@@ -17,6 +17,8 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormPasswordInput from 'components/forms/form-password-input';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormTextArea from 'components/forms/form-textarea';
 
 /**
  * Style dependencies
@@ -118,6 +120,37 @@ const ServerCredentialsForm = ( {
 				{ formErrors.pass && <FormInputValidation isError={ true } text={ formErrors.pass } /> }
 			</FormFieldset>
 		</div>
+
+		<FormFieldset className="server-credentials-form__path">
+			<FormLabel htmlFor="wordpress-path">
+				{ labels.path || translate( 'WordPress installation path' ) }
+			</FormLabel>
+			<FormTextInput
+				name="path"
+				id="wordpress-path"
+				placeholder="/public_html/wordpress-site/"
+				value={ get( form, 'path', '' ) }
+				onChange={ handleFieldChange }
+				disabled={ formIsSubmitting }
+				isError={ !! formErrors.path }
+			/>
+			{ formErrors.path && <FormInputValidation isError={ true } text={ formErrors.path } /> }
+		</FormFieldset>
+
+		<FormFieldset className="server-credentials-form__kpri">
+			<FormLabel htmlFor="private-key">{ labels.kpri || translate( 'Private Key' ) }</FormLabel>
+			<FormTextArea
+				name="kpri"
+				id="private-key"
+				value={ get( form, 'kpri', '' ) }
+				onChange={ handleFieldChange }
+				disabled={ formIsSubmitting }
+				className="server-credentials-form__private-key"
+			/>
+			<FormSettingExplanation>
+				{ translate( 'Only non-encrypted private keys are supported.' ) }
+			</FormSettingExplanation>
+		</FormFieldset>
 
 		<FormFieldset className="server-credentials-form__buttons">
 			<Button

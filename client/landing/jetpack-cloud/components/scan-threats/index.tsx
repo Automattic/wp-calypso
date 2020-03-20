@@ -54,6 +54,11 @@ const ScanThreats = ( { site, threats }: Props ) => {
 		closeDialog();
 	};
 
+	const confirmFixAllThreats = () => {
+		window.alert( `Starting to fix ${ threats.length } threats found...` );
+		setShowFixAllThreatsDialog( false );
+	};
+
 	return (
 		<>
 			<h1 className="scan-threats scan__header">{ translate( 'Your site may be at risk' ) }</h1>
@@ -118,6 +123,8 @@ const ScanThreats = ( { site, threats }: Props ) => {
 				showDialog={ showFixAllThreatsDialog }
 				siteId={ site.ID }
 				onCloseDialog={ () => setShowFixAllThreatsDialog( false ) }
+				onConfirmation={ confirmFixAllThreats }
+				userHasCredentials={ false }
 			/>
 		</>
 	);

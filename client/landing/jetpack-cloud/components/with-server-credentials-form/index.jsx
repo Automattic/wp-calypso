@@ -12,6 +12,7 @@ import { find, isEmpty } from 'lodash';
  */
 import { deleteCredentials, updateCredentials } from 'state/jetpack/credentials/actions';
 import { getSiteSlug } from 'state/sites/selectors';
+import getJetpackCredentials from 'state/selectors/get-jetpack-credentials';
 import getJetpackCredentialsUpdateStatus from 'state/selectors/get-jetpack-credentials-update-status';
 import getRewindState from 'state/selectors/get-rewind-state';
 import QueryRewindState from 'components/data/query-rewind-state';
@@ -154,12 +155,16 @@ function withServerCredentialsForm( WrappedComponent ) {
 
 	const mapStateToProps = ( state, { siteId } ) => {
 		// I should pass the state of the form update to the child component
-		const x = getJetpackCredentialsUpdateStatus( state, siteId );
+		const formSubmissionStatus = getJetpackCredentialsUpdateStatus( state, siteId );
 
 		// eslint-disable-next-line no-console
-		console.log( 'getJetpackCredentialsUpdateStatus', x );
+		console.log( getJetpackCredentials( state, siteId, 'main' ) );
+
+		// eslint-disable-next-line no-console
+		console.log( 'formSubmissionStatus', formSubmissionStatus );
 		return {
-			formIsSubmitting: 'pending' === x,
+			formSubmissionStatus,
+			formIsSubmitting: 'pending' === formSubmissionStatus,
 			siteSlug: getSiteSlug( state, siteId ),
 			rewindState: getRewindState( state, siteId ),
 		};
