@@ -12,7 +12,6 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import Banner from 'components/banner';
 import { Button, Card } from '@automattic/components';
 import CardHeading from 'components/card-heading';
 import EmptyContent from 'components/empty-content';
@@ -24,7 +23,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import FormattedHeader from 'components/formatted-header';
 import { SIDEBAR_SECTION_TOOLS } from 'my-sites/sidebar/constants';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { canCurrentUserUseCustomerHome, getSiteOption, isNewSite } from 'state/sites/selectors';
+import { canCurrentUserUseCustomerHome, getSiteOption } from 'state/sites/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
@@ -37,21 +36,16 @@ import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actio
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
-import isSiteRecentlyMigrated from 'state/selectors/is-site-recently-migrated';
 import StatsBanners from 'my-sites/stats/stats-banners';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
-import { getActiveTheme, getCanonicalTheme } from 'state/themes/selectors';
-import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import QueryActiveTheme from 'components/data/query-active-theme';
-import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import GoMobileCard from 'my-sites/customer-home/go-mobile-card';
-import WelcomeBanner from './welcome-banner';
 import StatsCard from './stats-card';
 import FreePhotoLibraryCard from './free-photo-library-card';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import QuickLinks from 'my-sites/customer-home/quick-links';
+import Notices from 'my-sites/customer-home/notices';
 
 /**
  * Style dependencies
@@ -61,7 +55,6 @@ import './style.scss';
 /**
  * Image dependencies
  */
-import fireworksIllustration from 'assets/images/illustrations/fireworks.svg';
 import happinessIllustration from 'assets/images/customer-home/happiness.png';
 
 class Home extends Component {
@@ -86,36 +79,6 @@ class Home extends Component {
 		isStaticHomePage: PropTypes.bool.isRequired,
 	};
 
-	state = {
-		renderChecklistCompleteBanner: null,
-	};
-
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		// If we still don't have checklist data or we don't want to render the banner, probably because
-		// this is a page load, don't change the state.
-		if (
-			null === nextProps.isChecklistComplete ||
-			'norender' === prevState.renderChecklistCompleteBanner
-		) {
-			return null;
-		}
-		// If this state prop doesn't have a value yet
-		if ( null === prevState.renderChecklistCompleteBanner ) {
-			return {
-				// Set to norender because this is the initial state value and the checklist is completed.
-				// Otherwise the banner will always display once the checklist is completed, even on page load.
-				renderChecklistCompleteBanner: nextProps.isChecklistComplete ? 'norender' : 'waiting', // If checklist is not complete, let's flag it and wait until it is.
-			};
-		}
-		// If we're here, this is not a page load, so let's check if the checklist was completed.
-		if ( nextProps.isChecklistComplete ) {
-			return {
-				renderChecklistCompleteBanner: 'render',
-			};
-		}
-		return null;
-	}
-
 	onLaunchBannerClick = e => {
 		const { siteId } = this.props;
 		e.preventDefault();
@@ -123,97 +86,9 @@ class Home extends Component {
 		this.props.launchSiteOrRedirectToLaunchSignupFlow( siteId );
 	};
 
-	getChecklistSubHeaderText = () => {
-		const { checklistMode, currentTheme, translate, user } = this.props;
-
-		switch ( checklistMode ) {
-			case 'concierge':
-				return translate(
-					'We emailed %(email)s with instructions to schedule your Quick Start Session call with us. ' +
-						'In the mean time, use this quick list of setup tasks to get your site ready to share.',
-					{
-						args: {
-							email: user.email,
-						},
-					}
-				);
-
-			case 'theme':
-				return translate(
-					'Your theme %(themeName)s by %(themeAuthor)s is now active on your site. ' +
-						'Next, use this quick list of setup tasks to get it ready to share.',
-					{
-						args: {
-							themeName: currentTheme && currentTheme.name,
-							themeAuthor: currentTheme && currentTheme.author,
-						},
-					}
-				);
-
-			case 'launched':
-				return translate( 'Make sure you share it with everyone and show it off.' );
-
-			case 'migrated':
-				return translate( 'Next, make sure everything looks the way you expected.' );
-
-			default:
-				return translate(
-					'Next, use this quick list of setup tasks to get your site ready to share.'
-				);
-		}
-	};
-
 	renderCustomerHomeHeader() {
-		const {
-			displayChecklist,
-			isNewlyCreatedSite,
-			isRecentlyMigratedSite,
-			translate,
-			checklistMode,
-			site,
-			siteId,
-			currentThemeId,
-			siteIsUnlaunched,
-			isAtomic,
-			trackAction,
-			displayWelcomeBanner,
-		} = this.props;
+		const { translate, site, siteIsUnlaunched, trackAction } = this.props;
 
-		// Show a thank-you message 30 mins post site creation/purchase
-		if (
-			isNewlyCreatedSite &&
-			! isRecentlyMigratedSite &&
-			displayChecklist &&
-			'launched' !== checklistMode
-		) {
-			if ( siteIsUnlaunched || isAtomic ) {
-				//Only show pre-launch, or for Atomic sites
-				return (
-					<>
-						{ siteId && 'theme' === checklistMode && <QueryActiveTheme siteId={ siteId } /> }
-						{ currentThemeId && (
-							<QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } />
-						) }
-						<img
-							src="/calypso/images/signup/confetti.svg"
-							aria-hidden="true"
-							className="customer-home__confetti"
-							alt=""
-						/>
-						<FormattedHeader
-							headerText={
-								this.props.siteHasPaidPlan
-									? translate( 'Thank you for your purchase!' )
-									: translate( 'Your site has been created!' )
-							}
-							subHeaderText={ this.getChecklistSubHeaderText() }
-						/>
-					</>
-				);
-			}
-		}
-
-		// If launched, show a congratulatory message, else show the standard heading
 		return (
 			<>
 				<div className="customer-home__heading">
@@ -232,46 +107,13 @@ class Home extends Component {
 						</div>
 					) }
 				</div>
-				{ isRecentlyMigratedSite && (
-					<Card className="customer-home__migrate-card" highlight="info">
-						<img
-							src={ fireworksIllustration }
-							aria-hidden="true"
-							className="customer-home__migrate-fireworks"
-							alt=""
-						/>
-						<div className="customer-home__migrate-card-text">
-							<CardHeading>{ translate( 'Your site has been imported!' ) }</CardHeading>
-							<p className="customer-home__migrate-card-subtext">
-								{ this.getChecklistSubHeaderText() }
-							</p>
-						</div>
-					</Card>
-				) }
-				{ ! siteIsUnlaunched && 'launched' === checklistMode ? (
-					<Card className="customer-home__launch-card" highlight="info">
-						<img
-							src={ fireworksIllustration }
-							aria-hidden="true"
-							className="customer-home__launch-fireworks"
-							alt=""
-						/>
-						<div className="customer-home__launch-card-text">
-							<CardHeading>{ translate( 'You launched your site!' ) }</CardHeading>
-							<p className="customer-home__launch-card-subtext">
-								{ this.getChecklistSubHeaderText() }
-							</p>
-						</div>
-					</Card>
-				) : (
-					displayWelcomeBanner && <WelcomeBanner />
-				) }
 			</>
 		);
 	}
 
 	render() {
 		const {
+			checklistMode,
 			translate,
 			canUserUseCustomerHome,
 			siteSlug,
@@ -279,8 +121,6 @@ class Home extends Component {
 			isChecklistComplete,
 			siteIsUnlaunched,
 			isEstablishedSite,
-			isRecentlyMigratedSite,
-			displayWelcomeBanner,
 		} = this.props;
 
 		if ( ! canUserUseCustomerHome ) {
@@ -293,9 +133,6 @@ class Home extends Component {
 			);
 		}
 
-		const renderChecklistCompleteBanner =
-			'render' === this.state.renderChecklistCompleteBanner && ! isRecentlyMigratedSite;
-
 		return (
 			<Main className="customer-home__main is-wide-layout">
 				<PageViewTracker path={ `/home/:site` } title={ translate( 'My Home' ) } />
@@ -303,8 +140,9 @@ class Home extends Component {
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				<SidebarNavigation />
 				<div className="customer-home__page-heading">{ this.renderCustomerHomeHeader() }</div>
+				<Notices checklistMode={ checklistMode } />
 				{ //Only show upgrade nudges to sites > 2 days old
-				isEstablishedSite && ! displayWelcomeBanner && (
+				isEstablishedSite && (
 					<div className="customer-home__upsells">
 						<StatsBanners
 							siteId={ siteId }
@@ -312,16 +150,6 @@ class Home extends Component {
 							primaryButton={ isChecklistComplete && ! siteIsUnlaunched ? true : false }
 						/>
 					</div>
-				) }
-				{ renderChecklistCompleteBanner && (
-					<Banner
-						dismissPreferenceName="checklist-complete"
-						dismissTemporary={ true }
-						icon="checkmark"
-						disableHref
-						title={ translate( 'Congratulations!' ) }
-						description={ translate( "You've completed each item in your checklist." ) }
-					/>
 				) }
 				{ this.renderCustomerHome() }
 			</Main>
@@ -446,29 +274,19 @@ class Home extends Component {
 }
 
 const connectHome = connect(
-	( state, { checklistMode } ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 		const siteChecklist = getSiteChecklist( state, siteId );
 		const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
-		let themeInfo = {};
-		if ( 'theme' === checklistMode ) {
-			const currentThemeId = getActiveTheme( state, siteId );
-			const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
-			themeInfo = { currentTheme, currentThemeId };
-		}
-		const isNewlyCreatedSite = isNewSite( state, siteId );
 		const isAtomic = isAtomicSite( state, siteId );
 		const isChecklistComplete = isSiteChecklistComplete( state, siteId );
 		const createdAt = getSiteOption( state, siteId, 'created_at' );
 		const user = getCurrentUser( state );
-		const displayWelcomeBanner =
-			! isNewlyCreatedSite && user.date && new Date( user.date ) < new Date( '2019-08-06' );
 		const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
 
 		return {
 			displayChecklist:
 				isEligibleForDotcomChecklist( state, siteId ) && hasChecklistData && ! isChecklistComplete,
-			displayWelcomeBanner,
 			site: getSelectedSite( state ),
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
@@ -479,13 +297,9 @@ const connectHome = connect(
 			needsEmailVerification: ! isCurrentUserEmailVerified( state ),
 			isStaticHomePage:
 				! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
-			siteHasPaidPlan: isSiteOnPaidPlan( state, siteId ),
-			isNewlyCreatedSite,
 			isEstablishedSite: moment().isAfter( moment( createdAt ).add( 2, 'days' ) ),
-			isRecentlyMigratedSite: isSiteRecentlyMigrated( state, siteId ),
 			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 			user,
-			...themeInfo,
 		};
 	},
 	dispatch => ( {
