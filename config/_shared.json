@@ -133,7 +133,8 @@
 	"sections": {
 		"jetpack-cloud": false,
 		"scan": false,
-		"backups": false
+		"backups": false,
+		"jetpack-cloud-settings": false
 	},
 	"theme": "default"
 }
