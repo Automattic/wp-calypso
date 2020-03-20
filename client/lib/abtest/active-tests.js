@@ -125,7 +125,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	purchaseConciergeAppointmentUpsell: {
-		datestamp: '20191228',
+		datestamp: '20200320',
 		variations: {
 			variationShowConciergeUpsell: 50,
 			control: 50,
