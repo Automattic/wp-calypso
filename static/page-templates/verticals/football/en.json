@@ -20,21 +20,21 @@
 	"text-examples-title": [
 		"Northwich village leage",
 		"North england amateur cup",
-		"Amateur Euro Cup"
+		"Amateur Euro Cup",
+		"Times we play",
+		"Location",
+		"Contact"
 	],
 	"text-examples-description": [
 		"6 teams playing agains each other every other week. Since 2001!",
 		"Open to everyone to signup! all the matches happens in the same weekend",
-		"We are in contact with other amateur football associations to make this happen!"
+		"We are in contact with other amateur football associations to make this happen!",
+		"Sun: 11:30 am - 10:00 pm",
+		"1 Example Street,Anytown, NY 10100",
+		"(555) 555 1234mail@example.com"
 	],
 	"button": [ "View the latest news" ],
 	"text-contact": [
 		"Come to play some footie with us! call us (123) 444\u20135678 or use the form below."
-	],
-	"text-example-title": [ "Times we play", "Location", "Contact" ],
-	"text-example-description": [
-		"Sun: 11:30 am - 10:00 pm",
-		"1 Example Street,Anytown, NY 10100",
-		"(555) 555 1234mail@example.com"
 	]
 }
