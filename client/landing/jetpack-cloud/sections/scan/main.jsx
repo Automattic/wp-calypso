@@ -69,7 +69,12 @@ class ScanPage extends Component {
 
 	renderThreats() {
 		const { threats, site } = this.props;
-		return <ScanThreats className="scan__threats" threats={ threats } site={ site } />;
+		return (
+			<>
+				<SecurityIcon icon="error" />
+				<ScanThreats className="scan__threats" threats={ threats } site={ site } />
+			</>
+		);
 	}
 
 	renderScanError() {
@@ -113,7 +118,7 @@ class ScanPage extends Component {
 
 	render() {
 		return (
-			<Main className="scan__main">
+			<Main wideLayout className="scan__main">
 				<DocumentHead title="Scanner" />
 				<SidebarNavigation />
 				<div className="scan__content">{ this.renderScanState() }</div>
