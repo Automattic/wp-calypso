@@ -133,7 +133,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							disableAutocorrect
 						/>
 						<div className="domain-picker__connect-domain">
-							<span>{ NO__( 'Already have a domain?' ) }</span>&nbsp;
+							<span>{ NO__( 'Already have a domain?' ) }</span>{ ' ' }
 							<Button
 								className="domain-picker__connect-button"
 								isLink
