@@ -77,7 +77,7 @@ export function Gutenboard() {
 	return (
 		<div className="block-editor__container">
 			<DropZoneProvider>
-				<div className="edit-post-layout">
+				<div className="gutenboarding__layout edit-post-layout">
 					<Header />
 					<BlockEditorProvider
 						useSubRegistry={ false }
@@ -86,9 +86,9 @@ export function Gutenboard() {
 							templateLock: 'all',
 						} }
 					>
-						<div className="gutenboard__edit-post-layout-content edit-post-layout__content ">
+						<div className="gutenboarding__content edit-post-layout__content">
 							<div
-								className="edit-post-visual-editor editor-styles-wrapper"
+								className="gutenboarding__content-editor edit-post-visual-editor editor-styles-wrapper"
 								role="region"
 								aria-label={ NO__( 'Onboarding screen content' ) }
 								tabIndex={ -1 }

@@ -12,15 +12,19 @@
 	grid-template-columns: 163px auto;
 	column-gap: 100px;
 }
+
 .style-preview__titles {
 	grid-area: title;
 }
+
 .style-preview__viewport-select {
 	grid-area: viewport-select;
 }
+
 .style-preview__actions {
 	grid-area: actions;
 }
+
 .style-preview__font-options {
 	grid-area: fonts;
 	display: grid;
@@ -84,6 +88,7 @@
 	align-items: center;
 	padding: 10px;
 }
+
 .style-preview__preview-bar-dot {
 	background: var( --studio-gray-5 );
 	width: 6px;
