@@ -292,7 +292,7 @@ export default function CompositeCheckout( {
 		updateContactDetailsCache
 	);
 
-	useCachedDomainContactDetails( dispatch );
+	useCachedDomainContactDetails();
 
 	useDisplayErrors( errors, showErrorMessage );
 
