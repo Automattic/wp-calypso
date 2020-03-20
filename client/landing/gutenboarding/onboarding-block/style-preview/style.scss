@@ -2,13 +2,15 @@
 	display: grid;
 	grid-template-areas: 'title viewport-select actions';
 	column-gap: 1em;
+	margin-top: 53px;
 }
 
 .style-preview__content {
 	display: grid;
+	margin-top: 55px;
 	grid-template-areas: 'fonts preview';
-	grid-template-columns: 200px auto;
-	column-gap: 80px;
+	grid-template-columns: 163px auto;
+	column-gap: 100px;
 }
 .style-preview__titles {
 	grid-area: title;
