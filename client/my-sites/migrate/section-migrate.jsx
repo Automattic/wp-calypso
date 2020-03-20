@@ -32,6 +32,7 @@ import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/u
 import { urlToSlug } from 'lib/url';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import wpcom from 'lib/wp';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -242,6 +243,8 @@ class SectionMigrate extends Component {
 		}
 
 		this.setMigrationState( { migrationStatus: 'backing-up', startTime: null } );
+
+		this.props.recordTracksEvent( 'calypso_site_migration_start_migration' );
 
 		wpcom
 			.undocumented()
@@ -704,5 +707,11 @@ export default connect(
 			targetSiteSlug: getSelectedSiteSlug( state ),
 		};
 	},
-	{ navigateToSelectedSourceSite, receiveSite, updateSiteMigrationMeta, requestSite }
+	{
+		navigateToSelectedSourceSite,
+		receiveSite,
+		updateSiteMigrationMeta,
+		requestSite,
+		recordTracksEvent,
+	}
 )( localize( SectionMigrate ) );
