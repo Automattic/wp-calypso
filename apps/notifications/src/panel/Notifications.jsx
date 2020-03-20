@@ -9,6 +9,7 @@ import { SET_IS_SHOWING } from './state/action-types';
 import actions from './state/actions';
 
 import RestClient from './rest-client';
+import SimperiumClient from './simperium-client';
 import { setGlobalData } from './flux/app-actions';
 import repliesCache from './comment-replies-cache';
 
@@ -85,9 +86,15 @@ export class Notifications extends PureComponent {
 
 		initAPI( wpcom );
 
-		client = new RestClient();
-		client.global = globalData;
-		client.sendMessage = receiveMessage;
+		if ( 'simperium' === localStorage.getItem( 'wp_notes_client' ) ) {
+			client = new SimperiumClient();
+			client.global = globalData;
+			client.sendMessage = receiveMessage;
+		} else {
+			client = new RestClient();
+			client.global = globalData;
+			client.sendMessage = receiveMessage;
+		}
 
 		/**
 		 * Initialize store with actions that need to occur on

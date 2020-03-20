@@ -23,6 +23,7 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-color-schemes": "file:../../packages/calypso-color-schemes",
-		"@automattic/calypso-polyfills": "file:../../packages/calypso-polyfills"
+		"@automattic/calypso-polyfills": "file:../../packages/calypso-polyfills",
+		"simperium": "1.0.4"
 	}
 }

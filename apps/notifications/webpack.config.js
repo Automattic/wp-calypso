@@ -52,6 +52,7 @@ function getWebpackConfig(
 
 	return {
 		...webpackConfig,
+		node: true,
 		plugins: [
 			...webpackConfig.plugins,
 			new HtmlWebpackPlugin( {
