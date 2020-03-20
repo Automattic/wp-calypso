@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { isMobile } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -18,13 +19,33 @@ import { withLocalizedMoment } from 'components/localized-moment';
 import Gridicon from 'components/gridicon';
 import FoldableCard from 'components/foldable-card';
 import { Button } from '@automattic/components';
+import Filterbar from 'my-sites/activity/filterbar';
+import { updateFilter } from 'state/activity-log/actions';
+import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
+import Pagination from 'components/pagination';
+// This can be used after merging https://github.com/Automattic/wp-calypso/pull/40066
+//import ActivityCard from '../../../components/activity-card';
+import { getEventsInDailyBackup } from '../utils';
+
+const PAGE_SIZE = 10;
 
 class BackupDetailPage extends Component {
-	render() {
-		const { backupId, logs, moment, siteId, translate } = this.props;
+	changePage = pageNumber => {
+		this.props.selectPage( this.props.siteId, pageNumber );
+		window.scrollTo( 0, 0 );
+	};
 
-		const thisBackup = logs.filter( event => event.rewindId === backupId );
-		const meta = thisBackup[ 0 ] && thisBackup[ 0 ].activityDescription[ 2 ].children[ 0 ];
+	render() {
+		const { backupId, filter, logs, moment, siteId, translate } = this.props;
+		const { page: requestedPage } = filter;
+
+		const backups = logs.filter( event => event.rewindId === backupId );
+		const thisBackup = backups[ 0 ];
+		const events =
+			( thisBackup && getEventsInDailyBackup( logs, new Date( thisBackup.activityDate ) ) ) || [];
+		console.log( events );
+
+		const meta = thisBackup && thisBackup.activityDescription[ 2 ].children[ 0 ];
 
 		const metaList =
 			meta &&
@@ -32,13 +53,37 @@ class BackupDetailPage extends Component {
 				return <li key={ item }>{ item }</li>;
 			} );
 
+		const actualPage = Math.max(
+			1,
+			Math.min( requestedPage, Math.ceil( logs.length / PAGE_SIZE ) )
+		);
+		const theseLogs = logs.slice( ( actualPage - 1 ) * PAGE_SIZE, actualPage * PAGE_SIZE );
+
+		const cards = theseLogs.map( activity => (
+			<div key={ activity.activityId }>
+				<div>{ activity.activityDate }</div>
+				<div>{ activity.activityName }</div>
+			</div>
+			// This can be replaced with the following after we merge https://github.com/Automattic/wp-calypso/pull/40066
+			/*
+			<ActivityCard
+				{ ...{
+					key: activity.activityId,
+					moment,
+					activity,
+					allowRestore,
+				} }
+			/>
+			*/
+		) );
+
 		return (
 			<Main>
 				<DocumentHead title="Backup Details" />
 				<SidebarNavigation />
 				<div>
 					<Gridicon icon="cloud-upload" />
-					{ moment( thisBackup.activityDate ).format( 'YYYY-MM-DD' ) }
+					{ thisBackup && moment( thisBackup.activityDate ).format( 'YYYY-MM-DD' ) }
 				</div>
 				<div>
 					<Button primary={ false }>{ translate( 'Download backup' ) }</Button>
@@ -48,17 +93,59 @@ class BackupDetailPage extends Component {
 					<ul>{ metaList }</ul>
 				</FoldableCard>
 				<div>{ translate( 'Backup details' ) }</div>
+				<Filterbar
+					{ ...{
+						siteId,
+						filter,
+						isLoading: false,
+						isVisible: true,
+					} }
+				/>
+				<Pagination
+					compact={ isMobile() }
+					className="backups__pagination"
+					key="backups__pagination-top"
+					nextLabel={ 'Older' }
+					page={ actualPage }
+					pageClick={ this.changePage }
+					perPage={ PAGE_SIZE }
+					prevLabel={ 'Newer' }
+					total={ logs.length }
+				/>
+				{ cards }
+				<Pagination
+					compact={ isMobile() }
+					className="backups__pagination"
+					key="backups__pagination-bottom"
+					nextLabel={ 'Older' }
+					page={ actualPage }
+					pageClick={ this.changePage }
+					perPage={ PAGE_SIZE }
+					prevLabel={ 'Newer' }
+					total={ logs.length }
+				/>
 			</Main>
 		);
 	}
 }
 
-export default connect( state => {
+const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 	const logs = siteId && requestActivityLogs( siteId, emptyFilter );
+	const filter = getActivityLogFilter( state, siteId );
 
 	return {
+		filter,
 		logs: logs?.data ?? [],
 		siteId,
 	};
-} )( localize( withLocalizedMoment( BackupDetailPage ) ) );
+};
+
+const mapDispatchToProps = dispatch => ( {
+	selectPage: ( siteId, pageNumber ) => dispatch( updateFilter( siteId, { page: pageNumber } ) ),
+} );
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( withLocalizedMoment( BackupDetailPage ) ) );
