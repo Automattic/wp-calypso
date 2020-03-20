@@ -77,7 +77,7 @@ export function Gutenboard() {
 	return (
 		<div className="block-editor__container">
 			<DropZoneProvider>
-				<div className="edit-post-layout gutenboarding__layout">
+				<div className="gutenboarding__layout edit-post-layout">
 					<Header />
 					<BlockEditorProvider
 						useSubRegistry={ false }
