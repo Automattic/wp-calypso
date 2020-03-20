@@ -3,6 +3,7 @@
  */
 import React, { FunctionComponent, useState } from 'react';
 import { Button, Panel, PanelBody, PanelRow } from '@wordpress/components';
+//  TODO: Extract SearchCard. https://github.com/Automattic/wp-calypso/issues/40323
 import SearchCard from 'components/search-card';
 import { useSelect } from '@wordpress/data';
 import { useDebounce } from 'use-debounce';
