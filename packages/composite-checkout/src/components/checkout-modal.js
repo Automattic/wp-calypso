@@ -18,6 +18,7 @@ export default function CheckoutModal( {
 	title,
 	copy,
 	primaryAction,
+	cancelAction = () => {},
 	closeModal,
 	isVisible,
 	buttonCTA,
@@ -33,14 +34,17 @@ export default function CheckoutModal( {
 	return (
 		<CheckoutModalWrapper
 			className={ joinClasses( [ className, 'checkout-modal' ] ) }
-			onClick={ closeModal }
+			onClick={ () => handleCancelAction( cancelAction, closeModal ) }
 		>
 			<CheckoutModalContent className="checkout-modal__content" onClick={ preventClose }>
 				<CheckoutModalTitle className="checkout-modal__title">{ title }</CheckoutModalTitle>
 				<CheckoutModalCopy className="checkout-modal__copy">{ copy }</CheckoutModalCopy>
 
 				<CheckoutModalActions>
-					<Button buttonState="default" onClick={ closeModal }>
+					<Button
+						buttonState="default"
+						onClick={ () => handleCancelAction( cancelAction, closeModal ) }
+					>
 						{ cancelButtonCTA || localize( 'Cancel' ) }
 					</Button>
 					<Button
@@ -62,6 +66,7 @@ CheckoutModal.propTypes = {
 	title: PropTypes.string.isRequired,
 	copy: PropTypes.string.isRequired,
 	primaryAction: PropTypes.func.isRequired,
+	cancelAction: PropTypes.func,
 	isVisible: PropTypes.bool.isRequired,
 	className: PropTypes.string,
 	buttonCTA: PropTypes.string,
@@ -143,6 +148,11 @@ const CheckoutModalActions = styled.div`
 
 function handlePrimaryAction( primaryAction, closeModal ) {
 	primaryAction();
+	closeModal();
+}
+
+function handleCancelAction( cancelAction, closeModal ) {
+	cancelAction();
 	closeModal();
 }
 

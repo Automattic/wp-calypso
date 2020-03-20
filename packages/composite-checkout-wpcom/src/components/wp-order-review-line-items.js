@@ -94,6 +94,11 @@ function WPLineItem( {
 								},
 							} );
 						} }
+						cancelAction={ () => {
+							onEvent( {
+								type: 'a8c_checkout_cancel_delete_product',
+							} );
+						} }
 						title={ modalCopy.title }
 						copy={ modalCopy.description }
 					/>
