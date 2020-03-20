@@ -13,7 +13,7 @@ import CheckoutContext from '../lib/checkout-context';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { LocalizeProvider } from '../lib/localize';
 import { LineItemsProvider } from '../lib/line-items';
-import { RegistryProvider, createRegistry } from '../lib/registry';
+import { RegistryProvider, defaultRegistry } from '../lib/registry';
 import { useFormStatusManager } from '../lib/form-status';
 import defaultTheme from '../theme';
 import {
@@ -65,7 +65,7 @@ export const CheckoutProvider = props => {
 
 	// Create the registry automatically if it's not a prop
 	const registryRef = useRef( registry );
-	registryRef.current = registryRef.current || createRegistry();
+	registryRef.current = registryRef.current || defaultRegistry;
 
 	const value = useMemo(
 		() => ( {

@@ -15,8 +15,8 @@ import {
 	CheckoutProvider,
 	createApplePayMethod,
 	createPayPalMethod,
-	createRegistry,
 	createStripeMethod,
+	defaultRegistry,
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
@@ -90,8 +90,7 @@ async function makePayPalExpressRequest( data ) {
 	return window.location.href;
 }
 
-const registry = createRegistry();
-const { registerStore, select } = registry;
+const { registerStore, select } = defaultRegistry;
 
 registerStore( 'demo', {
 	actions: {
@@ -370,7 +369,7 @@ function MyCheckout() {
 			showErrorMessage={ showErrorMessage }
 			showInfoMessage={ showInfoMessage }
 			showSuccessMessage={ showSuccessMessage }
-			registry={ registry }
+			registry={ defaultRegistry }
 			isLoading={ isLoading }
 			paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
 		>

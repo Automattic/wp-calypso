@@ -13,9 +13,15 @@ import useConstructor from './use-constructor';
 
 export { createRegistry, RegistryProvider, useRegistry, useDispatch, useSelect };
 
+export const defaultRegistry = createRegistry();
+
+export function registerStore( ...args ) {
+	return defaultRegistry.registerStore( ...args );
+}
+
 export function useRegisterStore( id, store ) {
-	const { registerStore } = useRegistry();
-	useConstructor( () => registerStore( id, store ) );
+	const registry = useRegistry();
+	useConstructor( () => registry.registerStore( id, store ) );
 }
 
 const primaryStoreId = 'checkout';
