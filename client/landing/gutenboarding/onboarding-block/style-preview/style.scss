@@ -33,6 +33,7 @@
 	// Extra specificity to override core style
 	&.components-button {
 		height: auto;
+		border-radius: 2px;
 	}
 	min-height: 3.4em;
 	box-shadow: inset 0 0 0 1px var( --studio-gray-10 );
