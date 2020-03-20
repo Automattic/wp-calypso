@@ -135,7 +135,7 @@ class JetpackCloudSidebar extends Component {
 									}
 								>
 									{ numberOfThreatsFound > 0 && (
-										<Badge type="scan-threat">
+										<Badge type="error">
 											{ translate( '%(number)d threat', '%(number)d threats', {
 												count: numberOfThreatsFound,
 												args: {
