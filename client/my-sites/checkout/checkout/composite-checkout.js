@@ -870,7 +870,9 @@ function getCheckoutEventHandler( reduxDispatch ) {
 				);
 
 			case 'a8c_checkout_cancel_delete_product':
-				return dispatch( recordTracksEvent( 'calypso_checkout_composite_cancel_delete_product' ) );
+				return reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_composite_cancel_delete_product' )
+				);
 
 			case 'a8c_checkout_delete_product':
 				return reduxDispatch(
