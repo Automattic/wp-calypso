@@ -489,7 +489,7 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
-		name: 'scan',
+		name: 'backups',
 		paths: [ '/backups' ],
 		module: 'landing/jetpack-cloud/sections/backups',
 		secondary: true,
