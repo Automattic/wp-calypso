@@ -37,11 +37,11 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 						{ NO__( 'Recommended' ) }
 					</Badge>
 				) }
-				{ isCurrent ? (
+				{ isCurrent && (
 					<Badge type="success" className="domain-picker__badge">
 						{ NO__( 'Selected' ) }
 					</Badge>
-				) : null }
+				) }
 			</div>
 			<div
 				className={ classnames( 'domain-picker__price', {
