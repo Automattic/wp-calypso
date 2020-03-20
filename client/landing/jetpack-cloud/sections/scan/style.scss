@@ -7,8 +7,7 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	min-height: calc( 100vh - 47px ); // Padding of .layout__content.
-
+	min-height: calc( 100vh - 111px ); // Padding of .layout__content: 79px + 32px;
 }
 
 .scan__content {
