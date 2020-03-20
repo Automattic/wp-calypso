@@ -1,20 +1,21 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, useCallback, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import { useLocalizedMoment } from 'components/localized-moment';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { RewindFlowPurpose } from './types';
+import BackupDownloadFlow from './download';
+import BackupRestoreFlow from './restore';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
-import Gridicon from 'components/gridicon';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { RewindFlowPurpose, defaultRewindConfig, RewindConfig } from './types';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 /**
  * Style dependencies
@@ -27,16 +28,20 @@ interface Props {
 }
 
 const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) => {
-	// const dispatch = useDispatch();
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
-
-	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
-	const rewindIdTimestamp: string = moment.unix( rewindId ).format( 'LLL' );
-
 	const siteId = useSelector( getSelectedSiteId );
 
-	const render = () => <div />;
+	const render = () => {
+		if ( siteId && rewindId ) {
+			return purpose === RewindFlowPurpose.RESTORE ? (
+				<BackupRestoreFlow rewindId={ rewindId } siteId={ siteId } />
+			) : (
+				<BackupDownloadFlow rewindId={ rewindId } siteId={ siteId } />
+			);
+		}
+		// TODO: good errors/placeholder here
+		return <div />;
+	};
 
 	return (
 		<Main className="rewind-flow">
@@ -45,15 +50,8 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 					purpose === RewindFlowPurpose.RESTORE ? translate( 'Restore' ) : translate( 'Download' )
 				}
 			/>
-			<Card>
-				<div className="rewind-flow__header">
-					<Gridicon
-						icon={ purpose === RewindFlowPurpose.RESTORE ? 'history' : 'cloud-download' }
-						size={ 48 }
-					/>
-				</div>
-				{ render() }
-			</Card>
+			<SidebarNavigation />
+			<Card>{ render() }</Card>
 		</Main>
 	);
 };

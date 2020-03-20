@@ -31,4 +31,96 @@
 // this rule is extremely specific to override other stylings
 input.rewind-flow__rewind-config-editor-checkbox.form-checkbox {
 	margin-right: 5px;
+	&:checked::before {
+		content: url( '/calypso/images/checkbox-icons/checkmark-jetpack.svg' );
+	}
+}
+
+.rewind-flow-notice {
+	div,
+	a {
+		display: flex;
+		flex-direction: row;
+		margin-bottom: 16px;
+		width: fit-content;
+	}
+
+	.gridicon {
+		margin-right: 5px;
+	}
+	// this allows the gridicon and text to align on their centers
+	p {
+		margin: 0;
+		font-size: 16px;
+		line-height: 22px;
+		font-style: normal;
+		font-weight: normal;
+	}
+	h4,
+	a {
+		font-size: 16px;
+		font-style: normal;
+		font-weight: bold;
+		line-height: 23px;
+	}
+}
+
+div.rewind-flow-notice__title-notice,
+a.rewind-flow-notice__title-notice,
+a.rewind-flow-notice__title-notice:visited {
+	fill: var( --color-neutral-light );
+	color: var( --color-neutral-light );
+
+	&:hover {
+		color: var( --color-neutral );
+		fill: var( --color-neutral );
+	}
+}
+div.rewind-flow-notice__title-warning,
+a.rewind-flow-notice__title-warning,
+a.rewind-flow-notice__title-warning:visited {
+	.gridicon {
+		fill: var( --color-error );
+	}
+
+	&:hover {
+		fill: var( --color-error-dark );
+	}
+}
+
+.rewind-flow__primary-button {
+	width: 100%;
+	text-align: center;
+
+	@include breakpoint( '>660px' ) {
+		width: auto;
+		text-align: auto;
+	}
+	margin-bottom: 22.5px;
+}
+
+.rewind-flow__progress-bar {
+	p {
+		margin: 0;
+		font-style: normal;
+		font-weight: normal;
+		font-size: 12px;
+		line-height: 14px;
+		color: var( --color-neutral-light );
+	}
+	margin-bottom: 22.5px;
+}
+
+.rewind-flow__info {
+	font-style: normal;
+	font-weight: normal;
+	font-size: 16px;
+	line-height: 23px;
+}
+
+.rewind-flow__cta {
+	font-style: normal;
+	font-weight: bold;
+	font-size: 16px;
+	line-height: 23px;
 }
