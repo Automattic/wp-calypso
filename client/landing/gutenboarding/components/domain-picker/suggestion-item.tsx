@@ -5,10 +5,9 @@ import React, { FunctionComponent } from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import classnames from 'classnames';
 import Badge from 'components/badge';
-import { DomainSuggestions } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 
-type DomainSuggestion = DomainSuggestions.DomainSuggestion;
+type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
 export interface Props extends Button.AnchorProps {
 	suggestion: DomainSuggestion;
