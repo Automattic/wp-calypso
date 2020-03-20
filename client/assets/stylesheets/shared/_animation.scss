@@ -23,6 +23,16 @@
 	}
 }
 
+// Simple animations to make elements disappear
+@keyframes disappear {
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+
 // Pulsing background color for loading placeholders
 @keyframes pulse-light {
 	50% {
