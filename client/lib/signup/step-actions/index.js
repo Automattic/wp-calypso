@@ -12,6 +12,8 @@ import { parse as parseURL } from 'url';
 // Libraries
 import config from 'config';
 import wpcom from 'lib/wp';
+import guessTimezone from 'lib/i18n-utils/guess-timezone';
+
 /* eslint-enable no-restricted-imports */
 import userFactory from 'lib/user';
 import { getSavedVariations } from 'lib/abtest';
@@ -178,6 +180,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				title: siteTitle,
 			},
 			site_creation_flow: flowToCheck,
+			timezone_string: guessTimezone(),
 		},
 		public: getNewSitePublicSetting( state ),
 		validate: false,
@@ -505,7 +508,7 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 		blog_name: site,
 		blog_title: '',
 		public: getNewSitePublicSetting( state ),
-		options: { theme: themeSlugWithRepo },
+		options: { theme: themeSlugWithRepo, timezone_string: guessTimezone() },
 		validate: false,
 	};
 
