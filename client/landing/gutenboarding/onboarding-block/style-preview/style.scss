@@ -35,7 +35,7 @@
 		height: auto;
 	}
 	min-height: 3.4em;
-	box-shadow: 0 0 0 1px var( --studio-gray-10 );
+	box-shadow: inset 0 0 0 1px var( --studio-gray-10 );
 	justify-content: center;
 
 	span {
@@ -43,7 +43,7 @@
 	}
 
 	&.is-selected {
-		box-shadow: 0 0 0 1px var( --highlightColor );
+		box-shadow: inset 0 0 0 1px var( --highlightColor );
 		color: var( --highlightColor );
 	}
 }
