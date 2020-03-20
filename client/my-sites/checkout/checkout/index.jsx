@@ -296,7 +296,11 @@ export class Checkout extends React.Component {
 			cartItem = ! hasConciergeSession( cart ) && conciergeSessionItem();
 		}
 
-		if ( startsWith( this.props.product, 'jetpack_backup' ) && isJetpackNotAtomic ) {
+		if (
+			( startsWith( this.props.product, 'jetpack_backup' ) ||
+				startsWith( this.props.product, 'jetpack_search' ) ) &&
+			isJetpackNotAtomic
+		) {
 			cartItem = jetpackProductItem( this.props.product );
 		}
 
