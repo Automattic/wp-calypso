@@ -88,7 +88,7 @@ export function Gutenboard() {
 					>
 						<div className="gutenboarding__content edit-post-layout__content">
 							<div
-								className="edit-post-visual-editor gutenboarding__content-editor editor-styles-wrapper"
+								className="gutenboarding__content-editor edit-post-visual-editor editor-styles-wrapper"
 								role="region"
 								aria-label={ NO__( 'Onboarding screen content' ) }
 								tabIndex={ -1 }
