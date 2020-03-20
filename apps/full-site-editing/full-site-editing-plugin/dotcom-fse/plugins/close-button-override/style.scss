@@ -11,7 +11,8 @@
 	display: flex;
 	align-items: center;
 	padding: 9px 10px;
-	margin-left: -8px;
+	margin-left: -24px;
+	margin-right: 10px;
 	border: none;
 	border-right: 1px solid #e2e4e7;
 
@@ -29,10 +30,6 @@
 
 	.dashicons-arrow-left-alt2 {
 		margin-left: -7px;
-	}
-
-	@media ( max-width: 599px ) {
-		margin-left: -2px;
 	}
 
 	@media ( max-width: 400px ) {
