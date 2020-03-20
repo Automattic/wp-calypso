@@ -84,8 +84,9 @@ const BackupRewindConfigEditor: FunctionComponent< Props > = ( {
 			{ checkboxes.map( ( { name, label } ) => (
 				<FormLabel
 					className="rewind-flow__rewind-config-editor-label"
-					required={ false }
+					key={ name }
 					optional={ false }
+					required={ false }
 				>
 					<FormCheckbox
 						checked={ currentConfig[ name ] }
