@@ -96,7 +96,9 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 		}
 	}
 
-	const loginRedirectUrl = `${ originUrl() }/gutenboarding${ makePath( Step.CreateSite ) }?new`;
+	const loginRedirectUrl = `${ window.location.origin }/gutenboarding${ makePath(
+		Step.CreateSite
+	) }?new`;
 
 	return (
 		<Modal
@@ -149,14 +151,5 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 		</Modal>
 	);
 };
-
-function originUrl() {
-	return (
-		window.location.protocol +
-		'//' +
-		window.location.hostname +
-		( window.location.port ? ':' + window.location.port : '' )
-	);
-}
 
 export default SignupForm;
