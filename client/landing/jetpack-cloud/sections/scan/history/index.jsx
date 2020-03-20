@@ -131,20 +131,22 @@ class ScanHistoryPage extends Component {
 	render() {
 		const logEntries = this.filteredEntries();
 		return (
-			<Main className="history">
+			<Main wideLayout className="history">
 				<DocumentHead title={ translate( 'History' ) } />
 				<SidebarNavigation />
 				<h1 className="history__header">{ translate( 'History' ) }</h1>
-				<p>
+				<p className="history__description">
 					{ translate(
 						'The scanning history contains a record of all previously active threats on your site.'
 					) }
 				</p>
-				<SimplifiedSegmentedControl
-					className="history__filters"
-					options={ filterOptions }
-					onSelect={ this.handleOnFilterChange }
-				/>
+				<div className="history__filters-wrapper">
+					<SimplifiedSegmentedControl
+						className="history__filters"
+						options={ filterOptions }
+						onSelect={ this.handleOnFilterChange }
+					/>
+				</div>
 				<div className="history__entries">
 					{ logEntries.map( entry => (
 						<ScanHistoryItem entry={ entry } key={ entry.id } />

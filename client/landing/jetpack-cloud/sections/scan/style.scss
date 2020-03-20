@@ -1,12 +1,25 @@
+.theme-jetpack-cloud .main {
+	margin-left: 0;
+}
+
+.scan__main {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	min-height: calc( 100vh - 47px ); // Padding of .layout__content.
+
+}
+
 .scan__content {
+	padding: 40px 16px 0;
 	flex: 1 0 auto;
 	max-width: 680px;
-	padding: 0 16px;
 
 	.security-icon {
 		display: block;
 		margin: 0 auto;
-		width: 70px;
+		width: 56px;
 
 		@include breakpoint( '>660px' ) {
 			margin: 0;
