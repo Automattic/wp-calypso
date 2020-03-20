@@ -145,6 +145,7 @@ class Home extends Component {
 				isEstablishedSite && (
 					<div className="customer-home__upsells">
 						<StatsBanners
+							isGSuiteStatsNudgeVisible={ false }
 							siteId={ siteId }
 							slug={ siteSlug }
 							primaryButton={ isChecklistComplete && ! siteIsUnlaunched ? true : false }
