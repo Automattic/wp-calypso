@@ -4,8 +4,11 @@
 
 	.masterbar__item-title {
 		padding-left: 16px;
+		font-size: 20px;
+		color: var( --color-gray-70 );
 		flex: 1 0 auto;
 		text-transform: none;
+		font-weight: 500;
 	}
 }
 
