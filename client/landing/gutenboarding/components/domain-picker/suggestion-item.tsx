@@ -32,11 +32,11 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 		<Button className="domain-picker__suggestion-item" isTertiary { ...props }>
 			<div className="domain-picker__suggestion-item-name">
 				{ suggestion.domain_name }
-				{ isRecommended ? (
+				{ isRecommended && (
 					<Badge type="info-blue" className="domain-picker__badge">
 						{ NO__( 'Recommended' ) }
 					</Badge>
-				) : null }
+				) }
 				{ isCurrent ? (
 					<Badge type="success" className="domain-picker__badge">
 						{ NO__( 'Selected' ) }
