@@ -71,9 +71,11 @@ class BackupDelta extends Component {
 			}
 		} );
 
+		const hasChanges = !! ( deltas.posts.length || deltas.mediaCreated.length );
+
 		return (
 			<div className="backup-delta__daily">
-				<div>Backup details</div>
+				{ hasChanges && <div>{ translate( 'Backup details' ) }</div> }
 				{ !! deltas.mediaCreated.length && (
 					<Fragment>
 						<div>{ translate( 'Media' ) }</div>
@@ -86,13 +88,13 @@ class BackupDelta extends Component {
 						<div>{ posts }</div>
 					</Fragment>
 				) }
-				<div>{ meta }</div>
+				{ hasChanges && <div>{ meta }</div> }
 				{ mainBackup && (
 					<Button
 						className="backup-delta__view-all-button"
 						href={ `/backups/${ siteSlug }/detail/${ mainBackup.rewindId }` }
 					>
-						View all backup details
+						{ translate( 'View all backup details' ) }
 					</Button>
 				) }
 			</div>

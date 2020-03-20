@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isMobile } from '@automattic/viewport';
@@ -41,23 +41,22 @@ class BackupDetailPage extends Component {
 
 		const backups = logs.filter( event => event.rewindId === backupId );
 		const thisBackup = backups[ 0 ];
-		const events =
-			( thisBackup && getEventsInDailyBackup( logs, new Date( thisBackup.activityDate ) ) ) || [];
-		console.log( events );
 
 		const meta = thisBackup && thisBackup.activityDescription[ 2 ].children[ 0 ];
-
 		const metaList =
 			meta &&
 			meta.split( ', ' ).map( item => {
 				return <li key={ item }>{ item }</li>;
 			} );
 
+		const actualLogs =
+			( thisBackup && getEventsInDailyBackup( logs, new Date( thisBackup.activityDate ) ) ) || [];
+
 		const actualPage = Math.max(
 			1,
-			Math.min( requestedPage, Math.ceil( logs.length / PAGE_SIZE ) )
+			Math.min( requestedPage, Math.ceil( actualLogs.length / PAGE_SIZE ) )
 		);
-		const theseLogs = logs.slice( ( actualPage - 1 ) * PAGE_SIZE, actualPage * PAGE_SIZE );
+		const theseLogs = actualLogs.slice( ( actualPage - 1 ) * PAGE_SIZE, actualPage * PAGE_SIZE );
 
 		const cards = theseLogs.map( activity => (
 			<div key={ activity.activityId }>
@@ -92,38 +91,48 @@ class BackupDetailPage extends Component {
 				<FoldableCard header={ translate( 'Total # of files backed up' ) }>
 					<ul>{ metaList }</ul>
 				</FoldableCard>
-				<div>{ translate( 'Backup details' ) }</div>
-				<Filterbar
-					{ ...{
-						siteId,
-						filter,
-						isLoading: false,
-						isVisible: true,
-					} }
-				/>
-				<Pagination
-					compact={ isMobile() }
-					className="backups__pagination"
-					key="backups__pagination-top"
-					nextLabel={ 'Older' }
-					page={ actualPage }
-					pageClick={ this.changePage }
-					perPage={ PAGE_SIZE }
-					prevLabel={ 'Newer' }
-					total={ logs.length }
-				/>
+				{ actualLogs.length > PAGE_SIZE ? (
+					<Fragment>
+						<div>{ translate( 'Backup details' ) }</div>
+						<Filterbar
+							{ ...{
+								siteId,
+								filter,
+								isLoading: false,
+								isVisible: true,
+							} }
+						/>
+					</Fragment>
+				) : (
+					<div>{ translate( 'This backup contains no changes.' ) }</div>
+				) }
+				{ actualLogs.length > PAGE_SIZE && (
+					<Pagination
+						compact={ isMobile() }
+						className="backups__pagination"
+						key="backups__pagination-top"
+						nextLabel={ 'Older' }
+						page={ actualPage }
+						pageClick={ this.changePage }
+						perPage={ PAGE_SIZE }
+						prevLabel={ 'Newer' }
+						total={ actualLogs.length }
+					/>
+				) }
 				{ cards }
-				<Pagination
-					compact={ isMobile() }
-					className="backups__pagination"
-					key="backups__pagination-bottom"
-					nextLabel={ 'Older' }
-					page={ actualPage }
-					pageClick={ this.changePage }
-					perPage={ PAGE_SIZE }
-					prevLabel={ 'Newer' }
-					total={ logs.length }
-				/>
+				{ actualLogs.length > PAGE_SIZE && (
+					<Pagination
+						compact={ isMobile() }
+						className="backups__pagination"
+						key="backups__pagination-bottom"
+						nextLabel={ 'Older' }
+						page={ actualPage }
+						pageClick={ this.changePage }
+						perPage={ PAGE_SIZE }
+						prevLabel={ 'Newer' }
+						total={ actualLogs.length }
+					/>
+				) }
 			</Main>
 		);
 	}
