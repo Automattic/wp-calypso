@@ -1,3 +1,7 @@
+.backup-delta {
+    margin: 0 1rem;
+}
+
 .backup-delta__view-all-button {
     display: block;
     float: none;
@@ -10,4 +14,82 @@
 .backup-delta__realtime .button.is-borderless.is-primary {
     float: none;
     display: inline-block;
+}
+
+.backup-delta__changes-header {
+    margin-top: 2rem;
+    font-weight: 700;
+}
+
+.backup-delta__section-header {
+    margin: 0.5rem 0;
+
+}
+
+.backup-delta__section-posts {
+    margin-bottom: 1rem;
+
+}
+
+.backup-delta__media-image {
+    display: inline-block;
+    margin-right: 1rem;
+    position: relative;
+}
+
+.backup-delta__media-title {
+    position: relative;
+    top: -1.5rem;
+    background-color: rgba(0,0,0,.5);
+    color: #fff;
+    font-size: 0.8rem;
+}
+
+.backup-delta__media-title .gridicon {
+    width: 1rem;
+    margin: 0 0.3rem;
+}
+
+.backup-delta__count-bubble {
+    display: inline-block;
+    background: #DCDCDE;
+    color: #000;
+    border-radius: 1rem;
+    padding: 0.2rem 0.5rem;
+}
+
+.backup-delta__deleted-count-bubble {
+    position: absolute;
+    right: .5rem;
+    top: 2rem;
+    display: inline-block;
+    background: #D63638;
+    color: #fff;
+    border-radius: 1rem;
+    padding: 0.2rem 0.5rem;
+}
+
+.gridicon.backup-delta__post-icon {
+    width: 1rem;
+    fill: #787C82;
+}
+
+.backup-delta__post-link {
+    position: relative;
+    top: -0.4rem;
+    left: 0.5rem;
+}
+
+.backup-delta__post-block {
+    margin-bottom: -0.5rem;
+}
+
+.backup-delta__metas {
+    margin: 1rem 0;
+}
+
+@media (max-width: 660px) {
+    .backup-delta__view-all-button {
+        width: 100%;
+    }
 }
