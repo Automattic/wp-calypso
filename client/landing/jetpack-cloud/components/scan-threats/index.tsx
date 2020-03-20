@@ -2,7 +2,9 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { numberFormat, translate } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,6 +14,7 @@ import FixAllThreatsDialog from '../../components/fix-all-threats-dialog';
 import ThreatDialog from 'landing/jetpack-cloud/components/threat-dialog';
 import ThreatItem from 'landing/jetpack-cloud/components/threat-item';
 import { Threat, ThreatAction } from 'landing/jetpack-cloud/components/threat-item/types';
+import getJetpackCredentials from 'state/selectors/get-jetpack-credentials';
 
 /**
  * Style dependencies
@@ -24,9 +27,10 @@ interface Props {
 		name: string;
 	};
 	threats: Array< Threat >;
+	userHasCredentials: boolean;
 }
 
-const ScanThreats = ( { site, threats }: Props ) => {
+const ScanThreats = ( { site, threats, userHasCredentials }: Props ) => {
 	const [ selectedThreat, setSelectedThreat ] = React.useState< Threat | undefined >();
 	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
 	const [ showFixAllThreatsDialog, setShowFixAllThreatsDialog ] = React.useState( false );
@@ -124,10 +128,16 @@ const ScanThreats = ( { site, threats }: Props ) => {
 				siteId={ site.ID }
 				onCloseDialog={ () => setShowFixAllThreatsDialog( false ) }
 				onConfirmation={ confirmFixAllThreats }
-				userHasCredentials={ false }
+				userHasCredentials={ userHasCredentials }
 			/>
 		</>
 	);
 };
 
-export default ScanThreats;
+const mapStateToProps = ( state, { site } ) => {
+	return {
+		userHasCredentials: ! isEmpty( getJetpackCredentials( state, site.ID, 'main' ) ),
+	};
+};
+
+export default connect( mapStateToProps )( ScanThreats );
