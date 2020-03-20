@@ -2,10 +2,6 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@wordpress/components';
 
 const DomainPickerSuggestionItemPlaceholder: FunctionComponent = () => {
