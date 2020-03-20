@@ -86,7 +86,7 @@ export function Gutenboard() {
 							templateLock: 'all',
 						} }
 					>
-						<div className="gutenboarding__content edit-post-layout__content ">
+						<div className="gutenboarding__content edit-post-layout__content">
 							<div
 								className="edit-post-visual-editor gutenboarding__content-editor editor-styles-wrapper"
 								role="region"
