@@ -37,7 +37,13 @@ const CelebrateNotice = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const getChecklistMessage = () => {
+	const getSecondaryText = () => {
+		if ( ! displayChecklist ) {
+			return translate(
+				'Next, use these quick links to continue maintaining and growing your site.'
+			);
+		}
+
 		switch ( checklistMode ) {
 			case 'concierge':
 				return translate(
@@ -83,9 +89,7 @@ const CelebrateNotice = ( {
 			/>
 			<div className="celebrate-notice__text">
 				<CardHeading>{ message }</CardHeading>
-				{ displayChecklist && (
-					<p className="celebrate-notice__checklist-message">{ getChecklistMessage() }</p>
-				) }
+				<p className="celebrate-notice__secondary-text">{ getSecondaryText() }</p>
 			</div>
 		</Card>
 	);
