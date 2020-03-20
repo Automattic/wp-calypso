@@ -155,6 +155,24 @@ export type DomainContactDetails = {
 	fax: string;
 };
 
+// This is the data returned by the redux state, where the fields could have a
+// null value.
+export type PossiblyCompleteDomainContactDetails = {
+	firstName: string | null;
+	lastName: string | null;
+	organization: string | null;
+	email: string | null;
+	alternateEmail: string | null;
+	phone: string | null;
+	address1: string | null;
+	address2: string | null;
+	city: string | null;
+	state: string | null;
+	postalCode: string | null;
+	countryCode: string | null;
+	fax: string | null;
+};
+
 export type DomainContactDetailsErrors = {
 	firstName?: string;
 	lastName?: string;
@@ -232,7 +250,7 @@ export type ManagedContactDetailsUpdaters = {
 	setErrorMessages: ( ManagedContactDetails, ManagedContactDetailsErrors ) => ManagedContactDetails;
 	populateDomainFieldsFromCache: (
 		ManagedContactDetails,
-		DomainContactDetails
+		PossiblyCompleteDomainContactDetails
 	) => ManagedContactDetails;
 };
 
@@ -318,7 +336,7 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 
 	populateDomainFieldsFromCache: (
 		oldDetails: ManagedContactDetails,
-		newDetails: DomainContactDetails
+		newDetails: PossiblyCompleteDomainContactDetails,
 	): ManagedContactDetails => {
 		return {
 			...oldDetails,
