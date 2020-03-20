@@ -50,7 +50,6 @@ export interface Props {
 
 	/**
 	 * Callback that will be invoked when user wants to connect an existing domain.
-	 *
 	 */
 	onDomainConnect: () => void;
 
