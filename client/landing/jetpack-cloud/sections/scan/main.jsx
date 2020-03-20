@@ -10,9 +10,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import Main from 'components/main';
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
 import ScanThreats from 'landing/jetpack-cloud/components/scan-threats';
 import { isEnabled } from 'config';
