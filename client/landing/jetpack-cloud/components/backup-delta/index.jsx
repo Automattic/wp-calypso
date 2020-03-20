@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -19,7 +20,7 @@ import './style.scss';
 
 class BackupDelta extends Component {
 	renderRealtime() {
-		const { allowRestore } = this.props;
+		const { allowRestore, translate } = this.props;
 
 		const realtimeEvents = this.props.realtimeEvents.filter( event => event.activityIsRewindable );
 
@@ -42,10 +43,10 @@ class BackupDelta extends Component {
 					<div>{ event.activityTitle }</div>
 					<div>
 						<Button compact borderless>
-							See content <Gridicon icon="chevron-down" />
+							{ translate( 'See content' ) } <Gridicon icon="chevron-down" />
 						</Button>
 						<Button compact borderless>
-							Actions <Gridicon icon="add" />
+							{ translate( 'Actions' ) } <Gridicon icon="add" />
 						</Button>
 					</div>
 				</Card>
@@ -54,14 +55,18 @@ class BackupDelta extends Component {
 
 		return (
 			<div className="backup-delta__realtime">
-				<div>More backups from today</div>
-				{ events.length ? events : <div>you have no more backups for this day</div> }
+				<div>{ translate( 'More backups from today' ) }</div>
+				{ events.length ? (
+					events
+				) : (
+					<div>{ translate( 'you have no more backups for this day' ) }</div>
+				) }
 			</div>
 		);
 	}
 
 	renderDaily() {
-		const { backupAttempts, deltas } = this.props;
+		const { backupAttempts, deltas, translate } = this.props;
 		const mainBackup = backupAttempts.complete && backupAttempts.complete[ 0 ];
 		const meta = mainBackup && mainBackup.activityDescription[ 2 ].children[ 0 ];
 
@@ -96,18 +101,20 @@ class BackupDelta extends Component {
 				<div>Backup details</div>
 				{ !! deltas.mediaCreated.length && (
 					<Fragment>
-						<div>Media</div>
+						<div>{ translate( 'Media' ) }</div>
 						<div>{ media }</div>
 					</Fragment>
 				) }
 				{ !! deltas.posts.length && (
 					<Fragment>
-						<div>Posts</div>
+						<div>{ translate( 'Posts' ) }</div>
 						<div>{ posts }</div>
 					</Fragment>
 				) }
 				<div>{ meta }</div>
-				<Button className="backup-delta__view-all-button">View all backup details</Button>
+				<Button className="backup-delta__view-all-button">
+					{ translate( 'View all backup details' ) }
+				</Button>
 			</div>
 		);
 	}
@@ -121,4 +128,4 @@ class BackupDelta extends Component {
 	}
 }
 
-export default BackupDelta;
+export default localize( BackupDelta );
