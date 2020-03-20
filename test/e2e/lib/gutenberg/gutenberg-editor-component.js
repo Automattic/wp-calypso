@@ -410,7 +410,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async closeEditor() {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.edit-post-fullscreen-mode-close__toolbar, .edit-post-header-toolbar__back' )
+			By.css(
+				'.edit-post-header .edit-post-fullscreen-mode-close, .edit-post-header-toolbar__back'
+			)
 		);
 	}
 
