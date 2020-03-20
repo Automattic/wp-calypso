@@ -7,9 +7,10 @@ import React from 'react';
  * Internal dependencies
  */
 import BackupDetailPage from './detail';
-import BackupDownloadPage from './download';
+// import BackupDownloadPage from './download';
 import BackupsPage from './main';
-import BackupRestorePage from './restore';
+// import BackupRestorePage from './restore';
+import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 
 export function backupDetail( context, next ) {
 	const backupId = context.params.backupId;
@@ -24,13 +25,15 @@ export function backups( context, next ) {
 }
 
 export function backupRestore( context, next ) {
-	const restoreId = context.params.restoreId;
-
-	context.primary = <BackupRestorePage restoreId={ context.params.restoreId ? restoreId : null } />;
+	context.primary = (
+		<BackupRewindFlow rewindId={ context.params.rewindId } purpose={ RewindFlowPurpose.RESTORE } />
+	);
 	next();
 }
 
 export function backupDownload( context, next ) {
-	context.primary = <BackupDownloadPage rewindId={ context.params.rewindId } />;
+	context.primary = (
+		<BackupRewindFlow rewindId={ context.params.rewindId } purpose={ RewindFlowPurpose.DOWNLOAD } />
+	);
 	next();
 }
