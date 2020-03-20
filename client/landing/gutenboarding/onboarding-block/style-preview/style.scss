@@ -2,13 +2,15 @@
 	display: grid;
 	grid-template-areas: 'title viewport-select actions';
 	column-gap: 1em;
+	margin-top: 53px;
 }
 
 .style-preview__content {
 	display: grid;
+	margin-top: 55px;
 	grid-template-areas: 'fonts preview';
-	grid-template-columns: 200px auto;
-	column-gap: 80px;
+	grid-template-columns: 163px auto;
+	column-gap: 100px;
 }
 
 .style-preview__titles {
@@ -28,6 +30,7 @@
 	display: grid;
 	grid-template-columns: 100%;
 	row-gap: 1em;
+	align-self: start;
 }
 
 // Extra specificity to override core component border
@@ -44,18 +47,41 @@
 
 .style-preview__preview {
 	grid-area: preview;
-
-	border: 1px solid var( --studio-gray-5 );
-	box-shadow: 0 4px 14px rgba( 0, 0, 0, 0.25 );
+	margin: 0 auto;
+	background: var( --studio-white );
+	box-shadow: 0 0 0 1px var( --studio-gray-5 ), 0 4px 14px rgba( 0, 0, 0, 0.25 );
 	border-radius: 4px;
 	overflow: hidden;
+	width: 100%;
+
+	&.is-viewport-mobile,
+	&.is-viewport-tablet {
+		width: 375px;
+		height: 812px;
+		box-sizing: border-box;
+		border: 13px solid var( --studio-white );
+
+		box-shadow: 0 0 0 1px var( --studio-gray-5 ), 0 4px 14px rgba( 0, 0, 0, 0.14 ),
+			inset 0 0 0 1px var( --studio-gray-5 );
+		border-radius: 31px;
+	}
+
+	&.is-viewport-tablet {
+		width: 1024px;
+		height: 768px;
+	}
+
+	&.is-viewport-mobile {
+		width: 351px;
+		height: 690px;
+	}
 }
 
+// This and the following dot class render the browser chrome
 .style-preview__preview-bar {
 	width: 100%;
 	height: 30px;
-
-	background: #fff;
+	background: var( --studio-white );
 	border-bottom: 1px solid var( --studio-gray-5 );
 	display: flex;
 	flex-direction: row;
@@ -84,7 +110,7 @@
 
 		color: var( --studio-gray-10 );
 		&.is-selected {
-			color: #000;
+			color: var( --studio-black );
 		}
 	}
 }

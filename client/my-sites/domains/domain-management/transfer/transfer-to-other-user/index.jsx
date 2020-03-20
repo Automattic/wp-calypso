@@ -181,7 +181,7 @@ class TransferOtherUser extends React.Component {
 				},
 				{
 					action: 'confirm',
-					label: this.props.translate( 'Confirm Transfer' ),
+					label: this.props.translate( 'Confirm transfer' ),
 					onClick: this.handleConfirmTransferDomain,
 					disabled: this.state.disableDialogButtons,
 					isPrimary: true,
@@ -215,7 +215,7 @@ class TransferOtherUser extends React.Component {
 		const { selectedDomainName: domainName, translate, users, selectedSite } = this.props,
 			availableUsers = this.filterAvailableUsers( users ),
 			{ currentUserCanManage, domainRegistrationAgreementUrl } = getSelectedDomain( this.props ),
-			saveButtonLabel = translate( 'Transfer Domain' );
+			saveButtonLabel = translate( 'Transfer domain' );
 
 		if ( ! currentUserCanManage ) {
 			return <NonOwnerCard { ...omit( this.props, [ 'children' ] ) } />;

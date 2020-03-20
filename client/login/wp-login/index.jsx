@@ -194,11 +194,27 @@ export class Login extends React.Component {
 			socialService,
 			socialServiceResponse,
 			fromSite,
+			locale,
+			isLoginView,
+			path,
 		} = this.props;
 
 		if ( privateSite && isLoggedIn ) {
 			return <PrivateSite />;
 		}
+
+		const footer = (
+			<>
+				{ ! socialConnect && (
+					<LoginLinks
+						locale={ locale }
+						privateSite={ privateSite }
+						twoFactorAuthType={ twoFactorAuthType }
+					/>
+				) }
+				{ isLoginView && <TranslatorInvite path={ path } /> }
+			</>
+		);
 
 		return (
 			<LoginBlock
@@ -212,20 +228,13 @@ export class Login extends React.Component {
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
 				fromSite={ fromSite }
+				footer={ footer }
 			/>
 		);
 	}
 
 	render() {
-		const {
-			isLoginView,
-			locale,
-			path,
-			privateSite,
-			socialConnect,
-			translate,
-			twoFactorAuthType,
-		} = this.props;
+		const { locale, translate } = this.props;
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 		return (
 			<div>
@@ -238,18 +247,7 @@ export class Login extends React.Component {
 						meta={ [ { name: 'description', content: 'Log in to WordPress.com' } ] }
 					/>
 
-					<div>
-						<div className="wp-login__container">{ this.renderContent() }</div>
-
-						{ ! socialConnect && (
-							<LoginLinks
-								locale={ locale }
-								privateSite={ privateSite }
-								twoFactorAuthType={ twoFactorAuthType }
-							/>
-						) }
-						{ isLoginView && <TranslatorInvite path={ path } /> }
-					</div>
+					<div className="wp-login__container">{ this.renderContent() }</div>
 				</Main>
 
 				{ this.renderFooter() }

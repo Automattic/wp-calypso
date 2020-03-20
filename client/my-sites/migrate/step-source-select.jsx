@@ -113,6 +113,10 @@ class StepSourceSelect extends Component {
 		} );
 	};
 
+	componentDidMount() {
+		this.props.recordTracksEvent( 'calypso_importer_wordpress_source_select_viewed' );
+	}
+
 	render() {
 		const { targetSite, targetSiteSlug, translate } = this.props;
 		const backHref = `/import/${ targetSiteSlug }`;

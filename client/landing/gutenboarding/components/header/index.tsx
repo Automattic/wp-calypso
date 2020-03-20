@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -118,7 +119,7 @@ const Header: FunctionComponent = () => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	const siteTitleElement = (
 		<span className="gutenboarding__site-title">
-			{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
+			{ siteTitle ? siteTitle : NO__( 'Start your website' ) }
 		</span>
 	);
 
@@ -128,7 +129,9 @@ const Header: FunctionComponent = () => {
 				placeholder: ! currentDomain,
 			} ) }
 		>
-			{ currentDomain ? currentDomain.domain_name : 'example.wordpress.com' }
+			{ currentDomain
+				? sprintf( NO__( '%s is available' ), currentDomain.domain_name )
+				: 'example.wordpress.com' }
 		</span>
 	);
 
@@ -225,12 +228,13 @@ const Header: FunctionComponent = () => {
 			aria-label={ NO__( 'Top bar' ) }
 			tabIndex={ -1 }
 		>
-			<div className="gutenboarding__header-section">
-				<div className="gutenboarding__header-group">
-					<Icon icon="wordpress-alt" className="gutenboarding__header-wp-icon" />
+			<section className="gutenboarding__header-section">
+				<div className="gutenboarding__header-section-item">
+					<Icon icon="wordpress-alt" size={ 24 } className="gutenboarding__header-wp-icon" />
 				</div>
-				<div className="gutenboarding__header-group">
-					{ siteTitle ? (
+				<div className="gutenboarding__header-section-item">{ siteTitleElement }</div>
+				<div className="gutenboarding__header-section-item">
+					{ siteTitle && (
 						<DomainPickerButton
 							className="gutenboarding__header-domain-picker-button"
 							defaultQuery={ siteTitle }
@@ -244,16 +248,13 @@ const Header: FunctionComponent = () => {
 							}
 							queryParameters={ { vertical: siteVertical?.id } }
 						>
-							{ siteTitleElement }
 							{ domainElement }
 						</DomainPickerButton>
-					) : (
-						siteTitleElement
 					) }
 				</div>
-			</div>
-			<div className="gutenboarding__header-section">
-				<div className="gutenboarding__header-group">
+			</section>
+			<section className="gutenboarding__header-section">
+				<div className="gutenboarding__header-section-item">
 					{ hasSelectedDesign && (
 						<Button
 							className="gutenboarding__header-next-button"
@@ -267,7 +268,7 @@ const Header: FunctionComponent = () => {
 						</Button>
 					) }
 				</div>
-			</div>
+			</section>
 			{ showSignupDialog && (
 				<SignupForm onRequestClose={ closeAuthDialog } onOpenLogin={ handleLogin } />
 			) }

@@ -94,6 +94,11 @@ function WPLineItem( {
 								},
 							} );
 						} }
+						cancelAction={ () => {
+							onEvent( {
+								type: 'a8c_checkout_cancel_delete_product',
+							} );
+						} }
 						title={ modalCopy.title }
 						copy={ modalCopy.description }
 					/>
@@ -356,6 +361,11 @@ function returnModalCopy( product, translate, hasDomainsInCart ) {
 }
 
 function canItemBeDeleted( item ) {
-	const itemTypesThatCannotBeDeleted = [ 'tax', 'credits', 'wordpress-com-credits' ];
+	const itemTypesThatCannotBeDeleted = [
+		'domain_redemption',
+		'tax',
+		'credits',
+		'wordpress-com-credits',
+	];
 	return ! itemTypesThatCannotBeDeleted.includes( item.type );
 }

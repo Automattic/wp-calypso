@@ -195,7 +195,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		}
 
 		const cta: CtaButton = {
-			text: translate( 'Earn Free Credits' ) as string,
+			text: translate( 'Earn free credits' ) as string,
 			action: () => {
 				trackCtaButton( 'peer-referral-wpcom' );
 				onPeerReferralCtaClick();

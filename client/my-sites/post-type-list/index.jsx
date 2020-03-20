@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { isEqual, range, throttle, difference, isEmpty, get } from 'lodash';
-import { localize } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -191,16 +191,29 @@ class PostTypeList extends Component {
 	}
 
 	renderSectionHeader() {
-		const { editorUrl, postLabels } = this.props;
+		const { editorUrl, postLabels, localeSlug } = this.props;
 
 		if ( ! postLabels ) {
 			return null;
 		}
 
+		/*
+		 * Temporary workaround to Sentence case label from core API for EN langs
+		 * @TODO: Remove when https://core.trac.wordpress.org/ticket/49616 is merged
+		 */
+
+		let addNewLabel = postLabels.add_new_item;
+
+		if ( 'en' === localeSlug || 'en-gb' === localeSlug ) {
+			addNewLabel =
+				postLabels.add_new_item[ 0 ].toUpperCase() +
+				postLabels.add_new_item.slice( 1 ).toLowerCase();
+		}
+
 		return (
 			<SectionHeader label={ postLabels.name }>
 				<Button primary compact className="post-type-list__add-post" href={ editorUrl }>
-					{ postLabels.add_new_item }
+					{ addNewLabel }
 				</Button>
 			</SectionHeader>
 		);
@@ -310,5 +323,6 @@ export default connect( ( state, ownProps ) => {
 		lastPageToRequest,
 		editorUrl: getEditorUrl( state, siteId, null, ownProps.query.type ),
 		postLabels: get( getPostType( state, siteId, ownProps.query.type ), 'labels' ),
+		localeSlug: getLocaleSlug( state ),
 	};
 } )( localize( PostTypeList ) );

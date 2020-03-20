@@ -51,7 +51,7 @@ class SearchEmptyContent extends React.Component {
 				onClick={ this.recordSecondaryAction }
 				href="/discover"
 			>
-				{ this.props.translate( 'Explore Discover' ) }
+				{ this.props.translate( 'Explore' ) }
 			</a>
 		) : null;
 
@@ -63,7 +63,7 @@ class SearchEmptyContent extends React.Component {
 
 		return (
 			<EmptyContent
-				title={ this.props.translate( 'No Results' ) }
+				title={ this.props.translate( 'No results' ) }
 				line={ message }
 				action={ action }
 				secondaryAction={ secondaryAction }

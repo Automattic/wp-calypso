@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
+import DocumentHead from 'components/data/document-head';
 import { BackupProgress } from './types';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { rewindBackup } from 'state/activity-log/actions';
@@ -17,6 +18,8 @@ import InProgress from './in-progress';
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import Ready from './ready';
 import Error from './error';
+import Main from 'components/main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 interface Props {
 	rewindId: string;
@@ -73,10 +76,12 @@ const BackupDownloadPage = ( { rewindId }: Props ) => {
 	};
 
 	return (
-		<div>
+		<Main>
+			<DocumentHead title="Download" />
+			<SidebarNavigation />
 			{ siteId && <QueryRewindBackupStatus downloadId={ downloadId } siteId={ siteId } /> }
 			{ render() }
-		</div>
+		</Main>
 	);
 };
 

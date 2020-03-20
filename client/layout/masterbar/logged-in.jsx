@@ -25,6 +25,7 @@ import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
+import isSiteMigrationActiveRoute from 'state/selectors/is-site-migration-active-route';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -233,6 +234,10 @@ export default connect(
 		const currentSelectedSiteId = getSelectedSiteId( state );
 		const siteId = currentSelectedSiteId || getPrimarySiteId( state );
 
+		const isMigrationInProgress =
+			isSiteMigrationInProgress( state, currentSelectedSiteId ) ||
+			isSiteMigrationActiveRoute( state );
+
 		return {
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
@@ -241,7 +246,7 @@ export default connect(
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
 			user: getCurrentUser( state ),
 			isSupportSession: isSupportSession( state ),
-			isMigrationInProgress: !! isSiteMigrationInProgress( state, currentSelectedSiteId ),
+			isMigrationInProgress,
 			migrationStatus: getSiteMigrationStatus( state, currentSelectedSiteId ),
 			currentSelectedSiteId,
 		};
