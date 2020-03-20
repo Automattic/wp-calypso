@@ -10,7 +10,6 @@ import moment from 'moment';
  * Internal dependencies
  */
 import { emptyFilter } from 'state/activity-log/reducer';
-// import { getBackupAttemptsForDate, getDailyBackupDeltas, getEventsInDailyBackup } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
@@ -18,8 +17,6 @@ import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import { applySiteOffset } from 'lib/site/timezone';
 import { requestActivityLogs } from 'state/data-getters';
 import { withLocalizedMoment } from 'components/localized-moment';
-//import BackupDelta from '../../components/backup-delta';
-//import DailyBackupStatus from '../../components/daily-backup-status';
 import DatePicker from '../../components/date-picker';
 import getRewindState from 'state/selectors/get-rewind-state';
 import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
@@ -90,20 +87,8 @@ class BackupsPage extends Component {
 		//todo: go to the log activity view
 	};
 
-	// hasRealtimeBackups = () =>
-	// 	this.props.sitePurchases &&
-	// 	!! this.props.sitePurchases.filter(
-	// 		purchase => 'jetpack_backup_realtime' === purchase.productSlug
-	// 	).length;
-
 	render() {
-		// const { allowRestore, logs, moment, siteId, siteSlug } = this.props;
 		const { siteId, loading, oldestDateAvailable } = this.props;
-
-		// const hasRealtimeBackups = this.hasRealtimeBackups();
-		// const backupAttempts = getBackupAttemptsForDate( logs, selectedDateString );
-		// const deltas = getDailyBackupDeltas( logs, selectedDateString );
-		// const realtimeEvents = getEventsInDailyBackup( logs, selectedDateString );
 
 		return (
 			<div>
@@ -119,7 +104,7 @@ class BackupsPage extends Component {
 					siteId={ siteId }
 				/>
 
-				{ /* The following code is for testing purposes: */ }
+				{ /* The following code is only for testing purposes: */ }
 				<div>{ loading && 'Loading backups...' }</div>
 				<div>
 					{ ! loading && 'Backups on this date: ' + this.state.backupsOnSelectedDate.length }
@@ -130,26 +115,7 @@ class BackupsPage extends Component {
 							<li key={ log.activityId }>{ log.activityTitle }</li>
 						) ) }
 				</ul>
-
-				{ /*<DailyBackupStatus*/ }
-				{ /*allowRestore={ allowRestore }*/ }
-				{ /*date={ this.state.selectedDate }*/ }
-				{ /*backups={ this.state.selectedDateBackups }*/ }
-				{ /*backupAttempts={ backupAttempts }*/ }
-				{ /*siteSlug={ siteSlug }*/ }
-				{ /*/>*/ }
-
-				{ /* Temporaly commented. PR in progress */ }
-				{ /*<BackupDelta*/ }
-				{ /*{ ...{*/ }
-				{ /*deltas,*/ }
-				{ /*backupAttempts,*/ }
-				{ /*hasRealtimeBackups,*/ }
-				{ /*realtimeEvents,*/ }
-				{ /*allowRestore,*/ }
-				{ /*moment,*/ }
-				{ /*} }*/ }
-				{ /*/>*/ }
+				{ /* END of code for testing purposes: */ }
 			</div>
 		);
 	}
@@ -216,7 +182,6 @@ export default connect( state => {
 	return {
 		allowRestore,
 		loading,
-		// rewind,
 		siteId,
 		sitePurchases,
 		siteSlug,
