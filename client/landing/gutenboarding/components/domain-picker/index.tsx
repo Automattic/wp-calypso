@@ -2,18 +2,13 @@
  * External dependencies
  */
 import React, { FunctionComponent, useState } from 'react';
-import {
-	Button,
-	HorizontalRule,
-	Panel,
-	PanelBody,
-	PanelRow,
-	TextControl,
-} from '@wordpress/components';
+import { Button, Panel, PanelBody, PanelRow } from '@wordpress/components';
+import SearchCard from 'components/search-card';
 import { useSelect } from '@wordpress/data';
 import { useDebounce } from 'use-debounce';
 import { times } from 'lodash';
 import { useI18n } from '@automattic/react-i18n';
+import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -21,6 +16,8 @@ import { useI18n } from '@automattic/react-i18n';
 import { DomainSuggestions } from '@automattic/data-stores';
 import { selectorDebounce } from '../../constants';
 import { STORE_KEY } from '../../stores/onboard';
+import DomainPickerSuggestionItem from './suggestion-item';
+import DomainPickerSuggestionItemPlaceholder from './suggestion-item-placeholder';
 
 /**
  * Style dependencies
@@ -28,7 +25,6 @@ import { STORE_KEY } from '../../stores/onboard';
 import './style.scss';
 
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
-0;
 
 const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
@@ -53,6 +49,18 @@ export interface Props {
 	onDomainPurchase: ( domainSuggestion: DomainSuggestion ) => void;
 
 	/**
+	 * Callback that will be invoked when user wants to connect an existing domain.
+	 *
+	 */
+	onDomainConnect: () => void;
+
+	/**
+	 * Callback that will be invoked when a close button is clicked
+	 *
+	 */
+	onClose: () => void;
+
+	/**
 	 * Additional parameters for the domain suggestions query.
 	 */
 	queryParameters?: Partial< DomainSuggestions.DomainSuggestionQuery >;
@@ -64,6 +72,8 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	defaultQuery,
 	onDomainSelect,
 	onDomainPurchase,
+	onDomainConnect,
+	onClose,
 	queryParameters,
 	currentDomain,
 } ) => {
@@ -74,13 +84,14 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 	const [ domainSearch, setDomainSearch ] = useState( siteTitle );
 
-	const placeholderAmount = 5;
+	const freePlaceholderAmount = 1;
+	const paidPlaceholderAmount = 5;
 
 	const [ search ] = useDebounce( domainSearch.trim() || defaultQuery || '', selectorDebounce );
 	const searchOptions = {
 		include_wordpressdotcom: true,
-		include_dotblogsubdomain: true,
-		quantity: 15,
+		include_dotblogsubdomain: false,
+		quantity: 6, // 1 free subdomain, 5 paid domains
 		...queryParameters,
 	};
 
@@ -93,87 +104,95 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		[ search, queryParameters ]
 	);
 
-	let numberOfFreeDomains = 0;
-	let numberOfPaidDomains = 0;
-	const suggestions = allSuggestions?.filter( suggestion => {
-		if (
-			suggestion.is_free &&
-			! numberOfFreeDomains &&
-			suggestion.domain_name !== currentDomain?.domain_name
-		) {
-			numberOfFreeDomains++;
-			return suggestion;
-		}
-		if ( ! suggestion.is_free && numberOfPaidDomains < 5 ) {
-			numberOfPaidDomains++;
-			return suggestion;
-		}
-	} );
+	const freeSuggestions = allSuggestions?.filter( suggestion => suggestion.is_free );
+	const paidSuggestions = allSuggestions?.filter( suggestion => ! suggestion.is_free );
 
-	const handleDomainClick = ( suggestion: DomainSuggestion ) => {
-		if ( suggestion.is_free ) {
-			onDomainSelect( suggestion );
-		} else {
-			onDomainPurchase( suggestion );
-		}
-	};
+	// Recommend paid domain with exact site title match with highest relevance score.
+	const recommendedSuggestion = paidSuggestions?.find( suggestion =>
+		suggestion.match_reasons.includes( 'exact-match' )
+	);
 
 	return (
 		<Panel className="domain-picker">
 			<PanelBody>
 				<PanelRow className="domain-picker__panel-row">
-					<div className="domain-picker__choose-domain-header">
-						{ NO__( 'Choose a new domain' ) }
+					<div className="domain-picker__header">
+						<div className="domain-picker__header-title">{ NO__( 'Choose a new domain' ) }</div>
+						<Button className="domain-picker__close-button" isTertiary onClick={ () => onClose() }>
+							{ NO__( 'Skip for now' ) }
+						</Button>
 					</div>
-					<TextControl
-						hideLabelFromVision
-						label={ label }
-						placeholder={ label }
-						onChange={ setDomainSearch }
-						value={ domainSearch }
-					/>
+					<div className="domain-picker__search">
+						<SearchCard
+							className="domain-picker__search-field"
+							inputLabel={ label }
+							placeholder={ label }
+							onSearch={ setDomainSearch }
+							value={ domainSearch }
+							compact
+							hideClose
+							disableAutocorrect
+						/>
+						<div className="domain-picker__connect-domain">
+							<span>{ NO__( 'Already have a domain?' ) }</span>&nbsp;
+							<Button
+								className="domain-picker__connect-button"
+								isLink
+								onClick={ () => onDomainConnect() }
+							>
+								{ NO__( 'Connect it now' ) }
+							</Button>
+						</div>
+					</div>
 				</PanelRow>
 
-				<HorizontalRule className="domain-picker__divider" />
+				<PanelRow className="domain-picker__panel-row">
+					<div className="domain-picker__suggestion-header">
+						<div className="domain-picker__suggestion-header-title">
+							{ NO__( 'Professional Domain' ) }
+						</div>
+						<div className="domain-picker__suggestion-header-description">
+							{ __experimentalCreateInterpolateElement(
+								NO__( '<Price>Free</Price> for the first year with a paid plan' ),
+								{ Price: <em /> }
+							) }
+						</div>
+					</div>
+					<div className="domain-picker__suggestion-item-group">
+						{ paidSuggestions?.length
+							? paidSuggestions.map( suggestion => (
+									<DomainPickerSuggestionItem
+										suggestion={ suggestion }
+										isRecommended={ suggestion === recommendedSuggestion }
+										isCurrent={ currentDomain.domain_name === suggestion.domain_name }
+										onClick={ () => onDomainPurchase( suggestion ) }
+										key={ suggestion.domain_name }
+									/>
+							  ) )
+							: times( paidPlaceholderAmount, i => (
+									<DomainPickerSuggestionItemPlaceholder key={ i } />
+							  ) ) }
+					</div>
+				</PanelRow>
 
 				<PanelRow className="domain-picker__panel-row">
-					<div className="domain-picker__recommended-header">{ NO__( 'Recommended' ) }</div>
-					{ suggestions?.length
-						? suggestions.map( suggestion => (
-								<Button
-									onClick={ () => handleDomainClick( suggestion ) }
-									className="domain-picker__suggestion-item"
-									key={ suggestion.domain_name }
-								>
-									<span className="domain-picker__suggestion-item-name">
-										{ suggestion.domain_name }
-									</span>
-									<span className="domain-picker__suggestion-action">
-										{ suggestion.is_free ? (
-											<span>
-												<span className="domain-picker__price">{ NO__( 'Free' ) }</span>
-												{ NO__( 'Select' ) }
-											</span>
-										) : (
-											<span>
-												{ /* FIXME: What value do we show here? */ }
-												<span className="domain-picker__price">{ NO__( 'from €4/month' ) }</span>
-												{ NO__( 'Upgrade' ) }
-											</span>
-										) }
-									</span>
-								</Button>
-						  ) )
-						: times( placeholderAmount, i => (
-								<Button className="domain-picker__suggestion-item" key={ i }>
-									<span className="domain-picker__suggestion-item-name placeholder">
-										example.wordpress.com
-									</span>
-									<span className="domain-picker__suggestion-action placeholder">
-										{ NO__( 'Select' ) }
-									</span>
-								</Button>
-						  ) ) }
+					<div className="domain-picker__suggestion-header">
+						<div className="domain-picker__suggestion-header-title">{ NO__( 'Subdomain' ) }</div>
+					</div>
+					<div className="domain-picker__suggestion-item-group">
+						{ freeSuggestions?.length
+							? freeSuggestions.map( suggestion => (
+									<DomainPickerSuggestionItem
+										suggestion={ suggestion }
+										isCurrent={ currentDomain.domain_name === suggestion.domain_name }
+										onClick={ () => onDomainSelect( suggestion ) }
+										key={ suggestion.domain_name }
+									/>
+							  ) )
+							: times( freePlaceholderAmount, i => (
+									<DomainPickerSuggestionItemPlaceholder key={ i } />
+							  ) ) }
+					</div>
 				</PanelRow>
 			</PanelBody>
 		</Panel>
