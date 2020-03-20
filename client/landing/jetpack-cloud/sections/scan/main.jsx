@@ -17,6 +17,7 @@ import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
 import ThreatItem from '../../components/threat-item';
 import { isEnabled } from 'config';
 import ThreatDialog from '../../components/threat-dialog';
+import Gridicon from 'components/gridicon';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 
@@ -158,10 +159,14 @@ class ScanPage extends Component {
 				</p>
 				<Button
 					primary
-					href={ `/contact-us/${ siteSlug }/?scan-state=error` }
+					target="_blank"
+					rel="noopener noreferrer"
+					href={ `https://jetpack.com/contact-support/?scan-state=error&site-slug=${ siteSlug }` }
 					className="scan__button"
 				>
-					{ translate( 'Contact Support' ) }
+					{ translate( 'Contact Support {{externalIcon/}}', {
+						components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
+					} ) }
 				</Button>
 			</>
 		);
