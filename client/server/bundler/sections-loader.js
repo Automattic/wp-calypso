@@ -53,12 +53,29 @@ function printSectionsAndPaths( sections ) {
 	}
 }
 
+function filterSections( sections ) {
+	const bundleEnv = config( 'env' );
+	if ( 'development' !== bundleEnv ) {
+		return sections;
+	}
+
+	const activeSections = config( 'sections' );
+	const byDefaultEnableSection = config( 'enable_all_sections' );
+
+	return sections.filter( section => {
+		if ( activeSections && typeof activeSections[ section.name ] !== 'undefined' ) {
+			return activeSections[ section.name ];
+		}
+		return byDefaultEnableSection;
+	} );
+}
+
 const loader = function() {
 	const options = getOptions( this ) || {};
 	const { useRequire, onlyIsomorphic } = options;
 	let { include } = options;
 
-	let sections = require( this.resourcePath );
+	let sections = filterSections( require( this.resourcePath ) );
 
 	if ( include ) {
 		if ( ! Array.isArray( include ) ) {
