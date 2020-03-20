@@ -13,6 +13,7 @@ import Item from 'layout/masterbar/item';
 import JetpackLogo from 'components/jetpack-logo';
 import Masterbar from 'layout/masterbar/masterbar';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { getDocumentHeadTitle } from 'state/document-head/selectors';
 
 /**
  * Style dependencies
@@ -22,7 +23,7 @@ import './style.scss';
 export default function() {
 	const translate = useTranslate();
 	const user = useSelector( state => getCurrentUser( state ) );
-
+	const headerTitle = useSelector( state => getDocumentHeadTitle( state ) );
 	return (
 		<Masterbar
 			className="is-jetpack-cloud-masterbar" // eslint-disable-line wpcalypso/jsx-classname-namespace
@@ -36,6 +37,7 @@ export default function() {
 			>
 				<JetpackLogo size={ 28 } full />
 			</Item>
+			<Item className="masterbar__item-title">{ headerTitle }</Item>
 			<Item
 				tipTarget="me"
 				url="#" // @todo: add a correct URL
