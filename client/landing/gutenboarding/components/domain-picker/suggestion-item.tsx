@@ -5,10 +5,6 @@ import React, { FunctionComponent } from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import classnames from 'classnames';
 import Badge from 'components/badge';
-
-/**
- * Internal dependencies
- */
 import { DomainSuggestions } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 
