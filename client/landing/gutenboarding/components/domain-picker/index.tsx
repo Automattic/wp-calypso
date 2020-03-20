@@ -163,7 +163,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 									<DomainPickerSuggestionItem
 										suggestion={ suggestion }
 										isRecommended={ suggestion === recommendedSuggestion }
-										isCurrent={ currentDomain.domain_name === suggestion.domain_name }
+										isCurrent={ currentDomain?.domain_name === suggestion.domain_name }
 										onClick={ () => onDomainPurchase( suggestion ) }
 										key={ suggestion.domain_name }
 									/>
@@ -183,7 +183,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							? freeSuggestions.map( suggestion => (
 									<DomainPickerSuggestionItem
 										suggestion={ suggestion }
-										isCurrent={ currentDomain.domain_name === suggestion.domain_name }
+										isCurrent={ currentDomain?.domain_name === suggestion.domain_name }
 										onClick={ () => onDomainSelect( suggestion ) }
 										key={ suggestion.domain_name }
 									/>
