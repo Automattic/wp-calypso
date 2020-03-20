@@ -36,9 +36,9 @@ const backupActivityNames = [
 ];
 
 class BackupsPage extends Component {
-	//todo: add the rest of the expected propTypes
 	static propTypes = {
-		logs: PropTypes.object,
+		indexedLog: PropTypes.object,
+		oldestDateAvailable: PropTypes.instanceOf( Date ),
 		loading: PropTypes.bool,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
@@ -49,19 +49,11 @@ class BackupsPage extends Component {
 	state = {
 		selectedDate: new Date(),
 		backupsOnSelectedDate: [],
-		indexedLog: {},
-		oldestDateAvailable: new Date(),
 	};
 
-	componentDidMount() {
-		this.createIndexedLog();
-	}
-
 	componentDidUpdate( prevProps ) {
-		if ( prevProps.logs !== this.props.logs ) {
-			this.createIndexedLog();
-		}
 		if ( prevProps.siteId !== this.props.siteId ) {
+			//If we switch the site, reset the current state
 			this.resetState();
 		}
 	}
@@ -70,44 +62,7 @@ class BackupsPage extends Component {
 		this.setState( {
 			selectedDate: new Date(),
 			backupsOnSelectedDate: [],
-			indexedLog: {},
-			oldestDateAvailable: new Date(),
 		} );
-	}
-
-	/**
-	 * Create an indexed log of backups based on the date of the backup and in the site time zone
-	 */
-	createIndexedLog() {
-		if ( 'success' === this.props.logs.state ) {
-			const { siteTimezone, siteGmtOffset } = this.props;
-
-			const indexedLog = {};
-			let oldestDateAvailable = new Date();
-
-			this.props.logs.data.forEach( log => {
-				const backupDate = applySiteOffset( moment( log.activityTs ), {
-					siteTimezone,
-					siteGmtOffset,
-				} );
-
-				const index = backupDate.format( INDEX_FORMAT );
-
-				if ( ! ( index in indexedLog ) ) {
-					indexedLog[ index ] = [];
-
-					if ( backupDate < oldestDateAvailable ) {
-						oldestDateAvailable = backupDate.toDate();
-					}
-				}
-				indexedLog[ index ].push( log );
-			} );
-
-			this.setState( {
-				indexedLog,
-				oldestDateAvailable,
-			} );
-		}
 	}
 
 	onDateChange = date => {
@@ -120,10 +75,10 @@ class BackupsPage extends Component {
 
 		let backupsOnSelectedDate;
 
-		if ( ! ( index in this.state.indexedLog ) || this.state.indexedLog[ index ].length === 0 ) {
+		if ( ! ( index in this.props.indexedLog ) || this.props.indexedLog[ index ].length === 0 ) {
 			backupsOnSelectedDate = [];
 		} else {
-			backupsOnSelectedDate = this.state.indexedLog[ index ].filter( log =>
+			backupsOnSelectedDate = this.props.indexedLog[ index ].filter( log =>
 				backupActivityNames.includes( log.activityName )
 			);
 		}
@@ -143,7 +98,7 @@ class BackupsPage extends Component {
 
 	render() {
 		// const { allowRestore, logs, moment, siteId, siteSlug } = this.props;
-		const { siteId, loading } = this.props;
+		const { siteId, loading, oldestDateAvailable } = this.props;
 
 		// const hasRealtimeBackups = this.hasRealtimeBackups();
 		// const backupAttempts = getBackupAttemptsForDate( logs, selectedDateString );
@@ -160,7 +115,7 @@ class BackupsPage extends Component {
 					onDateChange={ this.onDateChange }
 					onDateRangeSelection={ this.onDateRangeSelection }
 					selectedDate={ this.state.selectedDate }
-					oldestDateAvailable={ this.state.oldestDateAvailable }
+					oldestDateAvailable={ oldestDateAvailable }
 					siteId={ siteId }
 				/>
 
@@ -200,6 +155,48 @@ class BackupsPage extends Component {
 	}
 }
 
+/**
+ * Create an indexed log of backups based on the date of the backup and in the site time zone
+ *
+ * @param {Array} logs The activity logs retrieved from the store
+ * @param {string} siteTimezone The site time zone
+ * @param {number} siteGmtOffset The site offset from the GMT
+ */
+const createIndexedLog = ( logs, siteTimezone, siteGmtOffset ) => {
+	const indexedLog = {};
+	let oldestDateAvailable = new Date();
+
+	if ( 'success' === logs.state ) {
+		logs.data.forEach( log => {
+			//Move the backup date to the site timezone
+			const backupDate = applySiteOffset( moment( log.activityTs ), {
+				siteTimezone,
+				siteGmtOffset,
+			} );
+
+			//Get the index for this backup, index format: YYYYMMDD
+			const index = backupDate.format( INDEX_FORMAT );
+
+			if ( ! ( index in indexedLog ) ) {
+				//The first time we create the index for this date
+				indexedLog[ index ] = [];
+
+				//Check if the backup date is the oldest
+				if ( backupDate < oldestDateAvailable ) {
+					oldestDateAvailable = backupDate.toDate();
+				}
+			}
+
+			indexedLog[ index ].push( log );
+		} );
+	}
+
+	return {
+		indexedLog,
+		oldestDateAvailable,
+	};
+};
+
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
@@ -212,12 +209,12 @@ export default connect( state => {
 	const restoreStatus = rewind.rewind && rewind.rewind.status;
 	const allowRestore =
 		'active' === rewind.state && ! ( 'queued' === restoreStatus || 'running' === restoreStatus );
-
 	const loading = ! ( logs.state === 'success' );
+
+	const { indexedLog, oldestDateAvailable } = createIndexedLog( logs, siteTimezone, siteGmtOffset );
 
 	return {
 		allowRestore,
-		logs,
 		loading,
 		// rewind,
 		siteId,
@@ -225,5 +222,7 @@ export default connect( state => {
 		siteSlug,
 		siteTimezone,
 		siteGmtOffset,
+		indexedLog,
+		oldestDateAvailable,
 	};
 } )( withLocalizedMoment( BackupsPage ) );
