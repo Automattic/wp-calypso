@@ -41,8 +41,8 @@ function touchIfDifferent( newValue: string, oldData: ManagedValue ): ManagedVal
 		: { ...oldData, value: newValue, isTouched: true, errors: [] };
 }
 
-function setValueUnlessTouched( newValue: string, oldData: ManagedValue ): ManagedValue {
-	return oldData.isTouched ? oldData : { ...oldData, value: newValue, errors: [] };
+function setValueUnlessTouched( newValue: string | null, oldData: ManagedValue ): ManagedValue {
+	return oldData.isTouched ? oldData : { ...oldData, value: newValue || '', errors: [] };
 }
 
 function setErrors( errors: string[] | undefined, oldData: ManagedValue ): ManagedValue {
@@ -336,7 +336,7 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 
 	populateDomainFieldsFromCache: (
 		oldDetails: ManagedContactDetails,
-		newDetails: PossiblyCompleteDomainContactDetails,
+		newDetails: PossiblyCompleteDomainContactDetails
 	): ManagedContactDetails => {
 		return {
 			...oldDetails,
