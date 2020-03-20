@@ -20,7 +20,6 @@ import { getSitePlanSlug } from 'state/sites/selectors';
 import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
 import GSuiteStatsNudge from 'blocks/gsuite-stats-nudge';
 import isGoogleMyBusinessStatsNudgeVisibleSelector from 'state/selectors/is-google-my-business-stats-nudge-visible';
-import isGSuiteStatsNudgeVisible from 'state/selectors/is-gsuite-stats-nudge-visible';
 import isUpworkStatsNudgeDismissed from 'state/selectors/is-upwork-stats-nudge-dismissed';
 import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import QuerySiteDomains from 'components/data/query-site-domains';
@@ -159,7 +158,7 @@ export default connect( ( state, ownProps ) => {
 			state,
 			ownProps.siteId
 		),
-		isGSuiteStatsNudgeVisible: isGSuiteStatsNudgeVisible( state, ownProps.siteId, domains ),
+		isGSuiteStatsNudgeVisible: false,
 		isUpworkStatsNudgeVisible: ! isUpworkStatsNudgeDismissed( state, ownProps.siteId ),
 		planSlug: getSitePlanSlug( state, ownProps.siteId ),
 	};
