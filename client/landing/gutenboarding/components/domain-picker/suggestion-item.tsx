@@ -9,7 +9,7 @@ import { Button } from '@wordpress/components';
 
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
-export interface Props extends Button.AnchorProps {
+interface Props extends Button.AnchorProps {
 	suggestion: DomainSuggestion;
 	isRecommended?: boolean;
 	isCurrent?: boolean;
