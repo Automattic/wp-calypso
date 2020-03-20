@@ -17,7 +17,6 @@ import {
 	backupDownload,
 	backupRestore,
 } from 'landing/jetpack-cloud/sections/backups/controller';
-import { scan, scanHistory } from 'landing/jetpack-cloud/sections/scan/controller';
 import { settings } from 'landing/jetpack-cloud/sections/settings/controller';
 
 export default function() {
@@ -66,22 +65,6 @@ export default function() {
 				siteSelection,
 				navigation,
 				backupRestore,
-				makeLayout,
-				clientRender
-			);
-		}
-	}
-
-	if ( config.isEnabled( 'jetpack-cloud/scan' ) ) {
-		page( '/scan', siteSelection, sites, navigation, makeLayout, clientRender );
-		page( '/scan/:site', siteSelection, navigation, scan, makeLayout, clientRender );
-
-		if ( config.isEnabled( 'jetpack-cloud/scan-history' ) ) {
-			page(
-				'/scan/history/:site/',
-				siteSelection,
-				navigation,
-				scanHistory,
 				makeLayout,
 				clientRender
 			);
