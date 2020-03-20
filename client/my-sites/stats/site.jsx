@@ -24,13 +24,11 @@ import StatsModule from './stats-module';
 import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import StatsBanners from './stats-banners';
 import StickyPanel from 'components/sticky-panel';
 import JetpackBackupCredsBanner from 'blocks/jetpack-backup-creds-banner';
 import JetpackColophon from 'components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite, getSitePlanSlug } from 'state/sites/selectors';
-import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import { recordGoogleEvent, recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
@@ -128,7 +126,7 @@ class StatsSite extends Component {
 	};
 
 	renderStats() {
-		const { date, siteId, slug, isCustomerHomeEnabled, isJetpack } = this.props;
+		const { date, siteId, slug, isJetpack } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -169,9 +167,6 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				<div id="my-stats-content">
-					{ ! isCustomerHomeEnabled && (
-						<StatsBanners siteId={ siteId } slug={ slug } primaryButton={ true } />
-					) }
 					<ChartTabs
 						activeTab={ getActiveTab( this.props.chartTab ) }
 						activeLegend={ this.state.activeLegend }
@@ -328,7 +323,6 @@ export default connect(
 			siteId,
 			slug: getSelectedSiteSlug( state ),
 			planSlug: getSitePlanSlug( state, siteId ),
-			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
 		};
