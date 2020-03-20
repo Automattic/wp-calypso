@@ -5,6 +5,11 @@
 			"title": "rockfield",
 			"defaults": "rockfield",
 			"vertical-whitelist": []
+		},
+		{
+			"title": "leven",
+			"defaults": "leven",
+			"vertical-whitelist": []
 		}
 	],
 	"themes": [
