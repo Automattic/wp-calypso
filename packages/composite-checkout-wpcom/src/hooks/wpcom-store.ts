@@ -9,6 +9,7 @@ import { useRef } from 'react';
 import {
 	WpcomStoreState,
 	getInitialWpcomStoreState,
+	PossiblyCompleteDomainContactDetails,
 	DomainContactDetails,
 	ManagedContactDetails,
 	ManagedContactDetailsErrors,
@@ -31,7 +32,7 @@ type WpcomStoreAction =
 	| { type: 'UPDATE_COUNTRY_CODE'; payload: string }
 	| {
 			type: 'LOAD_DOMAIN_CONTACT_DETAILS_FROM_CACHE';
-			payload: DomainContactDetails;
+			payload: PossiblyCompleteDomainContactDetails;
 	  };
 
 export function useWpcomStore(
@@ -163,7 +164,9 @@ export function useWpcomStore(
 				return { type: 'UPDATE_VAT_ID', payload: payload };
 			},
 
-			loadDomainContactDetailsFromCache( payload: DomainContactDetails ): WpcomStoreAction {
+			loadDomainContactDetailsFromCache(
+				payload: PossiblyCompleteDomainContactDetails
+			): WpcomStoreAction {
 				return { type: 'LOAD_DOMAIN_CONTACT_DETAILS_FROM_CACHE', payload };
 			},
 		},
