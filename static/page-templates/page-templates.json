@@ -5,6 +5,11 @@
 			"title": "rockfield",
 			"defaults": "rockfield",
 			"vertical-whitelist": []
+		},
+		{
+			"title": "leven",
+			"defaults": "leven",
+			"vertical-whitelist": []
 		}
 	],
 	"themes": [
@@ -14,7 +19,27 @@
 		},
 		{
 			"title": "leven",
-			"demo": "https://wordpress.com/theme/leven"
+			"demo": "https://levendemo.wordpress.com/"
+		},
+		{
+			"title": "alves",
+			"demo": "https://alvesdemo.wordpress.com/"
+		},
+		{
+			"title": "mayland",
+			"demo": "https://maylanddemo.wordpress.com/"
+		},
+		{
+			"title": "startford",
+			"demo": "https://stratforddemo.wordpress.com/"
+		},
+		{
+			"title": "coutoire",
+			"demo": "https://coutoiredemo.wordpress.com/"
+		},
+		{
+			"title": "balasana",
+			"demo": "https://balasanademo.wordpress.com/"
 		}
 	]
 }
