@@ -31,7 +31,7 @@
 
 .style-preview__font-option {
 	// Extra specificity to override core style
-	.components-button {
+	&.components-button {
 		height: auto;
 	}
 	min-height: 3.4em;
