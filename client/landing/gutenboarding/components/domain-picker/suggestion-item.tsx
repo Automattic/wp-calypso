@@ -4,6 +4,7 @@
 import React, { FunctionComponent } from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import classnames from 'classnames';
+// TODO: Extract Badge component https://github.com/Automattic/wp-calypso/issues/40327.
 import Badge from 'components/badge';
 import { Button } from '@wordpress/components';
 
