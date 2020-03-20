@@ -68,6 +68,7 @@ function WPLineItem( {
 				<React.Fragment>
 					<DeleteButton
 						buttonState="borderless"
+						disabled={ isDisabled }
 						onClick={ () => {
 							setIsModalVisible( true );
 							onEvent( {
