@@ -474,7 +474,7 @@ const sections = [
 	},
 	{
 		name: 'jetpack-cloud',
-		paths: [ '/', '/backups', '/settings' ], // TODO: Split this up into its own sections
+		paths: [ '/', '/settings' ],
 		module: 'landing/jetpack-cloud',
 		secondary: true,
 		group: 'jetpack-cloud',
@@ -482,8 +482,16 @@ const sections = [
 	},
 	{
 		name: 'scan',
-		paths: [ '/scan' ], // TODO: Split this up into its own sections
+		paths: [ '/scan' ],
 		module: 'landing/jetpack-cloud/sections/scan',
+		secondary: true,
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'scan',
+		paths: [ '/backups' ],
+		module: 'landing/jetpack-cloud/sections/backups',
 		secondary: true,
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,

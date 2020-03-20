@@ -132,7 +132,8 @@
 	"enable_all_sections": true,
 	"sections": {
 		"jetpack-cloud": false,
-		"scan": false
+		"scan": false,
+		"backups": false
 	},
 	"theme": "default"
 }

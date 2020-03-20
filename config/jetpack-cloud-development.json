@@ -22,7 +22,8 @@
 	"enable_all_sections": false,
 	"sections": {
 		"jetpack-cloud": true,
-		"scan": true
+		"scan": true,
+		"backups": true
 	},
 	"theme": "jetpack-cloud"
 }
