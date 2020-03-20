@@ -56,7 +56,6 @@ export interface Props {
 
 	/**
 	 * Callback that will be invoked when a close button is clicked
-	 *
 	 */
 	onClose: () => void;
 
