@@ -451,12 +451,10 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			parsedPreviewUrl.query.iframe = 'true';
 			delete parsedPreviewUrl.search;
 
-			if ( config.isEnabled( 'post-editor/preview-with-unmapped-url' ) ) {
-				const { host: unmappedSiteUrlHost } = url.parse( unmappedSiteUrl );
-				if ( unmappedSiteUrlHost ) {
-					parsedPreviewUrl.host = unmappedSiteUrlHost;
-					parsedPreviewUrl.hostname = unmappedSiteUrlHost;
-				}
+			const { host: unmappedSiteUrlHost } = url.parse( unmappedSiteUrl );
+			if ( unmappedSiteUrlHost ) {
+				parsedPreviewUrl.host = unmappedSiteUrlHost;
+				parsedPreviewUrl.hostname = unmappedSiteUrlHost;
 			}
 
 			this.setState( {
