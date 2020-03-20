@@ -71,7 +71,7 @@ const ReferAFriendSection: FunctionComponent< ConnectedProps > = ( {
 		}
 
 		const cta: CtaButton = {
-			text: translate( 'Get Shareable Link' ) as string,
+			text: translate( 'Get shareable link' ) as string,
 			action: () => {
 				trackCtaButton( 'peer-referral-wpcom' );
 				onPeerReferralCtaClick();
