@@ -26,9 +26,10 @@ import './style.scss';
 const ServerCredentialsForm = ( {
 	formIsSubmitting,
 	onCancel,
+	onComplete,
 	translate,
 	handleFieldChange,
-	handleSubmit,
+	// handleSubmit,
 	form,
 	formErrors,
 	labels = {},
@@ -129,7 +130,7 @@ const ServerCredentialsForm = ( {
 			<Button
 				className="server-credentials-form__btn server-credentials-form__btn--fix"
 				disabled={ formIsSubmitting }
-				onClick={ handleSubmit }
+				onClick={ onComplete }
 			>
 				{ labels.save || translate( 'Save' ) }
 			</Button>

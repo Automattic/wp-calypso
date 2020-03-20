@@ -19,7 +19,6 @@ import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { withLocalizedMoment } from 'components/localized-moment';
-import FixAllThreatsDialog from '../../components/fix-all-threats-dialog';
 
 /**
  * Style dependencies
@@ -27,10 +26,6 @@ import FixAllThreatsDialog from '../../components/fix-all-threats-dialog';
 import './style.scss';
 
 class ScanPage extends Component {
-	state = {
-		showFixAllThreatsDialog: false,
-	};
-
 	renderScanOkay() {
 		const { siteSlug, moment, lastScanTimestamp } = this.props;
 

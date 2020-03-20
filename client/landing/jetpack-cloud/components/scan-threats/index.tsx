@@ -7,6 +7,8 @@ import { numberFormat, translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
+import FixAllThreatsDialog from '../../components/fix-all-threats-dialog';
 import ThreatDialog from 'landing/jetpack-cloud/components/threat-dialog';
 import ThreatItem from 'landing/jetpack-cloud/components/threat-item';
 import { Threat, ThreatAction } from 'landing/jetpack-cloud/components/threat-item/types';
@@ -18,6 +20,7 @@ import './style.scss';
 
 interface Props {
 	site: {
+		ID: number;
 		name: string;
 	};
 	threats: Array< Threat >;
@@ -26,7 +29,12 @@ interface Props {
 const ScanThreats = ( { site, threats }: Props ) => {
 	const [ selectedThreat, setSelectedThreat ] = React.useState< Threat | undefined >();
 	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
+	const [ showFixAllThreatsDialog, setShowFixAllThreatsDialog ] = React.useState( false );
 	const [ actionToPerform, setActionToPerform ] = React.useState< ThreatAction >( 'fix' );
+
+	const openFixAllThreatsDialog = () => {
+		setShowFixAllThreatsDialog( true );
+	};
 
 	const openDialog = ( action: ThreatAction, threat: Threat ) => {
 		setSelectedThreat( threat );
@@ -74,6 +82,17 @@ const ScanThreats = ( { site, threats }: Props ) => {
 				) }
 			</p>
 			<div className="scan-threats__threats">
+				<div className="scan-threats__buttons">
+					<Button
+						className="scan-threats__fix-all-threats-button"
+						onClick={ openFixAllThreatsDialog }
+					>
+						{ translate( 'Fix all' ) }
+					</Button>
+					<Button className="scan-threats__options-button" onClick={ openFixAllThreatsDialog }>
+						...
+					</Button>
+				</div>
 				{ threats.map( threat => (
 					<ThreatItem
 						key={ threat.id }
@@ -94,6 +113,12 @@ const ScanThreats = ( { site, threats }: Props ) => {
 					action={ actionToPerform }
 				/>
 			) }
+			<FixAllThreatsDialog
+				threats={ threats }
+				showDialog={ showFixAllThreatsDialog }
+				siteId={ site.ID }
+				onCloseDialog={ () => setShowFixAllThreatsDialog( false ) }
+			/>
 		</>
 	);
 };

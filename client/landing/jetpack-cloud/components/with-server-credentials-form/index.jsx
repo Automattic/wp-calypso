@@ -152,11 +152,18 @@ function withServerCredentialsForm( WrappedComponent ) {
 		}
 	};
 
-	const mapStateToProps = ( state, { siteId } ) => ( {
-		formIsSubmitting: 'pending' === getJetpackCredentialsUpdateStatus( state, siteId ),
-		siteSlug: getSiteSlug( state, siteId ),
-		rewindState: getRewindState( state, siteId ),
-	} );
+	const mapStateToProps = ( state, { siteId } ) => {
+		// I should pass the state of the form update to the child component
+		const x = getJetpackCredentialsUpdateStatus( state, siteId );
+
+		// eslint-disable-next-line no-console
+		console.log( 'getJetpackCredentialsUpdateStatus', x );
+		return {
+			formIsSubmitting: 'pending' === x,
+			siteSlug: getSiteSlug( state, siteId ),
+			rewindState: getRewindState( state, siteId ),
+		};
+	};
 
 	return connect( mapStateToProps, { deleteCredentials, updateCredentials } )(
 		ServerCredentialsFormClass
