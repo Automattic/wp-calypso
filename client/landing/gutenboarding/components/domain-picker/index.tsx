@@ -102,7 +102,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 	// Recommend paid domain with exact site title match with highest relevance score.
 	const recommendedSuggestion = paidSuggestions?.find( suggestion =>
-		suggestion.match_reasons.includes( 'exact-match' )
+		suggestion.match_reasons?.includes( 'exact-match' )
 	);
 
 	return (
