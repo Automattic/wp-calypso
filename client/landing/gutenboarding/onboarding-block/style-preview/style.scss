@@ -33,15 +33,25 @@
 	align-self: start;
 }
 
-// Extra specificity to override core component border
-.style-preview__font-option.components-button {
-	border: 1px solid var( --studio-gray-10 );
+.style-preview__font-option {
+	min-height: 3.4em;
+	box-shadow: inset 0 0 0 1px var( --studio-gray-10 );
 	justify-content: center;
-	height: 3.2em;
+
+	// Extra specificity to override core style
+	// This is effectively a more-specific synonmy of the same selector
+	&.components-button {
+		height: auto;
+		border-radius: 2px;
+	}
 
 	&.is-selected {
-		border-color: var( --highlightColor );
+		box-shadow: inset 0 0 0 1px var( --highlightColor );
 		color: var( --highlightColor );
+	}
+
+	span {
+		align-self: baseline;
 	}
 }
 
