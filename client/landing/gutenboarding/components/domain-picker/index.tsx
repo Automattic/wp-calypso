@@ -50,11 +50,6 @@ export interface Props {
 	onDomainPurchase: ( domainSuggestion: DomainSuggestion ) => void;
 
 	/**
-	 * Callback that will be invoked when user wants to connect an existing domain.
-	 */
-	onDomainConnect: () => void;
-
-	/**
 	 * Callback that will be invoked when a close button is clicked
 	 */
 	onClose: () => void;
@@ -71,7 +66,6 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	defaultQuery,
 	onDomainSelect,
 	onDomainPurchase,
-	onDomainConnect,
 	onClose,
 	queryParameters,
 	currentDomain,
@@ -132,16 +126,6 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							hideClose
 							disableAutocorrect
 						/>
-						<div className="domain-picker__connect-domain">
-							<span>{ NO__( 'Already have a domain?' ) }</span>{ ' ' }
-							<Button
-								className="domain-picker__connect-button"
-								isLink
-								onClick={ () => onDomainConnect() }
-							>
-								{ NO__( 'Connect it now' ) }
-							</Button>
-						</div>
 					</div>
 				</PanelRow>
 

@@ -59,10 +59,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 		setUserSelectedDomainSuggestion( selectedDomain );
 	};
 
-	const handleDomainConnect = () => {
-		// TODO: Handle connecting to existing domains
-	};
-
 	const handlePurchaseCancel = () => {
 		setUserSelectedDomainSuggestion( null );
 	};
@@ -100,7 +96,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 						defaultQuery={ defaultQuery }
 						onDomainSelect={ handleDomainSelect }
 						onDomainPurchase={ handlePaidDomainSelect }
-						onDomainConnect={ handleDomainConnect }
 						onClose={ handleClose }
 						queryParameters={ queryParameters }
 						currentDomain={ currentDomain }
