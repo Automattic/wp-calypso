@@ -125,6 +125,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							compact
 							hideClose
 							disableAutocorrect
+							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 						/>
 					</div>
 				</PanelRow>
