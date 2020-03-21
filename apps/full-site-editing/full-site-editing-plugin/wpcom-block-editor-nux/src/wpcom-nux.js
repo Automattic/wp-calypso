@@ -22,7 +22,11 @@ import {
 } from './images';
 
 function WpcomNux() {
-	const isWpcomNuxEnabled = useSelect( select => select( 'automattic/nux' ).isWpcomNuxEnabled() );
+	const { isWpcomNuxEnabled, isSPTOpen } = useSelect( select => ( {
+		isWpcomNuxEnabled: select( 'automattic/nux' ).isWpcomNuxEnabled(),
+		isSPTOpen: select( 'automattic/spt' ).isOpen(),
+	} ) );
+
 	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
 
 	// On mount check if the WPCOM NUX status exists in state, otherwise fetch it from the API.
@@ -37,7 +41,7 @@ function WpcomNux() {
 		fetchWpcomNuxStatus();
 	}, [ isWpcomNuxEnabled, setWpcomNuxStatus ] );
 
-	if ( ! isWpcomNuxEnabled ) {
+	if ( ! isWpcomNuxEnabled || isSPTOpen ) {
 		return null;
 	}
 
