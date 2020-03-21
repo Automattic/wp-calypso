@@ -33,31 +33,6 @@
 	}
 }
 
-.domain-picker__search {
-	// Override styling from @wordpress
-	input[type='search'].search__input {
-		width: 100%;
-		border: none;
-		box-shadow: none;
-		font-size: 16px;
-		font-weight: normal;
-
-		&:focus,
-		&:hover {
-			// Focus outline is provided by parent element in SearchCard.
-			outline: none;
-			box-shadow: none;
-		}
-	}
-}
-
-.domain-picker__search-field {
-	// Override styling from SearchCard
-	&.search-card {
-		margin: 0;
-	}
-}
-
 .domain-picker__connect-domain {
 	text-align: center;
 	margin-top: 14px;

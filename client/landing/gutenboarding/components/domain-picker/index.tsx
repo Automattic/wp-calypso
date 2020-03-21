@@ -2,9 +2,7 @@
  * External dependencies
  */
 import React, { FunctionComponent, useState } from 'react';
-import { Button, Panel, PanelBody, PanelRow } from '@wordpress/components';
-//  TODO: Extract SearchCard. https://github.com/Automattic/wp-calypso/issues/40323
-import SearchCard from 'components/search-card';
+import { Button, Panel, PanelBody, PanelRow, TextControl } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useDebounce } from 'use-debounce';
 import { times } from 'lodash';
@@ -116,16 +114,12 @@ const DomainPicker: FunctionComponent< Props > = ( {
 						</Button>
 					</div>
 					<div className="domain-picker__search">
-						<SearchCard
-							className="domain-picker__search-field"
-							inputLabel={ label }
+						<TextControl
+							hideLabelFromVision
+							label={ label }
 							placeholder={ label }
-							onSearch={ setDomainSearch }
+							onChange={ setDomainSearch }
 							value={ domainSearch }
-							compact
-							hideClose
-							disableAutocorrect
-							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 						/>
 					</div>
 				</PanelRow>
