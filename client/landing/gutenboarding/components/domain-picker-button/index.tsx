@@ -91,7 +91,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				/>
 			) }
 			{ isDomainPopoverVisible && (
-				<Popover onClose={ handleClose } onFocusOutside={ handleClose } focusOnMount="container">
+				<Popover onClose={ handleClose } onFocusOutside={ handleClose } focusOnMount={ false }>
 					<DomainPicker
 						defaultQuery={ defaultQuery }
 						onDomainSelect={ handleDomainSelect }
