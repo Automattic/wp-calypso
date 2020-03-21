@@ -18,7 +18,7 @@ import './style.scss';
 
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
-interface Props extends DomainPickerProps, Button.BaseProps {
+interface Props extends Omit< DomainPickerProps, 'onClose' >, Button.BaseProps {
 	className?: string;
 	currentDomain?: DomainSuggestion;
 }
