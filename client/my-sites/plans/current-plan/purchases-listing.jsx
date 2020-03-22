@@ -124,49 +124,18 @@ class PurchasesListing extends Component {
 		return null;
 	}
 
-	getPurchaseByCurrentPlan() {
-		const { currentPlanSlug, purchases } = this.props;
-
-		if ( ! currentPlanSlug ) {
-			return null;
-		}
-
-		return find(
-			purchases,
-			purchase => purchase.active && purchase.productSlug === currentPlanSlug
-		);
-	}
-
 	getExpirationInfoForPlan( plan ) {
-		// No expiration date for free plan or partner site.
-		if ( this.isFreePlan( plan ) || isPartnerPurchase( plan ) ) {
+		// No expiration date for free plans.
+		if ( this.isFreePlan( plan ) ) {
 			return null;
 		}
-
-		const subscribedMoment = plan.subscribedDate ? this.props.moment( plan.subscribedDate ) : null;
 
 		const expiryMoment = plan.expiryDate ? this.props.moment( plan.expiryDate ) : null;
 
 		const renewMoment =
 			plan.autoRenew && plan.autoRenewDate ? this.props.moment( plan.autoRenewDate ) : null;
 
-		let isRefundable = false;
-
-		// we need to find the purchase linked to the current plan to find out if it's refundable or not
-		const purchaseForCurrentPlan = this.getPurchaseByCurrentPlan();
-
-		if ( purchaseForCurrentPlan ) {
-			isRefundable = purchaseForCurrentPlan.isRefundable;
-		}
-
-		return (
-			<ProductExpiration
-				expiryDateMoment={ expiryMoment }
-				renewDateMoment={ renewMoment }
-				purchaseDateMoment={ subscribedMoment }
-				isRefundable={ isRefundable }
-			/>
-		);
+		return <ProductExpiration expiryDateMoment={ expiryMoment } renewDateMoment={ renewMoment } />;
 	}
 
 	getExpirationInfoForPurchase( purchase ) {
@@ -175,22 +144,11 @@ class PurchasesListing extends Component {
 			return null;
 		}
 
-		const subscribedMoment = purchase.subscribedDate
-			? this.props.moment( purchase.subscribedDate )
-			: null;
-
 		const expiryMoment = purchase.expiryDate ? this.props.moment( purchase.expiryDate ) : null;
 
 		const renewMoment = purchase.renewDate ? this.props.moment( purchase.renewDate ) : null;
 
-		return (
-			<ProductExpiration
-				expiryDateMoment={ expiryMoment }
-				renewDateMoment={ renewMoment }
-				purchaseDateMoment={ subscribedMoment }
-				isRefundable={ purchase.isRefundable }
-			/>
-		);
+		return <ProductExpiration expiryDateMoment={ expiryMoment } renewDateMoment={ renewMoment } />;
 	}
 
 	getActionButton( purchase ) {

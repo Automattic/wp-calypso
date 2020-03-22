@@ -52,7 +52,7 @@ export class ProductExpiration extends React.PureComponent< Props > {
 			return translate( 'Expired on %s', { args: expiryDateMoment.format( dateFormat ) } );
 		}
 
-		if ( ! renewDateMoment ) {
+		if ( ! renewDateMoment || ! renewDateMoment.isValid() ) {
 			return translate( 'Expires on %s', { args: expiryDateMoment.format( dateFormat ) } );
 		}
 
