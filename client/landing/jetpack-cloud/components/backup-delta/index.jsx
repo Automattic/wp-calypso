@@ -41,7 +41,7 @@ class BackupDelta extends Component {
 	}
 
 	renderDaily() {
-		const { backupAttempts, deltas, translate } = this.props;
+		const { backupAttempts, deltas, siteSlug, translate } = this.props;
 		const mainBackup = backupAttempts.complete && backupAttempts.complete[ 0 ];
 		const meta = mainBackup && mainBackup.activityDescription[ 2 ].children[ 0 ];
 
@@ -71,9 +71,11 @@ class BackupDelta extends Component {
 			}
 		} );
 
+		const hasChanges = !! ( deltas.posts.length || deltas.mediaCreated.length );
+
 		return (
 			<div className="backup-delta__daily">
-				<div>Backup details</div>
+				{ hasChanges && <div>{ translate( 'Backup details' ) }</div> }
 				{ !! deltas.mediaCreated.length && (
 					<Fragment>
 						<div>{ translate( 'Media' ) }</div>
@@ -86,10 +88,15 @@ class BackupDelta extends Component {
 						<div>{ posts }</div>
 					</Fragment>
 				) }
-				<div>{ meta }</div>
-				<Button className="backup-delta__view-all-button">
-					{ translate( 'View all backup details' ) }
-				</Button>
+				{ hasChanges && <div>{ meta }</div> }
+				{ mainBackup && (
+					<Button
+						className="backup-delta__view-all-button"
+						href={ `/backups/${ siteSlug }/detail/${ mainBackup.rewindId }` }
+					>
+						{ translate( 'View all backup details' ) }
+					</Button>
+				) }
 			</div>
 		);
 	}

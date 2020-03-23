@@ -92,6 +92,7 @@ class BackupsPage extends Component {
 						realtimeEvents,
 						allowRestore,
 						moment,
+						siteSlug,
 					} }
 				/>
 			</Main>
