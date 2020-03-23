@@ -20,7 +20,7 @@
 		cursor: pointer;
 	}
 
-	@include banner-color( var( --studio-blue-50 ) );
+	@include banner-color( var( --color-accent ) );
 
 	&.is-jetpack-plan {
 		&.is-upgrade-personal {
@@ -203,8 +203,8 @@
 	width: 100%;
 
 	.button.is-primary {
-		background-color: var( --studio-blue-50 );
-		border-color: var( --studio-blue-60 );
+		background-color: var( --color-accent );
+		border-color: var( --color-accent );
 	}
 
 	.banner__prices {
