@@ -196,8 +196,8 @@ const Header: FunctionComponent = () => {
 			tabIndex={ -1 }
 		>
 			<section className="gutenboarding__header-section">
-				<div className="gutenboarding__header-section-item">
-					<Icon icon="wordpress-alt" size={ 24 } className="gutenboarding__header-wp-icon" />
+				<div className="gutenboarding__header-section-item gutenboarding__header-wp-logo">
+					<Icon icon="wordpress-alt" size={ 24 } />
 				</div>
 				<div className="gutenboarding__header-section-item">{ siteTitleElement }</div>
 				<div className="gutenboarding__header-section-item">

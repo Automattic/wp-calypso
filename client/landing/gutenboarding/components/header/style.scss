@@ -26,7 +26,7 @@
 	}
 }
 
-.gutenboarding__header-wp-icon {
+.gutenboarding__header-wp-logo {
 	color: var( --studio-blue-90 );
 }
 
@@ -34,11 +34,14 @@
 	display: flex;
 	align-items: center;
 	font-size: 14px;
-	padding: 10px;
 }
 
 .gutenboarding__header-section-item {
 	margin-left: 10px;
+
+	&.gutenboarding__header-wp-logo {
+		margin-left: 24px - $grid-size; // ( 24 - header padding )
+	}
 }
 
 $padding--gutenboarding__header-domain-picker-button: 0.3em 0.5em;
