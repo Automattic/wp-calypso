@@ -4,13 +4,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import { Card, CompactCard } from '@automattic/components';
+import { Card } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import VerticalNav from 'components/vertical-nav';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
@@ -84,6 +83,8 @@ class RegisteredDomainType extends React.Component {
 			return null;
 		}
 
+		const title = translate( 'Delete Your Domain Permanently' );
+
 		if ( isLoadingPurchase ) {
 			return <VerticalNavItem isPlaceholder />;
 		}
@@ -92,17 +93,10 @@ class RegisteredDomainType extends React.Component {
 			return null;
 		}
 
-		const title = translate( 'Delete your domain permanently' );
-
 		if ( isCancelable( purchase ) ) {
 			const link = cancelPurchase( selectedSite.slug, purchase.id );
 
-			return (
-				<CompactCard href={ link } tagName="button">
-					<Gridicon icon="trash" />
-					{ title }
-				</CompactCard>
-			);
+			return <VerticalNavItem path={ link }>{ title }</VerticalNavItem>;
 		}
 
 		return (
@@ -112,6 +106,8 @@ class RegisteredDomainType extends React.Component {
 				site={ selectedSite }
 				purchase={ purchase }
 				title={ title }
+				hideTrashIcon={ true }
+				displayButtonAsLink={ true }
 			/>
 		);
 	}

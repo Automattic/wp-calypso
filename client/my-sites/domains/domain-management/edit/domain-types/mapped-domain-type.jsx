@@ -4,13 +4,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import { Card, CompactCard } from '@automattic/components';
+import { Card } from '@automattic/components';
 import VerticalNav from 'components/vertical-nav';
 import { withLocalizedMoment } from 'components/localized-moment';
 import DomainStatus from '../card/domain-status';
@@ -57,31 +56,26 @@ class MappedDomainType extends React.Component {
 	}
 
 	deleteMappingNavItem() {
-		const { domain, isLoadingPurchase, purchase, selectedSite, translate } = this.props;
+		const { domain, isLoadingPurchase, mappingPurchase, selectedSite, translate } = this.props;
 
 		if ( ! domain.currentUserCanManage ) {
 			return null;
 		}
 
+		const title = translate( 'Delete Domain Mapping' );
+
 		if ( isLoadingPurchase ) {
 			return <VerticalNavItem isPlaceholder />;
 		}
 
-		if ( ! selectedSite || ! purchase ) {
+		if ( ! selectedSite || ! mappingPurchase ) {
 			return null;
 		}
 
-		const title = translate( 'Delete your domain mapping' );
+		if ( isCancelable( mappingPurchase ) ) {
+			const link = cancelPurchase( selectedSite.slug, mappingPurchase.id );
 
-		if ( isCancelable( purchase ) ) {
-			const link = cancelPurchase( selectedSite.slug, purchase.id );
-
-			return (
-				<CompactCard href={ link }>
-					<Gridicon icon="trash" />
-					{ title }
-				</CompactCard>
-			);
+			return <VerticalNavItem path={ link }>{ title }</VerticalNavItem>;
 		}
 
 		return (
@@ -89,8 +83,10 @@ class MappedDomainType extends React.Component {
 				hasLoadedSites={ true }
 				hasLoadedUserPurchasesFromServer={ true }
 				site={ selectedSite }
-				purchase={ purchase }
+				purchase={ mappingPurchase }
 				title={ title }
+				hideTrashIcon={ true }
+				displayButtonAsLink={ true }
 			/>
 		);
 	}
@@ -405,6 +401,9 @@ export default connect(
 		return {
 			purchase: purchaseSubscriptionId
 				? getByPurchaseId( state, parseInt( purchaseSubscriptionId, 10 ) )
+				: null,
+			mappingPurchase: subscriptionId
+				? getByPurchaseId( state, parseInt( subscriptionId, 10 ) )
 				: null,
 			isLoadingPurchase:
 				isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
