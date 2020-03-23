@@ -10,8 +10,6 @@ import { isMobile } from '@automattic/viewport';
  */
 import DocumentHead from 'components/data/document-head';
 import { updateFilter } from 'state/activity-log/actions';
-import { getBackupAttemptsForDate, getDailyBackupDeltas, getEventsInDailyBackup } from './utils';
-import { emptyFilter } from 'state/activity-log/reducer';
 import {
 	getBackupAttemptsForDate,
 	getDailyBackupDeltas,

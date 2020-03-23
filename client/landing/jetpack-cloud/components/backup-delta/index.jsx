@@ -40,7 +40,11 @@ class BackupDelta extends Component {
 		return (
 			<div className="backup-delta__realtime">
 				<div>{ translate( 'More backups from today' ) }</div>
-				{ cards.length ? cards : <div>{ translate( 'you have no more backups for this day' ) }</div> }
+				{ cards.length ? (
+					cards
+				) : (
+					<div>{ translate( 'you have no more backups for this day' ) }</div>
+				) }
 			</div>
 		);
 	}
@@ -133,7 +137,7 @@ class BackupDelta extends Component {
 	}
 
 	renderDaily() {
-		const { backupAttempts, deltas, metaDiff, siteSlug, translate } = this.props;
+		const { backupAttempts, deltas, siteSlug, translate } = this.props;
 		const mainBackup = backupAttempts.complete && backupAttempts.complete[ 0 ];
 
 		const mediaCreated = deltas.mediaCreated.map( item => (
@@ -185,15 +189,13 @@ class BackupDelta extends Component {
 				return (
 					<div key={ item.activityId } className="backup-delta__post-block">
 						<Gridicon className="backup-delta__post-icon" icon="cross" />
-						<a className="backup-delta__post-link" href={ null }>
+						<div className="backup-delta__post-link">
 							{ item.activityDescription[ 0 ].children[ 0 ].text }
-						</a>
+						</div>
 					</div>
 				);
 			}
 		} );
-
-		const hasChanges = !! ( deltas.posts.length || deltas.mediaCreated.length );
 
 		return (
 			<div className="backup-delta__daily">
@@ -219,9 +221,15 @@ class BackupDelta extends Component {
 					</Fragment>
 				) }
 				{ this.renderMetaDiff() }
-				<Button isPrimary={ false } className="backup-delta__view-all-button">
-					{ translate( 'View all backup details' ) }
-				</Button>
+				{ mainBackup && (
+					<Button
+						isPrimary={ false }
+						className="backup-delta__view-all-button"
+						href={ `/backups/${ siteSlug }/detail/${ mainBackup.rewindId }` }
+					>
+						{ translate( 'View all backup details' ) }
+					</Button>
+				) }
 			</div>
 		);
 	}
