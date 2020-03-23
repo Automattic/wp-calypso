@@ -30,22 +30,22 @@ import './style.scss';
  */
 import freePhotoLibraryVideoPrompt from 'assets/images/customer-home/illustration--free-photo-library.svg';
 
-const FreePhotoLibraryCard = ( { openSupportArticleDialogAndTrack } ) => {
+const FreePhotoLibrary = ( { openSupportArticleDialogAndTrack } ) => {
 	const translate = useTranslate();
 
 	return (
-		<Card className="free-photo-library-card">
+		<Card className="free-photo-library">
 			{ isDesktop() && (
 				<button onClick={ openSupportArticleDialogAndTrack.bind( this, 'prompt' ) }>
 					<img
-						className="free-photo-library-card__demonstration-image"
+						className="free-photo-library__demonstration-image"
 						src={ freePhotoLibraryVideoPrompt }
 						alt={ translate( 'Free Photo Library demonstration' ) }
 					/>
 				</button>
 			) }
 			<CardHeading>{ translate( 'Over 40,000 Free Photos' ) }</CardHeading>
-			<p className="free-photo-library-card__text customer-home__card-subheader">
+			<p className="free-photo-library__text customer-home__card-subheader">
 				{ translate(
 					'The WordPress.com Free Photo Library integrates ' +
 						'your site with beautiful copyright-free photos to ' +
@@ -75,4 +75,4 @@ const openSupportArticleDialogAndTrack = clickSource =>
 		} )
 	);
 
-export default connect( null, { openSupportArticleDialogAndTrack } )( FreePhotoLibraryCard );
+export default connect( null, { openSupportArticleDialogAndTrack } )( FreePhotoLibrary );

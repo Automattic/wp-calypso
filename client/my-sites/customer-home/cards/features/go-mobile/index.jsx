@@ -5,7 +5,7 @@ import { isDesktop } from '@automattic/viewport';
 import React from 'react';
 import classnames from 'classnames';
 import { Card, Button } from '@automattic/components';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
@@ -26,7 +26,8 @@ import { getCurrentUserEmail } from 'state/current-user/selectors';
  */
 import './style.scss';
 
-export const GoMobileCard = ( { translate, email, sendMobileLoginEmail } ) => {
+export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
+	const translate = useTranslate();
 	const isDesktopView = isDesktop();
 	const { isiPad, isiPod, isiPhone, isAndroid } = userAgent;
 	const isIos = isiPad || isiPod || isiPhone;
@@ -40,13 +41,13 @@ export const GoMobileCard = ( { translate, email, sendMobileLoginEmail } ) => {
 	};
 
 	return (
-		<Card className="go-mobile-card">
+		<Card className="go-mobile">
 			<div className={ classnames( 'go-mobile-card__row', { 'has-2-cols': showOnlyOneBadge } ) }>
-				<div className="go-mobile-card__title">
+				<div className="go-mobile__title">
 					<CardHeading>{ translate( 'Go Mobile' ) }</CardHeading>
-					<h6 className="go-mobile-card__subheader">{ translate( 'Make updates on the go' ) }</h6>
+					<h6 className="go-mobile__subheader">{ translate( 'Make updates on the go' ) }</h6>
 				</div>
-				<div className="go-mobile-card__app-badges">
+				<div className="go-mobile__app-badges">
 					{ showIosBadge && (
 						<AppsBadge
 							storeLink="https://apps.apple.com/app/apple-store/id335703880?pt=299112&ct=calypso-customer-home&mt=8"
@@ -70,7 +71,7 @@ export const GoMobileCard = ( { translate, email, sendMobileLoginEmail } ) => {
 				</div>
 			</div>
 			{ isDesktopView && ! isDesktopApp && (
-				<Button className="go-mobile-card__email-link-button" onClick={ emailLogin }>
+				<Button className="go-mobile__email-link-button" onClick={ emailLogin }>
 					{ translate( 'Email download link' ) }
 				</Button>
 			) }
@@ -93,4 +94,4 @@ export default connect(
 	{
 		sendMobileLoginEmail,
 	}
-)( localize( GoMobileCard ) );
+)( GoMobile );

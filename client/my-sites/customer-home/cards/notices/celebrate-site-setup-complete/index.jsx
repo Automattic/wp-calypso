@@ -9,7 +9,7 @@ import React from 'react';
  */
 import CelebrateNotice from '../celebrate-notice';
 
-const SiteSetupCompleteCard = ( { displayChecklist } ) => {
+const CelebrateSiteSetupComplete = ( { displayChecklist } ) => {
 	const translate = useTranslate();
 	return (
 		<CelebrateNotice
@@ -20,4 +20,4 @@ const SiteSetupCompleteCard = ( { displayChecklist } ) => {
 	);
 };
 
-export default SiteSetupCompleteCard;
+export default CelebrateSiteSetupComplete;

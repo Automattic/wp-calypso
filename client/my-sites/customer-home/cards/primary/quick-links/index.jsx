@@ -11,7 +11,6 @@ import { isMobile } from '@automattic/viewport';
  * Internal dependencies
  */
 import CardHeading from 'components/card-heading';
-import ActionBox from 'my-sites/customer-home/quick-links/action-box';
 import FoldableCard from 'components/foldable-card';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
@@ -31,6 +30,7 @@ import {
 	recordTracksEvent,
 	withAnalytics,
 } from 'state/analytics/actions';
+import ActionBox from './action-box';
 
 /**
  * Image dependencies

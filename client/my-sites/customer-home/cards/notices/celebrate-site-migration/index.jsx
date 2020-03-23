@@ -9,16 +9,16 @@ import React from 'react';
  */
 import CelebrateNotice from '../celebrate-notice';
 
-const SiteLaunchedCard = ( { checklistMode, displayChecklist } ) => {
+const CelebrateSiteMigration = ( { checklistMode, displayChecklist } ) => {
 	const translate = useTranslate();
 	return (
 		<CelebrateNotice
 			checklistMode={ checklistMode }
-			dismissalPreferenceName="home-notice-site-launched"
+			dismissalPreferenceName="home-notice-site-migrated"
 			displayChecklist={ displayChecklist }
-			message={ translate( 'You launched your site!' ) }
+			message={ translate( 'Your site has been imported!' ) }
 		/>
 	);
 };
 
-export default SiteLaunchedCard;
+export default CelebrateSiteMigration;

@@ -15,10 +15,10 @@ import isSiteRecentlyMigrated from 'state/selectors/is-site-recently-migrated';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { isNewSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import SiteCreatedCard from './site-created-card';
-import SiteMigratedCard from './site-migrated-card';
-import SiteLaunchedCard from './site-launched-card';
-import SiteSetupCompleteCard from './site-setup-complete-card';
+import CelebrateSiteCreation from 'my-sites/customer-home/cards/notices/celebrate-site-creation';
+import CelebrateSiteLaunch from 'my-sites/customer-home/cards/notices/celebrate-site-launch';
+import CelebrateSiteMigration from 'my-sites/customer-home/cards/notices/celebrate-site-migration';
+import CelebrateSiteSetupComplete from 'my-sites/customer-home/cards/notices/celebrate-site-setup-complete';
 
 /**
  * Style dependencies
@@ -72,25 +72,25 @@ const Notices = ( {
 			if ( siteIsUnlaunched || isAtomic ) {
 				//Only show pre-launch, or for Atomic sites
 				return (
-					<SiteCreatedCard displayChecklist={ displayChecklist } checklistMode={ checklistMode } />
+					<CelebrateSiteCreation displayChecklist={ displayChecklist } checklistMode={ checklistMode } />
 				);
 			}
 		}
 
 		if ( isRecentlyMigratedSite ) {
 			return (
-				<SiteMigratedCard displayChecklist={ displayChecklist } checklistMode={ checklistMode } />
+				<CelebrateSiteMigration displayChecklist={ displayChecklist } checklistMode={ checklistMode } />
 			);
 		}
 
 		if ( ! siteIsUnlaunched && 'launched' === checklistMode ) {
 			return (
-				<SiteLaunchedCard displayChecklist={ displayChecklist } checklistMode={ checklistMode } />
+				<CelebrateSiteLaunch displayChecklist={ displayChecklist } checklistMode={ checklistMode } />
 			);
 		}
 
 		if ( showSiteSetupComplete && ! isRecentlyMigratedSite ) {
-			return <SiteSetupCompleteCard displayChecklist={ displayChecklist } />;
+			return <CelebrateSiteSetupComplete displayChecklist={ displayChecklist } />;
 		}
 	};
 
