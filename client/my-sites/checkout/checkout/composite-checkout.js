@@ -789,7 +789,10 @@ function createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) {
 		cartItem = conciergeSessionItem();
 	}
 
-	if ( planSlug.startsWith( 'jetpack_backup' ) && isJetpackNotAtomic ) {
+	if (
+		( planSlug.startsWith( 'jetpack_backup' ) || planSlug.startsWith( 'jetpack_search' ) ) &&
+		isJetpackNotAtomic
+	) {
 		cartItem = jetpackProductItem( planSlug );
 	}
 
