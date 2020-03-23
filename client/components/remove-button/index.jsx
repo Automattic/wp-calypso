@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,8 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import ScreenReaderText from 'components/screen-reader-text';
+import { Button, ScreenReaderText } from '@automattic/components';
 
 /**
  * Style dependences

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,15 +9,11 @@ import React from 'react';
  */
 import './style.scss';
 
-export default class extends React.Component {
-	static displayName = 'FeatureExample';
-
-	render() {
-		return (
-			<div className="feature-example">
-				<div className="feature-example__content">{ this.props.children }</div>
-				<div className="feature-example__gradient" />
-			</div>
-		);
-	}
+export default function FeatureExample( { children } ) {
+	return (
+		<div className="feature-example">
+			<div className="feature-example__content">{ children }</div>
+			<div className="feature-example__gradient" />
+		</div>
+	);
 }

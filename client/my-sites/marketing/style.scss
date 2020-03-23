@@ -39,13 +39,6 @@
 		}
 	}
 
-	&.eventbrite {
-		h2,
-		.sharing-service__logo {
-			color: var( --color-eventbrite );
-		}
-	}
-
 	&.instagram {
 		h2,
 		.sharing-service__logo {
@@ -153,7 +146,7 @@
 		margin-top: 10px;
 	}
 
-	.sharing-service-tip {
+	.connections__sharing-service-tip {
 		margin-top: 16px;
 		font-size: 14px;
 		color: var( --color-neutral-40 );
@@ -164,7 +157,7 @@
 		}
 	}
 
-	.sharing-service-tip:empty {
+	.connections__sharing-service-tip:empty {
 		display: none;
 	}
 
@@ -178,7 +171,7 @@
 		}
 
 		&.not-connected .sharing-service-accounts-detail,
-		&.not-connected .sharing-service-tip {
+		&.not-connected .connections__sharing-service-tip {
 			display: none;
 		}
 	}
@@ -283,7 +276,6 @@
 @include sharing-service( 'tumblr', var( --color-tumblr ));
 @include sharing-service( 'linkedin', var( --color-linkedin ));
 @include sharing-service( 'instagram', var( --color-instagram ));
-@include sharing-service( 'eventbrite', var( --color-eventbrite ));
 
 .sharing-service__name {
 	clear: none;
@@ -929,7 +921,6 @@
 @include sharing-button-service( 'press-this', var( --color-wordpress-com ));
 @include sharing-button-service( 'google-plus-1', var( --color-google-plus ));
 @include sharing-button-service( 'instagram', var( --color-instagram ));
-@include sharing-button-service( 'eventbrite', var( --color-eventbrite ));
 @include sharing-button-service( 'linkedin', var( --color-linkedin ));
 @include sharing-button-service( 'stumbleupon', var( --color-stumbleupon ));
 @include sharing-button-service( 'tumblr', var( --color-tumblr ));

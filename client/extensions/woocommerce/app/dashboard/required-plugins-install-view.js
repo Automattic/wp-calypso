@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { activatePlugin, installPlugin, fetchPlugins } from 'state/plugins/installed/actions';
-import Button from 'components/button';
+import { Button, ProgressBar } from '@automattic/components';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
@@ -23,7 +22,6 @@ import {
 	getPluginsForStoreSetup,
 } from 'woocommerce/lib/get-required-plugins';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import ProgressBar from 'components/progress-bar';
 import SetupHeader from './setup/header';
 import SetupNotices from './setup/notices';
 import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
@@ -94,7 +92,7 @@ class RequiredPluginsInstallView extends Component {
 		this.destroyUpdateTimer();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { automatedTransferStatus: currentATStatus, siteId, hasPendingAT } = this.props;
 		const { automatedTransferStatus: nextATStatus } = nextProps;
 

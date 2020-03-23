@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,6 +15,7 @@ export default class extends React.Component {
 	static displayName = 'NoticeAction';
 
 	static propTypes = {
+		'aria-label': PropTypes.string,
 		href: PropTypes.string,
 		onClick: PropTypes.func,
 		external: PropTypes.bool,
@@ -29,6 +28,7 @@ export default class extends React.Component {
 
 	render() {
 		const attributes = {
+			'aria-label': this.props[ 'aria-label' ],
 			className: 'notice__action',
 			href: this.props.href,
 			onClick: this.props.onClick,

@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -15,15 +12,15 @@ import { saveAs } from 'browser-filesaver';
  * Internal dependencies
  */
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
-import Card from 'components/card';
+import { isJetpackSite } from 'state/sites/selectors';
+import { Card, Button, CompactCard, Dialog } from '@automattic/components';
 import InfiniteScroll from 'components/infinite-scroll';
 import QueryMembershipsEarnings from 'components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'components/data/query-memberships-settings';
-import { requestSubscribers } from 'state/memberships/subscribers/actions';
+import { requestDisconnectStripeAccount } from 'state/memberships/settings/actions';
+import { requestSubscribers, requestSubscriptionStop } from 'state/memberships/subscribers/actions';
 import { decodeEntities } from 'lib/formatting';
 import Gravatar from 'components/gravatar';
-import Button from 'components/button';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import UpgradeNudge from 'blocks/upgrade-nudge';
 import { FEATURE_MEMBERSHIPS, PLAN_PERSONAL, PLAN_JETPACK_PERSONAL } from 'lib/plans/constants';
@@ -31,12 +28,12 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import SectionHeader from 'components/section-header';
 import QueryMembershipProducts from 'components/data/query-memberships';
-import CompactCard from 'components/card/compact';
 import Gridicon from 'components/gridicon';
 import { userCan } from 'lib/site/utils';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import ExternalLink from 'components/external-link';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -48,6 +45,10 @@ class MembershipsSection extends Component {
 		super( props );
 		this.downloadSubscriberList = this.downloadSubscriberList.bind( this );
 	}
+	state = {
+		cancelledSubscriber: null,
+		disconnectedConnectedAccountId: null,
+	};
 	componentDidMount() {
 		this.fetchNextSubscriberPage( false, true );
 	}
@@ -127,6 +128,33 @@ class MembershipsSection extends Component {
 		}
 	}
 
+	onCloseDisconnectStripeAccount = reason => {
+		if ( reason === 'disconnect' ) {
+			this.props.requestDisconnectStripeAccount(
+				this.props.siteId,
+				this.props.connectedAccountId,
+				this.props.translate( 'Please wait, disconnecting Stripe\u2026' ),
+				this.props.translate( 'Stripe account is disconnected.' )
+			);
+		}
+		this.setState( { disconnectedConnectedAccountId: null } );
+	};
+
+	onCloseCancelSubscription = reason => {
+		if ( reason === 'cancel' ) {
+			this.props.requestSubscriptionStop(
+				this.props.siteId,
+				this.state.cancelledSubscriber,
+				this.props.translate( 'Subscription cancelled for %(email)s', {
+					args: {
+						email: this.state.cancelledSubscriber.user.user_email,
+					},
+				} )
+			);
+		}
+		this.setState( { cancelledSubscriber: null } );
+	};
+
 	downloadSubscriberList( event ) {
 		event.preventDefault();
 		const fileName = [ this.props.siteSlug, 'memberships', 'subscribers' ].join( '_' ) + '.csv';
@@ -171,7 +199,7 @@ class MembershipsSection extends Component {
 			)
 			.join( '\n' );
 
-		const blob = new Blob( [ csvData ], { type: 'text/csv;charset=utf-8' } );
+		const blob = new window.Blob( [ csvData ], { type: 'text/csv;charset=utf-8' } );
 
 		saveAs( blob, fileName );
 	}
@@ -202,9 +230,11 @@ class MembershipsSection extends Component {
 					<Card>
 						<div className="memberships__module-content module-content">
 							<div>
-								{ orderBy( Object.values( this.props.subscribers ), [ 'id' ], [ 'desc' ] ).map(
-									sub => this.renderSubscriber( sub )
-								) }
+								{ orderBy(
+									Object.values( this.props.subscribers ),
+									[ 'id' ],
+									[ 'desc' ]
+								).map( sub => this.renderSubscriber( sub ) ) }
 							</div>
 							<InfiniteScroll
 								nextPageMethod={ triggeredByInteraction =>
@@ -212,6 +242,37 @@ class MembershipsSection extends Component {
 								}
 							/>
 						</div>
+						<Dialog
+							isVisible={ !! this.state.cancelledSubscriber }
+							buttons={ [
+								{
+									label: this.props.translate( 'Back' ),
+									action: 'back',
+								},
+								{
+									label: this.props.translate( 'Cancel Subscription' ),
+									isPrimary: true,
+									action: 'cancel',
+								},
+							] }
+							onClose={ this.onCloseCancelSubscription }
+						>
+							<h1>{ this.props.translate( 'Confirmation' ) }</h1>
+							<p>{ this.props.translate( 'Do you want to cancel this subscription?' ) }</p>
+							<Notice
+								text={ this.props.translate(
+									'Canceling the subscription will mean the subscriber %(email)s will no longer be charged.',
+									{
+										args: {
+											email: this.state.cancelledSubscriber
+												? this.state.cancelledSubscriber.user.user_email
+												: '',
+										},
+									}
+								) }
+								showDismiss={ false }
+							/>
+						</Dialog>
 						<div className="memberships__module-footer">
 							<Button onClick={ this.downloadSubscriberList }>
 								{ this.props.translate( 'Download list as CSV' ) }
@@ -223,7 +284,7 @@ class MembershipsSection extends Component {
 		);
 	}
 
-	renderProducts() {
+	renderSettings() {
 		return (
 			<div>
 				<SectionHeader label={ this.props.translate( 'Settings' ) } />
@@ -239,6 +300,55 @@ class MembershipsSection extends Component {
 							.join( ', ' ) }
 					</div>
 				</CompactCard>
+				<CompactCard
+					onClick={ () =>
+						this.setState( { disconnectedConnectedAccountId: this.props.connectedAccountId } )
+					}
+					className="memberships__settings-link"
+				>
+					<div className="memberships__settings-content">
+						<p className="memberships__settings-section-title is-warning">
+							{ this.props.translate( 'Disconnect Stripe Account' ) }
+						</p>
+						<p className="memberships__settings-section-desc">
+							{ this.props.translate( 'Disconnect Recurring Payments from your Stripe account' ) }
+						</p>
+					</div>
+				</CompactCard>
+				<Dialog
+					isVisible={ !! this.state.disconnectedConnectedAccountId }
+					buttons={ [
+						{
+							label: this.props.translate( 'Cancel' ),
+							action: 'cancel',
+						},
+						{
+							label: this.props.translate( 'Disconnect Recurring Payments from Stripe' ),
+							isPrimary: true,
+							action: 'disconnect',
+						},
+					] }
+					onClose={ this.onCloseDisconnectStripeAccount }
+				>
+					<h1>{ this.props.translate( 'Confirmation' ) }</h1>
+					<p>
+						{ this.props.translate(
+							'Do you want to disconnect Recurring Payments from your Stripe account?'
+						) }
+					</p>
+					<Notice
+						text={ this.props.translate(
+							'Once you disconnect Recurring Payments from Stripe, new subscribers won’t be able to sign up and existing subscriptions will stop working.{{br/}}{{strong}}Disconnecting your Stripe account here will remove it from all your WordPress.com and Jetpack sites.{{/strong}}',
+							{
+								components: {
+									br: <br />,
+									strong: <strong />,
+								},
+							}
+						) }
+						showDismiss={ false }
+					/>
+				</Dialog>
 			</div>
 		);
 	}
@@ -285,6 +395,10 @@ class MembershipsSection extends Component {
 				>
 					<Gridicon size={ 18 } icon={ 'external' } />
 					{ this.props.translate( 'See transactions in Stripe Dashboard' ) }
+				</PopoverMenuItem>
+				<PopoverMenuItem onClick={ () => this.setState( { cancelledSubscriber: subscriber } ) }>
+					<Gridicon size={ 18 } icon={ 'cross' } />
+					{ this.props.translate( 'Cancel Subscription' ) }
 				</PopoverMenuItem>
 			</EllipsisMenu>
 		);
@@ -345,7 +459,7 @@ class MembershipsSection extends Component {
 				) }
 				{ this.renderEarnings() }
 				{ this.renderSubscriberList() }
-				{ this.renderProducts() }
+				{ this.renderSettings() }
 			</div>
 		);
 	}
@@ -360,7 +474,7 @@ class MembershipsSection extends Component {
 					<p className="memberships__onboarding-paragraph">
 						{ this.props.translate(
 							'Start collecting subscription payments! Recurring Payments is a feature inside the block editor. When editing a post or a page you can insert a button that will allow you to collect paying subscribers.'
-						) }{' '}
+						) }{ ' ' }
 						<ExternalLink
 							href="https://support.wordpress.com/recurring-payments-button/"
 							icon={ true }
@@ -408,7 +522,7 @@ class MembershipsSection extends Component {
 				) }
 				{ this.renderOnboarding(
 					<Button primary={ true } href={ this.props.connectUrl }>
-						{ this.props.translate( 'Connect Stripe to Get Started' ) }{' '}
+						{ this.props.translate( 'Connect Stripe to Get Started' ) }{ ' ' }
 						<Gridicon size={ 18 } icon={ 'external' } />
 					</Button>
 				) }
@@ -417,23 +531,6 @@ class MembershipsSection extends Component {
 	}
 
 	render() {
-		if ( this.props.isJetpackTooOld ) {
-			return this.renderOnboarding(
-				<Notice
-					status="is-warning"
-					text={ this.props.translate(
-						'Please update the Jetpack plugin to version 7.4 or higher in order to use the Recurring Payments button block.'
-					) }
-					showDismiss={ false }
-				>
-					<NoticeAction
-						href={ `https://wordpress.com/plugins/jetpack/${ this.props.siteSlug }` }
-						icon="external"
-					/>
-				</Notice>
-			);
-		}
-
 		if ( ! this.props.paidPlan ) {
 			return this.renderOnboarding(
 				<UpgradeNudge
@@ -471,7 +568,7 @@ class MembershipsSection extends Component {
 const mapStateToProps = state => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const isJetpack = isJetpackSite( state, siteId );
+
 	return {
 		site,
 		siteId,
@@ -490,13 +587,13 @@ const mapStateToProps = state => {
 		),
 		connectUrl: get( state, [ 'memberships', 'settings', siteId, 'connectUrl' ], '' ),
 		paidPlan: isSiteOnPaidPlan( state, siteId ),
-		isJetpackTooOld: isJetpack && isJetpackMinimumVersion( state, siteId, '7.4' ) === false,
-		isJetpack: isJetpack,
+		isJetpack: isJetpackSite( state, siteId ),
 		products: get( state, [ 'memberships', 'productList', 'items', siteId ], [] ),
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{ requestSubscribers }
-)( localize( MembershipsSection ) );
+export default connect( mapStateToProps, {
+	requestSubscribers,
+	requestDisconnectStripeAccount,
+	requestSubscriptionStop,
+} )( localize( withLocalizedMoment( MembershipsSection ) ) );

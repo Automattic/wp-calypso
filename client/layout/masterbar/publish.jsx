@@ -1,7 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
@@ -10,10 +10,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import AsyncLoad from 'components/async-load';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import MasterbarItem from './item';
-import SitesPopover from 'components/sites-popover';
-import { isMobile } from 'lib/viewport';
 import { preload } from 'sections-helper';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUserVisibleSiteCount } from 'state/current-user/selectors';
@@ -77,7 +76,9 @@ class MasterbarItemNew extends React.Component {
 		}
 
 		return (
-			<SitesPopover
+			<AsyncLoad
+				require="components/sites-popover"
+				placeholder={ null }
 				id="popover__sites-popover-masterbar"
 				visible
 				groups
@@ -106,9 +107,9 @@ class MasterbarItemNew extends React.Component {
 					preloadSection={ this.preloadPostEditor }
 				>
 					{ this.props.children }
-					{ this.renderPopover() }
 				</MasterbarItem>
 				<MasterbarDrafts />
+				{ this.renderPopover() }
 			</div>
 		);
 	}

@@ -1,4 +1,4 @@
-/** @format */
+
 
 .subscription-length-picker {
 	&__header {
@@ -18,7 +18,7 @@
 		flex-basis: calc( 100% );
 
 		&:not( :first-child ) {
-			margin-top: 20px;
+			margin-top: 8px;
 		}
 
 		@include breakpoint( '>960px' ) {

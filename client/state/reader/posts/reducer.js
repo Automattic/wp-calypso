@@ -7,15 +7,15 @@ import { keyBy, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'state/action-types';
+import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'state/reader/action-types';
 import { combineReducers } from 'state/utils';
 
 /**
  * Tracks all known post objects, indexed by post ID.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function items( state = {}, action ) {
 	switch ( action.type ) {

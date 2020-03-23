@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -93,8 +91,9 @@ export default {
 	[ WOOCOMMERCE_SERVICES_SHIPPING_ACTION_LIST_CREATE ]: [
 		/**
 		 * Creates and executes a WCS shipping settings action list
-		 * @param {Object} store -
-		 * @param {Object} action - an action containing successAction and failureAction
+		 *
+		 * @param {object} store -
+		 * @param {object} action - an action containing successAction and failureAction
 		 */
 		( store, action ) => {
 			const { successAction, failureAction, noLabelsPaymentAction } = action;
@@ -107,6 +106,7 @@ export default {
 
 			/**
 			 * A callback issued after a successful request
+			 *
 			 * @param {Function} dispatch - dispatch function
 			 */
 			const onSuccess = dispatch => {
@@ -115,6 +115,7 @@ export default {
 			};
 			/**
 			 * A callback issued after a failed request
+			 *
 			 * @param {Function} dispatch - dispatch function
 			 */
 			const onFailure = dispatch => {

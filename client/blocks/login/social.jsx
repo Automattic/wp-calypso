@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import { loginSocialUser, createSocialUser, createSocialUserFailed } from 'state/login/actions';
 import {
 	getCreatedSocialAccountUsername,
@@ -56,7 +54,13 @@ class SocialLoginForm extends Component {
 		const { onSuccess, socialService } = this.props;
 		let redirectTo = this.props.redirectTo;
 
-		if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
+		if ( ! response.getAuthResponse ) {
+			return;
+		}
+
+		const tokens = response.getAuthResponse();
+
+		if ( ! tokens || ! tokens.access_token || ! tokens.id_token ) {
 			return;
 		}
 
@@ -75,8 +79,8 @@ class SocialLoginForm extends Component {
 
 		const socialInfo = {
 			service: 'google',
-			access_token: response.Zi.access_token,
-			id_token: response.Zi.id_token,
+			access_token: tokens.access_token,
+			id_token: tokens.id_token,
 		};
 
 		this.props.loginSocialUser( socialInfo, redirectTo ).then(

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,7 +16,7 @@ import Gridicon from 'components/gridicon';
 import { startMappingAuthors, startUpload } from 'lib/importer/actions';
 import { appStates } from 'state/imports/constants';
 import DropZone from 'components/drop-zone';
-import ProgressBar from 'components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
 import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
 
@@ -141,7 +139,7 @@ class UploadingPane extends React.PureComponent {
 
 		return (
 			<div>
-				<p>{ this.props.description }</p>
+				<p className="importer__uploading-pane-description">{ this.props.description }</p>
 				<div
 					className="importer__uploading-pane"
 					role="button"

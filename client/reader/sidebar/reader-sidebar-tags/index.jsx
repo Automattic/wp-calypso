@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -17,7 +16,7 @@ import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags'
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { requestFollowTag } from 'state/reader/tags/items/actions';
-import getReaderFollowedTags from 'state/selectors/get-reader-followed-tags';
+import { getReaderFollowedTags } from 'state/reader/tags/selectors';
 
 export class ReaderSidebarTags extends Component {
 	static propTypes = {

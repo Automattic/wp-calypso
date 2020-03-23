@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import {
 	HELP_TICKET_CONFIGURATION_REQUEST,
 	HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
@@ -12,7 +10,7 @@ import {
 	HELP_TICKET_CONFIGURATION_DISMISS_ERROR,
 } from 'state/action-types';
 
-const isRequesting = withoutPersistence( ( state = false, action ) => {
+const isRequesting = ( state = false, action ) => {
 	switch ( action.type ) {
 		case HELP_TICKET_CONFIGURATION_REQUEST:
 			return true;
@@ -23,9 +21,9 @@ const isRequesting = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+};
 
-const isUserEligible = withoutPersistence( ( state = false, action ) => {
+const isUserEligible = ( state = false, action ) => {
 	switch ( action.type ) {
 		case HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS: {
 			const { configuration } = action;
@@ -34,18 +32,18 @@ const isUserEligible = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+};
 
-const isReady = withoutPersistence( ( state = false, action ) => {
+const isReady = ( state = false, action ) => {
 	switch ( action.type ) {
 		case HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS:
 			return true;
 	}
 
 	return state;
-} );
+};
 
-const requestError = withoutPersistence( ( state = null, action ) => {
+const requestError = ( state = null, action ) => {
 	switch ( action.type ) {
 		case HELP_TICKET_CONFIGURATION_REQUEST:
 			return null;
@@ -60,7 +58,7 @@ const requestError = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	isReady,

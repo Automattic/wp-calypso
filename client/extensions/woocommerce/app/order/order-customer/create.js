@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,8 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AddressView from 'woocommerce/components/address-view';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import CustomerAddressDialog from './dialog';
 import {
 	areLocationsLoaded,

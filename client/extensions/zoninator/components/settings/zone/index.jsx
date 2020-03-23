@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import HeaderCake from 'components/header-cake';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import DeleteZoneDialog from './delete-zone-dialog';
@@ -52,7 +50,7 @@ class Zone extends Component {
 		showDeleteDialog: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.lockExpires || nextProps.lockExpires === this.props.lockExpires ) {
 			return;
 		}
@@ -170,7 +168,4 @@ const connectComponent = connect(
 	{ deleteZone, saveZone, saveFeed }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( Zone );
+export default flowRight( connectComponent, localize )( Zone );

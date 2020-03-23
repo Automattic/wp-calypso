@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import { includes } from 'lodash';
 import accept from 'lib/accept';
 import AuthorSelector from 'blocks/author-selector';
 import canCurrentUser from 'state/selectors/can-current-user';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';

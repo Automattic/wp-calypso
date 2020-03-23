@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,6 @@ import page from 'page';
 import React from 'react';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:my-sites:posts' );
-import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -18,7 +15,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import Posts from 'my-sites/posts/main';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 
 export default {
 	posts: function( context, next ) {
@@ -54,9 +50,6 @@ export default {
 			page.redirect( context.path.replace( /\/my\b/, '' ) );
 			return;
 		}
-
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Blog Posts', { textOnly: true } ) ) );
 
 		context.primary = React.createElement( Posts, {
 			context,

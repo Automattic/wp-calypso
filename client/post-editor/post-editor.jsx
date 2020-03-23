@@ -1,7 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
+import { isWithinBreakpoint } from '@automattic/viewport';
 import React from 'react';
 import ReactDom from 'react-dom';
 import page from 'page';
@@ -36,6 +36,7 @@ import {
 	saveConfirmationSidebarPreference,
 	editorEditRawContent,
 	editorResetRawContent,
+	setEditorIframeLoaded,
 } from 'state/ui/editor/actions';
 import { closeEditorSidebar, openEditorSidebar } from 'state/ui/editor/sidebar/actions';
 import {
@@ -65,6 +66,7 @@ import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported'
 import EditorForbidden from 'post-editor/editor-forbidden';
 import EditorNotice from 'post-editor/editor-notice';
 import EditorGutenbergOptInNotice from 'post-editor/editor-gutenberg-opt-in-notice';
+import EditorGutenbergDialogs from 'post-editor/editor-gutenberg-dialogs';
 import EditorWordCount from 'post-editor/editor-word-count';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
@@ -76,14 +78,12 @@ import EditorSidebar from 'post-editor/editor-sidebar';
 import Site from 'blocks/site';
 import EditorStatusLabel from 'post-editor/editor-status-label';
 import EditorGroundControl from 'post-editor/editor-ground-control';
-import { isWithinBreakpoint } from 'lib/viewport';
 import { isSitePreviewable } from 'state/sites/selectors';
 import { removep } from 'lib/formatting';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { pauseGuidedTour } from 'state/ui/guided-tours/actions';
-import EditorGutenbergBlocksWarningDialog from './editor-gutenberg-blocks-warning-dialog';
 
 /**
  * Style dependencies
@@ -120,6 +120,7 @@ export class PostEditor extends React.Component {
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		editorModePreference: PropTypes.string,
 		editorSidebarPreference: PropTypes.string,
+		setEditorIframeLoaded: PropTypes.func,
 		markChanged: PropTypes.func.isRequired,
 		markSaved: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -190,6 +191,7 @@ export class PostEditor extends React.Component {
 		this.debouncedSaveRawContent.cancel();
 		this.debouncedCopySelectedText.cancel();
 		this._previewWindow = null;
+		this.props.setEditorIframeLoaded( false );
 		clearTimeout( this._switchEditorTimeout );
 	}
 
@@ -297,7 +299,7 @@ export class PostEditor extends React.Component {
 				<EditorPostTypeUnsupported />
 				<EditorForbidden />
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
-				<EditorGutenbergBlocksWarningDialog />
+				<EditorGutenbergDialogs />
 				<div className="post-editor__inner">
 					<EditorGroundControl
 						setPostDate={ this.setPostDate }
@@ -474,6 +476,8 @@ export class PostEditor extends React.Component {
 
 	onEditorInitialized = () => {
 		this.setState( { isEditorInitialized: true } );
+		// Notify external listeners that the iframe has loaded
+		this.props.setEditorIframeLoaded();
 	};
 
 	onEditorTitleChange = () => {
@@ -999,8 +1003,8 @@ export class PostEditor extends React.Component {
 	 *
 	 * It uses some black magic raw JS trickery. Not for the faint-hearted.
 	 *
-	 * @param {Object} editor The editor where we must find the selection
-	 * @returns {null | Object} The selection range position in the editor
+	 * @param {object} editor The editor where we must find the selection
+	 * @returns {null | object} The selection range position in the editor
 	 */
 	findBookmarkedPosition = editor => {
 		// Get the TinyMCE `window` reference, since we need to access the raw selection.
@@ -1016,6 +1020,7 @@ export class PostEditor extends React.Component {
 		/**
 		 * The ID is used to avoid replacing user generated content, that may coincide with the
 		 * format specified below.
+		 *
 		 * @type {string}
 		 */
 		const selectionID = 'SELRES_' + uuid();
@@ -1198,6 +1203,7 @@ const enhance = flow(
 			openEditorSidebar,
 			editorEditRawContent,
 			editorResetRawContent,
+			setEditorIframeLoaded,
 			pauseGuidedTour,
 		}
 	)

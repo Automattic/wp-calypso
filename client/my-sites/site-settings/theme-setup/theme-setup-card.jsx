@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,7 @@ import ActionPanelBody from 'components/action-panel/body';
 import ActionPanelFooter from 'components/action-panel/footer';
 import ActionPanelFigure from 'components/action-panel/figure';
 import Notice from 'components/notice';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import ActiveThemeScreenshot from './active-theme-screenshot';
 import ThemeSetupDialog from 'my-sites/site-settings/theme-setup-dialog';
 
@@ -44,7 +42,7 @@ const ThemeSetupCard = ( { theme, translate, onClick } ) => (
 		</ActionPanelBody>
 		<ActionPanelFooter>
 			<Button className="theme-setup__button" primary={ true } onClick={ onClick }>
-				{ translate( 'Set Up Your Theme' ) }
+				{ translate( 'Set up your theme' ) }
 			</Button>
 		</ActionPanelFooter>
 		<ThemeSetupDialog />

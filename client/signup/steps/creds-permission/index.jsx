@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,8 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
 import QuerySites from 'components/data/query-sites';
 import { autoConfigCredentials } from 'state/jetpack/credentials/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -66,6 +64,11 @@ class CredsPermissionStep extends Component {
 							"Jetpack access to your host's server to perform backups?"
 					) }
 				</p>
+				<p className="creds-permission__description">
+					{ translate(
+						'By adding credentials, you are providing us with access to your server to perform automatic actions (such as backing up or restoring your site), manually access your site in case of an emergency, and troubleshoot your support requests.'
+					) }
+				</p>
 				<Button primary onClick={ this.shareCredentials }>
 					{ translate( 'Share credentials' ) }
 				</Button>
@@ -89,11 +92,8 @@ class CredsPermissionStep extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		autoConfigCredentials,
-		recordTracksEvent,
-		submitSignupStep,
-	}
-)( localize( CredsPermissionStep ) );
+export default connect( null, {
+	autoConfigCredentials,
+	recordTracksEvent,
+	submitSignupStep,
+} )( localize( CredsPermissionStep ) );

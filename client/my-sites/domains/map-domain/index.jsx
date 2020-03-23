@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -100,12 +99,10 @@ export class MapDomain extends Component {
 		// We don't go through the usual checkout process
 		// Instead, we add the mapping directly
 		if ( selectedSite.is_vip ) {
-			wpcom
-				.addVipDomainMapping( selectedSite.ID, domain )
-				.then(
-					() => page( domainManagementList( selectedSiteSlug ) ),
-					error => this.setState( { errorMessage: error.message } )
-				);
+			wpcom.addVipDomainMapping( selectedSite.ID, domain ).then(
+				() => page( domainManagementList( selectedSiteSlug ) ),
+				error => this.setState( { errorMessage: error.message } )
+			);
 			return;
 		}
 
@@ -114,11 +111,11 @@ export class MapDomain extends Component {
 		page( '/checkout/' + selectedSiteSlug );
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.checkSiteIsUpgradeable( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.checkSiteIsUpgradeable( nextProps );
 	}
 

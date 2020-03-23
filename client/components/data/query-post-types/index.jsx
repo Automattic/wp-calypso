@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -28,11 +26,11 @@ class QueryPostTypes extends Component {
 		requestPostTypes: PropTypes.func,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { siteSettings, siteId, themeSlug } = this.props;
 		const {
 			siteSettings: nextSiteSettings,

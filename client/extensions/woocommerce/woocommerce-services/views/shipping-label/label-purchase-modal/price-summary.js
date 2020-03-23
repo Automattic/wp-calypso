@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import Tooltip from 'components/tooltip';
 import { getTotalPriceBreakdown } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
@@ -34,18 +32,14 @@ class PriceSummary extends Component {
 		this.setState( { tooltipVisible: false } );
 	};
 
-	setTooltipContext = tooltipContext => {
-		if ( tooltipContext ) {
-			this.setState( { tooltipContext } );
-		}
-	};
+	tooltipContextRef = React.createRef();
 
 	renderDiscountExplanation = () => {
 		const { translate } = this.props;
 		return (
 			<div className="label-purchase-modal__price-item-help">
 				<Gridicon
-					ref={ this.setTooltipContext }
+					ref={ this.tooltipContextRef }
 					icon="help-outline"
 					onMouseEnter={ this.showTooltip }
 					onMouseLeave={ this.hideTooltip }
@@ -54,7 +48,7 @@ class PriceSummary extends Component {
 				<Tooltip
 					className="label-purchase-modal__price-item-tooltip is-dialog-visible"
 					isVisible={ this.state.tooltipVisible }
-					context={ this.state.tooltipContext }
+					context={ this.tooltipContextRef.current }
 				>
 					{ translate(
 						'WooCommerce Services gives you access to USPS ' +

@@ -2,70 +2,44 @@
  * External dependencies
  */
 import { useContext } from 'react';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import CheckoutContext from '../checkout-context';
-import loadPaymentMethods from './registered-methods';
 
-const paymentMethods = [];
-
-export function registerPaymentMethod( {
-	id,
-	LabelComponent,
-	PaymentMethodComponent,
-	BillingContactComponent,
-	SubmitButtonComponent,
-} ) {
-	if (
-		! id ||
-		! LabelComponent ||
-		! PaymentMethodComponent ||
-		! BillingContactComponent ||
-		! SubmitButtonComponent
-	) {
-		throw new Error( 'registerPaymentMethod called with missing data' );
-	}
-	paymentMethods.push( {
-		id,
-		LabelComponent,
-		PaymentMethodComponent,
-		BillingContactComponent,
-		SubmitButtonComponent,
-	} );
-}
-
-export function getPaymentMethods() {
-	return paymentMethods;
-}
+const debug = debugFactory( 'composite-checkout:payment-methods' );
 
 export function usePaymentMethodId() {
 	const { paymentMethodId, setPaymentMethodId } = useContext( CheckoutContext );
+	if ( ! setPaymentMethodId ) {
+		throw new Error( 'usePaymentMethodId can only be used inside a CheckoutProvider' );
+	}
 	return [ paymentMethodId, setPaymentMethodId ];
 }
 
 export function usePaymentMethod() {
-	const { paymentMethodId } = useContext( CheckoutContext );
+	const { paymentMethodId, setPaymentMethodId } = useContext( CheckoutContext );
+	const allPaymentMethods = useAllPaymentMethods();
+	if ( ! setPaymentMethodId ) {
+		throw new Error( 'usePaymentMethod can only be used inside a CheckoutProvider' );
+	}
 	if ( ! paymentMethodId ) {
 		return null;
 	}
-	const paymentMethod = getPaymentMethods().find( ( { id } ) => id === paymentMethodId );
+	const paymentMethod = allPaymentMethods.find( ( { id } ) => id === paymentMethodId );
 	if ( ! paymentMethod ) {
-		throw new Error( `No payment method found matching id '${ paymentMethodId }'` );
+		debug( `No payment method found matching id '${ paymentMethodId }' in`, allPaymentMethods );
+		return null;
 	}
 	return paymentMethod;
 }
 
-export function usePaymentMethodData() {
-	const { paymentMethodData, setPaymentMethodData } = useContext( CheckoutContext );
-	const paymentMethod = usePaymentMethod();
-	if ( ! paymentMethod ) {
-		return [ null, null ];
+export function useAllPaymentMethods() {
+	const { allPaymentMethods } = useContext( CheckoutContext );
+	if ( ! allPaymentMethods ) {
+		throw new Error( 'useAllPaymentMethods cannot be used outside of CheckoutProvider' );
 	}
-	const setData = newData =>
-		setPaymentMethodData( { ...paymentMethodData, [ paymentMethod.id ]: newData } );
-	return [ paymentMethodData[ paymentMethod.id ], setData ];
+	return allPaymentMethods;
 }
-
-loadPaymentMethods();

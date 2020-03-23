@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { includes, size, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import getPackageDescriptions from './get-package-descriptions';
@@ -146,7 +144,4 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { closeAddItem, setAddedItem, addItems }, dispatch );
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( AddItemDialog ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( AddItemDialog ) );

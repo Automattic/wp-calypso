@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,6 +21,10 @@ import { registrar as registrarNames, type as domainTypes } from 'lib/domains/co
 import SiteRedirect from './site-redirect';
 import Transfer from './transfer';
 import WpcomDomain from './wpcom-domain';
+import WpcomDomainType from './domain-types/wpcom-domain-type';
+import RegisteredDomainType from './domain-types/registered-domain-type';
+import MappedDomainType from './domain-types/mapped-domain-type';
+import config from 'config';
 
 /**
  * Style dependencies
@@ -32,6 +34,7 @@ import './style.scss';
 class Edit extends React.Component {
 	render() {
 		const domain = this.props.domains && getSelectedDomain( this.props );
+
 		const Details = this.getDetailsForType( domain && domain.type );
 
 		if ( ! domain || ! Details ) {
@@ -52,12 +55,14 @@ class Edit extends React.Component {
 	}
 
 	getDetailsForType = type => {
+		const newStatusDesign = config.isEnabled( 'domains/new-status-design' );
+
 		switch ( type ) {
 			case domainTypes.MAPPED:
-				return MappedDomain;
+				return newStatusDesign ? MappedDomainType : MappedDomain;
 
 			case domainTypes.REGISTERED:
-				return RegisteredDomain;
+				return newStatusDesign ? RegisteredDomainType : RegisteredDomain;
 
 			case domainTypes.SITE_REDIRECT:
 				return SiteRedirect;
@@ -66,7 +71,7 @@ class Edit extends React.Component {
 				return Transfer;
 
 			case domainTypes.WPCOM:
-				return WpcomDomain;
+				return newStatusDesign ? WpcomDomainType : WpcomDomain;
 
 			default:
 				return null;

@@ -1,13 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
-import { some, forEach, isEqual, without } from 'lodash';
+import React, { Fragment, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -17,66 +13,76 @@ import { requestSites, requestSite } from 'state/sites/actions';
 import { getPreference } from 'state/preferences/selectors';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 
-class QuerySites extends Component {
-	componentWillMount() {
-		this.requestAll( this.props );
-		this.requestPrimary( this.props );
-		this.requestRecent( this.props );
-		this.requestSingle( this.props );
+const getRecentSites = state => getPreference( state, 'recentSites' );
+
+const requestAll = () => ( dispatch, getState ) => {
+	if ( ! isRequestingSites( getState() ) ) {
+		dispatch( requestSites() );
+	}
+};
+
+function QueryAll() {
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		dispatch( requestAll() );
+	}, [ dispatch ] );
+
+	return null;
+}
+
+const requestSingle = siteId => ( dispatch, getState ) => {
+	if ( siteId && ! isRequestingSite( getState(), siteId ) ) {
+		dispatch( requestSite( siteId ) );
+	}
+};
+
+function QuerySingle( { siteId } ) {
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		if ( siteId ) {
+			dispatch( requestSingle( siteId ) );
+		}
+	}, [ dispatch, siteId ] );
+
+	return null;
+}
+
+const requestPrimaryAndRecent = siteIds => ( dispatch, getState ) => {
+	const state = getState();
+	if ( hasAllSitesList( state ) ) {
+		return;
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.siteId !== this.props.siteId ) {
-			this.requestSingle( nextProps );
+	siteIds.forEach( siteId => dispatch( requestSingle( siteId ) ) );
+};
+
+function QueryPrimaryAndRecent() {
+	const primarySiteId = useSelector( getPrimarySiteId );
+	// This should return the same reference every time, so we can compare by reference.
+	const recentSiteIds = useSelector( getRecentSites );
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		const siteIds = [ ...( primarySiteId ? [ primarySiteId ] : [] ), ...( recentSiteIds ?? [] ) ];
+
+		if ( siteIds && siteIds.length ) {
+			dispatch( requestPrimaryAndRecent( siteIds ) );
 		}
+	}, [ dispatch, primarySiteId, recentSiteIds ] );
 
-		if ( nextProps.primaryAndRecent && nextProps.primarySiteId !== this.props.primarySiteId ) {
-			this.requestPrimary( nextProps );
-		}
+	return null;
+}
 
-		if (
-			nextProps.primaryAndRecent &&
-			! isEqual( nextProps.recentSiteIds, this.props.recentSiteIds )
-		) {
-			this.requestRecent( nextProps );
-		}
-	}
-
-	requestAll( props ) {
-		if ( props.allSites && ! props.requestingSites ) {
-			props.requestSites();
-		}
-	}
-
-	requestPrimary( props ) {
-		if ( props.primaryAndRecent && ! props.hasAllSitesList ) {
-			const { primarySiteId, isRequestingPrimarySite } = props;
-
-			if ( primarySiteId && ! isRequestingPrimarySite ) {
-				props.requestSite( primarySiteId );
-			}
-		}
-	}
-
-	requestRecent( props ) {
-		if ( props.primaryAndRecent && ! props.hasAllSitesList ) {
-			const { recentSiteIds, isRequestingRecentSites, primarySiteId } = props;
-
-			if ( recentSiteIds && recentSiteIds.length && ! isRequestingRecentSites ) {
-				forEach( without( recentSiteIds, primarySiteId ), props.requestSite );
-			}
-		}
-	}
-
-	requestSingle( props ) {
-		if ( props.siteId && ! props.requestingSite ) {
-			props.requestSite( props.siteId );
-		}
-	}
-
-	render() {
-		return null;
-	}
+export default function QuerySites( { siteId, allSites = false, primaryAndRecent = false } ) {
+	return (
+		<Fragment>
+			{ allSites && <QueryAll /> }
+			{ siteId && <QuerySingle siteId={ siteId } /> }
+			{ primaryAndRecent && <QueryPrimaryAndRecent /> }
+		</Fragment>
+	);
 }
 
 QuerySites.propTypes = {
@@ -84,43 +90,7 @@ QuerySites.propTypes = {
 	primaryAndRecent: PropTypes.bool,
 	siteId: PropTypes.oneOfType( [
 		PropTypes.number,
-		// The actions and selectors we use also work with site slugs. Needed by jetpack-onboarding/main.
+		// The actions and selectors we use also work with site slugs.
 		PropTypes.string,
 	] ),
-	requestingSites: PropTypes.bool,
-	requestingSite: PropTypes.bool,
-	requestSites: PropTypes.func,
-	requestSite: PropTypes.func,
 };
-
-QuerySites.defaultProps = {
-	allSites: false,
-	primaryAndRecent: false,
-	requestSites: () => {},
-	requestSite: () => {},
-};
-
-export default connect(
-	( state, { siteId } ) => {
-		const primarySiteId = getPrimarySiteId( state );
-		const recentSiteIds = getPreference( state, 'recentSites' );
-		const recentSiteIdsWithoutPrimary = without(
-			getPreference( state, 'recentSites' ),
-			primarySiteId
-		);
-
-		return {
-			primarySiteId,
-			recentSiteIds,
-			hasAllSitesList: hasAllSitesList( state ),
-			requestingSites: isRequestingSites( state ),
-			requestingSite: isRequestingSite( state, siteId ),
-			isRequestingPrimarySite: isRequestingSite( state, primarySiteId ),
-			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-			isRequestingRecentSites: some( recentSiteIdsWithoutPrimary, id =>
-				isRequestingSite( state, id )
-			),
-		};
-	},
-	{ requestSites, requestSite }
-)( QuerySites );

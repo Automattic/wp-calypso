@@ -13,12 +13,11 @@ import { localize } from 'i18n-calypso';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 import TaskPlaceholder from './task-placeholder';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 
 class Checklist extends PureComponent {
 	static propTypes = {
 		className: PropTypes.string,
-		phase2: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
 		onExpandTask: PropTypes.func,
 		showChecklistHeader: PropTypes.bool,
@@ -36,7 +35,7 @@ class Checklist extends PureComponent {
 		this.notifyCompletion();
 	}
 
-	componentWillReceiveProps( { siteId } ) {
+	UNSAFE_componentWillReceiveProps( { siteId } ) {
 		if ( siteId !== this.props.siteId ) {
 			this.setState( { expandedTaskIndex: undefined } );
 		}
@@ -120,11 +119,7 @@ class Checklist extends PureComponent {
 		let skippedChildren = 0;
 
 		return (
-			<div
-				className={ classNames( 'checklist', this.props.className, {
-					'checklist-phase2': this.props.phase2,
-				} ) }
-			>
+			<div className={ classNames( 'checklist', this.props.className ) }>
 				{ showChecklistHeader && completed !== total && this.renderChecklistHeader() }
 
 				<div className="checklist__tasks">

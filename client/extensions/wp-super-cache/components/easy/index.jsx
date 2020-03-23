@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,8 +12,7 @@ import { flowRight, get, isEmpty, pick } from 'lodash';
  * Internal dependencies
  */
 import { isHttps } from 'lib/url';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import Notice from 'components/notice';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormToggle from 'components/forms/form-toggle/compact';
@@ -56,7 +53,7 @@ class EasyTab extends Component {
 		isDeletingAll: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.isDeleting && ! nextProps.isDeleting ) {
 			this.setState( {
 				isDeleting: false,
@@ -244,7 +241,4 @@ const getFormSettings = settings => {
 	return pick( settings, [ 'cache_mod_rewrite', 'is_cache_enabled' ] );
 };
 
-export default flowRight(
-	connectComponent,
-	WrapSettingsForm( getFormSettings )
-)( EasyTab );
+export default flowRight( connectComponent, WrapSettingsForm( getFormSettings ) )( EasyTab );

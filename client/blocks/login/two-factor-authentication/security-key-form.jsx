@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import { localize } from 'i18n-calypso';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
@@ -91,11 +91,8 @@ class SecurityKeyForm extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		formUpdate,
-		loginUserWithSecurityKey,
-		recordTracksEvent,
-	}
-)( localize( SecurityKeyForm ) );
+export default connect( null, {
+	formUpdate,
+	loginUserWithSecurityKey,
+	recordTracksEvent,
+} )( localize( SecurityKeyForm ) );

@@ -8,7 +8,11 @@ import { camelCase, kebabCase, debounce } from 'lodash';
  * Internal dependencies
  */
 import notices from 'notices';
-import { handleRenewNowClick, isRenewable } from 'lib/purchases';
+import {
+	handleRenewNowClick,
+	isRenewable,
+	shouldAddPaymentSourceInsteadOfRenewingNow,
+} from 'lib/purchases';
 import wpcomFactory from 'lib/wp';
 
 const wpcom = wpcomFactory.undocumented();
@@ -98,17 +102,26 @@ async function updateCreditCard( {
 	}
 
 	if ( purchase && siteSlug && isRenewable( purchase ) ) {
-		const noticeMessage = translate(
-			'Your credit card details were successfully updated, but your subscription has not been renewed yet.'
-		);
-		const noticeOptions = {
-			button: translate( 'Renew Now' ),
-			onClick: function( event, closeFunction ) {
-				handleRenewNowClick( purchase, siteSlug );
-				closeFunction();
-			},
-			persistent: true,
-		};
+		let noticeMessage = '';
+		let noticeOptions = {};
+		if ( shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) ) {
+			noticeMessage = translate( 'Your credit card details were successfully updated.' );
+			noticeOptions = {
+				persistent: true,
+			};
+		} else {
+			noticeMessage = translate(
+				'Your credit card details were successfully updated, but your subscription has not been renewed yet.'
+			);
+			noticeOptions = {
+				button: translate( 'Renew Now' ),
+				onClick: function( event, closeFunction ) {
+					handleRenewNowClick( purchase, siteSlug );
+					closeFunction();
+				},
+				persistent: true,
+			};
+		}
 		notices.info( noticeMessage, noticeOptions );
 		return;
 	}

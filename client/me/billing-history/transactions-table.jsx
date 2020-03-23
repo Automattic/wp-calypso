@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -15,11 +12,12 @@ import { capitalPDangit } from 'lib/formatting';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import Pagination from 'components/pagination';
 import TransactionsHeader from './transactions-header';
 import { groupDomainProducts, renderTransactionAmount } from './utils';
 import SearchCard from 'components/search-card';
+import { withLocalizedMoment } from 'components/localized-moment';
 import { setPage, setQuery } from 'state/ui/billing-transactions/actions';
 import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
 import getFilteredBillingTransactions from 'state/selectors/get-filtered-billing-transactions';
@@ -227,4 +225,4 @@ export default connect(
 		setPage,
 		setQuery,
 	}
-)( localize( TransactionsTable ) );
+)( localize( withLocalizedMoment( TransactionsTable ) ) );

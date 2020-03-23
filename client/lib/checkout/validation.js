@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -19,7 +18,7 @@ import {
 
 /**
  * Returns the credit card validation rule set
- * @param {object} additionalFieldRules custom validation rules depending on jurisdiction or other variable
+ *
  * @returns {object} the ruleset
  */
 export function getCreditCardFieldRules() {
@@ -64,6 +63,7 @@ export function getCreditCardFieldRules() {
 
 /**
  * Returns the credit card validation rule set for stripe elements
+ *
  * @returns {object} the ruleset
  */
 export function getStripeElementsRules() {
@@ -92,6 +92,7 @@ export function getStripeElementsRules() {
 /**
  * Returns the tef payment validation rule set
  * See: client/my-sites/checkout/checkout/redirect-payment-box.jsx
+ *
  * @returns {object} the ruleset
  */
 export function tefPaymentFieldRules() {
@@ -113,6 +114,7 @@ export function tefPaymentFieldRules() {
 
 /**
  * Returns the token validation rule set
+ *
  * @returns {object} the ruleset
  */
 export function tokenFieldRules() {
@@ -135,6 +137,7 @@ export function tokenFieldRules() {
 
 /**
  * Returns a validation ruleset to use for the given payment type
+ *
  * @param {object} paymentDetails object containing fieldname/value keypairs
  * @param {string} paymentType credit-card(default)|paypal|ideal|p24|tef|token|stripe
  * @returns {object|null} the ruleset
@@ -163,7 +166,8 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
 /**
  * Returns arguments deep-merged into one object with any array values
  * concatentated and deduped
- * @param {object}* rulesets Objects describing the rulesets to be combined
+ *
+ * @param {object} rulesets Objects describing the rulesets to be combined
  * @returns {object} The aggregated ruleset
  */
 export function mergeValidationRules( ...rulesets ) {
@@ -350,9 +354,9 @@ export function getCreditCardType( number ) {
 /**
  *
  * @param {string} field the name of the field
- * @param {value} value the value of the field
+ * @param {*} value the value of the field
  * @param {object} paymentDetails object containing fieldname/value keypairs
- * @returns {array} array of errors found, if any
+ * @returns {Array} array of errors found, if any
  */
 function getErrors( field, value, paymentDetails ) {
 	return compact(

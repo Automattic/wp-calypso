@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +9,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import Site from 'blocks/site';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSite } from 'state/sites/selectors';
 

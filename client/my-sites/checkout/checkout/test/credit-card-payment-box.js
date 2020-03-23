@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -14,6 +13,8 @@ import React from 'react';
  * Internal dependencies
  */
 import { CreditCardPaymentBox } from '../credit-card-payment-box';
+import PaymentChatButton from '../payment-chat-button';
+import CheckoutTerms from '../checkout-terms';
 import { INPUT_VALIDATION } from 'lib/store-transactions/step-types';
 import {
 	PLAN_ECOMMERCE,
@@ -46,29 +47,12 @@ jest.mock( 'lib/cart-values', () => ( {
 	},
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: x => x,
-	translate: x => x,
-} ) );
-
-jest.mock( '../terms-of-service', () => {
-	const react = require( 'react' );
-	return class TermsOfService extends react.Component {};
-} );
-jest.mock( '../payment-chat-button', () => {
-	const react = require( 'react' );
-	return class PaymentChatButton extends react.Component {};
-} );
-
 jest.mock( 'lib/abtest', () => ( { abtest: () => {} } ) );
 jest.mock( 'lib/cart-values', () => ( {
 	cartItems: {
 		hasRenewableSubscription: jest.fn( false ),
 	},
 } ) );
-
-// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
 
 jest.useFakeTimers();
 
@@ -87,7 +71,7 @@ describe( 'Credit Card Payment Box', () => {
 	test( 'does not blow up with default props', () => {
 		const wrapper = shallow( <CreditCardPaymentBox { ...defaultProps } /> );
 		expect( wrapper ).toHaveLength( 1 );
-		expect( wrapper.find( 'CheckoutTerms' ) ).toHaveLength( 1 );
+		expect( wrapper.find( CheckoutTerms ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should set progress timer when incoming validation transaction step contains no errors', () => {
@@ -180,7 +164,7 @@ describe( 'Credit Card Payment Box - PaymentChatButton', () => {
 				},
 			};
 			const wrapper = shallow( <CreditCardPaymentBox { ...props } /> );
-			expect( wrapper.find( 'PaymentChatButton' ) ).toHaveLength( 1 );
+			expect( wrapper.find( PaymentChatButton ) ).toHaveLength( 1 );
 		} );
 	} );
 
@@ -194,7 +178,7 @@ describe( 'Credit Card Payment Box - PaymentChatButton', () => {
 				},
 			};
 			const wrapper = shallow( <CreditCardPaymentBox { ...props } /> );
-			expect( wrapper.find( 'PaymentChatButton' ) ).toHaveLength( 0 );
+			expect( wrapper.find( PaymentChatButton ) ).toHaveLength( 0 );
 		} );
 	} );
 
@@ -224,7 +208,7 @@ describe( 'Credit Card Payment Box - PaymentChatButton', () => {
 				},
 			};
 			const wrapper = shallow( <CreditCardPaymentBox { ...props } /> );
-			expect( wrapper.find( 'PaymentChatButton' ) ).toHaveLength( 0 );
+			expect( wrapper.find( PaymentChatButton ) ).toHaveLength( 0 );
 		} );
 	} );
 } );

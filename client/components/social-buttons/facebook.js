@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -54,7 +52,7 @@ class FacebookLoginButton extends Component {
 		this.handleClick = this.handleClick.bind( this );
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.initialize();
 	}
 

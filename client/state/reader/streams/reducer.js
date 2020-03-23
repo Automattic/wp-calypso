@@ -17,7 +17,7 @@ import {
 	READER_STREAMS_SELECT_PREV_ITEM,
 	READER_STREAMS_SHOW_UPDATES,
 	READER_DISMISS_POST,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 import { keysAreEqual } from 'reader/post-key';
 import { combineXPosts } from './utils';
 

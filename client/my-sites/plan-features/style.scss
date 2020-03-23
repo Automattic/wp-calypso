@@ -528,6 +528,10 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
+.plans-features-main__group.is-wpcom {
+	padding-top: 19px;
+}
+
 // This is the customer type buttons that let
 // you toggle the visible plans in signup.
 // The #primary id is included to increase specificity
@@ -862,6 +866,10 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		color: var( --color-text-subtle );
 		align-items: center;
 		text-align: center;
+
+		&.plan-features__header-billing-info-plan-step-test {
+			font-size: 12px;
+		}
 	}
 
 	.plan-features__pricing {
@@ -879,6 +887,12 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		.plan-price__currency-symbol {
 			font-size: 50%;
 			font-weight: 400;
+		}
+
+		.plan-price__currency-symbol-plan-step-test {
+			font-size: 35%;
+			font-weight: 800;
+			vertical-align: text-top;
 		}
 
 		.plan-price__integer {

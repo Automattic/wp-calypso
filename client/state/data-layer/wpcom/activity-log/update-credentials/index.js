@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -36,8 +35,7 @@ const navigateTo =
  * Makes sure that we can initialize a connection
  * to HappyChat. We'll need this on the API response
  *
- * @param {function} dispatch Redux dispatcher
- * @param {function} getState Redux getState
+ * @param {object} args Redux dispatcher, getState
  */
 export const primeHappychat = ( { dispatch, getState } ) => {
 	const state = getState();
@@ -57,8 +55,14 @@ export const request = action => {
 	const { path, ...otherCredentials } = action.credentials;
 	const credentials = { ...otherCredentials, abspath: path };
 
+	const tracksEvent = recordTracksEvent( 'calypso_rewind_creds_update_attempt', {
+		site_id: action.siteId,
+		protocol: action.credentials.protocol,
+	} );
+
 	return [
 		notice,
+		tracksEvent,
 		http(
 			{
 				apiNamespace: 'wpcom/v2',
@@ -87,6 +91,10 @@ export const success = ( action, { rewind_state } ) => [
 	successNotice( i18n.translate( 'Your site is now connected.' ), {
 		duration: 4000,
 		id: action.noticeId,
+	} ),
+	recordTracksEvent( 'calypso_rewind_creds_update_success', {
+		site_id: action.siteId,
+		protocol: action.credentials.protocol,
 	} ),
 	// the API transform could fail and the rewind data might
 	// be unavailable so if that's the case just let it go
@@ -151,7 +159,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 				{ button: i18n.translate( 'Support chat' ), onClick: getHelp }
 			);
 			spreadHappiness(
-				'Rewind Credentials: update request failed on timeout (could be us or remote site)'
+				'Restore Credentials: update request failed on timeout (could be us or remote site)'
 			);
 			break;
 
@@ -159,7 +167,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 			announce(
 				i18n.translate( 'Something seems to be missing — please fill out all the required fields.' )
 			);
-			spreadHappiness( 'Rewind Credentials: missing API args (contact a dev)' );
+			spreadHappiness( 'Restore Credentials: missing API args (contact a dev)' );
 			break;
 
 		case 'invalid_args':
@@ -169,7 +177,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 						'another look to ensure everything is in the right place.'
 				)
 			);
-			spreadHappiness( 'Rewind Credentials: invalid API args (contact a dev)' );
+			spreadHappiness( 'Restore Credentials: invalid API args (contact a dev)' );
 			break;
 
 		case 'invalid_credentials':
@@ -178,7 +186,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 					"We couldn't connect to your site. Please verify your credentials and give it another try."
 				)
 			);
-			spreadHappiness( 'Rewind Credentials: invalid credentials' );
+			spreadHappiness( 'Restore Credentials: invalid credentials' );
 			break;
 
 		case 'invalid_wordpress_path':
@@ -189,18 +197,18 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 				),
 				{ button: i18n.translate( 'Get help' ), onClick: getHelp }
 			);
-			spreadHappiness( "Rewind Credentials: can't find WordPress installation files" );
+			spreadHappiness( "Restore Credentials: can't find WordPress installation files" );
 			break;
 
 		case 'read_only_install':
 			announce(
 				i18n.translate(
 					'It looks like your server is read-only. ' +
-						'To create backups and rewind your site, we need permission to write to your server.'
+						'To create backups and restore your site, we need permission to write to your server.'
 				),
 				{ button: i18n.translate( 'Get help' ), onClick: getHelp }
 			);
-			spreadHappiness( 'Rewind Credentials: creds only seem to provide read-only access' );
+			spreadHappiness( 'Restore Credentials: creds only seem to provide read-only access' );
 			break;
 
 		case 'unreachable_path':
@@ -210,12 +218,12 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 						"but it didn't work. Please make sure the directory is accessible and try again."
 				)
 			);
-			spreadHappiness( 'Rewind Credentials: creds might be for wrong site on right server' );
+			spreadHappiness( 'Restore Credentials: creds might be for wrong site on right server' );
 			break;
 
 		default:
 			announce( i18n.translate( 'Error saving. Please check your credentials and try again.' ) );
-			spreadHappiness( 'Rewind Credentials: unknown failure saving credentials' );
+			spreadHappiness( 'Restore Credentials: unknown failure saving credentials' );
 	}
 };
 

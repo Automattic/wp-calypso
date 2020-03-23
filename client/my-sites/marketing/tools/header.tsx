@@ -7,8 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 
 interface Props {
 	handleButtonClick: () => void;
@@ -40,7 +39,7 @@ const MarketingToolsHeader: FunctionComponent< Props > = ( { handleButtonClick }
 
 				<div className="tools__header-button-row">
 					<Button onClick={ handleButtonClick } primary>
-						{ translate( 'Boost My Traffic' ) }
+						{ translate( 'Boost my traffic' ) }
 					</Button>
 				</div>
 			</div>

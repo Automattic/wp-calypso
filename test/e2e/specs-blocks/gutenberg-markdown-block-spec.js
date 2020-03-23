@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -44,11 +42,6 @@ describe( `[${ host }] Gutenberg Markdown block: (${ screenSize }) @jetpack`, fu
 <li>item c</li>
 </ul>
 `;
-		// Easy way to run/develop tests against local WP instance
-		// step( 'Can login to WPORG site', async function() {
-		// 	const loginPage = await WPAdminLogonPage.Visit( driver, 'http://wpdev.localhost/' );
-		// 	await loginPage.login( 'wordpress', 'wordpress' );
-		// } );
 
 		step( 'Can create wporg site and connect Jetpack', async function() {
 			this.timeout( mochaTimeOut * 12 );

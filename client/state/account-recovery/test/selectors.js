@@ -1,10 +1,3 @@
-/** @format */
-
-/**
- * External dependencies
- */
-import { assert } from 'chai';
-
 /**
  * Internal dependencies
  */
@@ -18,6 +11,6 @@ describe( '#account-recovery selector isFetchingAccountRecoverySettings:', () =>
 			},
 		};
 
-		assert.isTrue( isFetchingAccountRecoverySettings( state ) );
+		expect( isFetchingAccountRecoverySettings( state ) ).toBe( true );
 	} );
 } );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -33,6 +31,7 @@ import './style.scss';
 class PurchasePlanDetails extends Component {
 	static propTypes = {
 		purchaseId: PropTypes.number,
+		isPlaceholder: PropTypes.bool,
 
 		// Connected props
 		purchase: PropTypes.object,
@@ -76,7 +75,7 @@ class PurchasePlanDetails extends Component {
 			return null;
 		}
 
-		if ( isDataLoading( this.props ) ) {
+		if ( isDataLoading( this.props ) || this.props.isPlaceholder ) {
 			return this.renderPlaceholder();
 		}
 

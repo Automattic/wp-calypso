@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import Toggle from 'components/forms/form-toggle';
 import { CHANGE_NAME_SERVERS } from 'lib/url/support';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
@@ -118,10 +116,7 @@ const wpcomNameServersLearnMoreClick = domainName =>
 		)
 	);
 
-export default connect(
-	null,
-	{
-		wpcomNameServersLearnMoreClick,
-		wpcomNameServersToggleButtonClick,
-	}
-)( localize( NameserversToggle ) );
+export default connect( null, {
+	wpcomNameServersLearnMoreClick,
+	wpcomNameServersToggleButtonClick,
+} )( localize( NameserversToggle ) );

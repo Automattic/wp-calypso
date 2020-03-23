@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -66,7 +64,7 @@ export default class extends React.Component {
 	 * but is supported in Internet Explorer and Chrome browsers. Further input
 	 * validation will occur when attempting to upload the file.
 	 *
-	 * @return {string} Supported file extensions, as comma-separated string
+	 * @returns {string} Supported file extensions, as comma-separated string
 	 */
 	getInputAccept = () => {
 		if ( ! isSiteAllowedFileTypesToBeTrusted( this.props.site ) ) {

@@ -1,23 +1,20 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-import notices from 'notices';
 import { localize } from 'i18n-calypso';
-import { flowRight as compose } from 'lodash';
+import { flowRight as compose, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import StateSelector from 'components/forms/us-state-selector';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
+import isSavingWordadsSettings from 'state/selectors/is-saving-wordads-settings';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -26,13 +23,15 @@ import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
-import WordadsActions from 'lib/ads/actions';
-import SettingsStore from 'lib/ads/settings-store';
+import QueryWordadsSettings from 'components/data/query-wordads-settings';
+import SectionHeader from 'components/section-header';
 import FoldableCard from 'components/foldable-card';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getWordadsSettings } from 'state/selectors/get-wordads-settings';
 import { isJetpackSite } from 'state/sites/selectors';
 import { dismissWordAdsSuccess } from 'state/wordads/approve/actions';
 import { protectForm } from 'lib/protect-form';
+import { saveWordadsSettings } from 'state/wordads/settings/actions';
 
 class AdsFormSettings extends Component {
 	static propTypes = {
@@ -41,58 +40,16 @@ class AdsFormSettings extends Component {
 		markSaved: PropTypes.func.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
+	state = {};
 
-		let store = this.getSettingsFromStore();
-		if ( ! store.tos ) {
-			store = this.defaultSettings();
-		}
-
-		this.state = store;
-	}
-
-	componentWillMount() {
-		SettingsStore.on( 'change', this.updateSettings );
-		this.fetchIfEmpty();
-	}
-
-	componentWillUnmount() {
-		SettingsStore.removeListener( 'change', this.updateSettings );
-		SettingsStore.clearNotices();
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		const { site } = this.props;
-		if ( ! nextProps || ! nextProps.site || ! nextProps.site.ID ) {
-			return;
-		}
-
-		if ( ! SettingsStore.settingsLoaded( nextProps.site.ID ) ) {
-			this.setState( this.defaultSettings() );
-		}
-
-		if ( site.ID !== nextProps.site.ID ) {
-			this.fetchIfEmpty( nextProps.site );
-			this.setState( this.getSettingsFromStore( nextProps.site ) );
+	UNSAFE_componentWillReceiveProps( { wordadsSettings } ) {
+		if ( isEmpty( this.state ) && wordadsSettings ) {
+			this.setState( {
+				...this.defaultSettings(),
+				...wordadsSettings,
+			} );
 		}
 	}
-
-	updateSettings = () => {
-		const settings = this.getSettingsFromStore();
-		const { site } = this.props;
-		this.setState( settings );
-
-		// set/clear any notices on update
-		site && this.props.dismissWordAdsSuccess( site.ID );
-		if ( settings.error && settings.error.message ) {
-			notices.error( settings.error.message );
-		} else if ( settings.notice ) {
-			notices.success( settings.notice );
-		} else {
-			notices.clearNotices( 'notices' );
-		}
-	};
 
 	handleChange = event => {
 		const name = event.currentTarget.name;
@@ -133,26 +90,10 @@ class AdsFormSettings extends Component {
 		const { site } = this.props;
 		event.preventDefault();
 
-		WordadsActions.updateSettings( site, this.packageState() );
-		this.setState( {
-			notice: null,
-			error: null,
-		} );
+		this.props.saveWordadsSettings( site.ID, this.packageState() );
+
 		this.props.markSaved();
 	};
-
-	getSettingsFromStore( siteInstance ) {
-		const site = siteInstance || this.props.site,
-			store = SettingsStore.getById( site.ID );
-
-		store.us_checked = 'yes' === store.us_resident;
-		if ( this.props.siteIsJetpack ) {
-			// JP doesn't matter, force yes to make things easier
-			store.show_to_logged_in = 'yes';
-		}
-
-		return store;
-	}
 
 	defaultSettings() {
 		return {
@@ -171,10 +112,6 @@ class AdsFormSettings extends Component {
 			who_owns: 'person',
 			zip: '',
 			display_options: {},
-			isLoading: false,
-			isSubmitting: false,
-			error: {},
-			notice: null,
 		};
 	}
 
@@ -197,26 +134,11 @@ class AdsFormSettings extends Component {
 		};
 	}
 
-	fetchIfEmpty( site ) {
-		site = site || this.props.site;
-		if ( ! site || ! site.ID ) {
-			return;
-		}
-
-		if ( SettingsStore.settingsLoaded( site.ID ) ) {
-			return;
-		}
-
-		// defer fetch requests to avoid dispatcher conflicts
-		setTimeout( function() {
-			WordadsActions.fetchSettings( site );
-		}, 0 );
-	}
-
 	jetpackPlacementControls() {
-		const linkHref = '/marketing/traffic/' + this.props.site.slug;
+		const { translate, site } = this.props;
+		const linkHref = '/marketing/traffic/' + site?.slug;
 
-		return <Card href={ linkHref }>Manage ad placements</Card>;
+		return <Card href={ linkHref }>{ translate( 'Manage ad placements' ) }</Card>;
 	}
 
 	wpcomPlacementControls() {
@@ -258,7 +180,7 @@ class AdsFormSettings extends Component {
 						value="yes"
 						checked={ 'yes' === this.state.show_to_logged_in }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					/>
 					<span>{ translate( 'Run ads for all users' ) }</span>
 				</FormLabel>
@@ -269,7 +191,7 @@ class AdsFormSettings extends Component {
 						value="no"
 						checked={ 'no' === this.state.show_to_logged_in }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					/>
 					<span>{ translate( 'Run ads only for logged-out users (less revenue)' ) }</span>
 				</FormLabel>
@@ -280,7 +202,7 @@ class AdsFormSettings extends Component {
 						value="pause"
 						checked={ 'pause' === this.state.show_to_logged_in }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					/>
 					<span>{ translate( 'Pause ads (no revenue)' ) }</span>
 				</FormLabel>
@@ -299,7 +221,7 @@ class AdsFormSettings extends Component {
 						name="optimized_ads"
 						checked={ !! this.state.optimized_ads }
 						onChange={ this.handleToggle }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					/>
 					<span>
 						{ translate( 'Show optimized ads. ' ) }
@@ -320,29 +242,29 @@ class AdsFormSettings extends Component {
 				<FormFieldset className="ads__settings-display-toggles">
 					<FormLegend>{ translate( 'Display ads below posts on' ) }</FormLegend>
 					<CompactFormToggle
-						checked={ !! this.state.display_options.display_front_page }
-						disabled={ this.state.isLoading }
+						checked={ !! this.state.display_options?.display_front_page }
+						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'display_front_page' ) }
 					>
 						{ translate( 'Front page' ) }
 					</CompactFormToggle>
 					<CompactFormToggle
-						checked={ !! this.state.display_options.display_post }
-						disabled={ this.state.isLoading }
+						checked={ !! this.state.display_options?.display_post }
+						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'display_post' ) }
 					>
 						{ translate( 'Posts' ) }
 					</CompactFormToggle>
 					<CompactFormToggle
-						checked={ !! this.state.display_options.display_page }
-						disabled={ this.state.isLoading }
+						checked={ !! this.state.display_options?.display_page }
+						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'display_page' ) }
 					>
 						{ translate( 'Pages' ) }
 					</CompactFormToggle>
 					<CompactFormToggle
-						checked={ !! this.state.display_options.display_archive }
-						disabled={ this.state.isLoading }
+						checked={ !! this.state.display_options?.display_archive }
+						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'display_archive' ) }
 					>
 						{ translate( 'Archives' ) }
@@ -351,22 +273,22 @@ class AdsFormSettings extends Component {
 				<FormFieldset className="ads__settings-display-toggles">
 					<FormLegend>{ translate( 'Additional ad placements' ) }</FormLegend>
 					<CompactFormToggle
-						checked={ !! this.state.display_options.enable_header_ad }
-						disabled={ this.state.isLoading }
+						checked={ !! this.state.display_options?.enable_header_ad }
+						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'enable_header_ad' ) }
 					>
 						{ translate( 'Top of each page' ) }
 					</CompactFormToggle>
 					<CompactFormToggle
-						checked={ !! this.state.display_options.second_belowpost }
-						disabled={ this.state.isLoading }
+						checked={ !! this.state.display_options?.second_belowpost }
+						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'second_belowpost' ) }
 					>
 						{ translate( 'Second ad below post' ) }
 					</CompactFormToggle>
 					<CompactFormToggle
-						checked={ !! this.state.display_options.sidebar }
-						disabled={ this.state.isLoading }
+						checked={ !! this.state.display_options?.sidebar }
+						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'sidebar' ) }
 					>
 						{ translate( 'Sidebar' ) }
@@ -388,7 +310,7 @@ class AdsFormSettings extends Component {
 						id="paypal"
 						value={ this.state.paypal || '' }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					/>
 				</FormFieldset>
 				<FormFieldset>
@@ -398,7 +320,7 @@ class AdsFormSettings extends Component {
 						id="who_owns"
 						value={ this.state.who_owns || '' }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					>
 						<option value="">{ translate( 'Select who owns this site' ) }</option>
 						<option value="person">{ translate( 'An Individual/Sole Proprietor' ) }</option>
@@ -412,8 +334,8 @@ class AdsFormSettings extends Component {
 					<FormLabel>
 						<FormCheckbox
 							name="us_resident"
-							checked={ this.state.us_checked }
-							disabled={ this.state.isLoading }
+							checked={ !! this.state.us_checked }
+							disabled={ this.props.isLoading }
 							onChange={ this.handleResidentCheckbox }
 						/>
 						<span>{ translate( 'US Resident or based in the US' ) }</span>
@@ -443,7 +365,7 @@ class AdsFormSettings extends Component {
 						}
 						value={ this.state.taxid || '' }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					/>
 				</FormFieldset>
 
@@ -456,7 +378,7 @@ class AdsFormSettings extends Component {
 						id="name"
 						value={ this.state.name || '' }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					/>
 				</FormFieldset>
 
@@ -468,7 +390,7 @@ class AdsFormSettings extends Component {
 						placeholder="Address Line 1"
 						value={ this.state.addr1 || '' }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					/>
 				</FormFieldset>
 
@@ -479,7 +401,7 @@ class AdsFormSettings extends Component {
 						placeholder="Address Line 2"
 						value={ this.state.addr2 || '' }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					/>
 				</FormFieldset>
 
@@ -490,7 +412,7 @@ class AdsFormSettings extends Component {
 						id="city"
 						value={ this.state.city || '' }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					/>
 				</FormFieldset>
 
@@ -502,7 +424,7 @@ class AdsFormSettings extends Component {
 						className="ads__settings-state"
 						value={ this.state.state || '' }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					/>
 				</FormFieldset>
 
@@ -513,7 +435,7 @@ class AdsFormSettings extends Component {
 						id="zip"
 						value={ this.state.zip || '' }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					/>
 				</FormFieldset>
 			</div>
@@ -530,7 +452,7 @@ class AdsFormSettings extends Component {
 						name="tos"
 						checked={ !! this.state.tos }
 						onChange={ this.handleToggle }
-						disabled={ this.state.isLoading || 'signed' === this.state.tos }
+						disabled={ this.props.isLoading || 'signed' === this.state.tos }
 					/>
 					<span>
 						{ translate(
@@ -562,13 +484,15 @@ class AdsFormSettings extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
-		const isPending = this.state.isLoading || this.state.isSubmitting;
+		const { isLoading, site, translate } = this.props;
+
 		const isWordAds = this.props.site.options.wordads;
 
 		return (
 			<Fragment>
-				<FoldableCard
+				<QueryWordadsSettings siteId={ site.ID } />
+
+        <FoldableCard
 					expanded={ ! isWordAds }
 					disabled={ isPending || ! isWordAds }
 					expandedSummary={
@@ -606,11 +530,19 @@ class AdsFormSettings extends Component {
 
 export default compose(
 	connect(
-		state => ( {
-			site: getSelectedSite( state ),
-			siteIsJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
-		} ),
-		{ dismissWordAdsSuccess }
+		state => {
+			const siteId = getSelectedSiteId( state );
+			const isSavingSettings = isSavingWordadsSettings( state, siteId );
+			const wordadsSettings = getWordadsSettings( state, siteId );
+
+			return {
+				isLoading: isSavingSettings || ! wordadsSettings,
+				site: getSelectedSite( state ),
+				siteIsJetpack: isJetpackSite( state, siteId ),
+				wordadsSettings,
+			};
+		},
+		{ dismissWordAdsSuccess, saveWordadsSettings }
 	),
 	localize,
 	protectForm

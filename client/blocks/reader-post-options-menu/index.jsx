@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -26,7 +25,7 @@ import QueryReaderFeed from 'components/data/query-reader-feed';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderTeams from 'components/data/query-reader-teams';
 import { isAutomatticTeamMember } from 'reader/lib/teams';
-import getReaderTeams from 'state/selectors/get-reader-teams';
+import { getReaderTeams } from 'state/reader/teams/selectors';
 import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 import ConversationFollowButton from 'blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
@@ -199,8 +198,8 @@ class ReaderPostOptionsMenu extends React.Component {
 						<FollowButton
 							tagName={ PopoverMenuItem }
 							siteUrl={ followUrl }
-							followLabel={ showConversationFollowButton ? translate( 'Follow Site' ) : null }
-							followingLabel={ showConversationFollowButton ? translate( 'Following Site' ) : null }
+							followLabel={ showConversationFollowButton ? translate( 'Follow site' ) : null }
+							followingLabel={ showConversationFollowButton ? translate( 'Following site' ) : null }
 						/>
 					) }
 
@@ -216,13 +215,13 @@ class ReaderPostOptionsMenu extends React.Component {
 
 					{ this.props.showVisitPost && post.URL && (
 						<PopoverMenuItem onClick={ this.visitPost } icon="external">
-							{ translate( 'Visit Post' ) }
+							{ translate( 'Visit post' ) }
 						</PopoverMenuItem>
 					) }
 
 					{ this.props.showEditPost && isEditPossible && (
 						<PopoverMenuItem onClick={ this.editPost } icon="pencil">
-							{ translate( 'Edit Post' ) }
+							{ translate( 'Edit post' ) }
 						</PopoverMenuItem>
 					) }
 
@@ -233,19 +232,19 @@ class ReaderPostOptionsMenu extends React.Component {
 
 					{ isBlockPossible && (
 						<PopoverMenuItem onClick={ this.blockSite }>
-							{ translate( 'Block Site' ) }
+							{ translate( 'Block site' ) }
 						</PopoverMenuItem>
 					) }
 
 					{ ( ( this.props.showReportPost && isBlockPossible ) || isDiscoverPost ) && (
 						<PopoverMenuItem onClick={ this.reportPost }>
-							{ translate( 'Report this Post' ) }
+							{ translate( 'Report this post' ) }
 						</PopoverMenuItem>
 					) }
 
 					{ this.props.showReportSite && site && isBlockPossible && (
 						<PopoverMenuItem onClick={ this.reportSite }>
-							{ translate( 'Report this Site' ) }
+							{ translate( 'Report this site' ) }
 						</PopoverMenuItem>
 					) }
 				</EllipsisMenu>

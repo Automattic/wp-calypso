@@ -237,6 +237,10 @@
 		margin-bottom: 1em;
 	}
 
+	.blocks-gallery-caption {
+		margin: auto;
+	}
+
 	// Import Gutenberg gallery styles
 	@import 'gutenberg-gallery.scss';
 

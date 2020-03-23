@@ -2,13 +2,13 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
-import moment from 'moment';
+import { Moment } from 'moment';
 import Gridicon from 'components/gridicon';
 import { localize, LocalizeProps } from 'i18n-calypso';
 
 interface Props {
 	statType?: string;
-	startOfPeriod?: moment.Moment;
+	startOfPeriod?: Moment;
 }
 
 // File downloads were only recorded from 1st July 2019 onwards,
@@ -30,7 +30,7 @@ const StatsModuleAvailabilityWarning: FunctionComponent< Props & LocalizeProps >
 
 	return (
 		<div className="stats-module__availability-warning">
-			<Gridicon icon="info-outline" size="24" />
+			<Gridicon icon="info-outline" size={ 24 } />
 			<p className="stats-module__availability-warning-message">
 				{ translate( 'File download counts were not recorded before July 2019.' ) }
 			</p>

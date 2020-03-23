@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -13,9 +11,9 @@ import getRawSite from 'state/selectors/get-raw-site';
  * site cannot be upgraded, or null if upgrade ability cannot be
  * determined.
  *
- * @param  {Object}   state  Global state tree
- * @param  {Number}   siteId Site ID
- * @return {?Boolean}        Whether site is upgradeable
+ * @param  {object}   state  Global state tree
+ * @param  {number}   siteId Site ID
+ * @returns {?boolean}        Whether site is upgradeable
  */
 export default function( state, siteId ) {
 	// Cannot determine site upgradeability if there is no current user

@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -17,10 +16,10 @@ import { Checkout } from '../';
 import { hasPendingPayment } from 'lib/cart-values';
 import { isEnabled } from 'config';
 
-jest.mock( 'lib/upgrades/actions', () => ( {
+jest.mock( 'lib/transaction/actions', () => ( {
 	resetTransaction: jest.fn(),
 } ) );
-jest.mock( 'lib/signup/step-actions', () => ( {} ) );
+jest.mock( 'lib/signup/step-actions/fetch-sites-and-user', () => ( {} ) );
 jest.mock( 'lib/analytics', () => ( {
 	tracks: {
 		recordEvent: jest.fn(),
@@ -28,9 +27,6 @@ jest.mock( 'lib/analytics', () => ( {
 } ) );
 jest.mock( 'lib/analytics/ad-tracking', () => ( {
 	recordViewCheckout: jest.fn(),
-} ) );
-jest.mock( 'lib/store-transactions', () => ( {
-	hasDomainDetails: jest.fn(),
 } ) );
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),

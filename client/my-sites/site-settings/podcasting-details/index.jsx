@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,8 +15,7 @@ import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import { decodeEntities } from 'lib/formatting';
 import scrollTo from 'lib/scroll-to';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInput from 'components/forms/form-text-input';
@@ -45,6 +42,7 @@ import UpgradeNudge from 'blocks/upgrade-nudge';
 import QueryTerms from 'components/data/query-terms';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isPrivateSite from 'state/selectors/is-private-site';
+import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -380,10 +378,10 @@ class PodcastingDetails extends Component {
 	renderSettingsError() {
 		// If there is a reason that we can't display the podcasting settings
 		// screen, it will be rendered here.
-		const { isPrivate, isUnsupportedSite, userCanManagePodcasting } = this.props;
+		const { isPrivate, isComingSoon, isUnsupportedSite, userCanManagePodcasting } = this.props;
 
 		if ( isPrivate ) {
-			return <PodcastingPrivateSiteMessage />;
+			return <PodcastingPrivateSiteMessage isComingSoon={ isComingSoon } />;
 		}
 
 		if ( ! userCanManagePodcasting ) {
@@ -496,6 +494,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		siteId,
 		siteSlug,
 		isPrivate: isPrivateSite( state, siteId ),
+		isComingSoon: isSiteComingSoon( state, siteId ),
 		isPodcastingEnabled,
 		podcastingCategoryId,
 		isCategoryChanging,

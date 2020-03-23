@@ -8,30 +8,20 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
-import { useCheckoutLineItems, renderDisplayValueMarkdown } from '../index';
+import { useLineItems, renderDisplayValueMarkdown } from '../public-api';
+import { useLocalize } from '../lib/localize';
 import {
 	OrderReviewLineItems,
 	OrderReviewTotal,
 	OrderReviewSection,
 } from './order-review-line-items';
 
-export default function CheckoutReviewOrder( { summary, className } ) {
-	const [ items, total ] = useCheckoutLineItems();
-	if ( summary ) {
-		return (
-			<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
-				<OrderReviewSection>
-					<OrderReviewLineItems items={ items } />
-				</OrderReviewSection>
-				<OrderReviewSection>
-					<OrderReviewTotal total={ total } />
-				</OrderReviewSection>
-			</div>
-		);
-	}
+export default function CheckoutReviewOrder( { className } ) {
+	const [ items, total ] = useLineItems();
+
 	return (
 		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
-			<OrderReviewSection withDivider>
+			<OrderReviewSection>
 				<OrderReviewLineItems items={ items } />
 			</OrderReviewSection>
 			<OrderReviewSection>
@@ -41,9 +31,12 @@ export default function CheckoutReviewOrder( { summary, className } ) {
 	);
 }
 
+export function CheckoutReviewOrderTitle() {
+	const localize = useLocalize();
+	return localize( 'Review your order' );
+}
+
 CheckoutReviewOrder.propTypes = {
-	isActive: PropTypes.bool.isRequired,
-	summary: PropTypes.bool,
 	className: PropTypes.string,
 };
 

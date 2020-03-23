@@ -76,6 +76,7 @@ class Login extends Component {
 
 	state = {
 		isBrowserSupported: isWebAuthnSupported(),
+		continueAsAnotherUser: false,
 	};
 
 	static defaultProps = { isJetpack: false, isJetpackWooCommerceFlow: false };
@@ -97,6 +98,33 @@ class Login extends Component {
 			window.scrollTo( 0, 0 );
 		}
 	}
+
+	showContinueAsUser = () => {
+		const {
+			isJetpack,
+			isJetpackWooCommerceFlow,
+			oauth2Client,
+			privateSite,
+			socialConnect,
+			twoStepNonce,
+			fromSite,
+			currentUser,
+			twoFactorEnabled,
+		} = this.props;
+
+		return (
+			! twoStepNonce &&
+			! socialConnect &&
+			! privateSite &&
+			! oauth2Client &&
+			! ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) &&
+			! isJetpack &&
+			! fromSite &&
+			! twoFactorEnabled &&
+			currentUser &&
+			! this.state.continueAsAnotherUser
+		);
+	};
 
 	handleValidLogin = () => {
 		if ( this.props.twoFactorEnabled ) {
@@ -143,6 +171,10 @@ class Login extends Component {
 		}
 	};
 
+	handleContinueAsAnotherUser = () => {
+		this.setState( { continueAsAnotherUser: true } );
+	};
+
 	rebootAfterLogin = async () => {
 		this.props.recordTracksEvent( 'calypso_login_success', {
 			two_factor_enabled: this.props.twoFactorEnabled,
@@ -175,8 +207,6 @@ class Login extends Component {
 			translate,
 			twoStepNonce,
 			fromSite,
-			currentUser,
-			twoFactorEnabled,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
@@ -264,12 +294,9 @@ class Login extends Component {
 			}
 
 			if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-				headerText = translate( 'Howdy!{{br/}}Log in to %(clientTitle)s:', {
+				headerText = translate( 'Sign in to %(clientTitle)s', {
 					args: {
 						clientTitle: oauth2Client.title,
-					},
-					components: {
-						br: <br />,
 					},
 				} );
 			}
@@ -295,7 +322,7 @@ class Login extends Component {
 				</p>
 			);
 		} else if ( isJetpack ) {
-			headerText = translate( 'Log in to your WordPress.com account to set up Jetpack' );
+			headerText = translate( 'Log in or create a WordPress.com account to set up Jetpack' );
 			preHeader = (
 				<div className="login__jetpack-logo">
 					<AsyncLoad
@@ -309,9 +336,6 @@ class Login extends Component {
 		} else if ( fromSite ) {
 			// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
 			postHeader = <VisitSite siteSlug={ fromSite } />;
-		} else if ( currentUser && ! twoFactorEnabled ) {
-			// someone is already logged in, offer to proceed to the app without a new login
-			postHeader = <ContinueAsUser />;
 		}
 
 		return (
@@ -395,6 +419,11 @@ class Login extends Component {
 			);
 		}
 
+		if ( this.showContinueAsUser() ) {
+			// someone is already logged in, offer to proceed to the app without a new login
+			return <ContinueAsUser onChangeAccount={ this.handleContinueAsAnotherUser } />;
+		}
+
 		return (
 			<LoginForm
 				disableAutoFocus={ disableAutoFocus }
@@ -403,8 +432,13 @@ class Login extends Component {
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
+				isJetpack={ isJetpack }
 			/>
 		);
+	}
+
+	renderFooter() {
+		return ! this.showContinueAsUser() && this.props.footer;
 	}
 
 	render() {
@@ -418,6 +452,7 @@ class Login extends Component {
 				{ this.renderNotice() }
 
 				{ this.renderContent() }
+				{ this.renderFooter() }
 			</div>
 		);
 	}
@@ -437,7 +472,7 @@ export default connect(
 		linkingSocialService: getSocialAccountLinkService( state ),
 		partnerSlug: getPartnerSlugFromQuery( state ),
 		isJetpackWooCommerceFlow:
-			'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' ),
+			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 	} ),
 	{ recordTracksEvent }

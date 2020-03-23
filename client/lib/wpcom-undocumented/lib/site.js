@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -74,7 +72,7 @@ resources.forEach( function( resource ) {
  * @param {[int]}   id          Site ID
  * @param {[WPCOM]} wpcom       WPCOM instance
  *
- * @return {{UndocumentedSite}} UndocumentedSite instance
+ * @returns {{UndocumentedSite}} UndocumentedSite instance
  *
  * @api public
  */
@@ -224,7 +222,7 @@ UndocumentedSite.prototype.postCounts = function( options, callback ) {
  * unlimited storage or is a jetpack site, values returned will be -1.
  *
  * @param {Function} callback - called on completion of the GET request
- * @return {Object} promise - resolves on completion of the GET request
+ * @returns {object} promise - resolves on completion of the GET request
  */
 UndocumentedSite.prototype.mediaStorage = function( callback ) {
 	return this.wpcom.req.get( '/sites/' + this._id + '/media-storage', callback );
@@ -245,7 +243,7 @@ UndocumentedSite.prototype.getGuidedTransferStatus = function() {
 /**
  * Saves guided transfer host details
  *
- * @param {Object} hostDetails  Host details
+ * @param {object} hostDetails  Host details
  * @returns {Promise} Resolves to the response containing the transfer status
  */
 UndocumentedSite.prototype.saveGuidedTransferHostDetails = function( hostDetails ) {
@@ -260,8 +258,8 @@ UndocumentedSite.prototype.saveGuidedTransferHostDetails = function( hostDetails
 /**
  * Returns a single site connection.
  *
- * @param  {Number}  connectionId The connection ID to get.
- * @return {Promise}              A Promise to resolve when complete.
+ * @param  {number}  connectionId The connection ID to get.
+ * @returns {Promise}              A Promise to resolve when complete.
  */
 UndocumentedSite.prototype.getConnection = function( connectionId ) {
 	debug( '/sites/:site_id:/publicize-connections/:connection_id: query' );
@@ -275,9 +273,9 @@ UndocumentedSite.prototype.getConnection = function( connectionId ) {
  * Upload an external media item to the WordPress media library
  *
  * @param {string} service - external media service name (i.e 'google_photos')
- * @param {array} files - array of external media file IDs
+ * @param {Array} files - array of external media file IDs
  *
- * @return {Object} promise - resolves on completion of the GET request
+ * @returns {object} promise - resolves on completion of the GET request
  */
 UndocumentedSite.prototype.uploadExternalMedia = function( service, files ) {
 	debug( '/sites/:site_id:/external-media-upload query' );
@@ -296,7 +294,7 @@ UndocumentedSite.prototype.uploadExternalMedia = function( service, files ) {
 /**
  * Runs Theme Setup (Headstart).
  *
- * @return {Promise} A Promise to resolve when complete.
+ * @returns {Promise} A Promise to resolve when complete.
  */
 UndocumentedSite.prototype.runThemeSetup = function() {
 	return this.wpcom.req.post( {
@@ -309,7 +307,7 @@ UndocumentedSite.prototype.runThemeSetup = function() {
  * Requests Store orders stats
  *
  * @param {object} query query parameters
- * @return {Promise} A Promise to resolve when complete.
+ * @returns {Promise} A Promise to resolve when complete.
  */
 UndocumentedSite.prototype.statsOrders = function( query ) {
 	return this.wpcom.req.get(
@@ -325,7 +323,7 @@ UndocumentedSite.prototype.statsOrders = function( query ) {
  * Requests Store referrer stats
  *
  * @param {object} query query parameters
- * @return {Promise} A Promise to resolve when complete.
+ * @returns {Promise} A Promise to resolve when complete.
  */
 UndocumentedSite.prototype.statsStoreReferrers = function( query ) {
 	return this.wpcom.req.get(
@@ -341,7 +339,7 @@ UndocumentedSite.prototype.statsStoreReferrers = function( query ) {
  * Requests Store top-sellers stats
  *
  * @param {object} query query parameters
- * @return {Promise} A Promise to resolve when complete.
+ * @returns {Promise} A Promise to resolve when complete.
  */
 UndocumentedSite.prototype.statsTopSellers = function( query ) {
 	return this.wpcom.req.get(
@@ -357,7 +355,7 @@ UndocumentedSite.prototype.statsTopSellers = function( query ) {
  * Requests Store top earners
  *
  * @param {object} query query parameters
- * @return {Promise} A Promise to resolve when complete.
+ * @returns {Promise} A Promise to resolve when complete.
  */
 UndocumentedSite.prototype.statsTopEarners = function( query ) {
 	return this.wpcom.req.get(
@@ -373,7 +371,7 @@ UndocumentedSite.prototype.statsTopEarners = function( query ) {
  * Requests Store top categories
  *
  * @param {object} query query parameters
- * @return {Promise} A Promise to resolve when complete.
+ * @returns {Promise} A Promise to resolve when complete.
  */
 UndocumentedSite.prototype.statsTopCategories = function( query ) {
 	return this.wpcom.req.get(
@@ -389,7 +387,7 @@ UndocumentedSite.prototype.statsTopCategories = function( query ) {
  * Requests Store top-* lists
  *
  * @param {object} query query parameters
- * @return {Promise} A Promise to resolve when complete.
+ * @returns {Promise} A Promise to resolve when complete.
  */
 UndocumentedSite.prototype.statsTopCoupons = function( query ) {
 	return this.wpcom.req.get(
@@ -404,8 +402,8 @@ UndocumentedSite.prototype.statsTopCoupons = function( query ) {
 /**
  * Delete site invites
  *
- * @param {array}     inviteIds  An array of inviteIds for deletion.
- * @return {Promise}             A Promise to resolve when complete.
+ * @param {Array}     inviteIds  An array of inviteIds for deletion.
+ * @returns {Promise}             A Promise to resolve when complete.
  */
 UndocumentedSite.prototype.deleteInvites = function( inviteIds ) {
 	return this.wpcom.req.post(

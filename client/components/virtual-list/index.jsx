@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,8 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import List from 'react-virtualized/List';
-import AutoSizer from 'react-virtualized/AutoSizer';
+import { AutoSizer, List } from '@automattic/react-virtualized';
 import { debounce, noop, range } from 'lodash';
 
 export class VirtualList extends Component {
@@ -41,7 +38,7 @@ export class VirtualList extends Component {
 
 	state = {};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.rowHeights = {};
 		this.list = null;
 
@@ -94,13 +91,15 @@ export class VirtualList extends Component {
 	hasNoSearchResults() {
 		return (
 			! this.props.loading &&
-			( this.props.items && ! this.props.items.length ) &&
-			( this.props.query.search && !! this.props.query.search.length )
+			this.props.items &&
+			! this.props.items.length &&
+			this.props.query.search &&
+			!! this.props.query.search.length
 		);
 	}
 
 	hasNoRows() {
-		return ! this.props.loading && ( this.props.items && ! this.props.items.length );
+		return ! this.props.loading && this.props.items && ! this.props.items.length;
 	}
 
 	getRowCount() {

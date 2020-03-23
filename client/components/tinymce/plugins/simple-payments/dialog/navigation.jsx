@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import Gridicon from 'components/gridicon';
  */
 import SectionHeader from 'components/section-header';
 import HeaderCake from 'components/header-cake';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 class SimplePaymentsDialogNavigation extends Component {
 	static propTypes = {

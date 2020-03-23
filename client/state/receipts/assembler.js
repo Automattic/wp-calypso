@@ -1,5 +1,3 @@
-/** @format */
-
 export function createReceiptObject( data ) {
 	return {
 		receiptId: data.receipt_id,

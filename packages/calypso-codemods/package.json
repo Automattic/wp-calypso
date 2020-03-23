@@ -1,0 +1,29 @@
+{
+	"name": "calypso-codemods",
+	"version": "0.1.6",
+	"description": "jscodeshift transforms used to upgrade calypso code",
+	"main": "./api.js",
+	"bin": {
+		"calypso-codemods": "./index.js"
+	},
+	"scripts": {
+		"test": "jest"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/calypso-codemods"
+	},
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/calypso-codemods#readme",
+	"dependencies": {
+		"5to6-codemod": "^1.8.0",
+		"jscodeshift": "^0.7.0",
+		"lodash": "^4.17.10",
+		"react-codemod": "^5.0.5"
+	}
+}

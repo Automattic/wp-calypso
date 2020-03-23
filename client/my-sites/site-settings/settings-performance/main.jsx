@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,6 +20,7 @@ import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import Search from 'my-sites/site-settings/search';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import SpeedUpYourSite from 'my-sites/site-settings/speed-up-site-settings';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
@@ -50,6 +49,11 @@ class SiteSettingsPerformance extends Component {
 				<DocumentHead title={ translate( 'Site Settings' ) } />
 				<JetpackDevModeNotice />
 				<SidebarNavigation />
+				<FormattedHeader
+					className="settings-performance__page-heading"
+					headerText={ translate( 'Settings' ) }
+					align="left"
+				/>
 				<SiteSettingsNavigation site={ site } section="performance" />
 
 				{ siteIsJetpack && (

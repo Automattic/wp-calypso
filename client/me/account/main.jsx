@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -23,8 +22,7 @@ import formBase from 'me/form-base';
 import config from 'config';
 import { languages } from 'languages';
 import { supportsCssCustomProperties } from 'lib/feature-detection';
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextValidation from 'components/forms/form-input-validation';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -82,7 +80,7 @@ const Account = createReactClass( {
 		showNoticeInitially: PropTypes.bool,
 	},
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		// Clear any username changes that were previously made
 		this.props.username.clearValidation();
 		this.props.userSettings.removeUnsavedSetting( 'user_login' );
@@ -255,7 +253,7 @@ const Account = createReactClass( {
 
 		return (
 			<FormSettingExplanation>
-				{' '}
+				{ ' ' }
 				{ translate(
 					'Thanks to {{a}}all our community members who helped translate to {{language/}}{{/a}}!',
 					{
@@ -388,7 +386,7 @@ const Account = createReactClass( {
 
 				// We reload here to refresh cookies, user object, and user settings.
 				// @TODO: Do not require reload here.
-				location.reload();
+				window.location.reload();
 			}
 		} );
 	},
@@ -629,7 +627,7 @@ const Account = createReactClass( {
 				>
 					{ this.state.submittingForm
 						? translate( 'Saving…' )
-						: translate( 'Save Account Settings' ) }
+						: translate( 'Save account settings' ) }
 				</FormButton>
 			</div>
 		);
@@ -761,7 +759,7 @@ const Account = createReactClass( {
 						type="button"
 						onClick={ this.getClickHandler( 'Change Username Button', this.submitUsernameForm ) }
 					>
-						{ translate( 'Save Username' ) }
+						{ translate( 'Save username' ) }
 					</FormButton>
 
 					<FormButton

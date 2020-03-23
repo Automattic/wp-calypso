@@ -46,7 +46,7 @@ class ChecklistMain extends PureComponent {
 	 *
 	 * Guard for relevant props updated and correct conditions
 	 *
-	 * @param {Object}   prevProps           Optional. Previous props from componentDidUpdate.
+	 * @param {object}   prevProps           Optional. Previous props from componentDidUpdate.
 	 * @param {?boolean} prevProps.isAtomic  Previous isAtomic
 	 * @param {?boolean} prevProps.isJetpack Previous isJetpack
 	 * @param {?string}  prevProps.siteSlug  Previous siteSlug
@@ -70,24 +70,13 @@ class ChecklistMain extends PureComponent {
 
 	/**
 	 * Get subheader text to be shown for Checklist
-	 * @return {String} The translated string
+	 *
+	 * @returns {string} The translated string
 	 */
 	getSubHeaderText() {
 		const { displayMode, currentTheme, translate } = this.props;
 
 		switch ( displayMode ) {
-			case 'gsuite':
-				return translate(
-					'We emailed %(email)s with instructions to complete your G Suite setup. ' +
-						'In the mean time, let’s get your new site ready for you to share. ' +
-						'We’ve prepared a list of things that will help you get there quickly.',
-					{
-						args: {
-							email: this.props.user.email,
-						},
-					}
-				);
-
 			case 'concierge':
 				return translate(
 					'We emailed %(email)s with instructions to schedule your Quick Start Session call with us. ' +

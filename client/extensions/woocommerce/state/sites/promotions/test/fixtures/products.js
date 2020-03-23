@@ -1,5 +1,3 @@
-/** @format */
-
 export const product1 = {
 	id: 1,
 	name: 'Product 1',

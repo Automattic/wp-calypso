@@ -144,7 +144,6 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       countryCode="IT"
       getFieldProps={[Function]}
       hasCountryStates={false}
-      manualLocationInput={false}
       shouldAutoFocusAddressField={false}
       translate={[Function]}
     />

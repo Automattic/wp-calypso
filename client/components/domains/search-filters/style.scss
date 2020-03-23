@@ -89,15 +89,18 @@
 	}
 }
 
+
+
 .search-filters__buttons {
 	display: flex;
-	flex-flow: row-reverse;
+	flex-flow: row;
+	overflow: hidden;
 	justify-content: space-between;
 
 	.button {
 		flex: 1 0 auto;
 		margin-left: 1em;
-		&:last-child {
+		&:first-child {
 			margin-left: 0;
 		}
 
@@ -117,11 +120,6 @@
 			padding-top: 0.5em;
 			padding-bottom: 0.5em;
 		}
-	}
-
-	&.search-filters__tld-filter-bar--is-domain-management
-		.search-filters__tld-button:nth-child( n + 6 ) {
-		display: none;
 	}
 
 	@include breakpoint( '<960px' ) {
@@ -163,14 +161,6 @@
 
 .search-filters__text-input-fieldset .search-filters__label {
 	margin-bottom: 0.25em;
-}
-
-.search-filters__checkboxes-fieldset .search-filters__label {
-	margin-bottom: 1em;
-
-	&:last-of-type {
-		margin-bottom: 0;
-	}
 }
 
 .search-filters__token-field-fieldset {
@@ -217,5 +207,8 @@
 
 	.token-field__suggestion {
 		color: var( --color-neutral-70 );
+		&.is-selected span {
+			color: var( --color-text-inverted );
+		}
 	}
 }

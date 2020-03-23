@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,9 +17,8 @@ import ActionPanelTitle from 'components/action-panel/title';
 import ActionPanelBody from 'components/action-panel/body';
 import ActionPanelFigure from 'components/action-panel/figure';
 import ActionPanelFooter from 'components/action-panel/footer';
-import Button from 'components/button';
+import { Button, Dialog } from '@automattic/components';
 import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
-import Dialog from 'components/dialog';
 import { hasLoadedSitePurchasesFromServer } from 'state/purchases/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSite, getSiteDomain } from 'state/sites/selectors';
@@ -143,16 +140,16 @@ class DeleteSite extends Component {
 		const deleteButtons = [
 			<Button onClick={ this.closeConfirmDialog }>{ translate( 'Cancel' ) }</Button>,
 			<Button primary scary disabled={ deleteDisabled } onClick={ this._deleteSite }>
-				{ translate( 'Delete this Site' ) }
+				{ translate( 'Delete this site' ) }
 			</Button>,
 		];
 
 		const strings = {
-			confirmDeleteSite: translate( 'Confirm Delete Site' ),
-			contactSupport: translate( 'Contact Support' ),
-			deleteSite: translate( 'Delete Site' ),
-			exportContent: translate( 'Export Content' ),
-			exportContentFirst: translate( 'Export Content First' ),
+			confirmDeleteSite: translate( 'Confirm delete site' ),
+			contactSupport: translate( 'Contact support' ),
+			deleteSite: translate( 'Delete site' ),
+			exportContent: translate( 'Export content' ),
+			exportContentFirst: translate( 'Export content first' ),
 		};
 
 		return (

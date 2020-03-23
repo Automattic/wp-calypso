@@ -15,15 +15,15 @@ import 'state/data-layer/wpcom/sites/jitm';
  * Re-exports
  */
 export { default as setRoute } from './set-route';
-export { setSection } from '../section/actions';
+export { setSection, hideSidebar } from '../section/actions';
 export { showMasterbar, hideMasterbar } from '../masterbar-visibility/actions';
 
 /**
  * Returns an action object to be used in signalling that a site has been set
  * as selected.
  *
- * @param  {Number} siteId Site ID
- * @return {Object}        Action object
+ * @param {number} siteId Site ID
+ * @returns {object} Action object
  */
 export function setSelectedSiteId( siteId ) {
 	return {
@@ -36,7 +36,7 @@ export function setSelectedSiteId( siteId ) {
  * Returns an action object to be used in signalling that all sites have been
  * set as selected.
  *
- * @return {Object}        Action object
+ * @returns {object} Action object
  */
 export function setAllSitesSelected() {
 	return {
@@ -55,7 +55,7 @@ export function setPreviewShowing( isShowing ) {
 /**
  * Sets ui state to toggle the notifications panel
  *
- * @returns {Object} An action object
+ * @returns {object} An action object
  */
 export const toggleNotificationsPanel = () => {
 	return {
@@ -66,16 +66,17 @@ export const toggleNotificationsPanel = () => {
 /**
  * Returns an action object signalling navigation to the given path.
  *
- * @param  {String} path Navigation path
- * @return {Object}      Action object
+ * @param  {string} path Navigation path
+ * @returns {object}      Action object
  */
 export const navigate = path => ( { type: NAVIGATE, path } );
 
 /**
  * Replaces the current url and modifies the browser history entry. Equivalent to window.replaceHistory
- * @param  {String} path Navigation path
- * @param  {Boolean} saveContext true if we should save the current page.js context
- * @return {Object}      Action object
+ *
+ * @param {string} path Navigation path
+ * @param {boolean} saveContext true if we should save the current page.js context
+ * @returns {object} Action object
  */
 export const replaceHistory = ( path, saveContext ) => ( {
 	type: HISTORY_REPLACE,

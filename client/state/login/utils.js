@@ -47,7 +47,7 @@ export class HTTPError extends Error {
 /**
  * Retrieves the first error message from the specified HTTP error.
  *
- * @param {Object} httpError HTTP error
+ * @param {object} httpError HTTP error
  * @returns {{code: string?, message: string, field: string}} an error message and the id of the corresponding field, if not global
  */
 export function getErrorFromHTTPError( httpError ) {
@@ -66,6 +66,20 @@ export function getErrorFromHTTPError( httpError ) {
 	if ( code ) {
 		if ( code in errorFields ) {
 			field = errorFields[ code ];
+		} else if ( code === 'compromisable_account' ) {
+			const url = localizeUrl( 'https://wordpress.com/wp-login.php?action=lostpassword' );
+			return {
+				code,
+				message: (
+					<p>
+						{ translate(
+							'Your account has been blocked as a security precaution. To continue, you must {{a}}reset your password{{/a}}.',
+							{ components: { a: <a href={ url } rel="external" /> } }
+						) }
+					</p>
+				),
+				field,
+			};
 		} else if ( code === 'admin_login_attempt' ) {
 			const url = localizeUrl( 'https://wordpress.com/wp-login.php?action=lostpassword' );
 
@@ -123,7 +137,7 @@ export function getErrorFromHTTPError( httpError ) {
 /**
  * Transforms WPCOM error to the error object we use for login purposes
  *
- * @param {Object} wpcomError HTTP error
+ * @param {object} wpcomError HTTP error
  * @returns {{message: string, field: string, code: string}} an error message and the id of the corresponding field
  */
 export const getErrorFromWPCOMError = wpcomError => ( {
@@ -136,21 +150,21 @@ export const getErrorFromWPCOMError = wpcomError => ( {
 /**
  * Determines whether the user account uses regular authentication by password.
  *
- * @param {String} authAccountType - authentication account type
- * @return {Boolean} true if the account is regular, false otherwise
+ * @param {string} authAccountType - authentication account type
+ * @returns {boolean} true if the account is regular, false otherwise
  */
 export const isRegularAccount = authAccountType => authAccountType === 'regular';
 
 /**
  * Determines whether the user account uses authentication without password.
  *
- * @param {String} authAccountType - authentication account type
- * @return {Boolean} true if the account is passwordless, false otherwise
+ * @param {string} authAccountType - authentication account type
+ * @returns {boolean} true if the account is passwordless, false otherwise
  */
 export const isPasswordlessAccount = authAccountType => authAccountType === 'passwordless';
 
 export async function postLoginRequest( action, bodyObj ) {
-	const response = await fetch(
+	const response = await window.fetch(
 		localizeUrl( `https://wordpress.com/wp-login.php?action=${ action }` ),
 		{
 			method: 'POST',

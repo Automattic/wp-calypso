@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,8 +9,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import ActivityIcon from '../activity-log-item/activity-icon';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import FormLabel from 'components/forms/form-label';
 import FormCheckbox from 'components/forms/form-checkbox';
 import Gridicon from 'components/gridicon';
@@ -50,7 +48,7 @@ const ActivityLogConfirmDialog = ( {
 			<div className="activity-log-confirm-dialog__partial-restore-settings">
 				<p>
 					{ notice
-						? translate( 'Choose the items you wish to rewind:' )
+						? translate( 'Choose the items you wish to restore:' )
 						: translate( 'Choose the items you wish to include in the download:' ) }
 				</p>
 				<FormLabel>
@@ -120,7 +118,4 @@ const mapDispatchToProps = {
 	happychatEvent: () => recordTracksEvent( 'calypso_activitylog_confirm_dialog' ),
 };
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( localize( ActivityLogConfirmDialog ) );
+export default connect( null, mapDispatchToProps )( localize( ActivityLogConfirmDialog ) );

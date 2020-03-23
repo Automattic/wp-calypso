@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -42,7 +40,10 @@ export function queries( state = {}, action ) {
 			const ids = state[ serializedQuery ] ? state[ serializedQuery ].ids : [];
 			return Object.assign( {}, state, {
 				[ serializedQuery ]: {
-					ids: union( ids, action.data.subscribers.map( follower => follower.ID ) ),
+					ids: union(
+						ids,
+						action.data.subscribers.map( follower => follower.ID )
+					),
 					total: action.data.total,
 					lastPage: action.data.pages,
 				},
@@ -71,9 +72,9 @@ export function queries( state = {}, action ) {
  * Returns the updated state for in-progress network calls to fetch followers
  * for a given query.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function queryRequests( state = {}, action ) {
 	switch ( action.type ) {

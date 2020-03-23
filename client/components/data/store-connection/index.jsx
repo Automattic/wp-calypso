@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import { isEqual } from 'lodash';
 
 class StoreConnection extends React.Component {
 	static propTypes = {
-		component: PropTypes.func,
+		component: PropTypes.elementType,
 		getStateFromStores: PropTypes.func.isRequired,
 		isDataLoading: PropTypes.func,
 		loadingPlaceholder: PropTypes.func,
@@ -23,7 +21,7 @@ class StoreConnection extends React.Component {
 		this.addStoreListeners( this.props.stores );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const nextState = nextProps.getStateFromStores( nextProps );
 
 		if ( ! isEqual( this.state, nextState ) ) {

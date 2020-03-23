@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,8 +7,8 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import { domainManagementEdit } from 'my-sites/domains/paths';
+import { Card } from '@automattic/components';
+import { domainManagementContactsPrivacy } from 'my-sites/domains/paths';
 import PropTypes from 'prop-types';
 
 /**
@@ -31,7 +29,7 @@ function EditContactInfoPrivacyEnabledCard( { selectedDomainName, selectedSiteSl
 						components: {
 							a: (
 								<a
-									href={ domainManagementEdit( selectedSiteSlug, selectedDomainName ) }
+									href={ domainManagementContactsPrivacy( selectedSiteSlug, selectedDomainName ) }
 									rel="noopener noreferrer"
 								/>
 							),

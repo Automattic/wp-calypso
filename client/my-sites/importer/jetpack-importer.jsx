@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,14 +7,12 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import { localize } from 'i18n-calypso';
 import { getSelectedSite } from 'state/ui/selectors';
-import CompactCard from 'components/card/compact';
 import EmptyContent from 'components/empty-content';
 
 class JetpackImporter extends PureComponent {
-	renderUnsupportedCard = () => {
+	render() {
 		const { site, translate } = this.props;
 		const {
 			options: { admin_url: adminUrl },
@@ -35,26 +31,6 @@ class JetpackImporter extends PureComponent {
 				actionURL={ adminUrl + 'import.php' }
 				actionTarget="_blank"
 			/>
-		);
-	};
-	render() {
-		if ( ! isEnabled( 'manage/import-to-jetpack' ) ) {
-			return this.renderUnsupportedCard();
-		}
-
-		return (
-			<CompactCard>
-				<h2>
-					A8C NOTICE: Jetpack Importing is currently in development -- please use wp-admin / wp-cli
-					tooling in the meantime
-				</h2>
-				<hr />
-				{ '<JetpackFileImporter /> would go here' }
-				<hr />
-				<div>@TODO URL Importer here</div>
-				<hr />
-				<div>@TODO Info / Icons for supported services here</div>
-			</CompactCard>
 		);
 	}
 }

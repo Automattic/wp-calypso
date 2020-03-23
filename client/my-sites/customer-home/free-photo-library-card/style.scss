@@ -1,0 +1,37 @@
+.free-photo-library-card {
+	.free-photo-library-card__demonstration-image {
+		cursor: pointer;
+		margin-bottom: 12px;
+		width: 100%;
+	}
+
+	.button {
+		float: right;
+	}
+}
+
+.free-photo-library-card__dialog-close {
+	margin-top: 12px;
+	text-align: right;
+}
+
+.free-photo-library-card__demonstration-video {
+	max-height: 600px;
+	max-width: 800px;
+	width: calc( 90vw - 16px * 2 );
+	position: relative;
+	padding-bottom: calc( 9 / 16 * 100% );
+	height: 0;
+
+	@include breakpoint( '>480px' ) {
+		width: calc( 90vw - 24px * 2 );
+	}
+
+	iframe {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+}

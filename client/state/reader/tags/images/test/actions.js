@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +13,7 @@ import {
 	READER_TAG_IMAGES_REQUEST,
 	READER_TAG_IMAGES_REQUEST_SUCCESS,
 	READER_TAG_IMAGES_RECEIVE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 import useNock from 'test/helpers/use-nock';
 import sampleSuccessResponse from './sample-responses.json';
 

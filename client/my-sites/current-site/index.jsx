@@ -11,8 +11,7 @@ import PropTypes from 'prop-types';
  */
 import AllSites from 'blocks/all-sites';
 import AsyncLoad from 'components/async-load';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import Site from 'blocks/site';
 import Gridicon from 'components/gridicon';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -83,13 +82,13 @@ class CurrentSite extends Component {
 				) : (
 					<AllSites />
 				) }
+				<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
+				<AsyncLoad require="my-sites/current-site/stale-cart-items-notice" placeholder={ null } />
 				<AsyncLoad
 					require="my-sites/current-site/notice"
 					placeholder={ null }
 					site={ selectedSite }
 				/>
-				<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
-				<AsyncLoad require="my-sites/current-site/stale-cart-items-notice" placeholder={ null } />
 			</Card>
 		);
 	}

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -74,7 +72,4 @@ const connectComponent = connect( ( state, { exclude } ) => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( RecentPostsDropdown );
+export default flowRight( connectComponent, localize )( RecentPostsDropdown );

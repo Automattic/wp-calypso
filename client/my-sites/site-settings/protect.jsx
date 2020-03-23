@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import { includes, some, trim, trimEnd } from 'lodash';
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';

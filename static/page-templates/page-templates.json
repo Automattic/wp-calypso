@@ -1,0 +1,65 @@
+{
+	"description": "WordPress.com page templates",
+	"templates": [
+		{
+			"title": "rockfield",
+			"defaults": "rockfield",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "leven",
+			"defaults": "leven",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "alves",
+			"defaults": "alves",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "exford",
+			"defaults": "exford",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "rockfield",
+			"defaults": "rockfield",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "stratford",
+			"defaults": "stratford",
+			"vertical-whitelist": []
+		}
+	],
+	"themes": [
+		{
+			"title": "rockfield",
+			"demo": "https://rockfielddemo.wordpress.com/"
+		},
+		{
+			"title": "leven",
+			"demo": "https://levendemo.wordpress.com/"
+		},
+		{
+			"title": "alves",
+			"demo": "https://alvesdemo.wordpress.com/"
+		},
+		{
+			"title": "mayland",
+			"demo": "https://maylanddemo.wordpress.com/"
+		},
+		{
+			"title": "startford",
+			"demo": "https://stratforddemo.wordpress.com/"
+		},
+		{
+			"title": "coutoire",
+			"demo": "https://coutoiredemo.wordpress.com/"
+		},
+		{
+			"title": "balasana",
+			"demo": "https://balasanademo.wordpress.com/"
+		}
+	]
+}

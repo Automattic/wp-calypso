@@ -13,9 +13,10 @@ import { QUERY_FIELDS } from './constants';
 
 /**
  * Returns the updated count records state after an action has been dispatched.
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const counts = withSchemaValidation(
 	countsSchema,
@@ -55,9 +56,10 @@ export const counts = withSchemaValidation(
 
 /**
  * Returns the loading state after an action has been dispatched.
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const isLoading = keyedReducer(
 	'siteId',

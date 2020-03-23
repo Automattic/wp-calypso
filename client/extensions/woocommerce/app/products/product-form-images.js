@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,9 +11,9 @@ import { isNumber, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import ImagePreloader from 'components/image-preloader';
+import MediaImage from 'my-sites/media-library/media-image';
 import ProductImageUploader from 'woocommerce/components/product-image-uploader';
 import Spinner from 'components/spinner';
 
@@ -47,7 +46,7 @@ class ProductFormImages extends Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.images !== this.props.images ) {
 			this.setState( { images: nextProps.images } );
 		}
@@ -126,7 +125,7 @@ class ProductFormImages extends Component {
 
 		return (
 			<figure>
-				<ImagePreloader
+				<MediaImage
 					src={ src }
 					alt={ thumb ? translate( 'Product thumbnail' ) : translate( 'Featured product image' ) }
 					placeholder={ placeholder ? <img src={ placeholder } alt="" /> : <span /> }

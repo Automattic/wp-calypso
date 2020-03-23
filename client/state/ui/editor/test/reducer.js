@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,6 +15,7 @@ describe( 'reducer', () => {
 			'postId',
 			'loadingError',
 			'isLoading',
+			'isIframeLoaded',
 			'isAutosaving',
 			'autosavePreviewUrl',
 			'lastDraft',

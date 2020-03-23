@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -32,7 +30,7 @@ import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
  * 		.map( endpoint => fetch( endpoint ) ) )
  *
  * @param {any} input - Anything. The world is your oyster.
- * @param {function} fn - A function expecting an array of size {0,1} and returning the same kind of array.
+ * @param {Function} fn - A function expecting an array of size {0,1} and returning the same kind of array.
  * @returns {?*} The value returned by `fn`, extracted from the array, or `null`.
  */
 const runMaybe = ( input, fn ) => get( fn( [ input ] ), 0, null );

@@ -1,8 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
@@ -10,6 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Badge from 'components/badge';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/gsuite';
 
 /**
@@ -17,60 +17,85 @@ import { getAnnualPrice, getMonthlyPrice } from 'lib/gsuite';
  */
 import './style.scss';
 
-const GSuitePrice = ( { cost, currencyCode, showMonthlyPrice } ) => {
+/**
+ * Determines whether a discount can be applied to the specified product via a sales coupon.
+ *
+ * @param {object} product - G Suite product
+ * @returns {boolean} - true if a discount can be applied, false otherwise
+ */
+const hasDiscount = product => {
+	if (
+		! product ||
+		! product.sale_cost ||
+		! product.sale_coupon ||
+		! product.sale_coupon.start_date ||
+		! product.sale_coupon.expires
+	) {
+		return false;
+	}
+
+	const currentTime = Date.now();
+	const startDate = new Date( product.sale_coupon.start_date );
+	const endDate = new Date( product.sale_coupon.expires );
+
+	return currentTime >= startDate && currentTime <= endDate;
+};
+
+const GSuitePrice = ( { currencyCode, product } ) => {
 	const translate = useTranslate();
 
-	const annualPrice = cost && currencyCode ? getAnnualPrice( cost, currencyCode ) : '-';
-	const monthlyPrice = cost && currencyCode ? getMonthlyPrice( cost, currencyCode ) : '-';
+	const cost = product?.cost ?? null;
 
-	const renderPerUserPerYear = () => {
-		return translate( '{{strong}}%(price)s{{/strong}} per user / year', {
-			components: {
-				strong: <strong />,
-			},
-			args: {
-				price: annualPrice,
-			},
-		} );
-	};
+	const annualPrice = getAnnualPrice( cost, currencyCode );
+	const monthlyPrice = getMonthlyPrice( cost, currencyCode );
 
-	const renderPerUserPerMonth = () => {
-		return translate( '{{strong}}%(price)s{{/strong}} per user / month', {
-			components: {
-				strong: <strong />,
-			},
-			args: {
-				price: monthlyPrice,
-			},
-		} );
-	};
+	const isDiscounted = hasDiscount( product );
 
 	return (
 		<div className="gsuite-price">
-			<h4 className="gsuite-price__price-per-user">
-				<span>{ showMonthlyPrice ? renderPerUserPerMonth() : renderPerUserPerYear() }</span>
+			<h4 className="gsuite-price__monthly-price">
+				{ translate( '{{strong}}%(price)s{{/strong}} per user/month', {
+					args: {
+						price: monthlyPrice,
+					},
+					components: {
+						strong: <strong />,
+					},
+					comment: "Monthly price per user formatted with the currency (e.g. '$8.40')",
+				} ) }
 			</h4>
-			{ showMonthlyPrice && (
-				<h5 className="gsuite-price__annual-price">
-					{ translate( '%(price)s billed yearly', {
+
+			<h5
+				className={ classNames( {
+					'gsuite-price__annual-price': true,
+					discounted: isDiscounted,
+				} ) }
+			>
+				{ translate( '%(price)s billed annually', {
+					args: {
+						price: annualPrice,
+					},
+					comment: "Annual price formatted with the currency (e.g. '$99.99')",
+				} ) }
+			</h5>
+
+			{ isDiscounted && (
+				<Badge type="success">
+					{ translate( '%(price)s for your first year', {
 						args: {
-							price: annualPrice,
+							price: getAnnualPrice( product.sale_cost, currencyCode ),
 						},
+						comment: "Discounted annual price formatted with the currency (e.g. '$80')",
 					} ) }
-				</h5>
+				</Badge>
 			) }
 		</div>
 	);
 };
 
 GSuitePrice.propTypes = {
-	cost: PropTypes.number,
 	currencyCode: PropTypes.string,
-	showMonthlyPrice: PropTypes.bool.isRequired,
-};
-
-GSuitePrice.defaultProps = {
-	showMonthlyPrice: false,
+	product: PropTypes.object,
 };
 
 export default GSuitePrice;

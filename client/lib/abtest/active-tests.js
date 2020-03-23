@@ -1,4 +1,3 @@
-/** @format */
 export default {
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
@@ -25,6 +24,15 @@ export default {
 			show: 80,
 		},
 		defaultVariation: 'hide',
+		allowExistingUsers: true,
+	},
+	showCompositeCheckout: {
+		datestamp: '20200221',
+		variations: {
+			composite: 50,
+			regular: 50,
+		},
+		defaultVariation: 'regular',
 		allowExistingUsers: true,
 	},
 	skipThemesSelectionModal: {
@@ -72,14 +80,6 @@ export default {
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
 	},
-	popularPlanBy: {
-		datestamp: '20190529',
-		variations: {
-			siteType: 0,
-			customerType: 100,
-		},
-		defaultVariation: 'siteType',
-	},
 	skippableDomainStep: {
 		datestamp: '20290717',
 		variations: {
@@ -89,63 +89,27 @@ export default {
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
 	},
-	signupWithBasicSite: {
-		datestamp: '20190930',
-		variations: {
-			variant: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	placesApiInCheckout: {
-		datestamp: '20190923',
-		variations: {
-			original: 50,
-			placesApi: 50,
-		},
-		defaultVariation: 'original',
-	},
-	domainSuggestionsEn: {
-		datestamp: '20191003',
-		variations: {
-			control: 50,
-			test: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	checkoutCollectPhoneNumber: {
-		datestamp: '20191007',
-		variations: {
-			show: 50,
-			hide: 50,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
-	verticalSuggestedThemes: {
-		datestamp: '20191011',
-		variations: {
-			control: 100,
-			test: 0,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	passwordlessSignup: {
-		datestamp: '20191013',
+		datestamp: '20291029',
 		variations: {
 			passwordless: 0,
 			default: 100,
 		},
 		defaultVariation: 'default',
 	},
-	prefillSiteTitleWithDomainQuery: {
-		datestamp: '20191017',
+	domainStepCopyUpdates: {
+		datestamp: '20191121',
 		variations: {
-			variant: 50,
+			variantShowUpdates: 90,
+			control: 10,
+		},
+		defaultVariation: 'variantShowUpdates',
+		allowExistingUsers: true,
+	},
+	planStepCopyUpdates: {
+		datestamp: '20200312',
+		variations: {
+			variantCopyUpdates: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',

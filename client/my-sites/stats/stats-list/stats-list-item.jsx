@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,6 +15,7 @@ const debug = debugFactory( 'calypso:stats:list-item' );
  */
 import analytics from 'lib/analytics';
 import Emojify from 'components/emojify';
+import { withLocalizedMoment } from 'components/localized-moment';
 import Follow from './action-follow';
 import Page from './action-page';
 import Spam from './action-spam';
@@ -276,7 +275,7 @@ class StatsListItem extends React.Component {
 				<span className={ wrapperClassSet } key={ i }>
 					{ gridiconSpan }
 					{ icon }
-					{ itemLabel }{' '}
+					{ itemLabel }{ ' ' }
 				</span>
 			);
 		}, this );
@@ -380,4 +379,4 @@ class StatsListItem extends React.Component {
 	}
 }
 
-export default localize( StatsListItem );
+export default localize( withLocalizedMoment( StatsListItem ) );

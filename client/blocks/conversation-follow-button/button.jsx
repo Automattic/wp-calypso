@@ -1,5 +1,4 @@
 /**
- * @format
  */
 
 /**
@@ -42,8 +41,8 @@ class ConversationFollowButton extends React.Component {
 		];
 		const iconSize = 20;
 		const label = isFollowing
-			? translate( 'Following Conversation' )
-			: translate( 'Follow Conversation' );
+			? translate( 'Following conversation' )
+			: translate( 'Follow conversation' );
 
 		if ( this.props.isFollowing ) {
 			buttonClasses.push( 'is-following' );

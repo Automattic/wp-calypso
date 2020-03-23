@@ -3,27 +3,66 @@
  */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
-const Label = styled.label`
+export default function RadioButton( {
+	checked,
+	name,
+	value,
+	onChange,
+	children,
+	label,
+	id,
+	ariaLabel,
+} ) {
+	const [ isFocused, changeFocus ] = useState( false );
+
+	return (
+		<RadioButtonWrapper isFocused={ isFocused } checked={ checked }>
+			<Radio
+				type="radio"
+				name={ name }
+				id={ id }
+				value={ value }
+				checked={ checked }
+				onChange={ onChange }
+				onFocus={ () => {
+					changeFocus( true );
+				} }
+				onBlur={ () => {
+					changeFocus( false );
+				} }
+				readOnly={ ! onChange }
+				aria-label={ ariaLabel }
+			/>
+			<Label checked={ checked } htmlFor={ id }>
+				{ label }
+			</Label>
+			{ children && <RadioButtonChildren checked={ checked }>{ children }</RadioButtonChildren> }
+		</RadioButtonWrapper>
+	);
+}
+
+RadioButton.propTypes = {
+	name: PropTypes.string.isRequired,
+	id: PropTypes.string.isRequired,
+	label: PropTypes.node.isRequired,
+	checked: PropTypes.bool,
+	value: PropTypes.string.isRequired,
+	onChange: PropTypes.func,
+	ariaLabel: PropTypes.string.isRequired,
+};
+
+const RadioButtonWrapper = styled.div`
 	position: relative;
-	padding: 16px 14px;
 	margin-top: 8px;
 	border-radius: 3px;
 	box-sizing: border-box;
 	width: 100%;
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
-	align-items: center;
 	outline: ${getOutline};
 
-	:first-child {
+	:first-of-type {
 		margin: 0;
-	}
-
-	:hover {
-		cursor: pointer;
 	}
 
 	:before {
@@ -43,56 +82,88 @@ const Label = styled.label`
 		border: 3px solid ${props => props.theme.colors.highlight};
 	}
 
-	img {
+	.payment-logos {
+		display: none;
+
+		@media ( ${props => props.theme.breakpoints.smallPhoneUp} ) {
+			display: block;
+		}
+	}
+
+	svg {
 		filter: grayscale( ${getGrayscaleValue} );
 	}
 
-	:hover img {
+	:hover svg {
 		filter: grayscale( 0 );
 	}
 `;
 
 const Radio = styled.input`
-	margin-right: 7px;
-	position: relative;
-	display: inline-block;
+	position: absolute;
 	opacity: 0;
 `;
 
-const LabelContent = styled.span`
-	flex: 1;
-	display: flex;
-	justify-content: space-between;
+const Label = styled.label`
 	position: relative;
+	padding: 16px 14px 16px 40px;
+	border-radius: 3px;
+	box-sizing: border-box;
+	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: flex-start;
 	font-size: 14px;
-	transform: translateY( -1px );
 
-	:after {
+	:hover {
+		cursor: pointer;
+	}
+
+	:before {
 		display: block;
 		width: 16px;
 		height: 16px;
 		content: '';
-		border: ${getRadioBorderWidth} solid ${getBorderColor};
+		border: 1px solid ${props => props.theme.colors.borderColor};
 		border-radius: 100%;
-		top: 01px;
-		left: -23px;
+		top: 19px;
+		left: 16px;
 		position: absolute;
-		background: ${props => props.theme.colors.white};
+		background: ${props => props.theme.colors.surface};
 		box-sizing: border-box;
 		z-index: 2;
 	}
+
+	:after {
+		display: block;
+		width: 8px;
+		height: 8px;
+		content: '';
+		border-radius: 100%;
+		top: 23px;
+		left: 20px;
+		position: absolute;
+		background: ${getRadioColor};
+		box-sizing: border-box;
+		z-index: 3;
+	}
+`;
+
+const RadioButtonChildren = styled.div`
+	display: ${props => ( props.checked ? 'block' : 'none' )};
 `;
 
 function getBorderColor( { checked, theme } ) {
-	return checked ? theme.colors.highlight : theme.colors.gray20;
+	return checked ? theme.colors.highlight : theme.colors.borderColor;
+}
+
+function getRadioColor( { checked, theme } ) {
+	return checked ? theme.colors.highlight : theme.colors.surface;
 }
 
 function getBorderWidth( { checked } ) {
 	return checked ? '3px' : '1px';
-}
-
-function getRadioBorderWidth( { checked } ) {
-	return checked ? '5px' : '1px';
 }
 
 function getGrayscaleValue( { checked } ) {
@@ -101,37 +172,7 @@ function getGrayscaleValue( { checked } ) {
 
 function getOutline( { isFocused, theme } ) {
 	if ( isFocused ) {
-		return theme.colors.outline + ' auto 5px';
+		return theme.colors.outline + ' solid 2px';
 	}
 	return '0';
 }
-
-export default function RadioButton( { checked, name, value, onChange, children } ) {
-	const [ isFocused, changeFocus ] = useState( false );
-	return (
-		<Label isFocused={ isFocused } checked={ checked }>
-			<Radio
-				type="radio"
-				name={ name }
-				value={ value }
-				checked={ checked }
-				onChange={ onChange }
-				onFocus={ () => {
-					changeFocus( true );
-				} }
-				onBlur={ () => {
-					changeFocus( false );
-				} }
-				readOnly={ ! onChange }
-			/>
-			<LabelContent checked={ checked }>{ children }</LabelContent>
-		</Label>
-	);
-}
-
-RadioButton.propTypes = {
-	name: PropTypes.string.isRequired,
-	checked: PropTypes.bool,
-	value: PropTypes.string.isRequired,
-	onChange: PropTypes.func,
-};

@@ -18,7 +18,7 @@ exports[`<SiteStyleStep /> should render 1`] = `
             className="site-style__fieldset"
             role="radiogroup"
           >
-            <Localized(FormLabel)
+            <FormLabel
               className="site-style__option-label is-checked site-style__variation-default"
               htmlFor="default"
               title=""
@@ -30,8 +30,8 @@ exports[`<SiteStyleStep /> should render 1`] = `
                 onChange={[Function]}
                 value="default"
               />
-            </Localized(FormLabel)>
-            <Localized(FormLabel)
+            </FormLabel>
+            <FormLabel
               className="site-style__option-label site-style__variation-eyesore"
               htmlFor="eyesore"
               title=""
@@ -43,7 +43,7 @@ exports[`<SiteStyleStep /> should render 1`] = `
                 onChange={[Function]}
                 value="eyesore"
               />
-            </Localized(FormLabel)>
+            </FormLabel>
           </FormFieldset>
           <div
             className="site-style__submit-wrapper"

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import PropTypes from 'prop-types';
  */
 import APIKeysView from 'woocommerce/components/api-keys-view';
 import AuthCaptureToggle from 'woocommerce/components/auth-capture-toggle';
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';

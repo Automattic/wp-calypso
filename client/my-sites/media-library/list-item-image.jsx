@@ -1,18 +1,16 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
-import PropTypes from 'prop-types';
 import React from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
 import { url as mediaUrl } from 'lib/media/utils';
 import MediaLibraryListItemFileDetails from './list-item-file-details';
-
+import MediaImage from './media-image';
 import { MEDIA_IMAGE_THUMBNAIL, SCALE_CHOICES } from 'lib/media/constants';
 
 export default class MediaLibraryListItemImage extends React.Component {
@@ -92,12 +90,12 @@ export default class MediaLibraryListItemImage extends React.Component {
 		}
 
 		return (
-			<img
+			<MediaImage
 				src={ url }
 				onLoad={ this.setUnknownImageDimensions }
 				alt={ this.props.media.alt || this.props.media.title }
 				style={ this.getImageStyle() }
-				className="media-library__list-item-centered"
+				className="media-library__list-item-centered is-image"
 				draggable="false"
 			/>
 		);

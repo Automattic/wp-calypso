@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { isWithinBreakpoint } from '@automattic/viewport';
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -20,7 +18,6 @@ import getPostRevisionsDiffView from 'state/selectors/get-post-revisions-diff-vi
 import TextDiff from 'components/text-diff';
 import scrollTo from 'lib/scroll-to';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { isWithinBreakpoint } from 'lib/viewport';
 
 /**
  * Style dependencies
@@ -74,7 +71,7 @@ class EditorDiffViewer extends PureComponent {
 		this.tryScrollingToFirstChangeOrTop();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.selectedRevisionId !== this.props.selectedRevisionId ) {
 			this.setState( { changeOffsets: [] } );
 		}

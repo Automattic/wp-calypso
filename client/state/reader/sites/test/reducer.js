@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -15,9 +14,8 @@ import {
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_REQUEST_FAILURE,
 	READER_SITE_UPDATE,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
+import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'items', () => {
@@ -240,7 +238,12 @@ describe( 'reducer', () => {
 			expect(
 				items( startingState, {
 					type: READER_SITE_BLOCKS_RECEIVE,
-					payload: { sites: [ { ID: 1, name: 'first' }, { ID: 2, name: 'second' } ] },
+					payload: {
+						sites: [
+							{ ID: 1, name: 'first' },
+							{ ID: 2, name: 'second' },
+						],
+					},
 				} )
 			).toEqual( {
 				1: { ID: 1, name: 'first' },

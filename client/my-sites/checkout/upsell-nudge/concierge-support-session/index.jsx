@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,8 +8,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import Button from 'components/button';
+import { CompactCard, Button } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
@@ -28,9 +25,13 @@ export class ConciergeSupportSession extends PureComponent {
 			comment: '"Checkout" is the part of the site where a user is preparing to make a purchase.',
 		} );
 
+		const pageViewTrackerPath = receiptId
+			? '/checkout/offer-support-session/:receipt_id/:site'
+			: '/checkout/offer-support-session/:site';
+
 		return (
 			<>
-				<PageViewTracker path="/checkout/:site/offer-support-session/:receipt_id" title={ title } />
+				<PageViewTracker path={ pageViewTrackerPath } title={ title } />
 				<DocumentHead title={ title } />
 				{ receiptId ? (
 					<CompactCard className="concierge-support-session__card-header">
@@ -159,7 +160,7 @@ export class ConciergeSupportSession extends PureComponent {
 								'Reserve a 45-minute "Quick Start" appointment, and save %(saveAmount)s if you sign up today.',
 								{
 									args: {
-										saveAmount: formatCurrency( savings, currencyCode ),
+										saveAmount: formatCurrency( savings, currencyCode, { stripZeros: true } ),
 									},
 								}
 							) }
@@ -172,12 +173,12 @@ export class ConciergeSupportSession extends PureComponent {
 									{
 										components: { del: <del /> },
 										args: {
-											oldPrice: formatCurrency( fullCost, currencyCode ),
+											oldPrice: formatCurrency( fullCost, currencyCode, { stripZeros: true } ),
 											price: productDisplayCost,
 										},
 									}
 								) }
-							</b>{' '}
+							</b>{ ' ' }
 							{ translate(
 								'Click the button below to confirm your purchase (sessions are currently limited to English language support).'
 							) }

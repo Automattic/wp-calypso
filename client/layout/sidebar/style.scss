@@ -98,6 +98,10 @@
 		}
 	}
 
+	.badge {
+		margin: -7px 0 -8px;
+	}
+
 	.selected &,
 	.selected &:hover {
 		color: var( --color-sidebar-menu-selected-text );
@@ -140,6 +144,14 @@
 	.sidebar__menu-link:hover & {
 		color: inherit;
 	}
+}
+
+.sidebar__menu-notification-dot {
+	background-color: var( --color-accent );
+	border: 1px solid var( --color-surface );
+	border-radius: 50px;
+	margin-left: 8px;
+	padding: 4px;
 }
 
 // Expandables: Some sidebar menus act like accordions where

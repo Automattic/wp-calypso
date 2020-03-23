@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,11 +10,11 @@ import { get, size, takeRight, delay } from 'lodash';
 /**
  * Internal dependencies
  */
-import getActiveReplyCommentId from 'state/selectors/get-active-reply-comment-id';
 import {
-	getPostCommentsTree,
 	commentsFetchingStatus,
+	getActiveReplyCommentId,
 	getCommentById,
+	getPostCommentsTree,
 } from 'state/comments/selectors';
 import { requestPostComments, requestComment, setActiveReply } from 'state/comments/actions';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
@@ -162,7 +161,7 @@ class PostCommentList extends React.Component {
 		}
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.initialFetches();
 		this.scrollWhenDOMReady();
 	}
@@ -171,7 +170,7 @@ class PostCommentList extends React.Component {
 		this.resetActiveReplyComment();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.initialFetches( nextProps );
 		if (
 			this.props.siteId !== nextProps.siteId ||
@@ -301,11 +300,12 @@ class PostCommentList extends React.Component {
 		);
 	};
 
-	/***
+	/**
 	 * Gets comments for display
-	 * @param {Immutable.List<Number>} commentIds The top level commentIds to take from
-	 * @param {Number} numberToTake How many top level comments to take
-	 * @returns {Object} that has the displayed comments + total displayed count including children
+	 *
+	 * @param {Array<number>} commentIds The top level commentIds to take from
+	 * @param {number} numberToTake How many top level comments to take
+	 * @returns {object} that has the displayed comments + total displayed count including children
 	 */
 	getDisplayedComments = ( commentIds, numberToTake ) => {
 		if ( ! commentIds ) {

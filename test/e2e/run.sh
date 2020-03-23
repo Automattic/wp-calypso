@@ -206,6 +206,10 @@ if [ "$SKIP_TEST_REGEX" != "" ]; then
   GREP="-i -g '$SKIP_TEST_REGEX'"
 fi
 
+if [ "$SUITE_TAG" != "" ]; then
+  SUITE_TAG_OVERRIDE="--suiteTag='$SUITE_TAG'"
+fi
+
 # Combine any NODE_CONFIG entries into a single object
 NODE_CONFIG_ARG="$(joinStr , ${NODE_CONFIG_ARGS[*]})"
 MOCHA_ARGS+="--NODE_CONFIG={$NODE_CONFIG_ARG}"
@@ -238,7 +242,7 @@ elif [ $CIRCLE_NODE_TOTAL > 1 ]; then
       for locale in ${LOCALE_ARRAY[@]}; do
         for config in "${MAGELLAN_CONFIGS[@]}"; do
           if [ "$config" != "" ]; then
-            CMD="env BROWSERSIZE=$size BROWSERLOCALE=$locale $MAGELLAN --mocha_args='$MOCHA_ARGS' --config='$config' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER --test=$FILE_LIST"
+            CMD="env BROWSERSIZE=$size BROWSERLOCALE=$locale $MAGELLAN --mocha_args='$MOCHA_ARGS' --config='$config' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER --test=$FILE_LIST $SUITE_TAG_OVERRIDE"
 
             eval $CMD
             RETURN+=$?

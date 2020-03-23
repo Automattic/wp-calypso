@@ -1,9 +1,8 @@
 /**
  * External dependencies
  *
- * @format
  */
-
+import { isDesktop } from '@automattic/viewport';
 import React, { Fragment } from 'react';
 import { overEvery as and } from 'lodash';
 import Gridicon from 'components/gridicon';
@@ -22,7 +21,6 @@ import {
 	Link,
 } from 'layout/guided-tours/config-elements';
 import { hasSelectedSitePremiumOrBusinessPlan } from '../selectors/has-selected-site-premium-or-business-plan';
-import { isDesktop } from 'lib/viewport';
 
 export const SimplePaymentsEndOfYearGuide = makeTour(
 	<Tour

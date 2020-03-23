@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -32,9 +31,8 @@ import {
 	areSettingsGeneralLoaded,
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
-import Button from 'components/button';
+import { Button, Dialog } from '@automattic/components';
 import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
-import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormInputCheckbox from 'components/forms/form-checkbox';

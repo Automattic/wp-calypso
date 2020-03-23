@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,17 +11,23 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog, Button, CompactCard } from '@automattic/components';
 import config from 'config';
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import PrecancellationChatButton from 'components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 import { CANCEL_FLOW_TYPE } from 'components/marketing-survey/cancel-purchase-form/constants';
 import GSuiteCancellationPurchaseDialog from 'components/marketing-survey/gsuite-cancel-purchase-dialog';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
 import { isDataLoading } from '../utils';
-import { isDomainRegistration, isGoogleApps, isJetpackPlan, isPlan } from 'lib/products-values';
+import {
+	isDomainMapping,
+	isDomainRegistration,
+	isDomainTransfer,
+	isGoogleApps,
+	isJetpackPlan,
+	isJetpackProduct,
+	isPlan,
+} from 'lib/products-values';
 import notices from 'notices';
 import { purchasesRoot } from '../paths';
 import { getPurchasesError } from 'state/purchases/selectors';
@@ -36,6 +41,7 @@ import { setAllSitesSelected } from 'state/ui/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import RemoveDomainDialog from './remove-domain-dialog';
+import NonPrimaryDomainDialog from 'me/purchases/non-primary-domain-dialog';
 
 /**
  * Style dependencies
@@ -45,7 +51,9 @@ import './style.scss';
 class RemovePurchase extends Component {
 	static propTypes = {
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		hasNonPrimaryDomainsFlag: PropTypes.bool,
 		isDomainOnlySite: PropTypes.bool,
+		isPrimaryDomainRegistered: PropTypes.bool,
 		receiveDeletedSite: PropTypes.func.isRequired,
 		removePurchase: PropTypes.func.isRequired,
 		purchase: PropTypes.object,
@@ -57,19 +65,41 @@ class RemovePurchase extends Component {
 	state = {
 		isDialogVisible: false,
 		isRemoving: false,
+		isShowingNonPrimaryDomainWarning: false,
 		survey: {},
 	};
 
 	closeDialog = () => {
 		this.setState( {
 			isDialogVisible: false,
+			isShowingNonPrimaryDomainWarning: false,
+		} );
+	};
+
+	showRemovePlanDialog = () => {
+		this.setState( {
+			isShowingNonPrimaryDomainWarning: false,
+			isDialogVisible: true,
 		} );
 	};
 
 	openDialog = event => {
 		event.preventDefault();
 
-		this.setState( { isDialogVisible: true } );
+		if (
+			this.shouldShowNonPrimaryDomainWarning() &&
+			! this.state.isShowingNonPrimaryDomainWarning
+		) {
+			this.setState( {
+				isShowingNonPrimaryDomainWarning: true,
+				isDialogVisible: false,
+			} );
+		} else {
+			this.setState( {
+				isShowingNonPrimaryDomainWarning: false,
+				isDialogVisible: true,
+			} );
+		}
 	};
 
 	onClickChatButton = () => {
@@ -140,6 +170,32 @@ class RemovePurchase extends Component {
 		);
 	};
 
+	shouldShowNonPrimaryDomainWarning() {
+		const {
+			hasNonPrimaryDomainsFlag,
+			isAtomicSite,
+			isPrimaryDomainRegistered,
+			purchase,
+		} = this.props;
+		return (
+			hasNonPrimaryDomainsFlag && isPlan( purchase ) && ! isAtomicSite && isPrimaryDomainRegistered
+		);
+	}
+
+	renderNonPrimaryDomainWarningDialog() {
+		const { purchase, site } = this.props;
+		return (
+			<NonPrimaryDomainDialog
+				isDialogVisible={ this.state.isShowingNonPrimaryDomainWarning }
+				closeDialog={ this.closeDialog }
+				removePlan={ this.showRemovePlanDialog }
+				planName={ getName( purchase ) }
+				oldDomainName={ site.domain }
+				newDomainName={ site.wpcom_url }
+			/>
+		);
+	}
+
 	renderDomainDialog() {
 		let chatButton = null;
 
@@ -202,7 +258,7 @@ class RemovePurchase extends Component {
 						// ^ is the internal WPcom domain i.e. example.wordpress.com
 						// if we want to use the purchased domain we can swap with the below line
 						//{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
-					} ) }{' '}
+					} ) }{ ' ' }
 					{ isGoogleApps( purchase )
 						? translate(
 								'Your G Suite account will continue working without interruption. ' +
@@ -260,12 +316,12 @@ class RemovePurchase extends Component {
 	renderDialog() {
 		const { purchase } = this.props;
 
-		if ( this.props.isAtomicSite ) {
-			return this.renderAtomicDialog( purchase );
-		}
-
 		if ( isDomainRegistration( purchase ) ) {
 			return this.renderDomainDialog();
+		}
+
+		if ( isDomainMapping( purchase ) || isDomainTransfer( purchase ) ) {
+			return this.renderPlanDialog();
 		}
 
 		if ( isGoogleApps( purchase ) ) {
@@ -277,6 +333,10 @@ class RemovePurchase extends Component {
 					site={ this.props.site }
 				/>
 			);
+		}
+
+		if ( this.props.isAtomicSite ) {
+			return this.renderAtomicDialog( purchase );
 		}
 
 		return this.renderPlanDialog();
@@ -305,6 +365,7 @@ class RemovePurchase extends Component {
 					<Gridicon icon="trash" />
 					{ translate( 'Remove %(productName)s', { args: { productName } } ) }
 				</CompactCard>
+				{ this.shouldShowNonPrimaryDomainWarning() && this.renderNonPrimaryDomainWarningDialog() }
 				{ this.renderDialog() }
 			</>
 		);
@@ -313,7 +374,7 @@ class RemovePurchase extends Component {
 
 export default connect(
 	( state, { purchase } ) => {
-		const isJetpack = purchase && isJetpackPlan( purchase );
+		const isJetpack = purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
 		return {
 			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),

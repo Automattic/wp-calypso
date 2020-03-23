@@ -1,22 +1,11 @@
-/** @format */
-
 // ==========================================================================
 // Buttons
 // ==========================================================================
-
-// resets button styles
-button {
-	background: transparent;
-	border: none;
-	outline: 0;
-	padding: 0;
-	font-size: 14px;
-	-webkit-appearance: none;
-	appearance: none;
-	vertical-align: baseline;
-}
+@import '../styles/typography.scss';
 
 .button {
+	font-family: $a8c-font-family-sans;
+	background: transparent;
 	border-style: solid;
 	border-width: 1px 1px 2px;
 	cursor: pointer;
@@ -33,8 +22,11 @@ button {
 	line-height: 21px;
 	border-radius: 4px;
 	padding: 7px 14px 9px;
-	-webkit-appearance: none;
 	appearance: none;
+
+	.rtl & {
+		font-family: $a8c-font-family-sans-rtl;
+	}
 
 	&.hidden {
 		display: none;
@@ -297,44 +289,6 @@ button {
 			margin-left: 4px;
 		}
 	}
-}
-
-// ==========================================================================
-// Resets
-// ==========================================================================
-
-// Turn Reset 'buttons' into regular text links
-.layout__content input,
-.dialog__content input {
-	&[type='reset'],
-	&[type='reset']:hover,
-	&[type='reset']:active,
-	&[type='reset']:focus {
-		background: 0 0;
-		border: 0;
-		padding: 0 2px 1px;
-		width: auto;
-		box-shadow: none;
-	}
-}
-
-// Buttons within sentences sit on the text baseline.
-.layout__content p .button,
-.dialog__content p .button {
-	vertical-align: baseline;
-}
-
-// Firefox Junk
-.layout__content button::-moz-focus-inner,
-.layout__content input[type='reset']::-moz-focus-inner,
-.layout__content input[type='button']::-moz-focus-inner,
-.layout__content input[type='submit']::-moz-focus-inner,
-.dialog__content button::-moz-focus-inner,
-.dialog__content input[type='reset']::-moz-focus-inner,
-.dialog__content input[type='button']::-moz-focus-inner,
-.dialog__content input[type='submit']::-moz-focus-inner {
-	border: 0;
-	padding: 0;
 }
 
 // ==========================================================================

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -48,22 +46,13 @@ export function getSiteVerticalPreview( state ) {
 }
 
 export function getSiteVerticalPreviewScreenshot( state, viewportDevice ) {
-	const screenshotPropName = getScreenshotPropName( viewportDevice );
-	return get( getSiteVerticalData( state ), [ 'previewScreenshots', screenshotPropName ] );
-}
+	const screenshots = get( getSiteVerticalData( state ), 'previewScreenshots' );
 
-function getScreenshotPropName( viewportDevice ) {
-	if ( window.devicePixelRatio === 1 ) {
-		if ( viewportDevice === 'phone' ) {
-			return 'phoneLowDpi';
-		}
-		return 'desktopLowDpi';
-	}
-
-	if ( viewportDevice === 'phone' ) {
-		return 'phoneHighDpi';
-	}
-	return 'desktopHighDpi';
+	return get(
+		screenshots,
+		viewportDevice,
+		get( screenshots, viewportDevice === 'phone' ? 'phoneHighDpi' : 'desktopHighDpi' )
+	);
 }
 
 export function getSiteVerticalPreviewStyles( state ) {

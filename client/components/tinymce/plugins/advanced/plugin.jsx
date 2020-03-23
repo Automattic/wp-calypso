@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { isWithinBreakpoint } from '@automattic/viewport';
 import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import tinymce from 'tinymce/tinymce';
@@ -12,7 +10,6 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isWithinBreakpoint } from 'lib/viewport';
 import { savePreference, fetchPreferences } from 'state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
 import Gridicon from 'components/gridicon';

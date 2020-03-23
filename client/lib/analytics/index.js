@@ -1,31 +1,19 @@
 /**
  * External dependencies
  */
-import cookie from 'cookie';
 import debug from 'debug';
-import { parse } from 'qs';
-import url from 'url';
-import { assign, includes, isObjectLike, isUndefined, omit, pickBy, times } from 'lodash';
-import { loadScript } from '@automattic/load-script';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
 import emitter from 'lib/mixins/emitter';
+import { costToUSD, urlParseAmpCompatible, saveCouponQueryArgument } from 'lib/analytics/utils';
+
 import {
-	doNotTrack,
-	costToUSD,
-	urlParseAmpCompatible,
-	saveCouponQueryArgument,
-} from 'lib/analytics/utils';
-import {
+	getGoogleAnalyticsDefaultConfig,
 	retarget as retargetAdTrackers,
 	recordAliasInFloodlight,
-	recordSignupCompletionInFloodlight,
-	recordSignupStartInFloodlight,
-	recordRegistration,
-	recordSignup,
 	recordAddToCart,
 	recordOrder,
 	setupGoogleAnalyticsGtag,
@@ -36,100 +24,30 @@ import {
 } from 'lib/analytics/ad-tracking';
 import { updateQueryParamsTracking } from 'lib/analytics/sem';
 import { statsdTimingUrl, statsdCountingUrl } from 'lib/analytics/statsd';
-import { getGoogleAnalyticsDefaultConfig } from './ad-tracking';
-import { affiliateReferral as trackAffiliateReferral } from 'state/refer/actions';
-import { reduxDispatch } from 'lib/redux-bridge';
+import { trackAffiliateReferral } from './refer';
 import { getFeatureSlugFromPageUrl } from './feature-slug';
+import { recordSignupComplete } from './signup';
+import {
+	recordTracksEvent,
+	analyticsEvents,
+	initializeAnalytics,
+	identifyUser,
+	getTracksAnonymousUserId,
+	recordTracksPageView,
+	getCurrentUser,
+	recordTracksPageViewWithPageParams,
+	getMostRecentUrlPath,
+	pushEventToTracksQueue,
+} from '@automattic/calypso-analytics';
 
 /**
  * Module variables
  */
-const pvDebug = debug( 'calypso:analytics:pv' );
+const identifyUserDebug = debug( 'calypso:analytics:identifyUser' );
 const mcDebug = debug( 'calypso:analytics:mc' );
 const gaDebug = debug( 'calypso:analytics:ga' );
-const referDebug = debug( 'calypso:analytics:refer' );
 const queueDebug = debug( 'calypso:analytics:queue' );
-const tracksDebug = debug( 'calypso:analytics:tracks' );
 const statsdDebug = debug( 'calypso:analytics:statsd' );
-
-let _superProps, _user;
-let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments
-
-/**
- * Tracks uses a bunch of special query params that should not be used as property name
- * See internal Nosara repo?
- */
-const TRACKS_SPECIAL_PROPS_NAMES = [ 'geo', 'message', 'request', 'geocity', 'ip' ];
-const EVENT_NAME_EXCEPTIONS = [
-	'a8c_cookie_banner_ok',
-	// WooCommerce Onboarding / Connection Flow.
-	'wcadmin_storeprofiler_create_jetpack_account',
-	'wcadmin_storeprofiler_connect_store',
-	'wcadmin_storeprofiler_login_jetpack_account',
-];
-
-// Load tracking scripts
-if ( typeof window !== 'undefined' ) {
-	window._tkq = window._tkq || [];
-}
-
-function getUrlParameter( name ) {
-	name = name.replace( /[[]/g, '\\[' ).replace( /[\]]/g, '\\]' );
-	const regex = new RegExp( '[\\?&]' + name + '=([^&#]*)' );
-	const results = regex.exec( location.search );
-	return results === null ? '' : decodeURIComponent( results[ 1 ].replace( /\+/g, ' ' ) );
-}
-
-function createRandomId( randomBytesLength = 9 ) {
-	// 9 * 4/3 = 12
-	// this is to avoid getting padding of a random byte string when it is base64 encoded
-	let randomBytes;
-
-	if ( window.crypto && window.crypto.getRandomValues ) {
-		randomBytes = new Uint8Array( randomBytesLength );
-		window.crypto.getRandomValues( randomBytes );
-	} else {
-		randomBytes = times( randomBytesLength, () => Math.floor( Math.random() * 256 ) );
-	}
-
-	return btoa( String.fromCharCode.apply( String, randomBytes ) );
-}
-
-function checkForBlockedTracks() {
-	// proceed only after the tracks script load finished and failed
-	// calling this function from `initialize` ensures that `_user` is already set
-	_loadTracksResult.catch( () => {
-		let _ut, _ui;
-
-		// detect stats blocking, and include identity from URL, user or cookie if possible
-		if ( _user && _user.get() ) {
-			_ut = 'wpcom:user_id';
-			_ui = _user.get().ID;
-		} else {
-			_ut = getUrlParameter( '_ut' ) || 'anon';
-			_ui = getUrlParameter( '_ui' );
-
-			if ( ! _ui ) {
-				const cookies = cookie.parse( document.cookie );
-				if ( cookies.tk_ai ) {
-					_ui = cookies.tk_ai;
-				} else {
-					const randomIdLength = 18; // 18 * 4/3 = 24 (base64 encoded chars)
-					_ui = createRandomId( randomIdLength );
-					document.cookie = cookie.serialize( 'tk_ai', _ui );
-				}
-			}
-		}
-
-		return loadScript(
-			'/nostats.js?_ut=' + encodeURIComponent( _ut ) + '&_ui=' + encodeURIComponent( _ui )
-		);
-	} );
-}
-
-if ( typeof document !== 'undefined' ) {
-	_loadTracksResult = loadScript( '//stats.wp.com/w.js?60' );
-}
 
 function buildQuerystring( group, name ) {
 	let uriComponent = '';
@@ -159,35 +77,17 @@ function buildQuerystringNoPrefix( group, name ) {
 	return uriComponent;
 }
 
-// we use this variable to track URL paths submitted to analytics.pageView.record
-// so that analytics.pageLoading.record can re-use the urlPath parameter.
-// this helps avoid some nasty coupling, but it's not the cleanest code - sorry.
-let mostRecentUrlPath = null;
-
-// pathCounter is used to keep track of the order of calypso_page_view Tracks
-// events. The pathCounter value is appended to the last_pageview_path_with_count and
-// this_pageview_path_with_count Tracks event props.
-let pathCounter = 0;
-
-if ( typeof window !== 'undefined' ) {
-	window.addEventListener( 'popstate', function() {
-		// throw away our URL value if the user used the back/forward buttons
-		mostRecentUrlPath = null;
-	} );
-}
-
 const analytics = {
-	initialize: function( user, superProps ) {
-		_user = user;
-		_superProps = superProps;
+	initialize: function( currentUser, superProps ) {
+		return initializeAnalytics( currentUser, superProps ).then( () => {
+			const user = getCurrentUser();
 
-		// this is called both for anonymous and logged-in users
-		checkForBlockedTracks();
-
-		if ( user && user.get() ) {
-			const userData = user.get();
-			analytics.identifyUser( userData.username, userData.ID );
-		}
+			// This block is neccessary because calypso-analytics/initializeAnalytics no longer calls out to ad-tracking
+			if ( 'object' === typeof currentUser && user && getTracksAnonymousUserId() ) {
+				identifyUserDebug( 'recordAliasInFloodlight', user );
+				recordAliasInFloodlight();
+			}
+		} );
 	},
 
 	mc: {
@@ -200,7 +100,7 @@ const analytics = {
 
 			if ( config( 'mc_analytics_enabled' ) ) {
 				const uriComponent = buildQuerystring( group, name );
-				new Image().src =
+				new window.Image().src =
 					document.location.protocol +
 					'//pixel.wp.com/g.gif?v=wpcom-no-pv' +
 					uriComponent +
@@ -219,7 +119,7 @@ const analytics = {
 
 			if ( config( 'mc_analytics_enabled' ) ) {
 				const uriComponent = buildQuerystringNoPrefix( group, name );
-				new Image().src =
+				new window.Image().src =
 					document.location.protocol +
 					'//pixel.wp.com/g.gif?v=wpcom' +
 					uriComponent +
@@ -235,15 +135,8 @@ const analytics = {
 			// Add delay to avoid stale `_dl` in recorded calypso_page_view event details.
 			// `_dl` (browserdocumentlocation) is read from the current URL by external JavaScript.
 			setTimeout( () => {
-				// Add paths to parameters.
-				params.last_pageview_path_with_count =
-					mostRecentUrlPath + '(' + pathCounter.toString() + ')';
-				params.this_pageview_path_with_count = urlPath + '(' + ( pathCounter + 1 ).toString() + ')';
-
-				pvDebug( 'Recording pageview.', urlPath, pageTitle, params );
-
 				// Tracks, Google Analytics, Refer platform.
-				analytics.tracks.recordPageView( urlPath, params );
+				recordTracksPageViewWithPageParams( urlPath, params );
 				analytics.ga.recordPageView( urlPath, pageTitle );
 				analytics.refer.recordPageView();
 
@@ -254,10 +147,6 @@ const analytics = {
 
 				// Event emitter.
 				analytics.emit( 'page-view', urlPath, pageTitle );
-
-				// Record this path.
-				mostRecentUrlPath = urlPath;
-				pathCounter++;
 
 				// Process queue.
 				analytics.queue.process();
@@ -334,81 +223,9 @@ const analytics = {
 		},
 	},
 
-	recordSignupStart: function( { flow, ref } ) {
-		// Tracks
-		analytics.tracks.recordEvent( 'calypso_signup_start', { flow, ref } );
-		// Google Analytics
-		analytics.ga.recordEvent( 'Signup', 'calypso_signup_start' );
-		// Marketing
-		recordSignupStartInFloodlight();
-	},
-
-	recordRegistration: function( { flow } ) {
-		// Tracks
-		analytics.tracks.recordEvent( 'calypso_user_registration_complete', { flow } );
-		// Google Analytics
-		analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
-		// Marketing
-		recordRegistration();
-	},
-
-	recordSocialRegistration: function() {
-		// Tracks
-		analytics.tracks.recordEvent( 'calypso_user_registration_social_complete' );
-		// Google Analytics
-		analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_social_complete' );
-		// Marketing
-		recordRegistration();
-	},
-
-	recordSignupComplete: function(
-		{ isNewUser, isNewSite, hasCartItems, flow, isNew7DUserSite },
-		now
-	) {
-		if ( ! now ) {
-			// Delay using the analytics localStorage queue.
-			return analytics.queue.add(
-				'recordSignupComplete',
-				{ isNewUser, isNewSite, hasCartItems, flow, isNew7DUserSite },
-				true
-			);
-		}
-
-		// Tracks
-		analytics.tracks.recordEvent( 'calypso_signup_complete', {
-			flow: flow,
-			is_new_user: isNewUser,
-			is_new_site: isNewSite,
-			has_cart_items: hasCartItems,
-		} );
-
-		// Google Analytics
-		const flags = [
-			isNewUser && 'is_new_user',
-			isNewSite && 'is_new_site',
-			hasCartItems && 'has_cart_items',
-		].filter( flag => false !== flag );
-
-		analytics.ga.recordEvent( 'Signup', 'calypso_signup_complete:' + flags.join( ',' ) );
-
-		if ( isNew7DUserSite ) {
-			// Tracks
-			analytics.tracks.recordEvent( 'calypso_new_user_site_creation', {
-				flow: flow,
-			} );
-
-			// Google Analytics
-			analytics.ga.recordEvent( 'Signup', 'calypso_new_user_site_creation' );
-		}
-
-		// Ad Tracking: Deprecated Floodlight pixels.
-		recordSignupCompletionInFloodlight(); // Every signup.
-
-		// Ad Tracking: New user, site creations.
-		if ( isNewUser && isNewSite ) {
-			recordSignup( 'new-user-site' );
-		}
-	},
+	// `analytics.recordSignupComplete` needs to be present for `analytics.queue` to call
+	// the method after page navigation.
+	recordSignupComplete,
 
 	recordAddToCart: function( { cartItem } ) {
 		// TODO: move Tracks event here?
@@ -441,7 +258,7 @@ const analytics = {
 
 	timing: {
 		record: function( eventType, duration, triggerName ) {
-			const urlPath = mostRecentUrlPath || 'unknown';
+			const urlPath = getMostRecentUrlPath() || 'unknown';
 			analytics.ga.recordTiming( urlPath, eventType, duration, triggerName );
 			analytics.statsd.recordTiming( urlPath, eventType, duration, triggerName );
 		},
@@ -449,121 +266,19 @@ const analytics = {
 
 	tracks: {
 		recordEvent: function( eventName, eventProperties ) {
-			eventProperties = eventProperties || {};
+			analyticsEvents.once( 'record-event', ( _eventName, _eventProperties ) => {
+				analytics.emit( 'record-event', _eventName, _eventProperties );
+			} );
 
-			if ( process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' ) {
-				if (
-					! /^calypso(?:_[a-z]+){2,}$/.test( eventName ) &&
-					! includes( EVENT_NAME_EXCEPTIONS, eventName )
-				) {
-					//eslint-disable-next-line no-console
-					console.error(
-						'Tracks: Event `%s` will be ignored because it does not match /^calypso(?:_[a-z]+){2,}$/ and is ' +
-							'not a listed exception. Please use a compliant event name.',
-						eventName
-					);
-				}
-
-				for ( const key in eventProperties ) {
-					if ( isObjectLike( eventProperties[ key ] ) ) {
-						const errorMessage =
-							`Tracks: Unable to record event "${ eventName }" because nested ` +
-							`properties are not supported by Tracks. Check '${ key }' on`;
-						console.error( errorMessage, eventProperties ); //eslint-disable-line no-console
-						return;
-					}
-
-					if ( ! /^[a-z_][a-z0-9_]*$/.test( key ) ) {
-						//eslint-disable-next-line no-console
-						console.error(
-							'Tracks: Event `%s` will be rejected because property name `%s` does not match /^[a-z_][a-z0-9_]*$/. ' +
-								'Please use a compliant property name.',
-							eventName,
-							key
-						);
-					}
-
-					if ( TRACKS_SPECIAL_PROPS_NAMES.indexOf( key ) !== -1 ) {
-						//eslint-disable-next-line no-console
-						console.error(
-							"Tracks: Event property `%s` will be overwritten because it uses one of Tracks' internal prop name: %s. " +
-								'Please use another property name.',
-							key,
-							TRACKS_SPECIAL_PROPS_NAMES.join( ', ' )
-						);
-					}
-				}
-			}
-
-			tracksDebug( 'Record event "%s" called with props %o', eventName, eventProperties );
-
-			if (
-				! eventName.startsWith( 'calypso_' ) &&
-				! includes( EVENT_NAME_EXCEPTIONS, eventName )
-			) {
-				tracksDebug(
-					'- Event name must be prefixed by "calypso_" or added to `EVENT_NAME_EXCEPTIONS`'
-				);
-				return;
-			}
-
-			if ( _superProps ) {
-				const superProperties = _superProps( eventProperties );
-				eventProperties = { ...eventProperties, ...superProperties }; // assign to a new object so we don't modify the argument
-			}
-
-			// Remove properties that have an undefined value
-			// This allows a caller to easily remove properties from the recorded set by setting them to undefined
-			eventProperties = omit( eventProperties, isUndefined );
-
-			tracksDebug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
-
-			if ( 'undefined' !== typeof window ) {
-				window._tkq.push( [ 'recordEvent', eventName, eventProperties ] );
-			}
-			analytics.emit( 'record-event', eventName, eventProperties );
+			recordTracksEvent( eventName, eventProperties );
 		},
 
 		recordPageView: function( urlPath, params ) {
-			let eventProperties = {
-				build_timestamp: window.BUILD_TIMESTAMP,
-				do_not_track: doNotTrack() ? 1 : 0,
-				path: urlPath,
-			};
-
-			// add optional path params
-			if ( params ) {
-				eventProperties = assign( eventProperties, params );
-			}
-
-			// Record all `utm` marketing parameters as event properties on the page view event
-			// so we can analyze their performance with our analytics tools
-			if ( window.location ) {
-				const parsedUrl = url.parse( window.location.href );
-				const urlParams = parse( parsedUrl.query );
-				const utmParams = pickBy( urlParams, ( value, key ) => key.startsWith( 'utm_' ) );
-
-				eventProperties = assign( eventProperties, utmParams );
-			}
-
-			analytics.tracks.recordEvent( 'calypso_page_view', eventProperties );
-		},
-
-		createRandomId,
-
-		/**
-		 * Returns the anoymous id stored in the `tk_ai` cookie
-		 *
-		 * @returns {String} - The Tracks anonymous user id
-		 */
-		anonymousUserId: function() {
-			const cookies = cookie.parse( document.cookie );
-
-			return cookies.tk_ai;
+			recordTracksPageView( urlPath, params );
 		},
 
 		setOptOut: function( isOptingOut ) {
-			window._tkq.push( [ 'setOptOut', isOptingOut ] );
+			pushEventToTracksQueue( [ 'setOptOut', isOptingOut ] );
 		},
 	},
 
@@ -577,7 +292,7 @@ const analytics = {
 				);
 
 				const imgUrl = statsdTimingUrl( featureSlug, eventType, duration );
-				new Image().src = imgUrl;
+				new window.Image().src = imgUrl;
 			}
 		},
 
@@ -590,7 +305,7 @@ const analytics = {
 				);
 
 				const imgUrl = statsdCountingUrl( featureSlug, eventType, increment );
-				new Image().src = imgUrl;
+				new window.Image().src = imgUrl;
 			}
 		},
 	},
@@ -626,10 +341,10 @@ const analytics = {
 		/**
 		 * Fires a generic Google Analytics event
 		 *
-		 * {String} category Is the string that will appear as the event category.
-		 * {String} action Is the string that will appear as the event action in Google Analytics Event reports.
-		 * {String} label Is the string that will appear as the event label.
-		 * {String} value Is a non-negative integer that will appear as the event value.
+		 * {string} category Is the string that will appear as the event category.
+		 * {string} action Is the string that will appear as the event action in Google Analytics Event reports.
+		 * {string} label Is the string that will appear as the event label.
+		 * {string} value Is a non-negative integer that will appear as the event value.
 		 */
 		recordEvent: makeGoogleAnalyticsTrackingFunction( function recordEvent(
 			category,
@@ -678,39 +393,38 @@ const analytics = {
 
 			const referrer = window.location.href;
 			const parsedUrl = urlParseAmpCompatible( referrer );
-			const affiliateId = parsedUrl.query.aff || parsedUrl.query.affiliate;
-			const campaignId = parsedUrl.query.cid;
-			const subId = parsedUrl.query.sid;
+			const affiliateId =
+				parsedUrl?.searchParams.get( 'aff' ) || parsedUrl?.searchParams.get( 'affiliate' );
+			const campaignId = parsedUrl?.searchParams.get( 'cid' );
+			const subId = parsedUrl?.searchParams.get( 'sid' );
 
 			if ( affiliateId && ! isNaN( affiliateId ) ) {
 				analytics.tracks.recordEvent( 'calypso_refer_visit', {
 					page: parsedUrl.host + parsedUrl.pathname,
 				} );
 
-				referDebug( 'Recording affiliate referral.', { affiliateId, campaignId, subId, referrer } );
-				reduxDispatch( trackAffiliateReferral( { affiliateId, campaignId, subId, referrer } ) );
+				trackAffiliateReferral( { affiliateId, campaignId, subId, referrer } );
 			}
 		},
 	},
 
-	identifyUser: function( newUserName, newUserId ) {
-		const anonymousUserId = this.tracks.anonymousUserId();
+	identifyUser: function( userData ) {
+		identifyUser( userData );
 
-		// Don't identify the user if we don't have one
-		if ( newUserId && newUserName ) {
-			if ( anonymousUserId ) {
-				recordAliasInFloodlight();
-			}
-			window._tkq.push( [ 'identifyUser', newUserId, newUserName ] );
+		// neccessary because calypso-analytics/initializeAnalytics no longer calls out to ad-tracking
+		const user = getCurrentUser();
+		if ( 'object' === typeof userData && user && getTracksAnonymousUserId() ) {
+			identifyUserDebug( 'recordAliasInFloodlight', user );
+			recordAliasInFloodlight();
 		}
 	},
 
 	setProperties: function( properties ) {
-		window._tkq.push( [ 'setProperties', properties ] );
+		pushEventToTracksQueue( [ 'setProperties', properties ] );
 	},
 
 	clearedIdentity: function() {
-		window._tkq.push( [ 'clearIdentity' ] );
+		pushEventToTracksQueue( [ 'clearIdentity' ] );
 	},
 };
 
@@ -723,7 +437,7 @@ const analytics = {
  * @see isGoogleAnalyticsAllowed
  *
  * @param  {Function} func Google Analytics tracking function
- * @return {Function}      Wrapped function
+ * @returns {Function} Wrapped function
  */
 export function makeGoogleAnalyticsTrackingFunction( func ) {
 	return function( ...args ) {

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -14,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import { getPostById } from 'state/reader/posts/selectors';
 import { getSite } from 'state/reader/sites/selectors';
 import QueryReaderSite from 'components/data/query-reader-site';
-import Card from 'components/card/compact';
+import { CompactCard as Card } from '@automattic/components';
 import Gravatar from 'components/gravatar';
 import FollowButton from 'reader/follow-button';
 import { getPostUrl, getStreamUrl } from 'reader/route';

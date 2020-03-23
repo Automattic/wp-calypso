@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -45,7 +44,7 @@ class QueryInlineHelpSupportTypes extends Component {
 	 * Before determining which variation to assign, certain async data needs to be in place.
 	 * This function helps assess whether we're ready to say which variation the user should see.
 	 *
-	 * @returns {Boolean} Whether all the data is present to determine the variation to show
+	 * @returns {boolean} Whether all the data is present to determine the variation to show
 	 */
 	hasDataToDetermineVariation = () => {
 		const ticketReadyOrError =

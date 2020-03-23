@@ -105,7 +105,6 @@ CartSynchronizer.prototype.update = function( changeFunction ) {
 
 	this._latestValue = changeFunction( this._latestValue );
 	this._performRequest( 'update', this._postToServer.bind( this ) );
-	this.emit( 'change' );
 };
 
 CartSynchronizer.prototype.pause = function() {
@@ -118,10 +117,7 @@ CartSynchronizer.prototype.resume = function() {
 
 CartSynchronizer.prototype._enqueueChange = function( changeFunction ) {
 	if ( this._queuedChanges ) {
-		this._queuedChanges = flowRight(
-			changeFunction,
-			this._queuedChanges
-		);
+		this._queuedChanges = flowRight( changeFunction, this._queuedChanges );
 	} else {
 		this._queuedChanges = changeFunction;
 	}

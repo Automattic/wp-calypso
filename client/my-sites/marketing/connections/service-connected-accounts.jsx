@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 const SharingServiceConnectedAccounts = ( { children, connect, service, translate } ) => (
 	<div className="sharing-service-accounts-detail">

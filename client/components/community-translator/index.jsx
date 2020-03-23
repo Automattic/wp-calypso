@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,7 +10,6 @@ import { find, isEmpty } from 'lodash';
  */
 import Translatable from './translatable';
 import { languages } from 'languages';
-import User from 'lib/user';
 import userSettings from 'lib/user-settings';
 import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
 
@@ -24,7 +22,6 @@ import './style.scss';
  * Local variables
  */
 const debug = debugModule( 'calypso:community-translator' );
-const user = new User();
 
 class CommunityTranslator extends Component {
 	languageJson = null;
@@ -43,13 +40,11 @@ class CommunityTranslator extends Component {
 		// the callback is overwritten by the translator on load/unload, so we're returning it within an anonymous function.
 		i18n.registerComponentUpdateHook( () => {} );
 		i18n.on( 'change', this.refresh );
-		user.on( 'change', this.refresh );
 		userSettings.on( 'change', this.refresh );
 	}
 
 	componentWillUnmount() {
 		i18n.off( 'change', this.refresh );
-		user.removeListener( 'change', this.refresh );
 		userSettings.removeListener( 'change', this.refresh );
 	}
 
@@ -95,7 +90,7 @@ class CommunityTranslator extends Component {
 	 * @param { String } originalFromPage - original string
 	 * @param { String } displayedTranslationFromPage - translated string
 	 * @param  { Object } optionsFromPage - i18n.translate options
-	 * @returns {Object} DOM object
+	 * @returns {object} DOM object
 	 */
 	wrapTranslation( originalFromPage, displayedTranslationFromPage, optionsFromPage ) {
 		if ( ! isCommunityTranslatorEnabled() ) {

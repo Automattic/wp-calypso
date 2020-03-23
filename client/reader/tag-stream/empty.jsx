@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -37,7 +36,11 @@ class TagEmptyContent extends React.Component {
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const action = (
-			<a className="empty-content__action button is-primary" onClick={ this.recordAction } href="/">
+			<a
+				className="empty-content__action button is-primary"
+				onClick={ this.recordAction }
+				href="/read"
+			>
 				{ this.props.translate( 'Back to Following' ) }
 			</a>
 		);
@@ -48,7 +51,7 @@ class TagEmptyContent extends React.Component {
 				onClick={ this.recordSecondaryAction }
 				href="/discover"
 			>
-				{ this.props.translate( 'Explore Discover' ) }
+				{ this.props.translate( 'Explore' ) }
 			</a>
 		) : null;
 

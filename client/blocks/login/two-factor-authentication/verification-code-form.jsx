@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
@@ -69,7 +67,7 @@ class VerificationCodeForm extends Component {
 		}
 	}
 
-	componentWillReceiveProps = nextProps => {
+	UNSAFE_componentWillReceiveProps = nextProps => {
 		// Resets the verification code input field when switching pages
 		if ( this.props.twoFactorAuthType !== nextProps.twoFactorAuthType ) {
 			this.setState( { twoStepCode: '' } );

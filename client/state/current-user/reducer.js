@@ -28,9 +28,9 @@ import emailVerification from './email-verification/reducer';
  *
  * This is likely caused by a server-side error or stored state corruption/auth token expiry.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const id = withSchemaValidation( idSchema, ( state = null, action ) => {
 	switch ( action.type ) {
@@ -53,9 +53,9 @@ export const flags = withSchemaValidation( flagsSchema, ( state = [], action ) =
 /**
  * Tracks the currency code of the current user
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  *
  */
 export const currencyCode = withSchemaValidation( currencyCodeSchema, ( state = null, action ) => {
@@ -83,9 +83,9 @@ export const currencyCode = withSchemaValidation( currencyCodeSchema, ( state = 
  * The state maps site ID keys to an object of current user capabilities for
  * that site.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const capabilities = withSchemaValidation( capabilitiesSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

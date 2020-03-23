@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flowRight as compose, get, identity } from 'lodash';
+import { flowRight as compose, get, identity, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,6 +32,7 @@ const privacyPolicyQuery = {
 				method: 'GET',
 				path: '/privacy-policy',
 				apiNamespace: 'wpcom/v2',
+				onSuccess: noop,
 			} ),
 			{
 				fromApi: () => data => [
@@ -183,10 +183,7 @@ const mapDispatchToProps = {
 };
 
 export default compose(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	),
+	connect( mapStateToProps, mapDispatchToProps ),
 	withLocalizedMoment,
 	localize
 )( PrivacyPolicyBanner );

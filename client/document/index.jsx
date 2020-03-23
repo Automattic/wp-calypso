@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import React, { Fragment } from 'react';
@@ -19,8 +18,9 @@ import EnvironmentBadge, {
 	PreferencesHelper,
 } from 'components/environment-badge';
 import { chunkCssLinks } from './utils';
+import JetpackLogo from 'components/jetpack-logo';
 import WordPressLogo from 'components/wordpress-logo';
-import { jsonStringifyForHtml } from '../../server/sanitize';
+import { jsonStringifyForHtml } from 'server/sanitize';
 
 class Document extends React.Component {
 	render() {
@@ -44,7 +44,6 @@ class Document extends React.Component {
 			sectionGroup,
 			sectionName,
 			clientData,
-			isFluidWidth,
 			env,
 			badge,
 			abTestHelper,
@@ -78,16 +77,17 @@ class Document extends React.Component {
 		const isJetpackWooCommerceFlow =
 			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
 			'jetpack-connect' === sectionName &&
-			'woocommerce-setup-wizard' === requestFrom;
+			'woocommerce-onboarding' === requestFrom;
+
+		const theme = config( 'theme' );
+
+		const LoadingLogo = config.isEnabled( 'jetpack-cloud' ) ? JetpackLogo : WordPressLogo;
 
 		return (
 			<html
 				lang={ lang }
 				dir={ isRTL ? 'rtl' : 'ltr' }
-				className={ classNames( {
-					'is-fluid-width': isFluidWidth,
-					'is-iframe': sectionName === 'gutenberg-editor',
-				} ) }
+				className={ classNames( { 'is-iframe': sectionName === 'gutenberg-editor' } ) }
 			>
 				<Head
 					title={ head.title }
@@ -109,6 +109,7 @@ class Document extends React.Component {
 					className={ classNames( {
 						rtl: isRTL,
 						'color-scheme': config.isEnabled( 'me/account/color-scheme-picker' ),
+						[ 'theme-' + theme ]: theme,
 						[ 'is-group-' + sectionGroup ]: sectionGroup,
 						[ 'is-section-' + sectionName ]: sectionName,
 					} ) }
@@ -134,7 +135,7 @@ class Document extends React.Component {
 							>
 								<div className="masterbar" />
 								<div className="layout__content">
-									<WordPressLogo size={ 72 } className="wpcom-site__logo" />
+									<LoadingLogo size={ 72 } className="wpcom-site__logo" />
 									{ hasSecondary && (
 										<Fragment>
 											<div className="layout__secondary" />

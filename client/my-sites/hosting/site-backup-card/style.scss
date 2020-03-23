@@ -1,0 +1,36 @@
+.site-backup-card {
+	&__date {
+		margin-bottom: 16px;
+
+		strong {
+			display: block;
+		}
+	}
+
+	&__warning {
+		color: var( --color-text-subtle );
+		font-size: 13px;
+		margin-bottom: 0;
+	}
+
+	&__placeholder {
+		@include placeholder();
+		height: 24px;
+		margin-bottom: 16px;
+
+		&.is-large {
+			height: 48px;
+		}
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	&.is-disabled {
+		.site-backup-card__placeholder {
+			animation: none;
+			background-color: var( --color-surface-backdrop );
+		}
+	}
+}

@@ -10,7 +10,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import pathToSection from 'lib/path-to-section';
 import { ROUTE_SET } from 'state/action-types';
 import {
@@ -96,7 +96,7 @@ export default class Step extends Component< Props, State > {
 	 */
 	isUpdatingPosition: boolean = false;
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.wait( this.props, this.context ).then( () => {
 			this.start();
 			this.setStepSection( this.context, { init: true } );
@@ -119,7 +119,7 @@ export default class Step extends Component< Props, State > {
 		}
 	}
 
-	componentWillReceiveProps( nextProps: Props, nextContext ) {
+	UNSAFE_componentWillReceiveProps( nextProps: Props, nextContext ) {
 		const shouldScrollTo = nextProps.shouldScrollTo && this.props.name !== nextProps.name;
 		this.wait( nextProps, nextContext ).then( () => {
 			this.setStepSection( nextContext );

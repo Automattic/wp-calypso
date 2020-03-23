@@ -13,32 +13,20 @@ import ProductSelector from '../';
 const products = [
 	{
 		title: 'Jetpack Backup',
-		description: (
-			<Fragment>
-				Automatic scanning and one-click fixes keep your site one step ahead of security threats.{' '}
-				<a href="https://jetpack.com/">More info</a>
-			</Fragment>
-		),
+		description:
+			'Always-on backups ensure you never lose your site. Choose from real-time or daily backups.',
 		id: 'jetpack_backup',
 		options: {
 			yearly: [ 'jetpack_backup_daily', 'jetpack_backup_realtime' ],
 			monthly: [ 'jetpack_backup_daily_monthly', 'jetpack_backup_realtime_monthly' ],
 		},
-		optionsLabel: 'Backup options',
-	},
-	{
-		title: 'Jetpack Plan',
-		description: <Fragment>A Jetpack subscription of your choice.</Fragment>,
-		id: 'jetpack_plan',
-		options: {
-			yearly: [ 'jetpack_personal', 'jetpack_premium', 'jetpack_business' ],
-			monthly: [
-				'jetpack_personal_monthly',
-				'jetpack_premium_monthly',
-				'jetpack_business_monthly',
-			],
+		optionShortNames: {
+			jetpack_backup_daily: 'Daily Backups',
+			jetpack_backup_daily_monthly: 'Daily Backups',
+			jetpack_backup_realtime: 'Real-Time Backups',
+			jetpack_backup_realtime_monthly: 'Real-Time Backups',
 		},
-		optionsLabel: 'Plan options',
+		optionsLabel: 'Backup options',
 	},
 ];
 

@@ -10,7 +10,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
 import Button from 'components/forms/form-button';
 import {

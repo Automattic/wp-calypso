@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,9 +16,9 @@ import { getSite, isJetpackSiteMainNetworkSite } from 'state/sites/selectors';
  * Returns the member sites (main or secondary) of given network site
  * Returns null if main site is not found or if the site is not a main site of a network
  *
- * @param  {Object}  state       Global state tree
- * @param  {Number}  mainSiteId  The ID of the main site for which we're retrieving the network sites
- * @return {?Array}              Array of network sites (the main one and the secondary ones)
+ * @param  {object}  state       Global state tree
+ * @param  {number}  mainSiteId  The ID of the main site for which we're retrieving the network sites
+ * @returns {?Array}              Array of network sites (the main one and the secondary ones)
  */
 export default createSelector(
 	( state, mainSiteId ) => {

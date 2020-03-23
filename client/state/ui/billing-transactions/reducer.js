@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Internal dependencies
  */
@@ -12,9 +11,10 @@ import { combineReducers, keyedReducer } from 'state/utils';
 
 /**
  * Returns the updated app filter state after an action has been dispatched
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {String}        Updated state
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {string}        Updated state
  */
 export const app = ( state = null, action ) => {
 	if ( action.type === BILLING_TRANSACTIONS_FILTER_SET_APP ) {
@@ -25,9 +25,10 @@ export const app = ( state = null, action ) => {
 
 /**
  * Returns the updated date filter state after an action has been dispatched
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const date = ( state = { month: null, operator: null }, { type, month, operator } ) => {
 	if ( type === BILLING_TRANSACTIONS_FILTER_SET_MONTH ) {
@@ -41,9 +42,10 @@ export const date = ( state = { month: null, operator: null }, { type, month, op
 
 /**
  * Returns the updated page state after an action has been dispatched
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Number}        Updated state
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {number}        Updated state
  */
 export const page = ( state = 1, action ) => {
 	switch ( action.type ) {
@@ -60,9 +62,10 @@ export const page = ( state = 1, action ) => {
 
 /**
  * Returns the updated string search filter state after an action has been dispatched
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {String}        Updated state
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {string}        Updated state
  */
 export const query = ( state = '', action ) => {
 	if ( action.type === BILLING_TRANSACTIONS_FILTER_SET_QUERY ) {

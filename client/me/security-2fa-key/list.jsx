@@ -36,9 +36,6 @@ Security2faKeyList.propTypes = {
 	onDelete: PropTypes.func.isRequired,
 };
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-	}
-)( localize( Security2faKeyList ) );
+export default connect( null, {
+	recordGoogleEvent,
+} )( localize( Security2faKeyList ) );

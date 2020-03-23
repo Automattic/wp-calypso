@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -136,13 +135,19 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch receive action when request completes', () => {
-			return togglePlugin( siteId, plugin )( spy ).then( () => {
+			return togglePlugin(
+				siteId,
+				plugin
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( receivePlugins( siteId, apiResponse.data ) );
 			} );
 		} );
 
 		test( 'should dispatch save success action when request completes', () => {
-			return togglePlugin( siteId, plugin )( spy ).then( () => {
+			return togglePlugin(
+				siteId,
+				plugin
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS,
 					plugin,
@@ -152,7 +157,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			return togglePlugin( failedSiteId, plugin )( spy ).then( () => {
+			return togglePlugin(
+				failedSiteId,
+				plugin
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_TOGGLE_PLUGIN_FAILURE,
 					siteId: failedSiteId,

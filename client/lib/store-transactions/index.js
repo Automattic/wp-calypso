@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -42,7 +40,7 @@ const wpcom = wp.undocumented();
  * @returns {Readable} A stream of transaction flow steps.
  *
  * @param {object} params - Includes the cart, domainDetails etc...
- * @param {function} onStep - Callback
+ * @param {Function} onStep - Callback
  */
 export function submit( params, onStep ) {
 	return new TransactionFlow( params, onStep );
@@ -547,37 +545,3 @@ export async function getStripeConfiguration( requestArgs ) {
 	debug( 'Stripe configuration', config );
 	return config;
 }
-
-export function hasDomainDetails( transaction ) {
-	return ! isEmpty( transaction.domainDetails );
-}
-
-export function newCardPayment( newCardDetails ) {
-	return {
-		paymentMethod: 'WPCOM_Billing_MoneyPress_Paygate',
-		newCardDetails: newCardDetails || {},
-	};
-}
-
-export function newStripeCardPayment( newCardDetails ) {
-	return {
-		paymentMethod: 'WPCOM_Billing_Stripe_Payment_Method',
-		newCardDetails: newCardDetails || {},
-	};
-}
-
-export function storedCardPayment( storedCard ) {
-	return {
-		paymentMethod: 'WPCOM_Billing_MoneyPress_Stored',
-		storedCard: storedCard,
-	};
-}
-
-export function webPayment( newCardDetails ) {
-	return {
-		paymentMethod: 'WPCOM_Billing_Web_Payment',
-		newCardDetails: newCardDetails || {},
-	};
-}
-
-export const fullCreditsPayment = { paymentMethod: 'WPCOM_Billing_WPCOM' };

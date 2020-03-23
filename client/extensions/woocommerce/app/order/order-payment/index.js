@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
 import { isOrderFailed, isOrderWaitingPayment } from 'woocommerce/lib/order-status';
 import RefundDialog from './dialog';
@@ -141,7 +140,6 @@ class OrderPaymentCard extends Component {
 	}
 }
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { saveOrder }, dispatch )
-)( localize( OrderPaymentCard ) );
+export default connect( null, dispatch => bindActionCreators( { saveOrder }, dispatch ) )(
+	localize( OrderPaymentCard )
+);

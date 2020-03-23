@@ -41,7 +41,7 @@ class SiteRedirect extends Component {
 		this.checkSiteIsUpgradeable( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.selectedSiteId !== this.props.selectedSiteId ) {
 			this.checkSiteIsUpgradeable( nextProps );
 		}

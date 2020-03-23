@@ -3,52 +3,83 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled from '@emotion/styled';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
-import { getPaymentMethods } from '../lib/payment-methods';
-import { RadioButtons } from './basics';
 import RadioButton from './radio-button';
+import { useLocalize } from '../lib/localize';
+import {
+	useAllPaymentMethods,
+	usePaymentMethod,
+	usePaymentMethodId,
+	useIsStepActive,
+	useIsStepComplete,
+} from '../public-api';
+import CheckoutErrorBoundary from './checkout-error-boundary';
 
-export default function CheckoutPaymentMethods( {
-	summary,
-	isActive,
-	isComplete,
-	className,
-	availablePaymentMethods,
-	paymentMethod,
-	onChange,
-} ) {
-	const paymentMethods = getPaymentMethods();
-	const paymentMethodsToDisplay = availablePaymentMethods
-		? paymentMethods.filter( method => availablePaymentMethods.includes( method.id ) )
-		: paymentMethods;
+const debug = debugFactory( 'composite-checkout:checkout-payment-methods' );
+
+export default function CheckoutPaymentMethods( { summary, isComplete, className } ) {
+	const localize = useLocalize();
+
+	const paymentMethod = usePaymentMethod();
+	const [ , setPaymentMethod ] = usePaymentMethodId();
+	const onClickPaymentMethod = newMethod => {
+		debug( 'setting payment method to', newMethod );
+		setPaymentMethod( newMethod );
+	};
+	const paymentMethods = useAllPaymentMethods();
 
 	if ( summary && isComplete && paymentMethod ) {
+		debug( 'rendering selected paymentMethod', paymentMethod );
 		return (
 			<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
-				<PaymentMethod { ...paymentMethod } checked={ true } />
+				<CheckoutErrorBoundary
+					errorMessage={ localize( 'There was a problem with this payment method.' ) }
+				>
+					<PaymentMethod
+						{ ...paymentMethod }
+						checked={ true }
+						summary
+						ariaLabel={ paymentMethod.getAriaLabel( localize ) }
+					/>
+				</CheckoutErrorBoundary>
 			</div>
 		);
 	}
+
 	if ( summary ) {
+		debug(
+			'summary requested, but no complete paymentMethod is selected; isComplete:',
+			isComplete,
+			'paymentMethod:',
+			paymentMethod
+		);
 		return null;
 	}
+	debug( 'rendering paymentMethods', paymentMethods );
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-payment-methods' ] ) }>
 			<RadioButtons>
-				{ paymentMethodsToDisplay.map( method => (
-					<PaymentMethod
-						{ ...method }
-						isActive={ isActive }
-						isComplete={ isComplete }
+				{ paymentMethods.map( method => (
+					<CheckoutErrorBoundary
 						key={ method.id }
-						checked={ paymentMethod.id === method.id }
-						onClick={ onChange }
-					/>
+						errorMessage={
+							localize( 'There was a problem with the payment method:' ) + ' ' + method.id
+						}
+					>
+						<PaymentMethod
+							{ ...method }
+							checked={ paymentMethod?.id === method.id }
+							onClick={ onClickPaymentMethod }
+							ariaLabel={ method.getAriaLabel( localize ) }
+						/>
+					</CheckoutErrorBoundary>
 				) ) }
 			</RadioButtons>
 		</div>
@@ -58,26 +89,44 @@ export default function CheckoutPaymentMethods( {
 CheckoutPaymentMethods.propTypes = {
 	summary: PropTypes.bool,
 	isComplete: PropTypes.bool.isRequired,
-	isActive: PropTypes.bool.isRequired,
 	className: PropTypes.string,
-	availablePaymentMethods: PropTypes.arrayOf( PropTypes.string ),
-	paymentMethod: PropTypes.object,
-	onChange: PropTypes.func.isRequired,
 };
 
-function PaymentMethod( { id, LabelComponent, PaymentMethodComponent, checked, onClick } ) {
+export function CheckoutPaymentMethodsTitle() {
+	const localize = useLocalize();
+	const isActive = useIsStepActive();
+	const isComplete = useIsStepComplete();
+	return ! isActive && isComplete
+		? localize( 'Payment method' )
+		: localize( 'Pick a payment method' );
+}
+
+function PaymentMethod( {
+	id,
+	label,
+	activeContent,
+	inactiveContent,
+	checked,
+	onClick,
+	ariaLabel,
+	summary,
+} ) {
+	if ( summary ) {
+		return inactiveContent;
+	}
+
 	return (
-		<React.Fragment>
-			<RadioButton
-				name="paymentMethod"
-				value={ id }
-				checked={ checked }
-				onChange={ onClick ? () => onClick( id ) : null }
-			>
-				<LabelComponent />
-			</RadioButton>
-			{ PaymentMethodComponent && <PaymentMethodComponent isActive={ checked } /> }
-		</React.Fragment>
+		<RadioButton
+			name="paymentMethod"
+			value={ id }
+			id={ id }
+			checked={ checked }
+			onChange={ onClick ? () => onClick( id ) : null }
+			ariaLabel={ ariaLabel }
+			label={ label }
+		>
+			{ activeContent && activeContent }
+		</RadioButton>
 	);
 }
 
@@ -85,6 +134,13 @@ PaymentMethod.propTypes = {
 	id: PropTypes.string.isRequired,
 	onClick: PropTypes.func,
 	checked: PropTypes.bool.isRequired,
-	PaymentMethodComponent: PropTypes.func,
-	LabelComponent: PropTypes.func,
+	ariaLabel: PropTypes.string.isRequired,
+	activeContent: PropTypes.node,
+	label: PropTypes.node,
+	inactiveContent: PropTypes.node,
+	summary: PropTypes.bool,
 };
+
+export const RadioButtons = styled.div`
+	margin-bottom: 16px;
+`;

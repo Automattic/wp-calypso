@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,11 +13,11 @@ import { isGeneratingStats } from '../../../state/stats/selectors';
 import { generateStats } from '../../../state/stats/actions';
 
 class QueryStats extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.generateStats( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { siteId } = this.props;
 
 		if ( ! nextProps.siteId || siteId === nextProps.siteId ) {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -99,5 +97,11 @@ export default class AsyncBaseContainer {
 	async setABTestControlGroupsInLocalStorage() {
 		await overrideABTests.setABTestControlGroups( this.driver );
 		return await this.waitForPage();
+	}
+
+	async overrideABTestInLocalStorage( name, variation ) {
+		await overrideABTests.setOverriddenABTests( this.driver, name, variation );
+		await this.waitForPage();
+		return await this.driver.navigate().refresh();
 	}
 }

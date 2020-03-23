@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,14 +11,14 @@ import { isNumber, head, isNull } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
-import ImagePreloader from 'components/image-preloader';
+import MediaImage from 'my-sites/media-library/media-image';
+
 import ProductImageUploader from 'woocommerce/components/product-image-uploader';
 import Spinner from 'components/spinner';
 import TermTreeSelectorTerms from 'blocks/term-tree-selector/terms';
@@ -56,7 +55,7 @@ class ProductCategoryForm extends Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.category.image !== this.props.category.image ) {
 			const image = ( nextProps.category && nextProps.category.image ) || {};
 			this.setState( {
@@ -171,7 +170,7 @@ class ProductCategoryForm extends Component {
 		if ( src && ! isUploading ) {
 			image = (
 				<figure>
-					<ImagePreloader
+					<MediaImage
 						src={ src }
 						alt={ translate( 'Category thumbnail' ) }
 						placeholder={ placeholder ? <img src={ placeholder } alt="" /> : <span /> }
@@ -271,7 +270,7 @@ class ProductCategoryForm extends Component {
 										{ translate( 'Top level category', {
 											context:
 												'Categories: New category being created is top level i.e. has no parent',
-										} ) }{' '}
+										} ) }{ ' ' }
 									</span>
 								</FormLabel>
 

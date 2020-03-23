@@ -186,13 +186,11 @@
 
 .activity-log-item__actor {
 	display: flex;
-	flex-shrink: 0;
-	min-width: 180px;
-	max-width: 100%;
 	margin-right: 32px;
 	align-items: center;
 
 	@include breakpoint( '>960px' ) {
+		flex: 0 0 180px;
 		margin-left: -56px;
 	}
 
@@ -312,6 +310,7 @@
 
 .activity-log-item__action {
 	display: flex;
+	justify-content: flex-end;
 
 	@include breakpoint( '<480px' ) {
 		margin-top: 16px;
@@ -331,6 +330,10 @@
 			transform: translateY( -50% );
 		}
 	}
+}
+
+.activity-log-item__clone-action {
+	flex-shrink: 0;
 }
 
 .activity-log-item__help-action {

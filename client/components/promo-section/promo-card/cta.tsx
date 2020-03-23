@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import ActionPanelCta from 'components/action-panel/cta';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -26,6 +26,7 @@ interface CtaAction {
 export interface CtaButton {
 	text: string;
 	action: URL | ClickCallback | CtaAction;
+	component?: JSX.Element;
 }
 
 export type Cta =

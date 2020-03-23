@@ -1,0 +1,28 @@
+{
+	"featured": [
+		{
+			"title": "Twenty twenty",
+			"slug": "twentytwenty",
+			"src": "https://s.wordpress.com/mshots/v1/https%3A%2F%2Ftwentytwentydemo.wordpress.com%2F%3Ftheme_preview%3Dtrue?h=332&amp;vpw=960&amp;wph=960",
+			"srcset": "https://s.wordpress.com/mshots/v1/https%3A%2F%2Ftwentytwentydemo.wordpress.com%2F%3Ftheme_preview%3Dtrue?w=480&amp;h=332&amp;vpw=960&amp;wph=960 480w, https://s.wordpress.com/mshots/v1/https%3A%2F%2Ftwentytwentydemo.wordpress.com%2F%3Ftheme_preview%3Dtrue?w=240&amp;h=332&amp;vpw=960&amp;wph=960 240w"
+		},
+		{
+			"title": "Mayland",
+			"slug": "mayland",
+			"src": "https://s.wordpress.com/mshots/v1/https%3A%2F%2Fmaylanddemo.wordpress.com%2F%3Ftheme_preview%3Dtrue?h=332&amp;vpw=960&amp;wph=960",
+			"srcset": "https://s.wordpress.com/mshots/v1/https%3A%2F%2Fmaylanddemo.wordpress.com%2F%3Ftheme_preview%3Dtrue?w=480&amp;h=332&amp;vpw=960&amp;wph=960 480w, https://s.wordpress.com/mshots/v1/https%3A%2F%2Fmaylanddemo.wordpress.com%2F%3Ftheme_preview%3Dtrue?w=240&amp;h=332&amp;vpw=960&amp;wph=960 240w"
+		},
+		{
+			"title": "Rockfield",
+			"slug": "rockfield",
+			"src": "https://s.wordpress.com/mshots/v1/https%3A%2F%2Frockfielddemo.wordpress.com%2F%3Ftheme_preview%3Dtrue?h=332&amp;vpw=960&amp;wph=960",
+			"srcset": "https://s.wordpress.com/mshots/v1/https%3A%2F%2Frockfielddemo.wordpress.com%2F%3Ftheme_preview%3Dtrue?w=480&amp;h=332&amp;vpw=960&amp;wph=960 480w, https://s.wordpress.com/mshots/v1/https%3A%2F%2Frockfielddemo.wordpress.com%2F%3Ftheme_preview%3Dtrue?w=240&amp;h=332&amp;vpw=960&amp;wph=960 240w"
+		},
+		{
+			"title": "Barnsbury",
+			"slug": "barnsbury",
+			"src": "https://s.wordpress.com/mshots/v1/https%3A%2F%2Fbarnsburydemo.wordpress.com%2F%3Ftheme_preview%3Dtrue?h=332&amp;vpw=960&amp;wph=960",
+			"srcset": "https://s.wordpress.com/mshots/v1/https%3A%2F%2Fbarnsburydemo.wordpress.com%2F%3Ftheme_preview%3Dtrue?w=480&amp;h=332&amp;vpw=960&amp;wph=960 480w, https://s.wordpress.com/mshots/v1/https%3A%2F%2Fbarnsburydemo.wordpress.com%2F%3Ftheme_preview%3Dtrue?w=240&amp;h=332&amp;vpw=960&amp;wph=960 240w"
+		}
+	]
+}

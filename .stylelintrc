@@ -22,7 +22,7 @@
 
 		"unit-case": "lower",
 		"unit-no-unknown": true,
-		"unit-whitelist": [ "px", "%", "deg", "ms", "em", "vh", "vw", "rem", "s" ],
+		"unit-whitelist": [ "%", "deg", "em", "fr", "ms", "px", "rem", "s", "vh", "vw" ],
 
 		"value-list-comma-space-after": "always-single-line",
 		"value-list-comma-space-before": "never",

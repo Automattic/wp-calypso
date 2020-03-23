@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { flowRight, get, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FoldableCard from 'components/foldable-card';
 import { deleteFile } from '../../state/stats/actions';
 import { isDeletingFile } from '../../state/stats/selectors';
@@ -115,7 +113,4 @@ const connectComponent = connect(
 	{ deleteFile }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( CacheStats );
+export default flowRight( connectComponent, localize )( CacheStats );

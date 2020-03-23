@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import getPackageDescriptions from './get-package-descriptions';
 import { openPackage } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
@@ -121,7 +119,4 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { openPackage }, dispatch );
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( PackageList ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PackageList ) );

@@ -161,7 +161,8 @@ $image-height: 47px;
 .layout.is-jetpack-login {
 	background-color: var( --color-jetpack-onboarding-background );
 
-	.login__form-header {
+	.login__form-header,
+	.magic-login__form-header {
 		color: var( --color-jetpack-onboarding-text );
 	}
 
@@ -191,7 +192,8 @@ $image-height: 47px;
 	.wp-login__links button,
 	.logged-out-form__links a,
 	.logged-out-form__link-item,
-	.translator-invite__content a {
+	.translator-invite__content a,
+	.magic-login__footer a {
 		color: var( --color-neutral-20 );
 		border-bottom-color: var( --color-neutral-70 );
 

@@ -12,6 +12,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import DocumentHead from 'components/data/document-head';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
@@ -25,23 +26,16 @@ import PluginsBrowserList from 'my-sites/plugins/plugins-browser-list';
 import PluginsListStore from 'lib/plugins/wporg-data/list-store';
 import PluginsActions from 'lib/plugins/wporg-data/actions';
 import urlSearch from 'lib/url-search';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import getRecommendedPlugins from 'state/selectors/get-recommended-plugins';
 import hasJetpackSites from 'state/selectors/has-jetpack-sites';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import {
-	getSitePlan,
-	isJetpackSite,
-	isRequestingSites,
-	canJetpackSiteManage,
-} from 'state/sites/selectors';
+import { getSitePlan, isJetpackSite, isRequestingSites } from 'state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
-import NonSupportedJetpackVersionNotice from 'my-sites/plugins/not-supported-jetpack-version';
 import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { isBusiness, isEcommerce, isEnterprise, isPremium } from 'lib/products-values';
 import { TYPE_BUSINESS } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
@@ -482,7 +476,7 @@ export class PluginsBrowser extends Component {
 				href={ uploadUrl }
 			>
 				<Gridicon icon="cloud-upload" />
-				<span className="plugins-browser__button-text">{ translate( 'Install Plugin' ) }</span>
+				<span className="plugins-browser__button-text">{ translate( 'Install plugin' ) }</span>
 			</Button>
 		);
 	}
@@ -507,40 +501,6 @@ export class PluginsBrowser extends Component {
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
-	}
-
-	getMockPluginItems() {
-		return (
-			<PluginsBrowserList
-				plugins={ this.getPluginsShortList( 'popular' ) }
-				listName={ 'Plugins' }
-				title={ this.props.translate( 'Popular Plugins' ) }
-				size={ 12 }
-			/>
-		);
-	}
-
-	renderDocumentHead() {
-		return <DocumentHead title={ this.props.translate( 'Plugin Browser', { textOnly: true } ) } />;
-	}
-
-	renderJetpackManageError() {
-		const { selectedSiteId } = this.props;
-
-		return (
-			<MainComponent>
-				{ this.renderDocumentHead() }
-				<SidebarNavigation />
-				<JetpackManageErrorPage
-					template="optInManage"
-					title={ this.props.translate( "Looking to manage this site's plugins?" ) }
-					siteId={ selectedSiteId }
-					section="plugins"
-					illustration="/calypso/images/jetpack/jetpack-manage.svg"
-					featureExample={ this.getMockPluginItems() }
-				/>
-			</MainComponent>
-		);
 	}
 
 	renderUpgradeNudge() {
@@ -597,19 +557,19 @@ export class PluginsBrowser extends Component {
 			);
 		}
 
-		if ( this.props.jetpackManageError ) {
-			return this.renderJetpackManageError();
-		}
-
 		return (
 			<MainComponent wideLayout>
 				{ this.isRecommendedPluginsEnabled() && (
 					<QuerySiteRecommendedPlugins siteId={ this.props.selectedSiteId } />
 				) }
 				{ this.renderPageViewTracker() }
-				<NonSupportedJetpackVersionNotice />
-				{ this.renderDocumentHead() }
+				<DocumentHead title={ this.props.translate( 'Plugin Browser', { textOnly: true } ) } />
 				<SidebarNavigation />
+				<FormattedHeader
+					className="plugins-browser__page-heading"
+					headerText={ this.props.translate( 'Plugin Browser' ) }
+					align="left"
+				/>
 				{ this.renderUpgradeNudge() }
 				{ this.getPageHeaderView() }
 				{ this.getPluginBrowserContent() }
@@ -641,9 +601,6 @@ export default flow(
 				isJetpackSite: isJetpackSite( state, selectedSiteId ),
 				isVipSite: isVipSite( state, selectedSiteId ),
 				hasJetpackSites: hasJetpackSites( state ),
-				jetpackManageError:
-					!! isJetpackSite( state, selectedSiteId ) &&
-					! canJetpackSiteManage( state, selectedSiteId ),
 				isRequestingSites: isRequestingSites( state ),
 				noPermissionsError:
 					!! selectedSiteId && ! canCurrentUser( state, selectedSiteId, 'manage_options' ),

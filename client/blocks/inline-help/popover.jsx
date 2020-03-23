@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -25,7 +24,7 @@ import {
 	hideOnboardingWelcomePrompt,
 	hideChecklistPrompt,
 } from 'state/inline-help/actions';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Popover from 'components/popover';
 import ChecklistOnboardingWelcome from 'my-sites/checklist/wpcom-checklist/checklist-onboarding-welcome';
 import InlineHelpSearchResults from './inline-help-search-results';
@@ -246,7 +245,13 @@ class InlineHelpPopover extends Component {
 			showOptIn,
 			showOptOut,
 			onClose,
+			isCheckout,
 		} = this.props;
+
+		// Don't show additional items inside Checkout.
+		if ( isCheckout ) {
+			return null;
+		}
 
 		return (
 			<>
@@ -378,6 +383,7 @@ function mapStateToProps( state ) {
 		showOptOut: isGutenbergOptOutEnabled( state, siteId ),
 		showOptIn: optInEnabled && isCalypsoClassic,
 		gutenbergUrl,
+		isCheckout: section.name && section.name === 'checkout',
 	};
 }
 
@@ -393,8 +399,5 @@ const mapDispatchToProps = {
 
 export default compose(
 	localize,
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)
+	connect( mapStateToProps, mapDispatchToProps )
 )( InlineHelpPopover );

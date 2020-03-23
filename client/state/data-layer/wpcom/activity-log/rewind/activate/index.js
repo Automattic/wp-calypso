@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,7 +15,7 @@ import {
 	REWIND_STATE_UPDATE,
 } from 'state/action-types';
 import { successNotice, errorNotice } from 'state/notices/actions';
-import { requestRewindState } from 'state/rewind/actions';
+import { requestRewindState } from 'state/rewind/state/actions';
 import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';

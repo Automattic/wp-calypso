@@ -1,6 +1,5 @@
-/** @format */
 /**
- * @fileoverview Disallow the use of this.translate
+ * @file Disallow the use of this.translate
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.

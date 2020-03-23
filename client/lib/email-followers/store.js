@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { omit } from 'lodash';
-import deterministicStringify from 'json-stable-stringify';
+import deterministicStringify from 'fast-json-stable-stringify';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:email-followers-store' );
 
@@ -15,13 +12,13 @@ const debug = debugFactory( 'calypso:email-followers-store' );
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
 
-const _fetchingFollowersByNamespace = {}, // store fetching state (boolean)
-	_followersBySite = {}, // store user objects
-	_totalFollowersByNamespace = {}, // store total found for params
-	_followersFetchedByNamespace = {}, // store fetch progress
-	_pageByNamespace = {}, // store fetch progress
-	_followerIDsByNamespace = {}, // store user order
-	_removingFromSite = {};
+const _fetchingFollowersByNamespace = {}; // store fetching state (boolean)
+const _followersBySite = {}; // store user objects
+const _totalFollowersByNamespace = {}; // store total found for params
+const _followersFetchedByNamespace = {}; // store fetch progress
+const _pageByNamespace = {}; // store fetch progress
+const _followerIDsByNamespace = {}; // store user order
+const _removingFromSite = {};
 
 const EmailFollowersStore = {
 	// This data may help with infinite scrolling

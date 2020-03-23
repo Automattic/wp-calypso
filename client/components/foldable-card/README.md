@@ -40,3 +40,4 @@ Name | Type | Default | Description
 `onOpen` | `function` | null | Function to be executed in addition to the expand action when the card is opened.
 `summary` | `string` | null | A string or component to show next to the action button when closed.
 `clickableHeader` | `bool` | false | Indicates if the whole header can be clicked to open the card.
+`highlight` | `string` | null | Displays a colored highlight. If specified (default is no highlight), can be one of `info`, `success`, `error`, or `warning`.

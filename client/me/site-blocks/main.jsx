@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,17 +9,19 @@ import { times } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import SectionHeader from 'components/section-header';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySiteBlocks from 'components/data/query-site-blocks';
-import getBlockedSites from 'state/selectors/get-blocked-sites';
-import isFetchingSiteBlocks from 'state/selectors/is-fetching-site-blocks';
-import getSiteBlocksCurrentPage from 'state/selectors/get-site-blocks-current-page';
-import getSiteBlocksLastPage from 'state/selectors/get-site-blocks-last-page';
+import {
+	getBlockedSites,
+	isFetchingSiteBlocks,
+	getSiteBlocksCurrentPage,
+	getSiteBlocksLastPage,
+} from 'state/reader/site-blocks/selectors';
 import SiteBlockListItem from './list-item';
 import InfiniteList from 'components/infinite-list';
 import { requestSiteBlocks } from 'state/reader/site-blocks/actions';

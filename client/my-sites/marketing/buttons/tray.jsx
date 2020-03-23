@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -46,7 +44,7 @@ class SharingButtonsTray extends React.Component {
 		isReordering: false,
 	};
 
-	componentWillUpdate( nextProps ) {
+	UNSAFE_componentWillUpdate( nextProps ) {
 		if ( this.props.visibility !== nextProps.visibility ) {
 			this.setState( { isReordering: false } );
 		}

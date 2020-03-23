@@ -205,6 +205,9 @@
 	div {
 		width: auto !important; // override inline style in content markup
 	}
+	.banner__icon-circle {
+		width: 24px !important;
+	}
 
 	p:last-child {
 		margin-bottom: 0;

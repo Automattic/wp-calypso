@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +9,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class SiteSelectorAddSite extends Component {
@@ -27,14 +26,11 @@ class SiteSelectorAddSite extends Component {
 		return (
 			<span className="site-selector__add-new-site">
 				<Button borderless href={ this.getAddNewSiteUrl() } onClick={ this.recordAddNewSite }>
-					<Gridicon icon="add-outline" /> { translate( 'Add New Site' ) }
+					<Gridicon icon="add-outline" /> { translate( 'Add new site' ) }
 				</Button>
 			</span>
 		);
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( localize( SiteSelectorAddSite ) );
+export default connect( null, { recordTracksEvent } )( localize( SiteSelectorAddSite ) );

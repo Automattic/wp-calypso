@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,14 +5,12 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get } from 'lodash';
-import { abtest } from 'lib/abtest';
 
 /**
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
@@ -23,7 +19,6 @@ import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
-import { getSignupProgress } from 'state/signup/progress/selectors';
 
 /**
  * Style dependencies
@@ -44,24 +39,7 @@ class SiteTitleStep extends Component {
 		siteType: PropTypes.string,
 	};
 
-	getDomainFormLastQuery() {
-		return get(
-			find( this.props.signupProgress, { stepName: 'domains-with-preview' } ),
-			[ 'domainForm', 'lastQuery' ],
-			null
-		);
-	}
-
 	componentDidMount() {
-		if (
-			this.props.flowName === 'onboarding' &&
-			'variant' === abtest( 'prefillSiteTitleWithDomainQuery' )
-		) {
-			const domainLastQuery = this.getDomainFormLastQuery();
-			if ( domainLastQuery && ! this.props.siteTitle ) {
-				this.props.setSiteTitle( domainLastQuery );
-			}
-		}
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
@@ -102,7 +80,7 @@ class SiteTitleStep extends Component {
 							/>
 							<Button primary type="submit" onClick={ this.handleSubmit }>
 								{ this.props.translate( 'Continue' ) }
-							</Button>{' '}
+							</Button>{ ' ' }
 						</FormFieldset>
 					</div>
 				</form>
@@ -135,7 +113,6 @@ class SiteTitleStep extends Component {
 
 export default connect(
 	state => ( {
-		signupProgress: getSignupProgress( state ),
 		siteTitle: getSiteTitle( state ),
 		siteType: getSiteType( state ),
 	} ),

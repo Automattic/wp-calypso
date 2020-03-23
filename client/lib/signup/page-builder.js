@@ -29,6 +29,7 @@ export function isBlockEditorSectionInTest( state ) {
 
 /**
  * This is only to be used once there is a `site` object post-signup
+ *
  * @param {object} state  Redux state
  * @param {number} siteId Current site ID
  * @returns {bool}        Is the site qualified?

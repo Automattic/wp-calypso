@@ -1,5 +1,4 @@
-/** @format */
-
+/* eslint-disable jsdoc/no-undefined-types */
 /**
  * External dependencies
  */
@@ -15,6 +14,7 @@ import {
 	EDITOR_AUTOSAVE_RESET,
 	EDITOR_AUTOSAVE_SUCCESS,
 	EDITOR_AUTOSAVE_FAILURE,
+	EDITOR_IFRAME_LOADED,
 	EDITOR_LOADING_ERROR_RESET,
 	EDITOR_PASTE_EVENT,
 	EDITOR_RESET,
@@ -47,9 +47,9 @@ export const MODAL_VIEW_STATS = {
  * Returns an action object to be used in signalling that the editor should
  * begin to edit the post with the specified post ID, or `null` as a new post.
  *
- * @param  {Number}  siteId   Site ID
- * @param  {?Number} postId   Post ID
- * @return {Action}           Action object
+ * @param  {number}  siteId   Site ID
+ * @param  {?number} postId   Post ID
+ * @returns {Action}           Action object
  */
 export function startEditingPost( siteId, postId ) {
 	return dispatch => {
@@ -78,9 +78,9 @@ export function startEditingNewPost( siteId, post ) {
  * Returns an action object to be used in signalling that the editor should
  * stop editing.
  *
- * @param  {Number}  siteId Site ID
- * @param  {?Number} postId Post ID
- * @return {Action}         Action object
+ * @param  {number}  siteId Site ID
+ * @param  {?number} postId Post ID
+ * @returns {Action}         Action object
  */
 export function stopEditingPost( siteId, postId ) {
 	return dispatch => {
@@ -93,8 +93,8 @@ export function stopEditingPost( siteId, postId ) {
  * Returns an action object to be used in signalling that the user has pasted
  * some content from source.
  *
- * @param {String} source Identifier of the app the content was pasted from.
- * @return {Object} Action object
+ * @param {string} source Identifier of the app the content was pasted from.
+ * @returns {object} Action object
  */
 export function pasteEvent( source ) {
 	return {
@@ -108,7 +108,7 @@ export function pasteEvent( source ) {
  * view should be updated in the context of the post editor.
  *
  * @param  {ModalViews} view Media view
- * @return {Object}          Action object
+ * @returns {object}          Action object
  */
 export function setEditorMediaModalView( view ) {
 	const action = setMediaModalView( view );
@@ -125,9 +125,9 @@ export function setEditorMediaModalView( view ) {
  * Returns an action object used in signalling that the confirmation sidebar
  * preference has changed.
  *
- * @param  {Number}  siteId    Site ID
+ * @param  {number}  siteId    Site ID
  * @param  {?Bool}   isEnabled Whether or not the sidebar should be shown
- * @return {Object}            Action object
+ * @returns {object}            Action object
  */
 export function saveConfirmationSidebarPreference( siteId, isEnabled = true ) {
 	return ( dispatch, getState ) => {
@@ -155,6 +155,11 @@ export function saveConfirmationSidebarPreference( siteId, isEnabled = true ) {
 		dispatch( bumpStat( 'calypso_publish_confirmation', isEnabled ? 'enabled' : 'disabled' ) );
 	};
 }
+
+export const setEditorIframeLoaded = ( isIframeLoaded = true ) => ( {
+	type: EDITOR_IFRAME_LOADED,
+	isIframeLoaded,
+} );
 
 export const editorAutosaveReset = () => ( {
 	type: EDITOR_AUTOSAVE_RESET,
@@ -208,6 +213,7 @@ export function editorEditRawContent( content ) {
 
 /**
  * Unsets the raw TinyMCE content value
+ *
  * @returns {Action} Action object
  */
 export function editorResetRawContent() {

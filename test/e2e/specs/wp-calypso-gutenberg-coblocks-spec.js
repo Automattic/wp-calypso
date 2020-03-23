@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,6 +20,8 @@ const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
+const gutenbergUser =
+	process.env.GUTENBERG_EDGE === 'true' ? 'gutenbergSimpleSiteEdgeUser' : 'gutenbergSimpleSiteUser';
 
 let driver;
 
@@ -33,37 +33,9 @@ before( async function() {
 describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, function() {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Insert a Buttons block: @parallel', function() {
-		step( 'Can log in', async function() {
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
-			return await this.loginFlow.loginAndStartNewPost( null, true );
-		} );
-
-		step( 'Can insert the Buttons block', async function() {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			await gEditorComponent.addBlock( 'Buttons' );
-			return await driverHelper.waitTillPresentAndDisplayed(
-				driver,
-				By.css( '.wp-block-coblocks-buttons' )
-			);
-		} );
-
-		step( 'Can publish and view content', async function() {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			return await gEditorComponent.publish( { visit: true } );
-		} );
-
-		step( 'Can see the Buttons block in our published post', async function() {
-			return await driverHelper.waitTillPresentAndDisplayed(
-				driver,
-				By.css( '.wp-block-coblocks-buttons' )
-			);
-		} );
-	} );
-
 	describe( 'Insert a Click to Tweet block: @parallel', function() {
 		step( 'Can log in', async function() {
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
@@ -122,7 +94,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 
 	describe( 'Insert a Dynamic HR block: @parallel', function() {
 		step( 'Can log in', async function() {
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
@@ -150,7 +122,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 
 	describe( 'Insert a Hero block: @parallel', function() {
 		step( 'Can log in', async function() {
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
@@ -186,13 +158,13 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		} );
 
 		step( 'Can log in', async function() {
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
 		step( 'Can insert the Logos & Badges block', async function() {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			await gEditorComponent.addBlock( 'Logos' );
+			await gEditorComponent.addBlock( 'Logos & Badges' );
 			return await driverHelper.waitTillPresentAndDisplayed(
 				driver,
 				By.css( '.wp-block-coblocks-logos' )
@@ -202,7 +174,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		step( 'Can select an image as a logo', async function() {
 			await driverHelper.waitTillPresentAndDisplayed(
 				driver,
-				By.css( '.editor-media-placeholder' )
+				By.css( '.block-editor-media-placeholder' )
 			);
 			await driverHelper.waitTillPresentAndDisplayed(
 				driver,
@@ -233,7 +205,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 
 	describe( 'Insert a Pricing Table block: @parallel', function() {
 		step( 'Can log in', async function() {
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -152,7 +150,9 @@ const ProductFormSimpleCard = ( {
 								'You can enable it under your {{managementLink}}inventory settings{{/managementLink}}.',
 							{
 								components: {
-									managementLink: <a href={ inventorySettingsUrl } target="_blank" />,
+									managementLink: (
+										<a href={ inventorySettingsUrl } target="_blank" rel="noopener noreferrer" />
+									),
 								},
 							}
 						) }

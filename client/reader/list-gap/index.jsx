@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -62,9 +61,4 @@ class Gap extends React.Component {
 	}
 }
 
-export default localize(
-	connect(
-		null,
-		{ fillGap }
-	)( Gap )
-);
+export default localize( connect( null, { fillGap } )( Gap ) );

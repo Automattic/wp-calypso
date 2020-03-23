@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -117,7 +115,7 @@ class ThemesUpsellComponent extends Component {
 						<Feature
 							icon={ <Gridicon icon="types" size={ 48 } /> }
 							title="Access our Entire Library of Premium Themes"
-							description="Professional site designs can be expensive, so we’ve negotiated deals on your behalf with many of the most prominent WordPress theme designers in the world. As a Business plan customer, you’ll gain access to our entire library of 197 premium site themes for no additional fee."
+							description="Professional site designs can be expensive, so we’ve negotiated deals on your behalf with many of the most prominent WordPress theme designers in the world. As a Business plan customer, you’ll gain access to our entire library of premium themes for no additional fee."
 						/>
 					</div>
 
@@ -292,10 +290,7 @@ const mapDispatchToProps = dispatch => ( {
 } );
 
 export default flowRight(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	),
+	connect( mapStateToProps, mapDispatchToProps ),
 	localize,
 	redirectUnlessCanUpgradeSite,
 	redirectIf( ( state, siteId ) => hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ), '/themes' )

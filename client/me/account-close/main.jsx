@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -24,12 +22,12 @@ import ActionPanelFigureList from 'components/action-panel/figure-list';
 import ActionPanelFigureListItem from 'components/action-panel/figure-list-item';
 import ActionPanelLink from 'components/action-panel/link';
 import ActionPanelFooter from 'components/action-panel/footer';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import AccountCloseConfirmDialog from './confirm-dialog';
 import QueryUserPurchases from 'components/data/query-user-purchases';
-import QuerySites from 'components/data/query-sites';
 import { getCurrentUser } from 'state/current-user/selectors';
 import hasLoadedSites from 'state/selectors/has-loaded-sites';
+import getAccountClosureSites from 'state/selectors/get-account-closure-sites';
 import userHasAnyAtomicSites from 'state/selectors/user-has-any-atomic-sites';
 import isAccountClosed from 'state/selectors/is-account-closed';
 import { hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
@@ -45,9 +43,10 @@ import './style.scss';
 class AccountSettingsClose extends Component {
 	state = {
 		showConfirmDialog: false,
+		showSiteDropdown: true,
 	};
 
-	componentWillReceiveProps = nextProps => {
+	UNSAFE_componentWillReceiveProps = nextProps => {
 		// If the account is closed, logout
 		if ( nextProps.isAccountClosed === true ) {
 			userUtils.logout();
@@ -73,6 +72,12 @@ class AccountSettingsClose extends Component {
 		this.setState( { showConfirmDialog: false } );
 	};
 
+	handleSiteDropdown = () => {
+		this.setState( state => ( {
+			showSiteDropdown: ! state.showSiteDropdown,
+		} ) );
+	};
+
 	render() {
 		const {
 			translate,
@@ -85,12 +90,12 @@ class AccountSettingsClose extends Component {
 		const isDeletePossible = ! isLoading && ! hasAtomicSites && ! hasCancelablePurchases;
 		const containerClasses = classnames( 'account-close', 'main', {
 			'is-loading': isLoading,
+			'is-hiding-other-sites': this.state.showSiteDropdown,
 		} );
 
 		return (
 			<div className={ containerClasses } role="main">
 				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
-				<QuerySites allSites />
 				<HeaderCake onClick={ this.goBack }>
 					<h1>{ translate( 'Close account' ) }</h1>
 				</HeaderCake>
@@ -108,10 +113,37 @@ class AccountSettingsClose extends Component {
 									<ActionPanelFigureListItem>
 										{ translate( 'Personal details' ) }
 									</ActionPanelFigureListItem>
-									<ActionPanelFigureListItem>{ translate( 'Sites' ) }</ActionPanelFigureListItem>
-									<ActionPanelFigureListItem>{ translate( 'Posts' ) }</ActionPanelFigureListItem>
-									<ActionPanelFigureListItem>{ translate( 'Pages' ) }</ActionPanelFigureListItem>
-									<ActionPanelFigureListItem>{ translate( 'Media' ) }</ActionPanelFigureListItem>
+									{ this.props.sitesToBeDeleted.length > 0 && (
+										<Fragment>
+											<ActionPanelFigureListItem className="account-close__sites-item">
+												{ translate( 'Sites' ) }
+												<Gridicon
+													size={ 18 }
+													onClick={ this.handleSiteDropdown }
+													icon="chevron-down"
+												/>
+												{ this.state.showSiteDropdown && (
+													<ul className="account-close__sites-list">
+														{ this.props.sitesToBeDeleted.map( sitesToBeDeleted => (
+															<li key={ sitesToBeDeleted.slug }>
+																{ [ sitesToBeDeleted.name ] }
+																<span>{ [ sitesToBeDeleted.slug ] }</span>
+															</li>
+														) ) }
+													</ul>
+												) }
+											</ActionPanelFigureListItem>
+											<ActionPanelFigureListItem>
+												{ translate( 'Posts' ) }
+											</ActionPanelFigureListItem>
+											<ActionPanelFigureListItem>
+												{ translate( 'Pages' ) }
+											</ActionPanelFigureListItem>
+											<ActionPanelFigureListItem>
+												{ translate( 'Media' ) }
+											</ActionPanelFigureListItem>
+										</Fragment>
+									) }
 									<ActionPanelFigureListItem>{ translate( 'Domains' ) }</ActionPanelFigureListItem>
 									<ActionPanelFigureListItem>{ translate( 'Gravatar' ) }</ActionPanelFigureListItem>
 									{ purchasedPremiumThemes && purchasedPremiumThemes.length > 0 && (
@@ -256,5 +288,6 @@ export default connect( state => {
 		purchasedPremiumThemes,
 		hasAtomicSites: userHasAnyAtomicSites( state ),
 		isAccountClosed: isAccountClosed( state ),
+		sitesToBeDeleted: getAccountClosureSites( state ),
 	};
 } )( localize( AccountSettingsClose ) );

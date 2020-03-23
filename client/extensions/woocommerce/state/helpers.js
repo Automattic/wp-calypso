@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,8 +15,8 @@ import { isFunction, isObject } from 'lodash';
  *
  * @param {Function} dispatch The dispatch function (same as in an action thunk)
  * @param {Function} getState Gets the current state (same as in an action thunk)
- * @param {Object|Function} action The action to be dispatched
- * @param {Object} props The props to be sent to the function or assigned to the object.
+ * @param {object|Function} action The action to be dispatched
+ * @param {object} props The props to be sent to the function or assigned to the object.
  */
 export function dispatchWithProps( dispatch, getState, action, props ) {
 	if ( isFunction( action ) ) {

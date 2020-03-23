@@ -11,42 +11,48 @@ import { removeQueryArgs } from '@wordpress/url';
 
 /**
  * A full asset URL.
- * @typedef {String} URL
+ *
+ * @typedef {string} URL
  */
 
 /**
  * Gutenberg Block.
- * @typedef {Object} GutenbergBlock
- * @property {String} clientId A unique id of the block.
- * @property {String} name A block name, like "core/paragraph".
+ *
+ * @typedef {object} GutenbergBlock
+ * @property {string} clientId A unique id of the block.
+ * @property {string} name A block name, like "core/paragraph".
  * @property {Array<GutenbergBlock>} innerBlocks Nested blocks.
- * @property {Object} attributes An object with attributes, different for each block type.
+ * @property {object} attributes An object with attributes, different for each block type.
  */
 
 /**
  * Usage object contains an info that certain property is used inside another object.
- * @typedef {Object} Usage
- * @property {String} prop Name of the property.
- * @property {Array<String|Number>} path A path inside an object where prop is, defined as list of keys.
+ *
+ * @typedef {object} Usage
+ * @property {string} prop Name of the property.
+ * @property {Array<string|number>} path A path inside an object where prop is, defined as list of keys.
  */
 
 /**
  * An asset file that is referenced in blocks.
- * @typedef {Object} Asset
+ *
+ * @typedef {object} Asset
  * @property {URL} url A full URL of the asset.
  * @property {Array<Usage>} usages A list of {@link Usage} objects.
  */
 
 /**
  * A collection of {@link Asset} objects, keyed by their URLs.
- * @typedef {Object.<String, Asset>} Assets URLs as keys, {@link Asset}.as a values.
+ *
+ * @typedef {object.<string, Asset>} Assets URLs as keys, {@link Asset}.as a values.
  */
 
 /**
  * FetchSession describes a set of blocks and their assets.
- * @typedef {Object} FetchSession
+ *
+ * @typedef {object} FetchSession
  * @property {Array<GutenbergBlock>} blocks List of Gutenberg blocks.
- * @property {Object<String, GutenbergBlock>} blocksByClientId Blocks, keyed by their `clientId`
+ * @property {object<string, GutenbergBlock>} blocksByClientId Blocks, keyed by their `clientId`
  * @property {Assets} assets A list of assets detected in blocks.
  */
 
@@ -166,7 +172,7 @@ const fetchAssets = async assets => {
  * their new local copies.
  *
  * @param {FetchSession} session A current session.
- * @param {Object<String,Object>} fetchedAssets Fetched assets.
+ * @param {object<string, object>} fetchedAssets Fetched assets.
  * @returns {Array<GutenbergBlock>} A promise resolving into an array of blocks.
  */
 const getBlocksWithAppliedAssets = ( session, fetchedAssets ) => {

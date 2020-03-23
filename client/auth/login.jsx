@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -170,9 +168,6 @@ export class Auth extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-	}
-)( localize( Auth ) );
+export default connect( null, {
+	recordGoogleEvent,
+} )( localize( Auth ) );

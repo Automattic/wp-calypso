@@ -1,22 +1,23 @@
 /**
  * External dependencies
  */
-import { get, mapValues, reduce, reduceRight } from 'lodash';
+import { get, mapValues, pick, reduce, reduceRight } from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
  */
-import { APPLY_STORED_STATE, SERIALIZE } from 'state/action-types';
+import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { SerializationResult } from 'state/serialization-result';
 import { withoutPersistence } from './without-persistence';
 
 /**
  * Create a new reducer from original `reducers` by adding a new `reducer` at `keyPath`
+ *
  * @param {Function} origReducer Original reducer to copy `storageKey` and other flags from
- * @param {Object} reducers Object with reducer names as keys and reducer functions as values that
+ * @param {object} reducers Object with reducer names as keys and reducer functions as values that
  *   is used as parameter to `combineReducers` (the original Redux one and our extension, too).
- * @return {Function} The function to be attached as `addReducer` method to the
+ * @returns {Function} The function to be attached as `addReducer` method to the
  *   result of `combineReducers`.
  */
 export function addReducer( origReducer, reducers ) {
@@ -75,6 +76,7 @@ export function addReducer( origReducer, reducers ) {
  * If you don't need state to be stored, simply use this method instead of
  * combineReducers from redux. This function uses the same interface.
  * *
+ *
  * @example
  * const age = ( state = 0, action ) =>
  *     GROW === action.type
@@ -129,7 +131,7 @@ export function addReducer( origReducer, reducers ) {
  * combinedReducer( { date: new Date( 6 ), height: 123 } ), { type: GROW } ); // { date: new Date( 7 ), height: 124 };
  *
  * @param {object} reducers - object containing the reducers to merge
- * @returns {function} - Returns the combined reducer function
+ * @returns {Function} - Returns the combined reducer function
  */
 export function combineReducers( reducers ) {
 	// set up persistence of reducers passed from app and then create a combined one
@@ -163,6 +165,9 @@ function createCombinedReducer( reducers ) {
 		switch ( action.type ) {
 			case SERIALIZE:
 				return serializeState( reducers, state, action );
+
+			case DESERIALIZE:
+				return combined( pick( state, Object.keys( reducers ) ), action );
 
 			case APPLY_STORED_STATE:
 				return applyStoredState( reducers, state, action );
@@ -239,8 +244,7 @@ function setupReducerPersistence( reducer ) {
 
 	if ( reducer.schema ) {
 		throw new Error(
-			'`schema` properties in reducers are no longer supported.' +
-				'Please use createReducerWithValidation or wrap reducers with withSchemaValidation.'
+			'`schema` properties in reducers are no longer supported. Please wrap reducers with withSchemaValidation.'
 		);
 	}
 

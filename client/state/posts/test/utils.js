@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -573,14 +571,20 @@ describe( 'utils', () => {
 			);
 
 			expect( edited ).toEqual( {
-				metadata: [ { key: 'geo_latitude', value: '10' }, { key: 'geo_longitude', value: '20' } ],
+				metadata: [
+					{ key: 'geo_latitude', value: '10' },
+					{ key: 'geo_longitude', value: '20' },
+				],
 			} );
 		} );
 
 		test( 'should remove metadata', () => {
 			const edited = applyPostEdits(
 				deepFreeze( {
-					metadata: [ { key: 'geo_latitude', value: '10' }, { key: 'geo_longitude', value: '20' } ],
+					metadata: [
+						{ key: 'geo_latitude', value: '10' },
+						{ key: 'geo_longitude', value: '20' },
+					],
 				} ),
 				{
 					metadata: [ { key: 'geo_longitude', operation: 'delete' } ],

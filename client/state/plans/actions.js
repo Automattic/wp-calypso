@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Internal dependencies
  */
@@ -14,7 +13,7 @@ import 'state/data-layer/wpcom/plans';
  * Action creator function: RECEIVE
  *
  * @param {Array} plans - WordPress.com plans list
- * @return {Object} action object
+ * @returns {object} action object
  */
 export const plansReceiveAction = plans => {
 	return {
@@ -26,7 +25,7 @@ export const plansReceiveAction = plans => {
 /**
  * Action creator function: REQUEST_SUCCESS
  *
- * @return {Object} action object
+ * @returns {object} action object
  */
 export const plansRequestSuccessAction = () => {
 	return { type: PLANS_REQUEST_SUCCESS };
@@ -35,8 +34,8 @@ export const plansRequestSuccessAction = () => {
 /**
  * Action creator function: REQUEST_FAILURE
  *
- * @param {String} error - error message
- * @return {Object} action object
+ * @param {string} error - error message
+ * @returns {object} action object
  */
 export const plansRequestFailureAction = error => {
 	return {
@@ -48,7 +47,7 @@ export const plansRequestFailureAction = error => {
 /**
  * Action creator to request WordPress.com plans: REQUEST
  *
- * @return {Object} action object
+ * @returns {object} action object
  */
 export const requestPlans = () => ( {
 	type: PLANS_REQUEST,

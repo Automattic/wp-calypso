@@ -13,6 +13,27 @@ import i18n from 'i18n-calypso';
  */
 import './style.scss';
 
+/**
+ * Image assets
+ */
+import creditCardAmexImage from 'assets/images/upgrades/cc-amex.svg';
+import creditCardDinersImage from 'assets/images/upgrades/cc-diners.svg';
+import creditCardDiscoverImage from 'assets/images/upgrades/cc-discover.svg';
+import creditCardJCBImage from 'assets/images/upgrades/cc-jcb.svg';
+import creditCardMasterCardImage from 'assets/images/upgrades/cc-mastercard.svg';
+import creditCardUnionPayImage from 'assets/images/upgrades/cc-unionpay.svg';
+import creditCardVisaImage from 'assets/images/upgrades/cc-visa.svg';
+
+const LOGO_PATHS = {
+	amex: creditCardAmexImage,
+	diners: creditCardDinersImage,
+	discover: creditCardDiscoverImage,
+	jcb: creditCardJCBImage,
+	mastercard: creditCardMasterCardImage,
+	unionpay: creditCardUnionPayImage,
+	visa: creditCardVisaImage,
+};
+
 const ALT_TEXT = {
 	alipay: 'Alipay',
 	amex: 'American Express',
@@ -58,7 +79,18 @@ class PaymentLogo extends React.Component {
 			className
 		);
 
-		return <div className={ classes } aria-label={ altText || ALT_TEXT[ type ] || '' } />;
+		// Credit card images have been migrated to Webpack, while the remaining
+		// images are still referenced in the stylesheets (they’re still to be migrated)
+		const logoPath = LOGO_PATHS[ type ];
+		const logoStyle = logoPath ? { backgroundImage: `url(${ logoPath })` } : undefined;
+
+		return (
+			<div
+				className={ classes }
+				style={ logoStyle }
+				aria-label={ altText || ALT_TEXT[ type ] || '' }
+			/>
+		);
 	}
 }
 

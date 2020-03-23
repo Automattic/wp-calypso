@@ -18,7 +18,7 @@ import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
 import DatePicker from '../stats-date-picker';
 import DownloadCsv from '../stats-download-csv';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import StatsModulePlaceholder from './placeholder';
 import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
@@ -30,7 +30,7 @@ import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'state/stats/lists/selectors';
-import { FEATURE_GOOGLE_ANALYTICS } from 'lib/plans/constants';
+import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from 'lib/plans/constants';
 
 /**
  * Style dependencies
@@ -50,7 +50,6 @@ class StatsModule extends Component {
 		statType: PropTypes.string,
 		showSummaryLink: PropTypes.bool,
 		translate: PropTypes.func,
-		moment: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -62,7 +61,7 @@ class StatsModule extends Component {
 		loaded: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.requesting && this.props.requesting ) {
 			this.setState( { loaded: true } );
 		}
@@ -197,11 +196,10 @@ class StatsModule extends Component {
 					{ summary && 'countryviews' === path && (
 						<UpgradeNudge
 							title={ translate( 'Add Google Analytics' ) }
-							message={ translate(
-								'Upgrade to a Business Plan for Google Analytics integration.'
-							) }
+							message={ translate( 'Upgrade to a Premium Plan for Google Analytics integration.' ) }
 							event="googleAnalytics-stats-countries"
 							feature={ FEATURE_GOOGLE_ANALYTICS }
+							plan={ PLAN_PREMIUM }
 						/>
 					) }
 				</Card>

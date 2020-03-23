@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -21,8 +20,6 @@ import { ModalViews } from 'state/ui/media-modal/constants';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 jest.mock( 'component-closest', () => {} );
-jest.mock( 'components/dialog', () => require( 'components/empty-component' ) );
-jest.mock( 'components/popover', () => require( 'components/empty-component' ) );
 jest.mock( 'event', () => require( 'component-event' ), { virtual: true } );
 jest.mock( 'post-editor/media-modal/detail', () => ( {
 	default: require( 'components/empty-component' ),
@@ -85,7 +82,7 @@ describe( 'EditorMediaModal', () => {
 				mediaLibrarySelectedItems={ DUMMY_MEDIA }
 			/>
 		).instance();
-		tree.componentWillMount();
+		tree.UNSAFE_componentWillMount();
 		expect( setLibrarySelectedItems ).to.have.been.calledWith( DUMMY_SITE.ID, [] );
 	} );
 
@@ -231,7 +228,7 @@ describe( 'EditorMediaModal', () => {
 		expect( buttons ).to.be.undefined;
 	} );
 
-	test( 'should show an insert button when viewing external media (no selection)', () => {
+	test( 'should show a Copy to media library button when viewing external media (no selection)', () => {
 		const tree = shallow(
 			<EditorMediaModal site={ DUMMY_SITE } view={ ModalViews.DETAIL } setView={ spy } />
 		).instance();
@@ -240,10 +237,10 @@ describe( 'EditorMediaModal', () => {
 		const buttons = tree.getModalButtons();
 
 		expect( buttons.length ).to.be.equals( 2 );
-		expect( buttons[ 1 ].label ).to.be.equals( 'Insert' );
+		expect( buttons[ 1 ].label ).to.be.equals( 'Copy to media library' );
 	} );
 
-	test( 'should show a insert button when 1 external image is selected', () => {
+	test( 'should show a Copy to media library button when 1 external image is selected', () => {
 		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
@@ -257,7 +254,7 @@ describe( 'EditorMediaModal', () => {
 		const buttons = tree.getModalButtons();
 
 		expect( buttons.length ).to.be.equals( 2 );
-		expect( buttons[ 1 ].label ).to.be.equals( 'Insert' );
+		expect( buttons[ 1 ].label ).to.be.equals( 'Copy to media library' );
 	} );
 
 	test( 'should show a copy button when 1 external video is selected', () => {
@@ -360,7 +357,7 @@ describe( 'EditorMediaModal', () => {
 			} );
 		} );
 
-		test( 'should copy external media after loading WordPress library if 2 or more media are selected and button is pressed', done => {
+		test( 'should copy external media after loading WordPress library if 1 or more media are selected and button is pressed', done => {
 			const tree = shallow(
 				<EditorMediaModal
 					site={ DUMMY_SITE }
@@ -386,32 +383,6 @@ describe( 'EditorMediaModal', () => {
 			} );
 		} );
 
-		test( 'should copy external media and insert it in the editor if 1 image is selected and button is pressed', done => {
-			const SINGLE_ITEM_MEDIA = DUMMY_MEDIA.slice( 0, 1 );
-			const tree = shallow(
-				<EditorMediaModal
-					site={ DUMMY_SITE }
-					mediaLibrarySelectedItems={ SINGLE_ITEM_MEDIA }
-					view={ ModalViews.DETAIL }
-					setView={ spy }
-				/>
-			).instance();
-
-			tree.setState( { source: 'external' } );
-			tree.copyExternal = onClose;
-			tree.confirmSelection();
-
-			// EditorMediaModal will generate transient ID for the media selected
-			// by using uniqueId, which increments its value within the same session.
-			const transientItems = [
-				Object.assign( {}, SINGLE_ITEM_MEDIA[ 0 ], { ID: 'media-3', transient: true } ),
-			];
-			process.nextTick( () => {
-				expect( onClose ).to.have.been.calledWith( transientItems, 'external' );
-				done();
-			} );
-		} );
-
 		test( 'should copy external after loading WordPress library if 1 video is selected and button is pressed', done => {
 			const tree = shallow(
 				<EditorMediaModal
@@ -429,7 +400,7 @@ describe( 'EditorMediaModal', () => {
 			// EditorMediaModal will generate transient ID for the media selected
 			// by using uniqueId, which increments its value within the same session.
 			const transientItems = [
-				Object.assign( {}, DUMMY_VIDEO_MEDIA[ 0 ], { ID: 'media-4', transient: true } ),
+				Object.assign( {}, DUMMY_VIDEO_MEDIA[ 0 ], { ID: 'media-3', transient: true } ),
 			];
 			process.nextTick( () => {
 				expect( onClose ).to.have.been.calledWith( transientItems, 'external' );

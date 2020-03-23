@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,9 +14,10 @@ import debugFactory from 'debug';
  */
 import config from 'config';
 import Main from 'components/main';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import Notice from 'components/notice';
 import HelpContactForm from 'me/help/help-contact-form';
+import LiveChatClosureNotice from 'me/help/live-chat-closure-notice';
 import GMClosureNotice from 'me/help/gm-closure-notice';
 import HelpContactConfirmation from 'me/help/help-contact-confirmation';
 import HeaderCake from 'components/header-cake';
@@ -57,7 +56,7 @@ import isDirectlyReady from 'state/selectors/is-directly-ready';
 import isDirectlyUninitialized from 'state/selectors/is-directly-uninitialized';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { getHelpSelectedSiteId } from 'state/help/selectors';
-import { isDefaultLocale } from 'lib/i18n-utils';
+import { isDefaultLocale, localizeUrl } from 'lib/i18n-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryLanguageNames from 'components/data/query-language-names';
@@ -290,6 +289,9 @@ class HelpContact extends React.Component {
 		const { isSubmitting } = this.state;
 		const { currentUserLocale, hasMoreThanOneSite, translate, localizedLanguageNames } = this.props;
 		let buttonLabel = translate( 'Chat with us' );
+		const languageForumAvailable =
+			isDefaultLocale( currentUserLocale ) ||
+			localizeUrl( 'https://en.forums.wordpress.com/' ) !== 'https://en.forums.wordpress.com/';
 
 		switch ( variationSlug ) {
 			case SUPPORT_HAPPYCHAT: {
@@ -375,21 +377,37 @@ class HelpContact extends React.Component {
 			default:
 				return {
 					onSubmit: this.submitSupportForumsTopic,
-					buttonLabel: isSubmitting
-						? translate( 'Asking in the forums' )
-						: translate( 'Ask in the forums' ),
-					formDescription: translate(
-						'Post a new question in our {{strong}}public forums{{/strong}}, ' +
-							'where it may be answered by helpful community members, ' +
-							'by submitting the form below. ' +
-							'{{strong}}Please do not{{/strong}} provide financial or ' +
-							'contact information when submitting this form.',
-						{
-							components: {
-								strong: <strong />,
-							},
-						}
-					),
+					buttonLabel: languageForumAvailable
+						? translate( 'Ask in the forums' )
+						: translate( 'Ask in the English forums' ),
+					formDescription: languageForumAvailable
+						? translate(
+								'Post a new question in our {{strong}}public forums{{/strong}}, ' +
+									'where it may be answered by helpful community members, ' +
+									'by submitting the form below. ' +
+									'{{strong}}Please do not{{/strong}} provide financial or ' +
+									'contact information when submitting this form.',
+								{
+									components: {
+										strong: <strong />,
+									},
+								}
+						  )
+						: translate(
+								'Post a new question in our {{strong}}public forums{{/strong}}, ' +
+									'where it may be answered by helpful community members, ' +
+									'by submitting the form below. ' +
+									'{{strong}}Please do not{{/strong}} provide financial or ' +
+									'contact information when submitting this form.' +
+									'{{br/}}{{br/}}' +
+									"Unfortunately, we don't have a forum available for your language. Therefore, {{strong}}please write your question in English{{/strong}}, as this will be posted to our English forums.",
+								{
+									components: {
+										br: <br />,
+										strong: <strong />,
+									},
+								}
+						  ),
 					showSubjectField: true,
 					showHowCanWeHelpField: false,
 					showHowYouFeelField: false,
@@ -435,7 +453,7 @@ class HelpContact extends React.Component {
 	 * Before determining which variation to assign, certain async data needs to be in place.
 	 * This function helps assess whether we're ready to say which variation the user should see.
 	 *
-	 * @returns {Boolean} Whether all the data is present to determine the variation to show
+	 * @returns {boolean} Whether all the data is present to determine the variation to show
 	 */
 	hasDataToDetermineVariation = () => {
 		const ticketReadyOrError =
@@ -470,7 +488,8 @@ class HelpContact extends React.Component {
 
 	/**
 	 * Get the view for the contact page.
-	 * @return {object} A JSX object that should be rendered
+	 *
+	 * @returns {object} A JSX object that should be rendered
 	 */
 	getView = () => {
 		const { confirmation } = this.state;
@@ -528,17 +547,37 @@ class HelpContact extends React.Component {
 		const isUserAffectedByLiveChatClosure =
 			supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM;
 
+		const xmasHolidayName = translate( 'Christmas', {
+			context: 'Holiday name',
+		} );
+
 		return (
 			<div>
 				{ isUserAffectedByLiveChatClosure && (
-					<GMClosureNotice
-						compact={ compact }
-						displayAt="2019-08-31 00:00Z"
-						basicChatClosesAt="2019-09-07 00:00Z"
-						basicChatReopensAt="2019-09-23 04:00Z"
-						priorityChatClosesAt="2019-09-10 00:00Z"
-						priorityChatReopensAt="2019-09-19 04:00Z"
-					/>
+					<>
+						<LiveChatClosureNotice
+							holidayName={ xmasHolidayName }
+							compact={ compact }
+							displayAt="2019-12-17 00:00Z"
+							closesAt="2019-12-24 00:00Z"
+							reopensAt="2019-12-26 07:00Z"
+						/>
+						<LiveChatClosureNotice
+							holidayName={ translate( "New Year's Day" ) }
+							compact={ compact }
+							displayAt="2019-12-26 07:00Z"
+							closesAt="2019-12-31 00:00Z"
+							reopensAt="2020-01-02 07:00Z"
+						/>
+						<GMClosureNotice
+							compact={ compact }
+							displayAt="2019-08-31 00:00Z"
+							basicChatClosesAt="2019-09-07 00:00Z"
+							basicChatReopensAt="2019-09-23 04:00Z"
+							priorityChatClosesAt="2019-09-10 00:00Z"
+							priorityChatReopensAt="2019-09-19 04:00Z"
+						/>
+					</>
 				) }
 				{ this.shouldShowTicketRequestErrorNotice( supportVariation ) && (
 					<Notice

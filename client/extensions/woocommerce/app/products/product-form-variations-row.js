@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,11 +12,11 @@ import { head } from 'lodash';
  * Internal dependencies
  */
 import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
 import FormTextInput from 'components/forms/form-text-input';
 import FormWeightInput from 'woocommerce/components/form-weight-input';
-import ImagePreloader from 'components/image-preloader';
+import MediaImage from 'my-sites/media-library/media-image';
 import PriceInput from 'woocommerce/components/price-input';
 import ProductImageUploader from 'woocommerce/components/product-image-uploader';
 import Spinner from 'components/spinner';
@@ -130,7 +129,7 @@ class ProductFormVariationsRow extends Component {
 		if ( src && ! isUploading ) {
 			image = (
 				<figure>
-					<ImagePreloader
+					<MediaImage
 						src={ src }
 						alt={ translate( 'Variation thumbnail' ) }
 						placeholder={ placeholder ? <img src={ placeholder } alt="" /> : <span /> }

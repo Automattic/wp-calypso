@@ -106,7 +106,7 @@ export class ProtectFormGuard extends Component< ProtectFormGuardProps > {
 		markSaved( this );
 	}
 
-	componentWillReceiveProps( nextProps: ProtectFormGuardProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps: ProtectFormGuardProps ) {
 		if ( nextProps.isChanged !== this.props.isChanged ) {
 			nextProps.isChanged ? markChanged( this ) : markSaved( this );
 		}

@@ -43,7 +43,7 @@ interface Props {
 	style?: React.CSSProperties;
 }
 
-type DivProps = Omit< React.ComponentProps< 'button' >, 'style' | 'onClick' >;
+type DivProps = Omit< React.ComponentPropsWithoutRef< 'button' >, 'style' | 'onClick' >;
 
 export default class MediaLibraryListItem extends React.Component< Props & DivProps > {
 	static defaultProps = {

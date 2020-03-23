@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,7 @@ import { shouldRequestTagImages } from 'state/reader/tags/images/selectors';
 import { requestTagImages } from 'state/reader/tags/images/actions';
 
 class QueryReaderTagImages extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.props.shouldRequestTagImages || ! this.props.tag ) {
 			return;
 		}
@@ -24,7 +22,7 @@ class QueryReaderTagImages extends Component {
 		this.props.requestTagImages( this.props.tag );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.shouldRequestTagImages ) {
 			return;
 		}

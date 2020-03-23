@@ -1,5 +1,3 @@
-/** @format */
-
 export default value => {
 	if ( '' === value ) {
 		return 0;

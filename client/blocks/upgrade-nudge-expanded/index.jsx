@@ -13,7 +13,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card, ProductIcon } from '@automattic/components';
 import QueryPlans from 'components/data/query-plans';
 import PlanCompareCard from 'my-sites/plan-compare-card';
 import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
@@ -26,7 +26,6 @@ import { PLAN_PERSONAL } from 'lib/plans/constants';
 import { getSitePlan, getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import PlanIcon from 'components/plans/plan-icon';
 
 /**
  * Style dependencies
@@ -98,10 +97,12 @@ class UpgradeNudgeExpanded extends Component {
 					{ this.props.title && (
 						<div className="upgrade-nudge-expanded__title">
 							<div className="upgrade-nudge-expanded__title-plan">
-								<PlanIcon
-									plan={ this.props.plan.product_slug }
-									className="upgrade-nudge-expanded__title-plan-icon"
-								/>
+								{ this.props.plan.product_slug && (
+									<ProductIcon
+										slug={ this.props.plan.product_slug }
+										className="upgrade-nudge-expanded__title-plan-icon"
+									/>
+								) }
 							</div>
 							<p className="upgrade-nudge-expanded__title-message">{ this.props.title }</p>
 						</div>
@@ -162,7 +163,4 @@ const mapStateToProps = ( state, { plan = PLAN_PERSONAL } ) => ( {
 
 const mapDispatchToProps = dispatch => bindActionCreators( { recordTracksEvent }, dispatch );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( UpgradeNudgeExpanded ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( UpgradeNudgeExpanded ) );

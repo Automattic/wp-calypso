@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { assign } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:media' );
@@ -13,15 +10,35 @@ const debug = debugFactory( 'calypso:media' );
  */
 import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
-import { reduxGetState } from 'lib/redux-bridge';
+import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { createTransientMedia } from './utils';
+import getMediaItemErrors from 'state/selectors/get-media-item-errors';
 import MediaStore from './store';
 import MediaListStore from './list-store';
-import MediaValidationStore from './validation-store';
+import {
+	changeMediaSource,
+	clearMediaErrors,
+	clearMediaItemErrors,
+	createMediaItem,
+	failMediaItemRequest,
+	failMediaRequest,
+	receiveMedia,
+	successMediaItemRequest,
+	successMediaRequest,
+} from 'state/media/actions';
 
 /**
- * Module variables
+ * @typedef IMediaActions
+ *
+ * TODO: Better method types
+ *
+ * @property {Function} fetch
+ * @property {Function} setLibrarySelectedItems
+ */
+
+/**
+ * @type {IMediaActions}
  */
 const MediaActions = {
 	_fetching: {},
@@ -80,6 +97,7 @@ MediaActions.fetchNextPage = function( siteId ) {
 	} );
 
 	const query = MediaListStore.getNextPageQuery( siteId );
+
 	const mediaReceived = ( error, data ) => {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_MEDIA_ITEMS',
@@ -88,6 +106,12 @@ MediaActions.fetchNextPage = function( siteId ) {
 			data: data,
 			query: query,
 		} );
+		if ( error ) {
+			reduxDispatch( failMediaRequest( siteId, query, error ) );
+		} else {
+			reduxDispatch( successMediaRequest( siteId, query ) );
+			reduxDispatch( receiveMedia( siteId, data.media, data.found, query ) );
+		}
 	};
 
 	debug( 'Fetching media for %d using query %o', siteId, query );
@@ -167,9 +191,12 @@ function uploadFiles( uploader, files, site ) {
 		} );
 
 		// Abort upload if file fails to pass validation.
-		if ( MediaValidationStore.getErrors( siteId, transientMedia.ID ).length ) {
+		if ( getMediaItemErrors( reduxGetState(), siteId, transientMedia.ID ).length ) {
 			return Promise.resolve();
 		}
+
+		// If there are no errors, dispatch the create media item action
+		reduxDispatch( createMediaItem( site, transientMedia ) );
 
 		return lastUpload.then( () => {
 			// Achieve series upload by waiting for the previous promise to
@@ -183,6 +210,10 @@ function uploadFiles( uploader, files, site ) {
 							data: data.media[ 0 ],
 						} )
 					);
+
+					reduxDispatch( successMediaItemRequest( siteId, transientMedia.ID ) );
+					reduxDispatch( receiveMedia( siteId, data.media, data.found ) );
+
 					// also refetch media limits
 					Dispatcher.handleServerAction( {
 						type: 'FETCH_MEDIA_LIMITS',
@@ -191,6 +222,7 @@ function uploadFiles( uploader, files, site ) {
 				} )
 				.catch( error => {
 					Dispatcher.handleServerAction( Object.assign( action, { error } ) );
+					reduxDispatch( failMediaItemRequest( siteId, transientMedia.ID, error ) );
 				} );
 		} );
 	}, Promise.resolve() );
@@ -325,6 +357,7 @@ MediaActions.clearValidationErrors = function( siteId, itemId ) {
 		siteId: siteId,
 		itemId: itemId,
 	} );
+	reduxDispatch( clearMediaItemErrors( siteId, itemId ) );
 };
 
 MediaActions.clearValidationErrorsByType = function( siteId, type ) {
@@ -334,6 +367,7 @@ MediaActions.clearValidationErrorsByType = function( siteId, type ) {
 		siteId: siteId,
 		errorType: type,
 	} );
+	reduxDispatch( clearMediaErrors( siteId, type ) );
 };
 
 MediaActions.sourceChanged = function( siteId ) {
@@ -342,6 +376,7 @@ MediaActions.sourceChanged = function( siteId ) {
 		type: 'CHANGE_MEDIA_SOURCE',
 		siteId,
 	} );
+	reduxDispatch( changeMediaSource( siteId ) );
 };
 
 export default MediaActions;

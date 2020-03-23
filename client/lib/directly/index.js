@@ -2,7 +2,6 @@
  *
  *
  *
- * @format
  * @file Interface to the third-party Real Time Messaging (RTM) widget from Directly.
  * @see https:
  */
@@ -34,7 +33,7 @@ let directlyPromise;
  *
  * @see https://cloudup.com/cySVQ9R_O6S for all configuration options
  *
- * @returns {Object} The default configuration options
+ * @returns {object} The default configuration options
  */
 function getDefaultOptions() {
 	const ids = config( 'directly_rtm_widget_ids' );

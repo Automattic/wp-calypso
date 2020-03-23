@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,8 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import ShippingZoneEntry from './shipping-zone-list-entry';
 import QueryShippingZones, {
@@ -33,13 +30,13 @@ import { getActionList } from 'woocommerce/state/action-list/selectors';
 import { createAddDefultShippingZoneActionList } from 'woocommerce/state/ui/shipping/zones/actions';
 
 class ShippingZoneList extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( this.props.loaded ) {
 			this.props.actions.createAddDefultShippingZoneActionList();
 		}
 	}
 
-	componentWillReceiveProps( { loaded } ) {
+	UNSAFE_componentWillReceiveProps( { loaded } ) {
 		if ( ! this.props.loaded && loaded && ! this.props.savingZones ) {
 			this.props.actions.createAddDefultShippingZoneActionList();
 		}

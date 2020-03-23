@@ -1,0 +1,9 @@
+.domain-picker-button {
+	.dashicon {
+		margin-left: 0.5em;
+		transition: transform 100ms ease-in-out;
+	}
+	&.is-open .dashicon {
+		transform: rotate( 180deg );
+	}
+}

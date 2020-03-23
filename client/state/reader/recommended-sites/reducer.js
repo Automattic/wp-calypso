@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +6,7 @@ import { uniqBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_RECOMMENDED_SITES_RECEIVE } from 'state/action-types';
+import { READER_RECOMMENDED_SITES_RECEIVE } from 'state/reader/action-types';
 import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
 
 /**
@@ -15,8 +14,8 @@ import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
  * Sites get stored in a flat list. Just the basics like title/feedId,blogId.
  *
  * @param  {Array} state  Current state
- * @param  {Object} action Action payload
- * @return {Array}        Updated state
+ * @param  {object} action Action payload
+ * @returns {Array}        Updated state
  */
 export const items = keyedReducer(
 	'seed',
@@ -35,8 +34,8 @@ export const items = keyedReducer(
  * this is for used whenrequesting the next page of site recs
  *
  * @param  {Array} state Current state
- * @param  {Object} action Action payload
- * @return {Array}        Updated state
+ * @param  {object} action Action payload
+ * @returns {Array}        Updated state
  */
 export const pagingOffset = keyedReducer(
 	'seed',

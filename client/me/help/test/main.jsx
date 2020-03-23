@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -34,8 +32,6 @@ import { mapStateToProps } from '../main';
 jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'lib/user', () => jest.fn() );
 jest.mock( '../help-unverified-warning', () => 'HelpUnverifiedWarning' );
-jest.mock( 'components/card/compact', () => 'CardCompact' );
-jest.mock( 'components/button', () => 'Button' );
 jest.mock( 'components/main', () => 'Main' );
 jest.mock( 'components/section-header', () => 'SectionHeader' );
 jest.mock( 'me/sidebar-navigation', () => 'MeSidebarNavigation' );

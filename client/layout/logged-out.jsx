@@ -141,7 +141,7 @@ export default connect( state => {
 	const isPopup = '1' === get( getCurrentQueryArguments( state ), 'is_popup' );
 	const noMasterbarForSection = 'signup' === section.name || 'jetpack-connect' === section.name;
 	const isJetpackWooCommerceFlow =
-		'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' );
+		'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' );
 	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
 
 	return {

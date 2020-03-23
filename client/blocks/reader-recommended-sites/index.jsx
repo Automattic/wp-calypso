@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -12,7 +11,7 @@ import { connect } from 'react-redux';
  * Internal Dependencies
  */
 import { recordAction, recordTrackWithRailcar, recordTracksRailcarRender } from 'reader/stats';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { dismissSite } from 'state/reader/site-dismissals/actions';
 import ConnectedListItem from 'blocks/reader-list-item/connected';
 
@@ -98,7 +97,4 @@ export class RecommendedSites extends React.PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{ dismissSite }
-)( localize( RecommendedSites ) );
+export default connect( null, { dismissSite } )( localize( RecommendedSites ) );

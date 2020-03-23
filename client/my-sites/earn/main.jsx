@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,6 +17,7 @@ import NavItem from 'components/section-nav/item';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import WordAdsEarnings from 'my-sites/stats/wordads/earnings';
 import AdsSettings from 'my-sites/earn/ads/form-settings';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -77,7 +76,7 @@ class EarningsMain extends Component {
 	 * Remove any query parameters from the path before using it to
 	 * identify which screen the user is seeing.
 	 *
-	 * @returns {String} Path to current screen.
+	 * @returns {string} Path to current screen.
 	 */
 	getCurrentPath = () => {
 		let currentPath = this.props.path;
@@ -91,7 +90,7 @@ class EarningsMain extends Component {
 	/**
 	 * Check the current path and returns an appropriate title.
 	 *
-	 * @returns {String} Header text for current screen.
+	 * @returns {string} Header text for current screen.
 	 */
 	getHeaderText = () => {
 		const { translate } = this.props;
@@ -163,6 +162,11 @@ class EarningsMain extends Component {
 				/>
 				<DocumentHead title={ layoutTitles[ section ] } />
 				<SidebarNavigation />
+				<FormattedHeader
+					className="earn__page-header"
+					headerText={ translate( 'Earn' ) }
+					align="left"
+				/>
 				{ this.getHeaderCake() }
 				{ section && this.getSectionNav( section ) }
 				{ component }

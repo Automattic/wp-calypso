@@ -190,3 +190,4 @@ handleSubmit = ( event ) => {
 ```
 
 9 - open https://calypso.localhost:3000/start/hello in an incognito window. On opening you should be redirected to the first step showing your updated React component, and when you click the "Get started" button you should be taken to the next step.
+

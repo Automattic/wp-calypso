@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -41,7 +40,7 @@ const addReducerEnhancer = nextCreator => ( reducer, initialState ) => {
 };
 
 /**
- * @typedef {Object} ReduxStore
+ * @typedef {object} ReduxStore
  * @property {!Function} dispatch dispatches actions
  * @property {!Function} getState returns the current state tree
  * @property {Function} replaceReducers replaces the state reducers

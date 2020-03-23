@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,10 +13,8 @@ import { isEmpty, flowRight } from 'lodash';
  */
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
-import Card from 'components/card';
-import ProgressBar from 'components/progress-bar';
+import { Card, ProgressBar } from '@automattic/components';
 import UploadDropZone from 'blocks/upload-drop-zone';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import EligibilityWarnings from 'blocks/eligibility-warnings';
 import EmptyContent from 'components/empty-content';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -31,12 +27,7 @@ import getPluginUploadProgress from 'state/selectors/get-plugin-upload-progress'
 import getUploadedPluginId from 'state/selectors/get-uploaded-plugin-id';
 import isPluginUploadComplete from 'state/selectors/is-plugin-upload-complete';
 import isPluginUploadInProgress from 'state/selectors/is-plugin-upload-in-progress';
-import {
-	getSiteAdminUrl,
-	isJetpackMinimumVersion,
-	isJetpackSite,
-	isJetpackSiteMultiSite,
-} from 'state/sites/selectors';
+import { getSiteAdminUrl, isJetpackSite, isJetpackSiteMultiSite } from 'state/sites/selectors';
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
@@ -55,7 +46,7 @@ class PluginUpload extends React.Component {
 		! inProgress && this.props.clearPluginUpload( siteId );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
 			const { siteId, inProgress } = nextProps;
 			! inProgress && this.props.clearPluginUpload( siteId );
@@ -141,7 +132,7 @@ class PluginUpload extends React.Component {
 	}
 
 	render() {
-		const { translate, isJetpackMultisite, upgradeJetpack, siteId, siteSlug } = this.props;
+		const { translate, isJetpackMultisite, siteId, siteSlug } = this.props;
 		const { showEligibility } = this.state;
 
 		return (
@@ -149,14 +140,6 @@ class PluginUpload extends React.Component {
 				<PageViewTracker path="/plugins/upload/:site" title="Plugins > Upload" />
 				<QueryEligibility siteId={ siteId } />
 				<HeaderCake onClick={ this.back }>{ translate( 'Install plugin' ) }</HeaderCake>
-				{ upgradeJetpack && (
-					<JetpackManageErrorPage
-						template="updateJetpack"
-						siteId={ siteId }
-						featureExample={ this.renderUploadCard() }
-						version="5.1"
-					/>
-				) }
 				{ isJetpackMultisite && this.renderNotAvailableForMultisite() }
 				{ showEligibility && (
 					<EligibilityWarnings
@@ -164,7 +147,7 @@ class PluginUpload extends React.Component {
 						onProceed={ this.onProceedClick }
 					/>
 				) }
-				{ ! upgradeJetpack && ! isJetpackMultisite && ! showEligibility && this.renderUploadCard() }
+				{ ! isJetpackMultisite && ! showEligibility && this.renderUploadCard() }
 			</Main>
 		);
 	}
@@ -195,8 +178,6 @@ const mapStateToProps = state => {
 		error,
 		progress,
 		installing: progress === 100,
-		upgradeJetpack:
-			isJetpack && ! isJetpackMultisite && ! isJetpackMinimumVersion( state, siteId, '5.1' ),
 		isJetpackMultisite,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
@@ -205,10 +186,12 @@ const mapStateToProps = state => {
 };
 
 const flowRightArgs = [
-	connect(
-		mapStateToProps,
-		{ uploadPlugin, clearPluginUpload, initiateAutomatedTransferWithPluginZip, successNotice }
-	),
+	connect( mapStateToProps, {
+		uploadPlugin,
+		clearPluginUpload,
+		initiateAutomatedTransferWithPluginZip,
+		successNotice,
+	} ),
 	localize,
 ];
 

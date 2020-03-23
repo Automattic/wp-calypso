@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,7 +21,7 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import analytics from 'lib/analytics';
 import { errorNotice } from 'state/notices/actions';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 
 /**
@@ -173,7 +171,6 @@ class InviteAcceptLoggedOut extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { createAccount, acceptInvite, errorNotice }, dispatch )
+export default connect( null, dispatch =>
+	bindActionCreators( { createAccount, acceptInvite, errorNotice }, dispatch )
 )( localize( InviteAcceptLoggedOut ) );

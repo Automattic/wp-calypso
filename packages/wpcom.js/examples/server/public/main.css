@@ -1,0 +1,36 @@
+body {
+  font: 14px "Helvetica Nueue", "Lucida Grande", Arial, sans-serif;
+  padding: 50px 80px;
+  margin: 0;
+}
+
+h1 {
+  color: #a04;
+}
+
+h2 {
+  margin-top: 50px;
+}
+
+h2.err {
+  background-color: #fee;
+  color: red;
+  padding: 5px 20px;
+}
+
+h2.ok {
+  background-color: #efe;
+  color: #080;
+  padding: 5px 20px;
+}
+
+ul,
+ul li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.author em {
+  color: #a04;
+}

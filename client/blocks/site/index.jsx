@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -153,7 +152,11 @@ class Site extends React.Component {
 						</div>
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						{ this.props.site.is_private && (
-							<span className="site__badge site__badge-private">{ translate( 'Private' ) }</span>
+							<span className="site__badge site__badge-private">
+								{ this.props.site.is_coming_soon
+									? translate( 'Coming Soon' )
+									: translate( 'Private' ) }
+							</span>
 						) }
 						{ site.options && site.options.is_redirect && (
 							<span className="site__badge site__badge-redirect">{ translate( 'Redirect' ) }</span>
@@ -187,10 +190,7 @@ function mapStateToProps( state, ownProps ) {
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	{
-		recordGoogleEvent,
-		recordTracksEvent,
-	}
-)( localize( Site ) );
+export default connect( mapStateToProps, {
+	recordGoogleEvent,
+	recordTracksEvent,
+} )( localize( Site ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -34,7 +32,7 @@ export class ImageBlockComponent extends GutenbergBlockComponent {
 	async openMediaModal() {
 		await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,
-			By.css( '.editor-media-placeholder' )
+			By.css( '.block-editor-media-placeholder' )
 		);
 		await driverHelper.clickWhenClickable(
 			this.driver,

@@ -1,0 +1,110 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+@import '../mixins';
+
+// This should match the timeout used in the component.
+$onboarding-block-css-transition-duration: 750ms;
+
+.onboarding-block__acquire-intent {
+	@include onboarding-font-recoleta;
+	align-items: center;
+	background-color: var( --contrastColor );
+	color: var( --mainColor );
+	display: flex;
+	font-size: 64px;
+	height: 100%;
+	justify-content: center;
+	left: 0%;
+	margin-top: 40px;
+	position: fixed;
+	tab-size: 4;
+	top: 0;
+	transition:
+		color 0.5s ease-in-out 1s,
+		background-color 0.5s ease-in-out 1s;
+	width: 100%;
+}
+
+.onboarding-block__questions {
+	display: inline-block;
+	min-width: 800px;
+	font-size: 64px;
+	width: 70%;
+	height: 300px;
+}
+
+.onboarding-block__questions-heading {
+	margin-bottom: 10px;
+	text-align: left;
+	font-size: 64px;
+}
+
+.onboarding-block__footer {
+	text-align: left;
+}
+
+// Themed core button component
+.components-button.is-primary.onboarding-block__question-skip:not( :disabled ):not( [aria-disabled='true'] ) {
+	background: var( --mainColor );
+	border-color: var( --mainColor );
+	box-shadow: none;
+	color: var( --contrastColor );
+	font-size: 16px;
+	line-height: 16px;
+	padding: 20px 32px;
+	// @TODO: work out hover-state animations
+	transition:
+		background 0.5s ease-in-out 1s,
+		border-color 0.5s ease-in-out 1s,
+		color 0.5s ease-in-out 1s;
+
+	&:active,
+	&:hover,
+	&:focus {
+		background: var( --highlightColor );
+		border-color: var( --highlightColor );
+		color: var( --contrastColor );
+		outline-color: transparent;
+		box-shadow: none;
+	}
+}
+
+
+.onboarding-block__background {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-size: cover;
+	z-index: -1;
+}
+
+.onboarding-block__background.has-background::before {
+	background-color: $white;
+	content: '';
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	opacity: 0.7;
+	transition: opacity $onboarding-block-css-transition-duration linear;
+}
+
+.onboarding-block__background-fade-enter {
+	&.onboarding-block__background::before {
+		opacity: 0.8;
+	}
+}
+
+.onboarding-block__background-fade-enter,
+.onboarding-block__background-fade-exit,
+.onboarding-block__background-fade-exit-done {
+	opacity: 0;
+}
+
+.onboarding-block__background-fade-enter,
+.onboarding-block__background-fade-exit,
+.onboarding-block__background-fade-enter-done {
+	transition: opacity $onboarding-block-css-transition-duration linear;
+}

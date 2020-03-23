@@ -19,9 +19,9 @@ import { itemsSchema } from './schema';
 /**
  * Tracks media-storage information, indexed by site ID.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -40,9 +40,9 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 /**
  * Tracks media-storage fetching state, indexed by site ID.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function fetchingItems( state = {}, action ) {
 	switch ( action.type ) {

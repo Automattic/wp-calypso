@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,6 @@ import { find, isString, noop } from 'lodash';
  * Internal dependencies
  */
 import LanguagePickerModal from './modal';
-import QueryLanguageNames from 'components/data/query-language-names';
 import { requestGeoLocation } from 'state/data-getters';
 import { getLanguageCodeLabels } from './utils';
 
@@ -50,7 +47,7 @@ export class LanguagePicker extends PureComponent {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.value !== this.props.value || nextProps.valueKey !== this.props.valueKey ) {
 			this.setState( {
 				selectedLanguage: this.findLanguage( nextProps.valueKey, nextProps.value ),
@@ -149,7 +146,6 @@ export class LanguagePicker extends PureComponent {
 
 		return (
 			<Fragment>
-				<QueryLanguageNames />
 				<button
 					type="button"
 					className="language-picker"

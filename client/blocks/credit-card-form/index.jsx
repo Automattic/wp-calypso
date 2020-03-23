@@ -12,8 +12,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import { Card, CompactCard } from '@automattic/components';
 import CreditCardFormFields from 'components/credit-card-form-fields';
 import FormButton from 'components/forms/form-button';
 import notices from 'notices';
@@ -209,11 +208,11 @@ function SaveButton( { translate, formSubmitting } ) {
 	return (
 		<FormButton disabled={ formSubmitting } type="submit">
 			{ formSubmitting
-				? translate( 'Saving Card…', {
+				? translate( 'Saving card…', {
 						context: 'Button label',
 						comment: 'Credit card',
 				  } )
-				: translate( 'Save Card', {
+				: translate( 'Save card', {
 						context: 'Button label',
 						comment: 'Credit card',
 				  } ) }

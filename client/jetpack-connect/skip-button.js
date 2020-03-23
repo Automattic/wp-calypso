@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -53,9 +53,6 @@ class SkipButton extends PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( SkipButton ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( SkipButton ) );

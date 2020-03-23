@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -39,9 +37,7 @@ class Security2faSetupBackupCodes extends React.Component {
 	onRequestComplete = ( error, data ) => {
 		if ( error ) {
 			this.setState( {
-				lastError: this.props.translate(
-					'Unable to obtain backup codes.  Please try again later.'
-				),
+				lastError: this.props.translate( 'Unable to obtain backup codes. Please try again later.' ),
 			} );
 			return;
 		}
@@ -110,9 +106,6 @@ class Security2faSetupBackupCodes extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-	}
-)( localize( Security2faSetupBackupCodes ) );
+export default connect( null, {
+	recordGoogleEvent,
+} )( localize( Security2faSetupBackupCodes ) );

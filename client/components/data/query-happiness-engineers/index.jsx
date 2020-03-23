@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import { isRequestingHappinessEngineers } from 'state/happiness-engineers/select
 import { fetchHappinessEngineers } from 'state/happiness-engineers/actions';
 
 class QueryHappinessEngineers extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.props.isRequestingHappinessEngineers ) {
 			this.props.fetchHappinessEngineers();
 		}
