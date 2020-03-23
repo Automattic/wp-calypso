@@ -233,3 +233,17 @@ function load_wpcom_block_editor_nux() {
 	require_once __DIR__ . '/wpcom-block-editor-nux/class-wpcom-block-editor-nux.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
+
+/**
+ * Load FSE block patterns
+ */
+function load_block_patterns() {
+	if ( ! function_exists( '\gutenberg_load_block_pattern' ) ) {
+		return;
+	}
+
+	require_once __DIR__ . '/block-patterns/class-block-patterns.php';
+
+	Block_Patterns::get_instance();
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_patterns' );
