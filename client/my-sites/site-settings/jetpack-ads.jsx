@@ -140,7 +140,7 @@ class JetpackAds extends Component {
 				</Card>
 
 				{ wordadsModuleActive && (
-					<CompactCard href={ `/earn/ads-earnings/${ selectedSiteSlug }` }>
+					<CompactCard href={ `/earn/ads/${ selectedSiteSlug }` }>
 						{ translate( 'View your earnings' ) }
 					</CompactCard>
 				) }

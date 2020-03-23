@@ -162,7 +162,7 @@ class WordAds extends Component {
 								: translate( 'WordAds is not enabled on your site' )
 						}
 						action={ isAdmin ? translate( 'Explore WordAds' ) : false }
-						actionURL={ '/earn/ads-settings/' + slug }
+						actionURL={ '/earn/ads/' + slug }
 					/>
 				) }
 				{ canAccessAds && (

@@ -11,11 +11,8 @@ import page from 'page';
 import Main from './main';
 
 export default {
-	redirectToAdsEarnings: function( context ) {
-		page.redirect( '/earn/ads-earnings/' + context.params.site_id );
-	},
-	redirectToAdsSettings: function( context ) {
-		page.redirect( '/earn/ads-settings/' + context.params.site_id );
+	redirectToAds: function( context ) {
+		page.redirect( '/earn/ads/' + context.params.site_id );
 	},
 	layout: function( context, next ) {
 		// Scroll to the top

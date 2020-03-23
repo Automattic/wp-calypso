@@ -253,9 +253,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						text: hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' ),
 						action: () => {
 							trackCtaButton( 'ads' );
-							page(
-								`/earn/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ selectedSiteSlug }`
-							);
+							page( `/earn/ads/${ selectedSiteSlug }` );
 						},
 				  }
 				: {

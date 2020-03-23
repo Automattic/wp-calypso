@@ -27,7 +27,6 @@ import Home from './home';
 import AdsWrapper from './ads/wrapper';
 import MembershipsSection from './memberships';
 import MembershipsProductsSection from './memberships/products';
-import { canAccessAds } from 'lib/ads/utils';
 
 class EarningsMain extends Component {
 	static propTypes = {
@@ -46,38 +45,17 @@ class EarningsMain extends Component {
 	}
 
 	getFilters() {
-		const { siteSlug, translate } = this.props;
-		const pathSuffix = siteSlug ? '/' + siteSlug : '';
 		const tabs = [];
-
-		if ( canAccessAds( this.props.site ) ) {
-			tabs.push( {
-				title: translate( 'Earnings' ),
-				path: '/earn/ads-earnings' + pathSuffix,
-				id: 'ads-earnings',
-			} );
-			tabs.push( {
-				title: translate( 'Settings' ),
-				path: '/earn/ads-settings' + pathSuffix,
-				id: 'ads-settings',
-			} );
-		}
-
 		return tabs;
 	}
 
 	getComponent( section ) {
 		switch ( section ) {
-			case 'ads-earnings':
-				return (
-					<AdsWrapper section={ this.props.section }>
-						<WordAdsEarnings site={ this.props.site } />
-					</AdsWrapper>
-				);
-			case 'ads-settings':
+			case 'ads':
 				return (
 					<AdsWrapper section={ this.props.section }>
 						<AdsSettings />
+						<WordAdsEarnings site={ this.props.site } />
 					</AdsWrapper>
 				);
 			case 'payments':
@@ -121,8 +99,7 @@ class EarningsMain extends Component {
 			case 'payments':
 				return translate( 'Recurring Payments' );
 
-			case 'ads-earnings':
-			case 'ads-settings':
+			case 'ads':
 				return translate( 'Ads' );
 
 			default:
@@ -146,7 +123,8 @@ class EarningsMain extends Component {
 		const currentPath = this.getCurrentPath();
 
 		return (
-			! section.startsWith( 'payments' ) && (
+			! section.startsWith( 'payments' ) &&
+			'ads' !== section && (
 				<SectionNav selectedText={ this.getSelectedText() }>
 					<NavTabs>
 						{ this.getFilters().map( filterItem => {
@@ -171,8 +149,7 @@ class EarningsMain extends Component {
 		const component = this.getComponent( this.props.section );
 
 		const layoutTitles = {
-			earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
-			settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
+			ads: adsProgramName,
 			payments: translate( 'Recurring Payments' ),
 			'payments-plans': translate( 'Recurring Payments plans' ),
 		};

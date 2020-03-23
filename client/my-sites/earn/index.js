@@ -22,12 +22,14 @@ export default function() {
 	);
 	page( '/earn/memberships', () => page.redirect( '/earn/payments' ), makeLayout, clientRender );
 
-	page( '/earn/ads-settings', siteSelection, sites, makeLayout, clientRender );
-	page( '/earn/ads-earnings', siteSelection, sites, makeLayout, clientRender );
+	page( '/earn/ads', siteSelection, sites, makeLayout, clientRender );
 	// These are legacy URLs to redirect if they are present anywhere on the web.
-	page( '/ads/earnings/:site_id', earnController.redirectToAdsEarnings, makeLayout, clientRender );
-	page( '/ads/settings/:site_id', earnController.redirectToAdsSettings, makeLayout, clientRender );
-	page( '/ads/:site_id', earnController.redirectToAdsEarnings, makeLayout, clientRender );
+	page( '/earn/ads-earnings/:site_id', earnController.redirectToAds, makeLayout, clientRender );
+	page( '/earn/ads-settings/:site_id', earnController.redirectToAds, makeLayout, clientRender );
+	page( '/ads/earnings/:site_id', earnController.redirectToAds, makeLayout, clientRender );
+	page( '/ads/settings/:site_id', earnController.redirectToAds, makeLayout, clientRender );
+	page( '/earn/ads-earnings', '/earn/ads' );
+	page( '/earn/ads-settings', '/earn/ads' );
 	page( '/ads', '/earn' );
 	page( '/ads/*', '/earn' );
 
