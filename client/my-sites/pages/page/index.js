@@ -42,6 +42,7 @@ import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
 import { updateSiteFrontPage } from 'state/sites/actions';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import canCurrentUser from 'state/selectors/can-current-user';
+import config from 'config';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 
@@ -332,7 +333,7 @@ class Page extends Component {
 
 	getExportItem() {
 		const { page } = this.props;
-		if ( ! page.content ) {
+		if ( ! page.content || ! config.isEnabled( 'page/export' ) ) {
 			return null;
 		}
 
