@@ -10,22 +10,25 @@ import { memoize } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import {
+	expandMySitesSidebarSection as expandSection,
+	toggleMySitesSidebarSection as toggleSection,
+} from 'state/my-sites/sidebar/actions';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
+import { isSidebarSectionOpen } from 'state/my-sites/sidebar/selectors';
+import { itemLinkMatches } from 'my-sites/sidebar/utils';
+import Badge from 'components/badge';
 import config from 'config';
 import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
-import { itemLinkMatches } from 'my-sites/sidebar/utils';
-import Badge from 'components/badge';
+import getRewindState from 'state/selectors/get-rewind-state';
+import getRewindStateRequestStatus from 'state/selectors/get-rewind-state-request-status';
+import QueryRewindState from 'components/data/query-rewind-state';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
-import { isSidebarSectionOpen } from 'state/my-sites/sidebar/selectors';
-import {
-	expandMySitesSidebarSection as expandSection,
-	toggleMySitesSidebarSection as toggleSection,
-} from 'state/my-sites/sidebar/actions';
 
 // Lowercase because these are used as keys for sidebar state.
 export const SIDEBAR_SECTION_SCAN = 'scan';
@@ -41,6 +44,7 @@ class JetpackCloudSidebar extends Component {
 		path: PropTypes.string.isRequired,
 		selectedSiteSlug: PropTypes.string,
 		threats: PropTypes.array,
+		siteId: PropTypes.number,
 	};
 
 	/**
@@ -64,11 +68,12 @@ class JetpackCloudSidebar extends Component {
 	};
 
 	render() {
-		const { selectedSiteSlug, translate, threats } = this.props;
+		const { selectedSiteSlug, settingsIssues, siteId, translate, threats } = this.props;
 		const numberOfThreatsFound = threats.length;
 
 		return (
 			<Sidebar className="sidebar__jetpack-cloud">
+				{ siteId && <QueryRewindState siteId={ siteId } /> }
 				<SidebarRegion>
 					<CurrentSite />
 					<SidebarMenu>
@@ -168,7 +173,9 @@ class JetpackCloudSidebar extends Component {
 							materialIcon="settings"
 							materialIconStyle="filled"
 							selected={ this.isSelected( '/settings' ) }
-						/>
+						>
+							{ settingsIssues.length > 0 && <Badge type="error">{ settingsIssues.length }</Badge> }
+						</SidebarItem>
 					) }
 				</SidebarRegion>
 				<SidebarFooter>
@@ -210,11 +217,22 @@ export default connect(
 		const isBackupSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_BACKUP );
 		const isScanSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_SCAN );
 		const threats = getSiteThreats( state );
+		const siteId = getSelectedSiteId( state );
+		const rewindState = getRewindState( state, siteId );
+		const rewindStateRequestStatus = getRewindStateRequestStatus( state, siteId );
+
+		const settingsIssues = [];
+
+		if ( rewindStateRequestStatus === 'success' && rewindState?.state !== 'active' ) {
+			settingsIssues.push( 'not-connected' );
+		}
 
 		return {
 			isBackupSectionOpen,
 			isScanSectionOpen,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
+			settingsIssues,
+			siteId,
 			threats,
 		};
 	},
