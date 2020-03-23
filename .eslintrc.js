@@ -1,6 +1,31 @@
 const { merge } = require( 'lodash' );
 const reactVersion = require( './client/package.json' ).dependencies.react;
 
+const restrictedModulePaths = [
+	// Error if any module depends on the data-observe mixin, which is deprecated.
+	'lib/mixins/data-observe',
+	// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
+	{
+		name: 'gridicons',
+		message: "Please use 'components/gridicon' instead.",
+	},
+	// Use fetch instead of superagent.
+	{
+		name: 'superagent',
+		message: 'Please use native `fetch` instead.',
+	},
+];
+
+const restrictedImportPaths = [
+	...restrictedModulePaths,
+	// Prevent importing Redux's combineReducers.
+	{
+		name: 'redux',
+		importNames: [ 'combineReducers' ],
+		message: "`combineReducers` should be imported from 'state/utils', not 'redux'.",
+	},
+];
+
 module.exports = {
 	root: true,
 	extends: [
@@ -110,45 +135,13 @@ module.exports = {
 		'no-restricted-imports': [
 			2,
 			{
-				paths: [
-					// Error if any module depends on the data-observe mixin, which is deprecated.
-					'lib/mixins/data-observe',
-					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
-					{
-						name: 'gridicons',
-						message: "Please use 'components/gridicon' instead.",
-					},
-					// Prevent importing Redux's combineReducers.
-					{
-						name: 'redux',
-						importNames: [ 'combineReducers' ],
-						message: "`combineReducers` should be imported from 'state/utils', not 'redux'.",
-					},
-					// Use fetch instead of superagent.
-					{
-						name: 'superagent',
-						message: 'Please use native `fetch` instead.',
-					},
-				],
+				paths: restrictedImportPaths,
 			},
 		],
 		'no-restricted-modules': [
 			2,
 			{
-				paths: [
-					// Error if any module depends on the data-observe mixin, which is deprecated.
-					'lib/mixins/data-observe',
-					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
-					{
-						name: 'gridicons',
-						message: "Please use 'components/gridicon' instead.",
-					},
-					// Use fetch instead of superagent.
-					{
-						name: 'superagent',
-						message: 'Please use native `fetch` instead.',
-					},
-				],
+				paths: restrictedModulePaths,
 			},
 		],
 
