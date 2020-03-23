@@ -18,7 +18,7 @@ interface Props {
 	settingsLink: string;
 }
 
-const JetpackBackupMissingCredentialsWarning: FunctionComponent< Props > = ( { settingsLink } ) => {
+const JetpackCloudMissingCredentialsWarning: FunctionComponent< Props > = ( { settingsLink } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -38,4 +38,4 @@ const JetpackBackupMissingCredentialsWarning: FunctionComponent< Props > = ( { s
 	);
 };
 
-export default JetpackBackupMissingCredentialsWarning;
+export default JetpackCloudMissingCredentialsWarning;
