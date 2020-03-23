@@ -211,13 +211,15 @@ const Header: FunctionComponent = () => {
 					} );
 
 					resetOnboardStore();
-					window.location.href = `/checkout/${ newSite.site_slug }?redirect_to=%2Fgutenboarding%2Fdesign`;
+					window.location.replace(
+						`/checkout/${ newSite.site_slug }?redirect_to=%2Fgutenboarding%2Fdesign`
+					);
 				};
 				go();
 				return;
 			}
 			resetOnboardStore();
-			window.location.href = `/block-editor/page/${ newSite.site_slug }/home?is-gutenboarding`;
+			window.location.replace( `/block-editor/page/${ newSite.site_slug }/home?is-gutenboarding` );
 		}
 	}, [ domain, isDomainFlow, newSite, resetOnboardStore ] );
 
