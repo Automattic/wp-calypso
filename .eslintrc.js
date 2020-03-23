@@ -132,18 +132,8 @@ module.exports = {
 		// i18n-calypso translate triggers false failures
 		'jsx-a11y/anchor-has-content': 'off',
 
-		'no-restricted-imports': [
-			2,
-			{
-				paths: restrictedImportPaths,
-			},
-		],
-		'no-restricted-modules': [
-			2,
-			{
-				paths: restrictedModulePaths,
-			},
-		],
+		'no-restricted-imports': [ 2, { paths: restrictedImportPaths } ],
+		'no-restricted-modules': [ 2, { paths: restrictedModulePaths } ],
 
 		// Allows Chai `expect` expressions. Now that we're on jest, hopefully we can remove this one.
 		'no-unused-expressions': 'off',
