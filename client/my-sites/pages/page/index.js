@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 import pageRouter from 'page';
 import { connect } from 'react-redux';
 import { flow, get, includes, noop, partial } from 'lodash';
+import { saveAs } from 'browser-filesaver';
 
 /**
  * Internal dependencies
@@ -330,8 +331,13 @@ class Page extends Component {
 	}
 
 	getExportItem() {
+		const { page } = this.props;
+		if ( ! page.content ) {
+			return null;
+		}
+
 		return (
-			<PopoverMenuItem onClick={ this.exportPage } href={ '#' }>
+			<PopoverMenuItem onClick={ this.exportPage }>
 				<Gridicon icon="cloud-download" size={ 18 } />
 				{ this.props.translate( 'Export page' ) }
 			</PopoverMenuItem>
@@ -693,12 +699,8 @@ class Page extends Component {
 			content: page.content,
 		} );
 		const blob = new window.Blob( [ fileContent ], { type: 'application/json' } );
-		const link = document.createElement( 'a' );
-		link.href = URL.createObjectURL( blob );
-		link.download = page.title + '.json';
-		document.body.appendChild( link );
-		link.click();
-		document.body.removeChild( link );
+		const fileName = ( page.title ? page.title : 'page' ) + '.json';
+		saveAs( blob, fileName );
 	};
 
 	copyPageLink = () => {
