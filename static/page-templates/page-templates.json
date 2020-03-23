@@ -10,6 +10,26 @@
 			"title": "leven",
 			"defaults": "leven",
 			"vertical-whitelist": []
+		},
+		{
+			"title": "alves",
+			"defaults": "alves",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "exford",
+			"defaults": "exford",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "rockfield",
+			"defaults": "rockfield",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "stratford",
+			"defaults": "stratford",
+			"vertical-whitelist": []
 		}
 	],
 	"themes": [
