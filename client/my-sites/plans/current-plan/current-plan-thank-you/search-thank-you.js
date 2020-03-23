@@ -19,7 +19,11 @@ const SearchProductThankYou = ( { translate } ) => (
 		<p>
 			{ translate(
 				'Next, we’ll take a look at your new WordPress.com dashboard. ' +
+<<<<<<< HEAD
 					'You can manage Jetpack Search under “Tools > Activity” in the sidebar. ' +
+=======
+					'You can manage your Jetpack Search under “Tools > Activity” in the sidebar. ' +
+>>>>>>> Jetpack Search: add draft of the thank you note
 					'There’s also a checklist to help you get the most out of your Jetpack plan.'
 			) }
 		</p>
