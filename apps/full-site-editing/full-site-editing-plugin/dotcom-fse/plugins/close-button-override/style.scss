@@ -1,7 +1,11 @@
 .post-type-wp_template_part .edit-post-header .edit-post-fullscreen-mode-close,
 .post-type-page .edit-post-header .edit-post-fullscreen-mode-close,
 .post-type-post .edit-post-header .edit-post-fullscreen-mode-close,
-.close-button-override-thin {
+.close-button-override-thin,
+// keep legacy selectors for backward compatibility with Gutenberg plugin < v7.7
+.post-type-wp_template_part .edit-post-fullscreen-mode-close__toolbar,
+.post-type-page .edit-post-fullscreen-mode-close__toolbar,
+.post-type-post .edit-post-fullscreen-mode-close__toolbar {
 	display: none;
 }
 
@@ -11,8 +15,7 @@
 	display: flex;
 	align-items: center;
 	padding: 9px 10px;
-	margin-left: -24px;
-	margin-right: 10px;
+	margin-left: -8px;
 	border: none;
 	border-right: 1px solid #e2e4e7;
 
@@ -32,6 +35,10 @@
 		margin-left: -7px;
 	}
 
+	@media ( max-width: 599px ) {
+		margin-left: -2px;
+	}
+
 	@media ( max-width: 400px ) {
 		.close-button-override-wide {
 			display: none;
@@ -45,3 +52,14 @@
 	}
 }
 
+// add an extra class specific for the new Gutenberg plugin version so the main override above stays compatible with < v7.7
+.post-type-wp_template_part .block-editor-editor-skeleton__header .edit-post-fullscreen-mode-close__toolbar__override,
+.post-type-page .block-editor-editor-skeleton__header .edit-post-fullscreen-mode-close__toolbar__override,
+.post-type-post .block-editor-editor-skeleton__header .edit-post-fullscreen-mode-close__toolbar__override {
+	margin-left: -24px;
+	margin-right: 10px;
+
+	@media ( max-width: 599px ) {
+		margin-left: -24px;
+	}
+}
