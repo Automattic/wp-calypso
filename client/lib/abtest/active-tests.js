@@ -106,15 +106,6 @@ export default {
 		defaultVariation: 'variantShowUpdates',
 		allowExistingUsers: true,
 	},
-	domainStepDesignUpdates: {
-		datestamp: '20201220',
-		variations: {
-			variantDesignUpdates: 0,
-			control: 100,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	planStepCopyUpdates: {
 		datestamp: '20200312',
 		variations: {

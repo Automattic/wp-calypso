@@ -86,7 +86,6 @@ export class FeaturedDomainSuggestions extends Component {
 		return classNames( 'featured-domain-suggestions', this.getTextSizeClass(), {
 			'featured-domain-suggestions__is-domain-management': ! this.props.isSignupStep,
 			'featured-domain-suggestions--has-match-reasons': this.hasMatchReasons(),
-			'featured-domain-suggestions__domain-step-design-updates': this.props.showDesignUpdate,
 		} );
 	}
 
@@ -122,8 +121,6 @@ export class FeaturedDomainSuggestions extends Component {
 						fetchAlgo={ this.getFetchAlgorithm( primarySuggestion ) }
 						buttonStyles={ { primary: true } }
 						{ ...childProps }
-						showTestCopy={ this.props.showTestCopy }
-						showDesignUpdate={ this.props.showDesignUpdate }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 					/>
 				) }
@@ -136,8 +133,6 @@ export class FeaturedDomainSuggestions extends Component {
 						uiPosition={ 1 }
 						fetchAlgo={ this.getFetchAlgorithm( secondarySuggestion ) }
 						{ ...childProps }
-						showTestCopy={ this.props.showTestCopy }
-						showDesignUpdate={ this.props.showDesignUpdate }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 					/>
 				) }
