@@ -126,8 +126,8 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
 		throw new Error( 'Could not find product slug for renewal.' );
 	}
 	const productList = meta ? `${ product_slug }:${ meta }` : product_slug;
-	const renewalUrl = `/checkout/${ productList }/renew/${ purchaseId }/${ purchaseDomain ||
-		siteSlug ||
+	const renewalUrl = `/checkout/${ productList }/renew/${ purchaseId }/${ siteSlug ||
+		purchaseDomain ||
 		'' }`;
 	debug( 'handling renewal click', purchase, siteSlug, renewItem, renewalUrl );
 
