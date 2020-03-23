@@ -667,7 +667,6 @@ class ThemeSheet extends React.Component {
 						)
 					) }
 					event="themes_plan_particular_free_with_plan"
-					callToAction={ preventWidows( translate( 'View Plans' ) ) }
 					forceHref={ true }
 					href={ plansUrl }
 				/>
