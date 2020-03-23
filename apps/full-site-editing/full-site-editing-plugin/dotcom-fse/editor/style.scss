@@ -94,3 +94,10 @@
 		margin: 0;
 	}
 }
+
+@media ( max-width: 600px ) {
+	// Table of contents button is not displayed in mobile view.
+	.components-dropdown.table-of-contents {
+		display: none;
+	}
+}

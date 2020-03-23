@@ -9,8 +9,22 @@
 	}
 }
 
+// For Gutenberg < 7.7
 @media ( min-width: 600px ) {
 	body.is-iframed.is-fullscreen-mode .edit-post-header {
+		top: 0;
+	}
+}
+
+// For Gutenberg >= 7.7
+// 782px is $break-medium in Gutenberg which is
+// the starting breakpoint for tablet view.
+@media ( max-width: 782px ) {
+	// In non-iframed version, top: 46px is provided to accommodate #wpadminbar.
+	// On fullscreen mode, #wpadminbar is visible on tablet & mobile voew because
+	// fullscreen mode actually don't exists on tablet & mobile view.
+	// See: https://github.com/WordPress/gutenberg/pull/13425
+	body.is-iframed.is-fullscreen-mode .block-editor-editor-skeleton {
 		top: 0;
 	}
 }
@@ -30,4 +44,15 @@ body.is-fullscreen-mode {
 
 .components-notice-list {
 	z-index: 29; // Ensure notices are placed behind the editor header (z-index: 30).
+}
+
+// The parent element .edit-post-header__toolbar provides
+// a padding-left of 24px. However, the right side of the header
+// only has a padding-right of 16px.
+//
+// To make the toolbar buttons look more balanced, an left offset of -8px
+// is added to this custom block inserter button (24px - 16px = 8px). This
+// -8px offset also contributes in solving spacing issue in mobile/tablet view.
+.block-editor-inserter__toggle {
+	margin-left: -8px;
 }
