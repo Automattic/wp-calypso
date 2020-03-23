@@ -3,7 +3,6 @@
 }
 
 .backup-delta__view-all-button {
-    display: block;
     float: none;
 }
 
@@ -40,7 +39,7 @@
 .backup-delta__media-title {
     position: relative;
     top: -1.5rem;
-    background-color: rgba(0,0,0,.5);
+    background-color: rgba( 0, 0, 0, 0.5 );
     color: #fff;
     font-size: 0.8rem;
 }
@@ -52,7 +51,7 @@
 
 .backup-delta__count-bubble {
     display: inline-block;
-    background: #DCDCDE;
+    background: #dcdcde;
     color: #000;
     border-radius: 1rem;
     padding: 0.2rem 0.5rem;
@@ -60,10 +59,10 @@
 
 .backup-delta__deleted-count-bubble {
     position: absolute;
-    right: .5rem;
+    right: 0.5rem;
     top: 2rem;
     display: inline-block;
-    background: #D63638;
+    background: #d63638;
     color: #fff;
     border-radius: 1rem;
     padding: 0.2rem 0.5rem;
@@ -71,13 +70,15 @@
 
 .gridicon.backup-delta__post-icon {
     width: 1rem;
-    fill: #787C82;
+    fill: #787c82;
 }
 
 .backup-delta__post-link {
+    display: inline-block;
     position: relative;
     top: -0.4rem;
     left: 0.5rem;
+    color: #349e0b;
 }
 
 .backup-delta__post-block {
@@ -88,8 +89,9 @@
     margin: 1rem 0;
 }
 
-@media (max-width: 660px) {
+@media ( max-width: 660px ) {
     .backup-delta__view-all-button {
-        width: 100%;
+        display: block;
+        text-align: center;
     }
 }

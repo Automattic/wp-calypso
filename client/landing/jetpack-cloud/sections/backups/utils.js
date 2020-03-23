@@ -90,16 +90,17 @@ export const getMetaDiffForDailyBackup = ( logs, date ) => {
 	const thisMeta = metaStringToObject(
 		thisBackup.complete[ 0 ].activityDescription[ 2 ].children[ 0 ]
 	);
+
 	const lastMeta = metaStringToObject(
 		lastBackup.complete[ 0 ].activityDescription[ 2 ].children[ 0 ]
 	);
 
-	return {
-		plugins: thisMeta.plugins.val - lastMeta.plugins.val,
-		themes: thisMeta.themes.val - lastMeta.themes.val,
-		uploads: thisMeta.uploads.val - lastMeta.uploads.val,
-		posts: thisMeta.posts.val - lastMeta.posts.val,
-	};
+	return [
+		{ type: 'Plugin', num: thisMeta.plugins.val - lastMeta.plugins.val },
+		{ type: 'Theme', num: thisMeta.themes.val - lastMeta.themes.val },
+		{ type: 'Upload', num: thisMeta.uploads.val - lastMeta.uploads.val },
+		{ type: 'Post', num: thisMeta.posts.val - lastMeta.posts.val },
+	];
 };
 
 export const getDailyBackupDeltas = ( logs, date ) => {

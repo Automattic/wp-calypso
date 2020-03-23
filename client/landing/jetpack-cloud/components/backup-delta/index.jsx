@@ -50,88 +50,17 @@ class BackupDelta extends Component {
 	}
 
 	renderMetaDiff() {
-		const { metaDiff, translate } = this.props;
+		const { metaDiff } = this.props;
 		const metas = [];
 
-		if ( metaDiff.plugins > 0 ) {
-			metas.push(
-				translate( '+%(numPlugins)d Plugin', '+%(numPlugins)d Plugins', {
-					count: metaDiff.plugins,
-					args: {
-						numPlugins: metaDiff.plugins,
-					},
-				} )
-			);
-		} else if ( metaDiff.plugins < 0 ) {
-			metas.push(
-				translate( '%(numPlugins)d Plugin', '%(numPlugins)d Plugins', {
-					count: metaDiff.plugins,
-					args: {
-						numPlugins: metaDiff.plugins,
-					},
-				} )
-			);
-		}
-
-		if ( metaDiff.themes > 0 ) {
-			metas.push(
-				translate( '+%(numThemes)d Theme', '+%(numThemes)d Themes', {
-					count: metaDiff.themes,
-					args: {
-						numThemes: metaDiff.themes,
-					},
-				} )
-			);
-		} else if ( metaDiff.themes < 0 ) {
-			metas.push(
-				translate( '%(numThemes)d Theme', '%(numThemes)d Themes', {
-					count: metaDiff.themes,
-					args: {
-						numThemes: metaDiff.themes,
-					},
-				} )
-			);
-		}
-
-		if ( metaDiff.uploads > 0 ) {
-			metas.push(
-				translate( '+%(numUploads)d Upload', '+%(numUploads)d Uploads', {
-					count: metaDiff.uploads,
-					args: {
-						numUploads: metaDiff.uploads,
-					},
-				} )
-			);
-		} else if ( metaDiff.uploads < 0 ) {
-			metas.push(
-				translate( '%(numUploads)d Upload', '%(numUploads)d Uploads', {
-					count: metaDiff.uploads,
-					args: {
-						numUploads: metaDiff.uploads,
-					},
-				} )
-			);
-		}
-
-		if ( metaDiff.posts > 0 ) {
-			metas.push(
-				translate( '+%(numPosts)d Post', '+%(numPosts)d Posts', {
-					count: metaDiff.posts,
-					args: {
-						numPosts: metaDiff.posts,
-					},
-				} )
-			);
-		} else if ( metaDiff.posts < 0 ) {
-			metas.push(
-				translate( '%(numPosts)d Post', '%(numPosts)d Posts', {
-					count: metaDiff.posts,
-					args: {
-						numPosts: metaDiff.posts,
-					},
-				} )
-			);
-		}
+		metaDiff.forEach( meta => {
+			if ( meta.num > 0 || meta.num < 0 ) {
+				const operator = meta.num < 0 ? '-' : '+';
+				const plural = meta.num > 1 || meta.num < -1 ? 's' : '';
+				// TBD: How do we deal with translating these strings?
+				metas.push( `${ operator }${ meta.num } ${ meta.type }${ plural }` );
+			}
+		} );
 
 		return <div className="backup-delta__metas">{ metas.join( ', ' ) }</div>;
 	}
