@@ -52,6 +52,8 @@ class CurrentPlan extends Component {
 		path: PropTypes.string.isRequired,
 		domains: PropTypes.array,
 		currentPlan: PropTypes.object,
+		plan: PropTypes.string,
+		product: PropTypes.bool,
 		requestThankYou: PropTypes.bool,
 		shouldShowDomainWarnings: PropTypes.bool,
 		hasDomainsLoaded: PropTypes.bool,
@@ -75,12 +77,12 @@ class CurrentPlan extends Component {
 	}
 
 	renderThankYou() {
-		const { currentPlan, requestProduct } = this.props;
+		const { currentPlan, product, requestProduct } = this.props;
 
 		if ( requestProduct && startsWith( requestProduct, 'jetpack_backup' ) ) {
 			return <BackupProductThankYou />;
 		}
-		if ( requestProduct && startsWith( requestProduct, 'jetpack_search' ) ) {
+		if ( requestProduct && startsWith( product, 'jetpack_search' ) ) {
 			return <SearchProductThankYou />;
 		}
 		if ( ! currentPlan || isFreePlan( currentPlan ) || isFreeJetpackPlan( currentPlan ) ) {
