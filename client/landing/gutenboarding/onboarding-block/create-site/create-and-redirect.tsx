@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 import { useDispatch, useSelect } from '@wordpress/data';
 
@@ -13,11 +13,8 @@ import { USER_STORE } from '../../stores/user';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 import { Step, usePath } from '../../path';
 
-type Status = 'INIT' | 'SUCCESS' | 'ERROR' | 'MISSING_SITE_DATA';
-
 const CreateAndRedirect = () => {
 	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
-	const [ status, setStatus ] = useState< Status >( siteVertical ? 'INIT' : 'MISSING_SITE_DATA' );
 
 	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
 	const makePath = usePath();
@@ -28,23 +25,15 @@ const CreateAndRedirect = () => {
 	useEffect( () => {
 		// If there's no site title don't wait for a free domain suggestion, there won't be one
 		if ( currentUser && ( ! siteTitle || freeDomainSuggestion ) ) {
-			createSite( currentUser.username, freeDomainSuggestion ).then( success => {
-				setStatus( success ? 'SUCCESS' : 'ERROR' );
-			} );
+			createSite( currentUser.username, freeDomainSuggestion );
 		}
-	}, [ createSite, currentUser, freeDomainSuggestion, siteTitle, setStatus ] );
+	}, [ createSite, currentUser, freeDomainSuggestion, siteTitle ] );
 
-	switch ( status ) {
-		case 'INIT':
-			return null;
-
-		case 'SUCCESS':
-			return <Redirect to={ makePath( Step.CreateSite ) } />;
-
-		case 'ERROR':
-		case 'MISSING_SITE_DATA':
-			return <Redirect to={ makePath( Step.IntentGathering ) } />;
+	if ( ! siteVertical ) {
+		return <Redirect to={ makePath( Step.IntentGathering ) } />;
 	}
+
+	return null;
 };
 
 export default CreateAndRedirect;

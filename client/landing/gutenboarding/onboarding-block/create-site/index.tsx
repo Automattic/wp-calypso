@@ -3,21 +3,21 @@
  */
 import React, { FunctionComponent } from 'react';
 import { useI18n } from '@automattic/react-i18n';
-import { useLocation } from 'react-router-dom';
 
 /**
  * Internal dependencies
  */
 import AnimatedPlaceholder from '../animated-placeholder';
 import CreateAndRedirect from './create-and-redirect';
+import { useNewQueryParam } from '../../path';
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const CreateSite: FunctionComponent< {} > = () => {
 	const { __: NO__ } = useI18n();
-	const query = new URLSearchParams( useLocation().search );
+	const shouldTriggerCreate = useNewQueryParam();
 
-	const createAndRedirect = query.has( 'new' ) ? <CreateAndRedirect /> : null;
+	const createAndRedirect = shouldTriggerCreate ? <CreateAndRedirect /> : null;
 
 	return (
 		<div className="create-site__background">
