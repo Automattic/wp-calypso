@@ -32,7 +32,6 @@ class Posts_List_Block {
 	private function __construct() {
 		add_action( 'init', array( $this, 'register_blocks' ), 100 );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_scripts' ), 100 );
-		add_action( 'enqueue_core_site_editor_assets', array( $this, 'enqueue_scripts' ), 100 );
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_styles' ), 100 );
 	}
 

@@ -31,9 +31,6 @@ function initialize_site_editor() {
 
 	// TODO: Currently this action is removed on Dotcom. Circle back and find a cleaner way to deal with this.
 	add_action( 'admin_menu', 'gutenberg_menu' );
-
-	// Dotcom-specific overrides for API requests and similar.
-	add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\enqueue_override_scripts' );
 }
 
 /**
@@ -65,19 +62,6 @@ function enable_site_editor_experiment( $experiments_option ) {
 	}
 
 	return $experiments_option;
-}
-
-/**
- * We need to load Dotcom scripts to override default behavior.
- *
- * One example is routing API requests to public-api.
- */
-function enqueue_override_scripts() {
-	/*
-	 * TODO: clean up this workaround later if possible.
-	 * Currently this works because the required Dotcom overrides are hooked to this action.
-	 */
-	do_action( 'enqueue_core_site_editor_assets' );
 }
 
 /**
