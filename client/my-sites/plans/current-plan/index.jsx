@@ -53,7 +53,7 @@ class CurrentPlan extends Component {
 		domains: PropTypes.array,
 		currentPlan: PropTypes.object,
 		plan: PropTypes.string,
-		product: PropTypes.bool,
+		product: PropTypes.string,
 		requestThankYou: PropTypes.bool,
 		shouldShowDomainWarnings: PropTypes.bool,
 		hasDomainsLoaded: PropTypes.bool,
@@ -79,9 +79,10 @@ class CurrentPlan extends Component {
 	renderThankYou() {
 		const { currentPlan, product, requestProduct } = this.props;
 
-		if ( requestProduct && startsWith( requestProduct, 'jetpack_backup' ) ) {
+		if ( requestProduct && startsWith( product, 'jetpack_backup' ) ) {
 			return <BackupProductThankYou />;
 		}
+
 		if ( requestProduct && startsWith( product, 'jetpack_search' ) ) {
 			return <SearchProductThankYou />;
 		}

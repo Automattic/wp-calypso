@@ -33,6 +33,7 @@ export class ThankYouCard extends Component {
 			showCalypsoIntro,
 			showContinueButton,
 			showHideMessage,
+			showSearchRedirects,
 			title,
 			translate,
 		} = this.props;
@@ -80,6 +81,21 @@ export class ThankYouCard extends Component {
 							>
 								{ translate( 'Hide message' ) }
 							</a>
+						</p>
+					) }
+					{ showSearchRedirects && (
+						<p className="current-plan-thank-you__followup">
+							<Button
+								primary
+								compact={ true }
+								href="customize.php?autofocus[section]=jetpack_search"
+							>
+								{ translate( 'Customize Search Now' ) }
+							</Button>
+
+							<Button compact={ true } href={ '/plans/' }>
+								{ translate( "I'll do it later" ) }
+							</Button>
 						</p>
 					) }
 				</div>

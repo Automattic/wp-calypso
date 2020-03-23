@@ -11,20 +11,15 @@ import ThankYou from './thank-you';
 
 const SearchProductThankYou = ( { translate } ) => (
 	<ThankYou
-		illustration="/calypso/images/illustrations/security.svg"
-		showContinueButton
-		title={ translate( 'Hello Jetpack Search!' ) }
+		illustration="/calypso/images/illustrations/thankYou.svg"
+		showSearchRedirects
+		title={ translate( 'Welcome to Jetpack Search!' ) }
 	>
-		<p>{ translate( 'We just finished setting up search for you.' ) }</p>
+		<p>{ translate( 'We are currently indexing your site.' ) }</p>
 		<p>
 			{ translate(
-				'Next, we’ll take a look at your new WordPress.com dashboard. ' +
-<<<<<<< HEAD
-					'You can manage Jetpack Search under “Tools > Activity” in the sidebar. ' +
-=======
-					'You can manage your Jetpack Search under “Tools > Activity” in the sidebar. ' +
->>>>>>> Jetpack Search: add draft of the thank you note
-					'There’s also a checklist to help you get the most out of your Jetpack plan.'
+				'In the meantime, we have added some common filtering widgets to your site ' +
+					'that you should try customizing in your traditional WordPress dashboard.'
 			) }
 		</p>
 		<p>
