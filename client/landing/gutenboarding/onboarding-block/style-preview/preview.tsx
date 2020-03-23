@@ -4,13 +4,14 @@
 import * as React from 'react';
 import { addQueryArgs } from '@wordpress/url';
 import { useSelect } from '@wordpress/data';
+import { ValuesType } from 'utility-types';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
 import * as T from './types';
-import { ValuesType } from 'utility-types';
+import { useLangRouteParam } from '../../path';
 
 type Design = import('../../stores/onboard/types').Design;
 type SiteVertical = import('../../stores/onboard/types').SiteVertical;
@@ -28,6 +29,7 @@ const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 	) as { selectedDesign: Design; siteVertical: SiteVertical };
 
 	const iframe = React.useRef< HTMLIFrameElement >( null );
+	const language = useLangRouteParam();
 
 	React.useEffect(
 		() => {
@@ -37,7 +39,7 @@ const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 					selectedDesign.slug
 				) }/${ encodeURIComponent( selectedDesign.slug ) }/`;
 				const url = addQueryArgs( templateUrl, {
-					language: 'en',
+					language: language,
 					vertical: siteVertical.label,
 					font_headings: fontHeadings,
 					font_base: fontBase,
@@ -65,7 +67,7 @@ const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 			eff();
 		},
 		// Disable reason: We'll handle font change elsewhere.
-		[ selectedDesign, siteVertical ] // eslint-disable-line react-hooks/exhaustive-deps
+		[ language, selectedDesign, siteVertical ] // eslint-disable-line react-hooks/exhaustive-deps
 	);
 
 	React.useEffect( () => {
