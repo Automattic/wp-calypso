@@ -19,7 +19,10 @@
 	},
 	"enable_all_sections": false,
 	"sections": {
-		"jetpack-cloud": true
+		"jetpack-cloud": true,
+		"scan": true,
+		"backups": true,
+		"jetpack-cloud-settings": true
 	},
 	"theme": "jetpack-cloud"
 }
