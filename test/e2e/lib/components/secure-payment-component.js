@@ -199,7 +199,11 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 			By.css( 'button[data-e2e-type="apply-coupon"]' )
 		);
 		const noticesComponent = await NoticesComponent.Expect( this.driver );
-		return await noticesComponent.dismissNotice();
+		await noticesComponent.dismissNotice();
+		return await driverHelper.waitTillPresentAndDisplayed(
+			this.driver,
+			By.css( '.cart__remove-link' )
+		);
 	}
 
 	async enterCouponCode( couponCode ) {
