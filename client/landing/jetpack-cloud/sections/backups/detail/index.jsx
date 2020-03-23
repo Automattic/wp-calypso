@@ -23,8 +23,7 @@ import Filterbar from 'my-sites/activity/filterbar';
 import { updateFilter } from 'state/activity-log/actions';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 import Pagination from 'components/pagination';
-// This can be used after merging https://github.com/Automattic/wp-calypso/pull/40066
-//import ActivityCard from '../../../components/activity-card';
+import ActivityCard from '../../../components/activity-card';
 import { getEventsInDailyBackup } from '../utils';
 
 const PAGE_SIZE = 10;
@@ -59,21 +58,14 @@ class BackupDetailPage extends Component {
 		const theseLogs = actualLogs.slice( ( actualPage - 1 ) * PAGE_SIZE, actualPage * PAGE_SIZE );
 
 		const cards = theseLogs.map( activity => (
-			<div key={ activity.activityId }>
-				<div>{ activity.activityDate }</div>
-				<div>{ activity.activityName }</div>
-			</div>
-			// This can be replaced with the following after we merge https://github.com/Automattic/wp-calypso/pull/40066
-			/*
 			<ActivityCard
 				{ ...{
 					key: activity.activityId,
 					moment,
 					activity,
-					allowRestore,
+					allowRestore: false,
 				} }
 			/>
-			*/
 		) );
 
 		return (
@@ -109,8 +101,8 @@ class BackupDetailPage extends Component {
 				{ actualLogs.length > PAGE_SIZE && (
 					<Pagination
 						compact={ isMobile() }
-						className="backups__pagination"
-						key="backups__pagination-top"
+						className="detail__pagination"
+						key="detail__pagination-top"
 						nextLabel={ 'Older' }
 						page={ actualPage }
 						pageClick={ this.changePage }
@@ -123,8 +115,8 @@ class BackupDetailPage extends Component {
 				{ actualLogs.length > PAGE_SIZE && (
 					<Pagination
 						compact={ isMobile() }
-						className="backups__pagination"
-						key="backups__pagination-bottom"
+						className="detail__pagination"
+						key="detail__pagination-bottom"
 						nextLabel={ 'Older' }
 						page={ actualPage }
 						pageClick={ this.changePage }

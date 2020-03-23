@@ -63,7 +63,6 @@ class BackupsPage extends Component {
 		const { allowRestore, hasRealtimeBackups, logs, moment, siteId, siteSlug } = this.props;
 		const { selectedDateString } = this.state;
 
-		const hasRealtimeBackups = false; //this.hasRealtimeBackups();
 		const backupAttempts = getBackupAttemptsForDate( logs, selectedDateString );
 		const deltas = getDailyBackupDeltas( logs, selectedDateString );
 		const realtimeEvents = getEventsInDailyBackup( logs, selectedDateString );
