@@ -12,8 +12,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Checklist, Task } from 'components/checklist';
-import ChecklistBanner from './checklist-banner';
-import ChecklistBannerTask from './checklist-banner/task';
 import ChecklistNavigation from './checklist-navigation';
 import ChecklistPrompt from './checklist-prompt';
 import ChecklistPromptTask from './checklist-prompt/task';
@@ -256,9 +254,6 @@ class WpcomChecklistComponent extends PureComponent {
 		let ChecklistComponent = Checklist;
 
 		switch ( viewMode ) {
-			case 'banner':
-				ChecklistComponent = ChecklistBanner;
-				break;
 			case 'navigation':
 				ChecklistComponent = ChecklistNavigation;
 				break;
@@ -298,9 +293,6 @@ class WpcomChecklistComponent extends PureComponent {
 		let TaskComponent = Task;
 
 		switch ( viewMode ) {
-			case 'banner':
-				TaskComponent = ChecklistBannerTask;
-				break;
 			case 'prompt':
 				TaskComponent = ChecklistPromptTask;
 				break;

@@ -15,7 +15,6 @@ import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom
 import { getSelectedSiteId, isSiteSection } from 'state/ui/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import AsyncLoad from 'components/async-load';
-import { getNeverShowBannerStatus } from 'my-sites/checklist/wpcom-checklist/checklist-banner/never-show';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { isBlockEditorSectionInTest } from 'lib/signup/page-builder';
 
@@ -24,7 +23,7 @@ class WpcomChecklist extends Component {
 		designType: PropTypes.oneOf( [ 'blog', 'page', 'portfolio', 'store' ] ),
 		siteId: PropTypes.number,
 		taskStatuses: PropTypes.object,
-		viewMode: PropTypes.oneOf( [ 'checklist', 'banner', 'navigation', 'notification', 'prompt' ] ),
+		viewMode: PropTypes.oneOf( [ 'checklist', 'navigation', 'notification', 'prompt' ] ),
 	};
 
 	static defaultProps = {
@@ -49,13 +48,7 @@ class WpcomChecklist extends Component {
 	}
 }
 
-function shouldChecklistRender(
-	viewMode,
-	isEligibleForChecklist,
-	taskList,
-	isSectionEligible,
-	siteId
-) {
+function shouldChecklistRender( viewMode, isEligibleForChecklist, taskList, isSectionEligible ) {
 	// Render nothing in notification mode.
 	if ( viewMode === 'notification' ) {
 		return false;
@@ -73,11 +66,6 @@ function shouldChecklistRender(
 
 	// Render nothing in navigation mode if the current section is not site-specific.
 	if ( ! isSectionEligible && viewMode === 'navigation' ) {
-		return false;
-	}
-
-	// Render nothing in banner mode if "never show banner" is set.
-	if ( getNeverShowBannerStatus( siteId ) && viewMode === 'banner' ) {
 		return false;
 	}
 
