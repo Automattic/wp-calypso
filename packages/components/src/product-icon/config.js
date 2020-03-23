@@ -20,6 +20,7 @@ export const paths = {
 	'jetpack-personal': jetpackPersonal,
 	'jetpack-premium': jetpackPremium,
 	'jetpack-professional': jetpackProfessional,
+	'jetpack-search': jetpackBackup, // TODO: Add Jetpack Search icon
 	'wpcom-blogger': wpcomBlogger,
 	'wpcom-business': wpcomBusiness,
 	'wpcom-ecommerce': wpcomEcommerce,
@@ -41,6 +42,7 @@ export const iconToProductSlugMap = {
 	'jetpack-professional': [ 'jetpack_business', 'jetpack_business_monthly' ],
 	'jetpack-backup-daily': [ 'jetpack_backup_daily', 'jetpack_backup_daily_monthly' ],
 	'jetpack-backup-realtime': [ 'jetpack_backup_realtime', 'jetpack_backup_realtime_monthly' ],
+	'jetpack-search': [ 'jetpack_search', 'jetpack_search_monthly' ],
 };
 
 export const supportedSlugs = [ ...Object.values( iconToProductSlugMap ) ].flat();
