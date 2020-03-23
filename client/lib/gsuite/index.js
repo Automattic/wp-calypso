@@ -2,7 +2,7 @@
  * External dependencies
  */
 import formatCurrency from '@automattic/format-currency';
-import { endsWith, get, includes, isNumber, isString, some, sortBy } from 'lodash';
+import { endsWith, get, isNumber, isString, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,22 +28,17 @@ function applyPrecision( cost, precision ) {
 }
 
 /**
- * Can a domain add G Suite
+ * Determines whether G Suite is allowed for the specified domain.
  *
- * @param {string} domainName - domainname
- * @returns {boolean} -Can a domain add G Suite
+ * @param {string} domainName - domain name
+ * @returns {boolean} - true if G Suite is allowed, false otherwise
  */
 function canDomainAddGSuite( domainName ) {
-	const GOOGLE_APPS_INVALID_SUFFIXES = [ '.in', '.wpcomstaging.com' ];
-	const GOOGLE_APPS_BANNED_PHRASES = [ 'google' ];
-	const includesBannedPhrase = some( GOOGLE_APPS_BANNED_PHRASES, bannedPhrase =>
-		includes( domainName, bannedPhrase )
-	);
-	const hasInvalidSuffix = some( GOOGLE_APPS_INVALID_SUFFIXES, invalidSuffix =>
-		endsWith( domainName, invalidSuffix )
-	);
+	if ( endsWith( domainName, '.wpcomstaging.com' ) ) {
+		return false;
+	}
 
-	return ! ( hasInvalidSuffix || includesBannedPhrase || isGSuiteRestricted() );
+	return ! isGSuiteRestricted();
 }
 
 /**
