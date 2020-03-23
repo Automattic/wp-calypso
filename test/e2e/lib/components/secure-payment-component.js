@@ -223,17 +223,19 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	async removeCoupon() {
 		// Desktop
 		if ( currentScreenSize() !== 'mobile' ) {
-			return await driverHelper.clickWhenClickable(
+			await driverHelper.clickWhenClickable(
 				this.driver,
 				By.css( '.cart-body .cart__remove-link' )
 			);
+			return await driverHelper.waitTillNotPresent( this.driver, By.css( '.cart__remove-link' ) );
 		}
 
 		// Mobile
-		return await driverHelper.clickWhenClickable(
+		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.payment-box__content .cart__remove-link' )
 		);
+		return await driverHelper.waitTillNotPresent( this.driver, By.css( '.cart__remove-link' ) );
 	}
 	async removeFromCart() {
 		return await driverHelper.clickWhenClickable(
