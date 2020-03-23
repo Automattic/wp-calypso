@@ -65,7 +65,8 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 				} );
 			} );
 
-		window.__requireChunkCallback__.add( ( chunkId, promises ) => {
+		window.__requireChunkCallback__.add( ( { publicPath, scriptSrc }, promises ) => {
+			const chunkId = scriptSrc.replace( publicPath, '' ).replace( /\.js$/, '' );
 			const translationChunkPath = getTranslationChunkPath( chunkId );
 
 			if ( ! translatedChunks ) {

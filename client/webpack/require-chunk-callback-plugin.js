@@ -40,9 +40,9 @@ class RequireChunkCallbackPlugin {
 							return this;
 						};
 
-						RequireChunkCallback.prototype.trigger = function( chunkId, promises, publicPath ) {
+						RequireChunkCallback.prototype.trigger = function( chunk, promises, publicPath ) {
 							for ( var i = 0; i < this.callbacks.length; i++ ) {
-								this.callbacks[ i ]( chunkId, promises, publicPath );
+								this.callbacks[ i ]( chunk, promises, publicPath );
 							}
 
 							return this;
@@ -63,7 +63,11 @@ class RequireChunkCallbackPlugin {
 				return Template.asString( [
 					source,
 					'',
-					'requireChunkCallback.trigger( chunkId, promises, __webpack_require__.p )',
+					`requireChunkCallback.trigger( {
+						chunkId,
+						publicPath: __webpack_require__.p,
+						scriptSrc: jsonpScriptSrc( chunkId )
+					}, promises )`,
 				] );
 			} );
 		} );
