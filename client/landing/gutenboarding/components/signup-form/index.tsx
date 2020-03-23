@@ -13,11 +13,9 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
  */
 import { USER_STORE } from '../../stores/user';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { useLangRouteParam } from '../../path';
-import './style.scss';
+import { useLangRouteParam, usePath, Step } from '../../path';
 import ModalSubmitButton from '../modal-submit-button';
-
-type NewUserErrorResponse = import('@automattic/data-stores').User.NewUserErrorResponse;
+import './style.scss';
 
 // TODO: deploy this change to @types/wordpress__element
 declare module '@wordpress/element' {
@@ -41,6 +39,7 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 	const newUserError = useSelect( select => select( USER_STORE ).getNewUserError() );
 	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ) ).getState();
 	const langParam = useLangRouteParam();
+	const makePath = usePath();
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_gutenboarding_signup_start', {
@@ -97,6 +96,10 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 		}
 	}
 
+	const loginRedirectUrl = `${ window.location.origin }/gutenboarding${ makePath(
+		Step.CreateSite
+	) }?new`;
+
 	return (
 		<Modal
 			className="signup-form"
@@ -135,8 +138,14 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 				</div>
 			</form>
 			<div className="signup-form__login-links">
-				<Button isLink={ true } onClick={ openLogin }>
+				<Button isLink href={ '/log-in?redirect_to=' + encodeURIComponent( loginRedirectUrl ) }>
 					{ NO__( 'Log in to create a site for your existing account.' ) }
+				</Button>
+			</div>
+			<div className="signup-form__login-links">
+				<Button isLink={ true } onClick={ openLogin }>
+					{ /* Removing before shipping, no need to translate */ }
+					(experimental login)
 				</Button>
 			</div>
 		</Modal>

@@ -14,7 +14,7 @@ import { SITE_STORE } from '../stores/site';
 import DesignSelector from './design-selector';
 import CreateSite from './create-site';
 import { Attributes } from './types';
-import { Step, usePath } from '../path';
+import { Step, usePath, useNewQueryParam } from '../path';
 import AcquireIntent from './acquire-intent';
 import StylePreview from './style-preview';
 import { isEnabled } from '../../../config';
@@ -24,12 +24,15 @@ import './style.scss';
 const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
 	const { siteVertical, selectedDesign } = useSelect( select => select( STORE_KEY ).getState() );
 	const isCreatingSite = useSelect( select => select( SITE_STORE ).isFetchingSite() );
+	const replaceHistory = useNewQueryParam();
 
 	const makePath = usePath();
 
 	return (
 		<div className="onboarding-block" data-vertical={ siteVertical?.label }>
-			{ isCreatingSite && <Redirect push to={ makePath( Step.CreateSite ) } /> }
+			{ isCreatingSite && (
+				<Redirect push={ replaceHistory ? undefined : true } to={ makePath( Step.CreateSite ) } />
+			) }
 			<Switch>
 				<Route exact path={ makePath( Step.IntentGathering ) }>
 					<AcquireIntent />

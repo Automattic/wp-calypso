@@ -1,18 +1,20 @@
 /**
  * External dependencies
  */
-import { VerticalsTemplates } from '@automattic/data-stores';
+import { DomainSuggestions, VerticalsTemplates } from '@automattic/data-stores';
+import { dispatch, select } from '@wordpress/data-controls';
 
 /**
  * Internal dependencies
  */
 import { Design, SiteVertical } from './types';
+import { STORE_KEY as ONBOARD_STORE } from './constants';
+import { SITE_STORE } from '../site';
 
+type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 type Template = VerticalsTemplates.Template;
 
-export const setDomain = (
-	domain: import('@automattic/data-stores').DomainSuggestions.DomainSuggestion | undefined
-) => ( {
+export const setDomain = ( domain: DomainSuggestion | undefined ) => ( {
 	type: 'SET_DOMAIN' as const,
 	domain,
 } );
@@ -44,6 +46,37 @@ export const togglePageLayout = ( pageLayout: Template ) => ( {
 export const resetOnboardStore = () => ( {
 	type: 'RESET_ONBOARD_STORE' as const,
 } );
+
+export function* createSite(
+	username: string,
+	freeDomainSuggestion?: DomainSuggestion,
+	bearerToken?: string
+) {
+	const { domain, selectedDesign, siteTitle, siteVertical } = yield select(
+		ONBOARD_STORE,
+		'getState'
+	);
+
+	const currentDomain = domain ?? freeDomainSuggestion;
+	const siteUrl = currentDomain?.domain_name || siteTitle || username;
+
+	const success = yield dispatch( SITE_STORE, 'createSite', {
+		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
+		blog_title: siteTitle,
+		options: {
+			site_vertical: siteVertical?.id,
+			site_vertical_name: siteVertical?.label,
+			site_information: {
+				title: siteTitle,
+			},
+			site_creation_flow: 'gutenboarding',
+			theme: `pub/${ selectedDesign?.slug || 'twentytwenty' }`,
+		},
+		...( bearerToken && { authToken: bearerToken } ),
+	} );
+
+	return success;
+}
 
 export type OnboardAction = ReturnType<
 	| typeof setDomain

@@ -6,9 +6,7 @@ import { useI18n } from '@automattic/react-i18n';
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { FunctionComponent, useEffect, useCallback, useState } from 'react';
-import { useDebounce } from 'use-debounce';
 import classnames from 'classnames';
-import { DomainSuggestions } from '@automattic/data-stores';
 import { useHistory } from 'react-router-dom';
 
 /**
@@ -19,9 +17,9 @@ import { USER_STORE } from '../../stores/user';
 import { SITE_STORE } from '../../stores/site';
 import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
-import { selectorDebounce } from '../../constants';
 import SignupForm from '../../components/signup-form';
 import LoginForm from '../../components/login-form';
+import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 
 import wp from '../../../../lib/wp';
 const wpcom = wp.undocumented();
@@ -57,8 +55,6 @@ interface Cart {
 	messages: Record< 'errors' | 'success', unknown >;
 }
 
-const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
-
 const Header: FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 
@@ -67,31 +63,15 @@ const Header: FunctionComponent = () => {
 	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
 	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
 
-	const { createSite } = useDispatch( SITE_STORE );
-
 	const newSite = useSelect( select => select( SITE_STORE ).getNewSite() );
 
 	const { domain, selectedDesign, siteTitle, siteVertical } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
 	const hasSelectedDesign = !! selectedDesign;
-	const { setDomain, resetOnboardStore } = useDispatch( ONBOARD_STORE );
+	const { createSite, setDomain, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
-	const [ domainSearch ] = useDebounce( siteTitle, selectorDebounce );
-	const freeDomainSuggestion = useSelect(
-		select => {
-			if ( ! domainSearch ) {
-				return;
-			}
-			return select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( domainSearch, {
-				// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
-				include_wordpressdotcom: true,
-				quantity: 1,
-				...{ vertical: siteVertical?.id },
-			} )?.[ 0 ];
-		},
-		[ domainSearch, siteVertical ]
-	);
+	const freeDomainSuggestion = useFreeDomainSuggestion();
 
 	useEffect( () => {
 		if ( ! siteTitle ) {
@@ -137,24 +117,9 @@ const Header: FunctionComponent = () => {
 
 	const handleCreateSite = useCallback(
 		( username: string, bearerToken?: string ) => {
-			const siteUrl = currentDomain?.domain_name || siteTitle || username;
-
-			createSite( {
-				blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
-				blog_title: siteTitle,
-				options: {
-					site_vertical: siteVertical?.id,
-					site_vertical_name: siteVertical?.label,
-					site_information: {
-						title: siteTitle,
-					},
-					site_creation_flow: 'gutenboarding',
-					theme: `pub/${ selectedDesign?.slug || 'twentytwenty' }`,
-				},
-				...( bearerToken && { authToken: bearerToken } ),
-			} );
+			createSite( username, freeDomainSuggestion, bearerToken );
 		},
-		[ createSite, currentDomain, selectedDesign, siteTitle, siteVertical ]
+		[ createSite, freeDomainSuggestion ]
 	);
 
 	const handleCreateSiteForDomains: typeof handleCreateSite = ( ...args ) => {
