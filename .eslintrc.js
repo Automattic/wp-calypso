@@ -14,6 +14,12 @@ const restrictedModulePaths = [
 		name: 'superagent',
 		message: 'Please use native `fetch` instead.',
 	},
+	// Use fetch or wpcom-proxy-request instead of `lib/wp`.
+	{
+		name: 'lib/wp',
+		message:
+			'Please use native `fetch` for unauthenticated requests, or `wpcom-proxy-request` for authenticated requests.',
+	},
 ];
 
 const restrictedImportPaths = [
