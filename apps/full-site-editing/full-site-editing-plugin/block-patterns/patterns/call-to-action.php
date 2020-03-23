@@ -44,10 +44,10 @@ return array(
 	'title'   => esc_html__( 'Call to action', 'full-site-editing' ),
 	'content' => sprintf(
 		$markup,
-		esc_url( 'https://iamtakashiblockpatterns.files.wordpress.com/2020/03/david-pennington-t-gjuwpw-oi-unsplash.jpg?w=682' ),
+		esc_url( 'https://dotcompatterns.files.wordpress.com/2020/03/david-pennington-t-gjuwpw-oi-unsplash.jpg?w=682' ),
 		esc_html__( 'Content&hellip;', 'full-site-editing' ),
 		esc_html__( 'Start', 'full-site-editing' ),
-		wp_kses_post( __( '&#8220;You don&#8217;t have to be great to get started but you have to get started to be great.&#8221;<br>&mdash; Les Brown', 'full-site-editing' ) ),
+		esc_html__( 'You don&#8217;t have to be great to get started but you have to get started to be great.', 'full-site-editing' ),
 		esc_html__( 'Button', 'full-site-editing' )
 	),
 );
