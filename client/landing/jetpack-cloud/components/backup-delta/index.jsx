@@ -55,7 +55,7 @@ class BackupDelta extends Component {
 
 		metaDiff.forEach( meta => {
 			if ( meta.num > 0 || meta.num < 0 ) {
-				const operator = meta.num < 0 ? '-' : '+';
+				const operator = meta.num < 0 ? '' : '+';
 				const plural = meta.num > 1 || meta.num < -1 ? 's' : '';
 				// TBD: How do we deal with translating these strings?
 				metas.push( `${ operator }${ meta.num } ${ meta.type }${ plural }` );
@@ -66,12 +66,15 @@ class BackupDelta extends Component {
 	}
 
 	renderDaily() {
-		const { backupAttempts, deltas, siteSlug, translate } = this.props;
+		const { backupAttempts, deltas, metaDiff, siteSlug, translate } = this.props;
 		const mainBackup = backupAttempts.complete && backupAttempts.complete[ 0 ];
 
 		const mediaCreated = deltas.mediaCreated.map( item => (
 			<div key={ item.activityId } className="backup-delta__media-image">
-				<img alt="" src={ item.activityMedia.thumbnail_url } />
+				<img
+					alt=""
+					src={ item.activityMedia.available ? item.activityMedia.thumbnail_url : mediaImage }
+				/>
 				<div className="backup-delta__media-title">
 					<Gridicon icon="add" />
 					{ translate( 'Added' ) }
@@ -80,7 +83,7 @@ class BackupDelta extends Component {
 		) );
 
 		const mediaCount = deltas.mediaCreated.length - deltas.mediaDeleted.length;
-		const mediaOperator = mediaCount >= 0 ? '+' : '-';
+		const mediaOperator = mediaCount >= 0 ? '+' : '';
 		const mediaCountDisplay = `${ mediaOperator }${ mediaCount }`;
 
 		const deletedElement = [
@@ -100,7 +103,7 @@ class BackupDelta extends Component {
 				: mediaCreated.slice( 0, 3 );
 
 		const postsCount = deltas.postsCreated.length - deltas.postsDeleted.length;
-		const postsOperator = postsCount >= 0 ? '+' : '-';
+		const postsOperator = postsCount >= 0 ? '+' : '';
 		const postCountDisplay = `${ postsOperator }${ postsCount }`;
 
 		const posts = deltas.posts.map( item => {
@@ -126,11 +129,55 @@ class BackupDelta extends Component {
 			}
 		} );
 
+		const plugins = deltas.plugins.map( item => {
+			const className =
+				'plugin__installed' === item.activityName
+					? 'backup-delta__extension-block-installed'
+					: 'backup-delta__extension-block-removed';
+
+			return (
+				<div key={ item.activityId } className={ className }>
+					{ item.activityDescription[ 0 ].children[ 0 ] }
+				</div>
+			);
+		} );
+
+		const themes = deltas.themes.map( item => {
+			const className =
+				'theme__installed' === item.activityName
+					? 'backup-delta__extension-block-installed'
+					: 'backup-delta__extension-block-removed';
+
+			const icon =
+				'theme__installed' === item.activityName ? (
+					<Gridicon icon="plus" className="backup-delta__theme-icon-installed" />
+				) : (
+					<Gridicon icon="cross-small" className="backup-delta__theme-icon-removed" />
+				);
+
+			return (
+				<div key={ item.activityId } className={ className }>
+					{ icon }
+					{ item.activityDescription[ 0 ].children[ 0 ] }
+				</div>
+			);
+		} );
+
+		const hasChanges = !! (
+			deltas.mediaCreated.length ||
+			deltas.posts.length ||
+			deltas.plugins.length ||
+			deltas.themes.length ||
+			!! metaDiff.filter( diff => 0 !== diff.num ).length
+		);
+
 		return (
 			<div className="backup-delta__daily">
-				<div className="backup-delta__changes-header">
-					{ translate( 'Changes in this backup' ) }
-				</div>
+				{ hasChanges && (
+					<div className="backup-delta__changes-header">
+						{ translate( 'Changes in this backup' ) }
+					</div>
+				) }
 				{ !! deltas.mediaCreated.length && (
 					<Fragment>
 						<div className="backup-delta__section-header">{ translate( 'Media' ) }</div>
@@ -147,6 +194,18 @@ class BackupDelta extends Component {
 						<div className="backup-delta__section-header">{ translate( 'Posts' ) }</div>
 						<div className="backup-delta__section-posts">{ posts }</div>
 						<div className="backup-delta__count-bubble">{ postCountDisplay }</div>
+					</Fragment>
+				) }
+				{ !! deltas.plugins.length && (
+					<Fragment>
+						<div className="backup-delta__section-header">{ translate( 'Plugins' ) }</div>
+						<div className="backup-delta__section-plugins">{ plugins }</div>
+					</Fragment>
+				) }
+				{ !! deltas.themes.length && (
+					<Fragment>
+						<div className="backup-delta__section-header">{ translate( 'Themes' ) }</div>
+						<div className="backup-delta__section-plugins">{ themes }</div>
 					</Fragment>
 				) }
 				{ this.renderMetaDiff() }

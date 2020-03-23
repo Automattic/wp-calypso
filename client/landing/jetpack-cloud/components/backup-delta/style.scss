@@ -73,6 +73,24 @@
     fill: #787c82;
 }
 
+.gridicon.backup-delta__theme-icon-installed {
+    width: 1rem;
+    fill: #349e0b;
+}
+
+.gridicon.backup-delta__theme-icon-removed {
+    width: 1rem;
+    fill: #d63638;
+}
+
+.backup-delta__extension-block-installed {
+    color: #349e0b;
+}
+
+.backup-delta__extension-block-removed {
+    color: #d63638;
+}
+
 .backup-delta__post-link {
     display: inline-block;
     position: relative;

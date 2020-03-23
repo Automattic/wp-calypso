@@ -45,7 +45,7 @@ class BackupsPage extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			selectedDateString: props.moment( '2020-02-27' ).toISOString( true ),
+			selectedDateString: props.moment().toISOString( true ),
 		};
 	}
 
