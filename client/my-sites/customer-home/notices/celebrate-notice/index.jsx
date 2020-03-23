@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { Card } from '@automattic/components';
 import React from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
@@ -9,6 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import DismissibleCard from 'blocks/dismissible-card';
 import CardHeading from 'components/card-heading';
 import QueryActiveTheme from 'components/data/query-active-theme';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
@@ -30,6 +30,7 @@ const CelebrateNotice = ( {
 	checklistMode,
 	currentTheme,
 	currentThemeId,
+	dismissalPreferenceName,
 	displayChecklist,
 	message,
 	siteId,
@@ -78,7 +79,11 @@ const CelebrateNotice = ( {
 	};
 
 	return (
-		<Card className="celebrate-notice" highlight="info">
+		<DismissibleCard
+			className="celebrate-notice"
+			highlight="info"
+			preferenceName={ `${ dismissalPreferenceName }-${ siteId }` } // Makes cards dismissable per site.
+		>
 			{ siteId && 'theme' === checklistMode && <QueryActiveTheme siteId={ siteId } /> }
 			{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
 			<img
@@ -91,7 +96,7 @@ const CelebrateNotice = ( {
 				<CardHeading>{ message }</CardHeading>
 				<p className="celebrate-notice__secondary-text">{ getSecondaryText() }</p>
 			</div>
-		</Card>
+		</DismissibleCard>
 	);
 };
 

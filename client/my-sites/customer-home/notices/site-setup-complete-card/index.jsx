@@ -13,8 +13,9 @@ const SiteSetupCompleteCard = ( { displayChecklist } ) => {
 	const translate = useTranslate();
 	return (
 		<CelebrateNotice
-			message={ translate( "You've completed each item in your checklist." ) }
+			dismissalPreferenceName="home-notice-site-setup-complete"
 			displayChecklist={ displayChecklist }
+			message={ translate( "You've completed each item in your checklist." ) }
 		/>
 	);
 };
