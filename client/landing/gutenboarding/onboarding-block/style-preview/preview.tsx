@@ -24,6 +24,7 @@ const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 	const [ previewHtml, setPreviewHtml ] = React.useState< string >();
 	const [ requestedFonts, setRequestedFonts ] = React.useState< Set< string > >( new Set() );
 
+	// Cast reason: Our flow should ensure these are not `undefined`. Cast to defined types.
 	const { selectedDesign, siteVertical } = useSelect( select =>
 		select( STORE_KEY ).getState()
 	) as { selectedDesign: Design; siteVertical: SiteVertical };
