@@ -46,6 +46,7 @@ $onboarding-block-css-transition-duration: 750ms;
 .components-button.is-primary.onboarding-block__question-skip:not( :disabled ):not( [aria-disabled='true'] ) {
 	background: var( --mainColor );
 	border-color: var( --mainColor );
+	border-radius: 4px;
 	box-shadow: none;
 	color: var( --contrastColor );
 	font-size: 14px;
