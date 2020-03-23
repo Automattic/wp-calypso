@@ -329,6 +329,15 @@ class Page extends Component {
 		);
 	}
 
+	getExportItem() {
+		return (
+			<PopoverMenuItem onClick={ this.exportPage } href={ '#' }>
+				<Gridicon icon="cloud-download" size={ 18 } />
+				{ this.props.translate( 'Export page' ) }
+			</PopoverMenuItem>
+		);
+	}
+
 	getCopyLinkItem() {
 		const { page, translate } = this.props;
 		return (
@@ -440,6 +449,7 @@ class Page extends Component {
 		const copyLinkItem = this.getCopyLinkItem();
 		const statsItem = this.getStatsItem();
 		const moreInfoItem = this.popoverMoreInfo();
+		const exportItem = this.getExportItem();
 		const hasMenuItems =
 			viewItem ||
 			publishItem ||
@@ -448,7 +458,8 @@ class Page extends Component {
 			restoreItem ||
 			frontPageItem ||
 			sendToTrashItem ||
-			moreInfoItem;
+			moreInfoItem ||
+			exportItem;
 
 		const ellipsisMenu = hasMenuItems && (
 			<EllipsisMenu
@@ -465,6 +476,7 @@ class Page extends Component {
 				{ restoreItem }
 				{ frontPageItem }
 				{ postsPageItem }
+				{ exportItem }
 				{ sendToTrashItem }
 				{ moreInfoItem }
 			</EllipsisMenu>
@@ -668,6 +680,25 @@ class Page extends Component {
 
 	copyPage = () => {
 		this.props.recordEvent( 'Clicked Copy Page' );
+	};
+
+	exportPage = () => {
+		this.props.recordEvent( 'Clicked Export Page' );
+		const { page } = this.props;
+
+		const fileContent = JSON.stringify( {
+			__file: 'wp_template',
+			language: 'en',
+			title: page.title,
+			content: page.content,
+		} );
+		const blob = new window.Blob( [ fileContent ], { type: 'application/json' } );
+		const link = document.createElement( 'a' );
+		link.href = URL.createObjectURL( blob );
+		link.download = page.title + '.json';
+		document.body.appendChild( link );
+		link.click();
+		document.body.removeChild( link );
 	};
 
 	copyPageLink = () => {
