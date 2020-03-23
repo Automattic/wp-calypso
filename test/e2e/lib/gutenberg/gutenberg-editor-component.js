@@ -208,7 +208,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				prefix = 'jetpack-';
 				blockClass = 'contact-form';
 				break;
-			case 'Simple Payments button':
+			case 'Simple Payments':
 				prefix = 'jetpack-';
 				blockClass = 'simple-payments';
 				break;
