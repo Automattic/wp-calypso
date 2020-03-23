@@ -18,7 +18,7 @@ const selectors = {
 	isOpen: state => state.isOpen,
 };
 
-registerStore( 'automattic/spt', {
+registerStore( 'automattic/starter-page-layouts', {
 	reducer,
 	actions,
 	selectors,

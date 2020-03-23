@@ -127,10 +127,10 @@ const SidebarTemplatesPlugin = compose(
 	withSelect( select => ( {
 		lastTemplateUsedSlug: select( 'core/editor' ).getEditedPostAttribute( 'meta' )
 			._starter_page_template,
-		isOpen: select( 'automattic/spt' ).isOpen(),
+		isOpen: select( 'automattic/starter-page-layouts' ).isOpen(),
 	} ) ),
 	withDispatch( dispatch => ( {
-		setIsOpen: dispatch( 'automattic/spt' ).setIsOpen,
+		setIsOpen: dispatch( 'automattic/starter-page-layouts' ).setIsOpen,
 	} ) )
 )( SidebarModalOpener );
 

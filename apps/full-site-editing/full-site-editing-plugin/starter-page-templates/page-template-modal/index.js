@@ -506,7 +506,7 @@ export const PageTemplatesPlugin = compose(
 	withSelect( select => {
 		const getMeta = () => select( 'core/editor' ).getEditedPostAttribute( 'meta' );
 		const { _starter_page_template } = getMeta();
-		const isOpen = select( 'automattic/spt' ).isOpen();
+		const isOpen = select( 'automattic/starter-page-layouts' ).isOpen();
 		return {
 			isOpen,
 			getMeta,
@@ -520,7 +520,7 @@ export const PageTemplatesPlugin = compose(
 	} ),
 	withDispatch( ( dispatch, ownProps ) => {
 		const editorDispatcher = dispatch( 'core/editor' );
-		const { setIsOpen } = dispatch( 'automattic/spt' );
+		const { setIsOpen } = dispatch( 'automattic/starter-page-layouts' );
 		return {
 			setIsOpen,
 			saveTemplateChoice: slug => {

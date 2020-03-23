@@ -44,7 +44,7 @@ const templatesPluginSharedProps = {
 
 // Open plugin only if we are creating new page.
 if ( screenAction === 'add' ) {
-	dispatch( 'automattic/spt' ).setIsOpen( true );
+	dispatch( 'automattic/starter-page-layouts' ).setIsOpen( true );
 	registerPlugin( 'page-templates', {
 		render: () => (
 			<PageTemplatesPlugin { ...templatesPluginSharedProps } shouldPrefetchAssets={ false } />

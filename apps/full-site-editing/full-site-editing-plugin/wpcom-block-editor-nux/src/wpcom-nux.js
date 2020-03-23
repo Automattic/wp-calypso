@@ -24,7 +24,7 @@ import {
 function WpcomNux() {
 	const { isWpcomNuxEnabled, isSPTOpen } = useSelect( select => ( {
 		isWpcomNuxEnabled: select( 'automattic/nux' ).isWpcomNuxEnabled(),
-		isSPTOpen: select( 'automattic/spt' ).isOpen(),
+		isSPTOpen: select( 'automattic/starter-page-layouts' ).isOpen(),
 	} ) );
 
 	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
