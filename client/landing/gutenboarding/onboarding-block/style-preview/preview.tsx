@@ -2,17 +2,18 @@
  * External dependencies
  */
 import * as React from 'react';
-// import { useSelect } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-// import { STORE_KEY } from '../../stores/onboard';
+import { STORE_KEY } from '../../stores/onboard';
 import * as T from './types';
 import { ValuesType } from 'utility-types';
-// import { Design, SiteVertical } from '../../stores/onboard/types';
 
-/* eslint-disable no-console */
+type Design = import('../../stores/onboard/types').Design;
+type SiteVertical = import('../../stores/onboard/types').SiteVertical;
 
 interface Props {
 	viewport: T.Viewport;
@@ -22,33 +23,49 @@ const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 	const [ previewHtml, setPreviewHtml ] = React.useState< string >();
 	const [ requestedFonts, setRequestedFonts ] = React.useState< Set< string > >( new Set() );
 
-	// Disabled while previews are implemented
-	// Cast: These are required to be on this step.
-	// const { selectedDesign, siteVertical } = useSelect( select =>
-	// 	select( STORE_KEY ).getState()
-	// ) as { selectedDesign: Design; siteVertical: SiteVertical };
+	const { selectedDesign, siteVertical } = useSelect( select =>
+		select( STORE_KEY ).getState()
+	) as { selectedDesign: Design; siteVertical: SiteVertical };
 
 	const iframe = React.useRef< HTMLIFrameElement >( null );
-
-	// const messageHandler = React.useRef<  >( () => {} );
 
 	React.useEffect(
 		() => {
 			const eff = async () => {
-				const [ { fontFamily: headings }, { fontFamily: base } ] = fonts;
-				const url = `https://public-api.wordpress.com/rest/v1/template-demo/${ encodeURIComponent(
-					'rockfield'
-				) }/${ encodeURIComponent( 'rockfield' ) }/en/${ encodeURIComponent(
-					'gym'
-				) }?font_headings=${ encodeURI( headings ) }&font_base=${ encodeURI( base ) }`;
-				const resp = await window.fetch( url );
+				const [ { fontFamily: fontHeadings }, { fontFamily: fontBase } ] = fonts;
+				const templateUrl = `https://public-api.wordpress.com/rest/v1/template/demo/${ encodeURIComponent(
+					selectedDesign.slug
+				) }/${ encodeURIComponent( selectedDesign.slug ) }/`;
+				const url = addQueryArgs( templateUrl, {
+					language: 'en',
+					vertical: siteVertical.label,
+					font_headings: fontHeadings,
+					font_base: fontBase,
+				} );
+				let resp;
+				try {
+					resp = await window.fetch( url );
+					if ( resp.status < 200 || resp.status >= 300 ) {
+						throw resp;
+					}
+				} catch ( err ) {
+					if ( process.env.NODE_ENV !== 'production' ) {
+						// Disable reason: Log errors in development
+						// eslint-disable-next-line no-console
+						console.error( err );
+					}
+					setPreviewHtml( '<h1>Error loading preview.</h1>' );
+					setRequestedFonts( new Set() );
+					return;
+				}
 				const html = await resp.text();
 				setPreviewHtml( html );
+				setRequestedFonts( new Set( [ fontHeadings, fontBase ] ) );
 			};
 			eff();
 		},
 		// Disable reason: We'll handle font change elsewhere.
-		[] // eslint-disable-line react-hooks/exhaustive-deps
+		[ selectedDesign, siteVertical ] // eslint-disable-line react-hooks/exhaustive-deps
 	);
 
 	React.useEffect( () => {
@@ -86,9 +103,7 @@ const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 				nextFonts.add( base );
 			}
 
-			console.log( 'requested %o', requestedFonts );
 			if ( query.length ) {
-				console.log( 'adding %o', query );
 				const l = iframeDocument.createElement( 'link' );
 				l.rel = 'stylesheet';
 				l.type = 'text/css';
