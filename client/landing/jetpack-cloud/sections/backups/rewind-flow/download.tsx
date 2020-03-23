@@ -162,7 +162,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) 
 				/>
 			</div>
 			<h3 className="rewind-flow__title">
-				{ translate( 'An error occured while creating your backup' ) }
+				{ translate( 'An error occurred while creating your download' ) }
 			</h3>
 		</>
 	);
