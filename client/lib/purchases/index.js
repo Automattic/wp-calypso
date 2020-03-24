@@ -406,6 +406,26 @@ function creditCardExpiresBeforeSubscription( purchase ) {
 	);
 }
 
+function creditCardHasAlreadyExpired( purchase ) {
+	const creditCard = purchase?.payment?.creditCard;
+
+	return (
+		isPaidWithCreditCard( purchase ) &&
+		hasCreditCardData( purchase ) &&
+		moment( creditCard.expiryDate, 'MM/YY' ).isBefore( moment.now(), 'months' )
+	);
+}
+
+function shouldRenderExpiringCreditCard( purchase ) {
+	return (
+		! isExpired( purchase ) &&
+		! isExpiring( purchase ) &&
+		! isOneTimePurchase( purchase ) &&
+		! isIncludedWithPlan( purchase ) &&
+		creditCardExpiresBeforeSubscription( purchase )
+	);
+}
+
 function monthsUntilCardExpires( purchase ) {
 	const creditCard = purchase.payment.creditCard;
 	const expiry = moment( creditCard.expiryDate, 'MM/YY' );
@@ -486,6 +506,7 @@ function getDomainRegistrationAgreementUrl( purchase ) {
 export {
 	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
+	creditCardHasAlreadyExpired,
 	getDomainRegistrationAgreementUrl,
 	getIncludedDomain,
 	getName,
@@ -522,4 +543,5 @@ export {
 	showCreditCardExpiringWarning,
 	subscribedWithinPastWeek,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
+	shouldRenderExpiringCreditCard,
 };
