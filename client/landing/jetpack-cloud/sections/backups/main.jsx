@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { isMobile } from '@automattic/viewport';
 import page from 'page';
 import React, { Component } from 'react';
+import momentDate from 'moment';
 
 /**
  * Internal dependencies
@@ -36,6 +37,10 @@ import siteSupportsRealtimeBackup from 'state/selectors/site-supports-realtime-b
 import Pagination from 'components/pagination';
 import MissingCredentialsWarning from '../../components/missing-credentials';
 import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials.js';
+import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
+import { applySiteOffset } from 'lib/site/timezone';
+import QuerySiteSettings from 'components/data/query-site-settings'; // Required to get site time offset
 
 /**
  * Style dependencies
@@ -43,6 +48,7 @@ import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-c
 import './style.scss';
 
 const PAGE_SIZE = 10;
+const INDEX_FORMAT = 'YYYYMMDD';
 
 class BackupsPage extends Component {
 	constructor( props ) {
@@ -100,6 +106,7 @@ class BackupsPage extends Component {
 				<SidebarNavigation />
 				<QueryRewindState siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />
+				<QuerySiteSettings siteId={ siteId } />
 
 				<DatePicker
 					onDateChange={ this.onDateChange }
@@ -210,6 +217,48 @@ class BackupsPage extends Component {
 	}
 }
 
+/**
+ * Create an indexed log of backups based on the date of the backup and in the site time zone
+ *
+ * @param {Array} logs The activity logs retrieved from the store
+ * @param {string} siteTimezone The site time zone
+ * @param {number} siteGmtOffset The site offset from the GMT
+ */
+const createIndexedLog = ( logs, siteTimezone, siteGmtOffset ) => {
+	const indexedLog = {};
+	let oldestDateAvailable = new Date();
+
+	if ( 'success' === logs.state ) {
+		logs.data.forEach( log => {
+			//Move the backup date to the site timezone
+			const backupDate = applySiteOffset( momentDate( log.activityTs ), {
+				siteTimezone,
+				siteGmtOffset,
+			} );
+
+			//Get the index for this backup, index format: YYYYMMDD
+			const index = backupDate.format( INDEX_FORMAT );
+
+			if ( ! ( index in indexedLog ) ) {
+				//The first time we create the index for this date
+				indexedLog[ index ] = [];
+
+				//Check if the backup date is the oldest
+				if ( backupDate < oldestDateAvailable ) {
+					oldestDateAvailable = backupDate.toDate();
+				}
+			}
+
+			indexedLog[ index ].push( log );
+		} );
+	}
+
+	return {
+		indexedLog,
+		oldestDateAvailable,
+	};
+};
+
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 
@@ -220,11 +269,15 @@ const mapStateToProps = state => {
 
 	const filter = getActivityLogFilter( state, siteId );
 	const logs = siteId && requestActivityLogs( siteId, filter );
+	const siteGmtOffset = getSiteGmtOffset( state, siteId );
+	const siteTimezone = getSiteTimezoneValue( state, siteId );
 	const rewind = getRewindState( state, siteId );
 	const restoreStatus = rewind.rewind && rewind.rewind.status;
 	const doesRewindNeedCredentials = getDoesRewindNeedCredentials( state, siteId );
 	const allowRestore =
 		'active' === rewind.state && ! ( 'queued' === restoreStatus || 'running' === restoreStatus );
+
+	const { indexedLog, oldestDateAvailable } = createIndexedLog( logs, siteTimezone, siteGmtOffset );
 
 	return {
 		allowRestore,
@@ -235,6 +288,10 @@ const mapStateToProps = state => {
 		rewind,
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
+		siteTimezone,
+		siteGmtOffset,
+		indexedLog,
+		oldestDateAvailable,
 	};
 };
 
