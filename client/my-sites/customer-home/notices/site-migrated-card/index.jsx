@@ -13,9 +13,10 @@ const SiteMigratedCard = ( { checklistMode, displayChecklist } ) => {
 	const translate = useTranslate();
 	return (
 		<CelebrateNotice
-			message={ translate( 'Your site has been imported!' ) }
 			checklistMode={ checklistMode }
+			dismissalPreferenceName="home-notice-site-migrated"
 			displayChecklist={ displayChecklist }
+			message={ translate( 'Your site has been imported!' ) }
 		/>
 	);
 };

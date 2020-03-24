@@ -13,9 +13,10 @@ const SiteLaunchedCard = ( { checklistMode, displayChecklist } ) => {
 	const translate = useTranslate();
 	return (
 		<CelebrateNotice
-			message={ translate( 'You launched your site!' ) }
 			checklistMode={ checklistMode }
+			dismissalPreferenceName="home-notice-site-launched"
 			displayChecklist={ displayChecklist }
+			message={ translate( 'You launched your site!' ) }
 		/>
 	);
 };
