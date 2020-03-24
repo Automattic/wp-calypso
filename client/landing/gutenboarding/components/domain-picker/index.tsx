@@ -15,8 +15,9 @@ import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { DomainSuggestions } from '@automattic/data-stores';
 import { selectorDebounce } from '../../constants';
 import { STORE_KEY } from '../../stores/onboard';
-import DomainPickerSuggestionItem from './suggestion-item';
-import DomainPickerSuggestionItemPlaceholder from './suggestion-item-placeholder';
+import SuggestionItem from './suggestion-item';
+import SuggestionNone from './suggestion-none';
+import SuggestionItemPlaceholder from './suggestion-item-placeholder';
 
 /**
  * Style dependencies
@@ -68,6 +69,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	queryParameters,
 	currentDomain,
 } ) => {
+	const PAID_DOMAINS_TO_SHOW = 5;
 	const { __: NO__ } = useI18n();
 	const label = NO__( 'Search for a domain' );
 
@@ -75,14 +77,11 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 	const [ domainSearch, setDomainSearch ] = useState( siteTitle );
 
-	const freePlaceholderAmount = 1;
-	const paidPlaceholderAmount = 5;
-
 	const [ search ] = useDebounce( domainSearch.trim() || defaultQuery || '', selectorDebounce );
 	const searchOptions = {
 		include_wordpressdotcom: true,
 		include_dotblogsubdomain: false,
-		quantity: 6, // 1 free subdomain, 5 paid domains
+		quantity: PAID_DOMAINS_TO_SHOW + 1, // Add our free subdomain
 		...queryParameters,
 	};
 
@@ -96,7 +95,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	);
 
 	const freeSuggestions = allSuggestions?.filter( suggestion => suggestion.is_free );
-	const paidSuggestions = allSuggestions?.filter( suggestion => ! suggestion.is_free );
+	const paidSuggestions = allSuggestions
+		?.filter( suggestion => ! suggestion.is_free )
+		.slice( 0, PAID_DOMAINS_TO_SHOW );
 
 	// Recommend paid domain with exact site title match with highest relevance score.
 	const recommendedSuggestion = paidSuggestions?.find( suggestion =>
@@ -137,19 +138,22 @@ const DomainPicker: FunctionComponent< Props > = ( {
 						</div>
 					</div>
 					<div className="domain-picker__suggestion-item-group">
-						{ paidSuggestions?.length
-							? paidSuggestions.map( suggestion => (
-									<DomainPickerSuggestionItem
+						{ ! paidSuggestions &&
+							times( PAID_DOMAINS_TO_SHOW, i => <SuggestionItemPlaceholder key={ i } /> ) }
+						{ paidSuggestions &&
+							( paidSuggestions?.length ? (
+								paidSuggestions.map( suggestion => (
+									<SuggestionItem
 										suggestion={ suggestion }
 										isRecommended={ suggestion === recommendedSuggestion }
 										isCurrent={ currentDomain?.domain_name === suggestion.domain_name }
 										onClick={ () => onDomainPurchase( suggestion ) }
 										key={ suggestion.domain_name }
 									/>
-							  ) )
-							: times( paidPlaceholderAmount, i => (
-									<DomainPickerSuggestionItemPlaceholder key={ i } />
-							  ) ) }
+								) )
+							) : (
+								<SuggestionNone />
+							) ) }
 					</div>
 				</PanelRow>
 
@@ -158,18 +162,17 @@ const DomainPicker: FunctionComponent< Props > = ( {
 						<div className="domain-picker__suggestion-header-title">{ NO__( 'Subdomain' ) }</div>
 					</div>
 					<div className="domain-picker__suggestion-item-group">
-						{ freeSuggestions?.length
-							? freeSuggestions.map( suggestion => (
-									<DomainPickerSuggestionItem
-										suggestion={ suggestion }
-										isCurrent={ currentDomain?.domain_name === suggestion.domain_name }
-										onClick={ () => onDomainSelect( suggestion ) }
-										key={ suggestion.domain_name }
-									/>
-							  ) )
-							: times( freePlaceholderAmount, i => (
-									<DomainPickerSuggestionItemPlaceholder key={ i } />
-							  ) ) }
+						{ ! freeSuggestions && <SuggestionItemPlaceholder /> }
+						{ freeSuggestions &&
+							( freeSuggestions.length ? (
+								<SuggestionItem
+									suggestion={ freeSuggestions[ 0 ] }
+									isCurrent={ currentDomain?.domain_name === freeSuggestions[ 0 ].domain_name }
+									onClick={ () => onDomainSelect( freeSuggestions[ 0 ] ) }
+								/>
+							) : (
+								<SuggestionNone />
+							) ) }
 					</div>
 				</PanelRow>
 			</PanelBody>

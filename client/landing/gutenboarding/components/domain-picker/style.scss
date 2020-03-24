@@ -87,18 +87,22 @@
 	border: 1px solid var( --color-neutral-5 );
 }
 
+.domain-picker__suggestion-none {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	height: 46px;
+	border-radius: 0;
+	padding: 0 16px;
+	font-size: 14px;
+}
 .domain-picker__suggestion-item {
 	// Increasing specificity because @wordpress/components stylesheets are loaded after gutenboarding stylesheets.
 	// See https://github.com/Automattic/wp-calypso/pull/38554/commits/e1f9673bcfd9eaa6469a0cfecda9b915a520961a
 	// See https://github.com/WordPress/gutenberg/pull/19535
 	&.components-button {
-		display: flex;
-		justify-content: space-between;
-		width: 100%;
-		height: 46px;
-		border-radius: 0;
-		padding: 0 16px;
-		font-size: 14px;
+		@extend .domain-picker__suggestion-none;
 
 		&.is-tertiary {
 			color: var( --color-text );
