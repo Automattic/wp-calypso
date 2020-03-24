@@ -464,6 +464,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can update the homepage', async function() {
+			this.skip( 'Needs to complete the site title update task first' );
 			const checklistPage = await ChecklistPage.Expect( this.driver );
 			await checklistPage.updateHomepage();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
@@ -1093,6 +1094,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can update the homepage', async function() {
+			this.skip( 'Needs to complete the site title update task first' );
 			const checklistPage = await ChecklistPage.Expect( this.driver );
 			await checklistPage.updateHomepage();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
