@@ -80,6 +80,7 @@
 		"jetpack/connect/woocommerce": true,
 		"jetpack/happychat": true,
 		"jetpack/search-product": true,
+		"jetpack/scan-product": true,
 		"jitms": true,
 		"keyboard-shortcuts": true,
 		"legal-updates-banner": true,
