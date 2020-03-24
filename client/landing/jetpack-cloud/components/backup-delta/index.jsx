@@ -76,8 +76,8 @@ class BackupDelta extends Component {
 					src={ item.activityMedia.available ? item.activityMedia.thumbnail_url : mediaImage }
 				/>
 				<div className="backup-delta__media-title">
-					<Gridicon icon="add" />
-					{ translate( 'Added' ) }
+					<Gridicon icon="plus" />
+					<div className="backup-delta__media-title-text">{ translate( 'Added' ) }</div>
 				</div>
 			</div>
 		) );
@@ -91,8 +91,8 @@ class BackupDelta extends Component {
 				<img alt="" src={ mediaImage } />
 				<div className="backup-delta__deleted-count-bubble">-{ deltas.mediaDeleted.length }</div>
 				<div className="backup-delta__media-title">
-					<Gridicon icon="cross-circle" />
-					{ translate( 'Removed' ) }
+					<Gridicon icon="cross-small" />
+					<div className="backup-delta__media-title-text">{ translate( 'Removed' ) }</div>
 				</div>
 			</div>,
 		];
@@ -158,7 +158,9 @@ class BackupDelta extends Component {
 			return (
 				<div key={ item.activityId } className={ className }>
 					{ icon }
-					{ item.activityDescription[ 0 ].children[ 0 ] }
+					<div className="backup-delta__extension-block-text">
+						{ item.activityDescription[ 0 ].children[ 0 ] }
+					</div>
 				</div>
 			);
 		} );
