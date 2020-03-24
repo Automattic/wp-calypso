@@ -84,7 +84,8 @@ function renderProductVariant(
 					checked={ isChecked }
 					isDisabled={ isDisabled }
 					onChange={ () => {
-						onChangeItemVariant( selectedItem.wpcom_meta.uuid, productSlug, productId );
+						! isDisabled &&
+							onChangeItemVariant( selectedItem.wpcom_meta.uuid, productSlug, productId );
 					} }
 					ariaLabel={ translate( 'Select a different term length' ) as string }
 					label={
