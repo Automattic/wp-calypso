@@ -249,7 +249,7 @@ export const getJetpackProducts = () => {
 							1000000 * Math.ceil( productObject.price_tier_usage_quantity / 1000000 );
 						return translate( 'Tier %(tierNumber)d: Up to %(tierMaximumRecords)s records', {
 							args: {
-								tierNumber: tierNumber,
+								tierNumber,
 								tierMaximumRecords: numberFormat( tierMaximumRecords ),
 							},
 						} );
