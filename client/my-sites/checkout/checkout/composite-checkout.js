@@ -136,6 +136,8 @@ export default function CompositeCheckout( {
 	);
 	const previousRoute = useSelector( state => getPreviousPath( state ) );
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
+	const isLoadingCartSynchronizer =
+		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
 
 	const getThankYouUrl = useCallback( () => {
 		const transactionResult = select( 'wpcom' ).getTransactionResult();
@@ -262,7 +264,7 @@ export default function CompositeCheckout( {
 		responseCart,
 	} = useShoppingCart(
 		siteSlug,
-		canInitializeCart,
+		canInitializeCart && ! isLoadingCartSynchronizer,
 		productForCart,
 		couponCodeFromUrl,
 		setCart || wpcomSetCart,
