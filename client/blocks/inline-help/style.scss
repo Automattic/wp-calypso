@@ -107,24 +107,8 @@
 
 .inline-help__popover.popover {
 	@include breakpoint( '<660px' ) {
-		top: 0 !important;
-		right: 0 !important;
-		bottom: 0 !important;
-		left: 0 !important;
-		position: fixed;
-		background: rgba( var( --color-neutral-0-rgb ), 0.8 );
-
-		.popover__arrow {
-			display: none;
-		}
-
-		.popover__inner {
-			top: auto !important;
-			right: auto !important;
-			bottom: auto !important;
-			left: auto !important;
-			margin: 16px;
-		}
+		margin-top: -5px;
+		width: calc( 100% - 28px );
 	}
 
 	p {
