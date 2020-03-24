@@ -128,7 +128,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 				<PanelRow className="domain-picker__panel-row">
 					<div className="domain-picker__suggestion-header">
 						<div className="domain-picker__suggestion-header-title">
-							{ NO__( 'Professional Domain' ) }
+							{ NO__( 'Professional domain' ) }
 						</div>
 						<div className="domain-picker__suggestion-header-description">
 							{ __experimentalCreateInterpolateElement(
