@@ -74,7 +74,7 @@ function normalizeDomainSuggestionQuery(
 	return {
 		// Defaults
 		include_wordpressdotcom: queryOptions.only_wordpressdotcom || false,
-		include_dotblogsubdomain: ! queryOptions.only_wordpressdotcom || false,
+		include_dotblogsubdomain: false,
 		only_wordpressdotcom: false,
 		quantity: 5,
 		vendor: 'variation2_front',
