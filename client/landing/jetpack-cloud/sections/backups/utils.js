@@ -114,7 +114,12 @@ export const getDailyBackupDeltas = ( logs, date ) => {
 		),
 		postsCreated: changes.filter( event => 'post__published' === event.activityName ),
 		postsDeleted: changes.filter( event => 'post__trashed' === event.activityName ),
-		plugins: changes.filter( event => 'plugin__installed' === event.activityName ),
-		themes: changes.filter( event => 'theme__installed' === event.activityName ),
+		plugins: changes.filter(
+			event =>
+				'plugin__installed' === event.activityName || 'plugin__deleted' === event.activityName
+		),
+		themes: changes.filter(
+			event => 'theme__installed' === event.activityName || 'theme__deleted' === event.activityName
+		),
 	};
 };
