@@ -4,8 +4,6 @@
 import React, { FunctionComponent } from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import classnames from 'classnames';
-// TODO: Extract Badge component https://github.com/Automattic/wp-calypso/issues/40327.
-import Badge from 'components/badge';
 import { Button } from '@wordpress/components';
 
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
@@ -29,14 +27,10 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 			<div className="domain-picker__suggestion-item-name">
 				{ suggestion.domain_name }
 				{ isRecommended && (
-					<Badge type="info-blue" className="domain-picker__badge">
-						{ NO__( 'Recommended' ) }
-					</Badge>
+					<div className="domain-picker__badge is-recommended">{ NO__( 'Recommended' ) }</div>
 				) }
 				{ isCurrent && (
-					<Badge type="success" className="domain-picker__badge">
-						{ NO__( 'Selected' ) }
-					</Badge>
+					<div className="domain-picker__badge is-selected">{ NO__( 'Selected' ) }</div>
 				) }
 			</div>
 			<div
