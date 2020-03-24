@@ -7,7 +7,6 @@ import { createStore, applyMiddleware, compose } from 'redux';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import initialReducer from './reducer';
 
 /**
