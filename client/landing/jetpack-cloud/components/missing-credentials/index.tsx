@@ -36,7 +36,7 @@ const JetpackCloudMissingCredentialsWarning: FunctionComponent< Props > = ( { se
 				) }
 			</p>
 			<Button className="missing-credentials__button" href={ settingsLink }>
-				{ translate( 'Enter server credentials' ) }
+				{ translate( 'Enter your server credentials' ) }
 			</Button>
 		</div>
 	);
