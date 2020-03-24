@@ -20,9 +20,8 @@ import { itemLinkMatches } from 'my-sites/sidebar/utils';
 import Badge from 'components/badge';
 import config from 'config';
 import CurrentSite from 'my-sites/current-site';
+import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
-import getRewindState from 'state/selectors/get-rewind-state';
-import getRewindStateRequestStatus from 'state/selectors/get-rewind-state-request-status';
 import QueryRewindState from 'components/data/query-rewind-state';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
@@ -68,7 +67,7 @@ class JetpackCloudSidebar extends Component {
 	};
 
 	render() {
-		const { selectedSiteSlug, settingsIssues, siteId, translate, threats } = this.props;
+		const { doesRewindNeedCredentials, selectedSiteSlug, siteId, translate, threats } = this.props;
 		const numberOfThreatsFound = threats.length;
 
 		return (
@@ -173,7 +172,7 @@ class JetpackCloudSidebar extends Component {
 							materialIcon="settings"
 							materialIconStyle="filled"
 							selected={ this.isSelected( '/settings' ) }
-							showNotificationDot={ settingsIssues.length > 0 }
+							showNotificationDot={ doesRewindNeedCredentials }
 						/>
 					) }
 				</SidebarRegion>
@@ -217,20 +216,12 @@ export default connect(
 		const isScanSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_SCAN );
 		const threats = getSiteThreats( state );
 		const siteId = getSelectedSiteId( state );
-		const rewindState = getRewindState( state, siteId );
-		const rewindStateRequestStatus = getRewindStateRequestStatus( state, siteId );
-
-		const settingsIssues = [];
-
-		if ( rewindStateRequestStatus === 'success' && rewindState?.state !== 'active' ) {
-			settingsIssues.push( 'not-connected' );
-		}
 
 		return {
 			isBackupSectionOpen,
 			isScanSectionOpen,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
-			settingsIssues,
+			doesRewindNeedCredentials: getDoesRewindNeedCredentials( state, siteId ),
 			siteId,
 			threats,
 		};
