@@ -91,6 +91,7 @@ class BackupsPage extends Component {
 			moment,
 			siteId,
 			siteSlug,
+			isLoadingBackups,
 		} = this.props;
 		const { selectedDate } = this.state;
 		const selectedDateString = this.TO_REMOVE_getSelectedDateString();
@@ -113,27 +114,34 @@ class BackupsPage extends Component {
 					selectedDate={ selectedDate }
 					siteId={ siteId }
 				/>
-				<DailyBackupStatus
-					allowRestore={ allowRestore }
-					date={ selectedDateString }
-					backupAttempts={ backupAttempts }
-					siteSlug={ siteSlug }
-				/>
-				{ doesRewindNeedCredentials && (
-					<MissingCredentialsWarning settingsLink={ `/settings/${ siteSlug }` } />
+
+				<div>{ isLoadingBackups && 'Loading backups...' }</div>
+
+				{ ! isLoadingBackups && (
+					<>
+						<DailyBackupStatus
+							allowRestore={ allowRestore }
+							date={ selectedDateString }
+							backupAttempts={ backupAttempts }
+							siteSlug={ siteSlug }
+						/>
+                        { doesRewindNeedCredentials && (
+                            <MissingCredentialsWarning settingsLink={ `/settings/${ siteSlug }` } />
+                        ) }
+						<BackupDelta
+							{ ...{
+								deltas,
+								backupAttempts,
+								hasRealtimeBackups,
+								realtimeEvents,
+								allowRestore,
+								moment,
+								siteSlug,
+								metaDiff,
+							} }
+						/>
+					</>
 				) }
-				<BackupDelta
-					{ ...{
-						deltas,
-						backupAttempts,
-						hasRealtimeBackups,
-						realtimeEvents,
-						allowRestore,
-						moment,
-						siteSlug,
-						metaDiff,
-					} }
-				/>
 			</Main>
 		);
 	}
@@ -279,6 +287,8 @@ const mapStateToProps = state => {
 
 	const { indexedLog, oldestDateAvailable } = createIndexedLog( logs, siteTimezone, siteGmtOffset );
 
+	const isLoadingBackups = ! ( logs.state === 'success' );
+
 	return {
 		allowRestore,
 		doesRewindNeedCredentials,
@@ -292,6 +302,7 @@ const mapStateToProps = state => {
 		siteGmtOffset,
 		indexedLog,
 		oldestDateAvailable,
+		isLoadingBackups,
 	};
 };
 
