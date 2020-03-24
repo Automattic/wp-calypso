@@ -99,7 +99,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		?.filter( suggestion => ! suggestion.is_free )
 		.slice( 0, PAID_DOMAINS_TO_SHOW );
 
-	// Recommend paid domain with exact site title match with highest relevance score.
+	// Recommend either an exact match or the highest relevance score
 	const recommendedSuggestion = paidSuggestions?.reduce( ( result, suggestion ) => {
 		if ( result.match_reasons?.includes( 'exact-match' ) ) {
 			return result;
