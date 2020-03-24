@@ -21,17 +21,8 @@ import HappychatButton from 'components/happychat/button';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'components/async-load';
-import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
-import {
-	showInlineHelpPopover,
-	hideInlineHelpPopover,
-	hideChecklistPrompt,
-} from 'state/inline-help/actions';
-import {
-	isInlineHelpPopoverVisible,
-	getChecklistPromptTaskId,
-	isInlineHelpChecklistPromptVisible,
-} from 'state/inline-help/selectors';
+import { showInlineHelpPopover, hideInlineHelpPopover } from 'state/inline-help/actions';
+import { isInlineHelpPopoverVisible } from 'state/inline-help/selectors';
 
 /**
  * Style dependencies
@@ -66,18 +57,11 @@ class InlineHelp extends Component {
 		isPopoverVisible: false,
 	};
 
-	state = {
-		showChecklistNotification: false,
-		storedTask: null,
-	};
+	state = {};
 
 	componentDidMount() {
 		if ( globalKeyboardShortcuts ) {
 			globalKeyboardShortcuts.showInlineHelp = this.showInlineHelp;
-		}
-
-		if ( this.props.isChecklistPromptVisible && this.props.checklistPromptTaskId ) {
-			this.props.showInlineHelpPopover();
 		}
 	}
 
@@ -121,7 +105,6 @@ class InlineHelp extends Component {
 		debug( 'hiding inline help.' );
 		this.props.recordTracksEvent( 'calypso_inlinehelp_close' );
 		this.props.hideInlineHelpPopover();
-		this.props.hideChecklistPrompt();
 	};
 
 	handleHelpButtonClicked = () => {
@@ -142,30 +125,16 @@ class InlineHelp extends Component {
 
 	closeDialog = () => this.setState( { showDialog: false } );
 
-	setNotification = status => {
-		this.setState( { showChecklistNotification: status } );
-	};
-
-	setStoredTask = taskKey => {
-		this.setState( { storedTask: taskKey } );
-	};
-
 	render() {
 		const { translate, isPopoverVisible } = this.props;
-		const { showDialog, videoLink, dialogType, showChecklistNotification, storedTask } = this.state;
+		const { showDialog, videoLink, dialogType } = this.state;
 		const inlineHelpButtonClasses = {
 			'inline-help__button': true,
 			'is-active': isPopoverVisible,
-			'has-notification': showChecklistNotification,
 		};
 
 		return (
 			<div className="inline-help">
-				<WpcomChecklist
-					viewMode="notification"
-					setNotification={ this.setNotification }
-					storedTask={ storedTask }
-				/>
 				<Button
 					className={ classNames( inlineHelpButtonClasses ) }
 					onClick={ this.handleHelpButtonClicked }
@@ -182,9 +151,6 @@ class InlineHelp extends Component {
 						context={ this.inlineHelpToggle }
 						onClose={ this.closeInlineHelp }
 						setDialogState={ this.setDialogState }
-						setNotification={ this.setNotification }
-						setStoredTask={ this.setStoredTask }
-						showNotification={ showChecklistNotification }
 					/>
 				) }
 				{ showDialog && (
@@ -207,8 +173,6 @@ const mapStateToProps = state => {
 		isHappychatButtonVisible: hasActiveHappychatSession( state ),
 		isHappychatOpen: isHappychatOpen( state ),
 		isPopoverVisible: isInlineHelpPopoverVisible( state ),
-		isChecklistPromptVisible: isInlineHelpChecklistPromptVisible( state ),
-		checklistPromptTaskId: getChecklistPromptTaskId( state ),
 	};
 };
 
@@ -216,7 +180,6 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 	showInlineHelpPopover,
 	hideInlineHelpPopover,
-	hideChecklistPrompt,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelp ) );

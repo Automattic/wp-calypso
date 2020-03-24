@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Checklist, Task } from 'components/checklist';
-import ChecklistNavigation from './checklist-navigation';
 import ChecklistPrompt from './checklist-prompt';
 import ChecklistPromptTask from './checklist-prompt/task';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
@@ -34,12 +33,6 @@ import getChecklistTaskUrls, {
 	FIRST_TEN_SITE_POSTS_QUERY,
 } from 'state/selectors/get-checklist-task-urls';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
-import {
-	showInlineHelpPopover,
-	showChecklistPrompt,
-	setChecklistPromptTaskId,
-	setChecklistPromptStep,
-} from 'state/inline-help/actions';
 import { emailManagement } from 'my-sites/email/paths';
 import PendingGSuiteTosNoticeDialog from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice-dialog';
 import { domainManagementEdit, domainManagementList } from 'my-sites/domains/paths';
@@ -209,53 +202,16 @@ class WpcomChecklistComponent extends PureComponent {
 		return translate( 'Resend email' );
 	}
 
-	handleInlineHelpStart = task => () => {
-		if ( task.isCompleted ) {
-			return;
-		}
-
-		this.props.setChecklistPromptTaskId( task.id );
-		this.props.setChecklistPromptStep( 0 );
-		this.props.showInlineHelpPopover();
-		this.props.showChecklistPrompt();
-	};
-
-	nextInlineHelp = () => {
-		const taskList = this.props.taskList;
-		const firstIncomplete = taskList.getFirstIncompleteTask();
-
-		if ( firstIncomplete ) {
-			this.props.setChecklistPromptTaskId( firstIncomplete.id );
-			this.props.setChecklistPromptStep( 0 );
-		} else {
-			this.props.setChecklistPromptTaskId( null );
-			this.backToChecklist();
-		}
-	};
-
 	backToChecklist = () => {
 		page( `/checklist/${ this.props.siteSlug }` );
 	};
 
 	render() {
-		const {
-			siteId,
-			taskList,
-			taskStatuses,
-			viewMode,
-			updateCompletion,
-			setNotification,
-			setStoredTask,
-			closePopover,
-			showNotification,
-			storedTask,
-		} = this.props;
+		const { siteId, taskList, taskStatuses, viewMode, updateCompletion } = this.props;
 
 		let ChecklistComponent = Checklist;
 
 		switch ( viewMode ) {
-			case 'navigation':
-				ChecklistComponent = ChecklistNavigation;
 				break;
 			case 'prompt':
 				ChecklistComponent = ChecklistPrompt;
@@ -272,11 +228,6 @@ class WpcomChecklistComponent extends PureComponent {
 				<ChecklistComponent
 					isPlaceholder={ ! taskStatuses }
 					updateCompletion={ updateCompletion }
-					closePopover={ closePopover }
-					showNotification={ showNotification }
-					setNotification={ setNotification }
-					setStoredTask={ setStoredTask }
-					storedTask={ storedTask }
 					taskList={ taskList }
 					onExpandTask={ this.trackExpandTask }
 					showChecklistHeader={ false }
@@ -288,7 +239,7 @@ class WpcomChecklistComponent extends PureComponent {
 	}
 
 	renderTask( task ) {
-		const { siteSlug, viewMode, closePopover } = this.props;
+		const { siteSlug, viewMode } = this.props;
 
 		let TaskComponent = Task;
 
@@ -303,7 +254,6 @@ class WpcomChecklistComponent extends PureComponent {
 			key: task.id,
 			completed: task.isCompleted,
 			siteSlug,
-			closePopover: closePopover,
 			trackTaskDisplay: this.trackTaskDisplay,
 		};
 
@@ -841,7 +791,6 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
-				nextInlineHelp={ this.nextInlineHelp }
 				showSkip={ false }
 				buttonText={ translate( 'Start' ) }
 			/>
@@ -882,7 +831,6 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
-				nextInlineHelp={ this.nextInlineHelp }
 				showSkip={ false }
 				buttonText={ translate( 'Start' ) }
 			/>
@@ -914,7 +862,6 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
-				nextInlineHelp={ this.nextInlineHelp }
 				showSkip={ false }
 				buttonText={ translate( 'Update homepage' ) }
 				action="update-homepage"
@@ -953,7 +900,6 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
-				nextInlineHelp={ this.nextInlineHelp }
 				showSkip={ false }
 				buttonText={ translate( 'Start' ) }
 			/>
@@ -989,7 +935,6 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
-				nextInlineHelp={ this.nextInlineHelp }
 				showSkip={ false }
 				buttonText={ translate( 'Start' ) }
 			/>
@@ -1031,10 +976,8 @@ class WpcomChecklistComponent extends PureComponent {
 				] }
 				duration={ translate( '%d minute', '%d minutes', { count: 5, args: [ 5 ] } ) }
 				targetUrl={ taskUrls[ task.id ] }
-				onClick={ this.handleInlineHelpStart( task ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
-				nextInlineHelp={ this.nextInlineHelp }
 				showSkip={ false }
 				buttonText={ translate( 'Start' ) }
 			/>
@@ -1067,10 +1010,8 @@ class WpcomChecklistComponent extends PureComponent {
 				] }
 				duration={ translate( '%d minute', '%d minutes', { count: 10, args: [ 10 ] } ) }
 				targetUrl={ taskUrls[ task.id ] }
-				onClick={ this.handleInlineHelpStart( task ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				backToChecklist={ this.backToChecklist }
-				nextInlineHelp={ this.nextInlineHelp }
 				showSkip={ false }
 				buttonText={ translate( 'Start' ) }
 			/>
@@ -1115,9 +1056,5 @@ export default connect(
 		requestGuidedTour,
 		requestSiteChecklistTaskUpdate,
 		launchSiteOrRedirectToLaunchSignupFlow,
-		showInlineHelpPopover,
-		showChecklistPrompt,
-		setChecklistPromptTaskId,
-		setChecklistPromptStep,
 	}
 )( localize( WpcomChecklistComponent ) );
