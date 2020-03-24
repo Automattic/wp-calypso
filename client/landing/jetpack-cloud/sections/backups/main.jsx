@@ -50,10 +50,6 @@ class BackupsPage extends Component {
 		this.setState( { selectedDate: date } );
 	};
 
-	onDateRangeSelection = () => {
-		//todo: go to the log activity view
-	};
-
 	isEmptyFilter = filter => {
 		if ( ! filter ) {
 			return true;
@@ -91,7 +87,6 @@ class BackupsPage extends Component {
 
 				<DatePicker
 					onDateChange={ this.onDateChange }
-					onDateRangeSelection={ this.onDateRangeSelection }
 					selectedDate={ selectedDate }
 					siteId={ siteId }
 					oldestDateAvailable={ new Date( '2020-03-01' ) } //todo: provide the oldestDateAvailable of backups

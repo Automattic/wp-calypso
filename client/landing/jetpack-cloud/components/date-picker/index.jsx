@@ -24,7 +24,6 @@ class DatePicker extends Component {
 		siteId: PropTypes.number.isRequired,
 		selectedDate: PropTypes.instanceOf( Date ).isRequired,
 		onDateChange: PropTypes.func.isRequired,
-		onDateRangeSelection: PropTypes.func.isRequired,
 		oldestDateAvailable: PropTypes.instanceOf( Date ),
 	};
 
