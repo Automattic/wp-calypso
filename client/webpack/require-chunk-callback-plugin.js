@@ -64,7 +64,7 @@ class RequireChunkCallbackPlugin {
 					source,
 					'',
 					`requireChunkCallback.trigger( {
-						chunkId,
+						chunkId: chunkId,
 						publicPath: __webpack_require__.p,
 						scriptSrc: jsonpScriptSrc( chunkId )
 					}, promises )`,
