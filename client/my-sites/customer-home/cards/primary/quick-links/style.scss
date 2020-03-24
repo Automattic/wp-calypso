@@ -1,8 +1,19 @@
 .quick-links__boxes {
-	display: flex;
-	flex-flow: row wrap;
-	justify-content: space-between;
-	align-items: stretch;
+	margin-left: -16px;
+	margin-right: -16px;
+
+	@include breakpoint( '>480px' ) {
+		margin-left: -24px;
+		margin-right: -24px;
+	}
+}
+
+.quick-links.card {
+	padding-bottom: 0;
+
+	.card-heading {
+		margin-bottom: 16px;
+	}
 }
 
 .quick-links.foldable-card {
@@ -19,6 +30,7 @@
 
 		&__content {
 			border: 0;
+			padding-bottom: 0;
 		}
 	}
 }
@@ -37,38 +49,37 @@
 	}
 }
 
-.quick-links__action-box {
-	margin-bottom: 16px;
-	width: 100%;
+.card.quick-links__action-box {
+	display: flex;
+	transition: all 0.1s;
 
-	@include breakpoint( '>480px' ) {
-		width: 48%;
-		margin-bottom: 24px;
-	}
-
-	.button {
-		border-width: 1px;
+	.quick-links__action-box-image {
 		display: flex;
-		height: 100%;
-		min-width: 100%;
-		padding: 16px;
-		text-align: center;
+		flex-shrink: 0;
+		justify-content: center;
+		width: 24px;
+		margin-right: 16px;
 
 		@include breakpoint( '>480px' ) {
-			display: block;
-			min-height: 85px;
-			padding: 24px;
+			width: 32px;
 		}
 	}
-	.button:hover {
-		box-shadow: 0 2px 3px 0 rgba( 98, 109, 118, 0.15 );
-	}
 
-	span {
+	.quick-links__action-box-label,
+	.quick-links__action-box-subtitle {
+		color: var( --color-text );
 		display: block;
-
-		@include breakpoint( '<480px' ) {
-			margin: auto 14px;
-		}
 	}
+
+	&:hover {
+		background: var( --color-neutral-0 );
+	}
+}
+
+.quick-links__action-box-label {
+	font-size: 16px;
+}
+
+.quick-links__action-box-subtitle {
+	font-size: 14px;
 }

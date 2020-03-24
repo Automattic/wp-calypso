@@ -6,20 +6,20 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import { Button } from '@automattic/components';
+import { CompactCard } from '@automattic/components';
 
-const ActionBox = ( { external, href, onClick, target, iconSrc, label } ) => {
+const ActionBox = ( { href, onClick, target, iconSrc, label, subtitle } ) => {
 	const buttonAction = { href, onClick, target };
 	return (
-		<div className="quick-links__action-box">
-			<Button { ...buttonAction }>
+		<CompactCard { ...buttonAction } displayAsLink className="quick-links__action-box">
+			<div className="quick-links__action-box-image">
 				<img src={ iconSrc } alt="" />
-				<span>
-					{ label } { external && <Gridicon icon="external" /> }
-				</span>
-			</Button>
-		</div>
+			</div>
+			<div className="quick-links__action-box-text">
+				<h6 className="quick-links__action-box-label">{ label }</h6>
+				<span className="quick-links__action-box-subtitle">{ subtitle }</span>
+			</div>
+		</CompactCard>
 	);
 };
 

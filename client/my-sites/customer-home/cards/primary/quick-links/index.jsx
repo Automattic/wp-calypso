@@ -39,7 +39,7 @@ import commentIcon from 'assets/images/customer-home/comment.svg';
 import customDomainIcon from 'assets/images/customer-home/custom-domain.svg';
 import customizeIcon from 'assets/images/customer-home/customize.svg';
 import gSuiteIcon from 'assets/images/customer-home/gsuite.svg';
-import imagesIcon from 'assets/images/customer-home/images.svg';
+import homepageIcon from 'assets/images/customer-home/homepage.svg';
 import logoIcon from 'assets/images/customer-home/looka-logo.svg';
 import menuIcon from 'assets/images/customer-home/menus.svg';
 import pageIcon from 'assets/images/customer-home/page.svg';
@@ -76,12 +76,14 @@ export const QuickLinks = ( {
 				<ActionBox
 					onClick={ editHomepageAction }
 					label={ translate( 'Edit homepage' ) }
-					iconSrc={ imagesIcon }
+					subtitle={ translate( 'Create an eyecatching design with the new Block Editor.' ) }
+					iconSrc={ homepageIcon }
 				/>
 			) : (
 				<ActionBox
 					onClick={ writePostAction }
 					label={ translate( 'Write blog post' ) }
+					subtitle={ translate( 'Sites that publish content regularly get more traffic.' ) }
 					iconSrc={ postIcon }
 				/>
 			) }
@@ -89,12 +91,14 @@ export const QuickLinks = ( {
 				<ActionBox
 					onClick={ addPageAction }
 					label={ translate( 'Add a page' ) }
+					subtitle={ translate( 'Create a new page with the default template.' ) }
 					iconSrc={ pageIcon }
 				/>
 			) : (
 				<ActionBox
 					onClick={ manageCommentsAction }
 					label={ translate( 'Manage comments' ) }
+					subtitle={ translate( 'View, approve, and reply to comments on your posts and pages.' ) }
 					iconSrc={ commentIcon }
 				/>
 			) }
@@ -102,12 +106,14 @@ export const QuickLinks = ( {
 				<ActionBox
 					onClick={ writePostAction }
 					label={ translate( 'Write blog post' ) }
+					subtitle={ translate( 'Sites that publish content regularly get more traffic.' ) }
 					iconSrc={ postIcon }
 				/>
 			) : (
 				<ActionBox
 					onClick={ addPageAction }
 					label={ translate( 'Add a page' ) }
+					subtitle={ translate( 'Create a new page with the default template.' ) }
 					iconSrc={ pageIcon }
 				/>
 			) }
@@ -116,6 +122,7 @@ export const QuickLinks = ( {
 					href={ menusUrl }
 					onClick={ trackEditMenusAction }
 					label={ translate( 'Edit menus' ) }
+					subtitle={ translate( 'Help visitors easily navigate your site.' ) }
 					iconSrc={ menuIcon }
 				/>
 			) }
@@ -124,12 +131,14 @@ export const QuickLinks = ( {
 					href={ customizeUrl }
 					onClick={ trackCustomizeThemeAction }
 					label={ translate( 'Customize theme' ) }
+					subtitle={ translate( "Change your site's colors, fonts, branding, and more." ) }
 					iconSrc={ customizeIcon }
 				/>
 			) }
 			<ActionBox
 				onClick={ changeThemeAction }
 				label={ translate( 'Change theme' ) }
+				subtitle={ translate( 'Browse available themes to find the perfect one.' ) }
 				iconSrc={ themeIcon }
 			/>
 			<ActionBox
@@ -137,6 +146,7 @@ export const QuickLinks = ( {
 				onClick={ trackDesignLogoAction }
 				target="_blank"
 				label={ translate( 'Create a logo with Looka' ) }
+				subtitle={ translate( 'Get an instant logo for your site or business with Looka.' ) }
 				external
 				iconSrc={ logoIcon }
 			/>
@@ -144,12 +154,14 @@ export const QuickLinks = ( {
 				<ActionBox
 					onClick={ addEmailAction }
 					label={ translate( 'Add email' ) }
+					subtitle={ translate( 'Send and receive email using your custom domain.' ) }
 					iconSrc={ gSuiteIcon }
 				/>
 			) : (
 				<ActionBox
 					onClick={ addDomainAction }
-					label={ translate( 'Add a domain' ) }
+					label={ translate( 'Connect a domain' ) }
+					subtitle={ translate( 'Sites with custom domains look more professional.' ) }
 					iconSrc={ customDomainIcon }
 				/>
 			) }
