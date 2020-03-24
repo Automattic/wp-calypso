@@ -52,6 +52,11 @@ export function generateSteps( {
 			optionalDependencies: [ 'useThemeHeadstart' ],
 		},
 
+		'provide-theme': {
+			stepName: 'provide-theme',
+			providesDependencies: [ 'themeSlug', 'themeSlugWithRepo' ],
+		},
+
 		'portfolio-themes': {
 			stepName: 'portfolio-themes',
 			props: {
@@ -122,6 +127,7 @@ export function generateSteps( {
 			stepName: 'site',
 			apiRequestFunction: createSite,
 			providesDependencies: [ 'siteSlug' ],
+			dependencies: [ 'themeSlugWithRepo' ],
 		},
 
 		'rebrand-cities-welcome': {

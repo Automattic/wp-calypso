@@ -239,6 +239,15 @@ export function generateFlows( {
 		};
 	}
 
+	if ( isEnabled( 'signup/wpforteams' ) ) {
+		flows[ 'wp-for-teams' ] = {
+			steps: [ 'provide-theme', 'site', 'user' ],
+			destination: getRedirectDestination,
+			description: 'WordPress.com Connect signup flow',
+			lastModified: '2020-03-23',
+		};
+	}
+
 	flows.domain = {
 		steps: [
 			'domain-only',
