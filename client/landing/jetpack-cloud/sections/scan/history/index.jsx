@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -11,7 +12,7 @@ import { translate } from 'i18n-calypso';
 import DocumentHead from 'components/data/document-head';
 import ScanHistoryItem from '../../../components/scan-history-item';
 import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 
@@ -108,20 +109,27 @@ const scanEntries = [
 ];
 
 class ScanHistoryPage extends Component {
-	state = {
-		filter: filterOptions[ 0 ],
+	getCurrentFilter = () => {
+		const { filter } = this.props;
+
+		if ( filter ) {
+			return filterOptions.find( ( { value } ) => value === filter ) || filterOptions[ 0 ];
+		}
+		return filterOptions[ 0 ];
 	};
 
 	handleOnFilterChange = filter => {
-		// @todo: should we filter in the front end?
-		this.setState( {
-			filter,
-		} );
+		const { siteSlug } = this.props;
+		let filterValue = filter.value;
+		if ( 'all' === filterValue ) {
+			filterValue = '';
+		}
+		page.show( `/scan/history/${ siteSlug }/${ filterValue }` );
 	};
 
 	filteredEntries() {
 		const { logEntries } = this.props;
-		const { value: filter } = this.state.filter;
+		const { value: filter } = this.getCurrentFilter();
 		if ( filter === 'all' ) {
 			return logEntries;
 		}
@@ -130,6 +138,7 @@ class ScanHistoryPage extends Component {
 
 	render() {
 		const logEntries = this.filteredEntries();
+		const { value: filter } = this.getCurrentFilter();
 		return (
 			<Main wideLayout className="history">
 				<DocumentHead title={ translate( 'History' ) } />
@@ -145,6 +154,7 @@ class ScanHistoryPage extends Component {
 						className="history__filters"
 						options={ filterOptions }
 						onSelect={ this.handleOnFilterChange }
+						initialSelected={ filter }
 					/>
 				</div>
 				<div className="history__entries">
@@ -165,6 +175,7 @@ export default connect( state => {
 
 	return {
 		siteId,
+		siteSlug: getSelectedSiteSlug( state ),
 		logEntries: scanHistoryLogEntries,
 	};
 } )( ScanHistoryPage );
