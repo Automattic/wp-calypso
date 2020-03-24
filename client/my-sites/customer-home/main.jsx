@@ -46,8 +46,8 @@ import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import QuickLinks from 'my-sites/customer-home/quick-links';
 import Notices from 'my-sites/customer-home/notices';
-import QueryHomeCards from 'components/data/query-home-cards';
-import { getHomeCards } from 'state/selectors/get-home-cards';
+import QueryHomeLayout from 'components/data/query-home-layout';
+import { getHomeLayout } from 'state/selectors/get-home-layout';
 
 /**
  * Style dependencies
@@ -140,7 +140,7 @@ class Home extends Component {
 				<PageViewTracker path={ `/home/:site` } title={ translate( 'My Home' ) } />
 				<DocumentHead title={ translate( 'My Home' ) } />
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-				{ siteId && <QueryHomeCards siteId={ siteId } /> }
+				{ siteId && <QueryHomeLayout siteId={ siteId } /> }
 				<SidebarNavigation />
 				<div className="customer-home__page-heading">{ this.renderCustomerHomeHeader() }</div>
 				<Notices checklistMode={ checklistMode } />
@@ -303,7 +303,7 @@ const connectHome = connect(
 			isEstablishedSite: moment().isAfter( moment( createdAt ).add( 2, 'days' ) ),
 			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 			user,
-			cards: getHomeCards( state, siteId ),
+			cards: getHomeLayout( state, siteId ),
 		};
 	},
 	dispatch => ( {

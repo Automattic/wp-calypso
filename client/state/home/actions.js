@@ -1,16 +1,16 @@
 /**
  * Internal dependencies
  */
-import { HOME_CARDS_REQUEST, HOME_CARDS_SET } from 'state/action-types';
-import 'state/data-layer/wpcom/sites/home/cards';
+import { HOME_LAYOUT_REQUEST, HOME_LAYOUT_SET } from 'state/action-types';
+import 'state/data-layer/wpcom/sites/home/layout';
 
-export const requestHomeCards = siteId => ( {
-	type: HOME_CARDS_REQUEST,
+export const requestHomeLayout = siteId => ( {
+	type: HOME_LAYOUT_REQUEST,
 	siteId,
 } );
 
-export const setHomeCards = ( siteId, cards ) => ( {
-	type: HOME_CARDS_SET,
+export const setHomeLayout = ( siteId, layout ) => ( {
+	type: HOME_LAYOUT_SET,
 	siteId,
-	cards,
+	layout,
 } );
