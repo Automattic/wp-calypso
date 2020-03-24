@@ -25,7 +25,7 @@ function WpcomNux() {
 	const { isWpcomNuxEnabled, isSPTOpen } = useSelect( select => ( {
 		isWpcomNuxEnabled: select( 'automattic/nux' ).isWpcomNuxEnabled(),
 		isSPTOpen:
-			select( 'automattic/starter-page-layouts' ) &&
+			select( 'automattic/starter-page-layouts' ) && // Handle the case where SPT is not initalized.
 			select( 'automattic/starter-page-layouts' ).isOpen(),
 	} ) );
 
