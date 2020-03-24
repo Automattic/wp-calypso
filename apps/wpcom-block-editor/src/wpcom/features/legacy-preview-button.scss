@@ -1,0 +1,14 @@
+/**
+ * Enforces simple preview to be always visible and hide more complex preview
+ * @TODO: backwards compatibility with older Gutenberg
+ */
+@media ( min-width: 600px ) {
+	// Normally visible on mobile only, make it always visible
+	.editor-post-preview {
+		display: inline-flex;
+	}
+	// Normally visible on desktops, make it always hidden
+	.editor-post-preview__dropdown {
+		display: none;
+	}
+}
