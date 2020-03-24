@@ -173,9 +173,8 @@ class JetpackCloudSidebar extends Component {
 							materialIcon="settings"
 							materialIconStyle="filled"
 							selected={ this.isSelected( '/settings' ) }
-						>
-							{ settingsIssues.length > 0 && <Badge type="error">{ settingsIssues.length }</Badge> }
-						</SidebarItem>
+							showNotificationDot={ settingsIssues.length > 0 }
+						/>
 					) }
 				</SidebarRegion>
 				<SidebarFooter>
