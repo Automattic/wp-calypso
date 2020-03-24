@@ -10,24 +10,22 @@ import { memoize } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	expandMySitesSidebarSection as expandSection,
-	toggleMySitesSidebarSection as toggleSection,
-} from 'state/my-sites/sidebar/actions';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
-import { isSidebarSectionOpen } from 'state/my-sites/sidebar/selectors';
-import { itemLinkMatches } from 'my-sites/sidebar/utils';
-import Badge from 'components/badge';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 import config from 'config';
 import CurrentSite from 'my-sites/current-site';
-import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
-import QueryRewindState from 'components/data/query-rewind-state';
+import { itemLinkMatches } from 'my-sites/sidebar/utils';
+import Badge from 'components/badge';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
+import { isSidebarSectionOpen } from 'state/my-sites/sidebar/selectors';
+import {
+	expandMySitesSidebarSection as expandSection,
+	toggleMySitesSidebarSection as toggleSection,
+} from 'state/my-sites/sidebar/actions';
 
 // Lowercase because these are used as keys for sidebar state.
 export const SIDEBAR_SECTION_SCAN = 'scan';
@@ -43,7 +41,6 @@ class JetpackCloudSidebar extends Component {
 		path: PropTypes.string.isRequired,
 		selectedSiteSlug: PropTypes.string,
 		threats: PropTypes.array,
-		siteId: PropTypes.number,
 	};
 
 	/**
@@ -67,12 +64,11 @@ class JetpackCloudSidebar extends Component {
 	};
 
 	render() {
-		const { doesRewindNeedCredentials, selectedSiteSlug, siteId, translate, threats } = this.props;
+		const { selectedSiteSlug, translate, threats } = this.props;
 		const numberOfThreatsFound = threats.length;
 
 		return (
 			<Sidebar className="sidebar__jetpack-cloud">
-				{ siteId && <QueryRewindState siteId={ siteId } /> }
 				<SidebarRegion>
 					<CurrentSite />
 					<SidebarMenu>
@@ -172,7 +168,6 @@ class JetpackCloudSidebar extends Component {
 							materialIcon="settings"
 							materialIconStyle="filled"
 							selected={ this.isSelected( '/settings' ) }
-							showNotificationDot={ doesRewindNeedCredentials }
 						/>
 					) }
 				</SidebarRegion>
@@ -215,14 +210,11 @@ export default connect(
 		const isBackupSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_BACKUP );
 		const isScanSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_SCAN );
 		const threats = getSiteThreats( state );
-		const siteId = getSelectedSiteId( state );
 
 		return {
 			isBackupSectionOpen,
 			isScanSectionOpen,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
-			doesRewindNeedCredentials: getDoesRewindNeedCredentials( state, siteId ),
-			siteId,
 			threats,
 		};
 	},
