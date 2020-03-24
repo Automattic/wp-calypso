@@ -49,7 +49,6 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 					className="themes__showcase-banner"
 					title={ translate( 'Unlock ALL premium themes with our Premium and Business plans!' ) }
 					event="themes_plans_free_personal"
-					callToAction={ translate( 'View Plans' ) }
 					forceHref={ true }
 				/>
 			);
