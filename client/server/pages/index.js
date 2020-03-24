@@ -720,15 +720,6 @@ module.exports = function() {
 			}
 		} );
 
-		// redirect logged-out tag pages to en.wordpress.com
-		app.get( '/tag/:tag_slug', function( req, res, next ) {
-			if ( ! req.context.isLoggedIn ) {
-				res.redirect( 'https://wordpress.com/tag/' + encodeURIComponent( req.params.tag_slug ) );
-			} else {
-				next();
-			}
-		} );
-
 		// redirect logged-out searches to en.search.wordpress.com
 		app.get( '/read/search', function( req, res, next ) {
 			if ( ! req.context.isLoggedIn ) {
