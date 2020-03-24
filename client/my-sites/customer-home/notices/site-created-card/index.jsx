@@ -20,9 +20,10 @@ const SiteCreatedCard = ( { checklistMode, displayChecklist, siteHasPaidPlan } )
 
 	return (
 		<CelebrateNotice
-			message={ message }
 			checklistMode={ checklistMode }
+			dismissalPreferenceName="home-notice-site-created"
 			displayChecklist={ displayChecklist }
+			message={ message }
 		/>
 	);
 };
