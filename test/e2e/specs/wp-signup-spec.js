@@ -1483,7 +1483,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe( 'Import a site while signing up @parallel', function() {
+	describe.skip( 'Import a site while signing up @parallel', function() {
 		// Currently must use a Wix or GoDaddy site to be importable through this flow.
 		const siteURL = 'https://hi6822.wixsite.com/eat-here-its-good';
 		const userName = dataHelper.getNewBlogName();
