@@ -34,4 +34,4 @@ registerBlockType( blockName, {
 	category: 'layout',
 } );
 
-registerQueryStore();
+registerQueryStore( blockName );
