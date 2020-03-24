@@ -54,6 +54,7 @@ function WPLineItem( {
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const modalCopy = returnModalCopy( item.type, translate, hasDomainsInCart );
 	const onEvent = useEvents();
+	const isDisabled = formStatus !== 'ready';
 
 	const shouldShowVariantSelector = item.wpcom_meta && item.wpcom_meta.extra?.context === 'signup';
 
@@ -67,6 +68,7 @@ function WPLineItem( {
 				<React.Fragment>
 					<DeleteButton
 						buttonState="borderless"
+						disabled={ isDisabled }
 						onClick={ () => {
 							setIsModalVisible( true );
 							onEvent( {
@@ -112,6 +114,7 @@ function WPLineItem( {
 					variantSelectOverride={ variantSelectOverride }
 					getItemVariants={ getItemVariants }
 					onChangeItemVariant={ onChangePlanLength }
+					isDisabled={ isDisabled }
 				/>
 			) }
 		</div>
