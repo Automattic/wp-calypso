@@ -27,7 +27,11 @@ import ProductExpiration from 'components/product-expiration';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { managePurchase } from 'me/purchases/paths';
 import { getPlan } from 'lib/plans';
-import { isPartnerPurchase, shouldAddPaymentSourceInsteadOfRenewingNow } from 'lib/purchases';
+import {
+	isExpiring,
+	isPartnerPurchase,
+	shouldAddPaymentSourceInsteadOfRenewingNow,
+} from 'lib/purchases';
 import {
 	isFreeJetpackPlan,
 	isFreePlan,
@@ -146,7 +150,10 @@ class PurchasesListing extends Component {
 
 		const expiryMoment = purchase.expiryDate ? this.props.moment( purchase.expiryDate ) : null;
 
-		const renewMoment = purchase.renewDate ? this.props.moment( purchase.renewDate ) : null;
+		const renewMoment =
+			! isExpiring( purchase ) && purchase.renewDate
+				? this.props.moment( purchase.renewDate )
+				: null;
 
 		return <ProductExpiration expiryDateMoment={ expiryMoment } renewDateMoment={ renewMoment } />;
 	}
