@@ -292,7 +292,7 @@ const webpackConfig = {
 		isCalypsoClient && new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
 		shouldOutputChunksMap &&
 			new GenerateChunksMapPlugin( {
-				output: path.resolve( '.', 'chunks-map.json' ),
+				output: path.resolve( '.', `chunks-map.${ extraPath }.json` ),
 			} ),
 		isCalypsoClient && new RequireChunkCallbackPlugin(),
 		isDevelopment && new webpack.HotModuleReplacementPlugin(),

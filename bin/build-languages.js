@@ -1,5 +1,6 @@
 const _ = require( 'lodash' );
 const fs = require( 'fs' );
+const glob = require( 'glob' );
 const path = require( 'path' );
 const https = require( 'https' );
 const mkdirp = require( 'mkdirp' );
@@ -7,10 +8,9 @@ const readline = require( 'readline' );
 const parse = require( 'gettext-parser' ).po.parse;
 
 const LANGUAGES_BASE_URL = 'https://widgets.wp.com/languages/calypso';
-const LANGUAGES_DIR = './public/evergreen/languages';
 const LANGUAGES_REVISIONS_FILENAME = 'lang-revisions.json';
 const CALYPSO_STRINGS = './calypso-strings.pot';
-const CHUNKS_MAP = './chunks-map.json';
+const CHUNKS_MAP_PATTERN = './chunks-map.*.json';
 const LANGUAGE_MANIFEST_FILENAME = 'language-manifest.json';
 
 const languages = [
@@ -118,6 +118,23 @@ const languages = [
 	'tr',
 ]; // todo: can we use `../client/languages`?
 
+const chunksMaps = glob.sync( CHUNKS_MAP_PATTERN );
+const languagesPaths = chunksMaps
+	.map( chunksMapPath => {
+		const [ , extraPath ] = path.basename( chunksMapPath ).match( /.+\.(\w+)\.json/, '' );
+
+		if ( ! extraPath ) {
+			return;
+		}
+
+		return {
+			chunksMapPath,
+			extraPath,
+			publicPath: `./public/${ extraPath }/languages`,
+		};
+	} )
+	.filter( Boolean );
+
 function logUpdate( text ) {
 	readline.clearLine( process.stdout, 0 );
 	readline.cursorTo( process.stdout, 0 );
@@ -126,7 +143,7 @@ function logUpdate( text ) {
 
 // Create languages directory
 function createLanguagesDir() {
-	return mkdirp.sync( LANGUAGES_DIR );
+	return languagesPaths.forEach( ( { publicPath } ) => mkdirp.sync( publicPath ) );
 }
 
 // Download languages revisions
@@ -138,10 +155,12 @@ function downloadLanguagesRevions() {
 			);
 		}
 
-		const file = fs.createWriteStream( `${ LANGUAGES_DIR }/${ LANGUAGES_REVISIONS_FILENAME }` );
+		const files = languagesPaths.map( ( { publicPath } ) =>
+			fs.createWriteStream( `${ publicPath }/${ LANGUAGES_REVISIONS_FILENAME }` )
+		);
 
 		https.get( `${ LANGUAGES_BASE_URL }/${ LANGUAGES_REVISIONS_FILENAME }`, response => {
-			response.pipe( file );
+			files.forEach( file => response.pipe( file ) );
 			response.on( 'end', () => {
 				if ( response.statusCode !== 200 ) {
 					log( 'failed' );
@@ -174,13 +193,15 @@ async function downloadLanguages() {
 			langSlug =>
 				new Promise( resolve => {
 					const filename = `${ langSlug }-v1.1.json`;
-					const file = fs.createWriteStream( `${ LANGUAGES_DIR }/${ filename }` );
+					const files = languagesPaths.map( ( { publicPath } ) =>
+						fs.createWriteStream( `${ publicPath }/${ filename }` )
+					);
 					const translationUrl = `${ LANGUAGES_BASE_URL }/${ filename }`;
 
 					https.get( translationUrl, response => {
 						let body = '';
 
-						response.pipe( file );
+						files.forEach( file => response.pipe( file ) );
 						response.on( 'data', chunk => ( body += chunk ) );
 						response.on( 'end', () => {
 							if ( response.statusCode === 200 ) {
@@ -207,8 +228,7 @@ async function downloadLanguages() {
 function buildLanguageChunks( downloadedLanguages ) {
 	logUpdate( 'Building language chunks...' );
 
-	if ( fs.existsSync( CALYPSO_STRINGS ) && fs.existsSync( CHUNKS_MAP ) ) {
-		const chunksMap = require( '../chunks-map.json' );
+	if ( fs.existsSync( CALYPSO_STRINGS ) ) {
 		const { translations } = parse( fs.readFileSync( CALYPSO_STRINGS ) );
 		const translationsFlatten = _.reduce(
 			translations,
@@ -224,41 +244,45 @@ function buildLanguageChunks( downloadedLanguages ) {
 			},
 			{}
 		);
-		const chunks = _.mapValues( chunksMap, modules => {
-			return _.chain( translationsFlatten )
-				.pickBy( ( { comments } ) =>
-					modules.some( module => ( comments.reference || '' ).includes( module ) )
-				)
-				.keys()
-				.value();
-		} );
 
-		downloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
-			const languageChunks = _.chain( chunks )
-				.mapValues( stringIds => _.pick( languageTranslations, stringIds ) )
-				.omitBy( _.isEmpty )
-				.value();
+		languagesPaths.map( ( { chunksMapPath, publicPath } ) => {
+			const chunksMap = require( path.join( '..', chunksMapPath ) );
+			const chunks = _.mapValues( chunksMap, modules => {
+				return _.chain( translationsFlatten )
+					.pickBy( ( { comments } ) =>
+						modules.some( module => ( comments.reference || '' ).includes( module ) )
+					)
+					.keys()
+					.value();
+			} );
 
-			// Write language translated chunks map
-			const languageChunksDir = path.join( LANGUAGES_DIR, langSlug );
-			const translatedChunksKeys = Object.keys( languageChunks ).map(
-				chunk => path.parse( chunk ).name
-			);
-			mkdirp.sync( languageChunksDir );
-			fs.writeFileSync(
-				path.join( languageChunksDir, LANGUAGE_MANIFEST_FILENAME ),
-				JSON.stringify( {
-					locale: _.pick( languageTranslations, [ '' ] ),
-					translatedChunks: translatedChunksKeys,
-				} )
-			);
+			downloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
+				const languageChunks = _.chain( chunks )
+					.mapValues( stringIds => _.pick( languageTranslations, stringIds ) )
+					.omitBy( _.isEmpty )
+					.value();
 
-			// Write laguage translation chunks
-			_.forEach( languageChunks, ( chunkTranslations, chunkId ) => {
-				const chunkFilename = path.basename( chunkId, path.extname( chunkId ) ) + '.json';
-				const chunkFilepath = path.join( languageChunksDir, chunkFilename );
+				// Write language translated chunks map
+				const languageChunksDir = path.join( publicPath, langSlug );
+				const translatedChunksKeys = Object.keys( languageChunks ).map(
+					chunk => path.parse( chunk ).name
+				);
+				mkdirp.sync( languageChunksDir );
+				fs.writeFileSync(
+					path.join( languageChunksDir, LANGUAGE_MANIFEST_FILENAME ),
+					JSON.stringify( {
+						locale: _.pick( languageTranslations, [ '' ] ),
+						translatedChunks: translatedChunksKeys,
+					} )
+				);
 
-				fs.writeFileSync( chunkFilepath, JSON.stringify( chunkTranslations ) );
+				// Write language translation chunks
+				_.forEach( languageChunks, ( chunkTranslations, chunkId ) => {
+					const chunkFilename = path.basename( chunkId, path.extname( chunkId ) ) + '.json';
+					const chunkFilepath = path.join( languageChunksDir, chunkFilename );
+
+					fs.writeFileSync( chunkFilepath, JSON.stringify( chunkTranslations ) );
+				} );
 			} );
 		} );
 	}
