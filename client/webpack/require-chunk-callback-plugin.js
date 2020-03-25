@@ -48,8 +48,12 @@ class RequireChunkCallbackPlugin {
 							return this;
 						};
 
-						RequireChunkCallback.prototype.getInstalledChunks = function( ) {
-							return installedChunks;
+						RequireChunkCallback.prototype.getInstalledChunks = function() {
+							return Object.keys( installedChunks ).map( chunkId =>
+								jsonpScriptSrc( chunkId )
+									.replace( __webpack_require__.p, '' )
+									.replace( /\\.js$/, '' )
+							);
 						};
 
 						var requireChunkCallback = new RequireChunkCallback();

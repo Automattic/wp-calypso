@@ -51,7 +51,7 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 			.then( data => {
 				translatedChunks = data.translatedChunks;
 				i18n.setLocale( data.locale );
-				const installedChunks = Object.keys( window.__requireChunkCallback__.getInstalledChunks() );
+				const installedChunks = window.__requireChunkCallback__.getInstalledChunks();
 
 				installedChunks.forEach( chunkId => {
 					const translationChunkPath = getTranslationChunkPath( chunkId );
