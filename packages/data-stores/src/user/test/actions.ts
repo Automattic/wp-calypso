@@ -58,7 +58,10 @@ describe( 'createAccount', () => {
 			} ),
 		} );
 
-		const finalResult = generator.next( apiResponse );
+		expect( generator.next( apiResponse ).value ).toEqual( { type: 'RELOAD_PROXY' } );
+		expect( generator.next().value ).toEqual( { type: 'REQUEST_ALL_BLOGS_ACCESS' } );
+
+		const finalResult = generator.next();
 
 		expect( finalResult.value ).toEqual( {
 			type: 'RECEIVE_NEW_USER',
