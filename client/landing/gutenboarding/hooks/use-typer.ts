@@ -1,33 +1,12 @@
 /**
  * External dependencies
  */
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 
 /**
- * A hook that re-renders after `delay` passes.
- *
- * @param {Function} callback the handler
- * @param {number} delay the interval delay
+ * Internal dependencies
  */
-function useInterval( callback: Function, delay: number ) {
-	const savedCallback = useRef( callback );
-
-	// Remember the latest callback.
-	useEffect( () => {
-		savedCallback.current = callback;
-	}, [ callback ] );
-
-	// Set up the interval.
-	useEffect( () => {
-		function tick() {
-			savedCallback.current();
-		}
-		if ( delay !== null ) {
-			const id = setInterval( tick, delay );
-			return () => clearInterval( id );
-		}
-	}, [ delay ] );
-}
+import { useInterval } from 'lib/interval/use-interval';
 
 /**
  * A React hook that returns typing-machine animated strings
