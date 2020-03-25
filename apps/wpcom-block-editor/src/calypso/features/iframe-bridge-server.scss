@@ -53,6 +53,8 @@ body.is-fullscreen-mode {
 // To make the toolbar buttons look more balanced, an left offset of -8px
 // is added to this custom block inserter button (24px - 16px = 8px). This
 // -8px offset also contributes in solving spacing issue in mobile/tablet view.
-.block-editor-inserter__toggle {
+//
+// Specific to Gutenberg >= 7.7.
+.block-editor-editor-skeleton__header .block-editor-inserter__toggle {
 	margin-left: -8px;
 }
