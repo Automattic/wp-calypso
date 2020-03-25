@@ -433,10 +433,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 					By.css( 'button.template-selector-item__label[value="blank"]' )
 				);
 			} else {
-				await driverHelper.clickWhenClickable(
-					this.driver,
+				const useBlankButton = await this.driver.findElement(
 					By.css( '.page-template-modal__buttons .components-button.is-primary' )
 				);
+				await this.driver.executeScript( 'arguments[0].click()', useBlankButton );
 			}
 		}
 	}
