@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -23,6 +24,7 @@ import {
 } from 'my-sites/domains/paths';
 import { emailManagement } from 'my-sites/email/paths';
 import { type as domainTypes } from 'lib/domains/constants';
+import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 
 import './style.scss';
 
@@ -160,23 +162,6 @@ class DomainManagementNavigation extends React.Component {
 		);
 	}
 
-	handleEditSiteAddressClick = () => {
-		const { domain } = this.props;
-		const domainType = getDomainTypeText( domain );
-
-		this.props.recordGoogleEvent(
-			'Domain Management',
-			`Clicked "Edit Site Address" navigation link on a ${ domainType } in Edit`,
-			'Domain Name',
-			domain.name
-		);
-
-		this.props.recordTracksEvent( 'calypso_domain_management_edit_navigation_click', {
-			action: 'edit_site_address',
-			section: domain.type,
-		} );
-	};
-
 	handleChangeSiteAddressClick = () => {
 		const { domain } = this.props;
 		const domainType = getDomainTypeText( domain );
@@ -212,14 +197,7 @@ class DomainManagementNavigation extends React.Component {
 	};
 
 	getPickCustomDomain() {
-		const { domain, selectedSite, translate } = this.props;
-		const { type } = domain;
-
-		const isWpcomDomain = type === domainTypes.WPCOM;
-
-		if ( ! isWpcomDomain ) {
-			return;
-		}
+		const { selectedSite, translate } = this.props;
 
 		return (
 			<DomainManagementNavigationItem
@@ -233,33 +211,18 @@ class DomainManagementNavigation extends React.Component {
 
 	getSiteAddressChange() {
 		const { domain, selectedSite, translate } = this.props;
-		const { isWpcomStagingDomain, type } = domain;
+		const { isWpcomStagingDomain } = domain;
 
 		if ( isWpcomStagingDomain ) {
 			return;
 		}
 
-		const isWpcomDomain = type === domainTypes.WPCOM;
-
-		const path = isWpcomDomain
-			? domainManagementChangeSiteAddress( selectedSite.slug, domain.name )
-			: `https://${ domain.name }/wp-admin/index.php?page=my-blogs#blog_row_${ selectedSite.ID }`;
-
-		const onClick = isWpcomDomain
-			? this.handleChangeSiteAddressClick
-			: this.handleEditSiteAddressClick;
-
-		const text = isWpcomDomain
-			? translate( 'Change site address' )
-			: translate( 'Edit site address' );
-
 		return (
 			<DomainManagementNavigationItem
-				path={ path }
-				external={ ! isWpcomDomain }
-				onClick={ onClick }
+				path={ domainManagementChangeSiteAddress( selectedSite.slug, domain.name ) }
+				onClick={ this.handleChangeSiteAddressClick }
 				materialIcon="create"
-				text={ text }
+				text={ translate( 'Change site address' ) }
 			/>
 		);
 	}
@@ -308,4 +271,6 @@ class DomainManagementNavigation extends React.Component {
 	}
 }
 
-export default localize( withLocalizedMoment( DomainManagementNavigation ) );
+export default connect( null, { recordTracksEvent, recordGoogleEvent } )(
+	localize( withLocalizedMoment( DomainManagementNavigation ) )
+);
