@@ -17,7 +17,7 @@ import guessTimezone from 'lib/i18n-utils/guess-timezone';
 import userFactory from 'lib/user';
 import { abtest, getSavedVariations } from 'lib/abtest';
 import analytics from 'lib/analytics';
-import { recordRegistration, recordSocialRegistration } from 'lib/analytics/signup';
+import { recordRegistration } from 'lib/analytics/signup';
 import {
 	updatePrivacyForDomain,
 	supportsPrivacyProtectionPurchase,
@@ -414,7 +414,36 @@ export function createAccount(
 					);
 				}
 
-				recordSocialRegistration();
+				// TEMP DEBUG:
+				/*
+				 Google: ok
+				 Normal: ...
+				 Apple: ...
+				 Passwordless: ...
+				 */
+				debug( 'Social Signup: response: ', response );
+				debug( 'Social Signup: userData: ', userData );
+
+				const userId =
+					( response && response.signup_sandbox_user_id ) ||
+					( response && response.user_id ) ||
+					userData.ID;
+
+				const username =
+					( response && response.signup_sandbox_username ) ||
+					( response && response.username ) ||
+					userData.username;
+
+				const email = ( response && response.email ) || ( userData && userData.user_email );
+
+				const registrationUserData = {
+					ID: userId,
+					username: username,
+					email,
+				};
+
+				// Fire after a new user registers.
+				recordRegistration( { userData: registrationUserData, flow: flowName, type: 'social' } );
 
 				callback( undefined, pick( response, [ 'username', 'bearer_token' ] ) );
 			}
@@ -479,9 +508,14 @@ export function createAccount(
 					( response && response.user_id ) ||
 					userData.ID;
 
+				const registrationUserData = {
+					ID: userId,
+					username,
+					email: userData.email,
+				};
+
 				// Fire after a new user registers.
-				recordRegistration( flowName );
-				analytics.identifyUser( { ID: userId, username, email: userData.email } );
+				recordRegistration( { userData: registrationUserData, flow: flowName, type: 'default' } );
 
 				const providedDependencies = assign( { username }, bearerToken );
 
