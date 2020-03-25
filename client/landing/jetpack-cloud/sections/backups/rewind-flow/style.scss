@@ -53,15 +53,15 @@ input.rewind-flow__rewind-config-editor-checkbox.form-checkbox {
 	p {
 		font-size: 16px;
 	}
-}
 
-// this allows the gridicon and text to align on their centers
-p {
-	margin: 0;
-}
-a {
-	align-items: center;
-	display: flex;
+	// this allows the gridicon and text to align on their centers
+	p {
+		margin: 0;
+	}
+	a {
+		align-items: center;
+		display: flex;
+	}
 }
 
 // when the reminder is default make the header more bold
