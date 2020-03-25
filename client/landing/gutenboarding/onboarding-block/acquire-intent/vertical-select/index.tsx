@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-import React, { createRef, useState, FunctionComponent, useEffect } from 'react';
+import React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Suggestions } from '@automattic/components';
 import { ENTER } from '@wordpress/keycodes';
 import { useI18n } from '@automattic/react-i18n';
+import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { STORE_KEY as ONBOARD_STORE } from '../../../stores/onboard';
 import { Verticals } from '@automattic/data-stores';
-import { SiteVertical } from '../../stores/onboard/types';
-import { StepProps } from '../stepper-wizard';
-import Question from '../question';
-import useTyper from '../../hooks/use-typer';
+import { SiteVertical } from '../../../stores/onboard/types';
+import AnimatedPlaceholder from '../../animated-placeholder';
+import useTyper from '../../../hooks/use-typer';
 
 /**
  * Style dependencies
@@ -26,12 +26,7 @@ type Suggestion = SiteVertical & { category?: string };
 
 const VERTICALS_STORE = Verticals.register();
 
-const VerticalSelect: FunctionComponent< StepProps > = ( {
-	onSelect,
-	inputClass,
-	isActive,
-	onExpand,
-} ) => {
+const VerticalSelect: React.FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 	const popular = [
 		NO__( 'Travel Agency' ),
@@ -52,7 +47,7 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 	 *
 	 * Using `Suggestions` here would effectively be `any`.
 	 */
-	const suggestionRef = createRef< any >();
+	const suggestionRef = React.createRef< any >();
 
 	const verticals = useSelect( select =>
 		select( VERTICALS_STORE )
@@ -66,7 +61,7 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 	const { siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
 	const { setSiteVertical, resetSiteVertical } = useDispatch( ONBOARD_STORE );
 
-	const [ inputValue, setInputValue ] = useState( siteVertical?.label ?? '' );
+	const [ inputValue, setInputValue ] = React.useState( siteVertical?.label ?? '' );
 
 	const animatedPlaceholder = useTyper(
 		[ NO__( 'football' ), NO__( 'shopping' ), NO__( 'cars' ), NO__( 'design' ), NO__( 'travel' ) ],
@@ -130,7 +125,6 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 	const handleSelect = ( vertical: SiteVertical ) => {
 		setSiteVertical( vertical );
 		setInputValue( vertical.label );
-		onSelect();
 	};
 
 	const handleBlur = () => {
@@ -139,37 +133,25 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 		) ?? { label: inputValue.trim() };
 
 		setSiteVertical( vertical );
-		onSelect();
 	};
 
-	const label = NO__( 'My site is about' );
 	const displayValue = siteVertical?.label ?? '';
 
-	// Focus the input when we change to active
-	const inputRef = createRef< HTMLInputElement >();
-	useEffect( () => {
-		if ( isActive && document.activeElement !== inputRef.current ) {
-			inputRef.current?.focus();
-		}
-	}, [ isActive, inputRef ] );
-
-	return (
-		<Question
-			label={ label }
-			displayValue={ displayValue }
-			isActive={ isActive || ! displayValue }
-			onExpand={ onExpand }
-		>
-			<div className="vertical-select">
+	// translators: Form input for a site's topic where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
+	const madlib = NO__( 'My site is about <Input />.' );
+	const input = __experimentalCreateInterpolateElement( madlib, {
+		Input: (
+			<span className="vertical-select__suggestions-wrapper">
 				<input
-					aria-label={ label }
+					className="madlib__input"
 					autoComplete="off"
-					className={ inputClass }
+					style={ {
+						width: `${ inputValue.length * 0.85 }ch`,
+					} }
 					onBlur={ handleBlur }
 					onChange={ handleSuggestionChangeEvent }
 					onKeyDown={ handleSuggestionKeyDown }
 					placeholder={ animatedPlaceholder }
-					ref={ inputRef }
 					value={ inputValue }
 				/>
 				<div className="vertical-select__suggestions">
@@ -183,8 +165,25 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 						/>
 					) }
 				</div>
-			</div>
-		</Question>
+			</span>
+		),
+	} );
+
+	return (
+		<div className="vertical-select">
+			{ madlib }
+			{ ! inputValue && (
+				<AnimatedPlaceholder
+					texts={ [
+						NO__( 'football' ),
+						NO__( 'shopping' ),
+						NO__( 'cars' ),
+						NO__( 'design' ),
+						NO__( 'travel' ),
+					] }
+				/>
+			) }
+		</div>
 	);
 };
 
