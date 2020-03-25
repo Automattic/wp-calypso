@@ -697,7 +697,9 @@ class Page extends Component {
 			__file: 'wp_template',
 			language: 'en',
 			title: page.title,
-			content: page.content,
+			author: page.author,
+			demoURL: page.URL,
+			content: page.rawContent,
 		} );
 		const blob = new window.Blob( [ fileContent ], { type: 'application/json' } );
 		const fileName = ( page.title ? page.title : 'page' ) + '.json';
