@@ -35,7 +35,6 @@ import { setUnseenCount } from 'state/notifications';
  * Style dependencies
  */
 import './style.scss';
-import { isLoading } from 'wp-calypso/state/ui/reducer';
 
 /**
  * Returns whether or not the browser session
