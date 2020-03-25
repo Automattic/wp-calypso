@@ -12,8 +12,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Checklist, Task } from 'components/checklist';
-import ChecklistPrompt from './checklist-prompt';
-import ChecklistPromptTask from './checklist-prompt/task';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import getSiteTaskList from 'state/selectors/get-site-task-list';
 import QueryPosts from 'components/data/query-posts';
@@ -95,23 +93,10 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	trackTaskStart = ( task, props ) => {
-		let location;
-
-		switch ( this.props.viewMode ) {
-			case 'banner':
-				location = 'checklist_banner';
-				break;
-			case 'prompt':
-				location = 'checklist_prompt';
-				break;
-			default:
-				location = 'checklist_show';
-		}
-
 		this.props.recordTracksEvent( 'calypso_checklist_task_start', {
 			checklist_name: 'new_blog',
 			site_id: this.props.siteId,
-			location,
+			location: 'checklist_show',
 			step_name: task.id,
 			completed: task.isCompleted,
 			...props,
@@ -207,24 +192,14 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	render() {
-		const { siteId, taskList, taskStatuses, viewMode, updateCompletion } = this.props;
-
-		let ChecklistComponent = Checklist;
-
-		switch ( viewMode ) {
-			case 'prompt':
-				ChecklistComponent = ChecklistPrompt;
-				break;
-			case 'notification':
-				return null;
-		}
+		const { siteId, taskList, taskStatuses, updateCompletion } = this.props;
 
 		return (
 			<>
 				{ siteId && <QuerySites siteId={ siteId } /> }
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				{ siteId && <QueryPosts siteId={ siteId } query={ FIRST_TEN_SITE_POSTS_QUERY } /> }
-				<ChecklistComponent
+				<Checklist
 					isPlaceholder={ ! taskStatuses }
 					updateCompletion={ updateCompletion }
 					taskList={ taskList }
@@ -232,21 +207,15 @@ class WpcomChecklistComponent extends PureComponent {
 					showChecklistHeader={ false }
 				>
 					{ taskList.getAll().map( task => this.renderTask( task ) ) }
-				</ChecklistComponent>
+				</Checklist>
 			</>
 		);
 	}
 
 	renderTask( task ) {
-		const { siteSlug, viewMode } = this.props;
+		const { siteSlug } = this.props;
 
-		let TaskComponent = Task;
-
-		switch ( viewMode ) {
-			case 'prompt':
-				TaskComponent = ChecklistPromptTask;
-				break;
-		}
+		const TaskComponent = Task;
 
 		const baseProps = {
 			id: task.id,
