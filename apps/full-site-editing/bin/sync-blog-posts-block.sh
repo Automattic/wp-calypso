@@ -108,9 +108,6 @@ fi
 
 echo Syncing files to FSE…
 
-full_path=$(pwd)/$TARGET
-echo "Target: $full_path"
-
 # Remove the target dir so that we start on a clean slate.
 rm -rf "$TARGET"
 
