@@ -195,6 +195,7 @@ ServerCredentialsForm.propTypes = {
 	form: PropTypes.object,
 	formErrors: PropTypes.object,
 	formIsSubmitting: PropTypes.bool,
+	formSubmissionStatus: PropTypes.string,
 	handleFieldChange: PropTypes.func,
 	handleSubmit: PropTypes.func,
 	handleDelete: PropTypes.func,

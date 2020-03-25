@@ -27,7 +27,7 @@ function withServerCredentialsForm( WrappedComponent ) {
 			siteUrl: PropTypes.string,
 			requirePath: PropTypes.bool,
 			formIsSubmitting: PropTypes.bool,
-			formSubmissionStatus: PropTypes.object,
+			formSubmissionStatus: PropTypes.string,
 		};
 
 		static defaultProps = {
@@ -113,7 +113,6 @@ function withServerCredentialsForm( WrappedComponent ) {
 		UNSAFE_componentWillReceiveProps( nextProps ) {
 			const { rewindState, role, siteSlug } = nextProps;
 			const credentials = find( rewindState.credentials, { role: role } );
-
 			const nextForm = Object.assign( {}, this.state.form );
 
 			// Populate the fields with data from state if credentials are already saved
