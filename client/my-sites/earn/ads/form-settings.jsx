@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
+import ActionCard from 'components/action-card';
 import StateSelector from 'components/forms/us-state-selector';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import isSavingWordadsSettings from 'state/selectors/is-saving-wordads-settings';
@@ -25,7 +26,6 @@ import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
 import QueryWordadsSettings from 'components/data/query-wordads-settings';
 import SectionHeader from 'components/section-header';
-import FoldableCard from 'components/foldable-card';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getWordadsSettings } from 'state/selectors/get-wordads-settings';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -142,35 +142,31 @@ class AdsFormSettings extends Component {
 	}
 
 	wpcomPlacementControls() {
-		const { translate } = this.props;
-		const isPending = this.state.isLoading || this.state.isSubmitting;
+		const { isLoading, translate } = this.props;
 		const isWordAds = this.props.site.options.wordads;
 
 		return (
-			<FoldableCard
-				expanded={ isWordAds }
-				disabled={ isPending || ! isWordAds }
-				expandedSummary={
-					! this.props.siteIsJetpack && (
-						<Button compact primary onClick={ this.handleSubmit }>
-							{ isPending ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-						</Button>
-					)
-				}
-				header={
-					<div>
-						<div>{ translate( 'Placement Settings' ) }</div>
-					</div>
-				}
-			>
-				{ this.showAdsToOptions() }
-				{ this.displayOptions() }
-			</FoldableCard>
+			<div>
+				<SectionHeader label={ translate( 'Ad Placements' ) }>
+					<Button
+						compact
+						primary
+						onClick={ this.handleSubmit }
+						disabled={ isLoading || ! isWordAds }
+					>
+						{ isLoading ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+					</Button>
+				</SectionHeader>
+				<Card>
+					{ this.showAdsToOptions() }
+					{ this.displayOptions() }
+				</Card>
+			</div>
 		);
 	}
 
 	showAdsToOptions() {
-		const { translate } = this.props;
+		const { translate, isLoading } = this.props;
 
 		return (
 			<FormFieldset>
@@ -180,7 +176,7 @@ class AdsFormSettings extends Component {
 						value="yes"
 						checked={ 'yes' === this.state.show_to_logged_in }
 						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						disabled={ isLoading }
 					/>
 					<span>{ translate( 'Run ads for all users' ) }</span>
 				</FormLabel>
@@ -191,7 +187,7 @@ class AdsFormSettings extends Component {
 						value="no"
 						checked={ 'no' === this.state.show_to_logged_in }
 						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						disabled={ isLoading }
 					/>
 					<span>{ translate( 'Run ads only for logged-out users (less revenue)' ) }</span>
 				</FormLabel>
@@ -202,7 +198,7 @@ class AdsFormSettings extends Component {
 						value="pause"
 						checked={ 'pause' === this.state.show_to_logged_in }
 						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						disabled={ isLoading }
 					/>
 					<span>{ translate( 'Pause ads (no revenue)' ) }</span>
 				</FormLabel>
@@ -211,7 +207,7 @@ class AdsFormSettings extends Component {
 	}
 
 	additionalAdsOption() {
-		const { translate } = this.props;
+		const { translate, isLoading } = this.props;
 
 		return (
 			<FormFieldset>
@@ -221,7 +217,7 @@ class AdsFormSettings extends Component {
 						name="optimized_ads"
 						checked={ !! this.state.optimized_ads }
 						onChange={ this.handleToggle }
-						disabled={ this.props.isLoading }
+						disabled={ isLoading }
 					/>
 					<span>
 						{ translate( 'Show optimized ads. ' ) }
@@ -235,7 +231,7 @@ class AdsFormSettings extends Component {
 	}
 
 	displayOptions() {
-		const { translate } = this.props;
+		const { translate, isLoading } = this.props;
 
 		return (
 			<div>
@@ -243,28 +239,28 @@ class AdsFormSettings extends Component {
 					<FormLegend>{ translate( 'Display ads below posts on' ) }</FormLegend>
 					<CompactFormToggle
 						checked={ !! this.state.display_options?.display_front_page }
-						disabled={ this.props.isLoading }
+						disabled={ isLoading }
 						onChange={ this.handleDisplayToggle( 'display_front_page' ) }
 					>
 						{ translate( 'Front page' ) }
 					</CompactFormToggle>
 					<CompactFormToggle
 						checked={ !! this.state.display_options?.display_post }
-						disabled={ this.props.isLoading }
+						disabled={ isLoading }
 						onChange={ this.handleDisplayToggle( 'display_post' ) }
 					>
 						{ translate( 'Posts' ) }
 					</CompactFormToggle>
 					<CompactFormToggle
 						checked={ !! this.state.display_options?.display_page }
-						disabled={ this.props.isLoading }
+						disabled={ isLoading }
 						onChange={ this.handleDisplayToggle( 'display_page' ) }
 					>
 						{ translate( 'Pages' ) }
 					</CompactFormToggle>
 					<CompactFormToggle
 						checked={ !! this.state.display_options?.display_archive }
-						disabled={ this.props.isLoading }
+						disabled={ isLoading }
 						onChange={ this.handleDisplayToggle( 'display_archive' ) }
 					>
 						{ translate( 'Archives' ) }
@@ -274,21 +270,21 @@ class AdsFormSettings extends Component {
 					<FormLegend>{ translate( 'Additional ad placements' ) }</FormLegend>
 					<CompactFormToggle
 						checked={ !! this.state.display_options?.enable_header_ad }
-						disabled={ this.props.isLoading }
+						disabled={ isLoading }
 						onChange={ this.handleDisplayToggle( 'enable_header_ad' ) }
 					>
 						{ translate( 'Top of each page' ) }
 					</CompactFormToggle>
 					<CompactFormToggle
 						checked={ !! this.state.display_options?.second_belowpost }
-						disabled={ this.props.isLoading }
+						disabled={ isLoading }
 						onChange={ this.handleDisplayToggle( 'second_belowpost' ) }
 					>
 						{ translate( 'Second ad below post' ) }
 					</CompactFormToggle>
 					<CompactFormToggle
 						checked={ !! this.state.display_options?.sidebar }
-						disabled={ this.props.isLoading }
+						disabled={ isLoading }
 						onChange={ this.handleDisplayToggle( 'sidebar' ) }
 					>
 						{ translate( 'Sidebar' ) }
@@ -299,7 +295,7 @@ class AdsFormSettings extends Component {
 	}
 
 	siteOwnerOptions() {
-		const { translate } = this.props;
+		const { translate, isLoading } = this.props;
 
 		return (
 			<div>
@@ -310,7 +306,7 @@ class AdsFormSettings extends Component {
 						id="paypal"
 						value={ this.state.paypal || '' }
 						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						disabled={ isLoading }
 					/>
 				</FormFieldset>
 				<FormFieldset>
@@ -320,7 +316,7 @@ class AdsFormSettings extends Component {
 						id="who_owns"
 						value={ this.state.who_owns || '' }
 						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						disabled={ isLoading }
 					>
 						<option value="">{ translate( 'Select who owns this site' ) }</option>
 						<option value="person">{ translate( 'An Individual/Sole Proprietor' ) }</option>
@@ -335,10 +331,10 @@ class AdsFormSettings extends Component {
 						<FormCheckbox
 							name="us_resident"
 							checked={ !! this.state.us_checked }
-							disabled={ this.props.isLoading }
+							disabled={ isLoading }
 							onChange={ this.handleResidentCheckbox }
 						/>
-						<span>{ translate( 'US Resident or based in the US' ) }</span>
+						<span>{ translate( 'Are you a US resident or based in the United States?' ) }</span>
 					</FormLabel>
 				</FormFieldset>
 			</div>
@@ -346,7 +342,8 @@ class AdsFormSettings extends Component {
 	}
 
 	taxOptions() {
-		const { translate } = this.props;
+		const { translate, isLoading } = this.props;
+		const isWordAds = this.props.site.options.wordads;
 
 		return (
 			<div>
@@ -365,7 +362,7 @@ class AdsFormSettings extends Component {
 						}
 						value={ this.state.taxid || '' }
 						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						disabled={ isLoading }
 					/>
 				</FormFieldset>
 
@@ -378,7 +375,7 @@ class AdsFormSettings extends Component {
 						id="name"
 						value={ this.state.name || '' }
 						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						disabled={ isLoading }
 					/>
 				</FormFieldset>
 
@@ -390,7 +387,7 @@ class AdsFormSettings extends Component {
 						placeholder="Address Line 1"
 						value={ this.state.addr1 || '' }
 						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						disabled={ isLoading }
 					/>
 				</FormFieldset>
 
@@ -401,7 +398,7 @@ class AdsFormSettings extends Component {
 						placeholder="Address Line 2"
 						value={ this.state.addr2 || '' }
 						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						disabled={ isLoading }
 					/>
 				</FormFieldset>
 
@@ -412,7 +409,7 @@ class AdsFormSettings extends Component {
 						id="city"
 						value={ this.state.city || '' }
 						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						disabled={ isLoading }
 					/>
 				</FormFieldset>
 
@@ -424,7 +421,7 @@ class AdsFormSettings extends Component {
 						className="ads__settings-state"
 						value={ this.state.state || '' }
 						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						disabled={ isLoading }
 					/>
 				</FormFieldset>
 
@@ -435,7 +432,7 @@ class AdsFormSettings extends Component {
 						id="zip"
 						value={ this.state.zip || '' }
 						onChange={ this.handleChange }
-						disabled={ this.props.isLoading }
+						disabled={ isLoading }
 					/>
 				</FormFieldset>
 			</div>
@@ -443,7 +440,7 @@ class AdsFormSettings extends Component {
 	}
 
 	acceptCheckbox() {
-		const { translate } = this.props;
+		const { translate, isLoading } = this.props;
 
 		return (
 			<FormFieldset>
@@ -452,7 +449,7 @@ class AdsFormSettings extends Component {
 						name="tos"
 						checked={ !! this.state.tos }
 						onChange={ this.handleToggle }
-						disabled={ this.props.isLoading || 'signed' === this.state.tos }
+						disabled={ isLoading || 'signed' === this.state.tos }
 					/>
 					<span>
 						{ translate(
@@ -485,27 +482,35 @@ class AdsFormSettings extends Component {
 
 	render() {
 		const { isLoading, site, translate } = this.props;
-
 		const isWordAds = this.props.site.options.wordads;
 
 		return (
 			<Fragment>
 				<QueryWordadsSettings siteId={ site.ID } />
 
-        <FoldableCard
-					expanded={ ! isWordAds }
-					disabled={ isPending || ! isWordAds }
-					expandedSummary={
-						<Button compact primary onClick={ this.handleSubmit }>
-							{ isPending ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-						</Button>
-					}
-					header={
-						<div>
-							<div>{ translate( 'WordAds Account' ) }</div>
-						</div>
-					}
-				>
+				<ActionCard
+					headerText={ translate( 'Monitor Ads Stats & Payments' ) }
+					mainText={ translate( 'Review your ad metrics in the Stats section.' ) }
+					buttonText={ translate( 'View Ads Stats' ) }
+					buttonPrimary
+					buttonHref={ '/stats/ads/day/' + site.slug }
+				></ActionCard>
+				<br />
+				{ this.props.siteIsJetpack
+					? this.jetpackPlacementControls()
+					: this.wpcomPlacementControls() }
+
+				<SectionHeader label={ translate( 'WordAds Account' ) }>
+					<Button
+						compact
+						primary
+						onClick={ this.handleSubmit }
+						disabled={ isLoading || ! isWordAds }
+					>
+						{ isLoading ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+					</Button>
+				</SectionHeader>
+				<Card>
 					<form
 						id="wordads-settings"
 						onSubmit={ this.handleSubmit }
@@ -518,11 +523,7 @@ class AdsFormSettings extends Component {
 						<FormSectionHeading>{ translate( 'Terms of Service' ) }</FormSectionHeading>
 						{ this.acceptCheckbox() }
 					</form>
-				</FoldableCard>
-
-				{ this.props.siteIsJetpack
-					? this.jetpackPlacementControls()
-					: this.wpcomPlacementControls() }
+				</Card>
 			</Fragment>
 		);
 	}

@@ -18,7 +18,6 @@ import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import FormattedHeader from 'components/formatted-header';
-import WordAdsEarnings from 'my-sites/stats/wordads/earnings';
 import AdsSettings from 'my-sites/earn/ads/form-settings';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -55,7 +54,6 @@ class EarningsMain extends Component {
 				return (
 					<AdsWrapper section={ this.props.section }>
 						<AdsSettings />
-						<WordAdsEarnings site={ this.props.site } />
 					</AdsWrapper>
 				);
 			case 'payments':

@@ -250,7 +250,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const cta =
 			hasWordAds || hasSetupAds
 				? {
-						text: hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' ),
+						text: hasSetupAds ? translate( 'View ad settings' ) : translate( 'Earn ad revenue' ),
 						action: () => {
 							trackCtaButton( 'ads' );
 							page( `/earn/ads/${ selectedSiteSlug }` );
