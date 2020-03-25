@@ -141,7 +141,7 @@ function LineItemTitle( { item, id } ) {
 	if ( isLineItemADomain( item ) ) {
 		return <LineItemDomainTitle item={ item } id={ id } />;
 	}
-	if ( item.type === 'domain_map' ) {
+	if ( item.type === 'domain_map' || item.type === 'offsite_redirect' ) {
 		return <LineItemDomainTitle item={ item } id={ id } />;
 	}
 	return (
