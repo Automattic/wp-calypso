@@ -28,28 +28,31 @@ interface Props {
 	};
 	threats: Array< Threat >;
 	userHasCredentials: boolean;
+	updateState?: Function;
 }
 
-const ScanThreats = ( { site, threats, userHasCredentials }: Props ) => {
+type ScanThreatsState = 'threats-found' | 'fixing-threats';
+
+const ThreatsFound = ( { site, threats, userHasCredentials, updateState }: Props ) => {
 	const [ selectedThreat, setSelectedThreat ] = React.useState< Threat | undefined >();
 	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
 	const [ showFixAllThreatsDialog, setShowFixAllThreatsDialog ] = React.useState( false );
 	const [ actionToPerform, setActionToPerform ] = React.useState< ThreatAction >( 'fix' );
 
-	const openFixAllThreatsDialog = () => {
+	const openFixAllThreatsDialog = React.useCallback( () => {
 		setShowFixAllThreatsDialog( true );
-	};
+	}, [] );
 
-	const openDialog = ( action: ThreatAction, threat: Threat ) => {
+	const openDialog = React.useCallback( ( action: ThreatAction, threat: Threat ) => {
 		setSelectedThreat( threat );
 		setActionToPerform( action );
 		setShowThreatDialog( true );
-	};
+	}, [] );
 
-	const closeDialog = () => {
+	const closeDialog = React.useCallback( () => {
 		setSelectedThreat( undefined );
 		setShowThreatDialog( false );
-	};
+	}, [] );
 
 	const confirmAction = () => {
 		window.alert(
@@ -61,6 +64,7 @@ const ScanThreats = ( { site, threats, userHasCredentials }: Props ) => {
 	const confirmFixAllThreats = () => {
 		window.alert( `Starting to fix ${ threats.length } threats found...` );
 		setShowFixAllThreatsDialog( false );
+		updateState && updateState();
 	};
 
 	return (
@@ -132,6 +136,34 @@ const ScanThreats = ( { site, threats, userHasCredentials }: Props ) => {
 			/>
 		</>
 	);
+};
+
+const ScanThreats = ( { site, threats, userHasCredentials }: Props ) => {
+	// In the future, we should compute the initial state from props instead of
+	// having it defined here.
+	const [ state, setState ] = React.useState< ScanThreatsState >( 'threats-found' );
+
+	const setFixingThreatsState = React.useCallback( () => {
+		setState( 'fixing-threats' );
+	}, [] );
+
+	const renderCurrentState = React.useCallback( () => {
+		switch ( state ) {
+			case 'threats-found':
+				return (
+					<ThreatsFound
+						site={ site }
+						threats={ threats }
+						userHasCredentials={ userHasCredentials }
+						updateState={ setFixingThreatsState }
+					/>
+				);
+			case 'fixing-threats':
+				return <h1>Fixing threats</h1>;
+		}
+	}, [ threats, site, state, userHasCredentials, setFixingThreatsState ] );
+
+	return renderCurrentState();
 };
 
 const mapStateToProps = ( state, { site } ) => {
