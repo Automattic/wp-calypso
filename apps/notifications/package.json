@@ -24,6 +24,6 @@
 	"dependencies": {
 		"@automattic/calypso-color-schemes": "file:../../packages/calypso-color-schemes",
 		"@automattic/calypso-polyfills": "file:../../packages/calypso-polyfills",
-		"simperium": "1.0.4"
+		"simperium": "github:Automattic/node-simperium#update/universalize-app"
 	}
 }
