@@ -68,7 +68,6 @@
 	.quick-links__action-box-label,
 	.quick-links__action-box-subtitle {
 		color: var( --color-text );
-		display: block;
 	}
 
 	&:hover {
@@ -82,4 +81,9 @@
 
 .quick-links__action-box-subtitle {
 	font-size: 14px;
+	display: none;
+
+	@include breakpoint( '>480px' ) {
+		display: block;
+	}
 }
