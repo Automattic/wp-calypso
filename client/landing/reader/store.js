@@ -22,7 +22,6 @@ import libraryMiddleware from 'state/lib/middleware';
 import login from 'state/login/reducer';
 import masterbarVisibility from 'state/ui/masterbar-visibility/reducer';
 import notices from 'state/notices/reducer';
-import posts from 'state/posts/reducer';
 import preferences from 'state/preferences/reducer';
 import reader from 'state/ui/reader/reducer';
 import route from 'state/ui/route/reducer';
@@ -49,7 +48,6 @@ const reducer = combineReducers( {
 	login,
 	notices,
 	notificationsUnseenCount,
-	posts,
 	preferences,
 	sites,
 	ui: combineReducers( {
