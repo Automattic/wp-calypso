@@ -1,18 +1,16 @@
 .rewind-flow__header {
 	display: flex;
 	justify-content: center;
-	padding-top: 32px;
 	padding-bottom: 32px;
+	padding-top: 32px;
 	.gridicon {
 		fill: var( --color-primary );
 	}
 }
 
 .rewind-flow__title {
-	font-style: normal;
-	font-weight: 600;
 	font-size: 22px;
-	line-height: 32px;
+	font-weight: 600;
 	padding-bottom: 32px;
 }
 
@@ -21,55 +19,62 @@
 }
 
 .rewind-flow__rewind-config-editor-label {
+	align-items: center;
+	display: flex;
 	font-size: 16px;
-	font-style: normal;
-	font-weight: normal;
-	line-height: 23px;
 	margin-bottom: 15px;
 }
 
 // this rule is extremely specific to override other stylings
 input.rewind-flow__rewind-config-editor-checkbox.form-checkbox {
 	margin-right: 5px;
+	margin-bottom: 2px;
 	&:checked::before {
 		content: url( '/calypso/images/checkbox-icons/checkmark-jetpack.svg' );
 	}
 }
 
 .rewind-flow-notice {
-	div,
-	a {
+	.gridicon {
+		margin-right: 5px;
+	}
+
+	// the component renders a top-level a or div, depending on if it is a link or not
+	a,
+	div {
 		display: flex;
 		flex-direction: row;
 		margin-bottom: 16px;
 		width: fit-content;
 	}
 
-	.gridicon {
-		margin-right: 5px;
-	}
-	// this allows the gridicon and text to align on their centers
-	p {
-		margin: 0;
-		font-size: 16px;
-		line-height: 22px;
-		font-style: normal;
-		font-weight: normal;
-	}
+	a,
 	h4,
-	a {
+	p {
 		font-size: 16px;
-		font-style: normal;
-		font-weight: bold;
-		line-height: 23px;
 	}
+}
+
+// this allows the gridicon and text to align on their centers
+p {
+	margin: 0;
+}
+a {
+	align-items: center;
+	display: flex;
+}
+
+// when the reminder is default make the header more bold
+.rewind-flow-notice__title-reminder h4 {
+	font-size: 16px;
+	font-weight: bold;
 }
 
 div.rewind-flow-notice__title-notice,
 a.rewind-flow-notice__title-notice,
 a.rewind-flow-notice__title-notice:visited {
-	fill: var( --color-neutral-light );
 	color: var( --color-neutral-light );
+	fill: var( --color-neutral-light );
 
 	&:hover {
 		color: var( --color-neutral );
@@ -89,38 +94,31 @@ a.rewind-flow-notice__title-warning:visited {
 }
 
 .rewind-flow__primary-button {
-	width: 100%;
+	margin-bottom: 22.5px;
 	text-align: center;
+	width: 100%;
 
 	@include breakpoint( '>660px' ) {
-		width: auto;
 		text-align: auto;
+		width: auto;
 	}
-	margin-bottom: 22.5px;
 }
 
 .rewind-flow__progress-bar {
-	p {
-		margin: 0;
-		font-style: normal;
-		font-weight: normal;
-		font-size: 12px;
-		line-height: 14px;
-		color: var( --color-neutral-light );
-	}
 	margin-bottom: 22.5px;
+
+	p {
+		color: var( --color-neutral-light );
+		font-size: 12px;
+		margin: 0;
+	}
 }
 
 .rewind-flow__info {
-	font-style: normal;
-	font-weight: normal;
 	font-size: 16px;
-	line-height: 23px;
 }
 
 .rewind-flow__cta {
-	font-style: normal;
-	font-weight: bold;
 	font-size: 16px;
-	line-height: 23px;
+	font-weight: bold;
 }
