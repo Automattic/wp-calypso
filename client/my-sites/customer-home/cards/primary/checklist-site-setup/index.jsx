@@ -11,16 +11,21 @@ import React from 'react';
 import CardHeading from 'components/card-heading';
 import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const ChecklistSiteSetup = ( { checklistMode } ) => {
 	const translate = useTranslate();
 
 	return (
-		<>
-			<Card className="checklist-site-setup">
+		<div className="checklist-site-setup">
+			<Card className="checklist-site-setup__heading">
 				<CardHeading>{ translate( 'Site Setup List' ) }</CardHeading>
 			</Card>
 			<WpcomChecklist displayMode={ checklistMode } />
-		</>
+		</div>
 	);
 };
 
