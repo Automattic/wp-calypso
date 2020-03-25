@@ -20,7 +20,6 @@ import SidebarComponent from '../lib/components/sidebar-component.js';
 import NoticesComponent from '../lib/components/notices-component.js';
 import NavBarComponent from '../lib/components/nav-bar-component.js';
 import PostPreviewComponent from '../lib/components/post-preview-component';
-import PostPreviewExternalComponent from '../lib/components/post-preview-external-component';
 import RevisionsModalComponent from '../lib/components/revisions-modal-component';
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 import GutenbergEditorSidebarComponent from '../lib/gutenberg/gutenberg-editor-sidebar-component';
@@ -130,12 +129,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 
 		step( 'Can see correct post title in preview', async function() {
-			if ( driverManager.currentScreenSize() === 'mobile' ) {
-				this.postPreviewComponent = await PostPreviewComponent.Expect( driver );
-				await this.postPreviewComponent.displayed();
-			} else {
-				this.postPreviewComponent = new PostPreviewExternalComponent( driver );
-			}
+			this.postPreviewComponent = await PostPreviewComponent.Expect( driver );
 
 			const postTitle = await this.postPreviewComponent.postTitle();
 			assert.strictEqual(

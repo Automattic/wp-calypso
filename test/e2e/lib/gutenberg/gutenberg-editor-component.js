@@ -339,28 +339,14 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable( this.driver, By.css( '.components-snackbar' ) );
 	}
 
+	// @TODO: Update to new `.editor-post-preview__dropdown` format once we support it again
+	// https://github.com/Automattic/wp-calypso/issues/40401
 	async launchPreview() {
-		if ( driverManager.currentScreenSize() === 'mobile' ) {
-			return await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( '.components-button.editor-post-preview' ),
-				this.explicitWaitMS
-			);
-		}
-
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			// @TODO: Update to new `.editor-post-preview__dropdown` format once we support it again
-			// https://github.com/Automattic/wp-calypso/issues/40401
-			By.css( '.editor-post-preview' ),
+			By.css( '.components-button.editor-post-preview' ),
 			this.explicitWaitMS
 		);
-		// @TODO: Enable again once we support dropdown preview again
-		// https://github.com/Automattic/wp-calypso/issues/40401
-		//
-		// const editorPostPreviewSelector = By.css( '.editor-post-preview__button-external' );
-		// await driverHelper.waitTillPresentAndDisplayed( this.driver, editorPostPreviewSelector );
-		// return await driverHelper.clickWhenClickable( this.driver, editorPostPreviewSelector );
 	}
 
 	async revertToDraft() {
