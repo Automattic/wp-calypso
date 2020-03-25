@@ -40,6 +40,12 @@ export const getChangesInRange = ( logs, t1, t2 ) => {
 	} );
 };
 
+export const getEventsInRealtimeBackup = ( logs, date ) =>
+	logs.filter(
+		event =>
+			moment( event.activityDate ).format( 'YYYYMMDD' ) === moment( date ).format( 'YYYYMMDD' )
+	);
+
 export const getEventsInDailyBackup = ( logs, date ) => {
 	const d = new Date( date );
 	d.setDate( d.getDate() - 1 );

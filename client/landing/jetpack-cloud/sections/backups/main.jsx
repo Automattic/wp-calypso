@@ -10,7 +10,11 @@ import { isMobile } from '@automattic/viewport';
  */
 import DocumentHead from 'components/data/document-head';
 import { updateFilter } from 'state/activity-log/actions';
-import { getBackupAttemptsForDate, getDailyBackupDeltas, getEventsInDailyBackup } from './utils';
+import {
+	getBackupAttemptsForDate,
+	getDailyBackupDeltas,
+	getEventsInRealtimeBackup,
+} from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestActivityLogs } from 'state/data-getters';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -65,7 +69,7 @@ class BackupsPage extends Component {
 
 		const backupAttempts = getBackupAttemptsForDate( logs, selectedDateString );
 		const deltas = getDailyBackupDeltas( logs, selectedDateString );
-		const realtimeEvents = getEventsInDailyBackup( logs, selectedDateString );
+		const realtimeEvents = getEventsInRealtimeBackup( logs, selectedDateString );
 
 		return (
 			<Main>
