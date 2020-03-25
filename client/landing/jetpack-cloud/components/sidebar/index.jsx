@@ -47,11 +47,10 @@ class JetpackCloudSidebar extends Component {
 	 * Check if a menu item is selected.
 	 *
 	 * @param {string} path Menu item path
-	 * @param {boolean} allowStartsWith A path is considered selected if the current path starts with the given one
-	 * @returns {boolean}      True if menu item is selected
+	 * @returns {boolean} True if menu item is selected
 	 */
-	isSelected( path, allowStartsWith = true ) {
-		return this.props.path === path || ( allowStartsWith && this.props.path.startsWith( path ) );
+	isSelected( path ) {
+		return this.props.path === path || this.props.path.startsWith( path );
 	}
 
 	expandScanSection = () => this.props.expandSection( SIDEBAR_SECTION_SCAN );
@@ -71,17 +70,6 @@ class JetpackCloudSidebar extends Component {
 			<Sidebar className="sidebar__jetpack-cloud">
 				<SidebarRegion>
 					<CurrentSite />
-					<SidebarMenu>
-						<SidebarItem
-							link="/"
-							label={ translate( 'Dashboard', {
-								comment: 'Jetpack Cloud sidebar navigation item',
-							} ) }
-							materialIcon="dashboard"
-							materialIconStyle="filled"
-							selected={ this.isSelected( '/', false ) }
-						/>
-					</SidebarMenu>
 					{ config.isEnabled( 'jetpack-cloud/backups' ) && (
 						<ExpandableSidebarMenu
 							onClick={ this.toggleSection( SIDEBAR_SECTION_BACKUP ) }
