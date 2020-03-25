@@ -20,29 +20,34 @@ import {
 	getEventsInDailyBackup,
 	getMetaDiffForDailyBackup,
 } from './utils';
+import { applySiteOffset } from 'lib/site/timezone';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestActivityLogs } from 'state/data-getters';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { backupMainPath } from './paths';
+import ActivityCard from '../../components/activity-card';
+import ActivityCardList from 'landing/jetpack-cloud/components/activity-card-list';
 import BackupDelta from '../../components/backup-delta';
+import BackupUpsell from './components/upsell';
 import DailyBackupStatus from '../../components/daily-backup-status';
 import DatePicker from '../../components/date-picker';
+import Filterbar from 'my-sites/activity/filterbar';
+import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
+import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials.js';
+import getIsRewindMissingPlan from 'state/selectors/get-is-rewind-missing-plan';
+import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
 import getRewindState from 'state/selectors/get-rewind-state';
 import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
-import QueryRewindState from 'components/data/query-rewind-state';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import QueryRewindCapabilities from 'components/data/query-rewind-capabilities';
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
-import ActivityCardList from 'landing/jetpack-cloud/components/activity-card-list';
-import MissingCredentialsWarning from '../../components/missing-credentials';
-import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials.js';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
-import { applySiteOffset } from 'lib/site/timezone';
+import Main from 'components/main';
+import MissingCredentialsWarning from '../../components/missing-credentials';
+import Pagination from 'components/pagination';
+import QueryRewindCapabilities from 'components/data/query-rewind-capabilities';
+import QueryRewindState from 'components/data/query-rewind-state';
+import QuerySitePurchases from 'components/data/query-site-purchases';
 import QuerySiteSettings from 'components/data/query-site-settings'; // Required to get site time offset
-import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
-import { backupMainPath } from './paths';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 /**
  * Style dependencies
@@ -150,6 +155,26 @@ class BackupsPage extends Component {
 	};
 
 	renderMain() {
+		const { isRewindMissingPlan, siteId } = this.props;
+
+		return (
+			<Main>
+				<DocumentHead title="Backups" />
+				<SidebarNavigation />
+				<QueryRewindState siteId={ siteId } />
+				<QuerySitePurchases siteId={ siteId } />
+				<QuerySiteSettings siteId={ siteId } />
+				{ isRewindMissingPlan ? <BackupUpsell /> : this.renderBackupPicker() }
+			</Main>
+		);
+	}
+
+	changePage = pageNumber => {
+		this.props.selectPage( this.props.siteId, pageNumber );
+		window.scrollTo( 0, 0 );
+	};
+
+	renderBackupPicker() {
 		const {
 			allowRestore,
 			doesRewindNeedCredentials,
@@ -225,7 +250,7 @@ class BackupsPage extends Component {
 						/>
 					</>
 				) }
-			</Main>
+			</>
 		);
 	}
 
@@ -339,17 +364,18 @@ const mapStateToProps = ( state ) => {
 		allowRestore,
 		doesRewindNeedCredentials,
 		filter,
-		siteCapabilities,
+		gmtOffset,
+		indexedLog,
+		isLoadingBackups,
+		lastDateAvailable,
 		logs: logs?.data ?? [],
+		oldestDateAvailable,
 		rewind,
+		siteCapabilities,
+		siteGmtOffset,
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
 		timezone,
-		gmtOffset,
-		indexedLog,
-		oldestDateAvailable,
-		lastDateAvailable,
-		isLoadingBackups,
 	};
 };
 
