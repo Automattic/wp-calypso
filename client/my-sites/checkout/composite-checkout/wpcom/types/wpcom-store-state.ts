@@ -465,6 +465,9 @@ function prepareFrDomainContactExtraDetailsErrors(
  */
 export type ManagedContactDetailsUpdaters = {
 	updateDomainFields: ( ManagedContactDetails, DomainContactDetails ) => ManagedContactDetails;
+	updateCaFields: ( ManagedContactDetails, CaDomainContactExtraDetails ) => ManagedContactDetails;
+    updateUkFields: ( ManagedContactDetails, UkDomainContactExtraDetails ) => ManagedContactDetails;
+    updateFrFields: ( ManagedContactDetails, FrDomainContactExtraDetails ) => ManagedContactDetails;
 	updatePhone: ( ManagedContactDetails, string ) => ManagedContactDetails;
 	updatePhoneNumberCountry: ( ManagedContactDetails, string ) => ManagedContactDetails;
 	updatePostalCode: ( ManagedContactDetails, string ) => ManagedContactDetails;
@@ -500,6 +503,74 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 			fax: touchIfDifferent( newDetails.fax, oldDetails.fax ),
 		};
 	},
+
+    updateCaFields: (
+        oldDetails: ManagedContactDetails,
+        newDetails: CaDomainContactExtraDetails
+    ): ManagedContactDetails => {
+        return {
+            ...oldDetails,
+            organization: touchIfDifferent( newDetails.organization, oldDetails.organization ),
+            tldExtraFields: {
+                ...oldDetails.tldExtraFields,
+                ca: ( oldDetails.tldExtraFields?.ca )
+                    ? {
+                        lang: touchIfDifferent( newDetails.lang, oldDetails.tldExtraFields.ca.lang ),
+                        legalType: touchIfDifferent( newDetails.legal_type, oldDetails.tldExtraFields.ca.legalType ),
+                        ciraAgreementAccepted: touchIfDifferent( newDetails.cira_agreement_accepted.toString(), oldDetails.tldExtraFields.ca.ciraAgreementAccepted ),
+                    } : {
+                        lang: touchIfDifferent( newDetails.lang, getInitialManagedValue() ),
+                        legalType: touchIfDifferent( newDetails.legal_type, getInitialManagedValue() ),
+                        ciraAgreementAccepted: touchIfDifferent( newDetails.cira_agreement_accepted.toString(), getInitialManagedValue() ),
+                    },
+                }
+        };
+    },
+
+    updateUkFields: (
+        oldDetails: ManagedContactDetails,
+        newDetails: UkDomainContactExtraDetails
+    ): ManagedContactDetails => {
+	    return {
+            ...oldDetails,
+            tldExtraFields: {
+                ...oldDetails.tldExtraFields,
+                uk: ( oldDetails.tldExtraFields?.uk )
+                    ? {
+                        registrantType: touchIfDifferent( newDetails.registrant_type, oldDetails.tldExtraFields.uk.registrantType ),
+                        registrationNumber: touchIfDifferent( newDetails.registration_number, oldDetails.tldExtraFields.uk.registrationNumber ),
+                        tradingName: touchIfDifferent( newDetails.trading_name, oldDetails.tldExtraFields.uk.tradingName ),
+                    } : {
+                        registrantType: touchIfDifferent( newDetails.registrant_type, getInitialManagedValue() ),
+                        registrationNumber: touchIfDifferent( newDetails.registration_number, getInitialManagedValue() ),
+                        tradingName: touchIfDifferent( newDetails.trading_name, getInitialManagedValue() ),
+                    },
+            }
+        };
+    },
+
+    updateFrFields: (
+        oldDetails: ManagedContactDetails,
+        newDetails: FrDomainContactExtraDetails
+    ): ManagedContactDetails => {
+        return {
+            ...oldDetails,
+            vatId: touchIfDifferent( newDetails.registrant_vat_id, oldDetails.vatId ),
+            tldExtraFields: {
+                ...oldDetails.tldExtraFields,
+                fr: ( oldDetails.tldExtraFields?.fr )
+                    ? {
+                        registrantType: touchIfDifferent( newDetails.registrant_type, oldDetails.tldExtraFields.fr.registrantType ),
+                        trademarkNumber: touchIfDifferent( newDetails.trademark_number, oldDetails.tldExtraFields.fr.trademarkNumber ),
+                        sirenSirat: touchIfDifferent( newDetails.siren_sirat, oldDetails.tldExtraFields.fr.sirenSirat ),
+                    } : {
+                        registrantType: touchIfDifferent( newDetails.registrant_type, getInitialManagedValue() ),
+                        trademarkNumber: touchIfDifferent( newDetails.trademark_number, getInitialManagedValue() ),
+                        sirenSirat: touchIfDifferent( newDetails.siren_sirat, getInitialManagedValue() ),
+                    },
+            }
+    };
+    },
 
 	updatePhone: ( oldDetails: ManagedContactDetails, newPhone: string ): ManagedContactDetails => {
 		return {
