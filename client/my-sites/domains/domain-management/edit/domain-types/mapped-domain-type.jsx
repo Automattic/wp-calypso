@@ -42,6 +42,11 @@ import RemovePurchase from 'me/purchases/remove-purchase';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class MappedDomainType extends React.Component {
 	getVerticalNavigation() {
 		return (
