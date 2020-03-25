@@ -30,7 +30,7 @@ const JetpackCloudBackupUpsell: FunctionComponent< Props > = ( { siteSlug } ) =>
 			<h3 className="upsell__title">{ translate( 'Go ahead, try something new' ) }</h3>
 			<p className="upsell__copy">
 				{ translate(
-					'Make a mistake or two. Experiment. With {{a}}Jetpack Backup{{/a}} you can revert changes or restore an earlier version of your site if you need to. No ifs, ands, or uh-ohs about it.',
+					'Make a mistake or two. {{span1}}Experiment{{/span1}}. With {{a}}Jetpack Backup{{/a}} you can revert changes or restore an earlier version of your site if you need to. No {{span2}}ifs{{/span2}}, {{span3}}ands{{/span3}}, or {{span4}}uh-ohs{{/span4}} about it.',
 					{
 						components: {
 							a: (
@@ -40,6 +40,10 @@ const JetpackCloudBackupUpsell: FunctionComponent< Props > = ( { siteSlug } ) =>
 									rel="noopener noreferrer"
 								/>
 							),
+							span1: <span />,
+							span2: <span />,
+							span3: <span />,
+							span4: <span />,
 						},
 					}
 				) }
