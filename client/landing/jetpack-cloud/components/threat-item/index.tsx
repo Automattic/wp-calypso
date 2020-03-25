@@ -22,6 +22,7 @@ interface Props {
 	threat: Threat;
 	onFixThreat: Function;
 	onIgnoreThreat: Function;
+	isFixing: boolean;
 }
 
 class ThreatItem extends Component< Props > {
@@ -32,12 +33,14 @@ class ThreatItem extends Component< Props > {
 	 *
 	 * @param {string} className A class for the button
 	 */
-	renderFixThreatButton( className ) {
+	renderFixThreatButton( className: string ) {
+		const { onFixThreat, isFixing } = this.props;
 		return (
 			<Button
-				className={ classnames( 'threat-item__fix-button', className ) }
 				compact
-				onClick={ this.props.onFixThreat }
+				className={ classnames( 'threat-item__fix-button', className ) }
+				onClick={ onFixThreat }
+				disabled={ isFixing }
 			>
 				{ translate( 'Fix threat' ) }
 			</Button>
@@ -45,7 +48,7 @@ class ThreatItem extends Component< Props > {
 	}
 
 	render() {
-		const { threat, onIgnoreThreat } = this.props;
+		const { threat, onIgnoreThreat, isFixing } = this.props;
 		const fixThreatCTA = this.renderFixThreatButton( 'is-summary' );
 
 		return (
@@ -67,7 +70,12 @@ class ThreatItem extends Component< Props > {
 
 				<div className="threat-item__buttons">
 					{ this.renderFixThreatButton( 'is-details' ) }
-					<Button className="threat-item__ignore-button" compact onClick={ onIgnoreThreat }>
+					<Button
+						className="threat-item__ignore-button"
+						compact
+						onClick={ onIgnoreThreat }
+						disabled={ isFixing }
+					>
 						{ translate( 'Ignore threat' ) }
 					</Button>
 				</div>

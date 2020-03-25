@@ -72,12 +72,7 @@ class ScanPage extends Component {
 
 	renderThreats() {
 		const { threats, site } = this.props;
-		return (
-			<>
-				<SecurityIcon icon="error" />
-				<ScanThreats className="scan__threats" threats={ threats } site={ site } />
-			</>
-		);
+		return <ScanThreats className="scan__threats" threats={ threats } site={ site } />;
 	}
 
 	renderScanError() {
