@@ -125,7 +125,7 @@ export const getJetpackProductsDisplayNames = () => {
 
 export const getJetpackProductsTaglines = () => {
 	const searchTagline = translate( 'Search your site.' );
-	const scanTagline = translate( 'Scan your site.' );
+	const scanTagline = 'Scan your site.';
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: translate(
 			'Your data is being securely backed up every day with a 30-day archive.'
@@ -148,7 +148,7 @@ export const getJetpackProductsTaglines = () => {
 
 export const getJetpackProductsDescriptions = () => {
 	const searchDescription = translate( 'Search your site.' );
-	const scanDescription = translate( 'Scan your site.' );
+	const scanDescription = 'Scan your site.';
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: translate(
 			'Always-on backups ensure you never lose your site. Your changes are saved every day with a 30-day archive.'
@@ -192,7 +192,7 @@ export const getJetpackProducts = () => {
 		output.push( {
 			title: translate( 'Jetpack Scan' ),
 			// TODO: Add new description copy for Search
-			description: translate( 'Always-on scan ensure you never lose your site.' ),
+			description: 'Always-on scan ensure you never lose your site.',
 			id: PRODUCT_JETPACK_SCAN,
 			options: {
 				yearly: [ PRODUCT_JETPACK_SCAN ],
