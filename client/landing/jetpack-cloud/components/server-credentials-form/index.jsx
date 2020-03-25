@@ -27,6 +27,7 @@ import './style.scss';
 
 const ServerCredentialsForm = ( {
 	formIsSubmitting,
+	formSubmissionStatus,
 	onCancel,
 	onComplete,
 	translate,
@@ -36,13 +37,14 @@ const ServerCredentialsForm = ( {
 	formErrors,
 	labels = {},
 } ) => {
-	const handleSubmitAndComplete = React.useCallback(
-		( ...args ) => {
-			handleSubmit( ...args );
-			onComplete && onComplete( ...args );
-		},
-		[ handleSubmit, onComplete ]
-	);
+	React.useEffect( () => {
+		// I'm letting the user jump to the next step even if the submission failed
+		// so one can test the UI without having to enter real credentials. On the next
+		// iteration we should fix this.
+		if ( formSubmissionStatus === 'failed' || formSubmissionStatus === 'success' ) {
+			onComplete && onComplete();
+		}
+	}, [ formSubmissionStatus ] );
 
 	return (
 		<div className="server-credentials-form">
@@ -172,7 +174,7 @@ const ServerCredentialsForm = ( {
 				<Button
 					className="server-credentials-form__btn server-credentials-form__btn--fix"
 					disabled={ formIsSubmitting }
-					onClick={ handleSubmitAndComplete }
+					onClick={ handleSubmit }
 				>
 					{ labels.save || translate( 'Save' ) }
 				</Button>

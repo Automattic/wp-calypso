@@ -27,6 +27,7 @@ function withServerCredentialsForm( WrappedComponent ) {
 			siteUrl: PropTypes.string,
 			requirePath: PropTypes.bool,
 			formIsSubmitting: PropTypes.bool,
+			formSubmissionStatus: PropTypes.object,
 		};
 
 		static defaultProps = {
@@ -131,7 +132,13 @@ function withServerCredentialsForm( WrappedComponent ) {
 
 		render() {
 			const { form, formErrors, showAdvancedSettings } = this.state;
-			const { formIsSubmitting, requirePath, siteId, ...otherProps } = this.props;
+			const {
+				formIsSubmitting,
+				formSubmissionStatus,
+				requirePath,
+				siteId,
+				...otherProps
+			} = this.props;
 			return (
 				<>
 					<QueryRewindState siteId={ siteId } />
@@ -139,6 +146,7 @@ function withServerCredentialsForm( WrappedComponent ) {
 						form={ form }
 						formErrors={ formErrors }
 						formIsSubmitting={ formIsSubmitting }
+						formSubmissionStatus={ formSubmissionStatus }
 						requirePath={ requirePath }
 						handleFieldChange={ this.handleFieldChange }
 						handleSubmit={ this.handleSubmit }
@@ -153,10 +161,7 @@ function withServerCredentialsForm( WrappedComponent ) {
 	};
 
 	const mapStateToProps = ( state, { siteId } ) => {
-		// I should pass the state of the form update to the child component
 		const formSubmissionStatus = getJetpackCredentialsUpdateStatus( state, siteId );
-		// eslint-disable-next-line no-console
-		console.log( 'formSubmissionStatus', formSubmissionStatus );
 		return {
 			formSubmissionStatus,
 			formIsSubmitting: 'pending' === formSubmissionStatus,
