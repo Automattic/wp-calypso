@@ -2,10 +2,225 @@
  * Internal dependencies
  */
 import {
-	DomainContactDetails,
-	PossiblyCompleteDomainContactDetails,
-	DomainContactDetailsErrors,
+    DomainContactDetails,
+    DomainContactValidationRequestExtraFields,
+    PossiblyCompleteDomainContactDetails,
+    DomainContactDetailsErrors,
 } from './backend/domain-contact-details-components';
+
+type ManagedContactDetailsShape<T> = {
+    firstName: T;
+    lastName: T;
+    organization: T;
+    email: T;
+    alternateEmail: T;
+    phone: T;
+    phoneNumberCountry: T;
+    address1: T;
+    address2: T;
+    city: T;
+    state: T;
+    postalCode: T;
+    countryCode: T;
+    fax: T;
+    vatId: T;
+    tldExtraFields: ManagedContactDetailsTldExtraFields<T>;
+};
+
+type ManagedContactDetailsTldExtraFields<T> = {
+    ca?: {
+        lang: T;
+        legalType: T;
+        ciraAgreementAccepted: T;
+    };
+    uk?: {
+        registrantType: T;
+        registrationNumber: T;
+        tradingName: T;
+    };
+    fr?: {
+        registrantType: T;
+        trademarkNumber: T;
+        sirenSirat: T;
+    };
+}
+
+function liftManagedContactDetailsShape< A, B >(
+	f: ( A, B ) => B,
+	x: ManagedContactDetailsShape< A >,
+	y: ManagedContactDetailsShape< B >
+): ManagedContactDetailsShape< B > {
+	const tldExtraFields: ManagedContactDetailsTldExtraFieldsShape< B > = {};
+
+	if ( y.tldExtraFields?.ca ) {
+		if ( x.tldExtraFields?.ca ) {
+			tldExtraFields.ca = {
+				lang: f( x.tldExtraFields.ca.lang, y.tldExtraFields.ca.lang ),
+				legalType: f( x.tldExtraFields.ca.legalType, y.tldExtraFields.ca.legalType ),
+				ciraAgreementAccepted: f(
+					x.tldExtraFields.ca.ciraAgreementAccepted,
+					y.tldExtraFields.ca.ciraAgreementAccepted
+				),
+			};
+		} else {
+			tldExtraFields.ca = y.tldExtraFields.ca;
+		}
+	}
+
+	if ( y.tldExtraFields?.uk ) {
+		if ( x.tldExtraFields?.uk ) {
+			tldExtraFields.uk = {
+				registrantType: f( x.tldExtraFields.uk.registrantType, y.tldExtraFields.uk.registrantType ),
+				registrationNumber: f(
+					x.tldExtraFields.uk.registrationNumber,
+					y.tldExtraFields.uk.registrationNumber
+				),
+				tradingName: f( x.tldExtraFields.uk.tradingName, y.tldExtraFields.uk.tradingName ),
+			};
+		} else {
+			tldExtraFields.uk = y.tldExtraFields.uk;
+		}
+	}
+
+	if ( y.tldExtraFields?.fr ) {
+		if ( x.tldExtraFields?.fr ) {
+			tldExtraFields.fr = {
+				registrantType: f( x.tldExtraFields.fr.registrantType, y.tldExtraFields.fr.registrantType ),
+				trademarkNumber: f(
+					x.tldExtraFields.fr.trademarkNumber,
+					y.tldExtraFields.fr.trademarkNumber
+				),
+				sirenSirat: f( x.tldExtraFields.fr.sirenSirat, y.tldExtraFields.fr.sirenSirat ),
+			};
+		} else {
+			tldExtraFields.fr = y.tldExtraFields.fr;
+		}
+	}
+}
+
+function liftManagedContactDetailsShape< A, B >(
+    f: (A, B) => B,
+    x: ManagedContactDetailsShape<A>,
+    y: ManagedContactDetailsShape<B>
+): ManagedContactDetailsShape<B> {
+    const tldExtraFields: ManagedContactDetailsTldExtraFields<B> = {};
+
+    if ( y.tldExtraFields?.ca ) {
+        if ( x.tldExtraFields?.ca ) {
+            tldExtraFields.ca = {
+                lang: f( x.tldExtraFields.ca.lang, y.tldExtraFields.ca.lang ),
+                legalType: f( x.tldExtraFields.ca.legalType, y.tldExtraFields.ca.legalType ),
+                ciraAgreementAccepted: f( x.tldExtraFields.ca.ciraAgreementAccepted, y.tldExtraFields.ca.ciraAgreementAccepted ),
+            };
+        } else {
+            tldExtraFields.ca = y.tldExtraFields.ca;
+        }
+    }
+
+    if ( y.tldExtraFields?.uk ) {
+        if ( x.tldExtraFields?.uk ) {
+            tldExtraFields.uk = {
+                registrantType: f( x.tldExtraFields.uk.registrantType, y.tldExtraFields.uk.registrantType ),
+                registrationNumber: f( x.tldExtraFields.uk.registrationNumber, y.tldExtraFields.uk.registrationNumber ),
+                tradingName: f( x.tldExtraFields.uk.tradingName, y.tldExtraFields.uk.tradingName ),
+            };
+        } else {
+            tldExtraFields.uk = y.tldExtraFields.uk;
+        }
+    }
+
+    if ( y.tldExtraFields?.fr ) {
+        if ( x.tldExtraFields?.fr ) {
+            tldExtraFields.fr = {
+                registrantType: f( x.tldExtraFields.fr.registrantType, y.tldExtraFields.fr.registrantType ),
+                trademarkNumber: f( x.tldExtraFields.fr.trademarkNumber, y.tldExtraFields.fr.trademarkNumber ),
+                sirenSirat: f( x.tldExtraFields.fr.sirenSirat, y.tldExtraFields.fr.sirenSirat ),
+            };
+        } else {
+            tldExtraFields.fr = y.tldExtraFields.fr;
+        }
+    }
+
+    return {
+        firstName: f( x.firstName, y.firstName ),
+        lastName: f( x.lastName, y.lastName ),
+        organization: f( x.organization, y.organization ),
+        email: f( x.email, y.email ),
+        alternateEmail: f( x.alternateEmail, y.alternateEmail ),
+        phone: f( x.phone, y.phone ),
+        phoneNumberCountry: f( x.phoneNumberCountry, y.phoneNumberCountry ),
+        address1: f( x.address1, y.address1 ),
+        address2: f( x.address2, y.address2 ),
+        city: f( x.city, y.city ),
+        state: f( x.state, y.state ),
+        postalCode: f( x.postalCode, y.postalCode ),
+        countryCode: f( x.countryCode, y.countryCode ),
+        fax: f( x.fax, y.fax ),
+        vatId: f( x.vatId, y.vatId ),
+        tldExtraFields,
+    };
+}
+
+function flattenManagedContactDetailsShape< A, B >(
+    f: (A) => B,
+    x: ManagedContactDetailsShape<A>
+): Array<B> {
+    const values = [
+        f( x.firstName ),
+        f( x.lastName ),
+        f( x.organization ),
+        f( x.email ),
+        f( x.alternateEmail ),
+        f( x.phone ),
+        f( x.phoneNumberCountry ),
+        f( x.address1 ),
+        f( x.address2 ),
+        f( x.city ),
+        f( x.state ),
+        f( x.postalCode ),
+        f( x.countryCode ),
+        f( x.fax ),
+        f( x.vatId ),
+    ];
+
+    const caValues = ( x.tldExtraFields && x.tldExtraFields.ca )
+        ? [
+            f( x.tldExtraFields.ca.lang ),
+            f( x.tldExtraFields.ca.legalType) ,
+            f( x.tldExtraFields.ca.lang ),
+        ] : [];
+
+    const ukValues = ( x.tldExtraFields && x.tldExtraFields.uk )
+        ? [
+            f( x.tldExtraFields.uk.registrantType ),
+            f( x.tldExtraFields.uk.registrationNumber ),
+            f( x.tldExtraFields.uk.tradingName ),
+        ] : [];
+
+    const frValues = ( x.tldExtraFields && x.tldExtraFields.fr )
+        ? [
+            f( x.tldExtraFields.fr.registrantType ),
+            f( x.tldExtraFields.fr.trademarkNumber ),
+            f( x.tldExtraFields.fr.sirenSirat ),
+        ] : [];
+
+    return values.concat( caValues, ukValues, frValues );
+}
+
+/*
+ * The wpcom store hook stores an object with all the contact info
+ * which is used to share state across fields where appropriate.
+ * Each value keeps track of whether it has been edited and validated.
+ */
+export type ManagedContactDetails = ManagedContactDetailsShape< ManagedValue >;
+
+export type ManagedContactDetailsErrors = ManagedContactDetailsShape< undefined | string[] >;
+
+/*
+ * Different subsets of the details are mandatory depending on what is
+ * in the cart. This type lets us define these subsets declaratively.
+ */
+export type ManagedContactDetailsRequiredMask = ManagedContactDetailsShape< boolean >;
 
 /*
  * All child components in composite checkout are controlled -- they accept
@@ -58,68 +273,34 @@ function setErrors( errors: string[] | undefined, oldData: ManagedValue ): Manag
 	return undefined === errors ? { ...oldData, errors: [] } : { ...oldData, errors };
 }
 
-/*
- * The wpcom store hook stores an object with all the contact info
- * which is used to share state across fields where appropriate.
- * Each value keeps track of whether it has been edited and validated.
- */
-export type ManagedContactDetails = {
-	firstName: ManagedValue;
-	lastName: ManagedValue;
-	organization: ManagedValue;
-	email: ManagedValue;
-	alternateEmail: ManagedValue;
-	phone: ManagedValue;
-	phoneNumberCountry: ManagedValue;
-	address1: ManagedValue;
-	address2: ManagedValue;
-	city: ManagedValue;
-	state: ManagedValue;
-	postalCode: ManagedValue;
-	countryCode: ManagedValue;
-	fax: ManagedValue;
-	vatId: ManagedValue;
-};
+function getManagedValuesList( details: ManagedContactDetails ): ManagedValue[] {
+    return flattenManagedContactDetailsShape( x => x, details );
+}
 
 export function isCompleteAndValid( details: ManagedContactDetails ): boolean {
-	const values = Object.values( details );
-	const result = values.length > 0 && values.every( isValid );
-	return result;
+	const values = getManagedValuesList( details );
+	return values.length > 0 && values.every( isValid );
 }
 
 export function isTouched( details: ManagedContactDetails ): boolean {
-	const values = Object.values( details );
+	const values = getManagedValuesList( details );
 	return values.length > 0 && values.every( value => value.isTouched );
 }
 
 export function areRequiredFieldsNotEmpty( details: ManagedContactDetails ): boolean {
-	const values = Object.values( details );
-	return (
-		values.length > 0 && values.every( value => value.value?.length > 0 || ! value.isRequired )
-	);
+	const values = getManagedValuesList( details );
+	return values.length > 0 && values.every( value => value.value?.length > 0 || ! value.isRequired );
 }
 
 function setManagedContactDetailsErrors(
 	errors: ManagedContactDetailsErrors,
 	details: ManagedContactDetails
 ): ManagedContactDetails {
-	return {
-		firstName: setErrors( errors.firstName, details.firstName ),
-		lastName: setErrors( errors.lastName, details.lastName ),
-		organization: setErrors( errors.organization, details.organization ),
-		email: setErrors( errors.email, details.email ),
-		alternateEmail: setErrors( errors.alternateEmail, details.alternateEmail ),
-		phone: setErrors( errors.phone, details.phone ),
-		phoneNumberCountry: setErrors( errors.phoneNumberCountry, details.phoneNumberCountry ),
-		address1: setErrors( errors.address1, details.address1 ),
-		address2: setErrors( errors.address2, details.address2 ),
-		city: setErrors( errors.city, details.city ),
-		state: setErrors( errors.state, details.state ),
-		postalCode: setErrors( errors.postalCode, details.postalCode ),
-		countryCode: setErrors( errors.countryCode, details.countryCode ),
-		fax: setErrors( errors.fax, details.fax ),
-		vatId: setErrors( errors.vatId, details.vatId ),
-	};
+    return liftManagedContactDetailsShape(
+        ( error, detail ) => setErrors( error, detail ),
+        errors,
+        details
+    );
 }
 
 /*
@@ -148,23 +329,133 @@ export function prepareDomainContactDetails(
 }
 
 export function prepareDomainContactDetailsErrors(
-	details: ManagedContactDetails
+    details: ManagedContactDetails
 ): DomainContactDetailsErrors {
+    return {
+        firstName: details.firstName.errors[ 0 ],
+        lastName: details.lastName.errors[ 0 ],
+        organization: details.organization.errors[ 0 ],
+        email: details.email.errors[ 0 ],
+        alternateEmail: details.alternateEmail.errors[ 0 ],
+        phone: details.phone.errors[ 0 ],
+        address1: details.address1.errors[ 0 ],
+        address2: details.address2.errors[ 0 ],
+        city: details.city.errors[ 0 ],
+        state: details.state.errors[ 0 ],
+        postalCode: details.postalCode.errors[ 0 ],
+        countryCode: details.countryCode.errors[ 0 ],
+        fax: details.fax.errors[ 0 ],
+    };
+}
+
+export function prepareTldExtraContactDetails(
+	details: ManagedContactDetails
+): {
+	ca: null | CaDomainContactExtraDetails;
+	uk: null | UkDomainContactExtraDetails;
+	fr: null | FrDomainContactExtraDetails;
+} {
 	return {
-		firstName: details.firstName.errors[ 0 ],
-		lastName: details.lastName.errors[ 0 ],
-		organization: details.organization.errors[ 0 ],
-		email: details.email.errors[ 0 ],
-		alternateEmail: details.alternateEmail.errors[ 0 ],
-		phone: details.phone.errors[ 0 ],
-		address1: details.address1.errors[ 0 ],
-		address2: details.address2.errors[ 0 ],
-		city: details.city.errors[ 0 ],
-		state: details.state.errors[ 0 ],
-		postalCode: details.postalCode.errors[ 0 ],
-		countryCode: details.countryCode.errors[ 0 ],
-		fax: details.fax.errors[ 0 ],
+		ca: prepareCaDomainContactExtraDetails( details ),
+		uk: prepareUkDomainContactExtraDetails( details ),
+		fr: prepareFrDomainContactExtraDetails( details ),
 	};
+}
+
+export function prepareTldExtraContactDetailsErrors(
+	details: ManagedContactDetails
+): {
+	ca: null | CaDomainContactExtraDetailsErrors;
+	uk: null | UkDomainContactExtraDetailsErrors;
+	fr: null | FrDomainContactExtraDetailsErrors;
+} {
+	return {
+		ca: prepareCaDomainContactExtraDetailsErrors( details ),
+		uk: prepareUkDomainContactExtraDetailsErrors( details ),
+		fr: prepareFrDomainContactExtraDetailsErrors( details ),
+	};
+}
+
+function prepareCaDomainContactExtraDetails(
+	details: ManagedContactDetails
+): CaDomainContactExtraDetails | null {
+    if ( details.tldExtraFields?.ca ) {
+        return {
+            lang: details.tldExtraFields.ca.lang.value,
+            organization: details.organization.value,
+            legal_type: details.tldExtraFields.ca.legalType.value,
+            cira_agreement_accepted: details.tldExtraFields.ca.ciraAgreementAccepted.value === 'true',
+        };
+    }
+    return null;
+}
+
+function prepareCaDomainContactExtraDetailsErrors(
+	details: ManagedContactDetails
+): CaDomainContactExtraDetailsErrors | null {
+    if ( details.tldExtraFields?.ca ) {
+        return {
+            lang: details.tldExtraFields.ca.lang.errors[ 0 ],
+            organization: details.organization.errors[ 0 ],
+            legal_type: details.tldExtraFields.ca.legalType.errors[ 0 ],
+            cira_agreement_accepted: details.tldExtraFields.ca.ciraAgreementAccepted.errors[ 0 ],
+        };
+    }
+    return null;
+}
+
+function prepareUkDomainContactExtraDetails(
+	details: ManagedContactDetails
+): UkDomainContactExtraDetails | null {
+    if ( details.tldExtraFields?.uk ) {
+        return {
+            registrant_type: details.tldExtraFields.uk.registrantType.value,
+            registration_number: details.tldExtraFields.uk.registrationNumber.value,
+            trading_name: details.tldExtraFields.uk.tradingName.value,
+        };
+    }
+    return null;
+}
+
+function prepareUkDomainContactExtraDetailsErrors(
+	details: ManagedContactDetails
+): UkDomainContactExtraDetailsErrors | null {
+    if ( details.tldExtraFields?.uk ) {
+        return {
+            registrant_type: details.tldExtraFields.uk.registrantType.errors[ 0 ],
+            registration_number: details.tldExtraFields.uk.registrationNumber.errors[ 0 ],
+            trading_name: details.tldExtraFields.uk.tradingName.errors[ 0 ],
+        };
+    }
+    return null;
+}
+
+function prepareFrDomainContactExtraDetails(
+	details: ManagedContactDetails
+): FrDomainContactExtraDetails | null {
+    if ( details.tldExtraFields?.fr ) {
+        return {
+            registrant_type: details.tldExtraFields.fr.registrantType.value,
+            registrant_vat_id: details.vatId.value,
+            trademark_number: details.tldExtraFields.fr.trademarkNumber.value,
+            siren_sirat: details.tldExtraFields.fr.sirenSirat.value,
+        };
+    }
+    return null;
+}
+
+function prepareFrDomainContactExtraDetailsErrors(
+	details: ManagedContactDetails
+): FrDomainContactExtraDetailsErrors | null {
+    if ( details.tldExtraFields?.fr ) {
+        return {
+            registrant_type: details.tldExtraFields.fr.registrantType.errors[ 0 ],
+            registrant_vat_id: details.vatId.errors[ 0 ],
+            trademark_number: details.tldExtraFields.fr.trademarkNumber.errors[ 0 ],
+            siren_sirat: details.tldExtraFields.fr.sirenSirat.errors[ 0 ],
+        };
+    }
+    return null;
 }
 
 /*
