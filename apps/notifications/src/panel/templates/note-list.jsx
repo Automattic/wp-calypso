@@ -2,7 +2,7 @@
  * External dependencies
  */
 import ReactDOM from 'react-dom';
-import React from 'react';
+import React, { createRef } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -46,6 +46,7 @@ export class NoteList extends React.Component {
 	};
 
 	noteElements = {};
+	scrollableContainer = createRef();
 
 	UNSAFE_componentWillMount() {
 		this.props.global.updateStatusBar = this.updateStatusBar;
@@ -59,11 +60,13 @@ export class NoteList extends React.Component {
 	}
 
 	componentDidMount() {
-		ReactDOM.findDOMNode( this.scrollableContainer ).addEventListener( 'scroll', this.onScroll );
+		this.scrollableContainer.current &&
+			this.scrollableContainer.current.addEventListener( 'scroll', this.onScroll );
 	}
 
 	componentWillUnmount() {
-		ReactDOM.findDOMNode( this.scrollableContainer ).removeEventListener( 'scroll', this.onScroll );
+		this.scrollableContainer.current &&
+			this.scrollableContainer.current.removeEventListener( 'scroll', this.onScroll );
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -75,8 +78,9 @@ export class NoteList extends React.Component {
 
 	componentDidUpdate( prevProps ) {
 		if ( this.noteList && ! this.props.isLoading ) {
-			const element = ReactDOM.findDOMNode( this.scrollableContainer );
+			const element = this.scrollableContainer.current;
 			if (
+				element &&
 				element.clientHeight > 0 &&
 				element.scrollTop + element.clientHeight >= this.noteList.clientHeight - 300
 			) {
@@ -98,8 +102,8 @@ export class NoteList extends React.Component {
 
 		requestAnimationFrame( () => ( this.isScrolling = false ) );
 
-		const element = ReactDOM.findDOMNode( this.scrollableContainer );
-		if ( ! this.state.scrolling || this.state.scrollY !== element.scrollTop ) {
+		const element = this.scrollableContainer.current;
+		if ( ! this.state.scrolling || ( element && this.state.scrollY !== element.scrollTop ) ) {
 			// only set state and trigger render if something has changed
 			this.setState( {
 				scrolling: true,
@@ -192,10 +196,6 @@ export class NoteList extends React.Component {
 
 	storeNoteList = ref => {
 		this.noteList = ref;
-	};
-
-	storeScrollableContainer = ref => {
-		this.scrollableContainer = ref;
 	};
 
 	storeUndoActImmediately = actImmediately => {
@@ -339,7 +339,7 @@ export class NoteList extends React.Component {
 		return (
 			<div className={ classes }>
 				<FilterBar controller={ this.props.filterController } />
-				<div ref={ this.storeScrollableContainer } className={ listViewClasses }>
+				<div ref={ this.scrollableContainer } className={ listViewClasses }>
 					<ol ref={ this.storeNoteList } className="wpnc__notes">
 						<StatusBar
 							statusClasses={ this.state.statusClasses }

@@ -35,6 +35,7 @@ import { setUnseenCount } from 'state/notifications';
  * Style dependencies
  */
 import './style.scss';
+import { isLoading } from 'wp-calypso/state/ui/reducer';
 
 /**
  * Returns whether or not the browser session
@@ -169,8 +170,8 @@ export class Notifications extends Component {
 
 		const customMiddleware = {
 			APP_RENDER_NOTES: [
-				( store, { newNoteCount } ) => {
-					this.props.setIndicator( newNoteCount );
+				( store, { newNoteCount, hasNewNote } ) => {
+					this.props.setIndicator( newNoteCount, hasNewNote );
 					this.props.setUnseenCount( newNoteCount );
 				},
 			],
@@ -246,12 +247,40 @@ export class Notifications extends Component {
 					isShowing={ this.props.isShowing }
 					isVisible={ this.state.isVisible }
 					locale={ localeSlug }
+					simperiumModule={ this.props.simperiumModule }
 					wpcom={ wpcom }
 				/>
 			</div>
 		);
 	}
 }
+
+class SimperiumNotifications extends Component {
+	state = {
+		simperiumModule: null,
+	};
+
+	constructor( ...args ) {
+		super( ...args );
+
+		import( 'simperium' ).then( simperiumModule => {
+			this.setState( { simperiumModule } );
+		} );
+	}
+
+	render() {
+		return this.state.simperiumModule ? (
+			<Notifications { ...this.props } simperiumModule={ this.state.simperiumModule } />
+		) : (
+			<div>Loading…</div>
+		);
+	}
+}
+
+const shouldLoadSimperiumClient =
+	localStorage && localStorage.getItem( 'wpnotes_client' ) === 'simperium';
+
+const ClientWrapper = shouldLoadSimperiumClient ? SimperiumNotifications : Notifications;
 
 export default connect(
 	state => ( {
@@ -261,4 +290,4 @@ export default connect(
 		recordTracksEvent,
 		setUnseenCount,
 	}
-)( Notifications );
+)( ClientWrapper );

@@ -87,14 +87,14 @@ class MasterbarItemNotifications extends Component {
 	 *
 	 * @param {number} currentUnseenCount Number of reported unseen notifications
 	 */
-	setNotesIndicator = currentUnseenCount => {
+	setNotesIndicator = ( currentUnseenCount, hasNewNote = false ) => {
 		const existingUnseenCount = store.get( 'wpnotes_unseen_count' );
 		let newAnimationState = this.state.animationState;
 
 		if ( 0 === currentUnseenCount ) {
 			// If we don't have new notes at load-time, remove the `-1` "init" status
 			newAnimationState = 0;
-		} else if ( currentUnseenCount > existingUnseenCount ) {
+		} else if ( hasNewNote || currentUnseenCount > existingUnseenCount ) {
 			// Animate the indicator bubble by swapping CSS classes through the animation state
 			// Note that we could have an animation state of `-1` indicating the initial load
 			newAnimationState = 1 - Math.abs( this.state.animationState );

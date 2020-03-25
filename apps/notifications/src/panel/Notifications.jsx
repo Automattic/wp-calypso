@@ -86,8 +86,8 @@ export class Notifications extends PureComponent {
 
 		initAPI( wpcom );
 
-		if ( 'simperium' === localStorage.getItem( 'wp_notes_client' ) ) {
-			client = new SimperiumClient();
+		if ( this.props.simperiumModule ) {
+			client = new SimperiumClient( this.props.simperiumModule );
 			client.global = globalData;
 			client.sendMessage = receiveMessage;
 		} else {
