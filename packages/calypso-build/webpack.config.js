@@ -127,7 +127,6 @@ function getWebpackConfig(
 			extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 			modules: [ 'node_modules' ],
 		},
-		node: false,
 		plugins: [
 			new webpack.DefinePlugin( {
 				'process.env.NODE_ENV': JSON.stringify( process.env.NODE_ENV ),
