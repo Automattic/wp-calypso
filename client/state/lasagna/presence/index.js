@@ -12,6 +12,6 @@ export default ( channel, store, globalId ) => {
 	const presence = new Presence( channel );
 	presence.onSync( () => {
 		const presenceCount = presence.list().length;
-		store.dispatch( updateUsersViewingPostCount( globalId, presenceCount ) );
+		//store.dispatch( updateUsersViewingPostCount( globalId, presenceCount ) );
 	} );
 };
