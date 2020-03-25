@@ -105,6 +105,16 @@
 	}
 }
 
+.inline-help__mobile-overlay {
+	background: rgba( var( --color-neutral-0-rgb ), 0.8 );
+	bottom: 0;
+	height: 100%;
+	position: fixed;
+	right: 0;
+	left: 0;
+	z-index: z-index( 'root', '.inline-help__mobile-overlay' );
+}
+
 .inline-help__popover.popover {
 	@include breakpoint( '<660px' ) {
 		margin-top: -5px;
