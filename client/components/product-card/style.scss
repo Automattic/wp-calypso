@@ -1,3 +1,11 @@
+.product-card {
+	width: 100%;
+
+	@include breakpoint( '>480px' ) {
+		min-width: 460px;
+	}
+
+}
 // Header
 .product-card__header {
 	margin: -16px -16px 16px;
