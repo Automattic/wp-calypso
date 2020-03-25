@@ -20,7 +20,7 @@
 }
 
 .acquire-intent__questions {
-	max-width: 700px;
+	max-width: 1200px;
 }
 
 .madlib__input {
@@ -31,22 +31,18 @@
 	line-height: inherit;
 	height: 1.01em;
 	padding: 0;
-	min-width: 70px;
+	min-width: 400px;
 
 	color: var( --mainColor );
-	border-bottom: 2px solid var( --studio-gray-0 );
+	border-bottom: 2px solid var( --studio-gray-5 );
 
 	transition: border-bottom 0.5s ease-in-out 1s, color 0.5s ease-in-out 1s;
 
-	&:hover {
-		border-color: var( --highlightColor );
-	}
-
-	&:active,
 	&:focus {
-		padding: 0;
-		border-color: var( --highlightColor );
-		outline: 0; // @TODO: needs a11y considerations
+		outline: none;
+	}
+	.accessible-focus &:focus {
+		outline: 2px solid var( --highlightColor );
 	}
 }
 

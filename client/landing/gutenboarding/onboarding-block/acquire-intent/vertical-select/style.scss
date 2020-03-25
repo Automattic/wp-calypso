@@ -1,7 +1,28 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 
+// Restyls `<Suggestion />` component
+.vertical-select {
+	.suggestions__category-heading {
+		display: none;
+	}
+	.suggestions__item {
+		border: none;
+		background-color: var( --studio-white );
+
+		&.has-highlight {
+			box-shadow: inset 0 0 0 1px var( --studio-blue-30 );
+			background-color: var( --studio-white );
+			border-radius: 2px;
+		}
+	}
+}
 .vertical-select__suggestions-wrapper {
 	position: relative;
+	.animated-placeholder {
+		position: absolute;
+		left: 0;
+		bottom: 11px;
+	}
 }
 .vertical-select__suggestions {
 	position: absolute;

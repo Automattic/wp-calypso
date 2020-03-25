@@ -13,7 +13,10 @@ import { useI18n } from '@automattic/react-i18n';
 import { STORE_KEY } from '../../stores/onboard';
 import { Step, usePath } from '../../path';
 
-const SiteTitle: React.FunctionComponent = () => {
+interface Props {
+	inputRef: React.RefObject< HTMLInputElement >;
+}
+const SiteTitle: React.FunctionComponent< Props > = ( { inputRef } ) => {
 	const { __: NO__ } = useI18n();
 	const { siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
 	const { setSiteTitle } = useDispatch( STORE_KEY );
@@ -30,6 +33,7 @@ const SiteTitle: React.FunctionComponent = () => {
 	const madlib = __experimentalCreateInterpolateElement( madlibTemplate, {
 		Input: (
 			<input
+				ref={ inputRef }
 				/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
 				className="madlib__input"
 				autoComplete="off"

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useSelect } from '@wordpress/data';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, createRef } from 'react';
 import { useI18n } from '@automattic/react-i18n';
 
 /**
@@ -20,11 +20,13 @@ const AcquireIntent: FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 	const { siteVertical, siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
 	const makePath = usePath();
+	const siteTitleRef = createRef< HTMLInputElement >();
+	const focusSiteTitle = () => siteTitleRef.current?.focus();
 	return (
 		<div className="acquire-intent">
 			<div className="acquire-intent__questions">
-				<VerticalSelect />
-				{ ( siteVertical || siteTitle ) && <SiteTitle /> }
+				<VerticalSelect handleSubmit={ focusSiteTitle } />
+				{ ( siteVertical || siteTitle ) && <SiteTitle inputRef={ siteTitleRef } /> }
 				{ siteVertical && (
 					<div className="acquire-intent__footer">
 						<Link
