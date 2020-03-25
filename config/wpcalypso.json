@@ -46,6 +46,7 @@
 		"gdpr-banner": true,
 		"google-my-business": true,
 		"gutenboarding": true,
+		"gutenboarding/style-preview": true,
 		"happychat": true,
 		"help": true,
 		"help/courses": true,
