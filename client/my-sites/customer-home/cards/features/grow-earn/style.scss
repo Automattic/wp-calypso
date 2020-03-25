@@ -1,0 +1,15 @@
+.grow-earn {
+    padding-bottom: 12px;
+
+	&__card-subheader {
+		color: var( --color-text-subtle );
+		font-size: 0.85rem;
+		margin: -0.5rem 0 1rem;
+	}
+
+	& .button {
+		font-size: 18px;
+		width: 100%;
+		height: 50px;
+	}
+}
