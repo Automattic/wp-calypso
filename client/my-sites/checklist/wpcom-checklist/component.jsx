@@ -212,7 +212,6 @@ class WpcomChecklistComponent extends PureComponent {
 		let ChecklistComponent = Checklist;
 
 		switch ( viewMode ) {
-				break;
 			case 'prompt':
 				ChecklistComponent = ChecklistPrompt;
 				break;
