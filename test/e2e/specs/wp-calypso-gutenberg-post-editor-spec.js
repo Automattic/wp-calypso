@@ -130,6 +130,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 		step( 'Can see correct post title in preview', async function() {
 			this.postPreviewComponent = await PostPreviewComponent.Expect( driver );
+
 			const postTitle = await this.postPreviewComponent.postTitle();
 			assert.strictEqual(
 				postTitle.toLowerCase(),
@@ -243,7 +244,8 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 	} );
 
-	describe( 'Basic Public Post @canary @ie11canary @parallel', function() {
+	// @TODO: add `@ie11canary` back here once FSE plugin works with IE11 again.
+	describe( 'Basic Public Post @canary @parallel', function() {
 		describe( 'Publish a New Post', function() {
 			const blogPostTitle = dataHelper.randomPhrase();
 			const blogPostQuote =
