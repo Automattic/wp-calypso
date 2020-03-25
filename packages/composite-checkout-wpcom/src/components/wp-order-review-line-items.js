@@ -138,17 +138,27 @@ WPLineItem.propTypes = {
 };
 
 function LineItemTitle( { item, id } ) {
+	if ( isLineItemADomain( item ) ) {
+		return <LineItemDomainTitle item={ item } id={ id } />;
+	}
+	if ( item.type === 'domain_map' ) {
+		return <LineItemDomainTitle item={ item } id={ id } />;
+	}
+	return (
+		<LineItemTitleUI>
+			<ProductTitleUI id={ id }>{ item.label }</ProductTitleUI>
+		</LineItemTitleUI>
+	);
+}
+
+function LineItemDomainTitle( { item, id } ) {
 	const translate = useTranslate();
 	return (
 		<LineItemTitleUI>
-			{ isLineItemADomain( item ) && item.sublabel ? (
-				<ProductTitleUI id={ id }>
-					{ item.label }: { item.sublabel }
-				</ProductTitleUI>
-			) : (
-				<ProductTitleUI id={ id }>{ item.label }</ProductTitleUI>
-			) }
-			{ isLineItemADomain( item ) && item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
+			<ProductTitleUI id={ id }>
+				{ item.label }: { item.sublabel }
+			</ProductTitleUI>
+			{ item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
 				<BundledDomainFreeUI>{ translate( 'First year free with your plan' ) }</BundledDomainFreeUI>
 			) }
 		</LineItemTitleUI>
