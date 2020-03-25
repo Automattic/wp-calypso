@@ -19,6 +19,10 @@ export interface SiteVertical {
 export interface Design {
 	title: string;
 	slug: string;
+	template: string;
+	theme: string;
 	src: string;
-	srcset: string;
+	srcset?: string;
+	fonts: string[];
+	categories: string[];
 }

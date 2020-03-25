@@ -40,14 +40,23 @@
 		position: relative;
 		overflow: hidden;
 
-		img {
+		iframe {
 			position: absolute;
 			top: 0;
 			left: 0;
-			right: 0;
 			margin: 0 auto;
+			width: 200%;
+			height: 200%;
+			transform: scale( 0.5 );
+			transform-origin: 0 0;
+		}
+
+		.design-selector__iframe-overlay {
 			width: 100%;
-			height: auto;
+			height: 100%;
+			position: absolute;
+			top: 0;
+			left: 0;
 		}
 	}
 
@@ -57,6 +66,7 @@
 		text-align: center;
 		width: 100%;
 		font-size: 24px;
+		text-transform: capitalize;
 		@include onboarding-font-recoleta;
 	}
 }

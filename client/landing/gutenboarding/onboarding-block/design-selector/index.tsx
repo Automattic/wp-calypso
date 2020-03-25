@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import { useDispatch } from '@wordpress/data';
 import React from 'react';
+import { addQueryArgs } from '@wordpress/url';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import { useHistory } from 'react-router-dom';
 import { Spring, animated } from 'react-spring/renderprops';
@@ -11,6 +12,7 @@ import { Spring, animated } from 'react-spring/renderprops';
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { Design } from '../../stores/onboard/types';
 import designs from './available-designs.json';
 import { usePath, Step } from '../../path';
 import { isEnabled } from '../../../../config';
@@ -29,11 +31,20 @@ const DesignSelector: React.FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 	const { push } = useHistory();
 	const makePath = usePath();
+	const { siteVertical, siteTitle } = useSelect( select => select( ONBOARD_STORE ).getState() );
 	const { setSelectedDesign, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
 	const handleStartOverButtonClick = () => {
 		resetOnboardStore();
 	};
+
+	const getDesignUrl = ( design: Design, title: string ) =>
+		addQueryArgs( design.src, {
+			vertical: siteVertical?.label,
+			font_headings: design.fonts[ 0 ],
+			font_base: design.fonts[ 1 ],
+			site_title: title,
+		} );
 
 	// Track hover/focus
 	const [ hoverDesign, setHoverDesign ] = React.useState< string >();
@@ -95,7 +106,14 @@ const DesignSelector: React.FunctionComponent = () => {
 										>
 											{ ( props2: React.CSSProperties ) => (
 												<animated.span style={ props2 } className="design-selector__image-frame">
-													<img alt={ design.title } src={ design.src } srcSet={ design.srcset } />
+													<iframe
+														title={ design.title }
+														className="design-selector__frame"
+														src={ getDesignUrl( design, siteTitle ) }
+														scrolling="no"
+														sandbox=""
+													/>
+													<div className="design-selector__iframe-overlay" />
 												</animated.span>
 											) }
 										</Spring>
