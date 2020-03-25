@@ -49,6 +49,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await this.driver.sleep( 2000 );
 	}
 
+	async _postInit() {
+		await this.driver.sleep( 2000 );
+	}
+
 	async initEditor( { dismissPageTemplateSelector = false } = {} ) {
 		if ( dismissPageTemplateSelector ) {
 			await this.dismissPageTemplateSelector();
