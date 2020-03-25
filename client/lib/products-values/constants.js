@@ -188,6 +188,22 @@ export const getJetpackProducts = () => {
 			slugs: JETPACK_BACKUP_PRODUCTS,
 		},
 	];
+	isEnabled( 'jetpack/scan-product' ) &&
+		output.push( {
+			title: translate( 'Jetpack Scan' ),
+			// TODO: Add new description copy for Search
+			description: translate( 'Always-on scan ensure you never lose your site.' ),
+			id: PRODUCT_JETPACK_SCAN,
+			options: {
+				yearly: [ PRODUCT_JETPACK_SCAN ],
+				monthly: [ PRODUCT_JETPACK_SCAN_MONTHLY ],
+			},
+			optionShortNames: getJetpackProductsShortNames(),
+			optionDisplayNames: getJetpackProductsDisplayNames(),
+			optionDescriptions: getJetpackProductsDescriptions(),
+			optionsLabel: translate( 'Select a product option:' ),
+			slugs: JETPACK_SCAN_PRODUCTS,
+		} );
 	isEnabled( 'jetpack/search-product' ) &&
 		output.push( {
 			title: translate( 'Jetpack Search' ),
@@ -207,21 +223,5 @@ export const getJetpackProducts = () => {
 			slugs: JETPACK_SEARCH_PRODUCTS,
 		} );
 
-	isEnabled( 'jetpack/scan-product' ) &&
-		output.push( {
-			title: translate( 'Jetpack Scan' ),
-			// TODO: Add new description copy for Search
-			description: translate( 'Always-on scan ensure you never lose your site.' ),
-			id: PRODUCT_JETPACK_SCAN,
-			options: {
-				yearly: [ PRODUCT_JETPACK_SCAN ],
-				monthly: [ PRODUCT_JETPACK_SCAN_MONTHLY ],
-			},
-			optionShortNames: getJetpackProductsShortNames(),
-			optionDisplayNames: getJetpackProductsDisplayNames(),
-			optionDescriptions: getJetpackProductsDescriptions(),
-			optionsLabel: translate( 'Select a product option:' ),
-			slugs: JETPACK_SCAN_PRODUCTS,
-		} );
 	return output;
 };
