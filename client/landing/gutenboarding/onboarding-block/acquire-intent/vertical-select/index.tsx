@@ -61,6 +61,7 @@ const VerticalSelect: React.FunctionComponent = () => {
 	const { siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
 	const { setSiteVertical, resetSiteVertical } = useDispatch( ONBOARD_STORE );
 
+	const [ isFocused, setIsFocused ] = React.useState( false );
 	const [ inputValue, setInputValue ] = React.useState( siteVertical?.label ?? '' );
 
 	const animatedPlaceholder = useTyper(
@@ -133,29 +134,31 @@ const VerticalSelect: React.FunctionComponent = () => {
 		) ?? { label: inputValue.trim() };
 
 		setSiteVertical( vertical );
+		setIsFocused( false );
 	};
 
-	const displayValue = siteVertical?.label ?? '';
-
 	// translators: Form input for a site's topic where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
-	const madlib = NO__( 'My site is about <Input />.' );
-	const input = __experimentalCreateInterpolateElement( madlib, {
+	const madlibTemplate = NO__( 'My site is about <Input />.' );
+	const madlib = __experimentalCreateInterpolateElement( madlibTemplate, {
 		Input: (
 			<span className="vertical-select__suggestions-wrapper">
 				<input
+					/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
 					className="madlib__input"
 					autoComplete="off"
 					style={ {
 						width: `${ inputValue.length * 0.85 }ch`,
 					} }
 					onBlur={ handleBlur }
+					onFocus={ () => setIsFocused( true ) }
 					onChange={ handleSuggestionChangeEvent }
 					onKeyDown={ handleSuggestionKeyDown }
 					placeholder={ animatedPlaceholder }
+					defaultValue={ siteVertical?.label }
 					value={ inputValue }
 				/>
 				<div className="vertical-select__suggestions">
-					{ inputValue && (
+					{ isFocused && !! inputValue.length && (
 						<Suggestions
 							ref={ suggestionRef }
 							query={ inputValue }

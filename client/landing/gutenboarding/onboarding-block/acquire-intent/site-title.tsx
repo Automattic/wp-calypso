@@ -12,7 +12,6 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import { STORE_KEY } from '../../stores/onboard';
 import { Step, usePath } from '../../path';
-import MadLib from './madlib';
 
 const SiteTitle: React.FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
@@ -27,7 +26,21 @@ const SiteTitle: React.FunctionComponent = () => {
 	const value = siteTitle.length ? siteTitle : '';
 
 	// translators: Form input for a site's title where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
-	const textInput = NO__( 'Itʼs called <Input />.' );
+	const madlibTemplate = NO__( 'Itʼs called <Input />.' );
+	const madlib = __experimentalCreateInterpolateElement( madlibTemplate, {
+		Input: (
+			<input
+				/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
+				className="madlib__input"
+				autoComplete="off"
+				style={ {
+					width: `${ value.length * 0.85 }ch`,
+				} }
+				onChange={ handleChange }
+				value={ value }
+			/>
+		),
+	} );
 
 	// As last input on first step, hitting 'Enter' should direct to next step.
 	const handleSubmit = ( e: React.FormEvent< HTMLFormElement > ) => {
@@ -35,13 +48,7 @@ const SiteTitle: React.FunctionComponent = () => {
 		history.push( makePath( Step.DesignSelection ) );
 	};
 
-	return (
-		<form onSubmit={ handleSubmit }>
-			<MadLib onChange={ handleChange } value={ value }>
-				{ textInput }
-			</MadLib>
-		</form>
-	);
+	return <form onSubmit={ handleSubmit }>{ madlib }</form>;
 };
 
 export default SiteTitle;
