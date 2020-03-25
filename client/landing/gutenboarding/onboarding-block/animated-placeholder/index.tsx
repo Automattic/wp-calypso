@@ -22,13 +22,18 @@ const AnimatedPlaceholder: FunctionComponent< Props > = ( { isSlow, texts } ) =>
 				'is-slow-speed': isSlow,
 			} ) }
 		>
-			<div className="animated-placeholder__content">
-				{ texts.map( suggestion => (
-					<span className="animated-placeholder__suggestion" key={ suggestion }>
-						{ suggestion }
-					</span>
-				) ) }
-			</div>
+			{ texts.map( suggestion => (
+				<span className="animated-placeholder__suggestion" key={ suggestion }>
+					{ suggestion.split( '' ).map( ( letter, index ) => (
+						<span
+							className="animated-placeholder__suggestion-letter"
+							key={ suggestion + '-' + letter + index }
+						>
+							{ letter }
+						</span>
+					) ) }
+				</span>
+			) ) }
 		</div>
 	);
 };
