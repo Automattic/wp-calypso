@@ -38,7 +38,7 @@ import {
 	hasTransferProduct,
 	jetpackProductItem,
 } from 'lib/cart-values/cart-items';
-import { JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
+import { JETPACK_BACKUP_PRODUCTS, JETPACK_SEARCH_PRODUCTS } from 'lib/products-values/constants';
 import PendingPaymentBlocker from './pending-payment-blocker';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';
@@ -76,7 +76,7 @@ import { isJetpackSite, isNewSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { getDomainNameFromReceiptOrCart } from 'lib/domains/cart-utils';
-import { fetchSitesAndUser } from 'lib/signup/step-actions';
+import { fetchSitesAndUser } from 'lib/signup/step-actions/fetch-sites-and-user';
 import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
 import QueryProducts from 'components/data/query-products-list';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
@@ -296,7 +296,11 @@ export class Checkout extends React.Component {
 			cartItem = ! hasConciergeSession( cart ) && conciergeSessionItem();
 		}
 
-		if ( startsWith( this.props.product, 'jetpack_backup' ) && isJetpackNotAtomic ) {
+		if (
+			( startsWith( this.props.product, 'jetpack_backup' ) ||
+				startsWith( this.props.product, 'jetpack_search' ) ) &&
+			isJetpackNotAtomic
+		) {
 			cartItem = jetpackProductItem( this.props.product );
 		}
 
@@ -387,7 +391,10 @@ export class Checkout extends React.Component {
 		// - has a receipt number
 		// - does not have a receipt number but has an item in cart(as in the case of paying with a redirect payment type)
 		if ( selectedSiteSlug && ( ! isReceiptEmpty || ! isCartEmpty ) ) {
-			const isJetpackProduct = product && includes( JETPACK_BACKUP_PRODUCTS, product );
+			const isJetpackProduct =
+				product &&
+				( includes( JETPACK_BACKUP_PRODUCTS, product ) ||
+					includes( JETPACK_SEARCH_PRODUCTS, product ) );
 			// If we just purchased a Jetpack product, redirect to the my plans page.
 			if ( isJetpackNotAtomic && isJetpackProduct ) {
 				return `/plans/my-plan/${ selectedSiteSlug }?thank-you&product=${ product }`;
@@ -445,7 +452,6 @@ export class Checkout extends React.Component {
 
 		const { cart, selectedSiteSlug, previousRoute } = this.props;
 
-		// For a user purchasing a qualifying plan, show either a plan upgrade upsell or concierge upsell.
 		// If the user has upgraded a plan from seeing our upsell (we find this by checking the previous route is /offer-plan-upgrade),
 		// then skip this section so that we do not show further upsells.
 		if (
@@ -455,10 +461,6 @@ export class Checkout extends React.Component {
 			( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) ) &&
 			! previousRoute.includes( `/checkout/${ selectedSiteSlug }/offer-plan-upgrade` )
 		) {
-			if ( hasPersonalPlan( cart ) ) {
-				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ pendingOrReceiptId }`;
-			}
-
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
 

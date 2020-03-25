@@ -243,7 +243,8 @@ export function waitForFieldClearable( driver, selector ) {
 	return driver.wait(
 		function() {
 			return driver.findElement( selector ).then(
-				element => {
+				async element => {
+					await driver.executeScript( "arguments[0].value = '';", element );
 					return element.clear().then(
 						function() {
 							return element.getAttribute( 'value' ).then( value => {

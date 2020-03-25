@@ -32,7 +32,7 @@ const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 	}
 
 	if ( isPlan( purchase ) ) {
-		url = '/plans/compare/' + selectedSite.slug;
+		url = '/plans/my-plan/' + selectedSite.slug;
 		text = i18n.translate( 'View Plan Features' );
 	}
 

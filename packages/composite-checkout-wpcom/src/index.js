@@ -16,6 +16,8 @@ import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	domainManagedContactDetails,
 	taxManagedContactDetails,
+	isCompleteAndValid,
+	areRequiredFieldsNotEmpty,
 } from './types';
 
 // Re-export the public API
@@ -35,4 +37,6 @@ export {
 	domainManagedContactDetails,
 	taxManagedContactDetails,
 	areDomainsInLineItems,
+	isCompleteAndValid,
+	areRequiredFieldsNotEmpty,
 };

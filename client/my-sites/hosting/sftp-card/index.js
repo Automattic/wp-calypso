@@ -127,7 +127,7 @@ export const SftpCard = ( {
 					busy={ isPasswordLoading }
 					className="sftp-card__password-reset-button"
 				>
-					{ translate( 'Reset Password' ) }
+					{ translate( 'Reset password' ) }
 				</Button>
 			</>
 		);
@@ -196,7 +196,7 @@ export const SftpCard = ( {
 						) }
 					</p>
 					<Button onClick={ createUser } primary className="sftp-card__create-credentials-button">
-						{ translate( 'Create SFTP Credentials' ) }
+						{ translate( 'Create SFTP credentials' ) }
 					</Button>
 				</>
 			) }

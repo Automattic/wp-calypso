@@ -34,6 +34,7 @@ import sanitize from 'server/sanitize';
 import utils from 'server/bundler/utils';
 import { pathToRegExp } from 'utils';
 import sections from 'sections';
+import isSectionEnabled from 'sections-filter';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'login';
 import { serverRouter, getNormalizedPath } from 'server/isomorphic-routing';
 import {
@@ -55,7 +56,6 @@ import analytics from 'server/lib/analytics';
 import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'landing/gutenboarding/section';
-import { JETPACK_CLOUD_SECTION_DEFINITION } from 'landing/jetpack-cloud/section';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -657,12 +657,6 @@ function handleLocaleSubdomains( req, res, next ) {
 	next();
 }
 
-const jetpackCloudEnvs = [
-	'jetpack-cloud-development',
-	'jetpack-cloud-stage',
-	'jetpack-cloud-production',
-];
-
 module.exports = function() {
 	const app = express();
 
@@ -681,23 +675,9 @@ module.exports = function() {
 		next();
 	} );
 
-	if ( jetpackCloudEnvs.includes( calypsoEnv ) ) {
-		JETPACK_CLOUD_SECTION_DEFINITION.paths.forEach( sectionPath =>
-			handleSectionPath( JETPACK_CLOUD_SECTION_DEFINITION, sectionPath, 'entry-jetpack-cloud' )
-		);
-
-		// catchall to render 404 for all routes not whitelisted in client/sections
-		app.use( render404( 'entry-jetpack-cloud' ) );
-
-		// Error handling middleware for displaying the server error 500 page must be the very last middleware defined
-		app.use( renderServerError( 'entry-jetpack-cloud' ) );
-
-		return app;
-	}
-
 	// redirect homepage if the Reader is disabled
 	app.get( '/', function( request, response, next ) {
-		if ( ! config.isEnabled( 'reader' ) ) {
+		if ( ! config.isEnabled( 'reader' ) && config.isEnabled( 'stats' ) ) {
 			response.redirect( '/stats' );
 		} else {
 			next();
@@ -843,6 +823,7 @@ module.exports = function() {
 
 	sections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
+		.filter( isSectionEnabled )
 		.forEach( section => {
 			section.paths.forEach( sectionPath => handleSectionPath( section, sectionPath ) );
 

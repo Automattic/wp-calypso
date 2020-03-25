@@ -45,6 +45,7 @@ function checkPropsChange( nextProps, propArr ) {
 	return false;
 }
 
+// eslint-disable-next-line react/prefer-es6-class
 export const PluginsList = createReactClass( {
 	displayName: 'PluginsList',
 	mixins: [ PluginNotices ],
@@ -134,7 +135,7 @@ export const PluginsList = createReactClass( {
 		const { autoupdate: canAutoupdate, activation: canActivate } = this.getAllowedPluginActions(
 			plugin
 		);
-		return ! this.hasNoSitesThatCanManage( plugin ) && ( canAutoupdate || canActivate );
+		return canAutoupdate || canActivate;
 	},
 
 	setBulkSelectionState( plugins, selectionState ) {
@@ -185,10 +186,6 @@ export const PluginsList = createReactClass( {
 		selected( plugin ) {
 			return this.isSelected( plugin );
 		},
-	},
-
-	hasNoSitesThatCanManage( plugin ) {
-		return ! plugin.sites.some( site => site.canManage );
 	},
 
 	getSelected() {
@@ -526,7 +523,6 @@ export const PluginsList = createReactClass( {
 		return (
 			<PluginItem
 				key={ plugin.slug }
-				hasAllNoManageSites={ this.hasNoSitesThatCanManage( plugin ) }
 				plugin={ plugin }
 				sites={ plugin.sites }
 				progress={ this.state.notices.inProgress.filter( log => log.plugin.slug === plugin.slug ) }

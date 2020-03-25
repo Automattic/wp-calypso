@@ -59,9 +59,10 @@ const updateSelectedEditor = action =>
 
 const setSelectedEditorAndRedirect = (
 	{ siteId, redirectUrl },
-	{ editor_web: editor }
+	{ editor_web: editor, opt_in: optIn, opt_out: optOut }
 ) => dispatch => {
 	dispatch( { type: EDITOR_TYPE_SET, siteId, editor } );
+	dispatch( { type: GUTENBERG_OPT_IN_OUT_SET, siteId, optIn, optOut } );
 
 	if ( ! redirectUrl ) {
 		return;

@@ -55,8 +55,14 @@ export const request = action => {
 	const { path, ...otherCredentials } = action.credentials;
 	const credentials = { ...otherCredentials, abspath: path };
 
+	const tracksEvent = recordTracksEvent( 'calypso_rewind_creds_update_attempt', {
+		site_id: action.siteId,
+		protocol: action.credentials.protocol,
+	} );
+
 	return [
 		notice,
+		tracksEvent,
 		http(
 			{
 				apiNamespace: 'wpcom/v2',
@@ -85,6 +91,10 @@ export const success = ( action, { rewind_state } ) => [
 	successNotice( i18n.translate( 'Your site is now connected.' ), {
 		duration: 4000,
 		id: action.noticeId,
+	} ),
+	recordTracksEvent( 'calypso_rewind_creds_update_success', {
+		site_id: action.siteId,
+		protocol: action.credentials.protocol,
 	} ),
 	// the API transform could fail and the rewind data might
 	// be unavailable so if that's the case just let it go

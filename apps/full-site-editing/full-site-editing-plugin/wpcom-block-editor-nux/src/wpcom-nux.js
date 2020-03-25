@@ -22,7 +22,13 @@ import {
 } from './images';
 
 function WpcomNux() {
-	const isWpcomNuxEnabled = useSelect( select => select( 'automattic/nux' ).isWpcomNuxEnabled() );
+	const { isWpcomNuxEnabled, isSPTOpen } = useSelect( select => ( {
+		isWpcomNuxEnabled: select( 'automattic/nux' ).isWpcomNuxEnabled(),
+		isSPTOpen:
+			select( 'automattic/starter-page-layouts' ) && // Handle the case where SPT is not initalized.
+			select( 'automattic/starter-page-layouts' ).isOpen(),
+	} ) );
+
 	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
 
 	// On mount check if the WPCOM NUX status exists in state, otherwise fetch it from the API.
@@ -37,7 +43,7 @@ function WpcomNux() {
 		fetchWpcomNuxStatus();
 	}, [ isWpcomNuxEnabled, setWpcomNuxStatus ] );
 
-	if ( ! isWpcomNuxEnabled ) {
+	if ( ! isWpcomNuxEnabled || isSPTOpen ) {
 		return null;
 	}
 
@@ -111,6 +117,11 @@ function WpcomNux() {
 	);
 }
 
-registerPlugin( 'wpcom-block-editor-nux', {
-	render: () => <WpcomNux />,
-} );
+// Only register plugin if these features are available.
+// If registered without this check, atomic sites without gutenberg enabled will error when loading the editor.
+// These seem to be the only dependencies here that are not supported there.
+if ( __experimentalCreateInterpolateElement && Guide && GuidePage ) {
+	registerPlugin( 'wpcom-block-editor-nux', {
+		render: () => <WpcomNux />,
+	} );
+}

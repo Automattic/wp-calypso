@@ -42,7 +42,7 @@ const ThemeSetupCard = ( { theme, translate, onClick } ) => (
 		</ActionPanelBody>
 		<ActionPanelFooter>
 			<Button className="theme-setup__button" primary={ true } onClick={ onClick }>
-				{ translate( 'Set Up Your Theme' ) }
+				{ translate( 'Set up your theme' ) }
 			</Button>
 		</ActionPanelFooter>
 		<ThemeSetupDialog />

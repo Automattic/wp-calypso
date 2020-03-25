@@ -208,11 +208,11 @@ function SaveButton( { translate, formSubmitting } ) {
 	return (
 		<FormButton disabled={ formSubmitting } type="submit">
 			{ formSubmitting
-				? translate( 'Saving Card…', {
+				? translate( 'Saving card…', {
 						context: 'Button label',
 						comment: 'Credit card',
 				  } )
-				: translate( 'Save Card', {
+				: translate( 'Save card', {
 						context: 'Button label',
 						comment: 'Credit card',
 				  } ) }

@@ -15,3 +15,10 @@ export interface SiteVertical {
 	 */
 	id?: string;
 }
+
+export interface Design {
+	title: string;
+	slug: string;
+	src: string;
+	srcset: string;
+}

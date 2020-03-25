@@ -156,7 +156,7 @@ class PurchasesListing extends Component {
 		// For free plan show a button redirecting to the plans comparison.
 		if ( this.isFreePlan( purchase ) ) {
 			return (
-				<Button href={ `/plans/${ selectedSiteSlug }` }>{ translate( 'Compare Plans' ) }</Button>
+				<Button href={ `/plans/${ selectedSiteSlug }` }>{ translate( 'Compare plans' ) }</Button>
 			);
 		}
 
@@ -170,14 +170,14 @@ class PurchasesListing extends Component {
 			return null;
 		}
 
-		let label = translate( 'Manage Plan' );
+		let label = translate( 'Manage plan' );
 
 		if ( isJetpackBackup( purchase ) ) {
-			label = translate( 'Manage Product' );
+			label = translate( 'Manage product' );
 		}
 
 		if ( purchase.autoRenew && ! shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) ) {
-			label = translate( 'Renew Now' );
+			label = translate( 'Renew now' );
 		}
 
 		return (

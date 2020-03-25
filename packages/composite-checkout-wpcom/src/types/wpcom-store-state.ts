@@ -36,7 +36,13 @@ function touchField( oldData: ManagedValue ): ManagedValue {
 }
 
 function touchIfDifferent( newValue: string, oldData: ManagedValue ): ManagedValue {
-	return newValue === oldData.value ? oldData : { ...oldData, value: newValue, isTouched: true };
+	return newValue === oldData.value
+		? oldData
+		: { ...oldData, value: newValue, isTouched: true, errors: [] };
+}
+
+function setValueUnlessTouched( newValue: string | null, oldData: ManagedValue ): ManagedValue {
+	return oldData.isTouched ? oldData : { ...oldData, value: newValue || '', errors: [] };
 }
 
 function setErrors( errors: string[] | undefined, oldData: ManagedValue ): ManagedValue {
@@ -72,6 +78,18 @@ export function isCompleteAndValid( details: ManagedContactDetails ): boolean {
 	return result;
 }
 
+export function isTouched( details: ManagedContactDetails ): boolean {
+	const values = Object.values( details );
+	return values.length > 0 && values.every( value => value.isTouched );
+}
+
+export function areRequiredFieldsNotEmpty( details: ManagedContactDetails ): boolean {
+	const values = Object.values( details );
+	return (
+		values.length > 0 && values.every( value => value.value?.length > 0 || ! value.isRequired )
+	);
+}
+
 /*
  * List of error messages for each field.
  */
@@ -99,7 +117,7 @@ function setManagedContactDetailsErrors(
 ): ManagedContactDetails {
 	return {
 		firstName: setErrors( errors.firstName, details.firstName ),
-		lastName: setErrors( errors.firstName, details.lastName ),
+		lastName: setErrors( errors.lastName, details.lastName ),
 		organization: setErrors( errors.organization, details.organization ),
 		email: setErrors( errors.email, details.email ),
 		alternateEmail: setErrors( errors.alternateEmail, details.alternateEmail ),
@@ -137,6 +155,40 @@ export type DomainContactDetails = {
 	fax: string;
 };
 
+// This is the data returned by the redux state, where the fields could have a
+// null value.
+export type PossiblyCompleteDomainContactDetails = {
+	firstName: string | null;
+	lastName: string | null;
+	organization: string | null;
+	email: string | null;
+	alternateEmail: string | null;
+	phone: string | null;
+	address1: string | null;
+	address2: string | null;
+	city: string | null;
+	state: string | null;
+	postalCode: string | null;
+	countryCode: string | null;
+	fax: string | null;
+};
+
+export type DomainContactDetailsErrors = {
+	firstName?: string;
+	lastName?: string;
+	organization?: string;
+	email?: string;
+	alternateEmail?: string;
+	phone?: string;
+	address1?: string;
+	address2?: string;
+	city?: string;
+	state?: string;
+	postalCode?: string;
+	countryCode?: string;
+	fax?: string;
+};
+
 /*
  * Convert a ManagedContactDetails object (used internally by the
  * WPCOM store state hook) into a DomainContactDetails object (used by
@@ -162,6 +214,26 @@ export function prepareDomainContactDetails(
 	};
 }
 
+export function prepareDomainContactDetailsErrors(
+	details: ManagedContactDetails
+): DomainContactDetailsErrors {
+	return {
+		firstName: details.firstName.errors[ 0 ],
+		lastName: details.lastName.errors[ 0 ],
+		organization: details.organization.errors[ 0 ],
+		email: details.email.errors[ 0 ],
+		alternateEmail: details.alternateEmail.errors[ 0 ],
+		phone: details.phone.errors[ 0 ],
+		address1: details.address1.errors[ 0 ],
+		address2: details.address2.errors[ 0 ],
+		city: details.city.errors[ 0 ],
+		state: details.state.errors[ 0 ],
+		postalCode: details.postalCode.errors[ 0 ],
+		countryCode: details.countryCode.errors[ 0 ],
+		fax: details.fax.errors[ 0 ],
+	};
+}
+
 /*
  * Helper type which bundles the field updaters in a single object
  * to help keep import lists under control. All updaters should
@@ -176,6 +248,10 @@ export type ManagedContactDetailsUpdaters = {
 	touchContactFields: ( ManagedContactDetails ) => ManagedContactDetails;
 	updateVatId: ( ManagedContactDetails, string ) => ManagedContactDetails;
 	setErrorMessages: ( ManagedContactDetails, ManagedContactDetailsErrors ) => ManagedContactDetails;
+	populateDomainFieldsFromCache: (
+		ManagedContactDetails,
+		PossiblyCompleteDomainContactDetails
+	) => ManagedContactDetails;
 };
 
 export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
@@ -256,6 +332,28 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 		errors: ManagedContactDetailsErrors
 	): ManagedContactDetails => {
 		return setManagedContactDetailsErrors( errors, oldDetails );
+	},
+
+	populateDomainFieldsFromCache: (
+		oldDetails: ManagedContactDetails,
+		newDetails: PossiblyCompleteDomainContactDetails
+	): ManagedContactDetails => {
+		return {
+			...oldDetails,
+			firstName: setValueUnlessTouched( newDetails.firstName, oldDetails.firstName ),
+			lastName: setValueUnlessTouched( newDetails.lastName, oldDetails.lastName ),
+			organization: setValueUnlessTouched( newDetails.organization, oldDetails.organization ),
+			email: setValueUnlessTouched( newDetails.email, oldDetails.email ),
+			alternateEmail: setValueUnlessTouched( newDetails.alternateEmail, oldDetails.alternateEmail ),
+			phone: setValueUnlessTouched( newDetails.phone, oldDetails.phone ),
+			address1: setValueUnlessTouched( newDetails.address1, oldDetails.address1 ),
+			address2: setValueUnlessTouched( newDetails.address2, oldDetails.address2 ),
+			city: setValueUnlessTouched( newDetails.city, oldDetails.city ),
+			state: setValueUnlessTouched( newDetails.state, oldDetails.state ),
+			postalCode: setValueUnlessTouched( newDetails.postalCode, oldDetails.postalCode ),
+			countryCode: setValueUnlessTouched( newDetails.countryCode, oldDetails.countryCode ),
+			fax: setValueUnlessTouched( newDetails.fax, oldDetails.fax ),
+		};
 	},
 };
 

@@ -1,9 +1,3 @@
-/**
- * External dependencies
- */
-
-import { Action } from 'redux';
-
 export interface NewSiteBlogDetails {
 	url: string;
 	blogid: number;
@@ -48,8 +42,4 @@ export interface CreateSiteParams {
 		site_creation_flow?: string;
 		theme?: string;
 	};
-}
-
-export interface CreateSiteAction extends Action {
-	params: CreateSiteParams;
 }

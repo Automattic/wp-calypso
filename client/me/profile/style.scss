@@ -1,4 +1,4 @@
-.me-profile-settings .edit-gravatar {
+.profile__settings .edit-gravatar {
 	text-align: center;
 
 	@include breakpoint('>960px') {
@@ -14,14 +14,14 @@
 	}
 }
 
-.me-profile-settings .form-fieldset:nth-child( 1 ),
-.me-profile-settings .form-fieldset:nth-child( 2 ) {
+.profile__settings .form-fieldset:nth-child( 1 ),
+.profile__settings .form-fieldset:nth-child( 2 ) {
 	@include breakpoint('>960px') {
 		clear: right;
 	}
 }
 
-.me-profile-settings__info-text {
+.profile__info-text {
 	margin-bottom: 0;
 }
 

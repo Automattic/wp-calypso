@@ -27,19 +27,23 @@ import StepUpgrade from './step-upgrade';
 import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'state/sites/selectors';
-import { receiveSite, updateSiteMigrationMeta } from 'state/sites/actions';
+import { receiveSite, updateSiteMigrationMeta, requestSite } from 'state/sites/actions';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { urlToSlug } from 'lib/url';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import wpcom from 'lib/wp';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
  */
 import './section-migrate.scss';
 
+const THIRTY_SECONDS = 30 * 1000;
+
 class SectionMigrate extends Component {
 	_startedMigrationFromCart = false;
+	_timeStartedMigrationFromCart = false;
 
 	state = {
 		errorMessage: '',
@@ -56,8 +60,13 @@ class SectionMigrate extends Component {
 	};
 
 	componentDidMount() {
+		if ( this.isNonAtomicJetpack() ) {
+			return page( `/import/${ this.props.targetSiteSlug }` );
+		}
+
 		if ( true === this.props.startMigration ) {
 			this._startedMigrationFromCart = true;
+			this._timeStartedMigrationFromCart = new Date().getTime();
 			this.setMigrationState( { migrationStatus: 'backing-up' } );
 			this.startMigration();
 		}
@@ -67,6 +76,10 @@ class SectionMigrate extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		if ( this.isNonAtomicJetpack() ) {
+			return page( `/import/${ this.props.targetSiteSlug }` );
+		}
+
 		if ( this.props.sourceSiteId !== prevProps.sourceSiteId ) {
 			this.fetchSourceSitePluginsAndThemes();
 		}
@@ -110,6 +123,12 @@ class SectionMigrate extends Component {
 	finishMigration = () => {
 		const { targetSiteId, targetSiteSlug } = this.props;
 
+		/**
+		 * Request another update after the migration is finished to
+		 * update the site title and other info that may have changed.
+		 */
+		this.props.requestSite( targetSiteId );
+
 		wpcom
 			.undocumented()
 			.resetMigration( targetSiteId )
@@ -152,10 +171,13 @@ class SectionMigrate extends Component {
 		// and start migration straight away. This condition prevents a response
 		// from the status endpoint accidentally changing the local state
 		// before the server's properly registered that we're backing up.
+		// After 30 seconds, responses from the server are no longer ignored,
+		// this prevents migrations reset from the server from being locked.
 		if (
 			this._startedMigrationFromCart &&
 			'backing-up' === this.state.migrationStatus &&
-			state.migrationStatus === 'inactive'
+			state.migrationStatus === 'inactive' &&
+			new Date().getTime() - this._timeStartedMigrationFromCart < THIRTY_SECONDS
 		) {
 			return;
 		}
@@ -222,6 +244,8 @@ class SectionMigrate extends Component {
 
 		this.setMigrationState( { migrationStatus: 'backing-up', startTime: null } );
 
+		this.props.recordTracksEvent( 'calypso_site_migration_start_migration' );
+
 		wpcom
 			.undocumented()
 			.startMigration( sourceSiteId, targetSiteId )
@@ -251,7 +275,7 @@ class SectionMigrate extends Component {
 	};
 
 	updateFromAPI = () => {
-		const { targetSiteId } = this.props;
+		const { targetSiteId, targetSite } = this.props;
 		wpcom
 			.undocumented()
 			.getMigrationStatus( targetSiteId )
@@ -262,6 +286,7 @@ class SectionMigrate extends Component {
 					source_blog_id: sourceSiteId,
 					created: startTime,
 					last_modified: lastModified,
+					is_atomic: isBackendAtomic,
 				} = response;
 
 				if ( sourceSiteId && sourceSiteId !== this.props.sourceSiteId ) {
@@ -295,6 +320,13 @@ class SectionMigrate extends Component {
 						return;
 					}
 
+					/**
+					 * Renew the site if the backend upgraded do Atomic, but Calypso still has old data
+					 */
+					if ( isBackendAtomic && ! get( targetSite, 'options.is_wpcom_atomic', false ) ) {
+						this.props.requestSite( targetSiteId );
+					}
+
 					this.setMigrationState( {
 						migrationStatus,
 						percent,
@@ -312,17 +344,23 @@ class SectionMigrate extends Component {
 	};
 
 	isInProgress = () => {
-		return includes( [ 'backing-up', 'restoring' ], this.state.migrationStatus );
+		return includes( [ 'new', 'backing-up', 'restoring' ], this.state.migrationStatus );
 	};
 
 	isFinished = () => {
 		return includes( [ 'done', 'error', 'unknown' ], this.state.migrationStatus );
 	};
 
+	isNonAtomicJetpack = () => {
+		return ! this.props.isTargetSiteAtomic && this.props.isTargetSiteJetpack;
+	};
+
 	renderLoading() {
+		const { translate } = this.props;
+
 		return (
 			<CompactCard>
-				<span className="migrate__placeholder">Loading...</span>
+				<span className="migrate__placeholder">{ translate( 'Loading…' ) }</span>
 			</CompactCard>
 		);
 	}
@@ -470,6 +508,9 @@ class SectionMigrate extends Component {
 		}
 
 		if ( 'backing-up' === progressState ) {
+			if ( 'new' === migrationStatus ) {
+				return <Spinner />;
+			}
 			return <Gridicon className="migrate__progress-item-icon-success" icon="checkmark-circle" />;
 		}
 
@@ -484,30 +525,52 @@ class SectionMigrate extends Component {
 
 	renderProgressItem( progressState ) {
 		const { migrationStatus } = this.state;
-		const { sourceSite, targetSite } = this.props;
+		const { sourceSite, targetSite, translate } = this.props;
 		const sourceSiteDomain = get( sourceSite, 'domain' );
 		const targetSiteDomain = get( targetSite, 'domain' );
 
 		let progressItemText;
 		switch ( progressState ) {
 			case 'backing-up':
-				progressItemText = (
-					<span>
-						Backed up from <span className="migrate__domain">{ sourceSiteDomain }</span>
-					</span>
-				);
-				if ( migrationStatus === 'backing-up' ) {
+				if ( 'backing-up' === migrationStatus || 'new' === migrationStatus ) {
 					progressItemText = (
 						<span>
-							Backing up from <span className="migrate__domain">{ sourceSiteDomain }</span>
+							{ translate( 'Backing up {{sp}}%(sourceSiteDomain)s{{/sp}}', {
+								args: {
+									sourceSiteDomain,
+								},
+								components: {
+									sp: <span className="migrate__domain" />,
+								},
+							} ) }
 						</span>
 					);
+					break;
 				}
+				progressItemText = (
+					<span>
+						{ translate( 'Backup of {{sp}}%(sourceSiteDomain)s{{/sp}} completed', {
+							args: {
+								sourceSiteDomain,
+							},
+							components: {
+								sp: <span className="migrate__domain" />,
+							},
+						} ) }
+					</span>
+				);
 				break;
 			case 'restoring':
 				progressItemText = (
 					<span>
-						Restoring to <span className="migrate__domain">{ targetSiteDomain }</span>
+						{ translate( 'Restoring to {{sp}}%(targetSiteDomain)s{{/sp}}', {
+							args: {
+								targetSiteDomain,
+							},
+							components: {
+								sp: <span className="migrate__domain" />,
+							},
+						} ) }
 					</span>
 				);
 				break;
@@ -644,5 +707,11 @@ export default connect(
 			targetSiteSlug: getSelectedSiteSlug( state ),
 		};
 	},
-	{ navigateToSelectedSourceSite, receiveSite, updateSiteMigrationMeta }
+	{
+		navigateToSelectedSourceSite,
+		receiveSite,
+		updateSiteMigrationMeta,
+		requestSite,
+		recordTracksEvent,
+	}
 )( localize( SectionMigrate ) );

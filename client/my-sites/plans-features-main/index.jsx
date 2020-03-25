@@ -29,7 +29,7 @@ import {
 	GROUP_JETPACK,
 } from 'lib/plans/constants';
 import {
-	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_PRODUCTS_LIST,
 	JETPACK_PRODUCT_PRICE_MATRIX,
 	getJetpackProducts,
 } from 'lib/products-values/constants';
@@ -432,19 +432,18 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		const { basePlansPath, intervalType, redirectTo, onUpgradeClick } = this.props;
-		const jetpackProducts = getJetpackProducts();
 
 		return (
-			<div className="plans-features-main__group is-narrow">
+			<div className="plans-features-main__group is-jetpack-products">
 				<PlansFeaturesMainProductsHeader />
 				<AsyncLoad
 					require="blocks/product-plan-overlap-notices"
 					placeholder={ null }
 					plans={ JETPACK_PLANS }
-					products={ JETPACK_BACKUP_PRODUCTS }
+					products={ JETPACK_PRODUCTS_LIST }
 				/>
 				<ProductSelector
-					products={ jetpackProducts }
+					products={ getJetpackProducts() }
 					intervalType={ intervalType }
 					basePlansPath={ basePlansPath }
 					productPriceMatrix={ JETPACK_PRODUCT_PRICE_MATRIX }

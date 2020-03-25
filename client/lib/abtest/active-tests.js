@@ -106,40 +106,13 @@ export default {
 		defaultVariation: 'variantShowUpdates',
 		allowExistingUsers: true,
 	},
-	sidebarUpsellNudgeUnification: {
-		datestamp: '20200221',
-		variations: {
-			variantShowUnifiedUpsells: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	domainStepDesignUpdates: {
-		datestamp: '20201220',
-		variations: {
-			variantDesignUpdates: 0,
-			control: 100,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	planStepCopyUpdates: {
-		datestamp: '20200221',
+		datestamp: '20200312',
 		variations: {
 			variantCopyUpdates: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	peerReferralEarnCard: {
-		datestamp: '20200305',
-		variations: {
-			show: 50,
-			holdout: 50,
-		},
-		defaultVariation: 'holdout',
 		allowExistingUsers: true,
 	},
 };

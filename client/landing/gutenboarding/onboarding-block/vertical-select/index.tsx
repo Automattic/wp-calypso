@@ -15,7 +15,7 @@ import { Verticals } from '@automattic/data-stores';
 import { SiteVertical } from '../../stores/onboard/types';
 import { StepProps } from '../stepper-wizard';
 import Question from '../question';
-import { __TodoAny__ } from '../../../../types';
+import AnimatedPlaceholder from '../animated-placeholder';
 
 /**
  * Style dependencies
@@ -52,7 +52,7 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 	 *
 	 * Using `Suggestions` here would effectively be `any`.
 	 */
-	const suggestionRef = createRef< __TodoAny__ >();
+	const suggestionRef = createRef< any >();
 
 	const verticals = useSelect( select =>
 		select( VERTICALS_STORE )
@@ -111,6 +111,15 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 			// User-supplied verticals don't have IDs.
 			suggestions.unshift( { label: inputValue.trim() } );
 		}
+
+		// If there is only one suggestion and that suggestion matches the user input value,
+		// do not show any suggestions.
+		if (
+			suggestions.length === 1 &&
+			suggestions[ 0 ].label.toLowerCase() === normalizedInputValue
+		) {
+			suggestions = [];
+		}
 	}
 
 	const handleSelect = ( vertical: SiteVertical ) => {
@@ -129,7 +138,7 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 	};
 
 	const label = NO__( 'My site is about' );
-	const displayValue = siteVertical?.label ?? NO__( 'enter a topic' );
+	const displayValue = siteVertical?.label ?? '';
 
 	// Focus the input when we change to active
 	const inputRef = createRef< HTMLInputElement >();
@@ -143,26 +152,43 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 		<Question
 			label={ label }
 			displayValue={ displayValue }
-			isActive={ isActive }
+			isActive={ isActive || ! displayValue }
 			onExpand={ onExpand }
 		>
 			<div className="vertical-select">
+				{ ! inputValue && (
+					<AnimatedPlaceholder
+						texts={ [
+							NO__( 'football' ),
+							NO__( 'shopping' ),
+							NO__( 'cars' ),
+							NO__( 'design' ),
+							NO__( 'travel' ),
+						] }
+					/>
+				) }
 				<input
-					ref={ inputRef }
-					className={ inputClass }
-					placeholder={ NO__( 'enter a topic' ) }
-					onChange={ handleSuggestionChangeEvent }
-					onBlur={ handleBlur }
-					onKeyDown={ handleSuggestionKeyDown }
+					aria-label={ label }
 					autoComplete="off"
+					className={ inputClass }
+					onBlur={ handleBlur }
+					onChange={ handleSuggestionChangeEvent }
+					onKeyDown={ handleSuggestionKeyDown }
+					placeholder=""
+					ref={ inputRef }
 					value={ inputValue }
 				/>
-				<Suggestions
-					ref={ suggestionRef }
-					query={ inputValue }
-					suggestions={ ! verticals.length ? loadingMessage : suggestions }
-					suggest={ handleSelect }
-				/>
+				<div className="vertical-select__suggestions">
+					{ inputValue && (
+						<Suggestions
+							ref={ suggestionRef }
+							query={ inputValue }
+							suggestions={ ! verticals.length ? loadingMessage : suggestions }
+							suggest={ handleSelect }
+							title={ NO__( 'Suggestions' ) }
+						/>
+					) }
+				</div>
 			</div>
 		</Question>
 	);

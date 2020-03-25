@@ -30,7 +30,7 @@ const SiteTitle: FunctionComponent< StepProps > = ( {
 		setSiteTitle( e.target.value.trim().length ? e.target.value : '' );
 
 	const label = NO__( "It's called" );
-	const value = siteTitle.length ? siteTitle : NO__( 'enter a title' );
+	const value = siteTitle.length ? siteTitle : '';
 
 	// Focus the input when we change to active
 	const inputRef = createRef< HTMLInputElement >();
@@ -52,7 +52,7 @@ const SiteTitle: FunctionComponent< StepProps > = ( {
 				<input
 					ref={ inputRef }
 					className={ inputClass }
-					placeholder={ NO__( 'enter a title' ) }
+					placeholder={ '' }
 					onChange={ handleChange }
 					onBlur={ onSelect }
 					value={ siteTitle }

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { generatePath, useRouteMatch } from 'react-router-dom';
+import { generatePath, useLocation, useRouteMatch } from 'react-router-dom';
 import { getLanguageRouteParam } from '../../lib/i18n-utils';
 import { ValuesType } from 'utility-types';
 
@@ -11,8 +11,9 @@ import { ValuesType } from 'utility-types';
 export const Step = {
 	IntentGathering: undefined,
 	DesignSelection: 'design',
-	PageSelection: 'pages',
+	Style: 'style',
 	Signup: 'signup',
+	Login: 'login',
 	CreateSite: 'create-site',
 } as const;
 
@@ -51,4 +52,11 @@ export function usePath() {
 export function useLangRouteParam() {
 	const match = useRouteMatch< { lang?: string } >( path );
 	return match?.params.lang;
+}
+
+// Returns true if the url has a `?new`, which is used by the
+// CreateSite step to decide whether a site creation needs to
+// be triggered.
+export function useNewQueryParam() {
+	return new URLSearchParams( useLocation().search ).has( 'new' );
 }

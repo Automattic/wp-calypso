@@ -37,6 +37,7 @@ import hasJetpackSites from 'state/selectors/has-jetpack-sites';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
+import isSiteMigrationActiveRoute from 'state/selectors/is-site-migration-active-route';
 import {
 	getCustomizerUrl,
 	getSite,
@@ -57,6 +58,8 @@ import {
 import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
+import isSiteUsingCoreSiteEditor from 'state/selectors/is-site-using-core-site-editor';
+import getSiteEditorUrl from 'state/selectors/get-site-editor-url';
 import {
 	SIDEBAR_SECTION_SITE,
 	SIDEBAR_SECTION_DESIGN,
@@ -194,11 +197,18 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		const activityLink = '/activity-log' + siteSuffix;
+		let activityLink = '/activity-log' + siteSuffix,
+			activityLabel = translate( 'Activity' );
+
+		if ( this.props.isJetpack && isEnabled( 'manage/themes-jetpack' ) ) {
+			activityLink += '?group=rewind';
+			activityLabel = translate( 'Activity & Backups' );
+		}
+
 		return (
 			<SidebarItem
 				tipTarget="activity"
-				label={ translate( 'Activity' ) }
+				label={ activityLabel }
 				selected={ itemLinkMatches( [ '/activity-log' ], path ) }
 				link={ activityLink }
 				onNavigate={ this.trackActivityClick }
@@ -265,7 +275,14 @@ export class MySitesSidebar extends Component {
 	}
 
 	design() {
-		const { path, site, translate, canUserEditThemeOptions, showCustomizerLink } = this.props,
+		const {
+				path,
+				site,
+				translate,
+				canUserEditThemeOptions,
+				showCustomizerLink,
+				showSiteEditor,
+			} = this.props,
 			jetpackEnabled = isEnabled( 'manage/themes-jetpack' );
 		let themesLink;
 
@@ -292,6 +309,14 @@ export class MySitesSidebar extends Component {
 						preloadSectionName="customize"
 						forceInternalLink
 						expandSection={ this.expandDesignSection }
+					/>
+				) }
+				{ showSiteEditor && (
+					<SidebarItem
+						label={ translate( 'Site Editor (beta)' ) }
+						link={ this.props.siteEditorUrl }
+						preloadSectionName="site editor"
+						forceInternalLink
 					/>
 				) }
 				<SidebarItem
@@ -753,6 +778,9 @@ function mapStateToProps( state ) {
 	const isToolsSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_TOOLS );
 	const isManageSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_MANAGE );
 
+	const isMigrationInProgress =
+		isSiteMigrationInProgress( state, selectedSiteId ) || isSiteMigrationActiveRoute( state );
+
 	return {
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
 		canUserListUsers: canCurrentUser( state, siteId, 'list_users' ),
@@ -776,9 +804,14 @@ function mapStateToProps( state ) {
 		isToolsSectionOpen,
 		isManageSectionOpen,
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
-		isMigrationInProgress: !! isSiteMigrationInProgress( state, selectedSiteId ),
+		isMigrationInProgress,
 		isVip: isVipSite( state, selectedSiteId ),
-		showCustomizerLink: ! isSiteUsingFullSiteEditing( state, selectedSiteId ),
+		showCustomizerLink: ! (
+			isSiteUsingFullSiteEditing( state, selectedSiteId ) ||
+			isSiteUsingCoreSiteEditor( state, selectedSiteId )
+		),
+		showSiteEditor: isSiteUsingCoreSiteEditor( state, selectedSiteId ),
+		siteEditorUrl: getSiteEditorUrl( state, selectedSiteId ),
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',

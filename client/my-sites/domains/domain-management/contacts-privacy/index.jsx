@@ -78,7 +78,7 @@ class ContactsPrivacy extends React.PureComponent {
 							this.props.selectedDomainName
 						) }
 					>
-						{ translate( 'Edit Contact Info' ) }
+						{ translate( 'Edit contact info' ) }
 					</VerticalNavItem>
 
 					{ canManageConsent && (

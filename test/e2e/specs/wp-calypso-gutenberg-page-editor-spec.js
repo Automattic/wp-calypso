@@ -537,7 +537,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		step( 'Can insert the payment button', async function() {
 			const pageTitle = 'Payment Button Page: ' + dataHelper.randomPhrase();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			const blockId = await gEditorComponent.addBlock( 'Simple Payments button' );
+			const blockId = await gEditorComponent.addBlock( 'Simple Payments' );
 
 			const gPaymentComponent = await SimplePaymentsBlockComponent.Expect( driver, blockId );
 			await gPaymentComponent.insertPaymentButtonDetails( paymentButtonDetails );

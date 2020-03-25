@@ -3,17 +3,22 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Button } from '@automattic/components';
-import { numberFormat, translate } from 'i18n-calypso';
+import { Button, ProgressBar } from '@automattic/components';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
-import { withLocalizedMoment } from 'components/localized-moment';
+import DocumentHead from 'components/data/document-head';
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
+import ScanThreats from 'landing/jetpack-cloud/components/scan-threats';
 import { isEnabled } from 'config';
+import Gridicon from 'components/gridicon';
+import Main from 'components/main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 import './style.scss';
 
@@ -23,7 +28,7 @@ class ScanPage extends Component {
 
 		return (
 			<>
-				<SecurityIcon className="scan__icon" />
+				<SecurityIcon />
 				<h1 className="scan__header scan__header--okay">
 					{ translate( 'Don’t worry about a thing' ) }
 				</h1>
@@ -45,45 +50,57 @@ class ScanPage extends Component {
 	}
 
 	renderScanning() {
-		return <p>Scanning!</p>;
-	}
-
-	renderThreats() {
-		const { threats, site } = this.props;
-
 		return (
 			<>
-				<h1 className="scan__header">{ translate( 'Your site may be at risk' ) }</h1>
+				<SecurityIcon icon="in-progress" />
+				<h1 className="scan__header scan__header--okay">{ translate( 'Preparing to scan' ) }</h1>
+				<ProgressBar value={ 1 } total={ 100 } color="#069E08" />
 				<p>
-					{ translate(
-						'The scan found {{strong}}%(threatCount)s{{/strong}} potential threat with {{strong}}%(siteName)s{{/strong}}.',
-						'The scan found {{strong}}%(threatCount)s{{/strong}} potential threats with {{strong}}%(siteName)s{{/strong}}.',
-						{
-							args: {
-								siteName: site.name,
-								threatCount: numberFormat( threats.length ),
-							},
-							components: { strong: <strong /> },
-							comment:
-								'%(threatCount)s represents the number of threats currently identified on the site, and $(siteName)s is the name of the site.',
-							count: threats.length,
-						}
-					) }
-					<br />
-					{ translate(
-						'Please review them below and take action. We are {{a}}here to help{{/a}} if you need us.',
-						{
-							components: { a: <a href="https://jetpack.com/contact-support/" /> },
-							comment: 'The {{a}} tag is a link that goes to a contact support page.',
-						}
-					) }
+					Welcome to Jetpack Scan, we are taking a first look at your site now and the results will
+					be with you soon.
+				</p>
+				<p>
+					We will send you an email once the scan completes, in the meantime feel free to continue
+					to use your site as normal, you can check back on progress at any time.
 				</p>
 			</>
 		);
 	}
 
+	renderThreats() {
+		const { threats, site } = this.props;
+		return (
+			<>
+				<SecurityIcon icon="error" />
+				<ScanThreats className="scan__threats" threats={ threats } site={ site } />
+			</>
+		);
+	}
+
 	renderScanError() {
-		return <p>There is an error with the scan.</p>;
+		const { siteSlug } = this.props;
+
+		return (
+			<>
+				<SecurityIcon icon="scan-error" />
+				<h1 className="scan__header">{ translate( 'Something went wrong' ) }</h1>
+				<p>
+					The scan did not complete successfully. In order to complete the scan you need to contact
+					support.
+				</p>
+				<Button
+					primary
+					target="_blank"
+					rel="noopener noreferrer"
+					href={ `https://jetpack.com/contact-support/?scan-state=error&site-slug=${ siteSlug }` }
+					className="scan__button"
+				>
+					{ translate( 'Contact Support {{externalIcon/}}', {
+						components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
+					} ) }
+				</Button>
+			</>
+		);
 	}
 
 	renderScanState() {
@@ -101,8 +118,10 @@ class ScanPage extends Component {
 
 	render() {
 		return (
-			<div>
-				{ this.renderScanState() }
+			<Main wideLayout className="scan__main">
+				<DocumentHead title="Scanner" />
+				<SidebarNavigation />
+				<div className="scan__content">{ this.renderScanState() }</div>
 				<StatsFooter
 					header="Scan Summary"
 					stats={ [
@@ -113,7 +132,7 @@ class ScanPage extends Component {
 					noticeText="Failing to plan is planning to fail. Regular backups ensure that should the worst happen, you are prepared. Jetpack Backups has you covered."
 					noticeLink="https://jetpack/upgrade/backups"
 				/>
-			</div>
+			</Main>
 		);
 	}
 }
@@ -129,12 +148,35 @@ export default connect( state => {
 	// TODO: Get threats from actual API.
 	const threats = [
 		{
-			title: 'Infected core file: wp-config.php',
-			details: 'Unexpected string was found in: /htdocs/wp-admin/wp-config.php',
+			id: 1,
+			title: 'Infected core file: index.php',
+			action: null,
+			detectionDate: '23 September, 2019',
+			actionDate: null,
+			description: {
+				title: 'Unexpected string was found in: /htdocs/wp-admin/index.php',
+				problem:
+					'Jetpack has detected code that is often used in web-based "shell" programs. If you believe the file(s) have been infected they need to be cleaned.',
+				fix:
+					'To fix this threat, Jetpack will be deleting the file, since it’s not a part of the original WordPress.',
+				details: 'This threat was found in the file: /htdocs/index.php',
+			},
 		},
 		{
-			title: 'Unexpected core file: sx--a4bp.php',
-			details: 'Unexpected file sx--a4bp.php contains malicious code and is not part of WordPress.',
+			id: 2,
+			title: 'Infected Plugin: Contact Form 7',
+			action: null,
+			detectionDate: '17 September, 2019',
+			actionDate: null,
+			description: {
+				title:
+					'Unexpected file baaaaaad--file.php contains malicious code and is not part of the Plugin',
+				problem:
+					'Jetpack has detected code that is often used in web-based "shell" programs. If you believe the file(s) have been infected they need to be cleaned.',
+				fix:
+					'To fix this threat, Jetpack will be deleting the file, since it’s not a part of the original WordPress.',
+				details: 'This threat was found in the file: /htdocs/sx--a4bp.php',
+			},
 		},
 	];
 

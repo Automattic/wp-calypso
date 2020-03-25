@@ -16,6 +16,7 @@ import { getLanguage, getLocaleSlug } from 'lib/i18n-utils';
 import readerContentWidth from 'reader/lib/content-width';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
+const { Blob } = globalThis; // The linter complains if I don't do this...?
 
 /**
  * Some endpoints are restricted by OAuth client IDs and secrets
@@ -2459,6 +2460,49 @@ Undocumented.prototype.startMigration = function( sourceSiteId, targetSiteId ) {
 	return this.wpcom.req.post( {
 		path: `/sites/${ targetSiteId }/migrate-from/${ sourceSiteId }`,
 		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+Undocumented.prototype.getAtomicSiteMediaViaProxy = function(
+	siteIdOrSlug,
+	mediaPath,
+	{ query = '', maxSize },
+	fn
+) {
+	const params = {
+		path: `/sites/${ siteIdOrSlug }/atomic-auth-proxy/file${ mediaPath }${ query }`,
+		apiNamespace: 'wpcom/v2',
+	};
+
+	const fetchMedia = () => this.wpcom.req.get( { ...params, responseType: 'blob' }, fn );
+
+	if ( ! maxSize ) {
+		return fetchMedia();
+	}
+
+	return this.wpcom.req.get( { ...params, method: 'HEAD' }, ( err, data, headers ) => {
+		if ( headers[ 'Content-Length' ] > maxSize ) {
+			fn( { message: 'exceeded_max_size' }, null );
+			return;
+		}
+
+		fetchMedia();
+	} );
+};
+
+Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function(
+	siteIdOrSlug,
+	mediaPath,
+	options,
+	fn
+) {
+	return this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, options, ( err, data ) => {
+		if ( data instanceof Blob || ( err && err.message === 'exceeded_max_size' ) ) {
+			fn( err, data );
+			return;
+		}
+
+		return this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, options, fn );
 	} );
 };
 

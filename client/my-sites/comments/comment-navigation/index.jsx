@@ -315,7 +315,7 @@ export class CommentNavigation extends Component {
 
 					{ hasComments && (
 						<Button compact onClick={ toggleBulkMode }>
-							{ translate( 'Bulk Edit' ) }
+							{ translate( 'Bulk edit' ) }
 						</Button>
 					) }
 				</CommentNavigationTab>

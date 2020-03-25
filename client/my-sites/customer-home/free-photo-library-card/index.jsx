@@ -1,16 +1,24 @@
 /**
  * External dependencies
  */
-import React, { Fragment, useState } from 'react';
+import React from 'react';
 import { useTranslate } from 'i18n-calypso';
-import { Button, Card, Dialog } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import CardHeading from 'components/card-heading';
+import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 import { localizeUrl } from 'lib/i18n-utils';
+import {
+	withAnalytics,
+	composeAnalytics,
+	recordTracksEvent,
+	bumpStat,
+} from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -20,58 +28,51 @@ import './style.scss';
 /**
  * Image dependencies
  */
-import freePhotoLibraryThumbnail from 'assets/images/customer-home/free-photo-library-thumbnail.png';
-import freePhotoLibraryVideoPrompt from 'assets/images/customer-home/free-photo-library-video-prompt.png';
+import freePhotoLibraryVideoPrompt from 'assets/images/customer-home/illustration--free-photo-library.svg';
 
-const FreePhotoLibraryCard = () => {
-	const [ showDialog, setShowDialog ] = useState( false );
+const FreePhotoLibraryCard = ( { openSupportArticleDialogAndTrack } ) => {
 	const translate = useTranslate();
 
-	const toggleDialog = () => setShowDialog( ! showDialog );
-
 	return (
-		<Fragment>
-			<Dialog additionalClassNames="free-photo-library-card__dialog" isVisible={ showDialog }>
-				<video
-					className="free-photo-library-card__demonstration-video"
-					controls
-					muted
-					autoPlay
-					poster={ freePhotoLibraryThumbnail }
-				>
-					<source
-						src="https://wpcom.files.wordpress.com/2020/02/free-photo-library-demonstration.mp4"
-						type="video/mp4"
+		<Card className="free-photo-library-card">
+			{ isDesktop() && (
+				<button onClick={ openSupportArticleDialogAndTrack.bind( this, 'prompt' ) }>
+					<img
+						className="free-photo-library-card__demonstration-image"
+						src={ freePhotoLibraryVideoPrompt }
+						alt={ translate( 'Free Photo Library demonstration' ) }
 					/>
-				</video>
-				<div className="free-photo-library-card__dialog-close">
-					<Button onClick={ toggleDialog }>{ translate( 'Close' ) }</Button>
-				</div>
-			</Dialog>
-			<Card className="free-photo-library-card">
-				{ isDesktop() && (
-					<button onClick={ toggleDialog }>
-						<img
-							className="free-photo-library-card__demonstration-image"
-							src={ freePhotoLibraryVideoPrompt }
-							alt={ translate( 'Free Photo Library demonstration' ) }
-						/>
-					</button>
+				</button>
+			) }
+			<CardHeading>{ translate( 'Over 40,000 Free Photos' ) }</CardHeading>
+			<p className="free-photo-library-card__text customer-home__card-subheader">
+				{ translate(
+					'The WordPress.com Free Photo Library integrates ' +
+						'your site with beautiful copyright-free photos to ' +
+						'create stunning designs.'
 				) }
-				<CardHeading>{ translate( 'Over 40,000 Free Photos' ) }</CardHeading>
-				<p className="free-photo-library-card__text customer-home__card-subheader">
-					{ translate(
-						'The WordPress.com Free Photo Library integrates ' +
-							'your site with beautiful copyright-free photos to ' +
-							'create stunning designs.'
-					) }
-				</p>
-				<Button href={ localizeUrl( 'https://support.wordpress.com/free-photo-library/' ) }>
-					{ translate( 'Learn more' ) }
-				</Button>
-			</Card>
-		</Fragment>
+			</p>
+			<Button onClick={ openSupportArticleDialogAndTrack.bind( this, 'button' ) }>
+				{ translate( 'Learn more' ) }
+			</Button>
+		</Card>
 	);
 };
 
-export default FreePhotoLibraryCard;
+const openSupportArticleDialogAndTrack = clickSource =>
+	withAnalytics(
+		composeAnalytics(
+			clickSource === 'prompt'
+				? recordTracksEvent( 'calypso_customer_home_free_photo_library_video_dialog_view' )
+				: recordTracksEvent( 'calypso_customer_home_free_photo_library_video_support_page_view' ),
+			clickSource === 'prompt'
+				? bumpStat( 'calypso_customer_home', 'view_free_photo_library_video' )
+				: bumpStat( 'calypso_customer_home', 'view_free_photo_library_learn_more' )
+		),
+		openSupportArticleDialog( {
+			postId: 145498,
+			postUrl: localizeUrl( 'https://support.wordpress.com/free-photo-library/' ),
+		} )
+	);
+
+export default connect( null, { openSupportArticleDialogAndTrack } )( FreePhotoLibraryCard );

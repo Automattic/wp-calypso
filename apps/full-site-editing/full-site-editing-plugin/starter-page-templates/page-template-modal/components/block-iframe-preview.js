@@ -43,8 +43,8 @@ const copyStylesToIframe = ( srcDocument, targetiFrameDocument ) => {
 
 	// See https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment
 	const targetDOMFragment = {
-		head: new DocumentFragment(), // eslint-disable-line no-undef
-		body: new DocumentFragment(), // eslint-disable-line no-undef
+		head: document.createDocumentFragment(), // eslint-disable-line no-undef
+		body: document.createDocumentFragment(), // eslint-disable-line no-undef
 	};
 
 	each( Object.keys( targetDOMFragment ), domReference => {
@@ -153,8 +153,11 @@ const BlockFramePreview = ( {
 	useEffect( () => {
 		setTimeout( () => {
 			copyStylesToIframe( window.document, iframeRef.current.contentDocument );
-			iframeRef.current.contentDocument.body.classList.add( bodyClassName );
-			iframeRef.current.contentDocument.body.classList.add( 'editor-styles-wrapper' );
+			iframeRef.current.contentDocument.body.classList.add(
+				bodyClassName,
+				'editor-styles-wrapper',
+				'block-editor__container'
+			);
 			rescale();
 		}, 0 );
 	}, [ setTimeout, bodyClassName, rescale ] );

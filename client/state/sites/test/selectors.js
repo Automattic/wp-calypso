@@ -40,7 +40,6 @@ import {
 	canCurrentUserUseAds,
 	canCurrentUserUseCustomerHome,
 	canCurrentUserUseStore,
-	canJetpackSiteManage,
 	canJetpackSiteUpdateFiles,
 	canJetpackSiteAutoUpdateFiles,
 	canJetpackSiteAutoUpdateCore,
@@ -49,7 +48,6 @@ import {
 	isJetpackSiteMultiSite,
 	isJetpackSiteSecondaryNetworkSite,
 	verifyJetpackModulesActive,
-	getJetpackSiteRemoteManagementUrl,
 	hasJetpackSiteCustomDomain,
 	getJetpackSiteUpdateFilesDisabledReasons,
 	isJetpackSiteMainNetworkSite,
@@ -128,7 +126,6 @@ describe( 'selectors', () => {
 				jetpack: true,
 				canAutoupdateFiles: true,
 				canUpdateFiles: true,
-				canManage: true,
 				isMainNetworkSite: false,
 				isSecondaryNetworkSite: false,
 				isSiteUpgradeable: null,
@@ -2403,92 +2400,6 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#canJetpackSiteManage()', () => {
-		test( 'it should return `null` for a non-existing site', () => {
-			const canManage = canJetpackSiteManage( stateWithNoItems, nonExistingSiteId );
-			chaiExpect( canManage ).to.equal( null );
-		} );
-
-		test( 'it should return `null` for a non jetpack site', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					jetpack: false,
-				},
-			} );
-
-			const canManage = canJetpackSiteManage( state, siteId );
-			chaiExpect( canManage ).to.equal( null );
-		} );
-
-		test( 'it should return `true` if jetpack version is strictly less than 3.4', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					jetpack: true,
-					options: {
-						jetpack_version: '3.3',
-					},
-				},
-			} );
-
-			const canManage = canJetpackSiteManage( state, siteId );
-			chaiExpect( canManage ).to.equal( true );
-		} );
-
-		test( 'it should return `true` if the modules has not yet been fetched', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					jetpack: true,
-					options: {
-						active_modules: null,
-						jetpack_version: '3.4',
-					},
-				},
-			} );
-
-			const canManage = canJetpackSiteManage( state, siteId );
-			chaiExpect( canManage ).to.equal( true );
-		} );
-
-		test( 'it should return `true` if jetpack version is greater or equal to 3.4 and the manage module is active', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					jetpack: true,
-					options: {
-						active_modules: [ 'manage' ],
-						jetpack_version: '3.4',
-					},
-				},
-			} );
-
-			const canManage = canJetpackSiteManage( state, siteId );
-			chaiExpect( canManage ).to.equal( true );
-		} );
-
-		test( 'it should return `false` if jetpack version is greater or equal to 3.4 and the manage module is not active', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					jetpack: true,
-					options: {
-						active_modules: [ 'sso' ],
-						jetpack_version: '3.4',
-					},
-				},
-			} );
-
-			const canManage = canJetpackSiteManage( state, siteId );
-			chaiExpect( canManage ).to.equal( false );
-		} );
-	} );
-
 	describe( '#canJetpackSiteUpdateFiles()', () => {
 		test( 'should return `null` for a non-existing site', () => {
 			const canUpdateFiles = canJetpackSiteUpdateFiles( stateWithNoItems, nonExistingSiteId );
@@ -2994,68 +2905,6 @@ describe( 'selectors', () => {
 				'manage',
 			] );
 			chaiExpect( modulesActive ).to.equal( false );
-		} );
-	} );
-
-	describe( '#getJetpackSiteRemoteManagementUrl()', () => {
-		test( 'should return `null` for a non-existing site', () => {
-			const managementUrl = getJetpackSiteRemoteManagementUrl(
-				stateWithNoItems,
-				nonExistingSiteId
-			);
-			chaiExpect( managementUrl ).to.equal( null );
-		} );
-
-		test( 'it should return `false` for a non jetpack site', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					options: {},
-				},
-			} );
-
-			const managementUrl = getJetpackSiteRemoteManagementUrl( state, siteId );
-			chaiExpect( managementUrl ).to.equal( null );
-		} );
-
-		test( 'it should return the correct url for version of jetpack less than 3.4', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					jetpack: true,
-					options: {
-						active_modules: [ 'manage', 'sso', 'photon', 'omnisearch' ],
-						admin_url: 'https://jetpacksite.me/wp-admin/',
-						jetpack_version: '3.3',
-					},
-				},
-			} );
-
-			const managementUrl = getJetpackSiteRemoteManagementUrl( state, siteId );
-			chaiExpect( managementUrl ).to.equal(
-				'https://jetpacksite.me/wp-admin/admin.php?page=jetpack&configure=json-api'
-			);
-		} );
-
-		test( 'it should return the correct url for versions of jetpack greater than or equal to 3.4', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					jetpack: true,
-					options: {
-						active_modules: [ 'manage', 'sso', 'photon', 'omnisearch' ],
-						admin_url: 'https://jetpacksite.me/wp-admin/',
-						jetpack_version: '3.4',
-					},
-				},
-			} );
-
-			const managementUrl = getJetpackSiteRemoteManagementUrl( state, siteId );
-			chaiExpect( managementUrl ).to.equal(
-				'https://jetpacksite.me/wp-admin/admin.php?page=jetpack&configure=manage'
-			);
 		} );
 	} );
 
@@ -3602,7 +3451,6 @@ describe( 'selectors', () => {
 			const noNewAttributes = getJetpackComputedAttributes( state, 77203074 );
 			chaiExpect( noNewAttributes.canAutoupdateFiles ).to.equal( undefined );
 			chaiExpect( noNewAttributes.canUpdateFiles ).to.equal( undefined );
-			chaiExpect( noNewAttributes.canManage ).to.equal( undefined );
 			chaiExpect( noNewAttributes.isMainNetworkSite ).to.equal( undefined );
 			chaiExpect( noNewAttributes.isSecondaryNetworkSite ).to.equal( undefined );
 			chaiExpect( noNewAttributes.isSiteUpgradeable ).to.equal( undefined );
@@ -3630,7 +3478,6 @@ describe( 'selectors', () => {
 			const noNewAttributes = getJetpackComputedAttributes( state, 77203074 );
 			chaiExpect( noNewAttributes.canAutoupdateFiles ).to.have.property;
 			chaiExpect( noNewAttributes.canUpdateFiles ).to.have.property;
-			chaiExpect( noNewAttributes.canManage ).to.have.property;
 			chaiExpect( noNewAttributes.isMainNetworkSite ).to.have.property;
 			chaiExpect( noNewAttributes.isSecondaryNetworkSite ).to.have.property;
 			chaiExpect( noNewAttributes.isSiteUpgradeable ).to.have.property;

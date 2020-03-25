@@ -51,8 +51,8 @@ export default class DevdocsSidebar extends React.PureComponent {
 							className="devdocs__navigation-item"
 							icon="pencil"
 							label="Contributing"
-							link="/devdocs/.github/CONTRIBUTING.md"
-							selected={ this.isItemSelected( '/devdocs/.github/CONTRIBUTING.md' ) }
+							link="/devdocs/docs/CONTRIBUTING.md"
+							selected={ this.isItemSelected( '/devdocs/docs/CONTRIBUTING.md' ) }
 						/>
 						<SidebarItem
 							className="devdocs__navigation-item"

@@ -23,7 +23,7 @@ const EuAddressFieldset = props => {
 			/>
 			<Input
 				label={ translate( 'City' ) }
-				{ ...getFieldProps( 'city', false, { customErrorMessage: contactDetailsErrors?.city } ) }
+				{ ...getFieldProps( 'city', { customErrorMessage: contactDetailsErrors?.city } ) }
 			/>
 		</div>
 	);

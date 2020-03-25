@@ -5,7 +5,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
-import { find, findKey, flowRight as compose, includes, isEmpty, map } from 'lodash';
+import { find, findKey, filter, flowRight as compose, includes, isEmpty, map } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -146,22 +146,32 @@ export class ProductSelector extends Component {
 		);
 	}
 
-	getProductSlugByCurrentPlan() {
+	getProductSlugsForCurrentPlan() {
 		const { currentPlanSlug, productSlugs } = this.props;
+		return ! currentPlanSlug
+			? null
+			: filter( productSlugs, productSlug => planHasFeature( currentPlanSlug, productSlug ) );
+	}
 
-		if ( ! currentPlanSlug ) {
-			return null;
-		}
+	currentPlanIncludesProduct( product ) {
+		const { currentPlanSlug } = this.props;
+		const productSlugs = this.getProductSlugsForCurrentPlan();
+		return ! currentPlanSlug || ! productSlugs
+			? false
+			: productSlugs.some( slug => product.slugs.includes( slug ) );
+	}
 
-		return find( productSlugs, productSlug => planHasFeature( currentPlanSlug, productSlug ) );
+	getProductSlugByCurrentPlan( product ) {
+		return ! this.props.currentPlanSlug
+			? null
+			: find( product.slugs, slug => planHasFeature( this.props.currentPlanSlug, slug ) );
 	}
 
 	getSubtitleByProduct( product ) {
 		const { currentPlanSlug, moment, selectedSiteSlug, translate } = this.props;
 		const currentPlan = currentPlanSlug && getPlan( currentPlanSlug );
-		const currentPlanIncludesProduct = !! this.getProductSlugByCurrentPlan();
 
-		if ( currentPlan && currentPlanIncludesProduct ) {
+		if ( currentPlan && this.currentPlanIncludesProduct( product ) ) {
 			return translate( 'Included in your {{planLink}}%(planName)s plan{{/planLink}}', {
 				args: {
 					planName: currentPlan.getTitle(),
@@ -201,7 +211,7 @@ export class ProductSelector extends Component {
 		}
 
 		// Description, obtained from a product that's included in a purchased plan
-		const planProductSlug = this.getProductSlugByCurrentPlan();
+		const planProductSlug = this.getProductSlugByCurrentPlan( product );
 		if ( planProductSlug && optionDescriptions && optionDescriptions[ planProductSlug ] ) {
 			return optionDescriptions[ planProductSlug ];
 		}
@@ -235,7 +245,7 @@ export class ProductSelector extends Component {
 		}
 
 		// Product display name, obtained from a product that's included in a purchased plan
-		const planProductSlug = this.getProductSlugByCurrentPlan();
+		const planProductSlug = this.getProductSlugByCurrentPlan( product );
 		if ( planProductSlug && optionDisplayNames && optionDisplayNames[ planProductSlug ] ) {
 			return optionDisplayNames[ planProductSlug ];
 		}
@@ -326,16 +336,15 @@ export class ProductSelector extends Component {
 		);
 	}
 
-	renderManageButton( purchase ) {
-		const { translate } = this.props;
-		const currentPlanIncludesProduct = !! this.getProductSlugByCurrentPlan();
-
+	renderManageButton( product, purchase ) {
 		return (
 			<ProductCardAction
 				onClick={ this.handleManagePurchase( purchase.productSlug ) }
 				href={ managePurchase( purchase.domain, purchase.id ) }
 				label={
-					! currentPlanIncludesProduct ? translate( 'Manage Product' ) : translate( 'Manage Plan' )
+					this.currentPlanIncludesProduct( product )
+						? this.props.translate( 'Manage Plan' )
+						: this.props.translate( 'Manage Product' )
 				}
 				primary={ false }
 			/>
@@ -485,14 +494,13 @@ export class ProductSelector extends Component {
 			} );
 		}
 
-		const currentPlanIncludesProduct = !! this.getProductSlugByCurrentPlan();
 		const currentPlanInSelectedTimeframe = this.isCurrentPlanInSelectedTimeframe();
 
 		return map( products, product => {
 			const stateKey = this.getStateKey( product.id, intervalType );
 
 			let purchase, isCurrent;
-			if ( currentPlanIncludesProduct ) {
+			if ( this.currentPlanIncludesProduct( product ) ) {
 				purchase = this.getPurchaseByCurrentPlan();
 				isCurrent = currentPlanInSelectedTimeframe;
 			} else {
@@ -510,7 +518,7 @@ export class ProductSelector extends Component {
 					purchase={ purchase }
 					subtitle={ this.getSubtitleByProduct( product ) }
 				>
-					{ hasProductPurchase && isCurrent && this.renderManageButton( purchase ) }
+					{ hasProductPurchase && isCurrent && this.renderManageButton( product, purchase ) }
 					{ ! hasProductPurchase && ! isCurrent && (
 						<Fragment>
 							<ProductCardPromoNudge

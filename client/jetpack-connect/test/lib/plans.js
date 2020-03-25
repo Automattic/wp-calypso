@@ -199,7 +199,6 @@ export const SELECTED_SITE = deepFreeze( {
 	title: 'Test Site',
 	canAutoupdateFiles: true,
 	canUpdateFiles: true,
-	canManage: true,
 	isMainNetworkSite: true,
 	isSecondaryNetworkSite: false,
 	isSiteUpgradeable: true,

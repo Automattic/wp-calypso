@@ -5,18 +5,31 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { memoize } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import config from 'config';
-import CurrentSite from '../current-site';
+import CurrentSite from 'my-sites/current-site';
+import ExpandableSidebarMenu from 'layout/sidebar/expandable';
+import { itemLinkMatches } from 'my-sites/sidebar/utils';
+import Badge from 'components/badge';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
+import { isSidebarSectionOpen } from 'state/my-sites/sidebar/selectors';
+import {
+	expandMySitesSidebarSection as expandSection,
+	toggleMySitesSidebarSection as toggleSection,
+} from 'state/my-sites/sidebar/actions';
+
+// Lowercase because these are used as keys for sidebar state.
+export const SIDEBAR_SECTION_SCAN = 'scan';
+export const SIDEBAR_SECTION_BACKUP = 'backup';
 
 /**
  * Style dependencies
@@ -27,6 +40,7 @@ class JetpackCloudSidebar extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 		selectedSiteSlug: PropTypes.string,
+		threats: PropTypes.array,
 	};
 
 	/**
@@ -40,17 +54,23 @@ class JetpackCloudSidebar extends Component {
 		return this.props.path === path || ( allowStartsWith && this.props.path.startsWith( path ) );
 	}
 
+	expandScanSection = () => this.props.expandSection( SIDEBAR_SECTION_SCAN );
+	expandBackupSection = () => this.props.expandSection( SIDEBAR_SECTION_BACKUP );
+
+	toggleSection = memoize( id => () => this.props.toggleSection( id ) );
+
 	onNavigate = () => {
 		window.scrollTo( 0, 0 );
 	};
 
 	render() {
-		const { selectedSiteSlug, translate } = this.props;
+		const { selectedSiteSlug, translate, threats } = this.props;
+		const numberOfThreatsFound = threats.length;
 
 		return (
-			<Sidebar>
-				<CurrentSite />
+			<Sidebar className="sidebar__jetpack-cloud">
 				<SidebarRegion>
+					<CurrentSite />
 					<SidebarMenu>
 						<SidebarItem
 							link="/"
@@ -63,28 +83,80 @@ class JetpackCloudSidebar extends Component {
 						/>
 					</SidebarMenu>
 					{ config.isEnabled( 'jetpack-cloud/backups' ) && (
-						<SidebarItem
-							label={ translate( 'Backups', {
-								comment: 'Jetpack Cloud sidebar navigation item',
+						<ExpandableSidebarMenu
+							onClick={ this.toggleSection( SIDEBAR_SECTION_BACKUP ) }
+							expanded={ this.props.isBackupSectionOpen }
+							title={ this.props.translate( 'Backup', {
+								comment: 'Jetpack Cloud / Backup sidebar navigation item',
 							} ) }
-							link={ selectedSiteSlug ? `/backups/${ selectedSiteSlug }` : '/backups' }
-							onNavigate={ this.onNavigate }
 							materialIcon="backup"
 							materialIconStyle="filled"
-							selected={ this.isSelected( '/backups' ) }
-						/>
+						>
+							<ul>
+								<SidebarItem
+									label={ translate( 'Status', {
+										comment: 'Jetpack Cloud / Backup status sidebar navigation item',
+									} ) }
+									link={ selectedSiteSlug ? `/backups/${ selectedSiteSlug }` : '/backups' }
+									onNavigate={ this.onNavigate }
+									selected={ itemLinkMatches( '/backups', this.props.path ) }
+								/>
+								<SidebarItem
+									label={ translate( 'Activity Log', {
+										comment: 'Jetpack Cloud / Activity Log status sidebar navigation item',
+									} ) }
+									link={ selectedSiteSlug ? `/activity/${ selectedSiteSlug }` : '/activity' }
+									onNavigate={ this.onNavigate }
+									selected={ itemLinkMatches( '/activity', this.props.path ) }
+								/>
+							</ul>
+						</ExpandableSidebarMenu>
 					) }
 					{ config.isEnabled( 'jetpack-cloud/scan' ) && (
-						<SidebarItem
-							label={ translate( 'Scan', {
+						<ExpandableSidebarMenu
+							onClick={ this.toggleSection( SIDEBAR_SECTION_SCAN ) }
+							expanded={ this.props.isScanSectionOpen }
+							title={ this.props.translate( 'Scan', {
 								comment: 'Jetpack Cloud / Scan sidebar navigation item',
 							} ) }
-							link={ selectedSiteSlug ? `/scan/${ selectedSiteSlug }` : '/scan' }
-							onNavigate={ this.onNavigate }
 							materialIcon="security" // @todo: The Scan logo differs from the Material Icon used here
 							materialIconStyle="filled"
-							selected={ this.isSelected( '/scan' ) }
-						/>
+						>
+							<ul>
+								<SidebarItem
+									label={ translate( 'Scanner', {
+										comment: 'Jetpack Cloud / Scanner sidebar navigation item',
+									} ) }
+									link={ selectedSiteSlug ? `/scan/${ selectedSiteSlug }` : '/scan' }
+									onNavigate={ this.onNavigate }
+									selected={
+										itemLinkMatches( '/scan', this.props.path ) &&
+										! itemLinkMatches( '/scan/history', this.props.path )
+									}
+								>
+									{ numberOfThreatsFound > 0 && (
+										<Badge type="error">
+											{ translate( '%(number)d threat', '%(number)d threats', {
+												count: numberOfThreatsFound,
+												args: {
+													number: numberOfThreatsFound,
+												},
+											} ) }
+										</Badge>
+									) }
+								</SidebarItem>
+								<SidebarItem
+									label={ translate( 'History', {
+										comment: 'Jetpack Cloud / Scan History sidebar navigation item',
+									} ) }
+									link={
+										selectedSiteSlug ? `/scan/history/${ selectedSiteSlug }` : '/scan/history'
+									}
+									onNavigate={ this.onNavigate }
+									selected={ itemLinkMatches( '/scan/history', this.props.path ) }
+								/>
+							</ul>
+						</ExpandableSidebarMenu>
 					) }
 					{ config.isEnabled( 'jetpack-cloud/settings' ) && (
 						<SidebarItem
@@ -102,8 +174,10 @@ class JetpackCloudSidebar extends Component {
 				<SidebarFooter>
 					<SidebarMenu>
 						<SidebarItem
-							label={ translate( 'Support', { comment: 'Jetpack Cloud sidebar navigation item' } ) }
-							link="#" // @todo: Add /support route or change link to other destination
+							label={ translate( 'Get help', {
+								comment: 'Jetpack Cloud sidebar navigation item',
+							} ) }
+							link="https://jetpack.com/support"
 							materialIcon="help"
 							materialIconStyle="filled"
 							onNavigate={ this.onNavigate }
@@ -125,6 +199,27 @@ class JetpackCloudSidebar extends Component {
 	}
 }
 
-export default connect( state => ( { selectedSiteSlug: getSelectedSiteSlug( state ) } ) )(
-	localize( JetpackCloudSidebar )
-);
+// This has to be replaced for a real selector once we load the
+// threats information into our Redux store.
+const getSiteThreats = () => {
+	return [ {}, {} ];
+};
+
+export default connect(
+	state => {
+		const isBackupSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_BACKUP );
+		const isScanSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_SCAN );
+		const threats = getSiteThreats( state );
+
+		return {
+			isBackupSectionOpen,
+			isScanSectionOpen,
+			selectedSiteSlug: getSelectedSiteSlug( state ),
+			threats,
+		};
+	},
+	{
+		expandSection,
+		toggleSection,
+	}
+)( localize( JetpackCloudSidebar ) );

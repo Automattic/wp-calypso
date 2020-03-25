@@ -40,6 +40,13 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 } from 'lib/plans/constants';
 
+import {
+	PRODUCT_JETPACK_BACKUP_DAILY,
+	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_REALTIME,
+	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+} from 'lib/products-values/constants';
+
 /**
  * Module variables
  */
@@ -59,11 +66,15 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 			personal: PLAN_JETPACK_PERSONAL,
 			premium: PLAN_JETPACK_PREMIUM,
 			pro: PLAN_JETPACK_BUSINESS,
+			realtimebackup: PRODUCT_JETPACK_BACKUP_REALTIME,
+			backup: PRODUCT_JETPACK_BACKUP_DAILY,
 		},
 		monthly: {
 			personal: PLAN_JETPACK_PERSONAL_MONTHLY,
 			premium: PLAN_JETPACK_PREMIUM_MONTHLY,
 			pro: PLAN_JETPACK_BUSINESS_MONTHLY,
+			realtimebackup: PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+			backup: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 		},
 	};
 

@@ -29,13 +29,4 @@
 			fill: var( --color-text-subtle );
 		}
 	}
-
-	.layout__primary {
-		padding: 40px 16px 0;
-		max-width: 680px;
-
-		@include breakpoint ( '>660px' ) {
-			padding: 0;
-		}
-	}
 }

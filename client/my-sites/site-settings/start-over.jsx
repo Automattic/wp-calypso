@@ -32,7 +32,7 @@ const StartOver = ( { translate, selectedSiteSlug } ) => {
 			<ActionPanel>
 				<ActionPanelBody>
 					<ActionPanelFigure inlineBodyText={ true }>
-						<img src="/calypso/images/wordpress/logo-stars.svg" width="170" height="143" />
+						<img src="/calypso/images/wordpress/logo-stars.svg" alt="" width="170" height="143" />
 					</ActionPanelFigure>
 					<ActionPanelTitle>{ translate( 'Start Over' ) }</ActionPanelTitle>
 					<p>
@@ -58,14 +58,14 @@ const StartOver = ( { translate, selectedSiteSlug } ) => {
 						className="action-panel__support-button is-external" // eslint-disable-line wpcalypso/jsx-classname-namespace
 						href={ EMPTY_SITE }
 					>
-						{ translate( 'Follow the Steps' ) }
+						{ translate( 'Follow the steps' ) }
 						<Gridicon icon="external" size={ 48 } />
 					</Button>
 					<Button
 						className="action-panel__support-button" // eslint-disable-line wpcalypso/jsx-classname-namespace
 						href="/help/contact"
 					>
-						{ translate( 'Contact Support' ) }
+						{ translate( 'Contact support' ) }
 					</Button>
 				</ActionPanelFooter>
 			</ActionPanel>

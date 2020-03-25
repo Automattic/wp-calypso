@@ -245,7 +245,13 @@ class InlineHelpPopover extends Component {
 			showOptIn,
 			showOptOut,
 			onClose,
+			isCheckout,
 		} = this.props;
+
+		// Don't show additional items inside Checkout.
+		if ( isCheckout ) {
+			return null;
+		}
 
 		return (
 			<>
@@ -377,6 +383,7 @@ function mapStateToProps( state ) {
 		showOptOut: isGutenbergOptOutEnabled( state, siteId ),
 		showOptIn: optInEnabled && isCalypsoClassic,
 		gutenbergUrl,
+		isCheckout: section.name && section.name === 'checkout',
 	};
 }
 

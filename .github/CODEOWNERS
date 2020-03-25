@@ -18,23 +18,11 @@
 # Client initialization
 /client/boot @Automattic/team-calypso
 
-# Client blocks
-/client/blocks/inline-help @Automattic/zelda
-
-# Client state
-/client/state/signup @Automattic/zelda
-
-# Client components
-/client/components/site-verticals-suggestion-search @Automattic/zelda
-
 # Client framework parts
 /client/config @Automattic/team-calypso
 /client/controller @Automattic/team-calypso
 /client/document @Automattic/team-calypso
 /client/layout @Automattic/team-calypso
-
-# Client sites
-/client/my-sites/checklist @Automattic/zelda
 
 # Comments management
 /client/my-sites/comment* @Automattic/serenity
@@ -112,9 +100,6 @@
 
 # Server infrastructure
 /server @Automattic/team-calypso
-
-# Signup
-/client/signup @Automattic/zelda
 
 # Test infrastructure
 /test @Automattic/team-calypso

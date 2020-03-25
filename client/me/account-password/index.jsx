@@ -188,7 +188,7 @@ const AccountPassword = createReactClass( {
 						}
 						onClick={ this.handleSaveButtonClick }
 					>
-						{ this.state.savingPassword ? translate( 'Saving…' ) : translate( 'Save Password' ) }
+						{ this.state.savingPassword ? translate( 'Saving…' ) : translate( 'Save password' ) }
 					</FormButton>
 
 					<FormButton isPrimary={ false } onClick={ this.handleGenerateButtonClick } type="button">

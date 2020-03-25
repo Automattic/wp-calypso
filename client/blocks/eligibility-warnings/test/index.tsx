@@ -50,6 +50,9 @@ function createState( {
 		},
 		sites: { items: { [ siteId ]: { URL: siteUrl } } },
 		ui: { selectedSiteId: siteId },
+		siteSettings: {
+			saveRequests: {},
+		},
 	};
 }
 
@@ -161,6 +164,7 @@ describe( '<EligibilityWarnings>', () => {
 
 		const upgradeAndContinue = getByText( 'Upgrade and continue' );
 		expect( upgradeAndContinue ).toBeVisible();
+		expect( upgradeAndContinue ).not.toBeDisabled();
 
 		fireEvent.click( upgradeAndContinue );
 

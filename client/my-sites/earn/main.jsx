@@ -27,6 +27,7 @@ import Home from './home';
 import AdsWrapper from './ads/wrapper';
 import MembershipsSection from './memberships';
 import MembershipsProductsSection from './memberships/products';
+import ReferAFriendSection from './refer-a-friend';
 import { canAccessAds } from 'lib/ads/utils';
 
 class EarningsMain extends Component {
@@ -84,6 +85,10 @@ class EarningsMain extends Component {
 				return <MembershipsSection section={ this.props.section } query={ this.props.query } />;
 			case 'payments-plans':
 				return <MembershipsProductsSection section={ this.props.section } />;
+
+			case 'refer-a-friend':
+				return <ReferAFriendSection />;
+
 			default:
 				return <Home />;
 		}
@@ -125,6 +130,9 @@ class EarningsMain extends Component {
 			case 'ads-settings':
 				return translate( 'Ads' );
 
+			case 'refer-a-friend':
+				return translate( 'Refer-a-Friend Program' );
+
 			default:
 				return '';
 		}
@@ -146,7 +154,8 @@ class EarningsMain extends Component {
 		const currentPath = this.getCurrentPath();
 
 		return (
-			! section.startsWith( 'payments' ) && (
+			! section.startsWith( 'payments' ) &&
+			! section.startsWith( 'refer-a-friend' ) && (
 				<SectionNav selectedText={ this.getSelectedText() }>
 					<NavTabs>
 						{ this.getFilters().map( filterItem => {
@@ -175,6 +184,7 @@ class EarningsMain extends Component {
 			settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
 			payments: translate( 'Recurring Payments' ),
 			'payments-plans': translate( 'Recurring Payments plans' ),
+			'refer-a-friend': translate( 'Refer-a-Friend Program' ),
 		};
 
 		return (

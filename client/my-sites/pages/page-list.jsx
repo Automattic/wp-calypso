@@ -224,7 +224,7 @@ class Pages extends Component {
 				attributes = {
 					title: translate( "You don't have any drafts." ),
 					line: translate( 'Would you like to create one?' ),
-					action: translate( 'Start a Page' ),
+					action: translate( 'Start a page' ),
 					actionURL: newPageLink,
 				};
 				break;
@@ -232,7 +232,7 @@ class Pages extends Component {
 				attributes = {
 					title: translate( "You don't have any scheduled pages yet." ),
 					line: translate( 'Would you like to create one?' ),
-					action: translate( 'Start a Page' ),
+					action: translate( 'Start a page' ),
 					actionURL: newPageLink,
 				};
 				break;
@@ -246,7 +246,7 @@ class Pages extends Component {
 				attributes = {
 					title: translate( "You haven't published any pages yet." ),
 					line: translate( 'Would you like to publish your first page?' ),
-					action: translate( 'Start a Page' ),
+					action: translate( 'Start a page' ),
 					actionURL: newPageLink,
 				};
 		}
@@ -299,7 +299,7 @@ class Pages extends Component {
 		return (
 			<SectionHeader label={ translate( 'Pages' ) }>
 				<Button primary compact className="pages__add-page" href={ newPageLink }>
-					{ translate( 'Add New Page' ) }
+					{ translate( 'Add new page' ) }
 				</Button>
 			</SectionHeader>
 		);

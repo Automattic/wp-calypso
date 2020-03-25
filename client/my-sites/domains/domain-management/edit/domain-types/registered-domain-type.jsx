@@ -126,7 +126,7 @@ class RegisteredDomainType extends React.Component {
 
 		return (
 			<VerticalNavItem path={ path }>
-				{ this.props.translate( 'Name Servers and DNS' ) }
+				{ this.props.translate( 'Name servers and DNS' ) }
 			</VerticalNavItem>
 		);
 	}
@@ -138,14 +138,14 @@ class RegisteredDomainType extends React.Component {
 			this.props.domain.name
 		);
 
-		return <VerticalNavItem path={ path }>{ translate( 'Contacts and Privacy' ) }</VerticalNavItem>;
+		return <VerticalNavItem path={ path }>{ translate( 'Contacts and privacy' ) }</VerticalNavItem>;
 	}
 
 	transferNavItem() {
 		const path = domainManagementTransfer( this.props.selectedSite.slug, this.props.domain.name );
 
 		return (
-			<VerticalNavItem path={ path }>{ this.props.translate( 'Transfer Domain' ) }</VerticalNavItem>
+			<VerticalNavItem path={ path }>{ this.props.translate( 'Transfer domain' ) }</VerticalNavItem>
 		);
 	}
 

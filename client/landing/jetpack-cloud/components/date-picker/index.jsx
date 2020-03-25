@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -18,37 +19,45 @@ import Gridicon from 'components/gridicon';
  */
 import './style.scss';
 
-const DATE_FORMAT = 'YYYY-MM-DD';
-
 class DatePicker extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
-		selectedDateString: PropTypes.string.isRequired,
-		onChange: PropTypes.func.isRequired,
+		selectedDate: PropTypes.instanceOf( Date ).isRequired,
+		onDateChange: PropTypes.func.isRequired,
+		onDateRangeSelection: PropTypes.func.isRequired,
 	};
 
-	getFormattedDate = dateString => this.props.moment.parseZone( dateString ).format( DATE_FORMAT );
+	getDisplayDate = ( date, showTodayYesterday = true ) => {
+		const { moment, translate } = this.props;
 
-	getDisplayDate = dateString => {
-		const word = this.props.moment
-			.parseZone( dateString )
-			.calendar()
-			.split( ' ' )[ 0 ];
-		if ( 'Today' === word || 'Yesterday' === word ) {
-			return word;
+		const daysDiff = moment().diff( date, 'days' );
+		const yearToday = moment().format( 'YYYY' );
+		const yearDate = moment( date ).format( 'YYYY' );
+
+		let dateFormat = 'MMM D';
+
+		if ( yearToday !== yearDate ) {
+			dateFormat = 'MMM D, YYYY';
 		}
 
-		return this.getFormattedDate( dateString );
+		if ( showTodayYesterday ) {
+			switch ( daysDiff ) {
+				case 0:
+					return translate( 'Today' );
+				case 1:
+					return translate( 'Yesterday' );
+			}
+		}
+
+		return moment( date ).format( dateFormat );
 	};
 
 	shuttleLeft = () => {
-		const { moment, onChange, selectedDateString } = this.props;
-		const newDateString = moment
-			.parseZone( selectedDateString )
-			.subtract( 1, 'days' )
-			.toISOString( true );
+		const { moment, onDateChange, selectedDate } = this.props;
 
-		onChange( newDateString );
+		const newSelectedDate = moment( selectedDate ).subtract( 1, 'days' );
+
+		onDateChange( newSelectedDate.toDate() );
 	};
 
 	shuttleRight = () => {
@@ -56,24 +65,27 @@ class DatePicker extends Component {
 			return false;
 		}
 
-		const { moment, onChange, selectedDateString } = this.props;
-		const newDateString = moment
-			.parseZone( selectedDateString )
-			.add( 1, 'days' )
-			.toISOString( true );
+		const { moment, onDateChange, selectedDate } = this.props;
 
-		onChange( newDateString );
+		const newSelectedDate = moment( selectedDate ).add( 1, 'days' );
+
+		onDateChange( newSelectedDate.toDate() );
 	};
 
 	canShuttleRight = () => {
-		const { moment, selectedDateString } = this.props;
-		return ! moment().isSame( moment.parseZone( selectedDateString ), 'day' );
+		const { moment, selectedDate } = this.props;
+
+		return ! moment( selectedDate ).isSame( moment(), 'day' );
 	};
 
 	render() {
-		const { selectedDateString, siteId } = this.props;
+		const { selectedDate, siteId, moment } = this.props;
 
-		const currentDisplayDate = this.getDisplayDate( selectedDateString );
+		const previousDate = moment( selectedDate ).subtract( 1, 'days' );
+		const nextDate = moment( selectedDate ).add( 1, 'days' );
+
+		const previousDisplayDate = this.getDisplayDate( previousDate );
+		const nextDisplayDate = this.getDisplayDate( nextDate, false );
 
 		return (
 			<div className="date-picker">
@@ -81,17 +93,26 @@ class DatePicker extends Component {
 					<Gridicon icon="chevron-left" />
 				</Button>
 
-				<div className="date-picker__current-display-date">{ currentDisplayDate }</div>
-
-				<Button compact borderless onClick={ this.shuttleRight }>
-					<Gridicon icon="chevron-right" className={ ! this.canShuttleRight() && 'disabled' } />
-				</Button>
+				<div className="date-picker__display-date">{ previousDisplayDate }</div>
 
 				<DateRangeSelector
 					siteId={ siteId }
 					enabled={ true }
 					customLabel={ <Gridicon icon="calendar" /> }
 				/>
+
+				<div
+					className={ classNames( 'date-picker__display-date', {
+						disabled: ! this.canShuttleRight(),
+					} ) }
+				>
+					{ nextDisplayDate }
+				</div>
+
+				<Button compact borderless onClick={ this.shuttleRight }>
+					<Gridicon icon="chevron-right" className={ ! this.canShuttleRight() && 'disabled' } />
+				</Button>
+				<div>Date selected: { this.getDisplayDate( selectedDate ) }</div>
 			</div>
 		);
 	}

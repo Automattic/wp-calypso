@@ -31,6 +31,7 @@ import getCurrentRouteParameterized from 'state/selectors/get-current-route-para
 import isHiddenSite from 'state/selectors/is-hidden-site';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'state/selectors/is-private-site';
+import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestSite } from 'state/sites/actions';
@@ -316,6 +317,7 @@ export class SeoForm extends React.Component {
 			: translate(
 					'Boost your search engine ranking with the powerful SEO tools in the Business plan'
 			  );
+
 		return (
 			<div>
 				<QuerySiteSettings siteId={ siteId } />
@@ -325,15 +327,22 @@ export class SeoForm extends React.Component {
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
-						text={
-							isSitePrivate
-								? translate(
-										"SEO settings aren't recognized by search engines while your site is Private."
-								  )
-								: translate(
-										"SEO settings aren't recognized by search engines while your site is Hidden."
-								  )
-						}
+						text={ ( function() {
+							if ( isSitePrivate ) {
+								if ( isSiteComingSoon ) {
+									return translate(
+										"SEO settings aren't recognized by search engines while your site is Coming Soon."
+									);
+								}
+
+								return translate(
+									"SEO settings aren't recognized by search engines while your site is Private."
+								);
+							}
+							return translate(
+								"SEO settings aren't recognized by search engines while your site is Hidden."
+							);
+						} )() }
 					>
 						<NoticeAction href={ generalTabUrl }>{ translate( 'Privacy Settings' ) }</NoticeAction>
 					</Notice>
@@ -492,6 +501,7 @@ const mapStateToProps = state => {
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isSiteHidden: isHiddenSite( state, siteId ),
 		isSitePrivate: isPrivateSite( state, siteId ),
+		isSiteComingSoon: isSiteComingSoon( state, siteId ),
 		hasAdvancedSEOFeature: hasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
 		hasSeoPreviewFeature: hasFeature( state, siteId, FEATURE_SEO_PREVIEW_TOOLS ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
