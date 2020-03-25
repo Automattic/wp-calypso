@@ -70,62 +70,58 @@ const DesignSelector: React.FunctionComponent = () => {
 					{ NO__( 'Start over' ) }
 				</Link>
 			</div>
-			<div className="design-selector__design-grid">
-				<div className="design-selector__grid">
-					{ designs.featured.map( design => {
-						const isFocused = hoverDesign === design.slug || focusDesign === design.slug;
-						return (
-							<Spring
-								native
-								key={ design.slug }
-								from={ ZOOM_OFF }
-								to={ isFocused ? ZOOM_ON : ZOOM_OFF }
-							>
-								{ ( props: React.CSSProperties ) => (
-									<animated.button
-										style={ props }
-										onMouseEnter={ () => setHoverDesign( design.slug ) }
-										onMouseLeave={ () =>
-											setHoverDesign( s => ( s === design.slug ? undefined : s ) )
+			<div className="design-selector__grid">
+				{ designs.featured.map( design => {
+					const isFocused = hoverDesign === design.slug || focusDesign === design.slug;
+					return (
+						<Spring
+							native
+							key={ design.slug }
+							from={ ZOOM_OFF }
+							to={ isFocused ? ZOOM_ON : ZOOM_OFF }
+						>
+							{ ( props: React.CSSProperties ) => (
+								<animated.button
+									style={ props }
+									onMouseEnter={ () => setHoverDesign( design.slug ) }
+									onMouseLeave={ () =>
+										setHoverDesign( s => ( s === design.slug ? undefined : s ) )
+									}
+									onFocus={ () => setFocusDesign( design.slug ) }
+									onBlur={ () => setFocusDesign( s => ( s === design.slug ? undefined : s ) ) }
+									onClick={ () => {
+										setSelectedDesign( design );
+										if ( isEnabled( 'gutenboarding/style-preview' ) ) {
+											push( makePath( Step.Style ) );
 										}
-										onFocus={ () => setFocusDesign( design.slug ) }
-										onBlur={ () => setFocusDesign( s => ( s === design.slug ? undefined : s ) ) }
-										className="design-selector__design-option"
-										onClick={ () => {
-											setSelectedDesign( design );
-											if ( isEnabled( 'gutenboarding/style-preview' ) ) {
-												push( makePath( Step.Style ) );
-											}
-										} }
+									} }
+								>
+									<Spring
+										native
+										key={ design.slug }
+										from={ SHADOW_OFF }
+										to={ isFocused ? SHADOW_ON : SHADOW_OFF }
 									>
-										<Spring
-											native
-											key={ design.slug }
-											from={ SHADOW_OFF }
-											to={ isFocused ? SHADOW_ON : SHADOW_OFF }
-										>
-											{ ( props2: React.CSSProperties ) => (
-												<animated.span style={ props2 } className="design-selector__image-frame">
-													<iframe
-														title={ design.title }
-														className="design-selector__frame"
-														src={ getDesignUrl( design, siteTitle ) }
-														scrolling="no"
-														sandbox=""
-													/>
-													<div className="design-selector__iframe-overlay" />
-												</animated.span>
-											) }
-										</Spring>
-										<span className="design-selector__option-overlay">
-											<span className="design-selector__option-name">{ design.title }</span>
-										</span>
-									</animated.button>
-								) }
-							</Spring>
-						);
-					} ) }
-				</div>
+										{ ( props2: React.CSSProperties ) => (
+											<animated.span style={ props2 } className="design-selector__image-frame">
+												<iframe
+													title={ design.title }
+													src={ getDesignUrl( design, siteTitle ) }
+													scrolling="no"
+													sandbox=""
+												/>
+												<div className="design-selector__iframe-overlay" />
+											</animated.span>
+										) }
+									</Spring>
+									<span className="design-selector__option-overlay">
+										<span className="design-selector__option-name">{ design.title }</span>
+									</span>
+								</animated.button>
+							) }
+						</Spring>
+					);
+				} ) }
 			</div>
 		</div>
 	);
