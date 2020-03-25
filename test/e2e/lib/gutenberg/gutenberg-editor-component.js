@@ -349,7 +349,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		}
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.editor-post-preview__dropdown' ),
+			// @TODO: Update to new `.editor-post-preview__dropdown` format once we support it again
+			// https://github.com/Automattic/wp-calypso/issues/40401
+			By.css( '.editor-post-preview' ),
 			this.explicitWaitMS
 		);
 		const editorPostPreviewSelector = By.css( '.editor-post-preview__button-external' );
