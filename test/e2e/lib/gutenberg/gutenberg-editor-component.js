@@ -378,8 +378,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async viewPublishedPostOrPage() {
-		const viewPostSelector = By.css( '.components-snackbar__content a' );
-		await driverHelper.clickWhenClickable( this.driver, viewPostSelector );
+		const viewPostLink = await this.driver.findElement(
+			By.css( '.components-snackbar__content a' )
+		);
+		await this.driver.executeScript( 'arguments[0].click()', viewPostLink );
 	}
 
 	async schedulePost( publishDate ) {
