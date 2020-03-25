@@ -147,10 +147,7 @@ function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, is
 
 	// If the URL is adding a product, only allow wpcom plans
 	const slugFragmentsToAllow = [ 'personal', 'premium', 'blogger', 'ecommerce', 'business' ];
-	if (
-		productSlug &&
-		! slugFragmentsToAllow.find( fragment => productSlug.includes( fragment ) )
-	) {
+	if ( productSlug && ! slugFragmentsToAllow.find( fragment => productSlug === fragment ) ) {
 		debug(
 			'shouldShowCompositeCheckout false because product does not match whitelist',
 			productSlug
