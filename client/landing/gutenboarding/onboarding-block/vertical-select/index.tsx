@@ -15,7 +15,7 @@ import { Verticals } from '@automattic/data-stores';
 import { SiteVertical } from '../../stores/onboard/types';
 import { StepProps } from '../stepper-wizard';
 import Question from '../question';
-import AnimatedPlaceholder from '../animated-placeholder';
+import useTyper from '../../hooks/use-typer';
 
 /**
  * Style dependencies
@@ -67,6 +67,11 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 	const { setSiteVertical, resetSiteVertical } = useDispatch( ONBOARD_STORE );
 
 	const [ inputValue, setInputValue ] = useState( siteVertical?.label ?? '' );
+
+	const animatedPlaceholder = useTyper(
+		[ NO__( 'football' ), NO__( 'shopping' ), NO__( 'cars' ), NO__( 'design' ), NO__( 'travel' ) ],
+		inputValue.length === 0
+	);
 
 	const normalizedInputValue = inputValue.trim().toLowerCase();
 
@@ -156,17 +161,6 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 			onExpand={ onExpand }
 		>
 			<div className="vertical-select">
-				{ ! inputValue && (
-					<AnimatedPlaceholder
-						texts={ [
-							NO__( 'football' ),
-							NO__( 'shopping' ),
-							NO__( 'cars' ),
-							NO__( 'design' ),
-							NO__( 'travel' ),
-						] }
-					/>
-				) }
 				<input
 					aria-label={ label }
 					autoComplete="off"
@@ -174,7 +168,7 @@ const VerticalSelect: FunctionComponent< StepProps > = ( {
 					onBlur={ handleBlur }
 					onChange={ handleSuggestionChangeEvent }
 					onKeyDown={ handleSuggestionKeyDown }
-					placeholder=""
+					placeholder={ animatedPlaceholder }
 					ref={ inputRef }
 					value={ inputValue }
 				/>
