@@ -13,6 +13,7 @@ import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
 import { PageTemplatesPlugin } from './page-template-modal';
 import SidebarTemplatesPlugin from './page-template-modal/components/sidebar-modal-opener';
 import { initializeWithIdentity } from './page-template-modal/utils/tracking';
+import './store';
 /* eslint-enable import/no-extraneous-dependencies */
 
 // Load config passed from backend.
@@ -43,6 +44,7 @@ const templatesPluginSharedProps = {
 
 // Open plugin only if we are creating new page.
 if ( screenAction === 'add' ) {
+	dispatch( 'automattic/starter-page-layouts' ).setIsOpen( true );
 	registerPlugin( 'page-templates', {
 		render: () => (
 			<PageTemplatesPlugin { ...templatesPluginSharedProps } shouldPrefetchAssets={ false } />

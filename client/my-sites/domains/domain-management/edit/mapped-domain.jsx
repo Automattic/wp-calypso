@@ -131,7 +131,7 @@ export class MappedDomain extends React.Component {
 		const path = domainManagementDns( this.props.selectedSite.slug, this.props.domain.name );
 
 		return (
-			<VerticalNavItem path={ path }>{ this.props.translate( 'DNS Records' ) }</VerticalNavItem>
+			<VerticalNavItem path={ path }>{ this.props.translate( 'DNS records' ) }</VerticalNavItem>
 		);
 	}
 

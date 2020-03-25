@@ -105,7 +105,6 @@ CartSynchronizer.prototype.update = function( changeFunction ) {
 
 	this._latestValue = changeFunction( this._latestValue );
 	this._performRequest( 'update', this._postToServer.bind( this ) );
-	this.emit( 'change' );
 };
 
 CartSynchronizer.prototype.pause = function() {

@@ -32,13 +32,15 @@ export default function useCouponFieldState( submitCoupon ): CouponFieldStatePro
 	}, [ couponFieldValue ] );
 
 	const handleCouponSubmit = useCallback( () => {
-		if ( isCouponValid( couponFieldValue ) ) {
+		const trimmedValue = couponFieldValue.trim();
+
+		if ( isCouponValid( trimmedValue ) ) {
 			onEvent( {
 				type: 'a8c_checkout_add_coupon',
-				payload: { coupon: couponFieldValue },
+				payload: { coupon: trimmedValue },
 			} );
 
-			submitCoupon( couponFieldValue );
+			submitCoupon( trimmedValue );
 
 			return;
 		}

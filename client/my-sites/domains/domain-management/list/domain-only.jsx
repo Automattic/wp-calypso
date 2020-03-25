@@ -56,11 +56,11 @@ const DomainOnly = ( { primaryDomain, hasNotice, recordTracks, siteId, slug, tra
 			<EmptyContent
 				title={ translate( '%(domainName)s is ready when you are.', { args: { domainName } } ) }
 				line={ translate( 'Start a site now to unlock everything WordPress.com can offer.' ) }
-				action={ translate( 'Create Site' ) }
+				action={ translate( 'Create site' ) }
 				actionURL={ `/start/site-selected/?siteSlug=${ encodeURIComponent(
 					slug
 				) }&siteId=${ encodeURIComponent( siteId ) }` }
-				secondaryAction={ translate( 'Manage Domain' ) }
+				secondaryAction={ translate( 'Manage domain' ) }
 				secondaryActionURL={ domainManagementEdit( slug, domainName ) }
 				illustration={ '/calypso/images/drake/drake-browser.svg' }
 			>
@@ -70,7 +70,7 @@ const DomainOnly = ( { primaryDomain, hasNotice, recordTracks, siteId, slug, tra
 					primary={ ! domainHasGSuiteWithUs }
 					onClick={ recordEmailClick }
 				>
-					{ domainHasGSuiteWithUs ? translate( 'Manage Email' ) : translate( 'Add Email' ) }
+					{ domainHasGSuiteWithUs ? translate( 'Manage email' ) : translate( 'Add email' ) }
 				</Button>
 			</EmptyContent>
 

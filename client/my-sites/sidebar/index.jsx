@@ -37,6 +37,7 @@ import hasJetpackSites from 'state/selectors/has-jetpack-sites';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
+import isSiteMigrationActiveRoute from 'state/selectors/is-site-migration-active-route';
 import {
 	getCustomizerUrl,
 	getSite,
@@ -196,11 +197,18 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		const activityLink = '/activity-log' + siteSuffix;
+		let activityLink = '/activity-log' + siteSuffix,
+			activityLabel = translate( 'Activity' );
+
+		if ( this.props.isJetpack && isEnabled( 'manage/themes-jetpack' ) ) {
+			activityLink += '?group=rewind';
+			activityLabel = translate( 'Activity & Backups' );
+		}
+
 		return (
 			<SidebarItem
 				tipTarget="activity"
-				label={ translate( 'Activity' ) }
+				label={ activityLabel }
 				selected={ itemLinkMatches( [ '/activity-log' ], path ) }
 				link={ activityLink }
 				onNavigate={ this.trackActivityClick }
@@ -770,6 +778,9 @@ function mapStateToProps( state ) {
 	const isToolsSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_TOOLS );
 	const isManageSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_MANAGE );
 
+	const isMigrationInProgress =
+		isSiteMigrationInProgress( state, selectedSiteId ) || isSiteMigrationActiveRoute( state );
+
 	return {
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
 		canUserListUsers: canCurrentUser( state, siteId, 'list_users' ),
@@ -793,7 +804,7 @@ function mapStateToProps( state ) {
 		isToolsSectionOpen,
 		isManageSectionOpen,
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
-		isMigrationInProgress: !! isSiteMigrationInProgress( state, selectedSiteId ),
+		isMigrationInProgress,
 		isVip: isVipSite( state, selectedSiteId ),
 		showCustomizerLink: ! (
 			isSiteUsingFullSiteEditing( state, selectedSiteId ) ||

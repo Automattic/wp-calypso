@@ -19,6 +19,7 @@ import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import { createNotice } from 'state/notices/actions';
 import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
 import FormToggle from 'components/forms/form-toggle';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 
 class AutoRenewToggle extends Component {
 	static propTypes = {
@@ -29,6 +30,8 @@ class AutoRenewToggle extends Component {
 		isAtomicSite: PropTypes.bool.isRequired,
 		fetchingUserPurchases: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
+		compact: PropTypes.bool,
+		withTextStatus: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -139,16 +142,27 @@ class AutoRenewToggle extends Component {
 		return this.props.isEnabled;
 	}
 
+	renderTextStatus() {
+		const { translate, isEnabled } = this.props;
+
+		return isEnabled ? translate( 'Auto-renew (on)' ) : translate( 'Auto-renew (off)' );
+	}
+
 	render() {
-		const { planName, siteDomain, purchase } = this.props;
+		const { planName, siteDomain, purchase, compact, withTextStatus } = this.props;
+
+		const ToggleComponent = compact ? CompactFormToggle : FormToggle;
 
 		return (
 			<>
-				<FormToggle
+				<ToggleComponent
 					checked={ this.getToggleUiStatus() }
 					disabled={ this.isUpdatingAutoRenew() }
+					toggling={ this.isUpdatingAutoRenew() }
 					onChange={ this.onToggleAutoRenew }
-				/>
+				>
+					{ withTextStatus && this.renderTextStatus() }
+				</ToggleComponent>
 				<AutoRenewDisablingDialog
 					isVisible={ this.state.showAutoRenewDisablingDialog }
 					planName={ planName }

@@ -1,4 +1,10 @@
 /**
+ * External dependencies
+ */
+import { select } from '@wordpress/data-controls';
+import { stringify } from 'qs';
+
+/**
  * Internal dependencies
  */
 import {
@@ -9,161 +15,185 @@ import {
 	SendLoginEmailSuccessResponse,
 	SendLoginEmailErrorResponse,
 } from './types';
+import { STORE_KEY } from './constants';
+import { wpcomRequest, fetchAndParse } from '../wpcom-request-controls';
+import { reloadProxy, remoteLoginUser } from './controls';
+import { WpcomClientCredentials } from '../shared-types';
 
-export const reset = () =>
-	( {
-		type: 'RESET_LOGIN_FLOW' as const,
-	} as const );
-
-export const receiveAuthOptions = (
-	response: AuthOptionsSuccessResponse,
-	usernameOrEmail: string
-) =>
-	( {
-		type: 'RECEIVE_AUTH_OPTIONS',
-		response,
-		usernameOrEmail,
-	} as const );
-
-export const receiveAuthOptionsFailed = ( response: AuthOptionsErrorResponse ) =>
-	( {
-		type: 'RECEIVE_AUTH_OPTIONS_FAILED',
-		response,
-	} as const );
-
-export const receiveSendLoginEmail = ( response: SendLoginEmailSuccessResponse ) =>
-	( {
-		type: 'RECEIVE_SEND_LOGIN_EMAIL',
-		response,
-	} as const );
-
-export const receiveSendLoginEmailFailed = ( response: SendLoginEmailErrorResponse ) =>
-	( {
-		type: 'RECEIVE_SEND_LOGIN_EMAIL_FAILED',
-		response,
-	} as const );
-
-export const clearErrors = () =>
-	( {
-		type: 'CLEAR_ERRORS',
-	} as const );
-
-export interface FetchAuthOptionsAction {
-	type: 'FETCH_AUTH_OPTIONS';
-	usernameOrEmail: string;
+export interface ActionsConfig extends WpcomClientCredentials {
+	/**
+	 * True if user needs immediate access to cookies after logging in.
+	 * See README.md for details.
+	 * Default: true
+	 */
+	loadCookiesAfterLogin?: boolean;
 }
 
-const fetchAuthOptions = ( usernameOrEmail: string ): FetchAuthOptionsAction => ( {
-	type: 'FETCH_AUTH_OPTIONS',
-	usernameOrEmail,
-} );
+export function createActions( {
+	client_id,
+	client_secret,
+	loadCookiesAfterLogin = true,
+}: ActionsConfig ) {
+	const reset = () =>
+		( {
+			type: 'RESET_LOGIN_FLOW' as const,
+		} as const );
 
-export interface SendLoginEmailAction {
-	type: 'SEND_LOGIN_EMAIL';
-	email: string;
-}
+	const receiveAuthOptions = ( response: AuthOptionsSuccessResponse, usernameOrEmail: string ) =>
+		( {
+			type: 'RECEIVE_AUTH_OPTIONS',
+			response,
+			usernameOrEmail,
+		} as const );
 
-const sendLoginEmail = ( email: string ): SendLoginEmailAction => ( {
-	type: 'SEND_LOGIN_EMAIL',
-	email,
-} );
+	const receiveAuthOptionsFailed = ( response: AuthOptionsErrorResponse ) =>
+		( {
+			type: 'RECEIVE_AUTH_OPTIONS_FAILED',
+			response,
+		} as const );
 
-export function* submitUsernameOrEmail( usernameOrEmail: string ) {
-	yield clearErrors();
+	const receiveSendLoginEmail = ( response: SendLoginEmailSuccessResponse ) =>
+		( {
+			type: 'RECEIVE_SEND_LOGIN_EMAIL',
+			response,
+		} as const );
 
-	try {
-		const authOptions: AuthOptionsSuccessResponse = yield fetchAuthOptions( usernameOrEmail );
+	const receiveSendLoginEmailFailed = ( response: SendLoginEmailErrorResponse ) =>
+		( {
+			type: 'RECEIVE_SEND_LOGIN_EMAIL_FAILED',
+			response,
+		} as const );
 
-		yield receiveAuthOptions( authOptions, usernameOrEmail );
+	const clearErrors = () =>
+		( {
+			type: 'CLEAR_ERRORS',
+		} as const );
 
-		if ( authOptions.passwordless ) {
-			try {
-				const emailResponse: SendLoginEmailSuccessResponse = yield sendLoginEmail(
-					usernameOrEmail
-				);
-				yield receiveSendLoginEmail( emailResponse );
-			} catch ( err ) {
-				yield receiveSendLoginEmailFailed( err );
+	function* submitUsernameOrEmail( usernameOrEmail: string ) {
+		yield clearErrors();
+		const escaped = encodeURIComponent( usernameOrEmail );
+
+		try {
+			const authOptions = yield wpcomRequest( {
+				path: `/users/${ escaped }/auth-options`,
+				apiVersion: '1.1',
+			} );
+
+			yield receiveAuthOptions( authOptions, usernameOrEmail );
+
+			if ( authOptions.passwordless ) {
+				try {
+					const emailResponse = yield wpcomRequest( {
+						path: `/auth/send-login-email`,
+						apiVersion: '1.2',
+						method: 'post',
+						body: {
+							email: usernameOrEmail,
+
+							// TODO Send the correct locale
+							lang_id: 1,
+							locale: 'en',
+
+							client_id,
+							client_secret,
+						},
+					} );
+
+					yield receiveSendLoginEmail( emailResponse );
+				} catch ( err ) {
+					yield receiveSendLoginEmailFailed( err );
+				}
 			}
+		} catch ( err ) {
+			yield receiveAuthOptionsFailed( err );
 		}
-	} catch ( err ) {
-		yield receiveAuthOptionsFailed( err );
 	}
+
+	const receiveWpLogin = ( response: WpLoginSuccessResponse ) =>
+		( {
+			type: 'RECEIVE_WP_LOGIN',
+			response,
+		} as const );
+
+	const receiveWpLoginFailed = ( response: WpLoginErrorResponse ) =>
+		( {
+			type: 'RECEIVE_WP_LOGIN_FAILED',
+			response,
+		} as const );
+
+	function* submitPassword( password: string ) {
+		yield clearErrors();
+		const username = yield select( STORE_KEY, 'getUsernameOrEmail' );
+
+		try {
+			const loginResponse = yield fetchAndParse(
+				// TODO Wrap this in `localizeUrl` from lib/i18n-utils
+				'https://wordpress.com/wp-login.php?action=login-endpoint',
+				{
+					credentials: 'include',
+					method: 'POST',
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/x-www-form-urlencoded',
+					},
+					body: stringify( {
+						remember_me: true,
+						username,
+						password,
+						client_id,
+						client_secret,
+					} ),
+				}
+			);
+
+			if ( loginResponse.ok && loginResponse.body.success ) {
+				if ( loadCookiesAfterLogin ) {
+					yield reloadProxy();
+				}
+				yield remoteLoginUser( loginResponse.body.data.token_links );
+				yield receiveWpLogin( loginResponse.body );
+			} else {
+				yield receiveWpLoginFailed( loginResponse.body );
+			}
+		} catch ( e ) {
+			const error = {
+				code: e.name,
+				message: e.message,
+			};
+
+			yield receiveWpLoginFailed( {
+				success: false,
+				data: { errors: [ error ] },
+			} );
+		}
+	}
+
+	return {
+		reset,
+		clearErrors,
+		receiveAuthOptions,
+		receiveAuthOptionsFailed,
+		receiveWpLogin,
+		receiveWpLoginFailed,
+		receiveSendLoginEmail,
+		receiveSendLoginEmailFailed,
+		submitPassword,
+		submitUsernameOrEmail,
+	};
 }
 
-export const receiveWpLogin = ( response: WpLoginSuccessResponse ) =>
-	( {
-		type: 'RECEIVE_WP_LOGIN',
-		response,
-	} as const );
-
-export const receiveWpLoginFailed = ( response: WpLoginErrorResponse ) =>
-	( {
-		type: 'RECEIVE_WP_LOGIN_FAILED',
-		response,
-	} as const );
-
-type WpLoginAction = 'login-endpoint' | 'two-step-authentication-endpoint';
-
-const fetchWpLogin = ( action: WpLoginAction, params: object ) =>
-	( {
-		type: 'FETCH_WP_LOGIN',
-		action,
-		params,
-	} as const );
-
-export type FetchWpLoginAction = ReturnType< typeof fetchWpLogin >;
-
-const remoteLoginUser = ( loginLinks: string[] ) =>
-	( {
-		type: 'REMOTE_LOGIN_USER',
-		loginLinks,
-	} as const );
-
-export type RemoteLoginUserAction = ReturnType< typeof remoteLoginUser >;
-
-export function* submitPassword( password: string ) {
-	yield clearErrors();
-	const username = yield { type: 'SELECT_USERNAME_OR_EMAIL' };
-
-	try {
-		const loginResponse = yield fetchWpLogin( 'login-endpoint', { username, password } );
-
-		if ( loginResponse.ok && loginResponse.body.success ) {
-			yield remoteLoginUser( loginResponse.body.data.token_links );
-			yield receiveWpLogin( loginResponse.body );
-		} else {
-			yield receiveWpLoginFailed( loginResponse.body );
-		}
-	} catch ( e ) {
-		const error = {
-			code: e.name,
-			message: e.message,
-		};
-
-		yield receiveWpLoginFailed( {
-			success: false,
-			data: { errors: [ error ] },
-		} );
-	}
-}
+type ActionCreators = ReturnType< typeof createActions >;
 
 export type Action =
 	| ReturnType<
-			| typeof reset
-			| typeof clearErrors
-			| typeof receiveAuthOptions
-			| typeof receiveAuthOptionsFailed
-			| typeof receiveWpLogin
-			| typeof receiveWpLoginFailed
-			| typeof receiveSendLoginEmail
-			| typeof receiveSendLoginEmailFailed
+			| ActionCreators[ 'reset' ]
+			| ActionCreators[ 'clearErrors' ]
+			| ActionCreators[ 'receiveAuthOptions' ]
+			| ActionCreators[ 'receiveAuthOptionsFailed' ]
+			| ActionCreators[ 'receiveWpLogin' ]
+			| ActionCreators[ 'receiveWpLoginFailed' ]
+			| ActionCreators[ 'receiveSendLoginEmail' ]
+			| ActionCreators[ 'receiveSendLoginEmailFailed' ]
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };
-
-export const publicActions = {
-	reset,
-	submitUsernameOrEmail,
-	submitPassword,
-};

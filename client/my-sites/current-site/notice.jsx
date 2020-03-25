@@ -33,6 +33,7 @@ import formatCurrency from '@automattic/format-currency/src';
 import { getPreference } from 'state/preferences/selectors';
 import { savePreference } from 'state/preferences/actions';
 import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
+import isSiteMigrationActiveRoute from 'state/selectors/is-site-migration-active-route';
 import { getSectionName } from 'state/ui/selectors';
 import { getTopJITM } from 'state/jitm/selectors';
 import AsyncLoad from 'components/async-load';
@@ -250,6 +251,7 @@ export class SiteNotice extends React.Component {
 							require="blocks/jitm"
 							messagePath={ messagePath }
 							template="sidebar-banner"
+							placeholder={ null }
 						/>
 					) ) }
 				<QuerySitePlans siteId={ site.ID } />
@@ -266,6 +268,9 @@ export default connect(
 		const sectionName = getSectionName( state );
 		const messagePath = `calypso:${ sectionName }:sidebar_notice`;
 
+		const isMigrationInProgress =
+			isSiteMigrationInProgress( state, siteId ) || isSiteMigrationActiveRoute( state );
+
 		return {
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isEligibleForFreeToPaidUpsell: isEligibleForFreeToPaidUpsell( state, siteId ),
@@ -277,7 +282,7 @@ export default connect(
 			isPlanOwner: isCurrentUserCurrentPlanOwner( state, siteId ),
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			domainUpsellNudgeDismissedDate: getPreference( state, DOMAIN_UPSELL_NUDGE_DISMISS_KEY ),
-			isMigrationInProgress: !! isSiteMigrationInProgress( state, siteId ),
+			isMigrationInProgress,
 			hasJITM: getTopJITM( state, messagePath ),
 			messagePath,
 		};

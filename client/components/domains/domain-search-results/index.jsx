@@ -256,8 +256,6 @@ class DomainSearchResults extends React.Component {
 					selectedSite={ this.props.selectedSite }
 					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 					unavailableDomains={ this.props.unavailableDomains }
-					showTestCopy={ this.props.showTestCopy }
-					showDesignUpdate={ this.props.showDesignUpdate }
 					isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 				/>
 			);
@@ -283,8 +281,6 @@ class DomainSearchResults extends React.Component {
 						onButtonClick={ this.props.onClickResult }
 						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 						unavailableDomains={ this.props.unavailableDomains }
-						showTestCopy={ this.props.showTestCopy }
-						showDesignUpdate={ this.props.showDesignUpdate }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 					/>
 				);
@@ -295,7 +291,6 @@ class DomainSearchResults extends React.Component {
 					<DomainTransferSuggestion
 						onButtonClick={ this.props.onClickUseYourDomain }
 						tracksButtonClickSource="search-suggestions-bottom"
-						showDesignUpdate={ this.props.showDesignUpdate }
 					/>
 				);
 			}

@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
+import { Button } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -40,7 +41,7 @@ async function validateUrl( redirectUrl ) {
 	}
 }
 
-function ContinueAsUser( { currentUser, redirectUrlFromQuery } ) {
+function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } ) {
 	const translate = useTranslate();
 	const [ validatedRedirectUrl, setValidatedRedirectUrl ] = useState( null );
 
@@ -54,19 +55,24 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery } ) {
 	// This helps avoid jarring layout shifts. It's not ideal that the link URL changes transparently
 	// like that, but it is better than the alternative, and in practice it should happen quicker than
 	// the user can notice.
-	const redirectLink = (
-		<a href={ validatedRedirectUrl || '/' }>
-			<Gravatar user={ currentUser } size={ 16 } />
-			{ userName }
-		</a>
-	);
 
 	return (
 		<div className="continue-as-user">
-			{ translate( 'or continue as {{userName/}}', {
-				components: { userName: redirectLink },
-				comment: 'Alternative link under login header, skips login to continue as current user.',
-			} ) }
+			<Gravatar user={ currentUser } imgSize={ 400 } size={ 200 } />
+			<div className="continue-as-user__username">{ userName }</div>
+			<Button primary href={ validatedRedirectUrl || '/' }>
+				{ translate( 'Continue' ) }
+			</Button>
+			<p>{ translate( 'or' ) }</p>
+
+			<button
+				type="button"
+				id="loginAsAnotherUser"
+				className="continue-as-user__change-user-link"
+				onClick={ onChangeAccount }
+			>
+				{ translate( 'Log in with a different account' ) }
+			</button>
 		</div>
 	);
 }

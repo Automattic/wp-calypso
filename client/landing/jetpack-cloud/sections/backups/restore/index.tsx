@@ -1,30 +1,37 @@
 /**
  * External dependencies
  */
-import React, { useCallback, useState } from 'react';
+import React, { FunctionComponent, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { Card } from '@automattic/components';
+import {
+	defaultRewindConfig,
+	RewindConfig,
+} from 'landing/jetpack-cloud/components/rewind-config/types';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { rewindRestore } from 'state/activity-log/actions';
+import { useLocalizedMoment } from 'components/localized-moment';
 import Confirm from './confirm';
+import DocumentHead from 'components/data/document-head';
 import Error from './error';
 import Finished from './finished';
 import getRewindState from 'state/selectors/get-rewind-state';
+import getSiteTitle from 'state/sites/selectors/get-site-title';
+import getSiteUrl from 'state/selectors/get-site-url';
+import Gridicon from 'components/gridicon';
 import InProgress from './in-progress';
+import Main from 'components/main';
 import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
-import Queued from './queued';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
-enum RestoreState {
-	RestoreConfirm,
-	RestoreQueued,
-	RestoreInProgress,
-	RestoreFinished,
-	RestoreError,
-}
-
+/**
+ * Style dependencies
+ */
+import './style.scss';
 interface Props {
 	restoreId?: string;
 }
@@ -37,68 +44,75 @@ interface RewindState {
 	};
 }
 
-const getRestoreState = ( rewindState: RewindState, hasRequestedRestore: boolean ) => {
-	if ( ! rewindState?.rewind && ! hasRequestedRestore ) {
-		return RestoreState.RestoreConfirm;
-	} else if (
-		( ! rewindState?.rewind && hasRequestedRestore ) ||
-		rewindState?.rewind?.status === 'queued'
-	) {
-		return RestoreState.RestoreQueued;
-	} else if ( rewindState?.rewind?.status === 'running' ) {
-		return RestoreState.RestoreInProgress;
-	} else if ( rewindState?.rewind?.status === 'finished' ) {
-		return RestoreState.RestoreFinished;
-	}
-	return RestoreState.RestoreError;
-};
-
-const BackupRestorePage = ( { restoreId }: Props ) => {
+const BackupRestorePage: FunctionComponent< Props > = ( { restoreId } ) => {
 	const dispatch = useDispatch();
 
+	const [ restoreSettings, setRestoreSettings ] = useState< RewindConfig >( defaultRewindConfig );
+
 	const siteId = useSelector( getSelectedSiteId );
-	const rewindState = useSelector( state => getRewindState( state, siteId ) );
+
+	const rewindState = useSelector< object, RewindState >( state =>
+		getRewindState( state, siteId )
+	);
+
+	const siteUrl = useSelector( state => ( siteId ? getSiteUrl( state, siteId ) : null ) );
+	const siteTitle = useSelector( state => ( siteId ? getSiteTitle( state, siteId ) : null ) );
+
+	const moment = useLocalizedMoment();
+	const restoreTimestamp: string = moment.unix( restoreId ).format( 'LLL' );
 
 	const [ hasRequestedRestore, setHasRequestedRestore ] = useState( false );
 
 	const requestRestore = useCallback( () => {
 		if ( siteId && restoreId ) {
-			dispatch( rewindRestore( siteId, restoreId, {} ) );
+			dispatch( rewindRestore( siteId, restoreId, restoreSettings ) );
 		}
-	}, [ dispatch, siteId, restoreId ] );
+	}, [ dispatch, siteId, restoreId, restoreSettings ] );
 
 	const onConfirm = () => {
 		setHasRequestedRestore( true );
 		requestRestore();
 	};
 
-	const restoreState = getRestoreState( rewindState, hasRequestedRestore );
-
 	const render = () => {
-		switch ( restoreState ) {
-			case RestoreState.RestoreConfirm:
-				return <Confirm siteId={ siteId } restoreId={ restoreId } onConfirm={ onConfirm } />;
-			case RestoreState.RestoreQueued:
-				return <Queued />;
-			case RestoreState.RestoreInProgress:
-				return (
-					<InProgress
-						percent={ rewindState?.rewind?.progress ? rewindState?.rewind?.progress : 0 }
-						siteId={ siteId }
-					/>
-				);
-			case RestoreState.RestoreFinished:
-				return <Finished siteId={ siteId } restoreId={ restoreId } />;
-			case RestoreState.RestoreError:
-				return <Error />;
+		if ( ! rewindState?.rewind && ! hasRequestedRestore ) {
+			return (
+				<Confirm
+					onConfirm={ onConfirm }
+					restoreTimestamp={ restoreTimestamp }
+					siteTitle={ siteTitle }
+					restoreSettings={ restoreSettings }
+					onRestoreSettingsChange={ setRestoreSettings }
+				/>
+			);
+		} else if (
+			( ! rewindState?.rewind && hasRequestedRestore ) ||
+			[ 'queued', 'running' ].includes( rewindState?.rewind?.status )
+		) {
+			return (
+				<InProgress
+					percent={ rewindState?.rewind?.progress ? rewindState?.rewind?.progress : 0 }
+					restoreTimestamp={ restoreTimestamp }
+				/>
+			);
+		} else if ( rewindState?.rewind?.status === 'finished' ) {
+			return <Finished restoreTimestamp={ restoreTimestamp } siteUrl={ siteUrl } />;
 		}
+		return <Error />;
 	};
 
 	return (
-		<div>
+		<Main className="restore">
+			<DocumentHead title="Restore" />
+			<SidebarNavigation />
 			{ siteId && <QueryRewindRestoreStatus siteId={ siteId } /> }
-			{ render() }
-		</div>
+			<Card>
+				<div className="restore__header">
+					<Gridicon icon="history" size={ 48 } />
+				</div>
+				{ render() }
+			</Card>
+		</Main>
 	);
 };
 

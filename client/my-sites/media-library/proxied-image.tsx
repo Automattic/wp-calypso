@@ -18,12 +18,14 @@ type RenderedComponentProps = {
 };
 export type RenderedComponent = string | React.ComponentType< RenderedComponentProps >;
 
-interface Props {
+export interface ProxiedImageProps {
 	query: string;
 	filePath: string;
 	siteSlug: string;
 	placeholder: React.ReactNode | null;
 	component: RenderedComponent;
+	maxSize: number | null;
+	onError?: ( err: Error ) => any;
 
 	[ key: string ]: any;
 }
@@ -44,11 +46,13 @@ const cacheResponse = ( requestId: string, blob: Blob, freshness = 60000 ) => {
 	}, freshness );
 };
 
-const ProxiedImage: React.FC< Props > = function ProxiedImage( {
+const ProxiedImage: React.FC< ProxiedImageProps > = function ProxiedImage( {
 	siteSlug,
 	filePath,
 	query,
 	placeholder,
+	maxSize,
+	onError,
 	component: Component,
 	...rest
 } ) {
@@ -63,17 +67,23 @@ const ProxiedImage: React.FC< Props > = function ProxiedImage( {
 				debug( 'set image from cache', { url } );
 			} else {
 				debug( 'requesting image from API', { requestId, imageObjectUrl } );
+				const options = { query };
+				if ( maxSize !== null ) {
+					options.maxSize = maxSize;
+				}
 				wpcom
 					.undocumented()
 					.getAtomicSiteMediaViaProxyRetry(
 						siteSlug,
 						filePath,
-						query,
+						options,
 						( err: Error, data: Blob | null ) => {
 							if ( data instanceof Blob ) {
 								cacheResponse( requestId, data );
 								setImageObjectUrl( URL.createObjectURL( data ) );
 								debug( 'got image from API', { requestId, imageObjectUrl, data } );
+							} else if ( onError ) {
+								onError( err );
 							}
 						}
 					);
@@ -86,7 +96,7 @@ const ProxiedImage: React.FC< Props > = function ProxiedImage( {
 				URL.revokeObjectURL( imageObjectUrl );
 			}
 		};
-	}, [ imageObjectUrl, filePath, requestId, siteSlug ] );
+	}, [ filePath, requestId, siteSlug ] );
 
 	if ( ! imageObjectUrl ) {
 		return placeholder as React.ReactElement;

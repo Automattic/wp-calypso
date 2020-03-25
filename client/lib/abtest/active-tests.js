@@ -106,15 +106,6 @@ export default {
 		defaultVariation: 'variantShowUpdates',
 		allowExistingUsers: true,
 	},
-	domainStepDesignUpdates: {
-		datestamp: '20201220',
-		variations: {
-			variantDesignUpdates: 0,
-			control: 100,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	planStepCopyUpdates: {
 		datestamp: '20200312',
 		variations: {
@@ -122,15 +113,6 @@ export default {
 			control: 50,
 		},
 		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	peerReferralEarnCard: {
-		datestamp: '20200305',
-		variations: {
-			show: 50,
-			holdout: 50,
-		},
-		defaultVariation: 'holdout',
 		allowExistingUsers: true,
 	},
 };

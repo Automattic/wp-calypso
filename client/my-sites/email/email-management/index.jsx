@@ -148,7 +148,7 @@ class EmailManagement extends React.Component {
 
 		const defaultEmptyContentProps = {
 			illustration: customDomainImage,
-			action: translate( 'Add a Custom Domain' ),
+			action: translate( 'Add a custom domain' ),
 			actionURL: '/domains/add/' + selectedSiteSlug,
 		};
 
@@ -172,7 +172,7 @@ class EmailManagement extends React.Component {
 		}
 
 		const emailForwardingAction = {
-			secondaryAction: translate( 'Add Email Forwarding' ),
+			secondaryAction: translate( 'Add email forwarding' ),
 			secondaryActionURL: emailManagementForwarding( selectedSiteSlug, selectedDomainName ),
 		};
 

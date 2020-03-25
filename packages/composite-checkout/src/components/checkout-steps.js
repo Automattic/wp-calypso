@@ -73,7 +73,7 @@ export function Checkout( { children, className } ) {
 			>
 				<MainContentUI
 					className={ joinClasses( [ className, 'checkout__content' ] ) }
-					isLastStepActive={ isThereAnotherNumberedStep }
+					isLastStepActive={ ! isThereAnotherNumberedStep }
 				>
 					{ children || getDefaultCheckoutSteps() }
 
@@ -373,7 +373,7 @@ const MainContentUI = styled.div`
 	background: ${props => props.theme.colors.surface};
 	width: 100%;
 	box-sizing: border-box;
-	margin-bottom: ${props => ( props.isLastStepActive ? '89px' : 0 )};
+	margin-bottom: ${props => ( props.isLastStepActive ? '100px' : 0 )};
 
 	@media ( ${props => props.theme.breakpoints.tabletUp} ) {
 		border: 1px solid ${props => props.theme.colors.borderColorLight};

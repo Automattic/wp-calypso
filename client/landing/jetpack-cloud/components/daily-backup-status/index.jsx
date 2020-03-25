@@ -18,11 +18,18 @@ import Button from 'components/forms/form-button';
 import './style.scss';
 
 class DailyBackupStatus extends Component {
+	// TODO: now that we are reusing URLs we should have a dedicated paths file
 	createRestoreUrl = restoreId => `/backups/${ this.props.siteSlug }/restore/${ restoreId }`;
+	createDownloadUrl = downloadId => `/backups/${ this.props.siteSlug }/download/${ downloadId }`;
 
 	triggerRestore = () => {
 		const restoreId = this.props.backupAttempts.complete[ 0 ].rewindId;
 		page.redirect( this.createRestoreUrl( restoreId ) );
+	};
+
+	triggerDownload = () => {
+		const downloadId = this.props.backupAttempts.complete[ 0 ].rewindId;
+		page.redirect( this.createDownloadUrl( downloadId ) );
 	};
 
 	renderGoodBackup() {
@@ -39,13 +46,15 @@ class DailyBackupStatus extends Component {
 					{ translate( 'Latest backup completed:' ) }
 				</div>
 				<div className="daily-backup-status__date">{ displayDate }</div>
-				<Button className="daily-backup-status__download-button">Download backup</Button>
+				<Button className="daily-backup-status__download-button" onClick={ this.triggerDownload }>
+					{ translate( 'Download backup' ) }
+				</Button>
 				<Button
 					className="daily-backup-status__restore-button"
 					disabled={ ! allowRestore }
 					onClick={ this.triggerRestore }
 				>
-					Restore to this point
+					{ translate( 'Restore to this point' ) }
 				</Button>
 			</Fragment>
 		);

@@ -27,7 +27,11 @@ import ProductExpiration from 'components/product-expiration';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { managePurchase } from 'me/purchases/paths';
 import { getPlan } from 'lib/plans';
-import { isPartnerPurchase, shouldAddPaymentSourceInsteadOfRenewingNow } from 'lib/purchases';
+import {
+	isExpiring,
+	isPartnerPurchase,
+	shouldAddPaymentSourceInsteadOfRenewingNow,
+} from 'lib/purchases';
 import {
 	isFreeJetpackPlan,
 	isFreePlan,
@@ -124,25 +128,34 @@ class PurchasesListing extends Component {
 		return null;
 	}
 
-	getExpirationInfo( purchase ) {
+	getExpirationInfoForPlan( plan ) {
+		// No expiration date for free plans.
+		if ( this.isFreePlan( plan ) ) {
+			return null;
+		}
+
+		const expiryMoment = plan.expiryDate ? this.props.moment( plan.expiryDate ) : null;
+
+		const renewMoment =
+			plan.autoRenew && plan.autoRenewDate ? this.props.moment( plan.autoRenewDate ) : null;
+
+		return <ProductExpiration expiryDateMoment={ expiryMoment } renewDateMoment={ renewMoment } />;
+	}
+
+	getExpirationInfoForPurchase( purchase ) {
 		// No expiration date for free plan or partner site.
 		if ( this.isFreePlan( purchase ) || isPartnerPurchase( purchase ) ) {
 			return null;
 		}
 
-		const subscribedMoment = purchase.subscribedDate
-			? this.props.moment( purchase.subscribedDate )
-			: null;
-
 		const expiryMoment = purchase.expiryDate ? this.props.moment( purchase.expiryDate ) : null;
 
-		return (
-			<ProductExpiration
-				expiryDateMoment={ expiryMoment }
-				purchaseDateMoment={ subscribedMoment }
-				isRefundable={ purchase.isRefundable }
-			/>
-		);
+		const renewMoment =
+			! isExpiring( purchase ) && purchase.renewDate
+				? this.props.moment( purchase.renewDate )
+				: null;
+
+		return <ProductExpiration expiryDateMoment={ expiryMoment } renewDateMoment={ renewMoment } />;
 	}
 
 	getActionButton( purchase ) {
@@ -200,7 +213,7 @@ class PurchasesListing extends Component {
 				) : (
 					<MyPlanCard
 						action={ this.getActionButton( currentPlan ) }
-						details={ this.getExpirationInfo( currentPlan ) }
+						details={ this.getExpirationInfoForPlan( currentPlan ) }
 						isError={ isPlanExpiring }
 						product={ currentPlanSlug }
 						tagline={ this.getTagline( currentPlan ) }
@@ -230,7 +243,7 @@ class PurchasesListing extends Component {
 					<MyPlanCard
 						key={ purchase.id }
 						action={ this.getActionButton( purchase ) }
-						details={ this.getExpirationInfo( purchase ) }
+						details={ this.getExpirationInfoForPurchase( purchase ) }
 						isError={ this.isProductExpiring( purchase ) }
 						isPlaceholder={ this.isLoading() }
 						product={ purchase?.productSlug }

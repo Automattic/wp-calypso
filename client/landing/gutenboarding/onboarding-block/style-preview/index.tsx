@@ -2,7 +2,6 @@
  * External dependencies
  */
 import * as React from 'react';
-import { Button } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
 import { ValuesType } from 'utility-types';
 
@@ -13,8 +12,9 @@ import Preview from './preview';
 import Link from '../../components/link';
 import { usePath, Step } from '../../path';
 import ViewportSelect from './viewport-select';
-import FontSelect, { fontPairings } from './font-select';
+import FontSelect from './font-select';
 import { Title, SubTitle } from '../../components/titles';
+import { fontPairings } from '../../constants';
 import * as T from './types';
 
 import './style.scss';
@@ -38,14 +38,6 @@ const StylePreview: React.FunctionComponent = () => {
 					<Link isLink to={ makePath( Step.DesignSelection ) }>
 						{ NO__( 'Choose another design' ) }
 					</Link>
-					<Button
-						isPrimary
-						onClick={ () => {
-							window.alert( 'Not implemented!' );
-						} }
-					>
-						{ NO__( 'Continue' ) }
-					</Button>
 				</div>
 			</div>
 			<div className="style-preview__content">
@@ -57,7 +49,3 @@ const StylePreview: React.FunctionComponent = () => {
 };
 
 export default StylePreview;
-
-interface ViewProps {
-	isSelected: boolean;
-}

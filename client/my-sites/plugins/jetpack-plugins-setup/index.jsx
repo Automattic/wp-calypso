@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import FeatureExample from 'components/feature-example';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import Spinner from 'components/spinner';
@@ -550,8 +549,7 @@ class PlansSetup extends React.Component {
 					{ translate( "We need to install a few plugins for you. It won't take long!" ) }
 				</p>
 				{ this.renderSuccess() }
-				<FeatureExample>{ this.renderPlugins( true ) }</FeatureExample>) : ( this.renderPlugins(
-				false ) ) }
+				{ this.renderPlugins( false ) }
 			</div>
 		);
 	}

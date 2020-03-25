@@ -40,6 +40,7 @@ import gutenbergOptInOut from './gutenberg-opt-in-out/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
 import happychat from './happychat/reducer';
 import help from './help/reducer';
+import home from './home/reducer';
 import i18n from './i18n/reducer';
 import immediateLogin from './immediate-login/reducer';
 import importerNux from './importer-nux/reducer';
@@ -48,7 +49,6 @@ import inlineHelp from './inline-help/reducer';
 import inlineSupportArticle from './inline-support-article/reducer';
 import invites from './invites/reducer';
 import jetpack from './jetpack/reducer';
-import jetpackConnect from './jetpack-connect/reducer';
 import jetpackProductInstall from './jetpack-product-install/reducer';
 import jetpackRemoteInstall from './jetpack-remote-install/reducer';
 import jetpackSync from './jetpack-sync/reducer';
@@ -128,6 +128,7 @@ const reducers = {
 	happinessEngineers,
 	happychat,
 	help,
+	home,
 	httpData,
 	i18n,
 	immediateLogin,
@@ -137,7 +138,6 @@ const reducers = {
 	inlineSupportArticle,
 	invites,
 	jetpack,
-	jetpackConnect,
 	jetpackProductInstall,
 	jetpackRemoteInstall,
 	jetpackSync,

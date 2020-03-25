@@ -27,6 +27,7 @@ export type ItemVariationPickerProps = {
 	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[];
 	getItemVariants: ( WPCOMProductSlug ) => WPCOMProductVariant[];
 	onChangeItemVariant: ( WPCOMCartItem, WPCOMProductSlug, number ) => void;
+	isDisabled: boolean;
 };
 
 export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > = ( {
@@ -34,6 +35,7 @@ export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > 
 	variantSelectOverride,
 	getItemVariants,
 	onChangeItemVariant,
+	isDisabled,
 } ) => {
 	const variants = getItemVariants( selectedItem.wpcom_meta.product_slug );
 
@@ -44,7 +46,7 @@ export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > 
 	return (
 		<TermOptions>
 			{ variants.map(
-				renderProductVariant( selectedItem, onChangeItemVariant, variantSelectOverride )
+				renderProductVariant( selectedItem, onChangeItemVariant, variantSelectOverride, isDisabled )
 			) }
 		</TermOptions>
 	);
@@ -53,7 +55,8 @@ export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > 
 function renderProductVariant(
 	selectedItem: WPCOMCartItem,
 	onChangeItemVariant: ( string, WPCOMProductSlug, number ) => void,
-	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[]
+	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[],
+	isDisabled: boolean
 ): ( _0: WPCOMProductVariant, _1: number ) => JSX.Element {
 	return (
 		{ variantLabel, variantDetails, productSlug, productId }: WPCOMProductVariant,
@@ -79,9 +82,10 @@ function renderProductVariant(
 					id={ key }
 					value={ productSlug }
 					checked={ isChecked }
-					isDisabled={ false }
+					isDisabled={ isDisabled }
 					onChange={ () => {
-						onChangeItemVariant( selectedItem.wpcom_meta.uuid, productSlug, productId );
+						! isDisabled &&
+							onChangeItemVariant( selectedItem.wpcom_meta.uuid, productSlug, productId );
 					} }
 					ariaLabel={ translate( 'Select a different term length' ) as string }
 					label={

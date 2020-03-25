@@ -1,31 +1,40 @@
+.theme-jetpack-cloud .main {
+	margin-left: 0;
+}
+.theme-jetpack-cloud .main.sites {
+	margin-left: auto;
+}
+
 .scan__main {
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
-	min-height: calc( 100vh - 47px ); // Padding of .layout__content.
-	padding: 40px 16px 0;
-
-	@include breakpoint ( '>660px' ) {
-		min-height: calc( 100vh - 95px ); // 71px top + 24px bottom padding. 
-		padding: 0;
-	}
-
-	@include breakpoint ( '>960px' ) {
-		min-height: calc( 100vh - 111px ); // 79px top + 32px bottom padding.
-	}
+	justify-content: space-between;
+	min-height: calc( 100vh - 111px ); // Padding of .layout__content: 79px + 32px;
 }
 
 .scan__content {
+	padding: 40px 16px 0;
 	flex: 1 0 auto;
-	max-width: 680px;
-}
 
-.scan__icon {
-	display: block;
-	margin: 0 auto;
+	.security-icon {
+		display: block;
+		margin: 0 auto;
+		width: 56px;
 
-	@include breakpoint( '>660px' ) {
-		margin: 0;
+		@include breakpoint( '>660px' ) {
+			margin: 0;
+			padding: 0;
+		}
+	}
+
+	.progress-bar {
+		margin-bottom: 24px;
+	}
+
+	.progress-bar__progress {
+		background-color: var( --color-primary );
+		box-shadow: 0 2px 6px rgba( var( --color-primary-rgb ), 0.25 );
 	}
 }
 

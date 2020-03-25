@@ -96,6 +96,7 @@ describe( `[${ host }] Plans: (${ screenSize })`, function() {
 		step( 'Can Select Plans tab', async function() {
 			const plansPage = await PlansPage.Expect( driver );
 			await plansPage.openPlansTab();
+			await plansPage.openAdvancedPlansSegment();
 			return await plansPage.waitForComparison();
 		} );
 

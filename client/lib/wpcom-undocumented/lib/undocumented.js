@@ -2463,29 +2463,46 @@ Undocumented.prototype.startMigration = function( sourceSiteId, targetSiteId ) {
 	} );
 };
 
-Undocumented.prototype.getAtomicSiteMediaViaProxy = function( siteIdOrSlug, mediaPath, query, fn ) {
-	return this.wpcom.req.get(
-		{
-			path: `/sites/${ siteIdOrSlug }/atomic-auth-proxy/file${ mediaPath }${ query }`,
-			apiNamespace: 'wpcom/v2',
-			responseType: 'blob',
-		},
-		fn
-	);
+Undocumented.prototype.getAtomicSiteMediaViaProxy = function(
+	siteIdOrSlug,
+	mediaPath,
+	{ query = '', maxSize },
+	fn
+) {
+	const params = {
+		path: `/sites/${ siteIdOrSlug }/atomic-auth-proxy/file${ mediaPath }${ query }`,
+		apiNamespace: 'wpcom/v2',
+	};
+
+	const fetchMedia = () => this.wpcom.req.get( { ...params, responseType: 'blob' }, fn );
+
+	if ( ! maxSize ) {
+		return fetchMedia();
+	}
+
+	return this.wpcom.req.get( { ...params, method: 'HEAD' }, ( err, data, headers ) => {
+		if ( headers[ 'Content-Length' ] > maxSize ) {
+			fn( { message: 'exceeded_max_size' }, null );
+			return;
+		}
+
+		fetchMedia();
+	} );
 };
 
 Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function(
 	siteIdOrSlug,
 	mediaPath,
-	query,
+	options,
 	fn
 ) {
-	return this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, query, ( err, data ) => {
-		if ( err || ! ( data instanceof Blob ) ) {
-			return this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, query, fn );
+	return this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, options, ( err, data ) => {
+		if ( data instanceof Blob || ( err && err.message === 'exceeded_max_size' ) ) {
+			fn( err, data );
+			return;
 		}
 
-		fn( err, data );
+		return this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, options, fn );
 	} );
 };
 
