@@ -1,4 +1,10 @@
 .upsell__header {
+	display: flex;
+	justify-content: center;
+	@include breakpoint( '>660px' ) {
+		justify-content: flex-start;
+	}
+
 	.gridicon {
 		fill: var( --color-primary );
 	}
@@ -6,8 +12,12 @@
 
 .upsell__title {
 	color: var( --color-primary );
-	font-size: 48px;
+	font-size: 32px;
 	font-weight: 600;
+	margin-bottom: 15px;
+	@include breakpoint( '>660px' ) {
+		font-size: 48px;
+	}
 }
 
 .upsell__copy {
@@ -24,5 +34,15 @@
 
 	span {
 		font-style: italic;
+	}
+}
+
+.upsell__upgrade-button {
+	text-align: center;
+	width: 100%;
+
+	@include breakpoint( '>660px' ) {
+		text-align: auto;
+		width: auto;
 	}
 }
