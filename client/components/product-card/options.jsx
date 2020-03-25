@@ -17,17 +17,21 @@ const ProductCardOptions = ( { handleSelect, options, optionsLabel, selectedSlug
 		return null;
 	}
 
+	const hasOneOption = options.length === 1;
+
 	return (
 		<div className="product-card__options">
 			{ optionsLabel && <h4 className="product-card__options-label">{ optionsLabel }</h4> }
 			{ options.map( option => (
 				<FormLabel key={ `product-option-${ option.slug }` } className="product-card__option">
-					<FormRadio
-						checked={ option.slug === selectedSlug }
-						onChange={ () => handleSelect( option.slug ) }
-					/>
+					{ ! hasOneOption && (
+						<FormRadio
+							checked={ option.slug === selectedSlug }
+							onChange={ () => handleSelect( option.slug ) }
+						/>
+					) }
 					<div className="product-card__option-description">
-						<div className="product-card__option-name">{ option.title }</div>
+						{ ! hasOneOption && <div className="product-card__option-name">{ option.title }</div> }
 						<ProductCardPriceGroup
 							billingTimeFrame={ option.billingTimeFrame }
 							currencyCode={ option.currencyCode }
