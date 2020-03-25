@@ -17,9 +17,6 @@
 }
 
 .quick-links.foldable-card {
-	&.is-expanded .foldable-card__header {
-		padding-bottom: 0;
-	}
 	.foldable-card {
 		@include breakpoint( '<480px' ) {
 			&__header {
@@ -31,6 +28,7 @@
 		&__content {
 			border: 0;
 			padding-bottom: 0;
+			padding-top: 0;
 		}
 	}
 }
