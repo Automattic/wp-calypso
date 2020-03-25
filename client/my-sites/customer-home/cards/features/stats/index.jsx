@@ -20,7 +20,7 @@ import QuerySiteStats from 'components/data/query-site-stats';
  */
 import './style.scss';
 
-export const StatsCard = ( {
+export const Stats = ( {
 	hideStats,
 	insightsData,
 	insightsStatsQuery,
@@ -39,7 +39,7 @@ export const StatsCard = ( {
 	}
 
 	return (
-		<Card className="stats-card">
+		<Card className="stats">
 			{ siteId && (
 				<>
 					<QuerySiteStats
@@ -57,33 +57,33 @@ export const StatsCard = ( {
 				</>
 			) }
 			<CardHeading>{ translate( 'Stats at a glance' ) }</CardHeading>
-			<h6 className="stats-card__subheader">{ translate( 'Your site in the last week.' ) }</h6>
-			<div className="stats-card__data">
+			<h6 className="stats__subheader">{ translate( 'Your site in the last week.' ) }</h6>
+			<div className="stats__data">
 				{ ! showInsights && (
 					<>
-						<div className="stats-card__data-item">
-							<div className="stats-card__data-value">
+						<div className="stats__data-item">
+							<div className="stats__data-value">
 								{ trafficData?.views ? numberFormat( trafficData.views ) : '-' }
 							</div>
-							<div className="stats-card__data-label">{ translate( 'Views' ) }</div>
+							<div className="stats__data-label">{ translate( 'Views' ) }</div>
 						</div>
-						<div className="stats-card__data-item">
-							<div className="stats-card__data-value">
+						<div className="stats__data-item">
+							<div className="stats__data-value">
 								{ trafficData?.visitors ? numberFormat( trafficData.visitors ) : '-' }
 							</div>
-							<div className="stats-card__data-label">{ translate( 'Visitors' ) }</div>
+							<div className="stats__data-label">{ translate( 'Visitors' ) }</div>
 						</div>
 					</>
 				) }
 				{ showInsights && (
 					<>
-						<div className="stats-card__data-item">
-							<div className="stats-card__data-value">{ insightsData?.day ?? '-' }</div>
-							<div className="stats-card__data-label">{ translate( 'Most popular day' ) }</div>
+						<div className="stats__data-item">
+							<div className="stats__data-value">{ insightsData?.day ?? '-' }</div>
+							<div className="stats__data-label">{ translate( 'Most popular day' ) }</div>
 						</div>
-						<div className="stats-card__data-item">
-							<div className="stats-card__data-value">{ insightsData?.hour ?? '-' }</div>
-							<div className="stats-card__data-label">{ translate( 'Most popular hour' ) }</div>
+						<div className="stats__data-item">
+							<div className="stats__data-value">{ insightsData?.hour ?? '-' }</div>
+							<div className="stats__data-label">{ translate( 'Most popular hour' ) }</div>
 						</div>
 					</>
 				) }
@@ -141,4 +141,4 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps )( StatsCard );
+export default connect( mapStateToProps )( Stats );

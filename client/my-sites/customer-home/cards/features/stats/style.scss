@@ -1,10 +1,10 @@
-.stats-card__subheader {
+.stats__subheader {
 	color: var( --color-text-subtle );
 	font-size: 0.85rem;
 	margin: -0.5rem 0 1rem;
 }
 
-.stats-card__data {
+.stats__data {
 	display: flex;
 	justify-content: center;
 	margin-bottom: 1rem;
@@ -15,7 +15,7 @@
 	}
 }
 
-.stats-card__data-item {
+.stats__data-item {
 	border-left: 1px solid var( --color-neutral-5 );
 	width: 50%;
 	text-align: center;
@@ -49,6 +49,6 @@
 	}
 }
 
-.stats-card__data-value {
+.stats__data-value {
 	font-size: 24px;
 }

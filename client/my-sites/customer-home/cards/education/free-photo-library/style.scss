@@ -1,5 +1,5 @@
-.free-photo-library-card {
-	.free-photo-library-card__demonstration-image {
+.free-photo-library {
+	.free-photo-library__demonstration-image {
 		cursor: pointer;
 		margin-bottom: 12px;
 		width: 100%;
@@ -10,12 +10,12 @@
 	}
 }
 
-.free-photo-library-card__dialog-close {
+.free-photo-library__dialog-close {
 	margin-top: 12px;
 	text-align: right;
 }
 
-.free-photo-library-card__demonstration-video {
+.free-photo-library__demonstration-video {
 	max-height: 600px;
 	max-width: 800px;
 	width: calc( 90vw - 16px * 2 );
