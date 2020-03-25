@@ -82,6 +82,7 @@ class JetpackCloudSidebar extends Component {
 						>
 							<ul>
 								<SidebarItem
+									expandSection={ this.expandBackupSection }
 									label={ translate( 'Status', {
 										comment: 'Jetpack Cloud / Backup status sidebar navigation item',
 									} ) }
@@ -90,6 +91,7 @@ class JetpackCloudSidebar extends Component {
 									selected={ itemLinkMatches( '/backups', this.props.path ) }
 								/>
 								<SidebarItem
+									expandSection={ this.expandBackupSection }
 									label={ translate( 'Activity Log', {
 										comment: 'Jetpack Cloud / Activity Log status sidebar navigation item',
 									} ) }
@@ -112,6 +114,7 @@ class JetpackCloudSidebar extends Component {
 						>
 							<ul>
 								<SidebarItem
+									expandSection={ this.expandScanSection }
 									label={ translate( 'Scanner', {
 										comment: 'Jetpack Cloud / Scanner sidebar navigation item',
 									} ) }
@@ -134,6 +137,7 @@ class JetpackCloudSidebar extends Component {
 									) }
 								</SidebarItem>
 								<SidebarItem
+									expandSection={ this.expandScanSection }
 									label={ translate( 'History', {
 										comment: 'Jetpack Cloud / Scan History sidebar navigation item',
 									} ) }
