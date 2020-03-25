@@ -142,7 +142,9 @@ function LineItemTitle( { item, id } ) {
 	return (
 		<LineItemTitleUI>
 			{ isLineItemADomain( item ) && item.sublabel ? (
-				<ProductTitleUI id={ id }>{ item.sublabel }</ProductTitleUI>
+				<ProductTitleUI id={ id }>
+					{ item.label }: { item.sublabel }
+				</ProductTitleUI>
 			) : (
 				<ProductTitleUI id={ id }>{ item.label }</ProductTitleUI>
 			) }
