@@ -34,6 +34,10 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		error,
 	} );
 
+	const clearErrors = () => ( {
+		type: 'CLEAR_ERRORS' as const,
+	} );
+
 	function* createAccount( params: CreateAccountParams ) {
 		yield fetchNewUser();
 		try {
@@ -68,6 +72,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		fetchNewUser,
 		receiveNewUser,
 		receiveNewUserFailed,
+		clearErrors,
 		createAccount,
 	};
 }

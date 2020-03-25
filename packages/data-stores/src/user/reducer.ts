@@ -40,6 +40,8 @@ const newUserError: Reducer< NewUserErrorResponse | undefined, Action > = ( stat
 			return undefined;
 		case 'RECEIVE_NEW_USER':
 			return undefined;
+		case 'CLEAR_ERRORS':
+			return undefined;
 		case 'RECEIVE_NEW_USER_FAILED':
 			return {
 				error: action.error.error,
