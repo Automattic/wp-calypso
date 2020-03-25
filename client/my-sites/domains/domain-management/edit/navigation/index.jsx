@@ -135,7 +135,7 @@ class DomainManagementNavigation extends React.Component {
 		return (
 			<DomainManagementNavigationItem
 				path={ domainManagementTransfer( selectedSite.slug, domain.name ) }
-				materialIcon="cached"
+				materialIcon="sync_alt"
 				text={ translate( 'Transfer domain' ) }
 				description={ null && translate( 'Transfer lock: off' ) }
 			/>
