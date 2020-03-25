@@ -414,13 +414,6 @@ export function createAccount(
 					);
 				}
 
-				// TEMP DEBUG:
-				/*
-				 Google: ok
-				 Normal: ...
-				 Apple: ...
-				 Passwordless: ...
-				 */
 				debug( 'Social Signup: response: ', response );
 				debug( 'Social Signup: userData: ', userData );
 
