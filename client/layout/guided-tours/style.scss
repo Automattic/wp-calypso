@@ -17,11 +17,6 @@
 
 	a {
 		color: var( --color-text-inverted );
-		text-decoration: underline;
-
-		&:hover {
-			text-decoration: none;
-		}
 	}
 
 	p {
