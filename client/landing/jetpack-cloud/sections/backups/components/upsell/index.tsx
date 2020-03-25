@@ -15,9 +15,11 @@ import Gridicon from 'components/gridicon';
  */
 import './style.scss';
 
-interface Props {}
+interface Props {
+	siteSlug: string;
+}
 
-const JetpackCloudBackupUpsell: FunctionComponent< Props > = () => {
+const JetpackCloudBackupUpsell: FunctionComponent< Props > = ( { siteSlug } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -42,7 +44,7 @@ const JetpackCloudBackupUpsell: FunctionComponent< Props > = () => {
 					}
 				) }
 			</p>
-			<Button href={ `https://wordpress.com/plans` } primary>
+			<Button href={ `https://wordpress.com/plans/${ siteSlug }` } primary>
 				{ translate( 'Upgrade' ) }
 			</Button>
 		</div>
