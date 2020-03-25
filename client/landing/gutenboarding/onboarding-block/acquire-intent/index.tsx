@@ -25,7 +25,7 @@ const AcquireIntent: FunctionComponent = () => {
 	return (
 		<div className="acquire-intent">
 			<div className="acquire-intent__questions">
-				<VerticalSelect handleSubmit={ focusSiteTitle } />
+				<VerticalSelect onSubmit={ focusSiteTitle } />
 				{ ( siteVertical || siteTitle ) && <SiteTitle inputRef={ siteTitleRef } /> }
 				{ siteVertical && (
 					<div className="acquire-intent__footer">

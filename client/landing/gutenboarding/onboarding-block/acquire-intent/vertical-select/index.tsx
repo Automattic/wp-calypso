@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { ENTER } from '@wordpress/keycodes';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Suggestions } from '@automattic/components';
 import { useI18n } from '@automattic/react-i18n';
@@ -72,6 +73,9 @@ const VerticalSelect: React.FunctionComponent< Props > = ( {
 
 	const handleSuggestionKeyDown = ( e: React.KeyboardEvent< HTMLInputElement > ) => {
 		if ( suggestionRef.current ) {
+			if ( suggestionRef.current.props.suggestions.length && e.keyCode === ENTER ) {
+				e.preventDefault();
+			}
 			suggestionRef.current.handleKeyEvent( e );
 		}
 	};
