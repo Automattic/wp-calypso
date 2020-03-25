@@ -22,6 +22,6 @@ export default function MyComponent() {
 
 The following props can be passed to the `<MissingCredentialsWarning />` component:
 
-### `settingsLink`
+### `settingsLink` ( Required )
 
 string to set as the link for the "Enter your server credentials" button
