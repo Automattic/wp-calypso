@@ -58,18 +58,25 @@ interface Cart {
 const Header: FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 
-	const [ isDomainFlow, setDomainFlow ] = useState( false );
-
 	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
 	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
 
 	const newSite = useSelect( select => select( SITE_STORE ).getNewSite() );
 
-	const { domain, selectedDesign, siteTitle, siteVertical } = useSelect( select =>
-		select( ONBOARD_STORE ).getState()
-	);
+	const {
+		domain,
+		selectedDesign,
+		siteTitle,
+		siteVertical,
+		siteWasCreatedForDomainPurchase,
+	} = useSelect( select => select( ONBOARD_STORE ).getState() );
 	const hasSelectedDesign = !! selectedDesign;
-	const { createSite, setDomain, resetOnboardStore } = useDispatch( ONBOARD_STORE );
+	const {
+		createSite,
+		setDomain,
+		resetOnboardStore,
+		setSiteWasCreatedForDomainPurchase,
+	} = useDispatch( ONBOARD_STORE );
 
 	const freeDomainSuggestion = useFreeDomainSuggestion();
 
@@ -123,7 +130,7 @@ const Header: FunctionComponent = () => {
 	);
 
 	const handleCreateSiteForDomains: typeof handleCreateSite = ( ...args ) => {
-		setDomainFlow( true );
+		setSiteWasCreatedForDomainPurchase( true );
 		handleCreateSite( ...args );
 	};
 
@@ -144,7 +151,7 @@ const Header: FunctionComponent = () => {
 
 	const handleSignupForDomains = () => {
 		setShowSignupDialog( true );
-		setDomainFlow( true );
+		setSiteWasCreatedForDomainPurchase( true );
 	};
 
 	useEffect( () => {
@@ -155,7 +162,7 @@ const Header: FunctionComponent = () => {
 
 	useEffect( () => {
 		if ( newSite ) {
-			if ( isDomainFlow ) {
+			if ( siteWasCreatedForDomainPurchase ) {
 				// I'd rather not make my own product, but this works.
 				// lib/cart-items helpers did not perform well.
 				const domainProduct = {
@@ -186,7 +193,7 @@ const Header: FunctionComponent = () => {
 			resetOnboardStore();
 			window.location.replace( `/block-editor/page/${ newSite.site_slug }/home?is-gutenboarding` );
 		}
-	}, [ domain, isDomainFlow, newSite, resetOnboardStore ] );
+	}, [ domain, siteWasCreatedForDomainPurchase, newSite, resetOnboardStore ] );
 
 	return (
 		<div

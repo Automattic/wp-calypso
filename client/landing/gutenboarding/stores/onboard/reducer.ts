@@ -67,12 +67,24 @@ const pageLayouts: Reducer< string[], OnboardAction > = ( state = [], action ) =
 	return state;
 };
 
+const siteWasCreatedForDomainPurchase: Reducer< boolean, OnboardAction > = (
+	state = false,
+	action
+) => {
+	if ( action.type === 'SET_SITE_WAS_CREATED_FOR_DOMAIN_PURCHASE' ) {
+		return action.siteWasCreatedForDomainPurchase;
+	}
+
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	selectedDesign,
 	siteTitle,
 	siteVertical,
 	pageLayouts,
+	siteWasCreatedForDomainPurchase,
 } );
 
 export type State = ReturnType< typeof reducer >;
