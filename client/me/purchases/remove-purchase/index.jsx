@@ -365,7 +365,7 @@ class RemovePurchase extends Component {
 		return (
 			<>
 				<CompactCard
-					displayAsLink={ this.props.displayButtonAsLink }
+					displayAsLink={ !! this.props.displayButtonAsLink }
 					tagName="button"
 					className="remove-purchase__card"
 					onClick={ this.openDialog }
