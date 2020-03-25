@@ -24,17 +24,14 @@ const combineMiddleware = ( ...m ) => {
 /**
  * Connection management middleware
  *
- * We intentionally halt the CONNECT/DISCONNECT actions
- * and dispatch news actions representing the results
- * of the attempts instead.
- *
  * @param store middleware store
  */
 const connectMiddleware = store => next => action => {
-	const user = getCurrentUser( store.getState() );
+	next( action );
 
 	switch ( action.type ) {
-		case 'LASAGNA_SOCKET_CONNECT':
+		case 'LASAGNA_SOCKET_CONNECT': {
+			const user = getCurrentUser( store.getState() );
 			wpcom
 				.request( {
 					method: 'POST',
@@ -42,14 +39,15 @@ const connectMiddleware = store => next => action => {
 					body: { payload: JSON.stringify( { user } ) },
 				} )
 				.then( ( { jwt } ) => socketConnect( store, jwt, user.ID ) );
-			return;
+			break;
+		}
 
 		case 'LASAGNA_SOCKET_DISCONNECT':
 			socketDisconnect( store );
-			return;
+			break;
 	}
 
-	return next( action );
+	return;
 };
 
 export default combineMiddleware(

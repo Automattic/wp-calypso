@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import debugFactory from 'debug';
+
+/**
  * Internal Dependencies
  */
 import registerEventHandlers from './events-to-actions';
@@ -6,6 +11,7 @@ import registerPresence from '../presence';
 import { socket } from '../socket';
 
 let channel = null;
+const debug = debugFactory( 'lasagna:channel:public-post' );
 
 export default store => next => action => {
 	switch ( action.type ) {
@@ -22,7 +28,14 @@ export default store => next => action => {
 			channel = socket.channel( `public_post:${ post.global_ID }` );
 			registerEventHandlers( channel, store );
 			registerPresence( channel, store, post.global_ID );
-			channel.join();
+			channel
+				.join()
+				.receive( 'ok', () => debug( 'channel join ok' ) )
+				.receive( 'error', ( { reason } ) => {
+					debug( 'channel join error', reason );
+					channel.leave();
+					channel = null;
+				} );
 			break;
 		}
 

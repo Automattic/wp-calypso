@@ -18,6 +18,6 @@ export default function( channel, store ) {
 			return;
 		}
 
-		store.dispatch( receiveComments( comment.siteId, comment.postId, [ comment ], true ) );
+		store.dispatch( receiveComments( comment.siteId, comment.post.ID, [ comment ], true ) );
 	} );
 }

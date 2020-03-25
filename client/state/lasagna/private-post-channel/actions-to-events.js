@@ -32,9 +32,9 @@ export default store => next => action => {
 			registerPresence( channel, store, postKey );
 			channel
 				.join()
-				.receive( 'ok', () => debug( 'Channel join ok' ) )
+				.receive( 'ok', () => debug( 'channel join ok' ) )
 				.receive( 'error', ( { reason } ) => {
-					debug( 'Channel join error', reason );
+					debug( 'channel join error', reason );
 					channel.leave();
 					channel = null;
 				} );

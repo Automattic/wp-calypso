@@ -18,6 +18,15 @@ export default function( channel, store ) {
 			return;
 		}
 
-		store.dispatch( receiveComments( comment.siteId, comment.postId, [ comment ], true ) );
+		store.dispatch(
+			receiveComments( {
+				siteId: comment.post.site_ID,
+				postId: comment.post.ID,
+				comments: [ comment ],
+				commentById: true,
+			} )
+		);
+
+		// { type: COMMENTS_COUNT_INCREMENT, siteId, postId }
 	} );
 }
