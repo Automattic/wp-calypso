@@ -89,7 +89,6 @@ class BackupsPage extends Component {
 					onDateChange={ this.onDateChange }
 					selectedDate={ selectedDate }
 					siteId={ siteId }
-					oldestDateAvailable={ new Date( '2020-03-01' ) } //todo: provide the oldestDateAvailable of backups
 				/>
 				<DailyBackupStatus
 					allowRestore={ allowRestore }

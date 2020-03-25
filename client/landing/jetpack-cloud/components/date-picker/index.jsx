@@ -73,11 +73,7 @@ class DatePicker extends Component {
 	canGoToPreviousDay = () => {
 		const { moment, selectedDate, oldestDateAvailable } = this.props;
 
-		if ( false === !! oldestDateAvailable ) {
-			return true;
-		}
-
-		return ! moment( selectedDate ).isSame( oldestDateAvailable, 'day' );
+		return ! oldestDateAvailable || ! moment( selectedDate ).isSame( oldestDateAvailable, 'day' );
 	};
 
 	canGoToNextDay = () => {
