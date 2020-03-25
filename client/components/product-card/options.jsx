@@ -21,7 +21,9 @@ const ProductCardOptions = ( { handleSelect, options, optionsLabel, selectedSlug
 
 	return (
 		<div className="product-card__options">
-			{ optionsLabel && <h4 className="product-card__options-label">{ optionsLabel }</h4> }
+			{ ! hasOneOption && optionsLabel && (
+				<h4 className="product-card__options-label">{ optionsLabel }</h4>
+			) }
 			{ options.map( option => (
 				<FormLabel key={ `product-option-${ option.slug }` } className="product-card__option">
 					{ ! hasOneOption && (
