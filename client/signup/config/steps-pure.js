@@ -127,7 +127,6 @@ export function generateSteps( {
 			stepName: 'site',
 			apiRequestFunction: createSite,
 			providesDependencies: [ 'siteSlug' ],
-			dependencies: [ 'themeSlugWithRepo' ],
 		},
 
 		'rebrand-cities-welcome': {
@@ -595,6 +594,13 @@ export function generateSteps( {
 			providesToken: true,
 			providesDependencies: [ 'bearer_token', 'email', 'username' ],
 			unstorableDependencies: [ 'bearer_token' ],
+		},
+
+		'wp-for-teams-site': {
+			stepName: 'wp-for-teams-site',
+			apiRequestFunction: createSite,
+			providesDependencies: [ 'siteSlug' ],
+			dependencies: [ 'themeSlugWithRepo' ],
 		},
 	};
 }
