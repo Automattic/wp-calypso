@@ -28,6 +28,7 @@
 
 .product-card__header-primary {
 	display: flex;
+	justify-content: center;
 
 	@include breakpoint( '>660px' ) {
 		flex-grow: 1;
