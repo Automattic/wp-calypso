@@ -748,6 +748,8 @@ export const PLANS_LIST = {
 		getHiddenFeatures: () => [
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+			constants.FEATURE_JETPACK_SCAN_DAILY,
+			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 		],
 		getInferiorHiddenFeatures: () => [],
 	},
@@ -813,6 +815,8 @@ export const PLANS_LIST = {
 		getHiddenFeatures: () => [
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+			constants.FEATURE_JETPACK_SCAN_DAILY,
+			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 		],
 		getInferiorHiddenFeatures: () => [],
 	},
