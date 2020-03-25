@@ -154,7 +154,6 @@ const VerticalSelect: React.FunctionComponent = () => {
 					onChange={ handleSuggestionChangeEvent }
 					onKeyDown={ handleSuggestionKeyDown }
 					placeholder={ animatedPlaceholder }
-					defaultValue={ siteVertical?.label }
 					value={ inputValue }
 				/>
 				<div className="vertical-select__suggestions">
