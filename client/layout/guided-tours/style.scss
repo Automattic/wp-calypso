@@ -17,6 +17,15 @@
 
 	a {
 		color: var( --color-text-inverted );
+		text-decoration: underline;
+
+		&:hover {
+			text-decoration: none;
+		}
+	}
+
+	a.button {
+		text-decoration: none;
 	}
 
 	p {
