@@ -36,8 +36,8 @@ const DesignSelector: React.FunctionComponent = () => {
 	};
 
 	// Track hover/focus
-	const [ hoverDesigns, setHoverDesigns ] = React.useState< Set< string > >( new Set() );
-	const [ focusDesigns, setFocusDesigns ] = React.useState< Set< string > >( new Set() );
+	const [ hoverDesign, setHoverDesign ] = React.useState< string >();
+	const [ focusDesign, setFocusDesign ] = React.useState< string >();
 
 	return (
 		<div className="design-selector">
@@ -62,7 +62,7 @@ const DesignSelector: React.FunctionComponent = () => {
 			<div className="design-selector__design-grid">
 				<div className="design-selector__grid">
 					{ designs.featured.map( design => {
-						const isFocused = hoverDesigns.has( design.slug ) || focusDesigns.has( design.slug );
+						const isFocused = hoverDesign === design.slug || focusDesign === design.slug;
 						return (
 							<Spring
 								native
@@ -73,34 +73,12 @@ const DesignSelector: React.FunctionComponent = () => {
 								{ ( props: React.CSSProperties ) => (
 									<animated.button
 										style={ props }
-										onMouseEnter={ () =>
-											setHoverDesigns( s => {
-												const nextState = new Set( s );
-												nextState.add( design.slug );
-												return nextState;
-											} )
-										}
+										onMouseEnter={ () => setHoverDesign( design.slug ) }
 										onMouseLeave={ () =>
-											setHoverDesigns( s => {
-												const nextState = new Set( s );
-												nextState.delete( design.slug );
-												return nextState;
-											} )
+											setHoverDesign( s => ( s === design.slug ? undefined : s ) )
 										}
-										onFocus={ () =>
-											setFocusDesigns( s => {
-												const nextState = new Set( s );
-												nextState.add( design.slug );
-												return nextState;
-											} )
-										}
-										onBlur={ () =>
-											setFocusDesigns( s => {
-												const nextState = new Set( s );
-												nextState.delete( design.slug );
-												return nextState;
-											} )
-										}
+										onFocus={ () => setFocusDesign( design.slug ) }
+										onBlur={ () => setFocusDesign( s => ( s === design.slug ? undefined : s ) ) }
 										className="design-selector__design-option"
 										onClick={ () => {
 											setSelectedDesign( design );
