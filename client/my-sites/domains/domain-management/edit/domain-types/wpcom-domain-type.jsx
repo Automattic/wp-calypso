@@ -9,6 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import { domainManagementChangeSiteAddress, domainAddNew } from 'my-sites/domains/paths';
@@ -16,6 +17,7 @@ import { type as domainTypes } from 'lib/domains/constants';
 import { getDomainTypeText } from 'lib/domains';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import DomainStatus from '../card/domain-status';
+import DomainManagementNavigation from '../navigation';
 
 class WpcomDomainType extends React.Component {
 	handleEditSiteAddressClick = () => {
@@ -129,7 +131,10 @@ class WpcomDomainType extends React.Component {
 	render() {
 		const {
 			domain: { name: domain_name },
+			domain,
 		} = this.props;
+
+		const newDomainStatusNavigation = config.isEnabled( 'domains/new-status-design/navigation' );
 
 		return (
 			<div className="domain-types__container">
@@ -139,7 +144,11 @@ class WpcomDomainType extends React.Component {
 					statusClass="status-success"
 					icon="check_circle"
 				/>
-				{ this.getVerticalNavigation() }
+				{ newDomainStatusNavigation ? (
+					<DomainManagementNavigation domain={ domain } selectedSite={ this.props.selectedSite } />
+				) : (
+					this.getVerticalNavigation()
+				) }
 			</div>
 		);
 	}
