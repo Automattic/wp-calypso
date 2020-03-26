@@ -113,12 +113,12 @@ class PurchasesListing extends Component {
 			return getJetpackProductTagline( purchase );
 		}
 
-		const jetpackBackupPurchase = this.getJetpackProductPurchases();
+		const jetpackProductPurchase = this.getJetpackProductPurchases();
 
 		if ( currentPlanSlug ) {
 			const planObject = getPlan( currentPlanSlug );
 			return (
-				planObject.getTagline?.( jetpackBackupPurchase[ 0 ]?.productSlug ) ??
+				planObject.getTagline?.( jetpackProductPurchase[ 0 ]?.productSlug ) ??
 				translate(
 					'Unlock the full potential of your site with all the features included in your plan.'
 				)
