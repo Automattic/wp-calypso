@@ -71,7 +71,6 @@ class SiteSettingsPerformance extends Component {
 
 						{ siteIsAtomicPrivate ? (
 							<EligibilityWarnings
-								// className="site-settings__card"
 								isEligible={ true }
 								backUrl={ `/settings/performance/${ siteSlug }` }
 								eligibilityData={ {
