@@ -80,8 +80,8 @@ export default connect(
 		expandToolsSection: () => dispatch( expandSection( SIDEBAR_SECTION_TOOLS ) ),
 	} ),
 	( stateProps, dispatchProps, ownProps ) => ( {
-		...stateProps,
 		...ownProps,
+		...stateProps,
 		expandToolsAndTrack: ( section, action ) => {
 			dispatchProps.expandToolsSection();
 			dispatchProps.trackAction( section, action, stateProps.isStaticHomePage );
