@@ -60,18 +60,66 @@ export const getEventsInDailyBackup = ( logs, date ) => {
 	return getChangesInRange( logs, lastBackupTime, thisBackupTime );
 };
 
+export const metaStringToObject = metaString => {
+	// Yes, this is horrible, but we will soon build an API that does this much better
+	const meta = metaString.split( ', ' ).map( item => {
+		const sp = item.split( ' ' );
+		return { key: sp[ 1 ], val: sp[ 0 ] };
+	} );
+
+	return {
+		plugins: meta.find( obj => 'plugins' === obj.key || 'plugin' === obj.key ),
+		themes: meta.find( obj => 'themes' === obj.key || 'theme' === obj.key ),
+		uploads: meta.find( obj => 'uploads' === obj.key || 'upload' === obj.key ),
+		posts: meta.find( obj => 'posts' === obj.key || 'post' === obj.key ),
+	};
+};
+
+export const getMetaDiffForDailyBackup = ( logs, date ) => {
+	const d = new Date( date );
+	d.setDate( d.getDate() - 1 );
+	const d1 = d.toISOString().split( 'T' )[ 0 ];
+	const d2 = new Date( date ).toISOString().split( 'T' )[ 0 ];
+	const lastBackup = getBackupAttemptsForDate( logs, d1 );
+	const thisBackup = getBackupAttemptsForDate( logs, d2 );
+
+	if ( ! ( lastBackup.complete.length && thisBackup.complete.length ) ) {
+		return [];
+	}
+
+	const thisMeta = metaStringToObject(
+		thisBackup.complete[ 0 ].activityDescription[ 2 ].children[ 0 ]
+	);
+
+	const lastMeta = metaStringToObject(
+		lastBackup.complete[ 0 ].activityDescription[ 2 ].children[ 0 ]
+	);
+
+	return [
+		{ type: 'Plugin', num: thisMeta.plugins.val - lastMeta.plugins.val },
+		{ type: 'Theme', num: thisMeta.themes.val - lastMeta.themes.val },
+		{ type: 'Upload', num: thisMeta.uploads.val - lastMeta.uploads.val },
+		{ type: 'Post', num: thisMeta.posts.val - lastMeta.posts.val },
+	];
+};
+
 export const getDailyBackupDeltas = ( logs, date ) => {
 	const changes = getEventsInDailyBackup( logs, date );
 
-	const mediaCreated = changes.filter( event => 'attachment__uploaded' === event.activityName );
-	const mediaDeleted = changes.filter( event => 'attachment__deleted' === event.activityName );
-	const posts = changes.filter(
-		event => 'post__published' === event.activityName || 'post__trashed' === event.activityName
-	);
-
 	return {
-		mediaCreated,
-		posts,
-		mediaDeleted,
+		mediaCreated: changes.filter( event => 'attachment__uploaded' === event.activityName ),
+		mediaDeleted: changes.filter( event => 'attachment__deleted' === event.activityName ),
+		posts: changes.filter(
+			event => 'post__published' === event.activityName || 'post__trashed' === event.activityName
+		),
+		postsCreated: changes.filter( event => 'post__published' === event.activityName ),
+		postsDeleted: changes.filter( event => 'post__trashed' === event.activityName ),
+		plugins: changes.filter(
+			event =>
+				'plugin__installed' === event.activityName || 'plugin__deleted' === event.activityName
+		),
+		themes: changes.filter(
+			event => 'theme__installed' === event.activityName || 'theme__deleted' === event.activityName
+		),
 	};
 };
