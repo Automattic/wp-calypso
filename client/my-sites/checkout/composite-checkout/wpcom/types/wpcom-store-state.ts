@@ -7,6 +7,11 @@ import {
     PossiblyCompleteDomainContactDetails,
     DomainContactDetailsErrors,
 } from './backend/domain-contact-details-components';
+import {
+    DomainContactValidationRequest,
+    DomainContactValidationRequestExtraFields,
+    DomainContactValidationResponse,
+} from './backend/domain-contact-validation-endpoint';
 
 type ManagedContactDetailsShape< T > = {
 	firstName: T;
@@ -420,6 +425,88 @@ function prepareFrDomainContactExtraDetailsErrors(
 		};
 	}
 	return null;
+}
+
+export function prepareDomainContactValidationRequest(
+    domainNames: string[],
+    details: ManagedContactDetails
+): DomainContactValidationRequest {
+	const extra: DomainContactValidationRequestExtraFields = {};
+
+	if ( details.tldExtraFields?.ca ) {
+		extra.ca = {
+			lang: details.tldExtraFields.ca.lang.value,
+			legal_type: details.tldExtraFields.ca.legalType.value,
+			cira_agreement_accepted: details.tldExtraFields.ca.ciraAgreementAccepted.value === 'true',
+		};
+	}
+	if ( details.tldExtraFields?.uk ) {
+		extra.uk = {
+			registrant_type: details.tldExtraFields.uk.registrantType.value,
+			registration_number: details.tldExtraFields.uk.registrationNumber.value,
+			trading_name: details.tldExtraFields.uk.tradingName.value,
+		};
+	}
+	if ( details.tldExtraFields?.fr ) {
+		extra.fr = {
+			registrant_type: details.tldExtraFields.fr.registrantType.value,
+			trademark_number: details.tldExtraFields.fr.trademarkNumber.value,
+			siren_sirat: details.tldExtraFields.fr.sirenSirat.value,
+		};
+	}
+
+	return {
+		domain_names: domainNames,
+		contact_information: {
+			firstName: details.firstName.value,
+			lastName: details.lastName.value,
+			organization: details.organization.value,
+			email: details.email.value,
+			alternateEmail: details.alternateEmail.value,
+			phone: details.phone.value,
+			phoneNumberCountry: details.phoneNumberCountry.value,
+			address1: details.address1.value,
+			address2: details.address2.value,
+			city: details.city.value,
+			state: details.state.value,
+			postalCode: details.postalCode.value,
+			countryCode: details.countryCode.value,
+			fax: details.fax.value,
+			vatId: details.vatId.value,
+			extra,
+		},
+	};
+}
+
+export function formatDomainContactValidationResponse(
+    response: DomainContactValidationResponse
+): ManagedContactDetailsErrors {
+	const optionalToArray: ( x: undefined | string ) => undefined | string[] = x => {
+		return x ? [ x ] : undefined;
+	};
+
+	const tldExtraFields: ManagedContactDetailsTldExtraFieldsShape< undefined | string[] > = {};
+
+	// TODO: figure out how the extra fields errors are formatted
+
+	return {
+		firstName: optionalToArray( response.messages?.firstName ),
+		lastName: optionalToArray( response.messages?.lastName ),
+		organization: optionalToArray( response.messages?.organization ),
+		email: optionalToArray( response.messages?.email ),
+		alternateEmail: optionalToArray( response.messages?.alternateEmail ),
+		phone: optionalToArray( response.messages?.phone ),
+		phoneNumberCountry: optionalToArray( response.messages?.phoneNumberCountry ),
+		address1: optionalToArray( response.messages?.address1 ),
+		address2: optionalToArray( response.messages?.address2 ),
+		city: optionalToArray( response.messages?.city ),
+		state: optionalToArray( response.messages?.state ),
+		postalCode: optionalToArray( response.messages?.postalCode ),
+		countryCode: optionalToArray( response.messages?.countryCode ),
+		fax: optionalToArray( response.messages?.fax ),
+		vatId: optionalToArray( response.messages?.vatId ),
+		tldExtraFields,
+	};
 }
 
 /*
