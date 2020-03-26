@@ -1,5 +1,6 @@
-import { default as createClient } from 'simperium';
-
+/**
+ * Internal dependencies
+ */
 import { store } from '../state';
 import actions from '../state/actions';
 import { wpcom } from '../rest-client/wpcom';
@@ -70,7 +71,8 @@ export default class SimperiumClient {
 			},
 		} );
 
-		const client = createClient( APP_ID, token, {} );
+		const simperium = await import( 'simperium' );
+		const client = simperium.default( APP_ID, token, {} );
 
 		return {
 			meta: client.bucket( 'meta' ),

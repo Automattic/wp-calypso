@@ -30,6 +30,9 @@ setGlobalData( globalData );
 
 repliesCache.cleanup();
 
+const shouldLoadSimperiumClient =
+	localStorage && localStorage.getItem( 'wpnotes_client' ) === 'simperium';
+
 /**
  * Force a manual refresh of the notes data
  */
@@ -86,8 +89,8 @@ export class Notifications extends PureComponent {
 
 		initAPI( wpcom );
 
-		if ( this.props.simperiumModule ) {
-			client = new SimperiumClient( this.props.simperiumModule );
+		if ( shouldLoadSimperiumClient ) {
+			client = new SimperiumClient();
 			client.global = globalData;
 			client.sendMessage = receiveMessage;
 		} else {

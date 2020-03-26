@@ -505,6 +505,7 @@ Client.prototype.reschedule = reschedule;
 Client.prototype.getNote = getNote;
 Client.prototype.getNotes = getNotes;
 Client.prototype.getNotesList = getNotesList;
+Client.prototype.readNote = () => {};
 Client.prototype.updateLastSeenTime = updateLastSeenTime;
 Client.prototype.loadMore = loadMore;
 Client.prototype.refreshNotes = refreshNotes;
