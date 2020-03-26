@@ -104,7 +104,7 @@ class DailyBackupStatus extends Component {
 				<div className="daily-backup-status__label">
 					<p>
 						{ translate(
-							'A backup for your site was attempted on %(displayDate) at %(displayTime) and was not able to be completed.',
+							'A backup for your site was attempted on %(displayDate)s at %(displayTime)s and was not able to be completed.',
 							{ args: { displayDate, displayTime } }
 						) }
 					</p>
