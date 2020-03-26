@@ -17,7 +17,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { useHasDomainsInCart } from '../hooks/has-domains';
 import Field from './field';
-import { SummaryLine, SummaryDetails, SummarySpacerLine } from './summary-details';
+import { SummaryLine, SummaryDetails } from './summary-details';
 import { LeftColumn, RightColumn } from './ie-fallback';
 import { prepareDomainContactDetails, prepareDomainContactDetailsErrors, isValid } from '../types';
 
@@ -209,12 +209,30 @@ function ContactFormSummary( { isDomainFieldsVisible } ) {
 				<SummaryDetails>
 					{ showDomainContactSummary && fullName && <SummaryLine>{ fullName }</SummaryLine> }
 
-					{ showDomainContactSummary && contactInfo.email.value?.length > 0 && (
-						<SummarySpacerLine>{ contactInfo.email.value }</SummarySpacerLine>
+					{ showDomainContactSummary && contactInfo.organization.value?.length > 0 && (
+						<SummaryLine>{ contactInfo.organization.value } </SummaryLine>
 					) }
 
+					{ showDomainContactSummary && contactInfo.email.value?.length > 0 && (
+						<SummaryLine>{ contactInfo.email.value }</SummaryLine>
+					) }
+
+					{ showDomainContactSummary && contactInfo.alternateEmail.value?.length > 0 && (
+						<SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>
+					) }
+
+					{ showDomainContactSummary && contactInfo.phone.value?.length > 0 && (
+						<SummaryLine>{ contactInfo.phone.value }</SummaryLine>
+					) }
+				</SummaryDetails>
+
+				<SummaryDetails>
 					{ showDomainContactSummary && contactInfo.address1.value?.length > 0 && (
 						<SummaryLine>{ contactInfo.address1.value } </SummaryLine>
+					) }
+
+					{ showDomainContactSummary && contactInfo.address2.value?.length > 0 && (
+						<SummaryLine>{ contactInfo.address2.value } </SummaryLine>
 					) }
 
 					{ showDomainContactSummary && cityAndState && (
