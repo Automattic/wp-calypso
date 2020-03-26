@@ -564,7 +564,10 @@ function handleInsertClassicBlockMedia( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handleCloseEditor( calypsoPort ) {
-	$( '#editor' ).on( 'click', '.edit-post-fullscreen-mode-close__toolbar a', e => {
+	const legacySelector = '.edit-post-fullscreen-mode-close__toolbar a'; // maintain support for Gutenberg plugin < v7.7
+	const selector = '.edit-post-header .edit-post-fullscreen-mode-close';
+
+	$( '#editor' ).on( 'click', `${ legacySelector }, ${ selector }`, e => {
 		e.preventDefault();
 
 		const { port2 } = new MessageChannel();

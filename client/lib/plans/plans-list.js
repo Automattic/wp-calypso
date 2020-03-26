@@ -168,7 +168,7 @@ const getPlanEcommerceDetails = () => ( {
 			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 			constants.FEATURE_ADVANCED_DESIGN,
-			constants.FEATURE_UNLIMITED_STORAGE,
+			constants.FEATURE_200GB_STORAGE,
 			constants.FEATURE_NO_ADS,
 			constants.FEATURE_GOOGLE_ANALYTICS,
 			isEnabled( 'republicize' ) && constants.FEATURE_REPUBLICIZE,
@@ -187,7 +187,7 @@ const getPlanEcommerceDetails = () => ( {
 			constants.FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
 		] ),
 	getPromotedFeatures: () => [
-		constants.FEATURE_UNLIMITED_STORAGE,
+		constants.FEATURE_200GB_STORAGE,
 		constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 		constants.FEATURE_CUSTOM_DOMAIN,
 		constants.FEATURE_NO_ADS,
@@ -328,7 +328,7 @@ const getPlanBusinessDetails = () => ( {
 			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 			constants.FEATURE_ADVANCED_DESIGN,
-			constants.FEATURE_UNLIMITED_STORAGE,
+			constants.FEATURE_200GB_STORAGE,
 			constants.FEATURE_NO_ADS,
 			constants.FEATURE_GOOGLE_ANALYTICS,
 			isEnabled( 'republicize' ) && constants.FEATURE_REPUBLICIZE,
@@ -342,7 +342,7 @@ const getPlanBusinessDetails = () => ( {
 			constants.FEATURE_NO_BRANDING,
 		] ),
 	getPromotedFeatures: () => [
-		constants.FEATURE_UNLIMITED_STORAGE,
+		constants.FEATURE_200GB_STORAGE,
 		constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 		constants.FEATURE_CUSTOM_DOMAIN,
 		constants.FEATURE_NO_ADS,
@@ -362,7 +362,7 @@ const getPlanBusinessDetails = () => ( {
 	],
 	getPortfolioSignupFeatures: () => [
 		constants.FEATURE_UPLOAD_THEMES_PLUGINS,
-		constants.FEATURE_UNLIMITED_STORAGE_SIGNUP,
+		constants.FEATURE_200GB_STORAGE,
 		constants.FEATURE_ALL_PREMIUM_FEATURES,
 	],
 	// Features not displayed but used for checking plan abilities

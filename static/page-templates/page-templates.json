@@ -7,8 +7,78 @@
 			"vertical-whitelist": []
 		},
 		{
+			"title": "rockfield2",
+			"defaults": "rockfield",
+			"vertical-whitelist": []
+		},
+		{
 			"title": "leven",
 			"defaults": "leven",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "alves",
+			"defaults": "alves",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "alves2",
+			"defaults": "alves",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "balasana",
+			"defaults": "balasana",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "coutoire",
+			"defaults": "coutoire",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "exford",
+			"defaults": "exford",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "rockfield",
+			"defaults": "rockfield",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "stratford",
+			"defaults": "stratford",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "stratford2",
+			"defaults": "stratford",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "mayland",
+			"defaults": "mayland",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "mayland2",
+			"defaults": "mayland",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "maywood",
+			"defaults": "maywood",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "maywood2",
+			"defaults": "maywood",
+			"vertical-whitelist": []
+		},
+		{
+			"title": "rivington",
+			"defaults": "rivington",
 			"vertical-whitelist": []
 		}
 	],
@@ -30,7 +100,7 @@
 			"demo": "https://maylanddemo.wordpress.com/"
 		},
 		{
-			"title": "startford",
+			"title": "stratford",
 			"demo": "https://stratforddemo.wordpress.com/"
 		},
 		{
@@ -40,6 +110,14 @@
 		{
 			"title": "balasana",
 			"demo": "https://balasanademo.wordpress.com/"
+		},
+		{
+			"title": "maywood",
+			"demo": "https://maywooddemo.wordpress.com/"
+		},
+		{
+			"title": "rivington",
+			"demo": "https://rivingtondemo.wordpress.com/"
 		}
 	]
 }

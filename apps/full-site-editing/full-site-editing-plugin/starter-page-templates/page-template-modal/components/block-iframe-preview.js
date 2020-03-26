@@ -43,8 +43,8 @@ const copyStylesToIframe = ( srcDocument, targetiFrameDocument ) => {
 
 	// See https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment
 	const targetDOMFragment = {
-		head: new DocumentFragment(), // eslint-disable-line no-undef
-		body: new DocumentFragment(), // eslint-disable-line no-undef
+		head: document.createDocumentFragment(), // eslint-disable-line no-undef
+		body: document.createDocumentFragment(), // eslint-disable-line no-undef
 	};
 
 	each( Object.keys( targetDOMFragment ), domReference => {

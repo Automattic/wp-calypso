@@ -24,8 +24,8 @@ const isTouch = hasTouch();
 
 /**
  * Auxiliary method to calculate the maximum value for the Y axis, based on a dataset.
- * @param {Array} values An array of numeric values.
  *
+ * @param {Array} values An array of numeric values.
  * @returns {number} The maximum value for the Y axis.
  */
 function getYAxisMax( values ) {

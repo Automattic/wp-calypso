@@ -8,13 +8,20 @@ import { useI18n } from '@automattic/react-i18n';
  * Internal dependencies
  */
 import AnimatedPlaceholder from '../animated-placeholder';
+import CreateAndRedirect from './create-and-redirect';
+import { useNewQueryParam } from '../../path';
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const CreateSite: FunctionComponent< {} > = () => {
 	const { __: NO__ } = useI18n();
+	const shouldTriggerCreate = useNewQueryParam();
+
+	const createAndRedirect = shouldTriggerCreate ? <CreateAndRedirect /> : null;
+
 	return (
 		<div className="create-site__background">
+			{ createAndRedirect }
 			<div className="create-site__layout">
 				<div className="create-site__header">
 					<div className="create-site__toolbar">

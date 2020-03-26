@@ -505,12 +505,8 @@
 }
 
 .banner.theme__page-upsell-banner {
-	@include banner-dark();
-
 	width: 50%;
-
 	margin: 0 0 10px;
-	background-color: #34444d;
 
 	@include breakpoint( '<960px' ) {
 		width: 100%;

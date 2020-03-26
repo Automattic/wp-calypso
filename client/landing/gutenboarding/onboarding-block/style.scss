@@ -46,10 +46,11 @@ $onboarding-block-css-transition-duration: 750ms;
 .components-button.is-primary.onboarding-block__question-skip:not( :disabled ):not( [aria-disabled='true'] ) {
 	background: var( --mainColor );
 	border-color: var( --mainColor );
+	border-radius: 4px;
 	box-shadow: none;
 	color: var( --contrastColor );
-	font-size: 16px;
-	line-height: 16px;
+	font-size: 14px;
+	font-weight: 500;
 	padding: 20px 32px;
 	// @TODO: work out hover-state animations
 	transition:

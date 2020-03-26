@@ -69,6 +69,7 @@
 			min-height: 1em;
 			min-width: 60px;
 			transition: color 0.5s ease-in-out 1s, border-color 0.5s ease-in-out 1s;
+			line-height: 1.1; // default is `normal` (20%)
 
 			&:hover {
 				border-color: var( --highlightColor );

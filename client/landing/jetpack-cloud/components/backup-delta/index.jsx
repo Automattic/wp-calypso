@@ -9,9 +9,7 @@ import { localize } from 'i18n-calypso';
  */
 import Gridicon from 'components/gridicon';
 import Button from 'components/forms/form-button';
-import { Card } from '@automattic/components';
-import ActivityActor from 'my-sites/activity/activity-log-item/activity-actor';
-import ActivityDescription from 'my-sites/activity/activity-log-item/activity-description';
+import ActivityCard from '../../components/activity-card';
 
 /**
  * Style dependencies
@@ -20,53 +18,30 @@ import './style.scss';
 
 class BackupDelta extends Component {
 	renderRealtime() {
-		const { allowRestore, translate } = this.props;
+		const { allowRestore, moment, translate } = this.props;
 
 		const realtimeEvents = this.props.realtimeEvents.filter( event => event.activityIsRewindable );
 
-		const events = realtimeEvents.map( event => (
-			<Fragment key={ event.activityId }>
-				<div className="backup-delta__time">
-					<Gridicon icon="cloud-upload" />
-					{ this.props.moment( event.activityDate ).format( 'LT' ) }
-				</div>
-				<Card>
-					<ActivityActor
-						{ ...{
-							actorAvatarUrl: event.actorAvatarUrl,
-							actorName: event.actorName,
-							actorRole: event.actorRole,
-							actorType: event.actorType,
-						} }
-					/>
-					<ActivityDescription activity={ event } rewindIsActive={ allowRestore } />
-					<div>{ event.activityTitle }</div>
-					<div>
-						<Button compact borderless>
-							{ translate( 'See content' ) } <Gridicon icon="chevron-down" />
-						</Button>
-						<Button compact borderless>
-							{ translate( 'Actions' ) } <Gridicon icon="add" />
-						</Button>
-					</div>
-				</Card>
-			</Fragment>
+		const cards = realtimeEvents.map( activity => (
+			<ActivityCard
+				{ ...{
+					moment,
+					activity,
+					allowRestore,
+				} }
+			/>
 		) );
 
 		return (
 			<div className="backup-delta__realtime">
 				<div>{ translate( 'More backups from today' ) }</div>
-				{ events.length ? (
-					events
-				) : (
-					<div>{ translate( 'you have no more backups for this day' ) }</div>
-				) }
+				{ cards.length ? cards : <div>{ translate( 'you have no more backups for this day' ) }</div> }
 			</div>
 		);
 	}
 
 	renderDaily() {
-		const { backupAttempts, deltas, translate } = this.props;
+		const { backupAttempts, deltas, siteSlug, translate } = this.props;
 		const mainBackup = backupAttempts.complete && backupAttempts.complete[ 0 ];
 		const meta = mainBackup && mainBackup.activityDescription[ 2 ].children[ 0 ];
 
@@ -96,9 +71,11 @@ class BackupDelta extends Component {
 			}
 		} );
 
+		const hasChanges = !! ( deltas.posts.length || deltas.mediaCreated.length );
+
 		return (
 			<div className="backup-delta__daily">
-				<div>Backup details</div>
+				{ hasChanges && <div>{ translate( 'Backup details' ) }</div> }
 				{ !! deltas.mediaCreated.length && (
 					<Fragment>
 						<div>{ translate( 'Media' ) }</div>
@@ -111,18 +88,25 @@ class BackupDelta extends Component {
 						<div>{ posts }</div>
 					</Fragment>
 				) }
-				<div>{ meta }</div>
-				<Button className="backup-delta__view-all-button">
-					{ translate( 'View all backup details' ) }
-				</Button>
+				{ hasChanges && <div>{ meta }</div> }
+				{ mainBackup && (
+					<Button
+						className="backup-delta__view-all-button"
+						href={ `/backups/${ siteSlug }/detail/${ mainBackup.rewindId }` }
+					>
+						{ translate( 'View all backup details' ) }
+					</Button>
+				) }
 			</div>
 		);
 	}
 
 	render() {
+		const { hasRealtimeBackups } = this.props;
+
 		return (
 			<div className="backup-delta">
-				{ this.props.hasRealtimeBackups ? this.renderRealtime() : this.renderDaily() }
+				{ hasRealtimeBackups ? this.renderRealtime() : this.renderDaily() }
 			</div>
 		);
 	}

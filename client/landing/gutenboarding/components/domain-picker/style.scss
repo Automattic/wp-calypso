@@ -1,18 +1,49 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import 'assets/stylesheets/shared/mixins/placeholder'; // Contains the placeholder mixin
 @import 'assets/stylesheets/shared/animation'; // Needed for the placeholder
+@import '../../mixins';
 
 .domain-picker {
-	min-width: 22em;
+	min-width: 530px;
+
+	.components-panel__body.is-opened {
+		padding: 36px;
+	}
 }
 
-.domain-picker__choose-domain-header {
-	font-weight: bold;
-	text-align: center;
-	margin-bottom: 20px;
+.domain-picker__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 14px;
 }
-.domain-picker__recommended-header {
-	font-weight: bold;
+
+.domain-picker__header-title {
+	@include onboarding-font-recoleta;
+	font-size: 26px;
+}
+
+.domain-picker__close-button {
+	font-size: 14px;
+	text-transform: lowercase;
+
+	&.components-button.is-tertiary {
+		color: var( --color-neutral-40 );
+		text-decoration: underline;
+	}
+}
+
+.domain-picker__connect-domain {
+	text-align: center;
+	margin-top: 14px;
+	color: var( --color-neutral-40 );
+}
+
+.domain-picker__connect-button {
+	&.components-button.is-link {
+		color: var( --color-neutral-40 );
+		text-decoration: underline;
+	}
 }
 
 .domain-picker__panel-row {
@@ -23,32 +54,75 @@
 		flex-direction: column;
 		align-items: stretch;
 	}
+
+	+ .domain-picker__panel-row {
+		margin-top: 36px;
+	}
 }
 
+.domain-picker__suggestion-header {
+	display: flex;
+	justify-content: space-between;
+	padding-bottom: 12px;
+}
+
+.domain-picker__suggestion-header-title {
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	color: var( --color-neutral-40 );
+}
+
+.domain-picker__suggestion-header-description {
+	font-size: 12px;
+	color: var( --color-neutral-40 );
+
+	em {
+		font-weight: 600;
+	}
+}
+
+.domain-picker__suggestion-item-group {
+	border: 1px solid var( --color-neutral-5 );
+}
+
+.domain-picker__suggestion-none {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	height: 46px;
+	border-radius: 0;
+	padding: 0 16px;
+	font-size: 14px;
+}
 .domain-picker__suggestion-item {
 	// Increasing specificity because @wordpress/components stylesheets are loaded after gutenboarding stylesheets.
 	// See https://github.com/Automattic/wp-calypso/pull/38554/commits/e1f9673bcfd9eaa6469a0cfecda9b915a520961a
 	// See https://github.com/WordPress/gutenberg/pull/19535
 	&.components-button {
-		display: flex;
-		justify-content: space-between;
-		margin-top: 18px;
+		@extend .domain-picker__suggestion-none;
+
+		&.is-tertiary {
+			color: var( --color-text );
+
+			&:not( :disabled ):not( [aria-disabled='true'] ):hover {
+				background: var( --color-surface-backdrop );
+				color: var( --color-text );
+			}
+		}
+	}
+
+	+ .domain-picker__suggestion-item {
+		border-top: 1px solid var( --color-neutral-5 );
 	}
 }
 
 .domain-picker__suggestion-item-name {
 	&.placeholder {
 		@include placeholder();
-	}
-}
-
-.domain-picker__suggestion-action {
-	color: var( --studio-blue-40 );
-	text-decoration: none;
-	margin-left: 20px;
-
-	&.placeholder {
-		@include placeholder( --studio-blue-30 );
+		min-width: 30%;
 	}
 }
 
@@ -59,12 +133,33 @@
 	}
 }
 
-.domain-picker__divider {
-	margin-top: 20px;
+.domain-picker__badge {
+	display: inline-flex;
+	border-radius: 1000px;
+	padding: 0.3em 1em;
+	align-items: center;
+	font-size: 0.75em;
+	margin-left: 1em;
+
+	background-color: var( --studio-blue-50 );
+	color: var( --color-text-inverted );
+
+	&.is-selected {
+		color: var( --color-text-inverted );
+		background-color: var( --color-success );
+	}
 }
 
 .domain-picker__price {
 	color: var( --studio-gray-20 );
-	margin: 0.1em 1em;
 	white-space: nowrap;
+
+	&.is-paid {
+		text-decoration: line-through;
+	}
+
+	&.placeholder {
+		@include placeholder();
+		min-width: 64px;
+	}
 }

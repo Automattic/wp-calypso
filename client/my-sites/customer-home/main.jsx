@@ -29,7 +29,6 @@ import DocumentHead from 'components/data/document-head';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
-import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { localizeUrl } from 'lib/i18n-utils';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actions';
@@ -39,13 +38,14 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import StatsBanners from 'my-sites/stats/stats-banners';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import GoMobileCard from 'my-sites/customer-home/go-mobile-card';
-import StatsCard from './stats-card';
-import FreePhotoLibraryCard from './free-photo-library-card';
-import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
+import GoMobile from 'my-sites/customer-home/cards/features/go-mobile';
+import Stats from 'my-sites/customer-home/cards/features/stats';
+import FreePhotoLibrary from 'my-sites/customer-home/cards/education/free-photo-library';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
-import QuickLinks from 'my-sites/customer-home/quick-links';
-import Notices from 'my-sites/customer-home/notices';
+import QueryHomeLayout from 'components/data/query-home-layout';
+import { getHomeLayout } from 'state/selectors/get-home-layout';
+import Primary from 'my-sites/customer-home/locations/primary';
+import Notices from 'my-sites/customer-home/locations/notices';
 
 /**
  * Style dependencies
@@ -138,6 +138,7 @@ class Home extends Component {
 				<PageViewTracker path={ `/home/:site` } title={ translate( 'My Home' ) } />
 				<DocumentHead title={ translate( 'My Home' ) } />
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
+				{ siteId && <QueryHomeLayout siteId={ siteId } /> }
 				<SidebarNavigation />
 				<div className="customer-home__page-heading">{ this.renderCustomerHomeHeader() }</div>
 				<Notices checklistMode={ checklistMode } />
@@ -158,7 +159,6 @@ class Home extends Component {
 
 	renderCustomerHome = () => {
 		const {
-			displayChecklist,
 			isAtomic,
 			isChecklistComplete,
 			needsEmailVerification,
@@ -180,18 +180,7 @@ class Home extends Component {
 		return (
 			<div className="customer-home__layout">
 				<div className="customer-home__layout-col customer-home__layout-col-left">
-					{ // "Go Mobile" has the highest priority placement when viewed in smaller viewports, so folks
-					// can see it on their phone without needing to scroll.
-					isMobile() && <GoMobileCard /> }
-					{ displayChecklist && (
-						<>
-							<Card className="customer-home__card-checklist-heading">
-								<CardHeading>{ translate( 'Site Setup List' ) }</CardHeading>
-							</Card>
-							<WpcomChecklist displayMode={ checklistMode } />
-						</>
-					) }
-					{ ! displayChecklist && <QuickLinks /> }
+					<Primary checklistMode={ checklistMode } />
 				</div>
 				<div className="customer-home__layout-col customer-home__layout-col-right">
 					{ siteIsUnlaunched && ! needsEmailVerification && (
@@ -210,8 +199,8 @@ class Home extends Component {
 							</Button>
 						</Card>
 					) }
-					{ ! siteIsUnlaunched && <StatsCard /> }
-					{ <FreePhotoLibraryCard /> }
+					{ ! siteIsUnlaunched && <Stats /> }
+					{ <FreePhotoLibrary /> }
 					{ ! siteIsUnlaunched && isChecklistComplete && (
 						<Card className="customer-home__grow-earn">
 							<CardHeading>{ translate( 'Grow & Earn' ) }</CardHeading>
@@ -266,7 +255,7 @@ class Home extends Component {
 						</div>
 					</Card>
 					{ // "Go Mobile" has the lowest priority placement when viewed in bigger viewports.
-					! isMobile() && <GoMobileCard /> }
+					! isMobile() && <GoMobile /> }
 				</div>
 			</div>
 		);
@@ -285,8 +274,6 @@ const connectHome = connect(
 		const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
 
 		return {
-			displayChecklist:
-				isEligibleForDotcomChecklist( state, siteId ) && hasChecklistData && ! isChecklistComplete,
 			site: getSelectedSite( state ),
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
@@ -300,6 +287,7 @@ const connectHome = connect(
 			isEstablishedSite: moment().isAfter( moment( createdAt ).add( 2, 'days' ) ),
 			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 			user,
+			cards: getHomeLayout( state, siteId ),
 		};
 	},
 	dispatch => ( {

@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { reloadProxy as triggerReloadProxy } from 'wpcom-proxy-request';
-
-/**
  * Creates a promise that will be rejected after a given timeout
  *
  * @param ms amount of milliseconds till reject the promise
@@ -52,11 +47,6 @@ export const remoteLoginUser = ( loginLinks: string[] ) =>
 		loginLinks,
 	} as const );
 
-export const reloadProxy = () =>
-	( {
-		type: 'RELOAD_PROXY',
-	} as const );
-
 export const controls = {
 	REMOTE_LOGIN_USER: ( { loginLinks }: ReturnType< typeof remoteLoginUser > ) =>
 		Promise.all(
@@ -65,7 +55,4 @@ export const controls = {
 				// make sure we continue even when a remote login fails
 				.map( promise => promise.catch( () => undefined ) )
 		),
-	RELOAD_PROXY: () => {
-		triggerReloadProxy();
-	},
 };

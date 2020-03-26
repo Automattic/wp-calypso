@@ -6,9 +6,7 @@ import { useI18n } from '@automattic/react-i18n';
 import { Button, Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { FunctionComponent, useEffect, useCallback, useState } from 'react';
-import { useDebounce } from 'use-debounce';
 import classnames from 'classnames';
-import { DomainSuggestions } from '@automattic/data-stores';
 import { useHistory } from 'react-router-dom';
 
 /**
@@ -19,9 +17,9 @@ import { USER_STORE } from '../../stores/user';
 import { SITE_STORE } from '../../stores/site';
 import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
-import { selectorDebounce } from '../../constants';
 import SignupForm from '../../components/signup-form';
 import LoginForm from '../../components/login-form';
+import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 
 import wp from '../../../../lib/wp';
 const wpcom = wp.undocumented();
@@ -57,41 +55,30 @@ interface Cart {
 	messages: Record< 'errors' | 'success', unknown >;
 }
 
-const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
-
 const Header: FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
-
-	const [ isDomainFlow, setDomainFlow ] = useState( false );
 
 	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
 	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
 
-	const { createSite } = useDispatch( SITE_STORE );
-
 	const newSite = useSelect( select => select( SITE_STORE ).getNewSite() );
 
-	const { domain, selectedDesign, siteTitle, siteVertical } = useSelect( select =>
-		select( ONBOARD_STORE ).getState()
-	);
+	const {
+		domain,
+		selectedDesign,
+		siteTitle,
+		siteVertical,
+		siteWasCreatedForDomainPurchase,
+	} = useSelect( select => select( ONBOARD_STORE ).getState() );
 	const hasSelectedDesign = !! selectedDesign;
-	const { setDomain, resetOnboardStore } = useDispatch( ONBOARD_STORE );
+	const {
+		createSite,
+		setDomain,
+		resetOnboardStore,
+		setSiteWasCreatedForDomainPurchase,
+	} = useDispatch( ONBOARD_STORE );
 
-	const [ domainSearch ] = useDebounce( siteTitle, selectorDebounce );
-	const freeDomainSuggestion = useSelect(
-		select => {
-			if ( ! domainSearch ) {
-				return;
-			}
-			return select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( domainSearch, {
-				// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
-				include_wordpressdotcom: true,
-				quantity: 1,
-				...{ vertical: siteVertical?.id },
-			} )?.[ 0 ];
-		},
-		[ domainSearch, siteVertical ]
-	);
+	const freeDomainSuggestion = useFreeDomainSuggestion();
 
 	useEffect( () => {
 		if ( ! siteTitle ) {
@@ -137,28 +124,13 @@ const Header: FunctionComponent = () => {
 
 	const handleCreateSite = useCallback(
 		( username: string, bearerToken?: string ) => {
-			const siteUrl = currentDomain?.domain_name || siteTitle || username;
-
-			createSite( {
-				blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
-				blog_title: siteTitle,
-				options: {
-					site_vertical: siteVertical?.id,
-					site_vertical_name: siteVertical?.label,
-					site_information: {
-						title: siteTitle,
-					},
-					site_creation_flow: 'gutenboarding',
-					theme: `pub/${ selectedDesign?.slug || 'twentytwenty' }`,
-				},
-				...( bearerToken && { authToken: bearerToken } ),
-			} );
+			createSite( username, freeDomainSuggestion, bearerToken );
 		},
-		[ createSite, currentDomain, selectedDesign, siteTitle, siteVertical ]
+		[ createSite, freeDomainSuggestion ]
 	);
 
 	const handleCreateSiteForDomains: typeof handleCreateSite = ( ...args ) => {
-		setDomainFlow( true );
+		setSiteWasCreatedForDomainPurchase( true );
 		handleCreateSite( ...args );
 	};
 
@@ -179,7 +151,7 @@ const Header: FunctionComponent = () => {
 
 	const handleSignupForDomains = () => {
 		setShowSignupDialog( true );
-		setDomainFlow( true );
+		setSiteWasCreatedForDomainPurchase( true );
 	};
 
 	useEffect( () => {
@@ -190,7 +162,7 @@ const Header: FunctionComponent = () => {
 
 	useEffect( () => {
 		if ( newSite ) {
-			if ( isDomainFlow ) {
+			if ( siteWasCreatedForDomainPurchase ) {
 				// I'd rather not make my own product, but this works.
 				// lib/cart-items helpers did not perform well.
 				const domainProduct = {
@@ -211,15 +183,17 @@ const Header: FunctionComponent = () => {
 					} );
 
 					resetOnboardStore();
-					window.location.href = `/checkout/${ newSite.site_slug }?redirect_to=%2Fgutenboarding%2Fdesign`;
+					window.location.replace(
+						`/checkout/${ newSite.site_slug }?redirect_to=%2Fgutenboarding%2Fdesign`
+					);
 				};
 				go();
 				return;
 			}
 			resetOnboardStore();
-			window.location.href = `/block-editor/page/${ newSite.site_slug }/home?is-gutenboarding`;
+			window.location.replace( `/block-editor/page/${ newSite.site_slug }/home?is-gutenboarding` );
 		}
-	}, [ domain, isDomainFlow, newSite, resetOnboardStore ] );
+	}, [ domain, siteWasCreatedForDomainPurchase, newSite, resetOnboardStore ] );
 
 	return (
 		<div
@@ -229,8 +203,8 @@ const Header: FunctionComponent = () => {
 			tabIndex={ -1 }
 		>
 			<section className="gutenboarding__header-section">
-				<div className="gutenboarding__header-section-item">
-					<Icon icon="wordpress-alt" size={ 24 } className="gutenboarding__header-wp-icon" />
+				<div className="gutenboarding__header-section-item gutenboarding__header-wp-logo">
+					<Icon icon="wordpress-alt" size={ 24 } />
 				</div>
 				<div className="gutenboarding__header-section-item">{ siteTitleElement }</div>
 				<div className="gutenboarding__header-section-item">

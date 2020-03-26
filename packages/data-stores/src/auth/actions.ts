@@ -16,8 +16,13 @@ import {
 	SendLoginEmailErrorResponse,
 } from './types';
 import { STORE_KEY } from './constants';
-import { wpcomRequest, fetchAndParse } from '../wpcom-request-controls';
-import { reloadProxy, remoteLoginUser } from './controls';
+import {
+	wpcomRequest,
+	fetchAndParse,
+	requestAllBlogsAccess,
+	reloadProxy,
+} from '../wpcom-request-controls';
+import { remoteLoginUser } from './controls';
 import { WpcomClientCredentials } from '../shared-types';
 
 export interface ActionsConfig extends WpcomClientCredentials {
@@ -149,6 +154,8 @@ export function createActions( {
 			if ( loginResponse.ok && loginResponse.body.success ) {
 				if ( loadCookiesAfterLogin ) {
 					yield reloadProxy();
+					// Need to rerequest access after the proxy is reloaded
+					yield requestAllBlogsAccess();
 				}
 				yield remoteLoginUser( loginResponse.body.data.token_links );
 				yield receiveWpLogin( loginResponse.body );

@@ -13,11 +13,9 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
  */
 import { USER_STORE } from '../../stores/user';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { useLangRouteParam } from '../../path';
-import './style.scss';
+import { useLangRouteParam, usePath, Step } from '../../path';
 import ModalSubmitButton from '../modal-submit-button';
-
-type NewUserErrorResponse = import('@automattic/data-stores').User.NewUserErrorResponse;
+import './style.scss';
 
 // TODO: deploy this change to @types/wordpress__element
 declare module '@wordpress/element' {
@@ -36,11 +34,17 @@ interface Props {
 const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 	const { __: NO__, _x: NO_x } = useI18n();
 	const [ emailVal, setEmailVal ] = useState( '' );
-	const { createAccount } = useDispatch( USER_STORE );
+	const { createAccount, clearErrors } = useDispatch( USER_STORE );
 	const isFetchingNewUser = useSelect( select => select( USER_STORE ).isFetchingNewUser() );
 	const newUserError = useSelect( select => select( USER_STORE ).getNewUserError() );
 	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ) ).getState();
 	const langParam = useLangRouteParam();
+	const makePath = usePath();
+
+	const closeModal = () => {
+		clearErrors();
+		onRequestClose();
+	};
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_gutenboarding_signup_start', {
@@ -64,7 +68,7 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 		} );
 
 		if ( success ) {
-			onRequestClose();
+			closeModal();
 		}
 	};
 
@@ -97,11 +101,15 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 		}
 	}
 
+	const loginRedirectUrl = `${ window.location.origin }/gutenboarding${ makePath(
+		Step.CreateSite
+	) }?new`;
+
 	return (
 		<Modal
 			className="signup-form"
 			title={ NO__( 'Sign up to save your changes' ) }
-			onRequestClose={ onRequestClose }
+			onRequestClose={ closeModal }
 			focusOnMount={ false }
 			isDismissible={ ! isFetchingNewUser }
 			// set to false so that 1password's autofill doesn't automatically close the modal
@@ -135,8 +143,14 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 				</div>
 			</form>
 			<div className="signup-form__login-links">
-				<Button isLink={ true } onClick={ openLogin }>
+				<Button isLink href={ '/log-in?redirect_to=' + encodeURIComponent( loginRedirectUrl ) }>
 					{ NO__( 'Log in to create a site for your existing account.' ) }
+				</Button>
+			</div>
+			<div className="signup-form__login-links">
+				<Button isLink={ true } onClick={ openLogin }>
+					{ /* Removing before shipping, no need to translate */ }
+					(experimental login)
 				</Button>
 			</div>
 		</Modal>
