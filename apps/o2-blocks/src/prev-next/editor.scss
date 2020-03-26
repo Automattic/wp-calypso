@@ -1,5 +1,16 @@
+.wp-block[data-type='a8c/prev-next'] {
+	display: flex;
+	flex-direction: row;/*rtl:row-reverse*/
+	gap: 1em;
+	justify-content: space-between;
+
+	.prev-next__link-entry label {
+		font-weight: bold;
+	}
+}
+
 .wp-block-a8c-prev-next {
 	display: flex;
 	flex-direction: row;/*rtl:row-reverse*/
-	justify-content: space-between;
+	gap: 2em;
 }
