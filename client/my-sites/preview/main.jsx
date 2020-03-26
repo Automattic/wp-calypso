@@ -22,11 +22,7 @@ import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import Gridicon from 'components/gridicon';
 import Main from 'components/main';
-import {
-	showInlineHelpPopover,
-	showChecklistPrompt,
-	showOnboardingWelcomePrompt,
-} from 'state/inline-help/actions';
+import { showInlineHelpPopover, showOnboardingWelcomePrompt } from 'state/inline-help/actions';
 import WebPreview from 'components/web-preview';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -77,10 +73,6 @@ class PreviewMain extends React.Component {
 
 		if ( this.props.help || this.props.welcome ) {
 			this.props.showInlineHelpPopover();
-		}
-
-		if ( this.props.checklist ) {
-			this.props.showChecklistPrompt();
 		}
 	}
 
@@ -238,6 +230,5 @@ export default connect( mapState, {
 	recordTracksEvent,
 	setLayoutFocus,
 	showInlineHelpPopover,
-	showChecklistPrompt,
 	showOnboardingWelcomePrompt,
 } )( localize( PreviewMain ) );
