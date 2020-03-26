@@ -42,6 +42,7 @@ const ICON_SIZE = 12;
 function PageCardInfo( {
 	page,
 	showTimestamp,
+	showPublishedStatus,
 	isFront,
 	isPosts,
 	siteUrl,
@@ -53,13 +54,14 @@ function PageCardInfo( {
 	const moment = useLocalizedMoment();
 
 	const renderTimestamp = function() {
-		if ( page.status === 'future' ) {
+		if ( showPublishedStatus ) {
 			return (
 				<PostRelativeTimeStatus
 					post={ page }
 					link={ contentLink.contentLinkURL }
 					target={ contentLink.contentLinkTarget }
 					gridiconSize={ ICON_SIZE }
+					includeBasicStatus={ true }
 				/>
 			);
 		}
