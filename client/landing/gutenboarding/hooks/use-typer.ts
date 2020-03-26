@@ -32,7 +32,7 @@ export default function useTyper(
 	useInterval(
 		() => {
 			// disable the animation to save render cycles if it's not needed
-			if ( enabled ) {
+			if ( enabled && texts && texts.length ) {
 				// wait extra characters between words to emulate a pause between words without extra logic
 				// `charIndex > word.length` is not a problem for substr :)
 				if (
@@ -53,5 +53,9 @@ export default function useTyper(
 		mode === 'TYPING' ? delayBetweenCharacters : delayBetweenCharacters / 3
 	);
 
-	return texts[ wordIndex ].substr( 0, charIndex );
+	if ( texts && texts.length ) {
+		return texts[ wordIndex ].substr( 0, charIndex );
+	}
+
+	return '';
 }
