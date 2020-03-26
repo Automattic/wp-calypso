@@ -16,6 +16,7 @@ import Spinner from 'components/spinner';
 interface Props {
 	siteId: number;
 	allowRestore: boolean;
+	showDateRange: boolean;
 }
 
 interface Activity {

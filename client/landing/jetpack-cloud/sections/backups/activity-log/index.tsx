@@ -1,26 +1,35 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
+import React, { FunctionComponent } from 'react';
 
 /**
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
+import BackupActivityLog from 'landing/jetpack-cloud/sections/backups/components/activity-log';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import BackupActivityLog from 'landing/jetpack-cloud/sections/backups/components/activity-log';
 
 const BackupActivityLogPage: FunctionComponent = () => {
+	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 
 	const render = () => {
 		return (
 			<div>
-				<h1>{ 'welcome to activity-log!' }</h1>
-				{ siteId && <BackupActivityLog siteId={ siteId } allowRestore={ false } /> }
+				<h3>{ translate( 'Find a backup or restore point' ) }</h3>
+				<p>
+					{ translate(
+						'This is the complete event history for your site. Filter by date range and/ or activity type.'
+					) }
+				</p>
+				{ siteId && (
+					<BackupActivityLog allowRestore={ false } siteId={ siteId } showDateRange={ true } />
+				) }
 			</div>
 		);
 	};
