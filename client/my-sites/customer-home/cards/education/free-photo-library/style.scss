@@ -14,24 +14,3 @@
 	margin-top: 12px;
 	text-align: right;
 }
-
-.free-photo-library__demonstration-video {
-	max-height: 600px;
-	max-width: 800px;
-	width: calc( 90vw - 16px * 2 );
-	position: relative;
-	padding-bottom: calc( 9 / 16 * 100% );
-	height: 0;
-
-	@include breakpoint( '>480px' ) {
-		width: calc( 90vw - 24px * 2 );
-	}
-
-	iframe {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-	}
-}
