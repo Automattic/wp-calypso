@@ -35,7 +35,6 @@ import {
 import {
 	isFreeJetpackPlan,
 	isFreePlan,
-	isJetpackBackup,
 	isJetpackProduct,
 	getJetpackProductDisplayName,
 	getJetpackProductTagline,
@@ -87,14 +86,7 @@ class PurchasesListing extends Component {
 
 	getProductPurchases() {
 		return (
-			filter( this.props.purchases, purchase => purchase.active && isJetpackProduct( purchase ) ) ??
-			null
-		);
-	}
-
-	getJetpackBackupPurchase() {
-		return (
-			find( this.props.purchases, purchase => purchase.active && isJetpackBackup( purchase ) ) ??
+			find( this.props.purchases, purchase => purchase.active && isJetpackProduct( purchase ) ) ??
 			null
 		);
 	}
@@ -121,7 +113,7 @@ class PurchasesListing extends Component {
 			return getJetpackProductTagline( purchase );
 		}
 
-		const jetpackBackupPurchase = this.getJetpackBackupPurchase();
+		const jetpackBackupPurchase = this.getJetpackProductPurchases();
 
 		if ( currentPlanSlug ) {
 			const planObject = getPlan( currentPlanSlug );
@@ -236,7 +228,7 @@ class PurchasesListing extends Component {
 		const { translate } = this.props;
 
 		// Get all products and filter out falsy items.
-		const productPurchases = this.getProductPurchases().filter( Boolean );
+		const productPurchases = this.getProductPurchases();
 
 		if ( isEmpty( productPurchases ) ) {
 			return null;
