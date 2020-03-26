@@ -123,6 +123,7 @@
 		"nps-survey/dev-trigger": true,
 		"network-connection": true,
 		"oauth": false,
+		"page/export": true,
 		"perfmon": false,
 		"persist-redux": true,
 		"plans/personal-plan": true,

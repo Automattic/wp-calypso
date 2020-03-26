@@ -89,6 +89,7 @@
 		"my-sites/checkout/web-payment/basic-card": false,
 		"nps-survey/devdocs": false,
 		"nps-survey/dev-trigger": false,
+		"page/export": true,
 		"perfmon": true,
 		"persist-redux": true,
 		"plans/personal-plan": true,
