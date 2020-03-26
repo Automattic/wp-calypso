@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b706ac358bac9e781c592f9fc10b1fda",
+    "content-hash": "f0d596b22caf239fd3cbd94f731b3051",
     "packages": [
         {
             "name": "dealerdirect/phpcodesniffer-composer-installer",
-            "version": "v0.5.0",
+            "version": "v0.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Dealerdirect/phpcodesniffer-composer-installer.git",
-                "reference": "e749410375ff6fb7a040a68878c656c2e610b132"
+                "reference": "6589501ebe29091bd46f4c29ca72dce25cca2984"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Dealerdirect/phpcodesniffer-composer-installer/zipball/e749410375ff6fb7a040a68878c656c2e610b132",
-                "reference": "e749410375ff6fb7a040a68878c656c2e610b132",
+                "url": "https://api.github.com/repos/Dealerdirect/phpcodesniffer-composer-installer/zipball/6589501ebe29091bd46f4c29ca72dce25cca2984",
+                "reference": "6589501ebe29091bd46f4c29ca72dce25cca2984",
                 "shasum": ""
             },
             "require": {
@@ -70,7 +70,7 @@
                 "stylecheck",
                 "tests"
             ],
-            "time": "2018-10-26T13:21:45+00:00"
+            "time": "2020-01-19T15:35:03+00:00"
         },
         {
             "name": "squizlabs/php_codesniffer",
