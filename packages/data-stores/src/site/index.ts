@@ -9,10 +9,12 @@ import { registerStore } from '@wordpress/data';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import { createActions } from './actions';
+import * as resolvers from './resolvers';
 import * as selectors from './selectors';
 import { DispatchFromMap, SelectFromMap } from '../mapped-types';
 import { WpcomClientCredentials } from '../shared-types';
 import { controls } from '../wpcom-request-controls';
+import { MetadataDispatch, MetadataSelect } from './types';
 
 export * from './types';
 export { State };
@@ -25,6 +27,7 @@ export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KE
 			actions: createActions( clientCreds ),
 			controls: controls as any,
 			reducer,
+			resolvers,
 			selectors,
 		} );
 	}
@@ -32,6 +35,8 @@ export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KE
 }
 
 declare module '@wordpress/data' {
-	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< ReturnType< typeof createActions > >;
-	function select( key: typeof STORE_KEY ): SelectFromMap< typeof selectors >;
+	function dispatch(
+		key: typeof STORE_KEY
+	): DispatchFromMap< ReturnType< typeof createActions > > & MetadataDispatch;
+	function select( key: typeof STORE_KEY ): SelectFromMap< typeof selectors > & MetadataSelect;
 }
