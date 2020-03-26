@@ -50,17 +50,70 @@ import './style.scss';
 const PAGE_SIZE = 10;
 const INDEX_FORMAT = 'YYYYMMDD';
 
-class BackupsPage extends Component {
-	constructor( props ) {
-		super( props );
+const backupStatusNames = [
+	'rewind__backup_complete_full',
+	'rewind__backup_complete_initial',
+	'rewind__backup_error',
+];
 
-		this.state = {
+class BackupsPage extends Component {
+	state = {
+		selectedDate: new Date(),
+		backupsOnSelectedDate: {
+			lastBackup: null, // Last activity backup on the date
+			activities: [], // Rest of the activities (including other backups)
+		},
+	};
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.siteId !== this.props.siteId ) {
+			//If we switch the site, reset the current state
+			this.resetState();
+		}
+	}
+
+	resetState() {
+		this.setState( {
 			selectedDate: new Date(),
-		};
+			backupsOnSelectedDate: [],
+		} );
 	}
 
 	onDateChange = date => {
 		this.setState( { selectedDate: date } );
+		this.setBackupLogsFor( date );
+	};
+
+	/**
+	 *  Create a list of backups in the selected date
+	 *
+	 * @param date {Date} The current selected date
+	 */
+	setBackupLogsFor = date => {
+		const { moment } = this.props;
+
+		const index = moment( date ).format( INDEX_FORMAT );
+
+		const backupsOnSelectedDate = {
+			lastBackup: null,
+			activities: [],
+		};
+
+		if ( index in this.props.indexedLog && this.props.indexedLog[ index ].length > 0 ) {
+			this.props.indexedLog[ index ].forEach( log => {
+				// Looking for the last backup on the date
+				if (
+					! backupsOnSelectedDate.lastBackup &&
+					backupStatusNames.includes( log.activityName )
+				) {
+					backupsOnSelectedDate.lastBackup = log;
+				} else {
+					backupsOnSelectedDate.activities.push( log );
+				}
+			} );
+
+			this.setState( { backupsOnSelectedDate } );
+		}
 	};
 
 	isEmptyFilter = filter => {
