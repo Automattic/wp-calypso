@@ -81,10 +81,6 @@ class PagesMain extends React.Component {
 			scheduled: translate( 'Scheduled', { context: 'Filter label for pages list' } ),
 			trashed: translate( 'Trashed', { context: 'Filter label for pages list' } ),
 		};
-		const searchPlaceholder = translate( 'Search Pages…', {
-			context: 'Search placeholder for pages list',
-			textOnly: true,
-		} );
 		return (
 			<Main wideLayout classname="pages">
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
@@ -104,7 +100,11 @@ class PagesMain extends React.Component {
 						fitsContainer
 						onSearch={ doSearch }
 						initialValue={ search }
-						placeholder={ searchPlaceholder }
+						placeholder={ this.props.translate( 'Search %(postTypes)s…', {
+							args: {
+								postTypes: translate( 'Pages' ),
+							},
+						} ) }
 						analyticsGroup="Pages"
 						delaySearch={ true }
 					/>
