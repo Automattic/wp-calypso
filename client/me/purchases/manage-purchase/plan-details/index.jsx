@@ -28,7 +28,7 @@ import { getPluginsForSite } from 'state/plugins/premium/selectors';
  */
 import './style.scss';
 
-class PurchasePlanDetails extends Component {
+export class PurchasePlanDetails extends Component {
 	static propTypes = {
 		purchaseId: PropTypes.number,
 		isPlaceholder: PropTypes.bool,
