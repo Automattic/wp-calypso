@@ -90,11 +90,11 @@ export class ThankYouCard extends Component {
 								compact={ true }
 								href="customize.php?autofocus[section]=jetpack_search"
 							>
-								{ translate( 'Customize Search Now' ) }
+								{ translate( 'Customize Search now' ) }
 							</Button>
 
 							<Button compact={ true } href={ '/plans/' }>
-								{ translate( "I'll do it later" ) }
+								{ translate( 'Go back to my site' ) }
 							</Button>
 						</p>
 					) }
