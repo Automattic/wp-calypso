@@ -5,6 +5,7 @@ import * as React from 'react';
 import { addQueryArgs } from '@wordpress/url';
 import { useSelect } from '@wordpress/data';
 import { ValuesType } from 'utility-types';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -20,6 +21,7 @@ interface Props {
 	viewport: T.Viewport;
 	fonts: ValuesType< typeof import('../../constants').fontPairings >;
 }
+
 const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 	const [ previewHtml, setPreviewHtml ] = React.useState< string >();
 	const [ requestedFonts, setRequestedFonts ] = React.useState< Set< string > >( new Set() );
@@ -37,8 +39,8 @@ const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 			const eff = async () => {
 				const [ { fontFamily: fontHeadings }, { fontFamily: fontBase } ] = fonts;
 				const templateUrl = `https://public-api.wordpress.com/rest/v1/template/demo/${ encodeURIComponent(
-					selectedDesign.slug
-				) }/${ encodeURIComponent( selectedDesign.slug ) }/`;
+					selectedDesign.theme
+				) }/${ encodeURIComponent( selectedDesign.template ) }/`;
 				const url = addQueryArgs( templateUrl, {
 					language: language,
 					vertical: siteVertical.label,
@@ -46,6 +48,7 @@ const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 					font_base: fontBase,
 				} );
 				let resp;
+
 				try {
 					resp = await window.fetch( url );
 					if ( resp.status < 200 || resp.status >= 300 ) {
@@ -128,7 +131,14 @@ const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 					<div role="presentation" className="style-preview__preview-bar-dot" />
 				</div>
 			) }
-			<iframe ref={ iframe } className="style-preview__iframe" title="preview" />
+			<iframe
+				ref={ iframe }
+				className={ classNames( {
+					'style-preview__iframe': true,
+					hideScroll: viewport !== 'desktop',
+				} ) }
+				title="preview"
+			/>
 		</div>
 	);
 };

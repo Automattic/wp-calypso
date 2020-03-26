@@ -68,6 +68,8 @@
 	border-radius: 4px;
 	overflow: hidden;
 	width: 100%;
+	position: relative;
+	height: 700px;
 
 	&.is-viewport-mobile,
 	&.is-viewport-tablet {
@@ -129,8 +131,14 @@
 		}
 	}
 }
+.block-editor__container iframe.style-preview__iframe {
+	transform: scale( 0.7 );
+	transform-origin: 0 0;
+	width: 143%;
+	height: 143%;
+	position: absolute;
 
-.style-preview__iframe {
-	width: 100%;
-	height: 700px;
+	&.hideScroll {
+		width: 145%;
+	}
 }
