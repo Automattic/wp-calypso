@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useEffect } from 'react';
-import { Button, ExternalLink, Modal, Notice } from '@wordpress/components';
+import { Button, ExternalLink, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
@@ -82,14 +82,7 @@ const LoginForm = ( { onRequestClose, onOpenSignup, onLogin }: Props ) => {
 	// todo: may need to be updated as more states are handled
 
 	return (
-		<Modal
-			className="login-form"
-			isDismissible={ true }
-			// set to false so that 1password's autofill doesn't automatically close the modal
-			shouldCloseOnClickOutside={ false }
-			title={ NO__( 'Log in to save your changes' ) }
-			onRequestClose={ closeModal }
-		>
+		<div className="login-form">
 			{ loginFlowState === 'ENTER_USERNAME_OR_EMAIL' && (
 				<EnterUsernameOrEmailForm tos={ tos } errorNotifications={ errorNotifications } />
 			) }
@@ -102,7 +95,7 @@ const LoginForm = ( { onRequestClose, onOpenSignup, onLogin }: Props ) => {
 					{ NO__( 'Create account.' ) }
 				</Button>
 			</div>
-		</Modal>
+		</div>
 	);
 };
 

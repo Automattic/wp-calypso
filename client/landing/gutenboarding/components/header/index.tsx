@@ -17,8 +17,7 @@ import { USER_STORE } from '../../stores/user';
 import { SITE_STORE } from '../../stores/site';
 import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
-import SignupForm from '../../components/signup-form';
-import LoginForm from '../../components/login-form';
+import AuthForm from '../../components/auth-form';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 
 import wp from '../../../../lib/wp';
@@ -80,7 +79,6 @@ const Header: FunctionComponent = () => {
 	}, [ siteTitle, setDomain ] );
 
 	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
-	const [ showLoginDialog, setShowLoginDialog ] = useState( false );
 
 	const {
 		location: { pathname },
@@ -91,8 +89,7 @@ const Header: FunctionComponent = () => {
 		// this header isn't unmounted on route changes so we need to
 		// explicitly hide the dialog.
 		setShowSignupDialog( false );
-		setShowLoginDialog( false );
-	}, [ pathname, setShowSignupDialog, setShowLoginDialog ] );
+	}, [ pathname, setShowSignupDialog ] );
 
 	const currentDomain = domain ?? freeDomainSuggestion;
 
@@ -129,17 +126,10 @@ const Header: FunctionComponent = () => {
 
 	const handleSignup = () => {
 		setShowSignupDialog( true );
-		setShowLoginDialog( false );
-	};
-
-	const handleLogin = () => {
-		setShowSignupDialog( false );
-		setShowLoginDialog( true );
 	};
 
 	const closeAuthDialog = () => {
 		setShowSignupDialog( false );
-		setShowLoginDialog( false );
 	};
 
 	const handleSignupForDomains = () => {
@@ -237,14 +227,7 @@ const Header: FunctionComponent = () => {
 				</div>
 			</section>
 			{ showSignupDialog && (
-				<SignupForm onRequestClose={ closeAuthDialog } onOpenLogin={ handleLogin } />
-			) }
-			{ showLoginDialog && (
-				<LoginForm
-					onRequestClose={ closeAuthDialog }
-					onOpenSignup={ handleSignup }
-					onLogin={ handleCreateSite }
-				/>
+				<AuthForm onRequestClose={ closeAuthDialog } handleCreateSite={ handleCreateSite } />
 			) }
 		</div>
 	);

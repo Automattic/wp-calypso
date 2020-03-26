@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useState, useEffect } from 'react';
-import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
+import { Button, ExternalLink, TextControl, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
@@ -34,17 +34,12 @@ interface Props {
 const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 	const { __: NO__, _x: NO_x } = useI18n();
 	const [ emailVal, setEmailVal ] = useState( '' );
-	const { createAccount, clearErrors } = useDispatch( USER_STORE );
+	const { createAccount } = useDispatch( USER_STORE );
 	const isFetchingNewUser = useSelect( select => select( USER_STORE ).isFetchingNewUser() );
 	const newUserError = useSelect( select => select( USER_STORE ).getNewUserError() );
 	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ) ).getState();
 	const langParam = useLangRouteParam();
 	const makePath = usePath();
-
-	const closeModal = () => {
-		clearErrors();
-		onRequestClose();
-	};
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_gutenboarding_signup_start', {
@@ -68,7 +63,7 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 		} );
 
 		if ( success ) {
-			closeModal();
+			onRequestClose();
 		}
 	};
 
@@ -106,15 +101,7 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 	) }?new`;
 
 	return (
-		<Modal
-			className="signup-form"
-			title={ NO__( 'Sign up to save your changes' ) }
-			onRequestClose={ closeModal }
-			focusOnMount={ false }
-			isDismissible={ ! isFetchingNewUser }
-			// set to false so that 1password's autofill doesn't automatically close the modal
-			shouldCloseOnClickOutside={ false }
-		>
+		<div className="signup-form">
 			<form onSubmit={ handleSignUp }>
 				<TextControl
 					label={ NO__( 'Your Email Address' ) }
@@ -153,7 +140,7 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 					(experimental login)
 				</Button>
 			</div>
-		</Modal>
+		</div>
 	);
 };
 

@@ -1,16 +1,9 @@
 @import '~@automattic/calypso-color-schemes/src/calypso-color-schemes';
 
-.login-form.components-modal__frame {
+.login-form {
 	border: none;
 	border-radius: 3px;
 	min-width: 450px;
-	
-	.components-modal__header {
-		.components-modal__header-heading {
-			font-size: 20px;
-			font-weight: normal;
-		}
-	}
 
 	.components-text-control__input {
 		padding: 7px 14px;
