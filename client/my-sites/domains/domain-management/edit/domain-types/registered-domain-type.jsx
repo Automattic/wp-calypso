@@ -38,11 +38,6 @@ import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainManagementNavigation from '../navigation';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 class RegisteredDomainType extends React.Component {
 	resolveStatus() {
 		const { domain, translate, purchase, moment } = this.props;
