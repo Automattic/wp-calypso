@@ -8,9 +8,9 @@ import {
     DomainContactDetailsErrors,
 } from './backend/domain-contact-details-components';
 import {
-    DomainContactValidationRequest,
-    DomainContactValidationRequestExtraFields,
-    DomainContactValidationResponse,
+	DomainContactValidationRequest,
+	DomainContactValidationRequestExtraFields,
+	DomainContactValidationResponse,
 } from './backend/domain-contact-validation-endpoint';
 
 type ManagedContactDetailsShape< T > = {
@@ -428,8 +428,8 @@ function prepareFrDomainContactExtraDetailsErrors(
 }
 
 export function prepareDomainContactValidationRequest(
-    domainNames: string[],
-    details: ManagedContactDetails
+	domainNames: string[],
+	details: ManagedContactDetails
 ): DomainContactValidationRequest {
 	const extra: DomainContactValidationRequestExtraFields = {};
 
@@ -464,7 +464,6 @@ export function prepareDomainContactValidationRequest(
 			email: details.email.value,
 			alternateEmail: details.alternateEmail.value,
 			phone: details.phone.value,
-			phoneNumberCountry: details.phoneNumberCountry.value,
 			address1: details.address1.value,
 			address2: details.address2.value,
 			city: details.city.value,
@@ -479,7 +478,7 @@ export function prepareDomainContactValidationRequest(
 }
 
 export function formatDomainContactValidationResponse(
-    response: DomainContactValidationResponse
+	response: DomainContactValidationResponse
 ): ManagedContactDetailsErrors {
 	const optionalToArray: ( x: undefined | string ) => undefined | string[] = x => {
 		return x ? [ x ] : undefined;
