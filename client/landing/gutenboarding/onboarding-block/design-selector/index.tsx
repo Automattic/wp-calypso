@@ -20,6 +20,8 @@ import { SubTitle, Title } from '../../components/titles';
 
 import './style.scss';
 
+type Design = import('../../stores/onboard/types').Design;
+
 // Values for springs:
 const ZOOM_OFF = { transform: 'scale(1)' };
 const ZOOM_ON = { transform: 'scale(1.03)' };

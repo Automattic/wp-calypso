@@ -29,7 +29,7 @@ const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 	// Cast reason: Our flow should ensure these are not `undefined`. Cast to defined types.
 	const { selectedDesign, siteVertical, siteTitle } = useSelect( select =>
 		select( STORE_KEY ).getState()
-	) as { selectedDesign: Design; siteVertical: SiteVertical };
+	) as { selectedDesign: Design; siteVertical: SiteVertical; siteTitle: string };
 
 	const iframe = React.useRef< HTMLIFrameElement >( null );
 	const language = useLangRouteParam();
