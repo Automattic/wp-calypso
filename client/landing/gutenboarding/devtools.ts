@@ -27,9 +27,9 @@ export const setupWpDataDebug = () => {
 				Site.register( clientCreds );
 
 				window.wp.auth = {};
-				let previousState = window.wp?.data.select( AUTH_STORE ).getLoginFlowState();
-				let previousErrors = window.wp?.data.select( AUTH_STORE ).getErrors();
-				window.wp?.data.subscribe( () => {
+				let previousState = window.wp.data.select( AUTH_STORE ).getLoginFlowState();
+				let previousErrors = window.wp.data.select( AUTH_STORE ).getErrors();
+				window.wp.data.subscribe( () => {
 					const newState = window.wp?.data.select( AUTH_STORE ).getLoginFlowState();
 					const newErrors = window.wp?.data.select( AUTH_STORE ).getErrors();
 					if (
