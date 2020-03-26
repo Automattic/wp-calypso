@@ -46,22 +46,19 @@ let siteUrlsSearched = [],
 class WpForTeamsSite extends React.Component {
 	static displayName = 'WpForTeamsSite';
 
-	state = {
-		form: null,
-		submitting: false,
-	};
+	constructor( props ) {
+		super( props );
 
-	UNSAFE_componentWillMount() {
 		let initialState;
 
-		if ( this.props.step && this.props.step.form ) {
-			initialState = this.props.step.form;
+		if ( props.step && props.step.form ) {
+			initialState = props.step.form;
 
-			if ( ! isEmpty( this.props.step.errors ) ) {
+			if ( ! isEmpty( props.step.errors ) ) {
 				initialState = formState.setFieldErrors(
 					formState.setFieldsValidating( initialState ),
 					{
-						site: this.props.step.errors[ 0 ].message,
+						site: props.step.errors[ 0 ].message,
 					},
 					true
 				);
@@ -79,7 +76,10 @@ class WpForTeamsSite extends React.Component {
 			initialState: initialState,
 		} );
 
-		this.setState( { form: this.formStateController.getInitialState() } );
+		this.state = {
+			form: this.formStateController.getInitialState(),
+			submitting: false,
+		};
 	}
 
 	componentWillUnmount() {
