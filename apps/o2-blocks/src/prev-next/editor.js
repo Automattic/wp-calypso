@@ -4,7 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import { Fragment } from '@wordpress/element';
 import { registerBlockType } from '@wordpress/blocks';
-import { TextControl } from '@wordpress/components';
+import { URLInput } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -18,19 +18,43 @@ const blockAttributes = {
 		selector: 'a:first-child',
 		attribute: 'href',
 	},
+	prevText: {
+		type: 'string',
+		source: 'attribute',
+		selector: 'a:first-child',
+		attribute: 'title',
+	},
 	next: {
 		type: 'string',
 		source: 'attribute',
 		selector: 'a:last-child',
 		attribute: 'href',
 	},
+	nextText: {
+		type: 'string',
+		source: 'attribute',
+		selector: 'a:last-child',
+		attribute: 'title',
+	},
 };
 
-const save = ( { attributes: { prev, next }, className, isEditor } ) =>
+const save = ( { attributes: { prev, prevText, next, nextText }, className, isEditor } ) =>
 	prev || next ? (
 		<div className={ isEditor ? className : '' }>
-			{ prev ? <a href={ prev }>← Prev</a> : <span> </span> }
-			{ next ? <a href={ next }>Next →</a> : <span> </span> }
+			{ prev ? (
+				<a href={ prev } title={ prevText }>
+					← { prevText }
+				</a>
+			) : (
+				<span> </span>
+			) }
+			{ next ? (
+				<a href={ next } title={ nextText }>
+					{ nextText } →
+				</a>
+			) : (
+				<span> </span>
+			) }
 		</div>
 	) : (
 		<Fragment />
@@ -40,15 +64,17 @@ const edit = ( { attributes, className, isSelected, setAttributes } ) => {
 	if ( isSelected ) {
 		return (
 			<Fragment>
-				<TextControl
-					label={ __( 'Previous Post' ) }
+				<URLInput
 					value={ attributes.prev }
-					onChange={ prev => setAttributes( { prev } ) }
+					onChange={ ( url, post ) =>
+						setAttributes( { prev: url, prevText: post?.title || 'Prev' } )
+					}
 				/>
-				<TextControl
-					label={ __( 'Next Post' ) }
+				<URLInput
 					value={ attributes.next }
-					onChange={ next => setAttributes( { next } ) }
+					onChange={ ( url, post ) =>
+						setAttributes( { next: url, nextText: post?.title || 'Next' } )
+					}
 				/>
 			</Fragment>
 		);
