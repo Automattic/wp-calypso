@@ -21,7 +21,6 @@ import VerticalNavItem from 'components/vertical-nav/item';
 import { preventWidows } from 'lib/formatting';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import FormattedHeader from 'components/formatted-header';
-import { SIDEBAR_SECTION_TOOLS } from 'my-sites/sidebar/constants';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { canCurrentUserUseCustomerHome, getSiteOption } from 'state/sites/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -33,12 +32,12 @@ import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { localizeUrl } from 'lib/i18n-utils';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actions';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import StatsBanners from 'my-sites/stats/stats-banners';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import GoMobile from 'my-sites/customer-home/cards/features/go-mobile';
+import GrowEarn from 'my-sites/customer-home/cards/features/grow-earn';
 import Stats from 'my-sites/customer-home/cards/features/stats';
 import FreePhotoLibrary from 'my-sites/customer-home/cards/education/free-photo-library';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
@@ -74,7 +73,6 @@ class Home extends Component {
 				);
 			}
 		},
-		expandToolsAndTrack: PropTypes.func.isRequired,
 		trackAction: PropTypes.func.isRequired,
 		isStaticHomePage: PropTypes.bool.isRequired,
 	};
@@ -164,9 +162,7 @@ class Home extends Component {
 			needsEmailVerification,
 			translate,
 			checklistMode,
-			siteSlug,
 			trackAction,
-			expandToolsAndTrack,
 			hasChecklistData,
 			siteIsUnlaunched,
 		} = this.props;
@@ -201,34 +197,7 @@ class Home extends Component {
 					) }
 					{ ! siteIsUnlaunched && <Stats /> }
 					{ <FreePhotoLibrary /> }
-					{ ! siteIsUnlaunched && isChecklistComplete && (
-						<Card className="customer-home__grow-earn">
-							<CardHeading>{ translate( 'Grow & Earn' ) }</CardHeading>
-							<h6 className="customer-home__card-subheader">
-								{ translate( 'Grow your audience and earn money' ) }
-							</h6>
-							<VerticalNav className="customer-home__card-links">
-								<VerticalNavItem
-									path={ `/marketing/connections/${ siteSlug }` }
-									onClick={ () => expandToolsAndTrack( 'earn', 'share_site' ) }
-								>
-									{ translate( 'Share my site' ) }
-								</VerticalNavItem>
-								<VerticalNavItem
-									path={ `/marketing/tools/${ siteSlug }` }
-									onClick={ () => expandToolsAndTrack( 'earn', 'grow_audience' ) }
-								>
-									{ translate( 'Grow my audience' ) }
-								</VerticalNavItem>
-								<VerticalNavItem
-									path={ `/earn/${ siteSlug }` }
-									onClick={ () => expandToolsAndTrack( 'earn', 'money' ) }
-								>
-									{ translate( 'Earn money' ) }
-								</VerticalNavItem>
-							</VerticalNav>
-						</Card>
-					) }
+					{ ! siteIsUnlaunched && isChecklistComplete && <GrowEarn /> }
 					<Card>
 						<CardHeading>{ translate( 'Support' ) }</CardHeading>
 						<h6 className="customer-home__card-subheader">
@@ -300,7 +269,6 @@ const connectHome = connect(
 					bumpStat( 'calypso_customer_home', `${ section }_${ action }` )
 				)
 			),
-		expandToolsSection: () => dispatch( expandSection( SIDEBAR_SECTION_TOOLS ) ),
 		launchSiteOrRedirectToLaunchSignupFlow: siteId =>
 			dispatch( launchSiteOrRedirectToLaunchSignupFlow( siteId ) ),
 	} ),
@@ -309,10 +277,6 @@ const connectHome = connect(
 		...ownProps,
 		launchSiteOrRedirectToLaunchSignupFlow: () =>
 			dispatchProps.launchSiteOrRedirectToLaunchSignupFlow( stateProps.siteId ),
-		expandToolsAndTrack: ( section, action ) => {
-			dispatchProps.expandToolsSection();
-			dispatchProps.trackAction( section, action, stateProps.isStaticHomePage );
-		},
 		trackAction: ( section, action ) =>
 			dispatchProps.trackAction( section, action, stateProps.isStaticHomePage ),
 	} )

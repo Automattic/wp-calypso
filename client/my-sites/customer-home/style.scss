@@ -171,9 +171,6 @@
 		font-size: 0.85rem;
 		margin: -0.5rem 0 1rem;
 	}
-	&__grow-earn {
-		padding-bottom: 12px;
-	}
 
 	&__layout {
 		@include grid-row( 4, 1 );
