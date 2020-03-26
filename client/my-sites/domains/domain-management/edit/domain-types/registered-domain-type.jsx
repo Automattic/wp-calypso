@@ -42,9 +42,21 @@ import NonPrimaryDomainPlanUpsell from '../../components/domain/non-primary-doma
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
 import AutoRenewToggle from 'me/purchases/manage-purchase/auto-renew-toggle';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import { isExpired, shouldRenderExpiringCreditCard, isRechargeable } from 'lib/purchases';
+import {
+	isExpired,
+	shouldRenderExpiringCreditCard,
+	isRechargeable,
+	isCancelable,
+} from 'lib/purchases';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
+import { cancelPurchase } from 'me/purchases/paths';
+import RemovePurchase from 'me/purchases/remove-purchase';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class RegisteredDomainType extends React.Component {
 	getVerticalNavigation() {
@@ -59,7 +71,44 @@ class RegisteredDomainType extends React.Component {
 				{ ( inNormalState || inGracePeriod ) && this.nameServersNavItem() }
 				{ ( inNormalState || inGracePeriod ) && this.contactsPrivacyNavItem() }
 				{ ( ! expired || inGracePeriod ) && this.transferNavItem() }
+				{ this.deleteDomainNavItem() }
 			</VerticalNav>
+		);
+	}
+
+	deleteDomainNavItem() {
+		const { domain, isLoadingPurchase, purchase, selectedSite, translate } = this.props;
+
+		if ( ! domain.currentUserCanManage ) {
+			return null;
+		}
+
+		const title = translate( 'Delete Your Domain Permanently' );
+
+		if ( isLoadingPurchase ) {
+			return <VerticalNavItem isPlaceholder />;
+		}
+
+		if ( ! selectedSite || ! purchase ) {
+			return null;
+		}
+
+		if ( isCancelable( purchase ) ) {
+			const link = cancelPurchase( selectedSite.slug, purchase.id );
+
+			return <VerticalNavItem path={ link }>{ title }</VerticalNavItem>;
+		}
+
+		return (
+			<RemovePurchase
+				hasLoadedSites={ true }
+				hasLoadedUserPurchasesFromServer={ true }
+				site={ selectedSite }
+				purchase={ purchase }
+				title={ title }
+				hideTrashIcon={ true }
+				displayButtonAsLink={ true }
+			/>
 		);
 	}
 

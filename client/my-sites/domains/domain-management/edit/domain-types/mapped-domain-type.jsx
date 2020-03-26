@@ -36,9 +36,16 @@ import {
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 } from 'state/purchases/selectors';
-import { isRechargeable, isExpired } from 'lib/purchases';
+import { isRechargeable, isExpired, isCancelable } from 'lib/purchases';
+import { cancelPurchase } from 'me/purchases/paths';
+import RemovePurchase from 'me/purchases/remove-purchase';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class MappedDomainType extends React.Component {
 	getVerticalNavigation() {
@@ -48,7 +55,44 @@ class MappedDomainType extends React.Component {
 				{ this.dnsRecordsNavItem() }
 				{ this.domainConnectMappingNavItem() }
 				{ this.transferMappedDomainNavItem() }
+				{ this.deleteMappingNavItem() }
 			</VerticalNav>
+		);
+	}
+
+	deleteMappingNavItem() {
+		const { domain, isLoadingPurchase, mappingPurchase, selectedSite, translate } = this.props;
+
+		if ( ! domain.currentUserCanManage ) {
+			return null;
+		}
+
+		const title = translate( 'Delete Domain Mapping' );
+
+		if ( isLoadingPurchase ) {
+			return <VerticalNavItem isPlaceholder />;
+		}
+
+		if ( ! selectedSite || ! mappingPurchase ) {
+			return null;
+		}
+
+		if ( isCancelable( mappingPurchase ) ) {
+			const link = cancelPurchase( selectedSite.slug, mappingPurchase.id );
+
+			return <VerticalNavItem path={ link }>{ title }</VerticalNavItem>;
+		}
+
+		return (
+			<RemovePurchase
+				hasLoadedSites={ true }
+				hasLoadedUserPurchasesFromServer={ true }
+				site={ selectedSite }
+				purchase={ mappingPurchase }
+				title={ title }
+				hideTrashIcon={ true }
+				displayButtonAsLink={ true }
+			/>
 		);
 	}
 
@@ -362,6 +406,9 @@ export default connect(
 		return {
 			purchase: purchaseSubscriptionId
 				? getByPurchaseId( state, parseInt( purchaseSubscriptionId, 10 ) )
+				: null,
+			mappingPurchase: subscriptionId
+				? getByPurchaseId( state, parseInt( subscriptionId, 10 ) )
 				: null,
 			isLoadingPurchase:
 				isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
