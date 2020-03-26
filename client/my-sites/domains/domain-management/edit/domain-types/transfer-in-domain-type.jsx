@@ -82,12 +82,22 @@ class TransferInDomainType extends React.Component {
 
 	resolveStatus() {
 		const { domain, translate } = this.props;
+		const { transferStatus: status } = domain;
 
-		if ( domain.transferStatus === transferStatus.PENDING_START ) {
+		if ( status === transferStatus.PENDING_START ) {
 			return {
 				statusText: translate( 'Action required' ),
 				statusClass: 'status-error',
 				icon: 'info',
+			};
+		} else if (
+			status === transferStatus.PENDING_OWNER ||
+			status === transferStatus.PENDING_REGISTRY
+		) {
+			return {
+				statusText: translate( 'Transfer in progress' ),
+				statusClass: 'status-success',
+				icon: 'cached',
 			};
 		}
 
@@ -107,7 +117,7 @@ class TransferInDomainType extends React.Component {
 		const { domain, translate } = this.props;
 
 		return (
-			<div>
+			<>
 				<p>
 					{ translate(
 						'We need you to complete a couple of steps before we can transfer %(domain)s from your ' +
@@ -124,7 +134,21 @@ class TransferInDomainType extends React.Component {
 				<Button primary onClick={ this.startTransfer }>
 					{ translate( 'Start Transfer' ) }
 				</Button>
-			</div>
+			</>
+		);
+	}
+
+	renderTransferInProgress() {
+		const { translate } = this.props;
+
+		return (
+			<p>
+				{ translate(
+					'Your transfer has been started and is waiting for authorization from your current ' +
+						'domain provider. This process can take up to 7 days. If you need to cancel or expedite the ' +
+						'transfer please contact them for assistance.'
+				) }
+			</p>
 		);
 	}
 
@@ -133,6 +157,8 @@ class TransferInDomainType extends React.Component {
 		const { name: domain_name } = domain;
 
 		const { statusText, statusClass, icon } = this.resolveStatus();
+
+		const domainStatus = domain.transferStatus;
 
 		return (
 			<div className="domain-types__container">
@@ -143,7 +169,10 @@ class TransferInDomainType extends React.Component {
 					statusClass={ statusClass }
 					icon={ icon }
 				>
-					{ domain.transferStatus === transferStatus.PENDING_START && this.renderPendingStart() }
+					{ domainStatus === transferStatus.PENDING_START && this.renderPendingStart() }
+					{ ( domainStatus === transferStatus.PENDING_OWNER ||
+						domainStatus === transferStatus.PENDING_REGISTRY ) &&
+						this.renderTransferInProgress() }
 				</DomainStatus>
 				{ this.getVerticalNavigation() }
 			</div>
