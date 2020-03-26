@@ -8,35 +8,56 @@ import { useState } from 'react';
  */
 import { useInterval } from 'lib/interval/use-interval';
 
+type TyperMode = 'TYPING' | 'DELETING';
+
+type AllTyperOptions = {
+	delayBetweenCharacters: number;
+	delayBetweenWords: number;
+};
+
+// if options are passed. At least one of them should be set
+type TyperOptions =
+	| Pick< AllTyperOptions, 'delayBetweenCharacters' >
+	| Pick< AllTyperOptions, 'delayBetweenWords' >
+	| AllTyperOptions;
+
+const defaultOptions: AllTyperOptions = { delayBetweenCharacters: 120, delayBetweenWords: 1200 };
+
 /**
  * A React hook that returns typing-machine animated strings
  *
- * @param {Array<string>} texts An array of strings you want to create the typing effect for
- * @param {boolean?} enabled Whether the animation is enabled
- * @param {number?} delayBetweenCharacters The typing delay time between two charactors. Default is 120ms
- * @param {number?} delayBetweenWords The typing delay time between two words. Default is 1200ms
+ * @param words An array of strings you want to create the typing effect for
+ * @param enabled Whether the animation is enabled
+ * @param options Animation options
+ * @param options.delayBetweenCharacters The typing delay time between two charactors. Default is 120ms
+ * @param options.delayBetweenWords The typing delay time between two words. Default is 1200ms
+ * @returns truncated strings from `words` array.
+ * The word get longer at every passing `delayBetweenCharacters` until it's fully spelled,
+ * then the next word is spelled out after `delayBetweenWords` passes.
  */
 export default function useTyper(
-	texts: Array< string >,
+	words: Array< string >,
 	enabled = true,
-	delayBetweenCharacters = 120,
-	delayBetweenWords = 1200
-) {
+	options: TyperOptions = defaultOptions
+): string {
 	const [ charIndex, setCharIndex ] = useState( 0 );
 	const [ wordIndex, setWordIndex ] = useState( 0 );
-	const [ mode, setMode ] = useState( 'TYPING' );
+	const [ mode, setMode ] = useState< TyperMode >( 'TYPING' );
+
+	const populatedOptions: AllTyperOptions = { ...defaultOptions, ...options };
 
 	/* measure how many characters' worth of waiting you need to wait between words */
-	const delayInCharacters = delayBetweenWords / delayBetweenCharacters;
+	const delayInCharacters =
+		populatedOptions.delayBetweenWords / populatedOptions.delayBetweenCharacters;
 
 	useInterval(
 		() => {
 			// disable the animation to save render cycles if it's not needed
-			if ( enabled && texts && texts.length ) {
+			if ( enabled && words && words.length ) {
 				// wait extra characters between words to emulate a pause between words without extra logic
 				// `charIndex > word.length` is not a problem for substr :)
 				if (
-					( charIndex - delayInCharacters < texts[ wordIndex ].length && mode === 'TYPING' ) ||
+					( charIndex - delayInCharacters < words[ wordIndex ].length && mode === 'TYPING' ) ||
 					( charIndex > 0 && mode === 'DELETING' )
 				) {
 					const increment = mode === 'TYPING' ? 1 : -1;
@@ -45,16 +66,18 @@ export default function useTyper(
 					// start deleting
 					setMode( 'DELETING' );
 				} else {
-					setWordIndex( ( wordIndex + 1 ) % texts.length );
+					setWordIndex( ( wordIndex + 1 ) % words.length );
 					setMode( 'TYPING' );
 				}
 			}
 		},
-		mode === 'TYPING' ? delayBetweenCharacters : delayBetweenCharacters / 3
+		mode === 'TYPING'
+			? populatedOptions.delayBetweenCharacters
+			: populatedOptions.delayBetweenCharacters / 3
 	);
 
-	if ( texts && texts.length ) {
-		return texts[ wordIndex ].substr( 0, charIndex );
+	if ( words && words.length ) {
+		return words[ wordIndex ].substr( 0, charIndex );
 	}
 
 	return '';
