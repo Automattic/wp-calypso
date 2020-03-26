@@ -17,8 +17,6 @@ export default ( options, getOptionValue ) => {
 		const cssVariables = {};
 		const styleElement = document.createElement( 'style' );
 		document.body.appendChild( styleElement );
-		const styleSheet = styleElement.sheet;
-
 		options.forEach( option => {
 			current[ option ] = null;
 			cssVariables[ option ] = `--${ option.replace( '_', '-' ) }`;
@@ -28,19 +26,15 @@ export default ( options, getOptionValue ) => {
 			let styleProps = '';
 			Object.keys( current ).forEach( key => {
 				const value = getOptionValue( key );
-				if ( ! isEmpty( value ) && current[ key ] !== value ) {
+				if ( ! isEmpty( value ) ) {
 					current[ key ] = value;
 					styleProps += `${ cssVariables[ key ] }:${ value };`;
 				}
 			} );
-			// We want to scope this to the root node of the editor.
 			// We need this to be a stylesheet rather than inline styles
 			// so the styles apply to all editor instances incl. previews.
 			if ( ! isEmpty( styleProps ) ) {
-				styleSheet.insertRule(
-					`.editor-styles-wrapper{${ styleProps }}`,
-					styleSheet.cssRules.length
-				);
+				styleElement.textContent = `.editor-styles-wrapper{${ styleProps }}`;
 			}
 		} );
 	} );
