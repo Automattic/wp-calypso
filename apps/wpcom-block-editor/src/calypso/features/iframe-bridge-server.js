@@ -566,8 +566,9 @@ function handleInsertClassicBlockMedia( calypsoPort ) {
 function handleCloseEditor( calypsoPort ) {
 	const legacySelector = '.edit-post-fullscreen-mode-close__toolbar a'; // maintain support for Gutenberg plugin < v7.7
 	const selector = '.edit-post-header .edit-post-fullscreen-mode-close';
+	const siteEditorSelector = '.edit-site-header .edit-site-fullscreen-mode-close';
 
-	$( '#editor' ).on( 'click', `${ legacySelector }, ${ selector }`, e => {
+	$( '#editor' ).on( 'click', `${ legacySelector }, ${ selector }, ${ siteEditorSelector }`, e => {
 		e.preventDefault();
 
 		const { port2 } = new MessageChannel();
