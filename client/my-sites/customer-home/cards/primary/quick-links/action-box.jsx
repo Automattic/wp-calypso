@@ -10,16 +10,7 @@ import { CompactCard } from '@automattic/components';
 import MaterialIcon from 'components/material-icon';
 import Gridicon from 'components/gridicon';
 
-const ActionBox = ( {
-	href,
-	onClick,
-	target,
-	iconSrc,
-	label,
-	subtitle,
-	materialIcon,
-	gridicon,
-} ) => {
+const ActionBox = ( { href, onClick, target, iconSrc, label, materialIcon, gridicon } ) => {
 	const buttonAction = { href, onClick, target };
 	const getIcon = () => {
 		if ( materialIcon ) {
@@ -38,7 +29,6 @@ const ActionBox = ( {
 			<div className="quick-links__action-box-image">{ getIcon() }</div>
 			<div className="quick-links__action-box-text">
 				<h6 className="quick-links__action-box-label">{ label }</h6>
-				<span className="quick-links__action-box-subtitle">{ subtitle }</span>
 			</div>
 		</CompactCard>
 	);
