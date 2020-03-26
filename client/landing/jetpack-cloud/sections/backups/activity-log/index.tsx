@@ -2,22 +2,32 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
+import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { getSelectedSiteId } from 'state/ui/selectors';
+import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import DocumentHead from 'components/data/document-head';
+import BackupActivityLog from 'landing/jetpack-cloud/sections/backups/components/activity-log';
 
 const BackupActivityLogPage: FunctionComponent = () => {
+	const siteId = useSelector( getSelectedSiteId );
+
 	const render = () => {
-		return <div>{ 'welcome to activity-log!' }</div>;
+		return (
+			<div>
+				<h1>{ 'welcome to activity-log!' }</h1>
+				{ siteId && <BackupActivityLog siteId={ siteId } allowRestore={ false } /> }
+			</div>
+		);
 	};
 
 	return (
-		<Main>
-			<DocumentHead title="Backup Details" />
+		<Main className="activity-log">
+			<DocumentHead title="Activity Log" />
 			<SidebarNavigation />
 			{ render() }
 		</Main>
