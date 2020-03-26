@@ -55,6 +55,18 @@ export default function isExternal( url: URLString ): boolean {
 			if ( pathname && isLegacyRoute( pathname.replace( '//', '/' ) ) ) {
 				return true;
 			}
+
+			// Check for other external URLs.
+			// eg. /support, /es/support, /pt-br/forums/*, etc.
+			if (
+				/^\/support($|\/)/i.test( pathname ) || // /support or /support/*
+				/^\/([a-z]{2}|[a-z]{2}-[a-z]{2})\/support($|\/)/i.test( pathname ) || // /en/support or /pt-br/support/*, etc
+				/^\/forums($|\/)/i.test( pathname ) || // /forums or /forums/*
+				/^\/([a-z]{2}|[a-z]{2}-[a-z]{2})\/forums($|\/)/i.test( pathname ) // /en/forums or /pt-br/forums/*, etc
+			) {
+				return true;
+			}
+
 			return false;
 		}
 	}
