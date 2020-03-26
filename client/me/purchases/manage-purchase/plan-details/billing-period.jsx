@@ -21,11 +21,13 @@ import { getYearlyPlanByMonthly } from 'lib/plans';
 import { planItem } from 'lib/cart-values/cart-items';
 import { addItem } from 'lib/cart/actions';
 import { isExpired, isExpiring, isRenewing, showCreditCardExpiringWarning } from 'lib/purchases';
+import { JETPACK_SUPPORT } from 'lib/url/support';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class PlanBillingPeriod extends Component {
 	static propTypes = {
 		purchase: PropTypes.object,
+		site: PropTypes.object,
 	};
 
 	handleMonthlyToYearlyButtonClick = () => {
@@ -75,7 +77,7 @@ class PlanBillingPeriod extends Component {
 	}
 
 	renderBillingPeriod() {
-		const { purchase, translate } = this.props;
+		const { purchase, site, translate } = this.props;
 		if ( ! purchase ) {
 			return;
 		}
@@ -94,9 +96,29 @@ class PlanBillingPeriod extends Component {
 		return (
 			<FormSettingExplanation>
 				{ translate( 'Billed monthly' ) }
-				<Button onClick={ this.handleMonthlyToYearlyButtonClick } primary compact>
-					{ translate( 'Upgrade to yearly billing' ) }
-				</Button>
+				{ site ? (
+					<Button onClick={ this.handleMonthlyToYearlyButtonClick } primary compact>
+						{ translate( 'Upgrade to yearly billing' ) }
+					</Button>
+				) : (
+					<span>
+						<br />
+						{ translate(
+							'To manage your plan, please {{supportPageLink}}reconnect{{/supportPageLink}} your site.',
+							{
+								components: {
+									supportPageLink: (
+										<a
+											href={
+												JETPACK_SUPPORT + 'reconnecting-reinstalling-jetpack/#reconnecting-jetpack'
+											}
+										/>
+									),
+								},
+							}
+						) }
+					</span>
+				) }
 			</FormSettingExplanation>
 		);
 	}
