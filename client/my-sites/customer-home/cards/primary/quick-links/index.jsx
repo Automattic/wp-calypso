@@ -35,16 +35,7 @@ import ActionBox from './action-box';
 /**
  * Image dependencies
  */
-import commentIcon from 'assets/images/customer-home/comment.svg';
-import customDomainIcon from 'assets/images/customer-home/custom-domain.svg';
-import customizeIcon from 'assets/images/customer-home/customize.svg';
-import gSuiteIcon from 'assets/images/customer-home/gsuite.svg';
-import homepageIcon from 'assets/images/customer-home/homepage.svg';
-import logoIcon from 'assets/images/customer-home/looka-logo.svg';
-import menuIcon from 'assets/images/customer-home/menus.svg';
-import pageIcon from 'assets/images/customer-home/page.svg';
-import postIcon from 'assets/images/customer-home/post.svg';
-import themeIcon from 'assets/images/customer-home/theme.svg';
+import logoIcon from 'assets/images/customer-home/looka-logo-60.svg';
 
 /**
  * Style dependencies
@@ -77,14 +68,14 @@ export const QuickLinks = ( {
 					onClick={ editHomepageAction }
 					label={ translate( 'Edit homepage' ) }
 					subtitle={ translate( 'Create an eyecatching design with the new Block Editor.' ) }
-					iconSrc={ homepageIcon }
+					materialIcon="laptop"
 				/>
 			) : (
 				<ActionBox
 					onClick={ writePostAction }
 					label={ translate( 'Write blog post' ) }
 					subtitle={ translate( 'Sites that publish content regularly get more traffic.' ) }
-					iconSrc={ postIcon }
+					materialIcon="edit"
 				/>
 			) }
 			{ isStaticHomePage ? (
@@ -92,14 +83,14 @@ export const QuickLinks = ( {
 					onClick={ addPageAction }
 					label={ translate( 'Add a page' ) }
 					subtitle={ translate( 'Create a new page with the default template.' ) }
-					iconSrc={ pageIcon }
+					materialIcon="insert_drive_file"
 				/>
 			) : (
 				<ActionBox
 					onClick={ manageCommentsAction }
 					label={ translate( 'Manage comments' ) }
 					subtitle={ translate( 'View, approve, and reply to comments on your posts and pages.' ) }
-					iconSrc={ commentIcon }
+					materialIcon="mode_comment"
 				/>
 			) }
 			{ isStaticHomePage ? (
@@ -107,14 +98,14 @@ export const QuickLinks = ( {
 					onClick={ writePostAction }
 					label={ translate( 'Write blog post' ) }
 					subtitle={ translate( 'Sites that publish content regularly get more traffic.' ) }
-					iconSrc={ postIcon }
+					materialIcon="edit"
 				/>
 			) : (
 				<ActionBox
 					onClick={ addPageAction }
 					label={ translate( 'Add a page' ) }
 					subtitle={ translate( 'Create a new page with the default template.' ) }
-					iconSrc={ pageIcon }
+					materialIcon="insert_drive_file"
 				/>
 			) }
 			{ showCustomizer && (
@@ -123,7 +114,7 @@ export const QuickLinks = ( {
 					onClick={ trackEditMenusAction }
 					label={ translate( 'Edit menus' ) }
 					subtitle={ translate( 'Help visitors easily navigate your site.' ) }
-					iconSrc={ menuIcon }
+					materialIcon="list"
 				/>
 			) }
 			{ showCustomizer && (
@@ -132,28 +123,28 @@ export const QuickLinks = ( {
 					onClick={ trackCustomizeThemeAction }
 					label={ translate( 'Customize theme' ) }
 					subtitle={ translate( "Change your site's colors, fonts, branding, and more." ) }
-					iconSrc={ customizeIcon }
+					materialIcon="palette"
 				/>
 			) }
 			<ActionBox
 				onClick={ changeThemeAction }
 				label={ translate( 'Change theme' ) }
 				subtitle={ translate( 'Browse available themes to find the perfect one.' ) }
-				iconSrc={ themeIcon }
+				materialIcon="view_quilt"
 			/>
 			{ hasCustomDomain ? (
 				<ActionBox
 					onClick={ addEmailAction }
 					label={ translate( 'Add email' ) }
 					subtitle={ translate( 'Send and receive email using your custom domain.' ) }
-					iconSrc={ gSuiteIcon }
+					materialIcon="email"
 				/>
 			) : (
 				<ActionBox
 					onClick={ addDomainAction }
 					label={ translate( 'Connect a domain' ) }
 					subtitle={ translate( 'Sites with custom domains look more professional.' ) }
-					iconSrc={ customDomainIcon }
+					gridicon="domains"
 				/>
 			) }
 			<ActionBox
