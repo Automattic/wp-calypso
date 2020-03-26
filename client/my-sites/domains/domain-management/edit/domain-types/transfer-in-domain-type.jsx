@@ -90,21 +90,18 @@ class TransferInDomainType extends React.Component {
 				statusClass: 'status-error',
 				icon: 'info',
 			};
-		} else if (
-			status === transferStatus.PENDING_OWNER ||
-			status === transferStatus.PENDING_REGISTRY
-		) {
+		} else if ( status === transferStatus.CANCELLED ) {
 			return {
-				statusText: translate( 'Transfer in progress' ),
-				statusClass: 'status-success',
-				icon: 'cached',
+				statusText: translate( 'Transfer failed' ),
+				statusClass: 'status-error',
+				icon: 'info',
 			};
 		}
 
 		return {
-			statusText: translate( 'Active' ),
+			statusText: translate( 'Transfer in progress' ),
 			statusClass: 'status-success',
-			icon: 'check_circle',
+			icon: 'cached',
 		};
 	}
 
@@ -152,13 +149,26 @@ class TransferInDomainType extends React.Component {
 		);
 	}
 
+	renderTransferFailed() {
+		// TODO
+		return null;
+	}
+
+	renderStatusBody( domainStatus ) {
+		if ( domainStatus === transferStatus.PENDING_START ) {
+			return this.renderPendingStart();
+		} else if ( domainStatus === transferStatus.CANCELLED ) {
+			return this.renderTransferFailed();
+		}
+
+		return this.renderTransferInProgress();
+	}
+
 	render() {
 		const { domain, selectedSite, purchase } = this.props;
 		const { name: domain_name } = domain;
 
 		const { statusText, statusClass, icon } = this.resolveStatus();
-
-		const domainStatus = domain.transferStatus;
 
 		return (
 			<div className="domain-types__container">
@@ -169,10 +179,7 @@ class TransferInDomainType extends React.Component {
 					statusClass={ statusClass }
 					icon={ icon }
 				>
-					{ domainStatus === transferStatus.PENDING_START && this.renderPendingStart() }
-					{ ( domainStatus === transferStatus.PENDING_OWNER ||
-						domainStatus === transferStatus.PENDING_REGISTRY ) &&
-						this.renderTransferInProgress() }
+					{ this.renderStatusBody( domain.transferStatus ) }
 				</DomainStatus>
 				{ this.getVerticalNavigation() }
 			</div>
