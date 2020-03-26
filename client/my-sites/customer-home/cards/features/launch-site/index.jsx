@@ -14,28 +14,28 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actions';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-export const LaunchSite = ( { isPrimary, launchSite, siteId } ) => {
+export const LaunchSite = ( { isPrimary, launchSiteAndTrack, siteId } ) => {
 	const translate = useTranslate();
-	const onLaunchBannerClick = () => {
-		launchSite( siteId );
-	};
 
 	return (
 		<Card className="launch-site">
 			<CardHeading>{ translate( 'Site Privacy' ) }</CardHeading>
-			<h6 className="customer-home__card-subheader launch-site__card-subheader">{ translate( 'Your site is private' ) }</h6>
+			<h6 className="customer-home__card-subheader launch-site__card-subheader">
+				{ translate( 'Your site is private' ) }
+			</h6>
 			<p>
 				{ translate(
 					'Only you and those you invite can view your site. Launch your site to make it visible to the public.'
 				) }
 			</p>
-			<Button primary={ isPrimary } onClick={ onLaunchBannerClick }>
+			<Button primary={ isPrimary } onClick={ () => launchSiteAndTrack( siteId ) }>
 				{ translate( 'Launch my site' ) }
 			</Button>
 		</Card>
@@ -54,6 +54,21 @@ export default connect(
 		};
 	},
 	dispatch => ( {
+		trackAction: () =>
+			dispatch(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_customer_home_launch_my_site_click' ),
+					bumpStat( 'calypso_customer_home', 'launch_my_site' )
+				)
+			),
 		launchSite: siteId => dispatch( launchSiteOrRedirectToLaunchSignupFlow( siteId ) ),
+	} ),
+	( stateProps, dispatchProps, ownProps ) => ( {
+		...ownProps,
+		...stateProps,
+		launchSiteAndTrack: siteId => {
+			dispatchProps.launchSite( siteId );
+			dispatchProps.trackAction();
+		},
 	} )
 )( LaunchSite );
