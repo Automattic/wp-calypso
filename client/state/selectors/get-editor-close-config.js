@@ -63,6 +63,13 @@ export default function getEditorCloseConfig( state, siteId, postType, fseParent
 		};
 	}
 
+	// If no postType, assume site editor and land on view.
+	if ( ! postType ) {
+		return {
+			url: `/view/${ getSiteSlug( state, siteId ) }`,
+		};
+	}
+
 	// Otherwise, just return to post type listings
 	return {
 		url: getPostTypeAllPostsUrl( state, postType ),
