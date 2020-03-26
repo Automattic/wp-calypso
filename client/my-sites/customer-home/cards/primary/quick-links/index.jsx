@@ -67,14 +67,12 @@ export const QuickLinks = ( {
 				<ActionBox
 					onClick={ editHomepageAction }
 					label={ translate( 'Edit homepage' ) }
-					subtitle={ translate( 'Create an eyecatching design with the new Block Editor.' ) }
 					materialIcon="laptop"
 				/>
 			) : (
 				<ActionBox
 					onClick={ writePostAction }
 					label={ translate( 'Write blog post' ) }
-					subtitle={ translate( 'Sites that publish content regularly get more traffic.' ) }
 					materialIcon="edit"
 				/>
 			) }
@@ -82,14 +80,12 @@ export const QuickLinks = ( {
 				<ActionBox
 					onClick={ addPageAction }
 					label={ translate( 'Add a page' ) }
-					subtitle={ translate( 'Create a new page with the default template.' ) }
 					materialIcon="insert_drive_file"
 				/>
 			) : (
 				<ActionBox
 					onClick={ manageCommentsAction }
 					label={ translate( 'Manage comments' ) }
-					subtitle={ translate( 'View, approve, and reply to comments on your posts and pages.' ) }
 					materialIcon="mode_comment"
 				/>
 			) }
@@ -97,14 +93,12 @@ export const QuickLinks = ( {
 				<ActionBox
 					onClick={ writePostAction }
 					label={ translate( 'Write blog post' ) }
-					subtitle={ translate( 'Sites that publish content regularly get more traffic.' ) }
 					materialIcon="edit"
 				/>
 			) : (
 				<ActionBox
 					onClick={ addPageAction }
 					label={ translate( 'Add a page' ) }
-					subtitle={ translate( 'Create a new page with the default template.' ) }
 					materialIcon="insert_drive_file"
 				/>
 			) }
@@ -113,7 +107,6 @@ export const QuickLinks = ( {
 					href={ menusUrl }
 					onClick={ trackEditMenusAction }
 					label={ translate( 'Edit menus' ) }
-					subtitle={ translate( 'Help visitors easily navigate your site.' ) }
 					materialIcon="list"
 				/>
 			) }
@@ -122,28 +115,24 @@ export const QuickLinks = ( {
 					href={ customizeUrl }
 					onClick={ trackCustomizeThemeAction }
 					label={ translate( 'Customize theme' ) }
-					subtitle={ translate( "Change your site's colors, fonts, branding, and more." ) }
 					materialIcon="palette"
 				/>
 			) }
 			<ActionBox
 				onClick={ changeThemeAction }
 				label={ translate( 'Change theme' ) }
-				subtitle={ translate( 'Browse available themes to find the perfect one.' ) }
 				materialIcon="view_quilt"
 			/>
 			{ hasCustomDomain ? (
 				<ActionBox
 					onClick={ addEmailAction }
 					label={ translate( 'Add email' ) }
-					subtitle={ translate( 'Send and receive email using your custom domain.' ) }
 					materialIcon="email"
 				/>
 			) : (
 				<ActionBox
 					onClick={ addDomainAction }
-					label={ translate( 'Connect a domain' ) }
-					subtitle={ translate( 'Sites with custom domains look more professional.' ) }
+					label={ translate( 'Add a domain' ) }
 					gridicon="domains"
 				/>
 			) }
@@ -152,7 +141,6 @@ export const QuickLinks = ( {
 				onClick={ trackDesignLogoAction }
 				target="_blank"
 				label={ translate( 'Create a logo with Looka' ) }
-				subtitle={ translate( 'Get an instant logo for your site or business with Looka.' ) }
 				external
 				iconSrc={ logoIcon }
 			/>
