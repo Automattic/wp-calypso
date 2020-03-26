@@ -26,10 +26,6 @@
 		}
 	}
 
-	&__upsells {
-		@include grid-column( 1, 12 );
-	}
-
 	&__main .banner.card {
 		@include grid-column( 1, 12 );
 		@include grid-row( 3, 1 );
