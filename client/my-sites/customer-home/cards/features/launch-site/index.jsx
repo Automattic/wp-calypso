@@ -54,10 +54,12 @@ export default connect(
 		};
 	},
 	dispatch => ( {
-		trackAction: () =>
+		trackAction: siteId =>
 			dispatch(
 				composeAnalytics(
-					recordTracksEvent( 'calypso_customer_home_launch_my_site_click' ),
+					recordTracksEvent( 'calypso_customer_home_launch_my_site_click', {
+						site_id: siteId,
+					} ),
 					bumpStat( 'calypso_customer_home', 'launch_my_site' )
 				)
 			),
@@ -68,7 +70,7 @@ export default connect(
 		...stateProps,
 		launchSiteAndTrack: siteId => {
 			dispatchProps.launchSite( siteId );
-			dispatchProps.trackAction();
+			dispatchProps.trackAction( siteId );
 		},
 	} )
 )( LaunchSite );
