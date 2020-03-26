@@ -141,15 +141,6 @@ export const QuickLinks = ( {
 				subtitle={ translate( 'Browse available themes to find the perfect one.' ) }
 				iconSrc={ themeIcon }
 			/>
-			<ActionBox
-				href="https://wp.me/logo-maker"
-				onClick={ trackDesignLogoAction }
-				target="_blank"
-				label={ translate( 'Create a logo with Looka' ) }
-				subtitle={ translate( 'Get an instant logo for your site or business with Looka.' ) }
-				external
-				iconSrc={ logoIcon }
-			/>
 			{ hasCustomDomain ? (
 				<ActionBox
 					onClick={ addEmailAction }
@@ -165,6 +156,15 @@ export const QuickLinks = ( {
 					iconSrc={ customDomainIcon }
 				/>
 			) }
+			<ActionBox
+				href="https://wp.me/logo-maker"
+				onClick={ trackDesignLogoAction }
+				target="_blank"
+				label={ translate( 'Create a logo with Looka' ) }
+				subtitle={ translate( 'Get an instant logo for your site or business with Looka.' ) }
+				external
+				iconSrc={ logoIcon }
+			/>
 		</div>
 	);
 
