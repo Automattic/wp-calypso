@@ -98,7 +98,7 @@ export class ThankYouCard extends Component {
 								{ translate( 'Customize Search now' ) }
 							</Button>
 
-							<Button compact={ true } href={ siteAdminUrl + '/admin.php?page=jetpack#/dashboard' }>
+							<Button compact={ true } href={ siteAdminUrl + 'admin.php?page=jetpack#/dashboard' }>
 								{ translate( 'Go back to my site' ) }
 							</Button>
 						</p>
@@ -109,19 +109,18 @@ export class ThankYouCard extends Component {
 	}
 }
 
-export default connect( state => {
-	const currentUser = getCurrentUser( state );
-	const selectedSiteId = getSelectedSiteId( state );
-	const isSingleSite = !! selectedSiteId || currentUser.site_count === 1;
-	const siteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
-	const siteAdminUrl = getSiteAdminUrl( state, siteId );
-	return (
-		{
-			siteId,
+export default connect(
+	state => {
+		const currentUser = getCurrentUser( state );
+		const selectedSiteId = getSelectedSiteId( state );
+		const isSingleSite = !! selectedSiteId || currentUser.site_count === 1;
+		const siteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
+		const siteAdminUrl = getSiteAdminUrl( state, siteId );
+		return {
 			siteAdminUrl,
 			currentRoute: getCurrentRoute( state ),
 			queryArgs: getCurrentQueryArguments( state ),
-		},
-		{ requestGuidedTour }
-	);
-} )( localize( ThankYouCard ) );
+		};
+	},
+	{ requestGuidedTour }
+)( localize( ThankYouCard ) );
