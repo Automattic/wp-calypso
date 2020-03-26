@@ -7,7 +7,7 @@ import {
 	NewUserErrorResponse,
 	NewUserSuccessResponse,
 } from './types';
-import { wpcomRequest } from '../wpcom-request-controls';
+import { wpcomRequest, requestAllBlogsAccess, reloadProxy } from '../wpcom-request-controls';
 import { WpcomClientCredentials } from '../shared-types';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
@@ -58,6 +58,12 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				apiVersion: '1.1',
 				method: 'post',
 			} );
+
+			yield reloadProxy();
+
+			// Need to rerequest access after the proxy is reloaded
+			yield requestAllBlogsAccess();
+
 			return receiveNewUser( newUser );
 		} catch ( err ) {
 			yield receiveNewUserFailed( err );

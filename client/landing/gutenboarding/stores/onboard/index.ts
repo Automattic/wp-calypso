@@ -23,7 +23,14 @@ registerStore< State >( STORE_KEY, {
 	controls,
 	reducer: reducer as any,
 	selectors,
-	persist: [ 'domain', 'siteTitle', 'siteVertical', 'pageLayouts', 'selectedDesign' ],
+	persist: [
+		'domain',
+		'siteTitle',
+		'siteVertical',
+		'pageLayouts',
+		'selectedDesign',
+		'siteWasCreatedForDomainPurchase',
+	],
 } );
 
 declare module '@wordpress/data' {
