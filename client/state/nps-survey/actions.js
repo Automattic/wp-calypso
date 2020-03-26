@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import wpcom from 'lib/wp';
 
@@ -9,6 +8,7 @@ import wpcom from 'lib/wp';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import {
 	NPS_SURVEY_SET_ELIGIBILITY,
 	NPS_SURVEY_SET_CONCIERGE_SESSION_AVAILABILITY,
@@ -71,7 +71,7 @@ export function submitNpsSurvey( surveyName, score ) {
 		debug( 'Submitting NPS survey...' );
 		dispatch( submitNpsSurveyRequesting( surveyName, score ) );
 
-		analytics.mc.bumpStat( 'calypso_nps_survey', 'survey_submitted' );
+		bumpStat( 'calypso_nps_survey', 'survey_submitted' );
 		analytics.tracks.recordEvent( 'calypso_nps_survey_submitted' );
 
 		return wpcom
@@ -93,7 +93,7 @@ export function submitNpsSurveyWithNoScore( surveyName ) {
 		debug( 'Submitting NPS survey with no score...' );
 		dispatch( submitNpsSurveyWithNoScoreRequesting( surveyName ) );
 
-		analytics.mc.bumpStat( 'calypso_nps_survey', 'survey_dismissed' );
+		bumpStat( 'calypso_nps_survey', 'survey_dismissed' );
 		analytics.tracks.recordEvent( 'calypso_nps_survey_dismissed' );
 
 		return wpcom
@@ -115,7 +115,7 @@ export function sendNpsSurveyFeedback( surveyName, feedback ) {
 		debug( 'Sending NPS survey feedback...' );
 		dispatch( sendNpsSurveyFeedbackRequesting( surveyName, feedback ) );
 
-		analytics.mc.bumpStat( 'calypso_nps_survey', 'feedback_submitted' );
+		bumpStat( 'calypso_nps_survey', 'feedback_submitted' );
 		analytics.tracks.recordEvent( 'calypso_nps_survey_feedback_submitted' );
 
 		return wpcom

@@ -25,6 +25,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { hasAnsweredNpsSurvey, isAvailableForConciergeSession } from 'state/nps-survey/selectors';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import RecommendationSelect from './recommendation-select';
 
 /**
@@ -129,7 +130,7 @@ export class NpsSurvey extends PureComponent {
 	};
 
 	UNSAFE_componentWillMount() {
-		analytics.mc.bumpStat( 'calypso_nps_survey', 'survey_displayed' );
+		bumpStat( 'calypso_nps_survey', 'survey_displayed' );
 		analytics.tracks.recordEvent( 'calypso_nps_survey_displayed' );
 	}
 

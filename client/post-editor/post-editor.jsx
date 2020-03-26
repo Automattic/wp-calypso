@@ -30,7 +30,7 @@ import VerifyEmailDialog from 'components/email-verification/email-verification-
 import * as utils from 'state/posts/utils';
 import EditorPreview from './editor-preview';
 import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
-import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import {
 	saveConfirmationSidebarPreference,
@@ -159,7 +159,7 @@ export class PostEditor extends React.Component {
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
 		this.debouncedCopySelectedText = debounce( this.copySelectedText, 200 );
 		this.useDefaultSidebarFocus();
-		analytics.mc.bumpStat( 'calypso_default_sidebar_mode', this.props.editorSidebarPreference );
+		bumpStat( 'calypso_default_sidebar_mode', this.props.editorSidebarPreference );
 
 		this.setState( {
 			isEditorInitialized: false,
@@ -182,7 +182,7 @@ export class PostEditor extends React.Component {
 
 		// record the initial value of the editor mode preference
 		if ( this.props.editorModePreference ) {
-			analytics.mc.bumpStat( 'calypso_default_editor_mode', this.props.editorModePreference );
+			bumpStat( 'calypso_default_editor_mode', this.props.editorModePreference );
 		}
 	}
 
