@@ -9,3 +9,7 @@
 	pointer-events: none;
 	position: absolute;
 }
+
+.wp-for-teams-site__validation .validation-fieldset__validation-message {
+	min-height: 0;
+}

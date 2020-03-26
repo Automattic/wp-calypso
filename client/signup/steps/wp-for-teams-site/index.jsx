@@ -264,7 +264,10 @@ class WpForTeamsSite extends React.Component {
 					onBlur={ this.handleBlur }
 					onChange={ this.handleChangeEvent }
 				/>
-				<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }>
+				<ValidationFieldset
+					errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }
+					className="wp-for-teams-site__validation"
+				>
 					<FormLabel htmlFor="site">{ this.props.translate( 'Choose a site address' ) }</FormLabel>
 					<FormTextInput
 						autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
