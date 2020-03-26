@@ -30,14 +30,13 @@ import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete'
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { localizeUrl } from 'lib/i18n-utils';
-import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actions';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import StatsBanners from 'my-sites/stats/stats-banners';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import GoMobile from 'my-sites/customer-home/cards/features/go-mobile';
 import GrowEarn from 'my-sites/customer-home/cards/features/grow-earn';
+import LaunchSite from 'my-sites/customer-home/cards/features/launch-site';
 import Stats from 'my-sites/customer-home/cards/features/stats';
 import FreePhotoLibrary from 'my-sites/customer-home/cards/education/free-photo-library';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
@@ -59,7 +58,6 @@ import happinessIllustration from 'assets/images/customer-home/happiness.png';
 class Home extends Component {
 	static propTypes = {
 		checklistMode: PropTypes.string,
-
 		site: PropTypes.object.isRequired,
 		siteId: PropTypes.number.isRequired,
 		siteSlug: PropTypes.string.isRequired,
@@ -77,35 +75,26 @@ class Home extends Component {
 		isStaticHomePage: PropTypes.bool.isRequired,
 	};
 
-	onLaunchBannerClick = e => {
-		const { siteId } = this.props;
-		e.preventDefault();
-
-		this.props.launchSiteOrRedirectToLaunchSignupFlow( siteId );
-	};
-
 	renderCustomerHomeHeader() {
 		const { translate, site, siteIsUnlaunched, trackAction } = this.props;
 
 		return (
-			<>
-				<div className="customer-home__heading">
-					<FormattedHeader
-						headerText={ translate( 'My Home' ) }
-						subHeaderText={ translate(
-							'Your home base for all the posting, editing, and growing of your site'
-						) }
-						align="left"
-					/>
-					{ ! siteIsUnlaunched && (
-						<div className="customer-home__view-site-button">
-							<Button href={ site.URL } onClick={ () => trackAction( 'my_site', 'view_site' ) }>
-								{ translate( 'View site' ) }
-							</Button>
-						</div>
+			<div className="customer-home__heading">
+				<FormattedHeader
+					headerText={ translate( 'My Home' ) }
+					subHeaderText={ translate(
+						'Your home base for all the posting, editing, and growing of your site'
 					) }
-				</div>
-			</>
+					align="left"
+				/>
+				{ ! siteIsUnlaunched && (
+					<div className="customer-home__view-site-button">
+						<Button href={ site.URL } onClick={ () => trackAction( 'my_site', 'view_site' ) }>
+							{ translate( 'View site' ) }
+						</Button>
+					</div>
+				) }
+			</div>
 		);
 	}
 
@@ -157,7 +146,6 @@ class Home extends Component {
 
 	renderCustomerHome = () => {
 		const {
-			isAtomic,
 			isChecklistComplete,
 			needsEmailVerification,
 			translate,
@@ -171,30 +159,13 @@ class Home extends Component {
 			return <div className="customer-home__loading-placeholder"></div>;
 		}
 
-		const isPrimary = ! isAtomic && isChecklistComplete;
-
 		return (
 			<div className="customer-home__layout">
 				<div className="customer-home__layout-col customer-home__layout-col-left">
 					<Primary checklistMode={ checklistMode } />
 				</div>
 				<div className="customer-home__layout-col customer-home__layout-col-right">
-					{ siteIsUnlaunched && ! needsEmailVerification && (
-						<Card className="customer-home__launch-button">
-							<CardHeading>{ translate( 'Site Privacy' ) }</CardHeading>
-							<h6 className="customer-home__card-subheader">
-								{ translate( 'Your site is private' ) }
-							</h6>
-							<p>
-								{ translate(
-									'Only you and those you invite can view your site. Launch your site to make it visible to the public.'
-								) }
-							</p>
-							<Button primary={ isPrimary } onClick={ this.onLaunchBannerClick }>
-								{ translate( 'Launch my site' ) }
-							</Button>
-						</Card>
-					) }
+					{ siteIsUnlaunched && ! needsEmailVerification && <LaunchSite /> }
 					{ ! siteIsUnlaunched && <Stats /> }
 					{ <FreePhotoLibrary /> }
 					{ ! siteIsUnlaunched && isChecklistComplete && <GrowEarn /> }
@@ -236,7 +207,6 @@ const connectHome = connect(
 		const siteId = getSelectedSiteId( state );
 		const siteChecklist = getSiteChecklist( state, siteId );
 		const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
-		const isAtomic = isAtomicSite( state, siteId );
 		const isChecklistComplete = isSiteChecklistComplete( state, siteId );
 		const createdAt = getSiteOption( state, siteId, 'created_at' );
 		const user = getCurrentUser( state );
@@ -249,7 +219,6 @@ const connectHome = connect(
 			canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 			hasChecklistData,
 			isChecklistComplete,
-			isAtomic,
 			needsEmailVerification: ! isCurrentUserEmailVerified( state ),
 			isStaticHomePage:
 				! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
@@ -269,14 +238,10 @@ const connectHome = connect(
 					bumpStat( 'calypso_customer_home', `${ section }_${ action }` )
 				)
 			),
-		launchSiteOrRedirectToLaunchSignupFlow: siteId =>
-			dispatch( launchSiteOrRedirectToLaunchSignupFlow( siteId ) ),
 	} ),
 	( stateProps, dispatchProps, ownProps ) => ( {
 		...stateProps,
 		...ownProps,
-		launchSiteOrRedirectToLaunchSignupFlow: () =>
-			dispatchProps.launchSiteOrRedirectToLaunchSignupFlow( stateProps.siteId ),
 		trackAction: ( section, action ) =>
 			dispatchProps.trackAction( section, action, stateProps.isStaticHomePage ),
 	} )
