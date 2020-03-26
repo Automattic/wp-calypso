@@ -25,6 +25,12 @@ import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
 import { isCancelable } from 'lib/purchases';
 import { cancelPurchase } from 'me/purchases/paths';
 import RemovePurchase from 'me/purchases/remove-purchase';
+import { INCOMING_DOMAIN_TRANSFER_STATUSES } from 'lib/url/support';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class TransferInDomainType extends React.Component {
 	getVerticalNavigation() {
@@ -129,7 +135,7 @@ class TransferInDomainType extends React.Component {
 				</p>
 
 				<Button primary onClick={ this.startTransfer }>
-					{ translate( 'Start Transfer' ) }
+					{ translate( 'Start transfer' ) }
 				</Button>
 			</>
 		);
@@ -150,8 +156,35 @@ class TransferInDomainType extends React.Component {
 	}
 
 	renderTransferFailed() {
-		// TODO
-		return null;
+		const { domain, translate } = this.props;
+
+		return (
+			<>
+				<p>
+					{ translate(
+						'We were unable to complete the transfer of {{strong}}%(domain)s{{/strong}}. ' +
+							'{{a}}Learn more{{/a}}',
+						{
+							args: {
+								domain: domain.name,
+							},
+							components: {
+								strong: <strong />,
+								a: (
+									<a
+										href={ INCOMING_DOMAIN_TRANSFER_STATUSES }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						}
+					) }
+				</p>
+
+				<Button onClick={ this.startTransfer }>{ translate( 'Start transfer again' ) }</Button>
+			</>
+		);
 	}
 
 	renderStatusBody( domainStatus ) {
