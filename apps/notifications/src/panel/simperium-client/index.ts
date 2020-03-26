@@ -71,7 +71,7 @@ export default class SimperiumClient {
 			},
 		} );
 
-		const simperium = await import( 'simperium' );
+		const simperium = await import( /* webpackChunkName: 'async-load-simperium-lib' */ 'simperium' );
 		const client = simperium.default( APP_ID, token, {} );
 
 		return {
