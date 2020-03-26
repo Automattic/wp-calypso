@@ -28,6 +28,7 @@ import { getSitePlanSlug, isRequestingSitePlans } from 'state/sites/plans/select
 import { getSitePurchases, isFetchingSitePurchases } from 'state/purchases/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getPlan, planHasFeature } from 'lib/plans';
+import { isExpiring } from 'lib/purchases';
 import { isRequestingPlans } from 'state/plans/selectors';
 import { TERM_ANNUALLY, TERM_MONTHLY } from 'lib/plans/constants';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -192,9 +193,13 @@ export class ProductSelector extends Component {
 
 		const expiryMoment = purchase.expiryDate ? moment( purchase.expiryDate ) : null;
 
+		const renewDateMoment =
+			! isExpiring( purchase ) && purchase.renewDate ? moment( purchase.renewDate ) : null;
+
 		return (
 			<ProductExpiration
 				expiryDateMoment={ expiryMoment }
+				renewDateMoment={ renewDateMoment }
 				purchaseDateMoment={ subscribedMoment }
 				isRefundable={ purchase.isRefundable }
 			/>

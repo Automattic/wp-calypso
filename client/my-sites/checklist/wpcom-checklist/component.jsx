@@ -394,6 +394,7 @@ class WpcomChecklistComponent extends PureComponent {
 				{ ...baseProps }
 				bannerImageSrc="/calypso/images/stats/tasks/personalize-your-site.svg"
 				completedButtonText={ translate( 'Edit' ) }
+				completedDescription={ translate( 'You can edit your site title whenever you like.' ) }
 				completedTitle={ translate( 'You updated your site title' ) }
 				description={ translate( 'Give your site a descriptive name to entice visitors.' ) }
 				duration={ translate( '%d minute', '%d minutes', { count: 1, args: [ 1 ] } ) }

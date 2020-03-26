@@ -16,7 +16,8 @@ import Gridicon from 'components/gridicon';
 import config from 'config';
 import { recordTracksEvent } from 'state/analytics/actions';
 import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
-import { Button } from '@automattic/components';
+import { Button, RootChild } from '@automattic/components';
+import { isWithinBreakpoint } from '@automattic/viewport';
 import HappychatButton from 'components/happychat/button';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
@@ -186,6 +187,11 @@ class InlineHelp extends Component {
 						setStoredTask={ this.setStoredTask }
 						showNotification={ showChecklistNotification }
 					/>
+				) }
+				{ isWithinBreakpoint( '<660px' ) && isPopoverVisible && (
+					<RootChild>
+						<div className="inline-help__mobile-overlay"></div>
+					</RootChild>
 				) }
 				{ showDialog && (
 					<InlineHelpDialog

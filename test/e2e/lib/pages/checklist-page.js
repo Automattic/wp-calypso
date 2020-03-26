@@ -14,7 +14,7 @@ import AsyncBaseContainer from '../async-base-container';
 export default class ChecklistPage extends AsyncBaseContainer {
 	constructor( driver, url ) {
 		super( driver, By.css( '.customer-home__layout .checklist' ), url );
-		this.headerSelector = By.css( '.customer-home__layout .customer-home__card-checklist-heading' );
+		this.headerSelector = By.css( '.customer-home__layout .checklist-site-setup__heading' );
 		this.updateHomeSelector = By.css(
 			'.customer-home__layout button[data-e2e-action="update-homepage"]'
 		);
