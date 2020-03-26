@@ -9,6 +9,15 @@
 namespace A8C\FSE\Common;
 
 /**
+ * Can be used to determine if the current screen is the block editor.
+ *
+ * @return bool True if the current screen is a block editor screen. False otherwise.
+ */
+function is_block_editor_screen() {
+	return is_callable( 'get_current_screen' ) && get_current_screen() && get_current_screen()->is_block_editor();
+}
+
+/**
  * Adds custom classes to the admin body classes.
  *
  * @param string $classes Classes for the body element.
@@ -16,11 +25,10 @@ namespace A8C\FSE\Common;
  */
 function admin_body_classes( $classes ) {
 	global $post;
-	$is_block_editor_screen = ( function_exists( 'get_current_screen' ) && get_current_screen() && get_current_screen()->is_block_editor() );
-	$hide                   = get_theme_mod( 'hide_front_page_title', false );
-	$front_page             = (int) get_option( 'page_on_front' );
-	$id                     = $post->ID;
-	if ( $is_block_editor_screen && $front_page === $post->ID && true === $hide ) {
+	$hide_homepage_title = (bool) get_theme_mod( 'hide_front_page_title', false );
+	$is_homepage         = ( (int) get_option( 'page_on_front' ) === $post->ID );
+
+	if ( is_block_editor_screen() && $hide_homepage_title && $is_homepage ) {
 		$classes .= ' hide-homepage-title';
 	}
 
