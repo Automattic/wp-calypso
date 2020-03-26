@@ -44,7 +44,7 @@ const ServerCredentialsForm = ( {
 		if ( formSubmissionStatus === 'failed' || formSubmissionStatus === 'success' ) {
 			onComplete && onComplete();
 		}
-	}, [ formSubmissionStatus ] );
+	}, [ formSubmissionStatus, onComplete ] );
 
 	return (
 		<div className="server-credentials-form">

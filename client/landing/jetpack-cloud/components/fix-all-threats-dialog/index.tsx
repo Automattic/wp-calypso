@@ -41,11 +41,7 @@ const FixAllThreatsDialog = ( {
 	const [ currentStep, setCurrentStep ] = React.useState< ProcessStep >( firstStep );
 
 	return (
-		<Dialog
-			additionalClassNames="fix-all-threats-dialog"
-			isVisible={ showDialog }
-			onClose={ onCloseDialog }
-		>
+		<Dialog additionalClassNames="fix-all-threats-dialog" isVisible={ showDialog }>
 			<h1 className="fix-all-threats-dialog__header">Fix all threats</h1>
 			{ currentStep === 'server-credentials' && (
 				<>
