@@ -30,10 +30,7 @@ import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete'
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { localizeUrl } from 'lib/i18n-utils';
-import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actions';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import isAtomicSite from 'state/selectors/is-site-automated-transfer';
-import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
 import StatsBanners from 'my-sites/stats/stats-banners';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
@@ -61,7 +58,6 @@ import happinessIllustration from 'assets/images/customer-home/happiness.png';
 class Home extends Component {
 	static propTypes = {
 		checklistMode: PropTypes.string,
-
 		site: PropTypes.object.isRequired,
 		siteId: PropTypes.number.isRequired,
 		siteSlug: PropTypes.string.isRequired,
@@ -169,9 +165,7 @@ class Home extends Component {
 					<Primary checklistMode={ checklistMode } />
 				</div>
 				<div className="customer-home__layout-col customer-home__layout-col-right">
-					{ siteIsUnlaunched && ! needsEmailVerification && (
-						<LaunchSite />
-					) }
+					{ siteIsUnlaunched && ! needsEmailVerification && <LaunchSite /> }
 					{ ! siteIsUnlaunched && <Stats /> }
 					{ <FreePhotoLibrary /> }
 					{ ! siteIsUnlaunched && isChecklistComplete && <GrowEarn /> }
@@ -244,14 +238,10 @@ const connectHome = connect(
 					bumpStat( 'calypso_customer_home', `${ section }_${ action }` )
 				)
 			),
-		launchSiteOrRedirectToLaunchSignupFlow: siteId =>
-			dispatch( launchSiteOrRedirectToLaunchSignupFlow( siteId ) ),
 	} ),
 	( stateProps, dispatchProps, ownProps ) => ( {
 		...stateProps,
 		...ownProps,
-		launchSiteOrRedirectToLaunchSignupFlow: () =>
-			dispatchProps.launchSiteOrRedirectToLaunchSignupFlow( stateProps.siteId ),
 		trackAction: ( section, action ) =>
 			dispatchProps.trackAction( section, action, stateProps.isStaticHomePage ),
 	} )
