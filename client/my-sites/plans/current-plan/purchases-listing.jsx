@@ -5,7 +5,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, find, isEmpty } from 'lodash';
+import { filter, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -86,7 +86,7 @@ class PurchasesListing extends Component {
 
 	getProductPurchases() {
 		return (
-			find( this.props.purchases, purchase => purchase.active && isJetpackProduct( purchase ) ) ??
+			filter( this.props.purchases, purchase => purchase.active && isJetpackProduct( purchase ) ) ??
 			null
 		);
 	}
@@ -118,7 +118,7 @@ class PurchasesListing extends Component {
 		if ( currentPlanSlug ) {
 			const planObject = getPlan( currentPlanSlug );
 			return (
-				planObject.getTagline?.( jetpackBackupPurchase?.productSlug ) ??
+				planObject.getTagline?.( jetpackBackupPurchase[ 0 ]?.productSlug ) ??
 				translate(
 					'Unlock the full potential of your site with all the features included in your plan.'
 				)
