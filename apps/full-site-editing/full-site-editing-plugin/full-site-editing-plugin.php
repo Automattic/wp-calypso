@@ -128,32 +128,26 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_global_styles' );
 /**
  * Load Event Countdown Block
  */
-add_action(
-	'plugins_loaded',
-	function() {
-		require_once __DIR__ . '/event-countdown-block/index.php';
-	}
-);
+function load_countdown_block() {
+	require_once __DIR__ . '/event-countdown-block/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_countdown_block' );
 
 /**
  * Load Timeline Block
  */
-add_action(
-	'plugins_loaded',
-	function() {
-		require_once __DIR__ . '/jetpack-timeline/index.php';
-	}
-);
+function load_timeline_block() {
+	require_once __DIR__ . '/jetpack-timeline/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_timeline_block' );
 
 /**
  * Load common module.
  */
-add_action(
-	'plugins_loaded',
-	function() {
-		require_once __DIR__ . '/common/index.php';
-	}
-);
+function load_common_module() {
+	require_once __DIR__ . '/common/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_common_module' );
 
 /**
  * Add front-end CoBlocks gallery block scripts.
