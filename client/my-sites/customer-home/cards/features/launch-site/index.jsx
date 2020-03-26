@@ -30,7 +30,7 @@ export const LaunchSite = ( { isAtomic, isChecklistComplete, launchSite, siteId 
 	return (
 		<Card className="launch-site">
 			<CardHeading>{ translate( 'Site Privacy' ) }</CardHeading>
-			<h6 className="launch-site__card-subheader">{ translate( 'Your site is private' ) }</h6>
+			<h6 className="customer-home__card-subheader launch-site__card-subheader">{ translate( 'Your site is private' ) }</h6>
 			<p>
 				{ translate(
 					'Only you and those you invite can view your site. Launch your site to make it visible to the public.'
