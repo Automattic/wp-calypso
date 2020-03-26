@@ -30,7 +30,7 @@ import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions'
  */
 import './style.scss';
 
-const debug = debugFactory( 'calypso:steps:site' );
+const debug = debugFactory( 'calypso:steps:wp-for-teams-site' );
 
 /**
  * Constants
@@ -43,8 +43,8 @@ const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500;
 let siteUrlsSearched = [],
 	timesValidationFailed = 0;
 
-class Site extends React.Component {
-	static displayName = 'Site';
+class WpForTeamsSite extends React.Component {
+	static displayName = 'WpForTeamsSite';
 
 	state = {
 		form: null,
@@ -69,7 +69,7 @@ class Site extends React.Component {
 		}
 
 		this.formStateController = new formState.Controller( {
-			fieldNames: [ 'site' ],
+			fieldNames: [ 'site', 'siteTitle' ],
 			sanitizerFunction: this.sanitize,
 			validatorFunction: this.validate,
 			onNewState: this.setFormState,
@@ -104,7 +104,7 @@ class Site extends React.Component {
 		wpcom.undocumented().sitesNew(
 			{
 				blog_name: fields.site,
-				blog_title: fields.site,
+				blog_title: fields.siteTitle,
 				validate: true,
 			},
 			function( error, response ) {
@@ -116,10 +116,13 @@ class Site extends React.Component {
 					if ( fields.site && ! includes( siteUrlsSearched, fields.site ) ) {
 						siteUrlsSearched.push( fields.site );
 
-						analytics.tracks.recordEvent( 'calypso_signup_site_url_validation_failed', {
-							error: error.error,
-							site_url: fields.site,
-						} );
+						analytics.tracks.recordEvent(
+							'calypso_signup_wp_for_teams_site_url_validation_failed',
+							{
+								error: error.error,
+								site_url: fields.site,
+							}
+						);
 					}
 
 					timesValidationFailed++;
@@ -152,6 +155,7 @@ class Site extends React.Component {
 		this.formStateController.handleSubmit(
 			function( hasErrors ) {
 				const site = formState.getFieldValue( this.state.form, 'site' );
+				const siteTitle = formState.getFieldValue( this.state.form, 'siteTitle' );
 
 				this.setState( { submitting: false } );
 
@@ -159,7 +163,7 @@ class Site extends React.Component {
 					return;
 				}
 
-				analytics.tracks.recordEvent( 'calypso_signup_site_step_submit', {
+				analytics.tracks.recordEvent( 'calypso_signup_wp_for_teams_site_step_submit', {
 					unique_site_urls_searched: siteUrlsSearched.length,
 					times_validation_failed: timesValidationFailed,
 				} );
@@ -170,6 +174,7 @@ class Site extends React.Component {
 					stepName: this.props.stepName,
 					form: this.state.form,
 					site,
+					siteTitle,
 				} );
 
 				this.props.goToNextStep();
@@ -185,7 +190,7 @@ class Site extends React.Component {
 
 	save = () => {
 		this.props.saveSignupStep( {
-			stepName: 'site',
+			stepName: 'wp-for-teams-site',
 			form: this.state.form,
 		} );
 	};
@@ -244,23 +249,39 @@ class Site extends React.Component {
 		const fieldDisabled = this.state.submitting;
 
 		return (
-			<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }>
-				<FormLabel htmlFor="site">{ this.props.translate( 'Choose a site address' ) }</FormLabel>
+			<React.Fragment>
+				<FormLabel htmlFor="site-title">
+					{ this.props.translate( "What's the name of your team or project?" ) }
+				</FormLabel>
 				<FormTextInput
 					autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 					autoCapitalize={ 'off' }
-					className="site__site-url"
+					className="wp-for-teams-site__site-title"
 					disabled={ fieldDisabled }
 					type="text"
-					name="site"
-					value={ formState.getFieldValue( this.state.form, 'site' ) }
-					isError={ formState.isFieldInvalid( this.state.form, 'site' ) }
-					isValid={ formState.isFieldValid( this.state.form, 'site' ) }
+					name="site-title"
+					value={ formState.getFieldValue( this.state.form, 'siteTitle' ) }
 					onBlur={ this.handleBlur }
 					onChange={ this.handleChangeEvent }
 				/>
-				<span className="site__wordpress-domain-suffix">.wordpress.com</span>
-			</ValidationFieldset>
+				<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }>
+					<FormLabel htmlFor="site">{ this.props.translate( 'Choose a site address' ) }</FormLabel>
+					<FormTextInput
+						autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
+						autoCapitalize={ 'off' }
+						className="wp-for-teams-site__site-url"
+						disabled={ fieldDisabled }
+						type="text"
+						name="site"
+						value={ formState.getFieldValue( this.state.form, 'site' ) }
+						isError={ formState.isFieldInvalid( this.state.form, 'site' ) }
+						isValid={ formState.isFieldValid( this.state.form, 'site' ) }
+						onBlur={ this.handleBlur }
+						onChange={ this.handleChangeEvent }
+					/>
+					<span className="wp-for-teams-site__wordpress-domain-suffix">.wordpress.com</span>
+				</ValidationFieldset>
+			</React.Fragment>
 		);
 	};
 
@@ -273,7 +294,7 @@ class Site extends React.Component {
 			return this.props.translate( 'Creating your site…' );
 		}
 
-		return this.props.translate( 'Create My Site' );
+		return this.props.translate( 'Continue' );
 	};
 
 	formFooter = () => {
@@ -296,11 +317,11 @@ class Site extends React.Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
-				fallbackHeaderText={ this.props.translate( 'Create your site.' ) }
+				fallbackHeaderText={ this.props.translate( "Let's get started" ) }
 				stepContent={ this.renderSiteForm() }
 			/>
 		);
 	}
 }
 
-export default connect( null, { saveSignupStep, submitSignupStep } )( localize( Site ) );
+export default connect( null, { saveSignupStep, submitSignupStep } )( localize( WpForTeamsSite ) );

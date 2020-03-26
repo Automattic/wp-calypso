@@ -24,6 +24,7 @@ export function generateSteps( {
 	addPlanToCart = noop,
 	createAccount = noop,
 	createSite = noop,
+	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
 	currentPage = noop,
@@ -598,7 +599,7 @@ export function generateSteps( {
 
 		'wp-for-teams-site': {
 			stepName: 'wp-for-teams-site',
-			apiRequestFunction: createSite,
+			apiRequestFunction: createWpForTeamsSite,
 			providesDependencies: [ 'siteSlug' ],
 			dependencies: [ 'themeSlugWithRepo' ],
 		},

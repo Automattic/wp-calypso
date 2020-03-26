@@ -534,6 +534,37 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 	} );
 }
 
+export function createWpForTeamsSite( callback, dependencies, stepData, reduxStore ) {
+	const { themeSlugWithRepo } = dependencies;
+	const { site, siteTitle } = stepData;
+	const state = reduxStore.getState();
+
+	const data = {
+		blog_name: site,
+		blog_title: siteTitle,
+		public: getNewSitePublicSetting( state ),
+		options: { theme: themeSlugWithRepo, timezone_string: guessTimezone() },
+		validate: false,
+	};
+
+	wpcom.undocumented().sitesNew( data, function( errors, response ) {
+		let providedDependencies, siteSlug;
+
+		if ( response && response.blog_details ) {
+			const parsedBlogURL = parseURL( response.blog_details.url );
+			siteSlug = parsedBlogURL.hostname;
+
+			providedDependencies = { siteSlug };
+		}
+
+		if ( user.get() && isEmpty( errors ) ) {
+			fetchSitesAndUser( siteSlug, () => callback( undefined, providedDependencies ), reduxStore );
+		} else {
+			callback( isEmpty( errors ) ? undefined : [ errors ], providedDependencies );
+		}
+	} );
+}
+
 function recordExcludeStepEvent( step, value ) {
 	analytics.tracks.recordEvent( 'calypso_signup_actions_exclude_step', {
 		step,
