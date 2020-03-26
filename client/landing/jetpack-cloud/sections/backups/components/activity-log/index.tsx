@@ -1,17 +1,18 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 
 /**
  * Internal dependencies
  */
-// import Filterbar from 'my-sites/activity/filterbar';
 import { getHttpData } from 'state/data-layer/http-data';
 import { requestActivityLogs, requestActivityLogsId } from 'state/data-getters';
 import { useLocalizedMoment } from 'components/localized-moment';
 import ActivityCard from 'landing/jetpack-cloud/components/activity-card';
+import Filterbar from 'my-sites/activity/filterbar';
+import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 import Pagination from 'components/pagination';
 import Spinner from 'components/spinner';
 
@@ -31,14 +32,17 @@ const BackupActivityLog: FunctionComponent< Props > = ( {
 	allowRestore,
 	pageSize = 10,
 } ) => {
-	const activities = useSelector( () => getHttpData( requestActivityLogsId( siteId, {} ) ) ).data;
+	const filter = useSelector( state => getActivityLogFilter( state, siteId ) );
+	const activities = useSelector( () => getHttpData( requestActivityLogsId( siteId, filter ) ) )
+		.data;
+
 	const moment = useLocalizedMoment();
 
 	const [ page, setPage ] = useState( 1 );
 
 	useEffect( () => {
-		requestActivityLogs( siteId, {} );
-	}, [ siteId ] );
+		requestActivityLogs( siteId, filter );
+	}, [ filter, siteId ] );
 
 	// todo: no spinners, but for now it works in a pinch
 	const renderLoading = () => {
@@ -48,6 +52,13 @@ const BackupActivityLog: FunctionComponent< Props > = ( {
 	const renderData = ( loadedActivities: Array< Activity > ) => {
 		return (
 			<>
+				<Filterbar
+					{ ...{
+						siteId,
+						filter,
+						isVisible: true,
+					} }
+				/>
 				<Pagination
 					page={ page }
 					perPage={ pageSize }
