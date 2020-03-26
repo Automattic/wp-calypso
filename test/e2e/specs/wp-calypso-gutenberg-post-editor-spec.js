@@ -280,10 +280,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			} );
 
 			step( 'Can see the Jetpack blocks', async function() {
-				// Jetpack blocks are broken in IE11. See https://github.com/Automattic/jetpack/issues/14273
-				if ( dataHelper.getTargetType() === 'IE11' ) {
-					return this.skip();
-				}
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 				await gEditorComponent.openBlockInserterAndSearch( 'Jetpack' );
 				assert.strictEqual(
