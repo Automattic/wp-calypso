@@ -83,24 +83,22 @@ class Home extends Component {
 		const { translate, site, siteIsUnlaunched, trackAction } = this.props;
 
 		return (
-			<>
-				<div className="customer-home__heading">
-					<FormattedHeader
-						headerText={ translate( 'My Home' ) }
-						subHeaderText={ translate(
-							'Your home base for all the posting, editing, and growing of your site'
-						) }
-						align="left"
-					/>
-					{ ! siteIsUnlaunched && (
-						<div className="customer-home__view-site-button">
-							<Button href={ site.URL } onClick={ () => trackAction( 'my_site', 'view_site' ) }>
-								{ translate( 'View site' ) }
-							</Button>
-						</div>
+			<div className="customer-home__heading">
+				<FormattedHeader
+					headerText={ translate( 'My Home' ) }
+					subHeaderText={ translate(
+						'Your home base for all the posting, editing, and growing of your site'
 					) }
-				</div>
-			</>
+					align="left"
+				/>
+				{ ! siteIsUnlaunched && (
+					<div className="customer-home__view-site-button">
+						<Button href={ site.URL } onClick={ () => trackAction( 'my_site', 'view_site' ) }>
+							{ translate( 'View site' ) }
+						</Button>
+					</div>
+				) }
+			</div>
 		);
 	}
 
