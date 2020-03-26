@@ -12,9 +12,7 @@ import { isEnabled } from 'config';
 import * as constants from './constants';
 
 const WPComGetBillingTimeframe = annualPriceText =>
-	annualPriceText
-		? `Billed at ${ annualPriceText } per year`
-		: i18n.translate( 'per month, billed annually' );
+	annualPriceText ? `billed annually` : i18n.translate( 'per month, billed annually' );
 const WPComGetBiennialBillingTimeframe = () => i18n.translate( '/month, billed every two years' );
 
 const plansDescriptionHeadingComponent = {
