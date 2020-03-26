@@ -25,8 +25,24 @@ import {
 import { emailManagement } from 'my-sites/email/paths';
 import { type as domainTypes } from 'lib/domains/constants';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
+import { isCancelable } from 'lib/purchases';
+import { cancelPurchase } from 'me/purchases/paths';
+import RemovePurchase from 'me/purchases/remove-purchase';
 
 import './style.scss';
+
+const DomainManagementNavigationItemContents = function( props ) {
+	const { materialIcon, text, description } = props;
+	return (
+		<React.Fragment>
+			<MaterialIcon icon={ materialIcon } className="navigation__icon" />
+			<div>
+				<div>{ text }</div>
+				<small>{ description }</small>
+			</div>
+		</React.Fragment>
+	);
+};
 
 const DomainManagementNavigationItem = function( props ) {
 	const { path, onClick, external, materialIcon, text, description } = props;
@@ -38,11 +54,11 @@ const DomainManagementNavigationItem = function( props ) {
 			external={ external }
 			className="navigation__nav-item"
 		>
-			<MaterialIcon icon={ materialIcon } className="navigation__icon" />
-			<div>
-				<div>{ text }</div>
-				<small>{ description }</small>
-			</div>
+			<DomainManagementNavigationItemContents
+				materialIcon={ materialIcon }
+				text={ text }
+				description={ description }
+			/>
 		</VerticalNavItem>
 	);
 };
@@ -227,6 +243,49 @@ class DomainManagementNavigation extends React.Component {
 		);
 	}
 
+	getDeleteDomain() {
+		const { domain, isLoadingPurchase, purchase, selectedSite, translate } = this.props;
+		const domainType = domain && domain.type;
+
+		if ( ! domain.currentUserCanManage ) {
+			return null;
+		}
+
+		const title =
+			domainTypes.MAPPED === domainType
+				? translate( 'Delete domain mapping' )
+				: translate( 'Delete your domain permanently' );
+
+		if ( isLoadingPurchase ) {
+			return <VerticalNavItem isPlaceholder />;
+		}
+
+		if ( ! selectedSite || ! purchase ) {
+			return null;
+		}
+
+		if ( isCancelable( purchase ) ) {
+			const link = cancelPurchase( selectedSite.slug, purchase.id );
+
+			return <DomainManagementNavigationItem path={ link } materialIcon="delete" text={ title } />;
+		}
+
+		return (
+			<RemovePurchase
+				hasLoadedSites={ true }
+				hasLoadedUserPurchasesFromServer={ true }
+				site={ selectedSite }
+				purchase={ purchase }
+				useVerticalNavItem={ true }
+				className="navigation__nav-item is-clickable"
+			>
+				<span>
+					<DomainManagementNavigationItemContents materialIcon="delete" text={ title } />
+				</span>
+			</RemovePurchase>
+		);
+	}
+
 	renderRegisteredDomainNavigation() {
 		return (
 			<React.Fragment>
@@ -234,6 +293,7 @@ class DomainManagementNavigation extends React.Component {
 				{ this.getNameServers() }
 				{ this.getContactsAndPrivacy() }
 				{ this.getTransferDomain() }
+				{ this.getDeleteDomain() }
 			</React.Fragment>
 		);
 	}
@@ -244,6 +304,7 @@ class DomainManagementNavigation extends React.Component {
 				{ this.getEmail() }
 				{ this.getDnsRecords() }
 				{ this.getDomainConnectMapping() }
+				{ this.getDeleteDomain() }
 			</React.Fragment>
 		);
 	}

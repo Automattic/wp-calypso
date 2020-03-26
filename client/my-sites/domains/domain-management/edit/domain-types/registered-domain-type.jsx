@@ -33,17 +33,10 @@ import NonPrimaryDomainPlanUpsell from '../../components/domain/non-primary-doma
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
 import AutoRenewToggle from 'me/purchases/manage-purchase/auto-renew-toggle';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import {
-	isExpired,
-	shouldRenderExpiringCreditCard,
-	isRechargeable,
-	isCancelable,
-} from 'lib/purchases';
+import { isExpired, shouldRenderExpiringCreditCard, isRechargeable } from 'lib/purchases';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainManagementNavigation from '../navigation';
-import { cancelPurchase } from 'me/purchases/paths';
-import RemovePurchase from 'me/purchases/remove-purchase';
 
 /**
  * Style dependencies
@@ -328,7 +321,7 @@ class RegisteredDomainType extends React.Component {
 	};
 
 	render() {
-		const { domain, selectedSite, purchase, moment } = this.props;
+		const { domain, selectedSite, purchase, isLoadingPurchase, moment } = this.props;
 		const { name: domain_name } = domain;
 
 		const { statusText, statusClass, icon } = this.resolveStatus();
@@ -391,7 +384,12 @@ class RegisteredDomainType extends React.Component {
 					) }
 					{ newStatusDesignAutoRenew && domain.currentUserCanManage && this.renderAutoRenew() }
 				</Card>
-				<DomainManagementNavigation domain={ domain } selectedSite={ this.props.selectedSite } />
+				<DomainManagementNavigation
+					domain={ domain }
+					selectedSite={ this.props.selectedSite }
+					purchase={ purchase }
+					isLoadingPurchase={ isLoadingPurchase }
+				/>
 			</div>
 		);
 	}

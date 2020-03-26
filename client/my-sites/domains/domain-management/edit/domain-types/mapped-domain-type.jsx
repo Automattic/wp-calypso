@@ -28,9 +28,7 @@ import {
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 } from 'state/purchases/selectors';
-import { isRechargeable, isExpired, isCancelable } from 'lib/purchases';
-import { cancelPurchase } from 'me/purchases/paths';
-import RemovePurchase from 'me/purchases/remove-purchase';
+import { isRechargeable, isExpired } from 'lib/purchases';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainManagementNavigation from '../navigation';
@@ -231,7 +229,15 @@ class MappedDomainType extends React.Component {
 	};
 
 	render() {
-		const { domain, selectedSite, purchase, moment, translate } = this.props;
+		const {
+			domain,
+			selectedSite,
+			purchase,
+			mappingPurchase,
+			isLoadingPurchase,
+			moment,
+			translate,
+		} = this.props;
 		const { name: domain_name } = domain;
 
 		const { statusText, statusClass, icon } = this.resolveStatus();
@@ -289,7 +295,12 @@ class MappedDomainType extends React.Component {
 					) }
 					{ newStatusDesignAutoRenew && domain.currentUserCanManage && this.renderAutoRenew() }
 				</Card>
-				<DomainManagementNavigation domain={ domain } selectedSite={ this.props.selectedSite } />
+				<DomainManagementNavigation
+					domain={ domain }
+					selectedSite={ this.props.selectedSite }
+					purchase={ mappingPurchase }
+					isLoadingPurchase={ isLoadingPurchase }
+				/>
 			</div>
 		);
 	}
