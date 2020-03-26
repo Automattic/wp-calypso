@@ -29,7 +29,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { inputRef } ) => {
 	const value = siteTitle.length ? siteTitle : '';
 
 	// translators: Form input for a site's title where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
-	const madlibTemplate = NO__( 'Itʼs called <Input />.' );
+	const madlibTemplate = NO__( 'Itʼs called <Input />' );
 	const madlib = __experimentalCreateInterpolateElement( madlibTemplate, {
 		Input: (
 			<input

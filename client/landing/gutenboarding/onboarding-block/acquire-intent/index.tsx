@@ -21,8 +21,7 @@ const AcquireIntent: FunctionComponent = () => {
 	const { siteVertical, siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
 	const makePath = usePath();
 	const siteTitleRef = createRef< HTMLInputElement >();
-	const focusSiteTitle = ( e: React.FormEvent< HTMLFormElement > ) => {
-		e.preventDefault();
+	const focusSiteTitle = () => {
 		siteTitleRef.current?.focus();
 	};
 	return (

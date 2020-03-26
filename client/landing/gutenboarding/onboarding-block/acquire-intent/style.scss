@@ -41,9 +41,11 @@
 	&:focus {
 		outline: none;
 	}
-	.accessible-focus &:focus {
-		outline: 2px solid var( --highlightColor );
-	}
+
+	// TODO focus for accessibility?
+	// .accessible-focus &:focus {
+	// 	outline: 2px solid var( --highlightColor );
+	// }
 }
 
 // Themed core button component
