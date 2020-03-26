@@ -42,7 +42,7 @@ const items = withSchemaValidation( itemSchemas, ( state = {}, action ) => {
 			if ( action.moduleSlug === 'photon' || action.moduleSlug === 'photon-cdn' ) {
 				// We can't know if the other module is still active, so we don't change
 				// Site Accelerator task completion state.
-				return;
+				return state;
 			}
 
 			if ( moduleTaskMap.hasOwnProperty( action.moduleSlug ) ) {
