@@ -146,6 +146,16 @@ add_action(
 );
 
 /**
+ * Load common module.
+ */
+add_action(
+	'plugins_loaded',
+	function() {
+		require_once __DIR__ . '/common/index.php';
+	}
+);
+
+/**
  * Add front-end CoBlocks gallery block scripts.
  *
  * This function performs the same enqueueing duties as `CoBlocks_Block_Assets::frontend_scripts`,
