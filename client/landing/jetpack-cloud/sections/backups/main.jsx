@@ -57,26 +57,28 @@ const backupStatusNames = [
 ];
 
 class BackupsPage extends Component {
-	state = {
-		selectedDate: new Date(),
-		backupsOnSelectedDate: {
-			lastBackup: null, // Last activity backup on the date
-			activities: [], // Rest of the activities (including other backups)
-		},
-	};
+	state = this.getDefaultState();
+
+	getDefaultState() {
+		return {
+			selectedDate: new Date(),
+			backupsOnSelectedDate: {
+				lastBackup: null,
+				activities: [],
+				nextBackupAt: null,
+			},
+		};
+	}
 
 	componentDidUpdate( prevProps ) {
 		if ( prevProps.siteId !== this.props.siteId ) {
-			//If we switch the site, reset the current state
+			//If we switch the site, reset the current state to default
 			this.resetState();
 		}
 	}
 
 	resetState() {
-		this.setState( {
-			selectedDate: new Date(),
-			backupsOnSelectedDate: [],
-		} );
+		this.setState( this.getDefaultState() );
 	}
 
 	onDateChange = date => {
