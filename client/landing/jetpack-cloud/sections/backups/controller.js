@@ -9,6 +9,7 @@ import React from 'react';
 import BackupDetailPage from './detail';
 import BackupsPage from './main';
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
+import BackupActivityLog from './activity-log';
 
 /* handles /backups/:site, see `backupMainPath` */
 export function backups( context, next ) {
@@ -37,5 +38,10 @@ export function backupRestore( context, next ) {
 	context.primary = (
 		<BackupRewindFlow rewindId={ context.params.rewindId } purpose={ RewindFlowPurpose.RESTORE } />
 	);
+	next();
+}
+
+export function backupActivityLog( context, next ) {
+	context.primary = <BackupActivityLog />;
 	next();
 }

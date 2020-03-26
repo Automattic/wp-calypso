@@ -11,16 +11,26 @@ import config from 'config';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
 import {
-	backups,
+	backupActivityLog,
 	backupDetail,
 	backupDownload,
 	backupRestore,
+	backups,
 } from 'landing/jetpack-cloud/sections/backups/controller';
 import { backupMainPath, backupRestorePath, backupDownloadPath, backupDetailPath } from './paths';
 
 export default function() {
 	if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
-		/* handles /backups/:site/detail/:backupId, see `backupDetailPath` */
+		page( '/backups/activity', siteSelection, sites, makeLayout, clientRender );
+		page(
+			'/backups/activity/:site',
+			siteSelection,
+			navigation,
+			backupActivityLog,
+			makeLayout,
+			clientRender
+		);
+
 		page(
 			backupDetailPath( ':site', ':backupId' ),
 			siteSelection,

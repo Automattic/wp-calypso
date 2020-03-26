@@ -44,16 +44,6 @@ class JetpackCloudSidebar extends Component {
 		threats: PropTypes.array,
 	};
 
-	/**
-	 * Check if a menu item is selected.
-	 *
-	 * @param {string} path Menu item path
-	 * @returns {boolean} True if menu item is selected
-	 */
-	isSelected( path ) {
-		return this.props.path === path || this.props.path.startsWith( path );
-	}
-
 	expandScanSection = () => this.props.expandSection( SIDEBAR_SECTION_SCAN );
 	expandBackupSection = () => this.props.expandSection( SIDEBAR_SECTION_BACKUP );
 
@@ -89,16 +79,23 @@ class JetpackCloudSidebar extends Component {
 									} ) }
 									link={ backupMainPath( selectedSiteSlug ) }
 									onNavigate={ this.onNavigate }
-									selected={ itemLinkMatches( backupMainPath(), this.props.path ) }
+									selected={
+										itemLinkMatches( backupMainPath(), this.props.path ) &&
+										! itemLinkMatches( '/backups/activity', this.props.path )
+									}
 								/>
 								<SidebarItem
 									expandSection={ this.expandBackupSection }
 									label={ translate( 'Activity Log', {
 										comment: 'Jetpack Cloud / Activity Log status sidebar navigation item',
 									} ) }
-									link={ selectedSiteSlug ? `/activity/${ selectedSiteSlug }` : '/activity' }
+									link={
+										selectedSiteSlug
+											? `/backups/activity/${ selectedSiteSlug }`
+											: '/backups/activity'
+									}
 									onNavigate={ this.onNavigate }
-									selected={ itemLinkMatches( '/activity', this.props.path ) }
+									selected={ itemLinkMatches( '/backups/activity', this.props.path ) }
 								/>
 							</ul>
 						</ExpandableSidebarMenu>
@@ -160,7 +157,7 @@ class JetpackCloudSidebar extends Component {
 							onNavigate={ this.onNavigate }
 							materialIcon="settings"
 							materialIconStyle="filled"
-							selected={ this.isSelected( '/settings' ) }
+							selected={ itemLinkMatches( '/settings', this.props.path ) }
 						/>
 					) }
 				</SidebarRegion>
@@ -174,7 +171,7 @@ class JetpackCloudSidebar extends Component {
 							materialIcon="help"
 							materialIconStyle="filled"
 							onNavigate={ this.onNavigate }
-							selected={ this.isSelected( '/support' ) }
+							selected={ itemLinkMatches( '/support', this.props.path ) }
 						/>
 						<SidebarItem
 							forceInternalLink={ true }
