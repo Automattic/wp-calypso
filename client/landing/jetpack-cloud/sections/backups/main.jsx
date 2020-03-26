@@ -148,6 +148,8 @@ class BackupsPage extends Component {
 			siteSlug,
 			isLoadingBackups,
 			oldestDateAvailable,
+			siteTimezone,
+			siteGmtOffset,
 		} = this.props;
 		const { selectedDate } = this.state;
 		const selectedDateString = this.TO_REMOVE_getSelectedDateString();
@@ -178,9 +180,10 @@ class BackupsPage extends Component {
 					<>
 						<DailyBackupStatus
 							allowRestore={ allowRestore }
-							date={ selectedDateString }
-							backupAttempts={ backupAttempts }
 							siteSlug={ siteSlug }
+							backup={ this.state.backupsOnSelectedDate.lastBackup }
+							timezone={ siteTimezone }
+							gmtOffset={ siteGmtOffset }
 						/>
                         { doesRewindNeedCredentials && (
                             <MissingCredentialsWarning settingsLink={ `/settings/${ siteSlug }` } />
