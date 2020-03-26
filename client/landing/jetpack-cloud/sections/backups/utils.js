@@ -43,7 +43,9 @@ export const getChangesInRange = ( logs, t1, t2 ) => {
 export const getEventsInRealtimeBackup = ( logs, date ) =>
 	logs.filter(
 		event =>
-			moment( event.activityDate ).format( 'YYYYMMDD' ) === moment( date ).format( 'YYYYMMDD' )
+			moment( event.activityDate ).format( 'YYYYMMDD' ) === moment( date ).format( 'YYYYMMDD' ) &&
+			event.activityIsRewindable &&
+			event.activityName !== 'rewind__backup_complete_full'
 	);
 
 export const getEventsInDailyBackup = ( logs, date ) => {

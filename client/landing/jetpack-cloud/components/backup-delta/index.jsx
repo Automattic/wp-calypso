@@ -20,8 +20,6 @@ class BackupDelta extends Component {
 	renderRealtime() {
 		const { allowRestore, moment, realtimeEvents, siteSlug, translate } = this.props;
 
-		//const realtimeEvents = this.props.realtimeEvents.filter( event => event.activityIsRewindable );
-
 		const cards = realtimeEvents.map( activity => (
 			<ActivityCard
 				{ ...{
@@ -44,7 +42,13 @@ class BackupDelta extends Component {
 						'Your site is backed up in real time (as you make changes) as well as in one daily backup.'
 					) }
 				</div>
-				{ !! cards.length && <div className="backup-delta__realtime-cards">{ cards }</div> }
+				{ cards.length ? (
+					<div className="backup-delta__realtime-cards">{ cards }</div>
+				) : (
+					<div className="backup-delta__realtime-description">
+						{ translate( 'No changes were made on this day.' ) }
+					</div>
+				) }
 			</div>
 		);
 	}

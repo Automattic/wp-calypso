@@ -35,16 +35,13 @@ class ActivityCard extends Component {
 	// TODO: now that we are reusing URLs we should have a dedicated paths file
 	createRestoreUrl = restoreId => `/backups/${ this.props.siteSlug }/restore/${ restoreId }`;
 	createDownloadUrl = downloadId => `/backups/${ this.props.siteSlug }/download/${ downloadId }`;
+	createDetailUrl = backupId => `/backups/${ this.props.siteSlug }/detail/${ backupId }`;
 
-	triggerRestore = () => {
-		const restoreId = this.props.activity.rewindId;
-		page.redirect( this.createRestoreUrl( restoreId ) );
-	};
+	triggerRestore = () => page.redirect( this.createRestoreUrl( this.props.activity.rewindId ) );
 
-	triggerDownload = () => {
-		const downloadId = this.props.activity.rewindId;
-		page.redirect( this.createDownloadUrl( downloadId ) );
-	};
+	triggerDownload = () => page.redirect( this.createDownloadUrl( this.props.activity.rewindId ) );
+
+	triggerDetails = () => page.redirect( this.createDetailUrl( this.props.activity.rewindId ) );
 
 	render() {
 		const { activity, moment, allowRestore, translate } = this.props;
@@ -71,7 +68,12 @@ class ActivityCard extends Component {
 					</div>
 					<div className="activity-card__activity-title">{ activity.activityTitle }</div>
 					<div className="activity-card__activity-actions">
-						<Button compact borderless className="activity-card__detail-button">
+						<Button
+							compact
+							borderless
+							className="activity-card__detail-button"
+							onClick={ this.triggerDetails }
+						>
 							{ translate( 'See content' ) } <Gridicon icon="chevron-down" />
 						</Button>
 						<Button
