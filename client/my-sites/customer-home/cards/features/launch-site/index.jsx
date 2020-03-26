@@ -20,9 +20,8 @@ import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actio
  */
 import './style.scss';
 
-export const LaunchSite = ( { isAtomic, isChecklistComplete, launchSite, siteId } ) => {
+export const LaunchSite = ( { isPrimary, launchSite, siteId } ) => {
 	const translate = useTranslate();
-	const isPrimary = ! isAtomic && isChecklistComplete;
 	const onLaunchBannerClick = () => {
 		launchSite( siteId );
 	};
@@ -48,9 +47,9 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const isAtomic = isAtomicSite( state, siteId );
 		const isChecklistComplete = isSiteChecklistComplete( state, siteId );
+		const isPrimary = ! isAtomic && isChecklistComplete;
 		return {
-			isAtomic,
-			isChecklistComplete,
+			isPrimary,
 			siteId,
 		};
 	},
