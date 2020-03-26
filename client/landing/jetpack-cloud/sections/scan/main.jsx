@@ -20,6 +20,9 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { withLocalizedMoment } from 'components/localized-moment';
 
+/**
+ * Style dependencies
+ */
 import './style.scss';
 
 class ScanPage extends Component {
@@ -69,12 +72,7 @@ class ScanPage extends Component {
 
 	renderThreats() {
 		const { threats, site } = this.props;
-		return (
-			<>
-				<SecurityIcon icon="error" />
-				<ScanThreats className="scan__threats" threats={ threats } site={ site } />
-			</>
-		);
+		return <ScanThreats className="scan__threats" threats={ threats } site={ site } />;
 	}
 
 	renderScanError() {
