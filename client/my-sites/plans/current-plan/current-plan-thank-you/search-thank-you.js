@@ -22,11 +22,6 @@ const SearchProductThankYou = ( { translate } ) => (
 					'that you should try customizing in your traditional WordPress dashboard.'
 			) }
 		</p>
-		<p>
-			{ translate(
-				'You can return to your traditional WordPress dashboard anytime by using the link at the bottom of the sidebar.'
-			) }
-		</p>
 	</ThankYou>
 );
 
