@@ -284,10 +284,10 @@ class BackupsPage extends Component {
  * Create an indexed log of backups based on the date of the backup and in the site time zone
  *
  * @param {Array} logs The activity logs retrieved from the store
- * @param {string} siteTimezone The site time zone
- * @param {number} siteGmtOffset The site offset from the GMT
+ * @param {string} timezone The site time zone
+ * @param {number} gmtOffset The site offset from the GMT
  */
-const createIndexedLog = ( logs, siteTimezone, siteGmtOffset ) => {
+const createIndexedLog = ( logs, timezone, gmtOffset ) => {
 	const indexedLog = {};
 	let oldestDateAvailable = new Date();
 
@@ -295,8 +295,8 @@ const createIndexedLog = ( logs, siteTimezone, siteGmtOffset ) => {
 		logs.data.forEach( log => {
 			//Move the backup date to the site timezone
 			const backupDate = applySiteOffset( momentDate( log.activityTs ), {
-				siteTimezone,
-				siteGmtOffset,
+				timezone,
+				gmtOffset,
 			} );
 
 			//Get the index for this backup, index format: YYYYMMDD
