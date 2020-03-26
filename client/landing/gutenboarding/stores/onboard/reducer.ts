@@ -71,11 +71,16 @@ const siteWasCreatedForDomainPurchase: Reducer< boolean, OnboardAction > = (
 	state = false,
 	action
 ) => {
-	if ( action.type === 'SET_SITE_WAS_CREATED_FOR_DOMAIN_PURCHASE' ) {
-		return action.siteWasCreatedForDomainPurchase;
-	}
+	switch ( action.type ) {
+		case 'SET_SITE_WAS_CREATED_FOR_DOMAIN_PURCHASE':
+			return action.siteWasCreatedForDomainPurchase;
 
-	return state;
+		case 'RESET_ONBOARD_STORE':
+			return false;
+
+		default:
+			return state;
+	}
 };
 
 const reducer = combineReducers( {
