@@ -23,8 +23,7 @@ import './style.scss';
 export const LaunchSite = ( { isAtomic, isChecklistComplete, launchSite, siteId } ) => {
 	const translate = useTranslate();
 	const isPrimary = ! isAtomic && isChecklistComplete;
-	const onLaunchBannerClick = e => {
-		e.preventDefault();
+	const onLaunchBannerClick = () => {
 		launchSite( siteId );
 	};
 
