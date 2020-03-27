@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Suggestions } from '@automattic/components';
 import { useI18n } from '@automattic/react-i18n';
@@ -27,9 +27,9 @@ type Suggestion = SiteVertical & { category?: string };
 const VERTICALS_STORE = Verticals.register();
 
 interface Props {
-	onSubmit?: () => void;
+	onSubmit: () => void;
 }
-const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit = () => undefined } ) => {
+const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 	const { __: NO__ } = useI18n();
 	const inputRef = React.useRef< HTMLInputElement >( null );
 	const [ isFocused, setIsFocused ] = React.useState< boolean >( false );
@@ -128,7 +128,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit = () => un
 		}
 	};
 
-	useEffect( () => {
+	React.useEffect( () => {
 		if ( ! hasValue ) {
 			inputRef?.current?.focus();
 		}
