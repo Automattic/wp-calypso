@@ -231,18 +231,37 @@ function touchField( oldData: ManagedValue ): ManagedValue {
 	return { ...oldData, isTouched: true };
 }
 
-function touchIfDifferent( newValue: string, oldData: ManagedValue ): ManagedValue {
+function touchIfDifferent(
+    newValue: undefined | string,
+    oldData: ManagedValue
+): ManagedValue {
+    if ( newValue === undefined ) {
+        return oldData;
+    }
 	return newValue === oldData.value
 		? oldData
 		: { ...oldData, value: newValue, isTouched: true, errors: [] };
 }
 
-function setValueUnlessTouched( newValue: string | null, oldData: ManagedValue ): ManagedValue {
-	return oldData.isTouched ? oldData : { ...oldData, value: newValue || '', errors: [] };
+function setValueUnlessTouched(
+    newValue: undefined | string,
+    oldData: ManagedValue
+): ManagedValue {
+    if ( newValue === undefined ) {
+        return oldData;
+    }
+	return oldData.isTouched
+        ? oldData
+        : { ...oldData, value: newValue, errors: [] };
 }
 
-function setErrors( errors: string[] | undefined, oldData: ManagedValue ): ManagedValue {
-	return undefined === errors ? { ...oldData, errors: [] } : { ...oldData, errors };
+function setErrors(
+    errors: undefined | string[],
+    oldData: ManagedValue
+): ManagedValue {
+	return undefined === errors
+        ? { ...oldData, errors: [] }
+        : { ...oldData, errors };
 }
 
 function getManagedValuesList( details: ManagedContactDetails ): ManagedValue[] {
