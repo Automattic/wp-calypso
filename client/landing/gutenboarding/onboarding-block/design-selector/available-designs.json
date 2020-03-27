@@ -48,7 +48,7 @@
 		{
 			"title": "Bowen",
 			"slug": "bowen",
-			"template": "coutoire",
+			"template": "bowen",
 			"theme": "coutoire",
 			"src": "https://public-api.wordpress.com/rest/v1/template/demo/coutoire/coutoire/",
 			"fonts": [ "Playfair Display", "Fira Sans" ],
