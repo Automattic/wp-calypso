@@ -24,7 +24,7 @@ import { isExpired, isExpiring, isRenewing, showCreditCardExpiringWarning } from
 import { JETPACK_SUPPORT } from 'lib/url/support';
 import { recordTracksEvent } from 'state/analytics/actions';
 
-class PlanBillingPeriod extends Component {
+export class PlanBillingPeriod extends Component {
 	static propTypes = {
 		purchase: PropTypes.object,
 		site: PropTypes.object,
