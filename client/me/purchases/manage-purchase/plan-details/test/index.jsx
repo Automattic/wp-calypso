@@ -51,7 +51,7 @@ describe( 'PurchasePlanDetails', () => {
 		} );
 
 		describe( 'a partner purchase', () => {
-			it( 'should render the PlanBillingPeriod', () => {
+			it( 'should not render the PlanBillingPeriod', () => {
 				const purchase = {
 					...props.purchase,
 					partnerName: 'partner',
