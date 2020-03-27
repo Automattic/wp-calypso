@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Suggestions } from '@automattic/components';
 import { useI18n } from '@automattic/react-i18n';
@@ -135,6 +135,12 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit = () => un
 			handleSelect( vertical );
 		}
 	};
+
+	useEffect( () => {
+		if ( ! hasValue ) {
+			inputRef?.current?.focus();
+		}
+	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	// TODO: Write a better translators comment.
 	// translators: Form input for a site's topic where "<Input />" is replaced by user input and must be preserved verbatim in translated string. <TerminalPunctuation /> is full-stop or an arrow depending on focus state.
