@@ -100,7 +100,7 @@ const setupContextMiddleware = reduxStore => {
 			/^\/forums($|\/)/i.test( context.pathname ) || // /forums or /forums/*
 			/^\/([a-z]{2}|[a-z]{2}-[a-z]{2})\/forums($|\/)/i.test( context.pathname ) // /en/forums or /pt-br/forums/*, etc
 		) {
-			window.open( context.pathname, '_blank' );
+			window.location.href = context.pathname;
 			return;
 		}
 
