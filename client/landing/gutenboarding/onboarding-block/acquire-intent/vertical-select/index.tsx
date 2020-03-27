@@ -15,7 +15,6 @@ import classnames from 'classnames';
 import { STORE_KEY as ONBOARD_STORE } from '../../../stores/onboard';
 import { Verticals } from '@automattic/data-stores';
 import { SiteVertical } from '../../../stores/onboard/types';
-import AnimatedPlaceholder from '../../animated-placeholder';
 import useTyper from '../../../hooks/use-typer';
 
 /**
@@ -156,17 +155,6 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit = () => un
 					placeholder={ animatedPlaceholder }
 					value={ inputValue }
 				/>
-				{ ! inputValue && (
-					<AnimatedPlaceholder
-						texts={ [
-							NO__( 'football' ),
-							NO__( 'shopping' ),
-							NO__( 'cars' ),
-							NO__( 'design' ),
-							NO__( 'travel' ),
-						] }
-					/>
-				) }
 				<div className="vertical-select__suggestions">
 					{ isFocused && !! verticals.length && (
 						<Suggestions
