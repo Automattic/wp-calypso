@@ -5,6 +5,7 @@
 
 import React, { Fragment } from 'react';
 import classNames from 'classnames';
+import path from 'path';
 
 /**
  * Internal dependencies
@@ -72,7 +73,10 @@ class Document extends React.Component {
 			( clientData ? `var configData = ${ jsonStringifyForHtml( clientData ) };\n` : '' ) +
 			( languageRevisions
 				? `var languageRevisions = ${ jsonStringifyForHtml( languageRevisions ) };\n`
-				: '' );
+				: '' ) +
+			`var installedChunks = ${ jsonStringifyForHtml(
+				chunkFiles.js.map( chunk => path.parse( chunk ).name )
+			) };\n`;
 
 		const isJetpackWooCommerceFlow =
 			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
