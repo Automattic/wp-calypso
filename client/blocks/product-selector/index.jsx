@@ -574,6 +574,7 @@ export class ProductSelector extends Component {
 								handleSelect={ productSlug =>
 									this.handleProductOptionSelect( stateKey, productSlug, product.id )
 								}
+								forceRadiosEvenIfOnlyOneOption={ !! product.forceRadios }
 							/>
 
 							{ this.renderCheckoutButton( product ) }

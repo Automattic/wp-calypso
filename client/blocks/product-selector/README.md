@@ -45,6 +45,8 @@ The following props can be passed to the Product Selector block:
 	* `title`: ( string ) Product title.
 	* `description`: ( string ) Product description.
 	* `id`: ( string ) Product ID.
+	* `forceRadios`: ( bool ) Used to force a full display with radio buttons, even when
+	there is only option per billing interval and the display would otherwise be simplified.
 	* `options`: ( object ) Product options. Each option has the billing interval as a key, and the value is an array with corresponding product slugs. Example:
 		```
 		options: {

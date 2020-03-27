@@ -220,6 +220,9 @@ export const getJetpackProducts = () => {
 				'Always-on backups ensure you never lose your site. Choose from real-time or daily backups.'
 			),
 			id: PRODUCT_JETPACK_SEARCH,
+			// There is only one option per billing interval, but this
+			// component still needs the full display with radio buttons.
+			forceRadios: true,
 			options: {
 				yearly: [ PRODUCT_JETPACK_SEARCH ],
 				monthly: [ PRODUCT_JETPACK_SEARCH_MONTHLY ],
