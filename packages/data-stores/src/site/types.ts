@@ -62,14 +62,3 @@ export interface ExistingSiteError {
 }
 
 export type ExistingSiteResponse = ExistingSiteDetails | ExistingSiteError;
-
-export type MetadataDispatch = {
-	invalidateResolution: (
-		selectorName: string,
-		args: Array< any >
-	) => { type: string; selectorName: string; args: any };
-};
-
-export type MetadataSelect = {
-	getIsResolving: ( selectorName: string, args: Array< any > ) => boolean | undefined;
-};

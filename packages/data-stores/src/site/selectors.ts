@@ -23,7 +23,7 @@ export const isNewSite = ( state: State ) => !! state.newSite.data;
 export const getSite = ( state: State, slug: string ) => {
 	const existingSite = state.existingSite[ slug ];
 	if ( ! existingSite ) {
-		dispatch( STORE_KEY ).invalidateResolution( 'getSite', [ slug ] );
+		dispatch( 'core/data' ).invalidateResolution( STORE_KEY, 'getSite', [ slug ] );
 	}
 	return existingSite;
 };

@@ -16,7 +16,6 @@ import wpcomRequest from 'wpcom-proxy-request';
  * Internal dependencies
  */
 import { register } from '..';
-import { STORE_KEY } from '../constants';
 
 jest.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,
@@ -66,7 +65,9 @@ describe( 'getSite', () => {
 
 		// The resolver should now be cached with an `isStarting` value of false
 
-		expect( select( store ).getIsResolving( 'getSite', [ slug ] ) ).toStrictEqual( false );
+		expect( select( 'core/data' ).getIsResolving( store, 'getSite', [ slug ] ) ).toStrictEqual(
+			false
+		);
 	} );
 
 	it( 'resolves the state via an API call and invalidates the resolver cache on fail', async () => {
@@ -78,8 +79,6 @@ describe( 'getSite', () => {
 		};
 
 		( wpcomRequest as jest.Mock ).mockRejectedValue( apiResponse );
-		const spy = jest.spyOn( dispatch( STORE_KEY ), 'invalidateResolution' );
-		spy.mockClear();
 
 		const listenForStateUpdate = () => {
 			// The subscribe function in wordpress/data stores only updates when state changes,
@@ -95,24 +94,25 @@ describe( 'getSite', () => {
 		expect( select( store ).getSite( slug ) ).toEqual( undefined );
 		await listenForStateUpdate();
 
-		expect( select( store ).getIsResolving( 'getSite', [ slug ] ) ).toStrictEqual( undefined );
-		expect( spy ).toHaveBeenCalledTimes( 1 );
-		expect( spy ).toHaveBeenCalledWith( 'getSite', [ slug ] );
+		expect( select( 'core/data' ).getIsResolving( store, 'getSite', [ slug ] ) ).toStrictEqual(
+			undefined
+		);
 
 		// After the second call, the resolver's cache will be valid
 		expect( select( store ).getSite( slug ) ).toEqual( undefined );
 		await listenForStateUpdate();
 
-		expect( select( store ).getIsResolving( 'getSite', [ slug ] ) ).toStrictEqual( false );
-		expect( spy ).toHaveBeenCalledTimes( 2 );
+		expect( select( 'core/data' ).getIsResolving( store, 'getSite', [ slug ] ) ).toStrictEqual(
+			false
+		);
 
 		// After the third call, the resolver's cache will be invalidated again
 		expect( select( store ).getSite( slug ) ).toEqual( undefined );
 		await listenForStateUpdate();
 
 		// The resolver should now be cached with an `isStarting` value of false
-		expect( select( store ).getIsResolving( 'getSite', [ slug ] ) ).toStrictEqual( undefined );
-		expect( spy ).toHaveBeenCalledTimes( 3 );
-		spy.mockClear();
+		expect( select( 'core/data' ).getIsResolving( store, 'getSite', [ slug ] ) ).toStrictEqual(
+			undefined
+		);
 	} );
 } );
