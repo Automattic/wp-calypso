@@ -1469,8 +1469,10 @@ function usePrepareProductForCart( planSlug, product, isJetpackNotAtomic ) {
 	const plans = useSelector( state => getPlans( state ) );
 	const plan = useSelector( state => getPlanBySlug( state, planSlug ) );
 	const reduxDispatch = useDispatch();
-	const [ canInitializeCart, setCanInitializeCart ] = useState( ! planSlug );
-	const [ productForCart, setProductForCart ] = useState();
+	const [ { canInitializeCart, productForCart }, setState ] = useState( {
+		canInitializeCart: ! planSlug && ! product,
+		productForCart: null,
+	} );
 
 	useEffect( () => {
 		if ( ! planSlug ) {
@@ -1483,21 +1485,29 @@ function usePrepareProductForCart( planSlug, product, isJetpackNotAtomic ) {
 		}
 		if ( ! plan ) {
 			debug( 'there is a request to add a plan but no plan was found' );
-			setCanInitializeCart( true );
+			setState( { canInitializeCart: true } );
 			return;
 		}
-		debug( 'preparing plan that was requested in url', { planSlug, plan, isJetpackNotAtomic } );
-		setProductForCart( createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) );
-		setCanInitializeCart( true );
+		const cartProduct = createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } );
+		debug(
+			'preparing plan that was requested in url',
+			{ planSlug, plan, isJetpackNotAtomic },
+			cartProduct
+		);
+		setState( { productForCart: cartProduct, canInitializeCart: true } );
 	}, [ reduxDispatch, planSlug, plan, plans, isJetpackNotAtomic ] );
 
 	useEffect( () => {
 		if ( ! product ) {
 			return;
 		}
-		debug( 'preparing product that was requested in url', { product, isJetpackNotAtomic } );
-		setProductForCart( createItemToAddToCart( { product, isJetpackNotAtomic } ) );
-		setCanInitializeCart( true );
+		const cartProduct = createItemToAddToCart( { product, isJetpackNotAtomic } );
+		debug(
+			'preparing product that was requested in url',
+			{ product, isJetpackNotAtomic },
+			cartProduct
+		);
+		setState( { productForCart: cartProduct, canInitializeCart: true } );
 	}, [ reduxDispatch, isJetpackNotAtomic, product ] );
 
 	return { productForCart, canInitializeCart };
