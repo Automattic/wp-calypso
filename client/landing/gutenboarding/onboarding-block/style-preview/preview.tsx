@@ -9,6 +9,7 @@ import { ValuesType } from 'utility-types';
 /**
  * Internal dependencies
  */
+import { disableNavigation } from './disableNavigation';
 import { STORE_KEY } from '../../stores/onboard';
 import * as T from './types';
 import { useLangRouteParam } from '../../path';
@@ -72,12 +73,13 @@ const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 	);
 
 	React.useEffect( () => {
-		if ( previewHtml ) {
-			const iframeDocument = iframe.current?.contentWindow?.document;
+		if ( previewHtml && iframe.current ) {
+			const iframeDocument = iframe.current.contentWindow?.document;
 			if ( iframeDocument ) {
 				iframeDocument.open();
 				iframeDocument.write( previewHtml );
 				iframeDocument.close();
+				disableNavigation( iframe.current );
 			}
 		}
 	}, [ previewHtml ] );
@@ -114,6 +116,7 @@ const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 				iframeDocument.head.appendChild( l );
 				setRequestedFonts( nextFonts );
 			}
+
 			iframeDocument.body.style.setProperty( '--font-headings', `${ headings }` );
 			iframeDocument.body.style.setProperty( '--font-base', `${ headings }` );
 		}
