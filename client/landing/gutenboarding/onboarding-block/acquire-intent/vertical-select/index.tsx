@@ -6,6 +6,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { Suggestions } from '@automattic/components';
 import { useI18n } from '@automattic/react-i18n';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -69,6 +70,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit = () => un
 	);
 
 	const normalizedInputValue = inputValue.trim().toLowerCase();
+	const hasValue = !! normalizedInputValue.length;
 
 	const handleSuggestionChangeEvent = ( e: React.ChangeEvent< HTMLInputElement > ) => {
 		setInputValue( e.target.value );
@@ -131,72 +133,79 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit = () => un
 		setIsFocused( false );
 	};
 
-	// translators: Form input for a site's topic where "<Input />" is replaced by user input and must be preserved verbatim in translated string. Must match similar string with full stop punctuation.
-	const madlibTemplate = NO__( 'My site is about <Input />.' );
 	// TODO: Write a better translators comment.
-	// translators: Form input for a site's topic where "<Input />" is replaced by user input and must be preserved verbatim in translated string. Must match
-	const madlibTemplateFocused = NO__( 'My site is about <Input />' );
-	const madlib = __experimentalCreateInterpolateElement(
-		isFocused || ! normalizedInputValue.length ? madlibTemplateFocused : madlibTemplate,
-		{
-			Input: (
-				<span className="vertical-select__suggestions-wrapper">
-					<input
-						ref={ inputRef }
-						/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
-						className="madlib__input"
-						autoComplete="off"
-						style={ {
-							width: `${ inputValue.length * 0.85 }ch`,
-						} }
-						onBlur={ handleBlur }
-						onFocus={ () => setIsFocused( true ) }
-						onChange={ handleSuggestionChangeEvent }
-						onKeyDown={ handleSuggestionKeyDown }
-						placeholder={ animatedPlaceholder }
-						value={ inputValue }
+	// translators: Form input for a site's topic where "<Input />" is replaced by user input and must be preserved verbatim in translated string. <TerminalPunctuation /> is full-stop or an arrow depending on focus state.
+	const madlibTemplate = NO__( 'My site is about <Input /><TerminalPunctuation />' );
+	const madlib = __experimentalCreateInterpolateElement( madlibTemplate, {
+		Input: (
+			<span className="vertical-select__suggestions-wrapper">
+				<input
+					ref={ inputRef }
+					/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
+					className="madlib__input"
+					autoComplete="off"
+					style={ {
+						width: `${ inputValue.length * 0.85 }ch`,
+					} }
+					onBlur={ handleBlur }
+					onFocus={ () => setIsFocused( true ) }
+					onChange={ handleSuggestionChangeEvent }
+					onKeyDown={ handleSuggestionKeyDown }
+					placeholder={ animatedPlaceholder }
+					value={ inputValue }
+				/>
+				{ ! inputValue && (
+					<AnimatedPlaceholder
+						texts={ [
+							NO__( 'football' ),
+							NO__( 'shopping' ),
+							NO__( 'cars' ),
+							NO__( 'design' ),
+							NO__( 'travel' ),
+						] }
 					/>
-					{ ! inputValue && (
-						<AnimatedPlaceholder
-							texts={ [
-								NO__( 'football' ),
-								NO__( 'shopping' ),
-								NO__( 'cars' ),
-								NO__( 'design' ),
-								NO__( 'travel' ),
-							] }
+				) }
+				<div className="vertical-select__suggestions">
+					{ isFocused && (
+						<Suggestions
+							ref={ suggestionRef }
+							query={ inputValue }
+							suggestions={ ! verticals.length ? loadingMessage : suggestions }
+							suggest={ handleSelect }
+							title={ NO__( 'Suggestions' ) }
 						/>
 					) }
-					<div className="vertical-select__suggestions">
-						{ isFocused && (
-							<Suggestions
-								ref={ suggestionRef }
-								query={ inputValue }
-								suggestions={ ! verticals.length ? loadingMessage : suggestions }
-								suggest={ handleSelect }
-								title={ NO__( 'Suggestions' ) }
-							/>
-						) }
-					</div>
-				</span>
-			),
-		}
-	);
+				</div>
+			</span>
+		),
+		TerminalPunctuation: (
+			<span className="vertical-select__terminal-punctuation">
+				{ isFocused ? (
+					<svg
+						className="vertical-select__terminal-arrow"
+						width="26"
+						height="18"
+						viewBox="0 0 26 18"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path d="M16 1L24 9M24 9L16 17M24 9H0" stroke="currentColor" strokeWidth="2" />
+					</svg>
+				) : (
+					'.'
+				) }
+			</span>
+		),
+	} );
 
 	return (
-		<form className="vertical-select" onSubmit={ submitHandler }>
+		<form
+			className={ classnames( 'vertical-select', {
+				'vertical-select--without-value': ! hasValue,
+			} ) }
+			onSubmit={ submitHandler }
+		>
 			{ madlib }
-			{ isFocused && !! normalizedInputValue.length && (
-				<svg
-					width="26"
-					height="18"
-					viewBox="0 0 26 18"
-					fill="none"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<path d="M16 1L24 9M24 9L16 17M24 9H0" stroke="currentColor" stroke-width="2" />
-				</svg>
-			) }
 		</form>
 	);
 };
