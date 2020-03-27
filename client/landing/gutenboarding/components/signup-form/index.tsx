@@ -28,10 +28,9 @@ declare module '@wordpress/element' {
 
 interface Props {
 	onRequestClose: () => void;
-	onOpenLogin: () => void;
 }
 
-const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
+const SignupForm = ( { onRequestClose }: Props ) => {
 	const { __: NO__, _x: NO_x } = useI18n();
 	const [ emailVal, setEmailVal ] = useState( '' );
 	const { createAccount, clearErrors } = useDispatch( USER_STORE );
@@ -70,11 +69,6 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 		if ( success ) {
 			closeModal();
 		}
-	};
-
-	const openLogin = ( e: React.MouseEvent< HTMLElement > ) => {
-		onOpenLogin();
-		e.preventDefault();
 	};
 
 	const tos = __experimentalCreateInterpolateElement(
@@ -145,12 +139,6 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 			<div className="signup-form__login-links">
 				<Button isLink href={ '/log-in?redirect_to=' + encodeURIComponent( loginRedirectUrl ) }>
 					{ NO__( 'Log in to create a site for your existing account.' ) }
-				</Button>
-			</div>
-			<div className="signup-form__login-links">
-				<Button isLink={ true } onClick={ openLogin }>
-					{ /* Removing before shipping, no need to translate */ }
-					(experimental login)
 				</Button>
 			</div>
 		</Modal>
