@@ -18,7 +18,7 @@ beforeAll( () => {
 
 describe( 'getSite', () => {
 	it( 'should return a receiveExistingSite action object on success', async () => {
-		const slug = 'mytestsite12345.wordpress.com';
+		const siteId = 123456;
 		const apiResponse = {
 			ID: 1,
 			name: 'My test site',
@@ -26,18 +26,18 @@ describe( 'getSite', () => {
 			URL: 'http://mytestsite12345.wordpress.com',
 		};
 
-		const generator = getSite( slug );
+		const generator = getSite( siteId );
 
 		expect( generator.next().value ).toEqual( {
 			type: 'WPCOM_REQUEST',
 			request: expect.objectContaining( {
-				path: `/sites/${ slug }`,
+				path: `/sites/${ siteId }`,
 			} ),
 		} );
 
 		expect( await generator.next( apiResponse ).value ).toEqual( {
-			type: 'RECEIVE_EXISTING_SITE',
-			slug,
+			type: 'RECEIVE_SITE',
+			siteId,
 			response: apiResponse,
 		} );
 
@@ -45,25 +45,25 @@ describe( 'getSite', () => {
 	} );
 
 	it( 'should return a receiveExistingSiteFailed action object on fail', async () => {
-		const slug = 'mytestsite12345.wordpress.com';
+		const siteId = 12345;
 		const apiResponse = {
 			status: 404,
 			error: 'unknown_blog',
 			message: 'Unknown blog',
 		};
 
-		const generator = getSite( slug );
+		const generator = getSite( siteId );
 
 		expect( generator.next().value ).toEqual( {
 			type: 'WPCOM_REQUEST',
 			request: expect.objectContaining( {
-				path: `/sites/${ slug }`,
+				path: `/sites/${ siteId }`,
 			} ),
 		} );
 
 		expect( await generator.throw( apiResponse ).value ).toEqual( {
-			type: 'RECEIVE_EXISTING_SITE_FAILED',
-			slug,
+			type: 'RECEIVE_SITE_FAILED',
+			siteId,
 			response: undefined,
 		} );
 

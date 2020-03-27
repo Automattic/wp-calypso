@@ -7,7 +7,7 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { NewSiteBlogDetails, NewSiteErrorResponse, ExistingSiteDetails } from './types';
+import { NewSiteBlogDetails, NewSiteErrorResponse, SiteDetails } from './types';
 import { Action } from './actions';
 
 export const newSiteData: Reducer< NewSiteBlogDetails | undefined, Action > = ( state, action ) => {
@@ -55,14 +55,14 @@ export const isFetchingSite: Reducer< boolean | undefined, Action > = ( state = 
 	return state;
 };
 
-export const existingSite: Reducer<
-	{ [ key: string ]: ExistingSiteDetails | undefined },
-	Action
-> = ( state = {}, action ) => {
-	if ( action.type === 'RECEIVE_EXISTING_SITE' ) {
-		return { ...state, [ action.slug ]: action.response };
-	} else if ( action.type === 'RECEIVE_EXISTING_SITE_FAILED' ) {
-		const { [ action.slug ]: slugToBeRemoved, ...remainingState } = state;
+export const sites: Reducer< { [ key: string ]: SiteDetails | undefined }, Action > = (
+	state = {},
+	action
+) => {
+	if ( action.type === 'RECEIVE_SITE' ) {
+		return { ...state, [ action.siteId ]: action.response };
+	} else if ( action.type === 'RECEIVE_SITE_FAILED' ) {
+		const { [ action.siteId ]: idToBeRemoved, ...remainingState } = state;
 		return { ...remainingState };
 	} else if ( action.type === 'RESET_SITE_STORE' ) {
 		return {};
@@ -76,7 +76,7 @@ const newSite = combineReducers( {
 	isFetching: isFetchingSite,
 } );
 
-const reducer = combineReducers( { newSite, existingSite } );
+const reducer = combineReducers( { newSite, sites } );
 
 export type State = ReturnType< typeof reducer >;
 

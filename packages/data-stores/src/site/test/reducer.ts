@@ -9,55 +9,51 @@
 /**
  * Internal dependencies
  */
-import { existingSite } from '../reducer';
-import { createActions } from '../actions';
-import { ExistingSiteDetails, ExistingSiteError } from '../types';
+import { sites } from '../reducer';
+import { SiteDetails, SiteError } from '../types';
 
-const { receiveExistingSite, receiveExistingSiteFailed } = createActions( {
-	client_id: '',
-	client_secret: '',
-} );
-
-describe( 'existingSite', () => {
-	const existingSiteDetails: ExistingSiteDetails = {
-		ID: 1,
+describe( 'Site', () => {
+	const siteDetailsResponse: SiteDetails = {
+		ID: 12345,
 		name: 'My test site',
 		description: '',
 		URL: 'http://mytestsite12345.wordpress.com',
 	};
 
-	const existingSiteError: ExistingSiteError = {
+	const siteErrorResponse: SiteError = {
 		error: 'unknown_blog',
 		message: 'Unknown blog',
 	};
 
 	it( 'returns the correct default state', () => {
-		const state = existingSite( undefined, { type: 'TEST_ACTION' } );
+		const state = sites( undefined, { type: 'TEST_ACTION' } );
 		expect( state ).toEqual( {} );
 	} );
 
-	it( 'returns site data keyed by slug', () => {
-		const state = existingSite(
-			undefined,
-			receiveExistingSite( 'mytestsite12345.wordpress.com', existingSiteDetails )
-		);
+	it( 'returns site data keyed by id', () => {
+		const state = sites( undefined, {
+			type: 'RECEIVE_SITE',
+			siteId: 12345,
+			response: siteDetailsResponse,
+		} );
 		expect( state ).toEqual( {
-			'mytestsite12345.wordpress.com': existingSiteDetails,
+			12345: siteDetailsResponse,
 		} );
 	} );
 
-	it( 'clears existing data keyed by slug, and no other data is affected', () => {
+	it( 'clears data keyed by id, and no other data is affected', () => {
 		const originalState = {
-			'mytestsite12345.wordpress.com': existingSiteDetails,
-			'myothertestsite12345.wordpress.com': existingSiteDetails,
+			12345: siteDetailsResponse,
+			23456: siteDetailsResponse,
 		};
-		const updatedState = existingSite(
-			originalState,
-			receiveExistingSiteFailed( 'myothertestsite12345.wordpress.com', existingSiteError )
-		);
+		const updatedState = sites( originalState, {
+			type: 'RECEIVE_SITE_FAILED',
+			siteId: 23456,
+			response: siteErrorResponse,
+		} );
 
 		expect( updatedState ).toEqual( {
-			'mytestsite12345.wordpress.com': existingSiteDetails,
+			12345: siteDetailsResponse,
 		} );
 	} );
 } );

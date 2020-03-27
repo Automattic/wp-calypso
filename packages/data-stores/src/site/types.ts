@@ -49,16 +49,16 @@ export interface CreateSiteParams {
 	};
 }
 
-export interface ExistingSiteDetails {
+export interface SiteDetails {
 	ID: number;
 	name: string;
 	description: string;
 	URL: string;
 }
 
-export interface ExistingSiteError {
+export interface SiteError {
 	error: string;
 	message: string;
 }
 
-export type ExistingSiteResponse = ExistingSiteDetails | ExistingSiteError;
+export type SiteResponse = SiteDetails | SiteError;

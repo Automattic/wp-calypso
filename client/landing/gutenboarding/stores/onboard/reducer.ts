@@ -81,7 +81,7 @@ const pageLayouts: Reducer< string[], OnboardAction > = ( state = [], action ) =
 	return state;
 };
 
-const selectedSite: Reducer< string | undefined, OnboardAction > = (
+const selectedSite: Reducer< number | undefined, OnboardAction > = (
 	state = undefined,
 	action
 ) => {

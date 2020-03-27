@@ -5,8 +5,8 @@ import {
 	CreateSiteParams,
 	NewSiteErrorResponse,
 	NewSiteSuccessResponse,
-	ExistingSiteDetails,
-	ExistingSiteError,
+	SiteDetails,
+	SiteError,
 } from './types';
 import { WpcomClientCredentials } from '../shared-types';
 import { wpcomRequest } from '../wpcom-request-controls';
@@ -63,15 +63,15 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		}
 	}
 
-	const receiveExistingSite = ( slug: string, response: ExistingSiteDetails | undefined ) => ( {
-		type: 'RECEIVE_EXISTING_SITE' as const,
-		slug,
+	const receiveSite = ( siteId: number, response: SiteDetails | undefined ) => ( {
+		type: 'RECEIVE_SITE' as const,
+		siteId,
 		response,
 	} );
 
-	const receiveExistingSiteFailed = ( slug: string, response: ExistingSiteError | undefined ) => ( {
-		type: 'RECEIVE_EXISTING_SITE_FAILED' as const,
-		slug,
+	const receiveSiteFailed = ( siteId: number, response: SiteError | undefined ) => ( {
+		type: 'RECEIVE_SITE_FAILED' as const,
+		siteId,
 		response,
 	} );
 
@@ -84,8 +84,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		receiveNewSite,
 		receiveNewSiteFailed,
 		createSite,
-		receiveExistingSite,
-		receiveExistingSiteFailed,
+		receiveSite,
+		receiveSiteFailed,
 		reset,
 	};
 }
@@ -97,8 +97,8 @@ export type Action =
 			| ActionCreators[ 'fetchNewSite' ]
 			| ActionCreators[ 'receiveNewSite' ]
 			| ActionCreators[ 'receiveNewSiteFailed' ]
-			| ActionCreators[ 'receiveExistingSite' ]
-			| ActionCreators[ 'receiveExistingSiteFailed' ]
+			| ActionCreators[ 'receiveSite' ]
+			| ActionCreators[ 'receiveSiteFailed' ]
 			| ActionCreators[ 'reset' ]
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost

@@ -13,17 +13,17 @@ export const isFetchingSite = ( state: State ) => state.newSite.isFetching;
 export const isNewSite = ( state: State ) => !! state.newSite.data;
 
 /**
- * Get an existing site matched by domain string. This selector has a matching
- * resolver that uses the `slug` parameter to fetch an existing site. If the
- * existingSite cannot be found, invalidate the resolution cache.
+ * Get a site matched by id. This selector has a matching
+ * resolver that uses the `siteId` parameter to fetch an existing site. If the
+ * site cannot be found, invalidate the resolution cache.
  *
  * @param state {State}		state object
- * @param slug {string}		domain string
+ * @param siteId {number}	id of the site to look up
  */
-export const getSite = ( state: State, slug: string ) => {
-	const existingSite = state.existingSite[ slug ];
-	if ( ! existingSite ) {
-		dispatch( 'core/data' ).invalidateResolution( STORE_KEY, 'getSite', [ slug ] );
+export const getSite = ( state: State, siteId: number ) => {
+	const site = state.sites[ siteId ];
+	if ( ! site ) {
+		dispatch( 'core/data' ).invalidateResolution( STORE_KEY, 'getSite', [ siteId ] );
 	}
-	return existingSite;
+	return site;
 };
