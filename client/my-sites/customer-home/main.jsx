@@ -12,8 +12,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { Button, Card } from '@automattic/components';
-import CardHeading from 'components/card-heading';
+import { Button } from '@automattic/components';
 import EmptyContent from 'components/empty-content';
 import Main from 'components/main';
 import { preventWidows } from 'lib/formatting';
@@ -141,7 +140,6 @@ class Home extends Component {
 		const {
 			isChecklistComplete,
 			needsEmailVerification,
-			translate,
 			checklistMode,
 			hasChecklistData,
 			siteIsUnlaunched,
