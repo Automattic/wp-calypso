@@ -16,6 +16,8 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 } from 'lib/plans/constants';
+import { GSUITE_BASIC_SLUG } from 'lib/gsuite/constants';
+import { PRODUCT_JETPACK_BACKUP_DAILY } from 'lib/products-values/constants';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'lib/user', () => () => {} );
@@ -33,6 +35,7 @@ const {
 	getCartItemBillPeriod,
 	getDomainPriceRule,
 	hasToUpgradeToPayForADomain,
+	getRenewalItemFromProduct,
 } = cartItems;
 
 /**
@@ -647,5 +650,222 @@ describe( 'hasToUpgradeToPayForADomain()', () => {
 
 	test( 'should return false if current site is not passed', () => {
 		expect( hasToUpgradeToPayForADomain( null, {} ) ).toBe( false );
+	} );
+} );
+
+describe( 'getRenewalItemFromProduct()', () => {
+	const buildPurchase = overrides => ( {
+		id: 123,
+		includedDomain: 'included.com',
+		domain: 'purchased.com',
+		...overrides,
+	} );
+	const properties = {
+		domain: 'purchased.com',
+		source: 'source',
+	};
+	describe( 'isDomainProduct', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct( buildPurchase( { product_slug: 'domain_map' } ), properties )
+			).toEqual( {
+				extra: {
+					includedDomain: 'included.com',
+					purchaseDomain: 'purchased.com',
+					purchaseId: 123,
+					purchaseType: 'renewal',
+					source: 'source',
+				},
+				meta: 'purchased.com',
+				product_slug: 'domain_map',
+			} );
+		} );
+	} );
+	describe( 'isPlan', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct( buildPurchase( { product_slug: PLAN_PERSONAL } ), properties )
+			).toEqual( {
+				extra: {
+					includedDomain: 'included.com',
+					purchaseDomain: 'purchased.com',
+					purchaseId: 123,
+					purchaseType: 'renewal',
+				},
+				free_trial: false,
+				product_slug: PLAN_PERSONAL,
+			} );
+		} );
+	} );
+	describe( 'isGoogleApps', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct(
+					buildPurchase( { product_slug: GSUITE_BASIC_SLUG, users: 123 } ),
+					properties
+				)
+			).toEqual( {
+				extra: {
+					google_apps_users: 123,
+					includedDomain: 'included.com',
+					purchaseDomain: 'purchased.com',
+					purchaseId: 123,
+					purchaseType: 'renewal',
+				},
+				meta: 'purchased.com',
+				product_slug: GSUITE_BASIC_SLUG,
+			} );
+		} );
+	} );
+	describe( 'isSiteRedirect', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct(
+					buildPurchase( { product_slug: 'offsite_redirect' } ),
+					properties
+				)
+			).toEqual( {
+				extra: {
+					includedDomain: 'included.com',
+					purchaseDomain: 'purchased.com',
+					purchaseId: 123,
+					purchaseType: 'renewal',
+					source: 'source',
+				},
+				meta: 'purchased.com',
+				product_slug: 'offsite_redirect',
+			} );
+		} );
+	} );
+	describe( 'isNoAds', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct(
+					buildPurchase( { product_slug: 'no-adverts/no-adverts.php' } ),
+					properties
+				)
+			).toEqual( {
+				extra: {
+					includedDomain: 'included.com',
+					purchaseDomain: 'purchased.com',
+					purchaseId: 123,
+					purchaseType: 'renewal',
+				},
+				product_slug: 'no-adverts/no-adverts.php',
+			} );
+		} );
+	} );
+	describe( 'isCustomDesign', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct( buildPurchase( { product_slug: 'custom-design' } ), properties )
+			).toEqual( {
+				extra: {
+					includedDomain: 'included.com',
+					purchaseDomain: 'purchased.com',
+					purchaseId: 123,
+					purchaseType: 'renewal',
+				},
+				product_slug: 'custom-design',
+			} );
+		} );
+	} );
+	describe( 'isVideoPress', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct( buildPurchase( { product_slug: 'videopress' } ), properties )
+			).toEqual( {
+				extra: {
+					includedDomain: 'included.com',
+					purchaseDomain: 'purchased.com',
+					purchaseId: 123,
+					purchaseType: 'renewal',
+				},
+				product_slug: 'videopress',
+			} );
+		} );
+	} );
+	describe( 'isUnlimitedSpace', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct(
+					buildPurchase( { product_slug: 'unlimited_space' } ),
+					properties
+				)
+			).toEqual( {
+				extra: {
+					includedDomain: 'included.com',
+					purchaseDomain: 'purchased.com',
+					purchaseId: 123,
+					purchaseType: 'renewal',
+				},
+				product_slug: 'unlimited_space',
+			} );
+		} );
+	} );
+	describe( 'isUnlimitedThemes', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct(
+					buildPurchase( { product_slug: 'unlimited_themes' } ),
+					properties
+				)
+			).toEqual( {
+				extra: {
+					includedDomain: 'included.com',
+					purchaseDomain: 'purchased.com',
+					purchaseId: 123,
+					purchaseType: 'renewal',
+				},
+				product_slug: 'unlimited_themes',
+			} );
+		} );
+	} );
+	describe( 'isJetpackProduct', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct(
+					buildPurchase( { product_slug: PRODUCT_JETPACK_BACKUP_DAILY } ),
+					properties
+				)
+			).toEqual( {
+				extra: {
+					includedDomain: 'included.com',
+					purchaseDomain: 'purchased.com',
+					purchaseId: 123,
+					purchaseType: 'renewal',
+				},
+				product_slug: PRODUCT_JETPACK_BACKUP_DAILY,
+			} );
+		} );
+	} );
+	describe( 'isSpaceUpgrade', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct(
+					buildPurchase( { product_slug: '1gb_space_upgrade' } ),
+					properties
+				)
+			).toEqual( {
+				extra: {
+					includedDomain: 'included.com',
+					purchaseDomain: 'purchased.com',
+					purchaseId: 123,
+					purchaseType: 'renewal',
+				},
+				product_slug: '1gb_space_upgrade',
+			} );
+		} );
+	} );
+
+	describe( 'renewal not supported', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect( () =>
+				getRenewalItemFromProduct(
+					buildPurchase( { product_slug: 'new_plan_does_not_exist' } ),
+					properties
+				)
+			).toThrowError( 'This product cannot be renewed' );
+		} );
 	} );
 } );
