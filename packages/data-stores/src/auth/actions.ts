@@ -153,11 +153,11 @@ export function createActions( {
 			} else if ( loginResponse.data.two_step_notification_sent ) {
 				yield receiveWpLogin( loginResponse );
 
-				const twoFactorResonse = yield* handle2fa( loginResponse.data );
-				if ( twoFactorResonse.success ) {
-					yield* handleSuccessfulLogin( twoFactorResonse );
-				} else if ( twoFactorResonse.success === false ) {
-					yield receiveWpLoginFailed( twoFactorResonse );
+				const twoFactorResponse = yield* handle2fa( loginResponse.data );
+				if ( twoFactorResponse.success ) {
+					yield* handleSuccessfulLogin( twoFactorResponse );
+				} else if ( twoFactorResponse.success === false ) {
+					yield receiveWpLoginFailed( twoFactorResponse );
 				} else {
 					// If success is undefined then 2fa polling was canceled
 				}
@@ -192,11 +192,11 @@ export function createActions( {
 	}
 
 	function* handle2fa(
-		loginResonseData: Exclude< WpLoginSuccessResponse[ 'data' ], LoginCompleteData >
+		loginResponseData: Exclude< WpLoginSuccessResponse[ 'data' ], LoginCompleteData >
 	) {
-		switch ( loginResonseData.two_step_notification_sent ) {
+		switch ( loginResponseData.two_step_notification_sent ) {
 			case 'push':
-				return yield* handlePush2fa( loginResonseData );
+				return yield* handlePush2fa( loginResponseData );
 		}
 	}
 
