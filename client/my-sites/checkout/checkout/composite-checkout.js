@@ -780,22 +780,26 @@ function createItemToAddToCart( {
 	let cartItem, cartMeta;
 
 	if ( planSlug && plan ) {
+		debug( 'creating plan product' );
 		cartItem = planItem( planSlug );
 		cartItem.product_id = plan.product_id;
 	}
 
 	if ( product.startsWith( 'theme:' ) ) {
+		debug( 'creating theme product' );
 		cartMeta = product.split( ':' )[ 1 ];
 		cartItem = themeItem( cartMeta );
 	}
 
 	if ( product.startsWith( 'domain-mapping:' ) ) {
+		debug( 'creating domain mapping product' );
 		cartMeta = product.split( ':' )[ 1 ];
 		cartItem = domainMapping( { domain: cartMeta } );
 	}
 
 	if ( product.startsWith( 'concierge-session' ) ) {
 		// TODO: prevent adding a conciergeSessionItem if one already exists
+		debug( 'creating concierge product' );
 		cartItem = conciergeSessionItem();
 	}
 
@@ -803,10 +807,12 @@ function createItemToAddToCart( {
 		( product.startsWith( 'jetpack_backup' ) || product.startsWith( 'jetpack_search' ) ) &&
 		isJetpackNotAtomic
 	) {
+		debug( 'creating jetpack product' );
 		cartItem = jetpackProductItem( product );
 	}
 
 	if ( ! cartItem ) {
+		debug( 'no product created' );
 		return null;
 	}
 
