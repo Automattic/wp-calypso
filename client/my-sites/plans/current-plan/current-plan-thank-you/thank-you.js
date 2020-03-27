@@ -94,7 +94,10 @@ export class ThankYouCard extends Component {
 					) }
 					{ showSearchRedirects && (
 						<p className="current-plan-thank-you__followup">
-							<Button primary href={ siteAdminUrl + 'customize.php' }>
+							<Button
+								primary
+								href={ siteAdminUrl + 'customize.php?autofocus[section]=jetpack_search' }
+							>
 								{ translate( 'Customize Search now' ) }
 							</Button>
 
