@@ -103,10 +103,12 @@
 .form-toggle.is-toggling {
 	+ .form-toggle__label .form-toggle__switch {
 		background: var( --color-primary );
+		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 	&:checked {
 		+ .form-toggle__label .form-toggle__switch {
 			background: var( --color-neutral-10 );
+			animation: loading-fade 1.6s ease-in-out infinite;
 		}
 	}
 }
