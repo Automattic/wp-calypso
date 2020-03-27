@@ -9,16 +9,14 @@ import 'moment-timezone'; // monkey patches the existing moment.js
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
-import FormSectionHeading from 'components/forms/form-section-heading';
+import ContactFormNotice from 'me/help/contact-form-notice/index';
 import { useLocalizedMoment } from 'components/localized-moment';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 const DATE_FORMAT = 'LLL';
+
+export const xmasHolidayName = translate( 'Christmas', {
+	context: 'Holiday name',
+} );
 
 const LiveChatClosureNotice = ( { closesAt, compact, displayAt, holidayName, reopensAt } ) => {
 	const translate = useTranslate();
@@ -26,10 +24,6 @@ const LiveChatClosureNotice = ( { closesAt, compact, displayAt, holidayName, reo
 
 	const currentDate = moment();
 	const guessedTimezone = moment.tz.guess();
-
-	if ( ! currentDate.isBetween( displayAt, reopensAt ) ) {
-		return null;
-	}
 
 	let heading, message;
 
@@ -66,27 +60,14 @@ const LiveChatClosureNotice = ( { closesAt, compact, displayAt, holidayName, reo
 		);
 	}
 
-	if ( compact ) {
-		return (
-			<FoldableCard
-				className="live-chat-closure-notice"
-				clickableHeader={ true }
-				compact={ true }
-				header={ heading }
-			>
-				{ message }
-			</FoldableCard>
-		);
-	}
-
 	return (
-		<div className="live-chat-closure-notice">
-			<FormSectionHeading>{ heading }</FormSectionHeading>
-			<div>
-				<p>{ message }</p>
-			</div>
-			<hr />
-		</div>
+		<ContactFormNotice
+			showAt={ displayAt }
+			hideAt={ reopensAt }
+			heading={ heading }
+			message={ <p>{ message }</p> }
+			compact={ compact }
+		/>
 	);
 };
 
