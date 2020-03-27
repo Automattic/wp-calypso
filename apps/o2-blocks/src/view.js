@@ -1,1 +1,0 @@
-import './spoiler/view.scss';
