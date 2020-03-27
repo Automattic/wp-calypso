@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import { useDispatch } from '@wordpress/data';
 import React from 'react';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { useI18n } from '@automattic/react-i18n';
 import { useHistory } from 'react-router-dom';
 import { Spring, animated } from 'react-spring/renderprops';
@@ -19,6 +20,8 @@ import { SubTitle, Title } from '../../components/titles';
 
 import './style.scss';
 
+type Design = import('../../stores/onboard/types').Design;
+
 // Values for springs:
 const ZOOM_OFF = { transform: 'scale(1)' };
 const ZOOM_ON = { transform: 'scale(1.03)' };
@@ -29,12 +32,22 @@ const DesignSelector: React.FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 	const { push } = useHistory();
 	const makePath = usePath();
+	const { siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
 	const { setSelectedDesign, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
 	const handleStartOverButtonClick = () => {
 		resetOnboardStore();
 	};
 
+	const getDesignUrl = ( design: Design ) => {
+		const mshotsUrl = 'https://s.wordpress.com/mshots/v1/';
+		const previewUrl = addQueryArgs( design.src, {
+			vertical: siteVertical?.label,
+			font_headings: design.fonts[ 0 ],
+			font_base: design.fonts[ 1 ],
+		} );
+		return mshotsUrl + encodeURIComponent( previewUrl );
+	};
 	// Track hover/focus
 	const [ hoverDesign, setHoverDesign ] = React.useState< string >();
 	const [ focusDesign, setFocusDesign ] = React.useState< string >();
@@ -95,7 +108,7 @@ const DesignSelector: React.FunctionComponent = () => {
 										>
 											{ ( props2: React.CSSProperties ) => (
 												<animated.span style={ props2 } className="design-selector__image-frame">
-													<img alt={ design.title } src={ design.src } srcSet={ design.srcset } />
+													<img alt={ design.title } src={ getDesignUrl( design ) } />
 												</animated.span>
 											) }
 										</Spring>
