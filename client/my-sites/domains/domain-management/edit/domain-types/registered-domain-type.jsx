@@ -366,6 +366,7 @@ class RegisteredDomainType extends React.Component {
 							  } ) }
 					</div>
 					{ this.renderDefaultRenewButton() }
+					<div className="domain-types__break" />
 					{ ! newStatusDesignAutoRenew && domain.currentUserCanManage && (
 						<div>
 							<SubscriptionSettings

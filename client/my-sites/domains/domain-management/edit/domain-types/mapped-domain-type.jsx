@@ -277,6 +277,7 @@ class MappedDomainType extends React.Component {
 				<Card compact={ true } className="domain-types__expiration-row">
 					<div>{ expiresText }</div>
 					{ this.renderDefaultRenewButton() }
+					<div className="domain-types__break" />
 					{ ! newStatusDesignAutoRenew && domain.subscriptionId && (
 						<div>
 							<SubscriptionSettings
