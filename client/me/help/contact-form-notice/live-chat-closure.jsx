@@ -13,13 +13,13 @@ import ContactFormNotice from 'me/help/contact-form-notice/index';
 import { useLocalizedMoment } from 'components/localized-moment';
 
 const DATE_FORMAT = 'LLL';
+const translate = useTranslate();
 
 export const xmasHolidayName = translate( 'Christmas', {
 	context: 'Holiday name',
 } );
 
 const LiveChatClosureNotice = ( { closesAt, compact, displayAt, holidayName, reopensAt } ) => {
-	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
 	const currentDate = moment();
