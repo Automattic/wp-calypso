@@ -1,13 +1,6 @@
 .upsell-nudge.banner.card {
 	display: flex;
 	align-items: center;
-
-	a,
-	button {
-		border: none;
-		box-shadow: none;
-		color: var( --color-text-inverted );
-	}
 }
 
 .upsell-nudge.banner.card.is-compact {
@@ -18,6 +11,13 @@
 	color: var( --color-text-inverted );
 	margin-top: -1px;
 	margin-bottom: -1px;
+
+	a,
+	button {
+		border: none;
+		box-shadow: none;
+		color: var( --color-text-inverted );
+	}
 
 	.banner__icon-circle,
 	.banner__icon {
