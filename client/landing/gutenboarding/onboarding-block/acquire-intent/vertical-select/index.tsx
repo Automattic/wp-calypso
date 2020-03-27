@@ -6,6 +6,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { Suggestions } from '@automattic/components';
 import { useI18n } from '@automattic/react-i18n';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
+import { ENTER } from '@wordpress/keycodes';
 import classnames from 'classnames';
 
 /**
@@ -33,11 +34,6 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit = () => un
 	const { __: NO__ } = useI18n();
 	const inputRef = React.useRef< HTMLInputElement >( null );
 	const [ isFocused, setIsFocused ] = React.useState< boolean >( false );
-
-	const submitHandler: React.EventHandler< any > = e => {
-		e.preventDefault();
-		onSubmit();
-	};
 
 	/**
 	 * Ref to the <Suggestions />, necessary for handling input events
@@ -71,16 +67,6 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit = () => un
 
 	const normalizedInputValue = inputValue.trim().toLowerCase();
 	const hasValue = !! normalizedInputValue.length;
-
-	const handleSuggestionChangeEvent = ( e: React.ChangeEvent< HTMLInputElement > ) => {
-		setInputValue( e.target.value );
-	};
-
-	const handleSuggestionKeyDown = ( e: React.KeyboardEvent< HTMLInputElement > ) => {
-		if ( suggestionRef.current ) {
-			suggestionRef.current.handleKeyEvent( e );
-		}
-	};
 
 	const loadingMessage = [
 		{
@@ -121,16 +107,33 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit = () => un
 	const handleSelect = ( vertical: SiteVertical ) => {
 		setSiteVertical( vertical );
 		setInputValue( vertical.label );
+		setIsFocused( false ); // prevent executing handleBlur()
 		onSubmit();
 	};
 
-	const handleBlur = () => {
-		const vertical = suggestions.find( ( { label } ) =>
-			label.toLowerCase().includes( normalizedInputValue )
-		) ?? { label: inputValue.trim() };
+	const handleSuggestionChangeEvent = ( e: React.ChangeEvent< HTMLInputElement > ) => {
+		setInputValue( e.target.value );
+	};
 
-		setSiteVertical( vertical );
-		setIsFocused( false );
+	const handleInputKeyDownEvent = ( e: React.KeyboardEvent< HTMLInputElement > ) => {
+		if ( e.keyCode === ENTER ) {
+			e.preventDefault();
+			handleSelect( { label: inputValue } );
+			return;
+		}
+		if ( suggestionRef.current ) {
+			suggestionRef.current.handleKeyEvent( e );
+		}
+	};
+
+	const handleBlur = () => {
+		if ( isFocused ) {
+			const vertical = suggestions.find( ( { label } ) =>
+				label.toLowerCase().includes( normalizedInputValue )
+			) ?? { label: inputValue.trim() };
+
+			handleSelect( vertical );
+		}
 	};
 
 	// TODO: Write a better translators comment.
@@ -150,7 +153,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit = () => un
 					onBlur={ handleBlur }
 					onFocus={ () => setIsFocused( true ) }
 					onChange={ handleSuggestionChangeEvent }
-					onKeyDown={ handleSuggestionKeyDown }
+					onKeyDown={ handleInputKeyDownEvent }
 					placeholder={ animatedPlaceholder }
 					value={ inputValue }
 				/>
@@ -203,7 +206,6 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit = () => un
 			className={ classnames( 'vertical-select', {
 				'vertical-select--without-value': ! hasValue,
 			} ) }
-			onSubmit={ submitHandler }
 		>
 			{ madlib }
 		</form>
