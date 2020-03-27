@@ -192,7 +192,7 @@ type ManagedContactDetailsUpdate = ManagedContactDetailsShape< undefined | strin
  * Different subsets of the details are mandatory depending on what is
  * in the cart. This type lets us define these subsets declaratively.
  */
-export type ManagedContactDetailsRequiredMask = ManagedContactDetailsShape< boolean >;
+type ManagedContactDetailsRequiredMask = ManagedContactDetailsShape< boolean >;
 
 /*
  * All child components in composite checkout are controlled -- they accept
