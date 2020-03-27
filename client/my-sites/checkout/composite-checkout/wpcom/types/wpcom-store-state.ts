@@ -376,8 +376,8 @@ function prepareCaDomainContactExtraDetails(
 		return {
 			lang: details.tldExtraFields.ca.lang.value,
 			organization: details.organization.value,
-			legal_type: details.tldExtraFields.ca.legalType.value,
-			cira_agreement_accepted: details.tldExtraFields.ca.ciraAgreementAccepted.value === 'true',
+			legalType: details.tldExtraFields.ca.legalType.value,
+			ciraAgreementAccepted: details.tldExtraFields.ca.ciraAgreementAccepted.value === 'true',
 		};
 	}
 	return null;
@@ -390,8 +390,8 @@ function prepareCaDomainContactExtraDetailsErrors(
 		return {
 			lang: details.tldExtraFields.ca.lang.errors[ 0 ],
 			organization: details.organization.errors[ 0 ],
-			legal_type: details.tldExtraFields.ca.legalType.errors[ 0 ],
-			cira_agreement_accepted: details.tldExtraFields.ca.ciraAgreementAccepted.errors[ 0 ],
+			legalType: details.tldExtraFields.ca.legalType.errors[ 0 ],
+			ciraAgreementAccepted: details.tldExtraFields.ca.ciraAgreementAccepted.errors[ 0 ],
 		};
 	}
 	return null;
@@ -402,9 +402,9 @@ function prepareUkDomainContactExtraDetails(
 ): UkDomainContactExtraDetails | null {
 	if ( details.tldExtraFields?.uk ) {
 		return {
-			registrant_type: details.tldExtraFields.uk.registrantType.value,
-			registration_number: details.tldExtraFields.uk.registrationNumber.value,
-			trading_name: details.tldExtraFields.uk.tradingName.value,
+			registrantType: details.tldExtraFields.uk.registrantType.value,
+			registrationNumber: details.tldExtraFields.uk.registrationNumber.value,
+			tradingName: details.tldExtraFields.uk.tradingName.value,
 		};
 	}
 	return null;
@@ -415,9 +415,9 @@ function prepareUkDomainContactExtraDetailsErrors(
 ): UkDomainContactExtraDetailsErrors | null {
 	if ( details.tldExtraFields?.uk ) {
 		return {
-			registrant_type: details.tldExtraFields.uk.registrantType.errors[ 0 ],
-			registration_number: details.tldExtraFields.uk.registrationNumber.errors[ 0 ],
-			trading_name: details.tldExtraFields.uk.tradingName.errors[ 0 ],
+			registrantType: details.tldExtraFields.uk.registrantType.errors[ 0 ],
+			registrationNumber: details.tldExtraFields.uk.registrationNumber.errors[ 0 ],
+			tradingName: details.tldExtraFields.uk.tradingName.errors[ 0 ],
 		};
 	}
 	return null;
@@ -428,10 +428,10 @@ function prepareFrDomainContactExtraDetails(
 ): FrDomainContactExtraDetails | null {
 	if ( details.tldExtraFields?.fr ) {
 		return {
-			registrant_type: details.tldExtraFields.fr.registrantType.value,
-			registrant_vat_id: details.vatId.value,
-			trademark_number: details.tldExtraFields.fr.trademarkNumber.value,
-			siren_sirat: details.tldExtraFields.fr.sirenSirat.value,
+			registrantType: details.tldExtraFields.fr.registrantType.value,
+			registrantVatId: details.vatId.value,
+			trademarkNumber: details.tldExtraFields.fr.trademarkNumber.value,
+			sirenSirat: details.tldExtraFields.fr.sirenSirat.value,
 		};
 	}
 	return null;
@@ -442,10 +442,10 @@ function prepareFrDomainContactExtraDetailsErrors(
 ): FrDomainContactExtraDetailsErrors | null {
 	if ( details.tldExtraFields?.fr ) {
 		return {
-			registrant_type: details.tldExtraFields.fr.registrantType.errors[ 0 ],
-			registrant_vat_id: details.vatId.errors[ 0 ],
-			trademark_number: details.tldExtraFields.fr.trademarkNumber.errors[ 0 ],
-			siren_sirat: details.tldExtraFields.fr.sirenSirat.errors[ 0 ],
+			registrantType: details.tldExtraFields.fr.registrantType.errors[ 0 ],
+			registrantVatId: details.vatId.errors[ 0 ],
+			trademarkNumber: details.tldExtraFields.fr.trademarkNumber.errors[ 0 ],
+			sirenSirat: details.tldExtraFields.fr.sirenSirat.errors[ 0 ],
 		};
 	}
 	return null;
@@ -644,19 +644,19 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 					? {
 							lang: touchIfDifferent( newDetails.lang, oldDetails.tldExtraFields.ca.lang ),
 							legalType: touchIfDifferent(
-								newDetails.legal_type,
+								newDetails.legalType,
 								oldDetails.tldExtraFields.ca.legalType
 							),
 							ciraAgreementAccepted: touchIfDifferent(
-								newDetails.cira_agreement_accepted.toString(),
+								newDetails.ciraAgreementAccepted?.toString(),
 								oldDetails.tldExtraFields.ca.ciraAgreementAccepted
 							),
 					  }
 					: {
 							lang: touchIfDifferent( newDetails.lang, getInitialManagedValue() ),
-							legalType: touchIfDifferent( newDetails.legal_type, getInitialManagedValue() ),
+							legalType: touchIfDifferent( newDetails.legalType, getInitialManagedValue() ),
 							ciraAgreementAccepted: touchIfDifferent(
-								newDetails.cira_agreement_accepted.toString(),
+								newDetails.ciraAgreementAccepted?.toString(),
 								getInitialManagedValue()
 							),
 					  },
@@ -675,28 +675,28 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 				uk: oldDetails.tldExtraFields?.uk
 					? {
 							registrantType: touchIfDifferent(
-								newDetails.registrant_type,
+								newDetails.registrantType,
 								oldDetails.tldExtraFields.uk.registrantType
 							),
 							registrationNumber: touchIfDifferent(
-								newDetails.registration_number,
+								newDetails.registrationNumber,
 								oldDetails.tldExtraFields.uk.registrationNumber
 							),
 							tradingName: touchIfDifferent(
-								newDetails.trading_name,
+								newDetails.tradingName,
 								oldDetails.tldExtraFields.uk.tradingName
 							),
 					  }
 					: {
 							registrantType: touchIfDifferent(
-								newDetails.registrant_type,
+								newDetails.registrantType,
 								getInitialManagedValue()
 							),
 							registrationNumber: touchIfDifferent(
-								newDetails.registration_number,
+								newDetails.registrationNumber,
 								getInitialManagedValue()
 							),
-							tradingName: touchIfDifferent( newDetails.trading_name, getInitialManagedValue() ),
+							tradingName: touchIfDifferent( newDetails.tradingName, getInitialManagedValue() ),
 					  },
 			},
 		};
@@ -708,34 +708,34 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 	): ManagedContactDetails => {
 		return {
 			...oldDetails,
-			vatId: touchIfDifferent( newDetails.registrant_vat_id, oldDetails.vatId ),
+			vatId: touchIfDifferent( newDetails.registrantVatId, oldDetails.vatId ),
 			tldExtraFields: {
 				...oldDetails.tldExtraFields,
 				fr: oldDetails.tldExtraFields?.fr
 					? {
 							registrantType: touchIfDifferent(
-								newDetails.registrant_type,
+								newDetails.registrantType,
 								oldDetails.tldExtraFields.fr.registrantType
 							),
 							trademarkNumber: touchIfDifferent(
-								newDetails.trademark_number,
+								newDetails.trademarkNumber,
 								oldDetails.tldExtraFields.fr.trademarkNumber
 							),
 							sirenSirat: touchIfDifferent(
-								newDetails.siren_sirat,
+								newDetails.sirenSirat,
 								oldDetails.tldExtraFields.fr.sirenSirat
 							),
 					  }
 					: {
 							registrantType: touchIfDifferent(
-								newDetails.registrant_type,
+								newDetails.registrantType,
 								getInitialManagedValue()
 							),
 							trademarkNumber: touchIfDifferent(
-								newDetails.trademark_number,
+								newDetails.trademarkNumber,
 								getInitialManagedValue()
 							),
-							sirenSirat: touchIfDifferent( newDetails.siren_sirat, getInitialManagedValue() ),
+							sirenSirat: touchIfDifferent( newDetails.sirenSirat, getInitialManagedValue() ),
 					  },
 			},
 		};
