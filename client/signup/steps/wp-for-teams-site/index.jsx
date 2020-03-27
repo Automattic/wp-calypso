@@ -270,7 +270,6 @@ class WpForTeamsSite extends React.Component {
 				>
 					<FormLabel htmlFor="site">{ this.props.translate( 'Choose a site address' ) }</FormLabel>
 					<FormTextInput
-						autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 						autoCapitalize={ 'off' }
 						className="wp-for-teams-site__site-url"
 						disabled={ fieldDisabled }
@@ -320,6 +319,7 @@ class WpForTeamsSite extends React.Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
+				subHeaderText=""
 				fallbackHeaderText={ this.props.translate( "Let's get started" ) }
 				stepContent={ this.renderSiteForm() }
 			/>
