@@ -528,7 +528,7 @@ export class DomainWarnings extends React.PureComponent {
 			domain =>
 				domain.registrationDate &&
 				moment( domain.registrationDate )
-					.add( 3, 'days' )
+					.add( 30, 'minutes' )
 					.isAfter( moment() ) &&
 				domain.type === domainTypes.REGISTERED
 		);
@@ -545,7 +545,7 @@ export class DomainWarnings extends React.PureComponent {
 			if ( hasNewPrimaryDomain ) {
 				text = translate(
 					'{{pNode}}We are setting up your new domains for you. ' +
-						'They should start working immediately, but may be unreliable during the first 72 hours.{{/pNode}}' +
+						'They should start working immediately, but may be unreliable during the first 30 minutes.{{/pNode}}' +
 						'{{pNode}}If you are unable to access your site at %(primaryDomain)s, try setting the primary domain to a domain ' +
 						'you know is working. {{domainsLink}}Learn more{{/domainsLink}} about setting the primary domain.{{/pNode}}',
 					{
@@ -559,7 +559,7 @@ export class DomainWarnings extends React.PureComponent {
 			} else {
 				text = translate(
 					'We are setting up your new domains for you. They should start working immediately, ' +
-						'but may be unreliable during the first 72 hours. ' +
+						'but may be unreliable during the first 30 minutes. ' +
 						'{{domainsLink}}Learn more{{/domainsLink}}.',
 					{ components: { domainsLink } }
 				);
@@ -569,7 +569,7 @@ export class DomainWarnings extends React.PureComponent {
 			if ( hasNewPrimaryDomain ) {
 				text = translate(
 					'{{pNode}}We are setting up {{strong}}%(domainName)s{{/strong}} for you. ' +
-						'It should start working immediately, but may be unreliable during the first 72 hours.{{/pNode}}' +
+						'It should start working immediately, but may be unreliable during the first 30 minutes.{{/pNode}}' +
 						'{{pNode}}If you are unable to access your site at {{strong}}%(domainName)s{{/strong}}, ' +
 						'try setting the primary domain to a domain you know is working. ' +
 						'{{domainsLink}}Learn more{{/domainsLink}} about setting the primary domain, or ' +
@@ -587,7 +587,7 @@ export class DomainWarnings extends React.PureComponent {
 			} else {
 				text = translate(
 					'We are setting up {{strong}}%(domainName)s{{/strong}} for you. ' +
-						'It should start working immediately, but may be unreliable during the first 72 hours. ' +
+						'It should start working immediately, but may be unreliable during the first 30 minutes. ' +
 						'{{domainsLink}}Learn more{{/domainsLink}} about your new domain, or ' +
 						'{{tryNowLink}} try it now{{/tryNowLink}}.',
 					{
