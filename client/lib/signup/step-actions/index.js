@@ -535,9 +535,12 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 }
 
 export function createWpForTeamsSite( callback, dependencies, stepData, reduxStore ) {
-	const { themeSlugWithRepo } = dependencies;
 	const { site, siteTitle } = stepData;
 	const state = reduxStore.getState();
+
+	// The new p2 theme for WP for Teams project.
+	// More info: https://lighthousep2.wordpress.com/2020/03/19/wordpress-for-teams-the-plan/
+	const themeSlugWithRepo = 'pub/p2020';
 
 	const data = {
 		blog_name: site,

@@ -53,11 +53,6 @@ export function generateSteps( {
 			optionalDependencies: [ 'useThemeHeadstart' ],
 		},
 
-		'provide-theme': {
-			stepName: 'provide-theme',
-			providesDependencies: [ 'themeSlug', 'themeSlugWithRepo' ],
-		},
-
 		'portfolio-themes': {
 			stepName: 'portfolio-themes',
 			props: {
@@ -601,7 +596,6 @@ export function generateSteps( {
 			stepName: 'wp-for-teams-site',
 			apiRequestFunction: createWpForTeamsSite,
 			providesDependencies: [ 'siteSlug' ],
-			dependencies: [ 'themeSlugWithRepo' ],
 		},
 	};
 }
