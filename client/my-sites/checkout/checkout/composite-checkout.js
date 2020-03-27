@@ -240,6 +240,7 @@ export default function CompositeCheckout( {
 
 	const { productForCart, canInitializeCart } = usePrepareProductForCart(
 		planSlug,
+		product,
 		isJetpackNotAtomic
 	);
 
@@ -768,34 +769,45 @@ function isNotCouponError( error ) {
 /**
  * Create and return an object to be added to the cart
  *
- * @returns ResponseCartProduct
+ * @returns ResponseCartProduct | null
  */
-function createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) {
+function createItemToAddToCart( {
+	planSlug = null,
+	product = '',
+	plan = null,
+	isJetpackNotAtomic = false,
+} ) {
 	let cartItem, cartMeta;
 
-	cartItem = planItem( planSlug );
-	cartItem.product_id = plan.product_id;
+	if ( planSlug && plan ) {
+		cartItem = planItem( planSlug );
+		cartItem.product_id = plan.product_id;
+	}
 
-	if ( planSlug.startsWith( 'theme' ) ) {
-		cartMeta = planSlug.split( ':' )[ 1 ];
+	if ( product.startsWith( 'theme:' ) ) {
+		cartMeta = product.split( ':' )[ 1 ];
 		cartItem = themeItem( cartMeta );
 	}
 
-	if ( planSlug.startsWith( 'domain-mapping' ) ) {
-		cartMeta = planSlug.split( ':' )[ 1 ];
+	if ( product.startsWith( 'domain-mapping:' ) ) {
+		cartMeta = product.split( ':' )[ 1 ];
 		cartItem = domainMapping( { domain: cartMeta } );
 	}
 
-	if ( planSlug.startsWith( 'concierge-session' ) ) {
+	if ( product.startsWith( 'concierge-session' ) ) {
 		// TODO: prevent adding a conciergeSessionItem if one already exists
 		cartItem = conciergeSessionItem();
 	}
 
 	if (
-		( planSlug.startsWith( 'jetpack_backup' ) || planSlug.startsWith( 'jetpack_search' ) ) &&
+		( product.startsWith( 'jetpack_backup' ) || product.startsWith( 'jetpack_search' ) ) &&
 		isJetpackNotAtomic
 	) {
-		cartItem = jetpackProductItem( planSlug );
+		cartItem = jetpackProductItem( product );
+	}
+
+	if ( ! cartItem ) {
+		return null;
 	}
 
 	cartItem.extra = { ...cartItem.extra, context: 'calypstore' };
@@ -1447,19 +1459,18 @@ const DoNotPayThis = styled.span`
 	margin-right: 8px;
 `;
 
-function usePrepareProductForCart( planSlug, isJetpackNotAtomic ) {
+function usePrepareProductForCart( planSlug, product, isJetpackNotAtomic ) {
 	const plans = useSelector( state => getPlans( state ) );
 	const plan = useSelector( state => getPlanBySlug( state, planSlug ) );
 	const reduxDispatch = useDispatch();
 	const [ canInitializeCart, setCanInitializeCart ] = useState( ! planSlug );
 	const [ productForCart, setProductForCart ] = useState();
 
-	// Fetch plans if they are not loaded
 	useEffect( () => {
 		if ( ! planSlug ) {
 			return;
 		}
-		if ( ! plans || plans.length < 1 ) {
+		if ( ! plans?.length > 0 ) {
 			debug( 'there is a request to add a plan but no plans are loaded; fetching plans' );
 			reduxDispatch( requestPlans() );
 			return;
@@ -1469,10 +1480,19 @@ function usePrepareProductForCart( planSlug, isJetpackNotAtomic ) {
 			setCanInitializeCart( true );
 			return;
 		}
-		debug( 'preparing item that was requested in url', { planSlug, plan, isJetpackNotAtomic } );
+		debug( 'preparing plan that was requested in url', { planSlug, plan, isJetpackNotAtomic } );
 		setProductForCart( createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) );
 		setCanInitializeCart( true );
 	}, [ reduxDispatch, planSlug, plan, plans, isJetpackNotAtomic ] );
+
+	useEffect( () => {
+		if ( ! product ) {
+			return;
+		}
+		debug( 'preparing product that was requested in url', { product, isJetpackNotAtomic } );
+		setProductForCart( createItemToAddToCart( { product, isJetpackNotAtomic } ) );
+		setCanInitializeCart( true );
+	}, [ reduxDispatch, isJetpackNotAtomic, product ] );
 
 	return { productForCart, canInitializeCart };
 }
