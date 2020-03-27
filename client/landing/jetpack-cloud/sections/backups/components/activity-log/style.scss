@@ -1,0 +1,62 @@
+.activity-log {
+	// todo: there is some strangeness with the jetpack cloud css, these are temporary fixes
+	.filterbar__wrap.card {
+		display: flex;
+	}
+
+	// todo: default button styles are overriding these rules, so just restate for a temp. fix
+	.pagination__list-item .button,
+	.pagination__list-item.pagination__ellipsis span {
+		padding: 8px 12px;
+		background-color: var( --color-surface );
+		border: solid 1px var( --color-neutral-10 );
+		border-right: none;
+		font-size: 14px;
+		line-height: 18px;
+		color: var( --color-text-subtle );
+		text-align: center;
+		border-radius: 0;
+		display: flex;
+		flex-wrap: nowrap;
+	}
+
+	.pagination__list-item.is-selected .button {
+		border-color: var( --color-primary );
+		background-color: var( --color-primary );
+		color: var( --color-text-inverted );
+	}
+
+	.pagination__list-item:last-child .button {
+		border-right: 1px solid var( --color-neutral-10 );
+		border-top-right-radius: 4px;
+		border-bottom-right-radius: 4px;
+	}
+
+	.pagination__list-item:first-child .button {
+		border-top-left-radius: 4px;
+		border-bottom-left-radius: 4px;
+	}
+
+	.button.is-borderless:disabled,
+	.button.is-borderless[disabled] {
+		color: var( --color-neutral-20 );
+		cursor: default;
+	}
+	.pagination__list-item.pagination__arrow.is-right .gridicon {
+		margin-left: 2px;
+	}
+
+	.pagination__list-item.pagination__arrow.is-left .gridicon {
+		margin-right: 2px;
+	}
+
+	.pagination__list-item.pagination__arrow .gridicon {
+		vertical-align: middle;
+		width: 18px;
+		height: 18px;
+	}
+	.pagination__list-item .button .gridicon,
+	.pagination__list-item.pagination__ellipsis span .gridicon {
+		top: 1px;
+	}
+}

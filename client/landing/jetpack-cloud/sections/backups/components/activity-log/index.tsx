@@ -16,6 +16,11 @@ import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 import Pagination from 'components/pagination';
 import Spinner from 'components/spinner';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 interface Props {
 	siteId: number;
 	allowRestore: boolean;
@@ -50,6 +55,19 @@ const BackupActivityLog: FunctionComponent< Props > = ( {
 	};
 
 	const renderData = ( loadedActivities: Array< Activity > ) => {
+		const renderedActivities = loadedActivities
+			.slice( ( page - 1 ) * pageSize, page * pageSize )
+			.map( activity => (
+				<ActivityCard
+					{ ...{
+						key: activity.activityId,
+						moment,
+						activity,
+						allowRestore,
+					} }
+				/>
+			) );
+
 		return (
 			<>
 				<Filterbar
@@ -65,16 +83,7 @@ const BackupActivityLog: FunctionComponent< Props > = ( {
 					total={ loadedActivities.length }
 					pageClick={ setPage }
 				/>
-				{ loadedActivities.slice( ( page - 1 ) * pageSize, page * pageSize ).map( activity => (
-					<ActivityCard
-						{ ...{
-							key: activity.activityId,
-							moment,
-							activity,
-							allowRestore,
-						} }
-					/>
-				) ) }
+				{ renderedActivities }
 				<Pagination
 					page={ page }
 					perPage={ pageSize }
@@ -85,7 +94,9 @@ const BackupActivityLog: FunctionComponent< Props > = ( {
 		);
 	};
 
-	return activities ? renderData( activities ) : renderLoading();
+	return (
+		<div className="activity-log">{ activities ? renderData( activities ) : renderLoading() }</div>
+	);
 };
 
 export default BackupActivityLog;
