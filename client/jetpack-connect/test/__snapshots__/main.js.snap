@@ -22,6 +22,6 @@ Array [
 
 exports[`JetpackConnectMain goToRemoteAuth should fire redirect 1`] = `
 Array [
-  "example.com/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=test",
+  "example.com/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&jetpack_connect_login_redirect=true&calypso_env=test",
 ]
 `;
