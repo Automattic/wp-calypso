@@ -68,13 +68,6 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit = () => un
 	const normalizedInputValue = inputValue.trim().toLowerCase();
 	const hasValue = !! normalizedInputValue.length;
 
-	const loadingMessage = [
-		{
-			label: '',
-			category: NO__( 'Loading, please wait…' ),
-		},
-	];
-
 	let suggestions: Suggestion[];
 
 	if ( ! normalizedInputValue ) {
@@ -175,11 +168,11 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit = () => un
 					/>
 				) }
 				<div className="vertical-select__suggestions">
-					{ isFocused && (
+					{ isFocused && !! verticals.length && (
 						<Suggestions
 							ref={ suggestionRef }
 							query={ inputValue }
-							suggestions={ ! verticals.length ? loadingMessage : suggestions }
+							suggestions={ suggestions }
 							suggest={ handleSelect }
 							title={ NO__( 'Suggestions' ) }
 						/>
