@@ -21,19 +21,18 @@ import { canCurrentUserUseCustomerHome, getSiteOption } from 'state/sites/select
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
-import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
-import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import QueryHomeLayout from 'components/data/query-home-layout';
 import { getHomeLayout } from 'state/selectors/get-home-layout';
 import Notices from 'my-sites/customer-home/locations/notices';
+import Upsells from 'my-sites/customer-home/locations/upsells';
 import Primary from 'my-sites/customer-home/locations/primary';
 import Secondary from 'my-sites/customer-home/locations/secondary';
-import Upsells from 'my-sites/customer-home/locations/upsells';
 
 /**
  * Style dependencies
@@ -47,7 +46,7 @@ const Home = ( {
 	site,
 	siteId,
 	siteIsUnlaunched,
-	trackAction,
+	trackViewSiteAction,
 } ) => {
 	const translate = useTranslate();
 
@@ -68,23 +67,21 @@ const Home = ( {
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 			{ siteId && <QueryHomeLayout siteId={ siteId } /> }
 			<SidebarNavigation />
-			<div className="customer-home__page-heading">
-				<div className="customer-home__heading">
-					<FormattedHeader
-						headerText={ translate( 'My Home' ) }
-						subHeaderText={ translate(
-							'Your home base for all the posting, editing, and growing of your site'
-						) }
-						align="left"
-					/>
-					{ ! siteIsUnlaunched && (
-						<div className="customer-home__view-site-button">
-							<Button href={ site.URL } onClick={ () => trackAction( 'my_site', 'view_site' ) }>
-								{ translate( 'View site' ) }
-							</Button>
-						</div>
+			<div className="customer-home__heading">
+				<FormattedHeader
+					headerText={ translate( 'My Home' ) }
+					subHeaderText={ translate(
+						'Your home base for all the posting, editing, and growing of your site'
 					) }
-				</div>
+					align="left"
+				/>
+				{ ! siteIsUnlaunched && (
+					<div className="customer-home__view-site-button">
+						<Button href={ site.URL } onClick={ trackViewSiteAction }>
+							{ translate( 'View site' ) }
+						</Button>
+					</div>
+				) }
 			</div>
 			<Notices checklistMode={ checklistMode } />
 			<Upsells />
@@ -111,59 +108,52 @@ Home.propTypes = {
 	siteSlug: PropTypes.string.isRequired,
 	canUserUseCustomerHome: PropTypes.bool.isRequired,
 	hasChecklistData: PropTypes.bool.isRequired,
-	isChecklistComplete: function( props, propName, componentName ) {
-		const propValue = props[ propName ]; // the actual value of `isChecklistComplete`
-		if ( null !== propValue && 'boolean' !== typeof propValue ) {
-			return new Error(
-				`isChecklistComplete prop of ${ componentName } only accepts null or Boolean.`
-			);
-		}
-	},
-	trackAction: PropTypes.func.isRequired,
+	trackViewSiteAction: PropTypes.func.isRequired,
 	isStaticHomePage: PropTypes.bool.isRequired,
 };
 
-const connectHome = connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const siteChecklist = getSiteChecklist( state, siteId );
-		const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
-		const isChecklistComplete = isSiteChecklistComplete( state, siteId );
-		const user = getCurrentUser( state );
-		const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
+const mapStateToProps = state => {
+	const siteId = getSelectedSiteId( state );
+	const siteChecklist = getSiteChecklist( state, siteId );
+	const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
+	const user = getCurrentUser( state );
+	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
 
-		return {
-			site: getSelectedSite( state ),
-			siteId,
-			siteSlug: getSelectedSiteSlug( state ),
-			canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
-			hasChecklistData,
-			isChecklistComplete,
-			needsEmailVerification: ! isCurrentUserEmailVerified( state ),
-			isStaticHomePage:
-				! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
-			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
-			user,
-			cards: getHomeLayout( state, siteId ),
-		};
-	},
-	dispatch => ( {
-		trackAction: ( section, action, isStaticHomePage ) =>
-			dispatch(
-				composeAnalytics(
-					recordTracksEvent( `calypso_customer_home_${ section }_${ action }_click`, {
-						is_static_home_page: isStaticHomePage,
-					} ),
-					bumpStat( 'calypso_customer_home', `${ section }_${ action }` )
-				)
-			),
-	} ),
-	( stateProps, dispatchProps, ownProps ) => ( {
-		...stateProps,
+	return {
+		site: getSelectedSite( state ),
+		siteId,
+		siteSlug: getSelectedSiteSlug( state ),
+		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
+		hasChecklistData,
+		isStaticHomePage:
+			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
+		siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
+		user,
+		cards: getHomeLayout( state, siteId ),
+	};
+};
+
+const trackViewSiteAction = isStaticHomePage =>
+	composeAnalytics(
+		recordTracksEvent( 'calypso_customer_home_my_site_view_site_click', {
+			is_static_home_page: isStaticHomePage,
+		} ),
+		bumpStat( 'calypso_customer_home', 'my_site_view_site' )
+	);
+
+const mapDispatchToProps = {
+	trackViewSiteAction,
+};
+
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const { isStaticHomePage } = stateProps;
+	return {
 		...ownProps,
-		trackAction: ( section, action ) =>
-			dispatchProps.trackAction( section, action, stateProps.isStaticHomePage ),
-	} )
-);
+		...stateProps,
+		trackViewSiteAction: () => dispatchProps.trackViewSiteAction( isStaticHomePage ),
+	};
+};
+
+const connectHome = connect( mapStateToProps, mapDispatchToProps, mergeProps );
 
 export default flowRight( connectHome, withTrackingTool( 'HotJar' ) )( Home );
