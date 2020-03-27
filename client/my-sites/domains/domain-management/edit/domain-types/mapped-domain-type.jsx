@@ -242,7 +242,7 @@ class MappedDomainType extends React.Component {
 				<div>
 					<p>{ primaryMessage }</p>
 					{ ! isSubdomain( domain.name ) && (
-						<ul>
+						<ul className="mapped-domain-type__name-server-list">
 							{ WPCOM_DEFAULTS.map( nameServer => {
 								return <li key={ nameServer }>{ nameServer }</li>;
 							} ) }
