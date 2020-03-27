@@ -70,10 +70,6 @@ class ProductPlanOverlapNotices extends Component {
 		const currentProducts = purchases.filter( purchase =>
 			includes( products, purchase.productSlug )
 		);
-		if ( ! currentProducts.length ) {
-			return null;
-		}
-
 		return currentProducts.map( product => product.productSlug );
 	}
 
