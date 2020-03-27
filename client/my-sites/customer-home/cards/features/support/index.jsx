@@ -39,7 +39,7 @@ const Support = ( { trackContactAction, trackDocsAction } ) => {
 			</h6>
 			<div className="support__content">
 				<img src={ happinessIllustration } alt={ translate( 'Support' ) } />
-				<VerticalNav className="support__links customer-home__card-links">
+				<VerticalNav>
 					<VerticalNavItem
 						path={ localizeUrl( 'https://en.support.wordpress.com' ) }
 						external
