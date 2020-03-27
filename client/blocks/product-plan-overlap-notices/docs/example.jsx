@@ -7,23 +7,9 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import SitesDropdown from 'components/sites-dropdown';
+import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
+import { JETPACK_PLANS } from 'lib/plans/constants';
 import ProductPlanOverlapNotices from '../';
-
-const jetpackPlans = [
-	'jetpack_personal',
-	'jetpack_personal_monthly',
-	'jetpack_premium',
-	'jetpack_premium_monthly',
-	'jetpack_business',
-	'jetpack_business_monthly',
-];
-
-const jetpackProducts = [
-	'jetpack_backup_daily',
-	'jetpack_backup_daily_monthly',
-	'jetpack_backup_realtime',
-	'jetpack_backup_realtime_monthly',
-];
 
 class ProductPlanOverlapNoticesExample extends Component {
 	state = {
@@ -39,8 +25,8 @@ class ProductPlanOverlapNoticesExample extends Component {
 
 				{ this.state.siteId ? (
 					<ProductPlanOverlapNotices
-						plans={ jetpackPlans }
-						products={ jetpackProducts }
+						plans={ JETPACK_PLANS }
+						products={ JETPACK_PRODUCTS_LIST }
 						siteId={ this.state.siteId }
 					/>
 				) : (

@@ -3,34 +3,20 @@ Product Plan Overlap Notices
 
 Product Plan Overlap Notices is a React component for rendering a block with notices.
 
-Those notices will appear when there is a feature overlap between the current plan and the current product, when they are within the provided list of products and plans.
+Those notices will appear when there is a feature overlap between the current plan and any products, when they are within the provided list of products and plans.
 
 ## Usage
 
 ```jsx
 import React from 'react';
 import ProductPlanOverlapNotices from 'blocks/product-plan-overlap-notices';
-
-const jetpackPlans = [
-	'jetpack_personal',
-	'jetpack_personal_monthly',
-	'jetpack_premium',
-	'jetpack_premium_monthly',
-	'jetpack_business',
-	'jetpack_business_monthly',
-];
-
-const jetpackProducts = [
-	'jetpack_backup_daily',
-	'jetpack_backup_daily_monthly',
-	'jetpack_backup_realtime',
-	'jetpack_backup_realtime_monthly',
-];
+import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
+import { JETPACK_PLANS } from 'lib/plans/constants';
 
 export default class extends React.Component {
 	render() {
 		return (
-			<ProductPlanOverlapNotices plans={ jetpackPlans } products={ jetpackProducts } />
+			<ProductPlanOverlapNotices plans={ JETPACK_PLANS } products={ JETPACK_PRODUCTS_LIST } />
 		);
 	}
 }

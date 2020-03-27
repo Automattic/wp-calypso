@@ -4,7 +4,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { find, includes, some } from 'lodash';
+import { includes, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -38,7 +38,7 @@ class ProductPlanOverlapNotices extends Component {
 	};
 
 	hasOverlap() {
-		const { availableProducts, currentPlanSlug, plans, products, purchases } = this.props;
+		const { availableProducts, currentPlanSlug, plans, purchases } = this.props;
 
 		if ( ! currentPlanSlug || ! purchases || ! availableProducts ) {
 			return false;
@@ -50,37 +50,35 @@ class ProductPlanOverlapNotices extends Component {
 		}
 
 		// Is the current product among the products we're interested in?
-		const currentProductSlug = this.getCurrentProductSlug();
-		if ( ! currentProductSlug ) {
+		const currentProductSlugs = this.getCurrentProductSlugs();
+		if ( ! currentProductSlugs.length ) {
 			return false;
 		}
 
 		// Does the current plan include the current product as a feature, or have a superior version of it?
 		return some(
-			products,
+			currentProductSlugs,
 			productSlug =>
-				productSlug === currentProductSlug &&
-				( planHasFeature( currentPlanSlug, productSlug ) ||
-					planHasSuperiorFeature( currentPlanSlug, productSlug ) )
+				planHasFeature( currentPlanSlug, productSlug ) ||
+				planHasSuperiorFeature( currentPlanSlug, productSlug )
 		);
 	}
 
-	getCurrentProductSlug() {
+	getCurrentProductSlugs() {
 		const { products, purchases } = this.props;
 
-		const currentProduct = find( purchases, purchase =>
+		const currentProducts = purchases.filter( purchase =>
 			includes( products, purchase.productSlug )
 		);
-		if ( ! currentProduct ) {
+		if ( ! currentProducts.length ) {
 			return null;
 		}
 
-		return currentProduct.productSlug;
+		return currentProducts.map( product => product.productSlug );
 	}
 
-	getCurrentProductName() {
+	getProductName( currentProductSlug ) {
 		const { availableProducts } = this.props;
-		const currentProductSlug = this.getCurrentProductSlug();
 
 		if ( ! currentProductSlug || ! availableProducts[ currentProductSlug ] ) {
 			return '';
@@ -99,14 +97,8 @@ class ProductPlanOverlapNotices extends Component {
 		return availableProducts[ currentPlanSlug ].product_name;
 	}
 
-	getOverlappingFeatureName() {
+	getOverlappingFeatureName( currentProductSlug ) {
 		const { availableProducts } = this.props;
-
-		if ( ! this.hasOverlap() ) {
-			return null;
-		}
-
-		const currentProductSlug = this.getCurrentProductSlug();
 		if ( ! currentProductSlug ) {
 			return null;
 		}
@@ -132,24 +124,26 @@ class ProductPlanOverlapNotices extends Component {
 				<QuerySitePurchases siteId={ selectedSiteId } />
 				<QueryProductsList />
 
-				{ this.hasOverlap() && (
-					<Notice
-						showDismiss={ false }
-						status="is-warning"
-						text={ translate(
-							'Your %(planName)s Plan includes %(featureName)s. ' +
-								'Looks like you also purchased the %(productName)s product. ' +
-								'Consider removing %(productName)s.',
-							{
-								args: {
-									featureName: this.getOverlappingFeatureName(),
-									planName: this.getCurrentPlanName(),
-									productName: this.getCurrentProductName(),
-								},
-							}
-						) }
-					/>
-				) }
+				{ this.hasOverlap() &&
+					this.getCurrentProductSlugs().map( productSlug => (
+						<Notice
+							key={ productSlug }
+							showDismiss={ false }
+							status="is-warning"
+							text={ translate(
+								'Your %(planName)s Plan includes %(featureName)s. ' +
+									'Looks like you also purchased the %(productName)s product. ' +
+									'Consider removing %(productName)s.',
+								{
+									args: {
+										featureName: this.getOverlappingFeatureName( productSlug ),
+										planName: this.getCurrentPlanName(),
+										productName: this.getProductName( productSlug ),
+									},
+								}
+							) }
+						/>
+					) ) }
 			</Fragment>
 		);
 	}
