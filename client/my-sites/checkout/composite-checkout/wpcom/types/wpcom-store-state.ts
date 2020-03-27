@@ -184,6 +184,11 @@ export type ManagedContactDetails = ManagedContactDetailsShape< ManagedValue >;
 export type ManagedContactDetailsErrors = ManagedContactDetailsShape< undefined | string[] >;
 
 /*
+ * Intermediate type used to represent update payloads
+ */
+type ManagedContactDetailsUpdate = ManagedContactDetailsShape< undefined | string >;
+
+/*
  * Different subsets of the details are mandatory depending on what is
  * in the cart. This type lets us define these subsets declaratively.
  */
@@ -508,6 +513,58 @@ export function formatDomainContactValidationResponse(
 	};
 }
 
+function prepareManagedContactDetailsUpdate(
+    rawFields: DomainContactDetails
+): ManagedContactDetailsUpdate {
+    return {
+        firstName: rawFields.firstName,
+        lastName: rawFields.lastName,
+        organization: rawFields.organization,
+        email: rawFields.email,
+        alternateEmail: rawFields.alternateEmail,
+        phone: rawFields.phone,
+        phoneNumberCountry: undefined,
+        address1: rawFields.address1,
+        address2: rawFields.address2,
+        city: rawFields.city,
+        state: rawFields.state,
+        postalCode: rawFields.postalCode,
+        countryCode: rawFields.countryCode,
+        fax: rawFields.fax,
+        vatId: rawFields.vatId,
+        tldExtraFields: {
+            ca: {
+                lang: rawFields?.extra?.ca?.lang,
+                legalType: rawFields?.extra?.ca?.legalType,
+                ciraAgreementAccepted: rawFields?.extra?.ca?.ciraAgreementAccepted?.toString(),
+            },
+            uk: {
+                registrantType: rawFields?.extra?.uk?.registrantType,
+                registrationNumber: rawFields?.extra?.uk?.registrationNumber,
+                tradingName: rawFields?.extra?.uk?.tradingName,
+            },
+            fr: {
+                registrantType: rawFields?.extra?.fr?.registrantType,
+                trademarkNumber: rawFields?.extra?.fr?.trademarkNumber,
+                sirenSirat: rawFields?.extra?.fr?.sirenSirat,
+            },
+        }
+    };
+}
+
+function applyDomainContactDetailsUpdate(
+    oldDetails: ManagedContactDetails,
+    update: ManagedContactDetailsUpdate
+): ManagedContactDetails {
+    return liftManagedContactDetailsShape(
+        ( newField: undefined | string, detail: ManagedValue ) => {
+            return touchIfDifferent( newField, detail );
+        },
+        update,
+        oldDetails
+    );
+}
+
 /*
  * Helper type which bundles the field updaters in a single object
  * to help keep import lists under control. All updaters should
@@ -522,6 +579,7 @@ export type ManagedContactDetailsUpdaters = {
 	updatePhoneNumberCountry: ( ManagedContactDetails, string ) => ManagedContactDetails;
 	updatePostalCode: ( ManagedContactDetails, string ) => ManagedContactDetails;
 	updateCountryCode: ( ManagedContactDetails, string ) => ManagedContactDetails;
+	updateDomainContactField: ( ManagedContactDetails, DomainContactDetails ) => ManagedContactDetails;
 	touchContactFields: ( ManagedContactDetails ) => ManagedContactDetails;
 	updateVatId: ( ManagedContactDetails, string ) => ManagedContactDetails;
 	setErrorMessages: ( ManagedContactDetails, ManagedContactDetailsErrors ) => ManagedContactDetails;
@@ -700,6 +758,16 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 			countryCode: touchIfDifferent( newCountryCode, oldDetails.countryCode ),
 		};
 	},
+
+    updateDomainContactField: (
+        oldDetails: ManagedContactDetails,
+        newField: DomainContactDetails,
+    ): ManagedContactDetails => {
+	    return applyDomainContactDetailsUpdate(
+	        oldDetails,
+            prepareManagedContactDetailsUpdate( newField )
+        );
+    },
 
 	touchContactFields: ( oldDetails: ManagedContactDetails ): ManagedContactDetails => {
 		return Object.keys( oldDetails ).reduce( ( newDetails, detailKey ) => {
