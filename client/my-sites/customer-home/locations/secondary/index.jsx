@@ -21,7 +21,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 
 const Secondary = ( { isChecklistComplete, needsEmailVerification, siteIsUnlaunched } ) => {
 	return (
-		<div className="secondary">
+		<>
 			{ siteIsUnlaunched && ! needsEmailVerification && <LaunchSite /> }
 			{ ! siteIsUnlaunched && <Stats /> }
 			{ <FreePhotoLibrary /> }
@@ -29,7 +29,7 @@ const Secondary = ( { isChecklistComplete, needsEmailVerification, siteIsUnlaunc
 			<Support />
 			{ // "Go Mobile" has the lowest priority placement when viewed in bigger viewports.
 			! isMobile() && <GoMobile /> }
-		</div>
+		</>
 	);
 };
 
