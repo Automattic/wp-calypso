@@ -75,6 +75,14 @@ class BackupsPage extends Component {
 			//If we switch the site, reset the current state to default
 			this.resetState();
 		}
+		if ( prevProps.isLoadingBackups && ! this.props.isLoadingBackups ) {
+			const today = applySiteOffset( momentDate(), {
+				timezone: this.props.siteTimezone,
+				gmtOffset: this.props.gmtOffset,
+			} );
+
+			this.setBackupLogsFor( today );
+		}
 	}
 
 	resetState() {
@@ -185,9 +193,9 @@ class BackupsPage extends Component {
 							timezone={ siteTimezone }
 							gmtOffset={ siteGmtOffset }
 						/>
-                        { doesRewindNeedCredentials && (
-                            <MissingCredentialsWarning settingsLink={ `/settings/${ siteSlug }` } />
-                        ) }
+						{ doesRewindNeedCredentials && (
+							<MissingCredentialsWarning settingsLink={ `/settings/${ siteSlug }` } />
+						) }
 						<BackupDelta
 							{ ...{
 								deltas,
