@@ -59,7 +59,7 @@ import {
 	isConciergeSession,
 } from 'lib/products-values';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
-import { JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
+import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
 import { JETPACK_PLANS } from 'lib/plans/constants';
 import Main from 'components/main';
 import PlanPrice from 'my-sites/plan-price';
@@ -550,7 +550,7 @@ class ManagePurchase extends Component {
 						require="blocks/product-plan-overlap-notices"
 						placeholder={ null }
 						plans={ JETPACK_PLANS }
-						products={ JETPACK_BACKUP_PRODUCTS }
+						products={ JETPACK_PRODUCTS_LIST }
 						siteId={ siteId }
 					/>
 					{ this.renderPurchaseDetail() }
