@@ -163,7 +163,7 @@ class TransferInDomainType extends React.Component {
 				<p>
 					{ translate(
 						'We were unable to complete the transfer of {{strong}}%(domain)s{{/strong}}. ' +
-							'You can remove the transfer from your account or try start the transfer again. ' +
+							'You can remove the transfer from your account or try to start the transfer again. ' +
 							'{{a}}Learn more{{/a}}',
 						{
 							args: {
