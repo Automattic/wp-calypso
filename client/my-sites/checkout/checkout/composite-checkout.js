@@ -47,6 +47,12 @@ import {
 import { requestPlans } from 'state/plans/actions';
 import { getPlanBySlug, getPlans } from 'state/plans/selectors';
 import {
+	computeProductsWithPrices,
+	getProductBySlug,
+	getProductsList,
+	isProductsListFetching,
+} from 'state/products-list/selectors';
+import {
 	useStoredCards,
 	getDomainDetails,
 	makePayPalExpressRequest,
@@ -84,7 +90,6 @@ import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-sign
 import getPreviousPath from 'state/selectors/get-previous-path.js';
 import { getPlan, findPlansKeys } from 'lib/plans';
 import { GROUP_WPCOM, TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
-import { computeProductsWithPrices } from 'state/products-list/selectors';
 import { requestProductsList } from 'state/products-list/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import analytics from 'lib/analytics';
@@ -773,42 +778,44 @@ function isNotCouponError( error ) {
  */
 function createItemToAddToCart( {
 	planSlug = null,
-	product = '',
-	plan = null,
+	productAlias = '',
+	product_id = null,
 	isJetpackNotAtomic = false,
 } ) {
 	let cartItem, cartMeta;
 
-	if ( planSlug && plan ) {
+	if ( planSlug && product_id ) {
 		debug( 'creating plan product' );
 		cartItem = planItem( planSlug );
-		cartItem.product_id = plan.product_id;
+		cartItem.product_id = product_id;
 	}
 
-	if ( product.startsWith( 'theme:' ) ) {
+	if ( productAlias.startsWith( 'theme:' ) ) {
 		debug( 'creating theme product' );
-		cartMeta = product.split( ':' )[ 1 ];
+		cartMeta = productAlias.split( ':' )[ 1 ];
 		cartItem = themeItem( cartMeta );
 	}
 
-	if ( product.startsWith( 'domain-mapping:' ) ) {
+	if ( productAlias.startsWith( 'domain-mapping:' ) && product_id ) {
 		debug( 'creating domain mapping product' );
-		cartMeta = product.split( ':' )[ 1 ];
+		cartMeta = productAlias.split( ':' )[ 1 ];
 		cartItem = domainMapping( { domain: cartMeta } );
+		cartItem.product_id = product_id;
 	}
 
-	if ( product.startsWith( 'concierge-session' ) ) {
+	if ( productAlias.startsWith( 'concierge-session' ) ) {
 		// TODO: prevent adding a conciergeSessionItem if one already exists
 		debug( 'creating concierge product' );
 		cartItem = conciergeSessionItem();
 	}
 
 	if (
-		( product.startsWith( 'jetpack_backup' ) || product.startsWith( 'jetpack_search' ) ) &&
+		( productAlias.startsWith( 'jetpack_backup' ) ||
+			productAlias.startsWith( 'jetpack_search' ) ) &&
 		isJetpackNotAtomic
 	) {
 		debug( 'creating jetpack product' );
-		cartItem = jetpackProductItem( product );
+		cartItem = jetpackProductItem( productAlias );
 	}
 
 	if ( ! cartItem ) {
@@ -1465,15 +1472,28 @@ const DoNotPayThis = styled.span`
 	margin-right: 8px;
 `;
 
-function usePrepareProductForCart( planSlug, product, isJetpackNotAtomic ) {
+function getProductSlugFromAlias( productAlias ) {
+	if ( productAlias?.startsWith?.( 'domain-mapping:' ) ) {
+		return 'domain_map';
+	}
+	return null;
+}
+
+function usePrepareProductForCart( planSlug, productAlias, isJetpackNotAtomic ) {
 	const plans = useSelector( state => getPlans( state ) );
 	const plan = useSelector( state => getPlanBySlug( state, planSlug ) );
+	const products = useSelector( state => getProductsList( state ) );
+	const product = useSelector( state =>
+		getProductBySlug( state, getProductSlugFromAlias( productAlias ) )
+	);
+	const isFetchingProducts = useSelector( state => isProductsListFetching( state ) );
 	const reduxDispatch = useDispatch();
 	const [ { canInitializeCart, productForCart }, setState ] = useState( {
-		canInitializeCart: ! planSlug && ! product,
+		canInitializeCart: ! planSlug && ! productAlias,
 		productForCart: null,
 	} );
 
+	// Add a plan if one is requested
 	useEffect( () => {
 		if ( ! planSlug ) {
 			return;
@@ -1488,7 +1508,11 @@ function usePrepareProductForCart( planSlug, product, isJetpackNotAtomic ) {
 			setState( { canInitializeCart: true } );
 			return;
 		}
-		const cartProduct = createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } );
+		const cartProduct = createItemToAddToCart( {
+			planSlug,
+			product_id: plan.product_id,
+			isJetpackNotAtomic,
+		} );
 		debug(
 			'preparing plan that was requested in url',
 			{ planSlug, plan, isJetpackNotAtomic },
@@ -1497,18 +1521,37 @@ function usePrepareProductForCart( planSlug, product, isJetpackNotAtomic ) {
 		setState( { productForCart: cartProduct, canInitializeCart: true } );
 	}, [ reduxDispatch, planSlug, plan, plans, isJetpackNotAtomic ] );
 
+	// Add a supported product if one is requested
 	useEffect( () => {
-		if ( ! product ) {
+		if ( ! productAlias ) {
 			return;
 		}
-		const cartProduct = createItemToAddToCart( { product, isJetpackNotAtomic } );
+		if ( isFetchingProducts ) {
+			debug( 'waiting on products fetch' );
+			return;
+		}
+		if ( ! products || Object.keys( products ).length < 1 ) {
+			debug( 'there is a request to add a product but no products are loaded; fetching' );
+			reduxDispatch( requestProductsList() );
+			return;
+		}
+		if ( ! product ) {
+			debug( 'there is a request to add a product but no product was found' );
+			setState( { canInitializeCart: true } );
+			return;
+		}
+		const cartProduct = createItemToAddToCart( {
+			productAlias,
+			product_id: product.product_id,
+			isJetpackNotAtomic,
+		} );
 		debug(
 			'preparing product that was requested in url',
-			{ product, isJetpackNotAtomic },
+			{ productAlias, isJetpackNotAtomic },
 			cartProduct
 		);
 		setState( { productForCart: cartProduct, canInitializeCart: true } );
-	}, [ reduxDispatch, isJetpackNotAtomic, product ] );
+	}, [ reduxDispatch, isJetpackNotAtomic, productAlias, product, products, isFetchingProducts ] );
 
 	return { productForCart, canInitializeCart };
 }
