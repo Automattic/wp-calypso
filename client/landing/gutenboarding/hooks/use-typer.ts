@@ -10,18 +10,26 @@ import { useInterval } from 'lib/interval/use-interval';
 
 type TyperMode = 'TYPING' | 'DELETING';
 
-type AllTyperOptions = {
+interface Options {
+	/**
+	 * The typing delay time in ms between two characters.
+	 *
+	 * @default 120
+	 */
 	delayBetweenCharacters: number;
+
+	/**
+	 * The typing delay in ms between two words.
+	 *
+	 * @default 1200
+	 */
 	delayBetweenWords: number;
+}
+
+const DEFAULT_OPTIONS: Readonly< Options > = {
+	delayBetweenCharacters: 120,
+	delayBetweenWords: 1200,
 };
-
-// if options are passed. At least one of them should be set
-type TyperOptions =
-	| Pick< AllTyperOptions, 'delayBetweenCharacters' >
-	| Pick< AllTyperOptions, 'delayBetweenWords' >
-	| AllTyperOptions;
-
-const defaultOptions: AllTyperOptions = { delayBetweenCharacters: 120, delayBetweenWords: 1200 };
 
 /**
  * A React hook that returns typing-machine animated strings
@@ -29,8 +37,6 @@ const defaultOptions: AllTyperOptions = { delayBetweenCharacters: 120, delayBetw
  * @param words An array of strings you want to create the typing effect for
  * @param enabled Whether the animation is enabled
  * @param options Animation options
- * @param options.delayBetweenCharacters The typing delay time between two charactors. Default is 120ms
- * @param options.delayBetweenWords The typing delay time between two words. Default is 1200ms
  * @returns truncated strings from `words` array.
  * The word get longer at every passing `delayBetweenCharacters` until it's fully spelled,
  * then the next word is spelled out after `delayBetweenWords` passes.
@@ -38,15 +44,15 @@ const defaultOptions: AllTyperOptions = { delayBetweenCharacters: 120, delayBetw
 export default function useTyper(
 	words: Array< string >,
 	enabled = true,
-	options: TyperOptions = defaultOptions
+	options?: Partial< Options >
 ): string {
 	const [ charIndex, setCharIndex ] = useState( 0 );
 	const [ wordIndex, setWordIndex ] = useState( 0 );
 	const [ mode, setMode ] = useState< TyperMode >( 'TYPING' );
 
-	const populatedOptions: AllTyperOptions = { ...defaultOptions, ...options };
+	const populatedOptions: Options = { ...DEFAULT_OPTIONS, ...options };
 
-	/* measure how many characters' worth of waiting you need to wait between words */
+	// measure how many characters' worth of waiting you need to wait between words
 	const delayInCharacters =
 		populatedOptions.delayBetweenWords / populatedOptions.delayBetweenCharacters;
 
