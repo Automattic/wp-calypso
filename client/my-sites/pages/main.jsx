@@ -100,11 +100,7 @@ class PagesMain extends React.Component {
 						fitsContainer
 						onSearch={ doSearch }
 						initialValue={ search }
-						placeholder={ this.props.translate( 'Search %(postTypes)s…', {
-							args: {
-								postTypes: translate( 'Pages' ),
-							},
-						} ) }
+						placeholder={ this.props.translate( 'Search Pages' ) }
 						analyticsGroup="Pages"
 						delaySearch={ true }
 					/>
