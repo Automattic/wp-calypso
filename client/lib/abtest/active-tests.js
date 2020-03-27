@@ -27,7 +27,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	showCompositeCheckout: {
-		datestamp: '20200221',
+		datestamp: '20200326',
 		variations: {
 			composite: 50,
 			regular: 50,
@@ -107,7 +107,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	planStepCopyUpdates: {
-		datestamp: '20200312',
+		datestamp: '20200326',
 		variations: {
 			variantCopyUpdates: 50,
 			control: 50,

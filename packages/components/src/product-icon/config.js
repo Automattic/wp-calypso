@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import jetpackBackup from './images/jetpack-backup.svg';
+import jetpackScan from './images/jetpack-scan.svg';
 import jetpackFree from './images/jetpack-free.svg';
 import jetpackPersonal from './images/jetpack-personal.svg';
 import jetpackPremium from './images/jetpack-premium.svg';
@@ -14,6 +15,7 @@ import wpcomPersonal from './images/wpcom-personal.svg';
 import wpcomPremium from './images/wpcom-premium.svg';
 
 export const paths = {
+	'jetpack-scan': jetpackScan,
 	'jetpack-backup-daily': jetpackBackup,
 	'jetpack-backup-realtime': jetpackBackup,
 	'jetpack-free': jetpackFree,
@@ -41,6 +43,7 @@ export const iconToProductSlugMap = {
 	'jetpack-professional': [ 'jetpack_business', 'jetpack_business_monthly' ],
 	'jetpack-backup-daily': [ 'jetpack_backup_daily', 'jetpack_backup_daily_monthly' ],
 	'jetpack-backup-realtime': [ 'jetpack_backup_realtime', 'jetpack_backup_realtime_monthly' ],
+	'jetpack-scan': [ 'jetpack_scan', 'jetpack_scan_monthly' ],
 };
 
 export const supportedSlugs = [ ...Object.values( iconToProductSlugMap ) ].flat();

@@ -27,8 +27,7 @@ function initialize_site_editor() {
 	}
 
 	// Force enable required Gutenberg experiments if they are not already active.
-	add_filter( 'option_gutenberg-experiments', __NAMESPACE__ . '\enable_site_editor_experiment' );
-
+	add_filter( 'pre_option_gutenberg-experiments', __NAMESPACE__ . '\enable_site_editor_experiment' );
 	// Add top level Site Editor menu item.
 	add_action( 'admin_menu', __NAMESPACE__ . '\add_site_editor_menu_item' );
 }

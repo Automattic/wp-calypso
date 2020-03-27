@@ -34,6 +34,7 @@ import getEditorUrl from 'state/selectors/get-editor-url';
 import SectionHeader from 'components/section-header';
 import { Button } from '@automattic/components';
 import { withLocalizedMoment } from 'components/localized-moment';
+import config from 'config';
 
 function preloadEditor() {
 	preload( 'post-editor' );
@@ -78,6 +79,11 @@ export default class PageList extends Component {
 			status: mapStatus( status ),
 			type: 'page',
 		};
+
+		if ( config.isEnabled( 'page/export' ) ) {
+			// we need the raw content of the pages to be able to export them
+			query.context = 'edit';
+		}
 
 		return (
 			<div>

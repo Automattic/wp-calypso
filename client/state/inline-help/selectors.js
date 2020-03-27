@@ -25,7 +25,7 @@ export function getSearchQuery( state ) {
  * Returns the index of the currently selected search result.
  *
  * @param  {object}  state  Global state tree
- * @returns {Integer}        The index of the currently selected search result
+ * @returns {number}       The index of the currently selected search result, integer
  */
 export function getSelectedResultIndex( state ) {
 	return get( state, 'inlineHelp.searchResults.search.selectedResult', -1 );
@@ -117,16 +117,6 @@ export function isInlineHelpPopoverVisible( state ) {
 }
 
 /**
- * Returns a bool indicating if the inline help popover is currently showing the checklist prompt.
- *
- * @param  {object}  state  Global state tree
- * @returns {boolean}        Is the inline help popover showing the checklist prompt.
- */
-export function isInlineHelpChecklistPromptVisible( state ) {
-	return get( state, 'inlineHelp.checklistPrompt.isVisible', false );
-}
-
-/**
  * Returns a bool indicating if the inline help popover is currently showing the onboarding welcome message.
  *
  * @param  {object}  state  Global state tree
@@ -134,18 +124,4 @@ export function isInlineHelpChecklistPromptVisible( state ) {
  */
 export function isOnboardingWelcomePromptVisible( state ) {
 	return get( state, 'inlineHelp.onboardingWelcomePrompt.isVisible', false );
-}
-
-/**
- * Returns the task ID that should show up in the inline help popover.
- *
- * @param  {object}  state  Global state tree
- * @returns {string}         The task ID
- */
-export function getChecklistPromptTaskId( state ) {
-	return get( state, 'inlineHelp.checklistPrompt.taskId', null );
-}
-
-export function getChecklistPromptStep( state ) {
-	return get( state, 'inlineHelp.checklistPrompt.step', 0 );
 }

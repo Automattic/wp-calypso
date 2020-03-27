@@ -12,9 +12,17 @@ import EditorGutenbergOptInDialog from 'post-editor/editor-gutenberg-opt-in-dial
 import EditorGutenbergBlocksWarningDialog from 'post-editor/editor-gutenberg-blocks-warning-dialog';
 import { getEditorRawContent, isEditorLoading } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isPrivateSite from 'state/selectors/is-private-site';
+import getWpAdminClassicEditorRedirectionUrl from "../../state/selectors/get-wp-admin-classic-editor-redirection-url";
 
+/**
+ * We don't support classic editor in Calypso for private atomic sites. This components makes sure
+ * we always redirect such users to wp-admin version of classic editor.
+ * * When opt-in dialogs are enabled, we always show one - either "This post contains blocks" or the opt-in dialog.
+ * * When opt-in dialogs are disabled, we redirect to wp-admin right away.
+ */
 const EditorGutenbergDialogs: React.FC< {} > = () => {
 	const [ hasGutenbergBlocks, setHasGutenbergBlocks ] = useState< boolean | null >( null );
 
@@ -27,27 +35,36 @@ const EditorGutenbergDialogs: React.FC< {} > = () => {
 	const isLoading = useSelector( isEditorLoading );
 	const isPostContentLoaded = ! isLoading && postContent !== null;
 
+	const optInEnabled = useSelector( state => isGutenbergOptInEnabled( state, siteId ) );
+	const wpAdminRedirectionUrl = useSelector( state => getWpAdminClassicEditorRedirectionUrl( state, siteId ) );
+
 	const dispatch = useDispatch();
 
 	useEffect(
 		function() {
-			if ( hasGutenbergBlocks !== null || ! isPostContentLoaded ) {
+			if ( hasGutenbergBlocks !== null || ! isPostContentLoaded || ! isPrivateAtomic ) {
 				return;
 			}
 			const hasGutenbergContent = ( postContent || '' ).indexOf( '<!-- wp:' ) !== -1;
 			setHasGutenbergBlocks( hasGutenbergContent );
 
-			// If a private atomic site uses classic editor, we want to always show some dialog, even
-			// if it doesn't have any Gutenberg blocks. Instead of saying "you may lose some data and formatting",
-			// let's just show the opt in dialog instead.
-			if ( ! hasGutenbergContent && isPrivateAtomic ) {
+			// Sometimes API will tell us opt-in dialogs shouldn't show up at all, in such case let's
+			// redirect to wp-admin right away
+			if ( ! optInEnabled ) {
+				window.location.href = wpAdminRedirectionUrl;
+				return;
+			}
+
+			// If the post doesn't have any Gutenberg content, it means <EditorGutenbergBlocksWarningDialog /> is not going
+			// to be displayed. In this case, let's trigger <EditorGutenbergOptInDialog /> dialog
+			if ( ! hasGutenbergContent ) {
 				dispatch( showGutenbergOptInDialog() );
 			}
 		},
 		// Disabling eslint check because hasGutenbergContent is only set inside this effect
 		// and we don't want to rerun it once it's updated
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[ dispatch, isPrivateAtomic, isPostContentLoaded, postContent ]
+		[ dispatch, isPrivateAtomic, isPostContentLoaded, postContent, optInEnabled, wpAdminRedirectionUrl ]
 	);
 
 	return (
