@@ -9,7 +9,7 @@ import React from 'react';
 import BackupDetailPage from './detail';
 import BackupsPage from './main';
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
-import BackupActivityLog from './activity-log';
+import BackupActivity from './activity';
 
 /* handles /backups/:site, see `backupMainPath` */
 export function backups( context, next ) {
@@ -42,6 +42,6 @@ export function backupRestore( context, next ) {
 }
 
 export function backupActivityLog( context, next ) {
-	context.primary = <BackupActivityLog />;
+	context.primary = <BackupActivity />;
 	next();
 }

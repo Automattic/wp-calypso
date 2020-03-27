@@ -14,7 +14,7 @@ import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 
-const BackupActivityLogPage: FunctionComponent = () => {
+const BackupActivityPage: FunctionComponent = () => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 
@@ -35,7 +35,7 @@ const BackupActivityLogPage: FunctionComponent = () => {
 	};
 
 	return (
-		<Main className="activity-log">
+		<Main className="activity">
 			<DocumentHead title="Activity Log" />
 			<SidebarNavigation />
 			{ render() }
@@ -43,4 +43,4 @@ const BackupActivityLogPage: FunctionComponent = () => {
 	);
 };
 
-export default BackupActivityLogPage;
+export default BackupActivityPage;
