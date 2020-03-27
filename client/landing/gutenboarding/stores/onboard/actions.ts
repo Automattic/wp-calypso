@@ -3,6 +3,7 @@
  */
 import { DomainSuggestions, VerticalsTemplates } from '@automattic/data-stores';
 import { dispatch, select } from '@wordpress/data-controls';
+import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
 
 /**
  * Internal dependencies
@@ -78,6 +79,7 @@ export function* createSite(
 			},
 			site_creation_flow: 'gutenboarding',
 			theme: `pub/${ selectedDesign?.slug || 'twentytwenty' }`,
+			timezone_string: guessTimezone(),
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	} );
