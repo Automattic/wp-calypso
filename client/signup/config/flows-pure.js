@@ -242,7 +242,7 @@ export function generateFlows( {
 	if ( isEnabled( 'signup/wpforteams' ) ) {
 		flows[ 'wp-for-teams' ] = {
 			steps: [ 'wp-for-teams-site', 'user' ],
-			destination: getRedirectDestination,
+			destination: dependencies => `https://${ dependencies.siteSlug }`,
 			description: 'WordPress.com Connect signup flow',
 			lastModified: '2020-03-23',
 		};
