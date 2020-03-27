@@ -94,15 +94,17 @@ export class PlanBillingPeriod extends Component {
 		}
 
 		return (
-			<FormSettingExplanation>
-				{ translate( 'Billed monthly' ) }
-				{ site ? (
-					<Button onClick={ this.handleMonthlyToYearlyButtonClick } primary compact>
-						{ translate( 'Upgrade to yearly billing' ) }
-					</Button>
-				) : (
-					<span>
-						<br />
+			<React.Fragment>
+				<FormSettingExplanation>
+					{ translate( 'Billed monthly' ) }
+					{ site && (
+						<Button onClick={ this.handleMonthlyToYearlyButtonClick } primary compact>
+							{ translate( 'Upgrade to yearly billing' ) }
+						</Button>
+					) }
+				</FormSettingExplanation>
+				{ ! site && (
+					<FormSettingExplanation>
 						{ translate(
 							'To manage your plan, please {{supportPageLink}}reconnect{{/supportPageLink}} your site.',
 							{
@@ -117,9 +119,9 @@ export class PlanBillingPeriod extends Component {
 								},
 							}
 						) }
-					</span>
+					</FormSettingExplanation>
 				) }
-			</FormSettingExplanation>
+			</React.Fragment>
 		);
 	}
 

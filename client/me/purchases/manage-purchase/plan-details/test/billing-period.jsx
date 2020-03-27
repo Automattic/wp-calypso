@@ -74,6 +74,7 @@ describe( 'PlanBillingPeriod', () => {
 				expect(
 					wrapper
 						.find( 'FormSettingExplanation' )
+						.last()
 						.shallow()
 						.text()
 				).toContain( 'To manage your plan, please reconnect your site.' );
