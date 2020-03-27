@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { get, omit } from 'lodash';
-import { stringify } from 'qs';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -170,7 +169,7 @@ export async function postLoginRequest( action, bodyObj ) {
 			method: 'POST',
 			credentials: 'include',
 			headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
-			body: stringify( bodyObj ),
+			body: new globalThis.URLSearchParams( bodyObj ).toString(),
 		}
 	);
 
