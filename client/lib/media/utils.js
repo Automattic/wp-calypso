@@ -632,10 +632,13 @@ export function validateMediaItem( site, item ) {
  * @returns {object}	Dictionary
  */
 export function mediaURLToProxyConfig( mediaUrl, siteSlug ) {
-	const { pathname, search: query, hostname } = getUrlParts( mediaUrl );
+	const { pathname, search: query, protocol, hostname } = getUrlParts( mediaUrl );
 	let filePath = pathname;
 	let isRelativeToSiteRoot = true;
-	if (
+
+	if ( [ 'http:', 'https:' ].indexOf( protocol ) === -1 ) {
+		isRelativeToSiteRoot = false;
+	} else if (
 		hostname !== siteSlug &&
 		( hostname.endsWith( 'wp.com' ) || hostname.endsWith( 'wordpress.com' ) )
 	) {
