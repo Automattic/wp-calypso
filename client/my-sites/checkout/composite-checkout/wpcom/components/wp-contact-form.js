@@ -15,11 +15,17 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { useHasDomainsInCart } from '../hooks/has-domains';
+import { useHasDomainsInCart, useDomainNamesInCart } from '../hooks/has-domains';
 import Field from './field';
 import { SummaryLine, SummaryDetails } from './summary-details';
 import { LeftColumn, RightColumn } from './ie-fallback';
-import { prepareDomainContactDetails, prepareDomainContactDetailsErrors, isValid } from '../types';
+import {
+	prepareDomainContactDetails,
+	prepareTldExtraContactDetails,
+	prepareDomainContactDetailsErrors,
+	prepareTldExtraContactDetailsErrors,
+	isValid,
+} from '../types';
 
 export default function WPContactForm( {
 	summary,
@@ -28,9 +34,6 @@ export default function WPContactForm( {
 	CountrySelectMenu,
 	countriesList,
 	renderDomainContactFields,
-	updateContactDetails,
-	updateCountryCode,
-	updatePostalCode,
 	shouldShowContactDetailsValidationErrors,
 } ) {
 	const translate = useTranslate();
@@ -49,19 +52,16 @@ export default function WPContactForm( {
 
 	return (
 		<BillingFormFields>
-			{ renderContactDetails( {
-				translate,
-				isDomainFieldsVisible,
-				contactInfo,
-				renderDomainContactFields,
-				updateContactDetails,
-				updateCountryCode,
-				updatePostalCode,
-				CountrySelectMenu,
-				countriesList,
-				shouldShowContactDetailsValidationErrors,
-				isDisabled,
-			} ) }
+			<RenderContactDetails
+				translate={ translate }
+				isDomainFieldsVisible={ isDomainFieldsVisible }
+				contactInfo={ contactInfo }
+				renderDomainContactFields={ renderDomainContactFields }
+				CountrySelectMenu={ CountrySelectMenu }
+				countriesList={ countriesList }
+				shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
+                isDisabled={ isDisabled }
+			/>
 		</BillingFormFields>
 	);
 }
@@ -268,14 +268,11 @@ function getContactDetailsFormat( isDomainFieldsVisible ) {
 	return 'DEFAULT';
 }
 
-function renderContactDetails( {
+function RenderContactDetails( {
 	translate,
 	isDomainFieldsVisible,
 	contactInfo,
 	renderDomainContactFields,
-	updateContactDetails,
-	updateCountryCode,
-	updatePostalCode,
 	CountrySelectMenu,
 	countriesList,
 	shouldShowContactDetailsValidationErrors,
@@ -283,6 +280,9 @@ function renderContactDetails( {
 } ) {
 	const format = getContactDetailsFormat( isDomainFieldsVisible );
 	const requiresVatId = isEligibleForVat( contactInfo.countryCode.value );
+	const domainNames = useDomainNamesInCart();
+	const { updateDomainContactFields, updateCountryCode, updatePostalCode } = useDispatch( 'wpcom' );
+
 	switch ( format ) {
 		case 'DOMAINS':
 			return (
@@ -293,11 +293,14 @@ function renderContactDetails( {
 						) }
 					</DomainContactFieldsDescription>
 					{ renderDomainContactFields(
+						domainNames,
 						prepareDomainContactDetails( contactInfo ),
+						prepareTldExtraContactDetails( contactInfo ),
 						prepareDomainContactDetailsErrors( contactInfo ),
-						updateContactDetails,
+						prepareTldExtraContactDetailsErrors( contactInfo ),
+						updateDomainContactFields,
 						shouldShowContactDetailsValidationErrors,
-						isDisabled
+                        isDisabled
 					) }
 					{ requiresVatId && <VatIdField /> }
 				</React.Fragment>
