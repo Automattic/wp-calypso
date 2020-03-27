@@ -43,6 +43,10 @@
 	.card__link-indicator {
 		display: none;
 	}
+
+	&:hover {
+		box-shadow: none;
+	}
 }
 
 .upsell-nudge.banner.card .banner__icon-circle,

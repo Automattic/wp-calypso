@@ -18,6 +18,15 @@
 
 	&.is-card-link {
 		padding-right: 48px;
+		transition: all 100ms ease-in-out;
+
+		&:hover {
+			box-shadow: 0 0 0 1px var( --color-neutral ), 0 2px 4px var( --color-neutral-10 );
+
+			.card__link-indicator {
+				color: var( --color-neutral-dark );
+			}
+		}
 	}
 }
 
