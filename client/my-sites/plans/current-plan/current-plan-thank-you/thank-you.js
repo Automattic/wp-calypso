@@ -94,11 +94,11 @@ export class ThankYouCard extends Component {
 					) }
 					{ showSearchRedirects && (
 						<p className="current-plan-thank-you__followup">
-							<Button primary compact={ true } href={ siteAdminUrl + 'customize.php' }>
+							<Button primary href={ siteAdminUrl + 'customize.php' }>
 								{ translate( 'Customize Search now' ) }
 							</Button>
 
-							<Button compact={ true } href={ siteAdminUrl + 'admin.php?page=jetpack#/dashboard' }>
+							<Button href={ siteAdminUrl + 'admin.php?page=jetpack#/dashboard' }>
 								{ translate( 'Go back to my site' ) }
 							</Button>
 						</p>

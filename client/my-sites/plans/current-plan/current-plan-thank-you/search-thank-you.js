@@ -18,7 +18,7 @@ const SearchProductThankYou = ( { translate } ) => (
 		<p>{ translate( 'We are currently indexing your site.' ) }</p>
 		<p>
 			{ translate(
-				'In the meantime, we have configured Jetpack Search on your site —' +
+				'In the meantime, we have configured Jetpack Search on your site — ' +
 					'you should try customizing it in your traditional WordPress dashboard.'
 			) }
 		</p>
