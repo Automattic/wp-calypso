@@ -26,6 +26,7 @@ import { getStatusForPlugin } from 'state/plugins/installed/selectors';
 import { errorNotice, infoNotice, successNotice } from 'state/notices/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { navigate } from 'state/ui/actions';
+import { decodeEntities } from 'lib/formatting';
 
 /**
  * Style dependencies
@@ -238,7 +239,7 @@ class ActivityLogTasklist extends Component {
 
 		showInfoNotice(
 			translate( 'Updating %(item)s on %(siteName)s.', {
-				args: { item: item.name, siteName },
+				args: { item: decodeEntities( item.name ), siteName },
 			} ),
 			{
 				id: `alitemupdate-${ item.slug }`,
@@ -293,7 +294,7 @@ class ActivityLogTasklist extends Component {
 			}
 
 			const noticeArgs = {
-				args: { item: name, siteName },
+				args: { item: decodeEntities( name ), siteName },
 			};
 
 			switch ( updateStatus.status ) {
