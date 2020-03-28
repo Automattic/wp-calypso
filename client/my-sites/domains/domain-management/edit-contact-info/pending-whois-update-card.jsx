@@ -36,7 +36,7 @@ export default function PendingWhoisUpdateCard() {
 							a: <a href={ CALYPSO_CONTACT } rel="noopener noreferrer" />,
 							supporta: (
 								<a
-									href="https://en.support.wordpress.com/update-contact-information/#email-or-name-changes"
+									href="https://wordpress.com/support/update-contact-information/#email-or-name-changes"
 									target="_blank"
 									rel="noopener noreferrer"
 								/>

@@ -141,7 +141,7 @@ export const SimplePaymentsEmailTour = makeTour(
 							{ translate( 'Got it, thanks!' ) }
 						</DelegatingQuit>
 					</ButtonRow>
-					<Link href="https://en.support.wordpress.com/simple-payments">
+					<Link href="https://wordpress.com/support/simple-payments">
 						{ translate( 'Learn more about Simple Payments.' ) }
 					</Link>
 				</Fragment>

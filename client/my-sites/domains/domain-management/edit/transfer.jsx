@@ -66,7 +66,7 @@ class Transfer extends React.PureComponent {
 						components: {
 							a: (
 								<a
-									href="https://en.support.wordpress.com/move-domain/incoming-domain-transfer/#checking-your-transfer-status-and-failed-transfers"
+									href="https://wordpress.com/support/move-domain/incoming-domain-transfer/#checking-your-transfer-status-and-failed-transfers"
 									target="_blank"
 									rel="noopener noreferrer"
 								/>

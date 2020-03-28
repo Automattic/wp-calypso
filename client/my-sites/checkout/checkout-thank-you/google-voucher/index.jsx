@@ -189,7 +189,7 @@ class GoogleVoucherDetails extends Component {
 									a: (
 										<a
 											className="google-voucher__help-link"
-											href="https://en.support.wordpress.com/google-ads-credit/"
+											href="https://wordpress.com/support/google-ads-credit/"
 											target="_blank"
 											rel="noopener noreferrer"
 										/>

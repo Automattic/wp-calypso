@@ -40,7 +40,7 @@ export class BusinessATStep extends Component {
 				onClick={ this.onClickPluginSupport }
 				target="_blank"
 				rel="noopener noreferrer"
-				href="https://en.support.wordpress.com/plugins/"
+				href="https://wordpress.com/support/plugins/"
 			/>
 		);
 		const themeLink = (
@@ -48,7 +48,7 @@ export class BusinessATStep extends Component {
 				onClick={ this.onClickThemeSupport }
 				target="_blank"
 				rel="noopener noreferrer"
-				href="https://en.support.wordpress.com/themes/adding-new-themes/"
+				href="https://wordpress.com/support/themes/adding-new-themes/"
 			/>
 		);
 

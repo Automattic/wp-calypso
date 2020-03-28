@@ -43,7 +43,7 @@ class HostSelect extends React.Component {
 									strong: <strong />,
 									partner_link: <a href="https://get.wp.com/gt-hosting/" />,
 									lobby_link: <a href="https://guidedtransfer.wordpress.com/" />,
-									learn_link: <a href="https://en.support.wordpress.com/guided-transfer/" />,
+									learn_link: <a href="https://wordpress.com/support/guided-transfer/" />,
 								},
 							}
 						) }

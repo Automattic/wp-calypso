@@ -26,7 +26,7 @@ export default localize( ( { isJetpack, translate } ) => {
 				href={
 					isJetpack
 						? 'https://jetpack.com/support/simple-payment-button/'
-						: 'https://en.support.wordpress.com/simple-payments/'
+						: 'https://wordpress.com/support/simple-payments/'
 				}
 				icon={ <img alt="" src={ paymentsImage } /> }
 				target="_blank"

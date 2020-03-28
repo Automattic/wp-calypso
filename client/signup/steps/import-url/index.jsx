@@ -30,7 +30,7 @@ import { suggestDomainFromImportUrl } from 'lib/importer/utils';
  */
 import './style.scss';
 
-const IMPORT_HELP_LINK = 'https://en.support.wordpress.com/import/';
+const IMPORT_HELP_LINK = 'https://wordpress.com/support/import/';
 const EXAMPLE_CUSTOM_DOMAIN_URL = 'https://example.com';
 const EXAMPLE_WIX_URL = 'https://username.wixsite.com/my-site';
 const EXAMPLE_GOCENTRAL_URL = 'https://example.godaddysites.com';

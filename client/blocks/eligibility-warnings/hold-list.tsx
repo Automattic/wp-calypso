@@ -54,7 +54,7 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
 			description: translate(
 				'Change your site\'s Privacy settings to "Public" or "Hidden" (not "Private.")'
 			),
-			supportUrl: localizeUrl( 'https://en.support.wordpress.com/settings/privacy-settings/' ),
+			supportUrl: localizeUrl( 'https://wordpress.com/support/settings/privacy-settings/' ),
 		},
 		SITE_UNLAUNCHED: {
 			title: translate( 'Launch your site' ),
@@ -71,7 +71,7 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
 		NON_ADMIN_USER: {
 			title: translate( 'Site administrator only' ),
 			description: translate( 'Only the site administrators can use this feature.' ),
-			supportUrl: localizeUrl( 'https://en.support.wordpress.com/user-roles/' ),
+			supportUrl: localizeUrl( 'https://wordpress.com/support/user-roles/' ),
 		},
 		NOT_RESOLVING_TO_WPCOM: {
 			title: translate( 'Domain pointing to a different site' ),
@@ -79,7 +79,7 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
 				"Your domain is not properly set up to point to your site. Reset your domain's A records in the Domains section to fix this."
 			),
 			supportUrl: localizeUrl(
-				'https://en.support.wordpress.com/move-domain/setting-custom-a-records/'
+				'https://wordpress.com/support/move-domain/setting-custom-a-records/'
 			),
 		},
 		EMAIL_UNVERIFIED: {
@@ -148,7 +148,7 @@ function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
 				  )
 				: translate( "Contact us to review your site's standing and resolve the dispute." ),
 			status: 'is-error',
-			contactUrl: localizeUrl( 'https://en.support.wordpress.com/suspended-blogs/' ),
+			contactUrl: localizeUrl( 'https://wordpress.com/support/suspended-blogs/' ),
 		},
 		NO_SSL_CERTIFICATE: {
 			message: hasLocalizedText(

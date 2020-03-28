@@ -112,10 +112,10 @@ const GMClosureNotice = ( {
 			}
 		),
 		nonPlan: translate(
-			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, check our support site at {{supportLink}}https://en.support.wordpress.com{{/supportLink}}',
+			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, check our support site at {{supportLink}}https://wordpress.com/support{{/supportLink}}',
 			{
 				components: {
-					supportLink: <a href="https://en.support.wordpress.com" />,
+					supportLink: <a href="https://wordpress.com/support" />,
 				},
 			}
 		),

@@ -151,7 +151,7 @@ export class LoginLinks extends React.Component {
 				icon={ true }
 				onClick={ this.recordHelpLinkClick }
 				target="_blank"
-				href="https://en.support.wordpress.com/security/two-step-authentication/"
+				href="https://wordpress.com/support/security/two-step-authentication/"
 			>
 				{ this.props.translate( 'Get help' ) }
 			</ExternalLink>

@@ -66,7 +66,7 @@ export const SimplePaymentsEndOfYearGuide = makeTour(
 						<Next step="add-new-page">{ translate( 'Get started!' ) }</Next>
 						<Quit>{ translate( 'No thanks.' ) }</Quit>
 					</ButtonRow>
-					<Link href="https://en.support.wordpress.com/simple-payments/">
+					<Link href="https://wordpress.com/support/simple-payments/">
 						{ translate( 'Learn more about Simple Payments.' ) }
 					</Link>
 				</Fragment>
@@ -185,7 +185,7 @@ export const SimplePaymentsEndOfYearGuide = makeTour(
 					<ButtonRow>
 						<Quit primary>{ translate( 'Got it, thanks!' ) }</Quit>
 					</ButtonRow>
-					<Link href="https://en.support.wordpress.com/menus/">
+					<Link href="https://wordpress.com/support/menus/">
 						{ translate( 'Learn about managing menus' ) }
 					</Link>
 				</Fragment>

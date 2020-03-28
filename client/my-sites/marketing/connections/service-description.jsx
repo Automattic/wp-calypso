@@ -154,7 +154,7 @@ class SharingServiceDescription extends Component {
 					components: {
 						a: (
 							<a
-								href="https://en.support.wordpress.com/publicize/#facebook-pages"
+								href="https://wordpress.com/support/publicize/#facebook-pages"
 								target="_blank"
 								rel="noopener noreferrer"
 							/>

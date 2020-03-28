@@ -73,7 +73,7 @@ class SiteBlockList extends Component {
 						{ translate(
 							'Blocked sites will not appear in your Reader and will not be recommended to you.'
 						) }
-						<a href="https://en.support.wordpress.com/reader/#blocking-sites">
+						<a href="https://wordpress.com/support/reader/#blocking-sites">
 							{ translate( ' Learn more.' ) }
 						</a>
 					</p>

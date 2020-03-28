@@ -73,7 +73,7 @@ class FeedSettings extends Component {
 								"The number of posts to include in your site's feed. {{link}}Learn more about feeds{{/link}}",
 								{
 									components: {
-										link: <a href="https://en.support.wordpress.com/feeds/" />,
+										link: <a href="https://wordpress.com/support/feeds/" />,
 									},
 								}
 							) }

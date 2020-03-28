@@ -108,7 +108,7 @@ class MembershipsSection extends Component {
 									br: <br />,
 									a: (
 										<ExternalLink
-											href="https://en.support.wordpress.com/recurring-payments-button/#related-fees"
+											href="https://wordpress.com/support/recurring-payments-button/#related-fees"
 											icon={ true }
 										/>
 									),
@@ -216,7 +216,7 @@ class MembershipsSection extends Component {
 								components: {
 									a: (
 										<a
-											href="https://en.support.wordpress.com/recurring-payments-button/"
+											href="https://wordpress.com/support/recurring-payments-button/"
 											target="_blank"
 											rel="noreferrer noopener"
 										/>

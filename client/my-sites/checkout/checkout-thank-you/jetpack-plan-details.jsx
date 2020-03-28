@@ -45,7 +45,7 @@ class EnhancedDetails extends Component {
 							'protect your site from spam and data loss. ' +
 							"If you have any questions along the way, we're here to help!"
 					) }
-					href="https://en.support.wordpress.com/setting-up-premium-services/"
+					href="https://wordpress.com/support/setting-up-premium-services/"
 					onClick={ trackManualInstall }
 				/>
 			);
@@ -67,7 +67,7 @@ class EnhancedDetails extends Component {
 								<a
 									target="_blank"
 									rel="noopener noreferrer"
-									href="https://en.support.wordpress.com/setting-up-premium-services/"
+									href="https://wordpress.com/support/setting-up-premium-services/"
 									onClick={ trackManualInstall }
 								/>
 							),
