@@ -54,7 +54,7 @@ function PageCardInfo( {
 	const moment = useLocalizedMoment();
 
 	const renderTimestamp = function() {
-		if ( showPublishedStatus ) {
+		if ( page.status === 'future' || showPublishedStatus ) {
 			return (
 				<PostRelativeTimeStatus
 					post={ page }
