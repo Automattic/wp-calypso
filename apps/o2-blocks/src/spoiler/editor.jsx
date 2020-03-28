@@ -3,18 +3,53 @@
  */
 import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
+import { RichText } from '@wordpress/block-editor';
 import { InnerBlocks } from '@wordpress/editor';
 
-/**
- * Internal dependencies
- */
-import './editor.scss';
-
-/**
- * @cite https://jsfiddle.net/clarle/bY7m4/
- */
-
 const blockAttributes = {
+	summary: {
+		type: 'string',
+		source: 'html',
+		selector: 'summary',
+	},
+};
+
+const save = ( { attributes: { summary } }, className ) => {
+	return (
+		<details className={ className }>
+			<RichText.Content tagName="summary" value={ summary || 'Click to show/hide' } />
+			<div style={ { marginTop: '1em' } }>
+				<InnerBlocks.Content />
+			</div>
+		</details>
+	);
+};
+
+const edit = ( { attributes: { summary }, className, isSelected, setAttributes } ) => {
+	return (
+		<div className={ className }>
+			{ isSelected || ! summary ? (
+				<RichText
+					tagName="heading"
+					placeholder="Enter a preview or description of what's hidden inside"
+					keepPlaceholderOnFocus={ true }
+					value={ summary }
+					onChange={ newSummary => setAttributes( { summary: newSummary } ) }
+				/>
+			) : (
+				<RichText.Content tagName="heading" value={ summary } />
+			) }
+			<hr />
+			<InnerBlocks />
+		</div>
+	);
+};
+
+///////////////////////////////////////
+// Deprecations
+///////////////////////////////////////
+
+const blockAttributes_v1 = {
 	hideId: {
 		type: 'string',
 	},
@@ -23,7 +58,9 @@ const blockAttributes = {
 	},
 };
 
-const save = ( { attributes: { hideId, showId }, className } ) => {
+const migrate_v1 = () => ( {} );
+
+const save_v1 = ( { attributes: { hideId, showId }, className } ) => {
 	return (
 		<div className={ className }>
 			<a
@@ -47,23 +84,6 @@ const save = ( { attributes: { hideId, showId }, className } ) => {
 	);
 };
 
-const randomId = () => `${ Math.floor( Math.random() * 999999999999 ) }`;
-
-const edit = ( { attributes: { hideId, showId }, className, setAttributes } ) => {
-	if ( ! hideId || ! showId ) {
-		setAttributes( {
-			hideId: randomId(),
-			showId: randomId(),
-		} );
-	}
-	return (
-		<div className={ className }>
-			<p>Spoiler content (hidden on page view)</p>
-			<InnerBlocks />
-		</div>
-	);
-};
-
 registerBlockType( 'a8c/spoiler', {
 	title: __( 'Spoiler!' ),
 	icon: 'warning',
@@ -73,4 +93,11 @@ registerBlockType( 'a8c/spoiler', {
 	attributes: blockAttributes,
 	edit,
 	save,
+	deprecated: [
+		{
+			attributes: blockAttributes_v1,
+			migrate: migrate_v1,
+			save: save_v1,
+		},
+	],
 } );
