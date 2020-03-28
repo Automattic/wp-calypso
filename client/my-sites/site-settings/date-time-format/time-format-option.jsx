@@ -68,7 +68,7 @@ export const TimeFormatOption = ( {
 			</span>
 			<FormSettingExplanation>
 				<ExternalLink
-					href="https://support.wordpress.com/settings/time-settings/"
+					href="https://wordpress.com/support/settings/time-settings/"
 					icon
 					target="_blank"
 				>

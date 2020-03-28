@@ -153,7 +153,7 @@ const Profile = createReactClass( {
 									hovercardslink: (
 										<a
 											onClick={ this.getClickHandler( 'Gravatar Hovercards Link' ) }
-											href="https://support.wordpress.com/gravatar-hovercards/"
+											href="https://wordpress.com/support/gravatar-hovercards/"
 											target="_blank"
 											rel="noopener noreferrer"
 										/>

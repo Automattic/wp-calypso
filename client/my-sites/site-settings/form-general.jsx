@@ -216,7 +216,7 @@ export class SiteSettingsFormGeneral extends Component {
 		const errors = {
 			error_cap: {
 				text: translate( 'The Site Language setting is disabled due to insufficient permissions.' ),
-				link: 'https://support.wordpress.com/user-roles/',
+				link: 'https://wordpress.com/support/user-roles/',
 				linkText: translate( 'More info' ),
 			},
 			error_const: {

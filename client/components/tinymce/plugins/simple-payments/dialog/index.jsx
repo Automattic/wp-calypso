@@ -489,7 +489,7 @@ class SimplePaymentsDialog extends Component {
 					secondaryAction={
 						<a
 							className="empty-content__action button"
-							href="https://support.wordpress.com/simple-payments/"
+							href="https://wordpress.com/support/simple-payments/"
 						>
 							{ translate( 'Learn more about Simple Payments' ) }
 						</a>
@@ -522,7 +522,7 @@ class SimplePaymentsDialog extends Component {
 					secondaryAction={
 						<a
 							className="empty-content__action button"
-							href="https://support.wordpress.com/simple-payments/"
+							href="https://wordpress.com/support/simple-payments/"
 						>
 							{ translate( 'Learn more about Simple Payments' ) }
 						</a>

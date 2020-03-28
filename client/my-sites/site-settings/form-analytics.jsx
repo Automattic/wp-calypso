@@ -106,7 +106,7 @@ export class GoogleAnalyticsForm extends Component {
 		const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
 		const analyticsSupportUrl = siteIsJetpack
 			? 'https://jetpack.com/support/google-analytics/'
-			: 'https://support.wordpress.com/google-analytics/';
+			: 'https://wordpress.com/support/google-analytics/';
 
 		const wooCommercePlugin = find( sitePlugins, { slug: 'woocommerce' } );
 		const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.active : false;

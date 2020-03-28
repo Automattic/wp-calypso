@@ -450,7 +450,7 @@ class MembershipsSection extends Component {
 						) }
 					>
 						<NoticeAction
-							href={ `https://support.wordpress.com/recurring-payments-button/#stripe-account-connected` }
+							href={ `https://wordpress.com/support/recurring-payments-button/#stripe-account-connected` }
 							icon="external"
 						>
 							{ this.props.translate( 'Learn how' ) }
@@ -476,7 +476,7 @@ class MembershipsSection extends Component {
 							'Start collecting subscription payments! Recurring Payments is a feature inside the block editor. When editing a post or a page you can insert a button that will allow you to collect paying subscribers.'
 						) }{ ' ' }
 						<ExternalLink
-							href="https://support.wordpress.com/recurring-payments-button/"
+							href="https://wordpress.com/support/recurring-payments-button/"
 							icon={ true }
 						>
 							{ this.props.translate( 'Learn more.' ) }

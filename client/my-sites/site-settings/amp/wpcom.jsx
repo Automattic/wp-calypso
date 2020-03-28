@@ -92,7 +92,7 @@ class AmpWpcom extends Component {
 								components: {
 									a: (
 										<a
-											href="https://support.wordpress.com/google-amp-accelerated-mobile-pages/"
+											href="https://wordpress.com/support/google-amp-accelerated-mobile-pages/"
 											target="_blank"
 											rel="noopener noreferrer"
 										/>

@@ -143,7 +143,7 @@ class CustomContentTypes extends Component {
 				'you can display them using the shortcode [testimonials].',
 			{
 				components: {
-					link: <a href="https://support.wordpress.com/testimonials/" />,
+					link: <a href="https://wordpress.com/support/testimonials/" />,
 				},
 			}
 		);
@@ -159,7 +159,7 @@ class CustomContentTypes extends Component {
 				'you can display them using the shortcode [portfolio].',
 			{
 				components: {
-					link: <a href="https://support.wordpress.com/portfolios/" />,
+					link: <a href="https://wordpress.com/support/portfolios/" />,
 				},
 			}
 		);

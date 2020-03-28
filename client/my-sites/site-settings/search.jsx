@@ -103,7 +103,7 @@ class Search extends Component {
 
 		return (
 			<FormFieldset>
-				{ this.renderInfoLink( 'https://support.wordpress.com/jetpack-search/' ) }
+				{ this.renderInfoLink( 'https://wordpress.com/support/jetpack-search/' ) }
 
 				<CompactFormToggle
 					checked={ !! fields.jetpack_search_enabled }

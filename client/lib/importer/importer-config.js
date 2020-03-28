@@ -42,7 +42,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 						<InlineSupportLink
 							supportPostId={ 67084 }
 							supportLink={ localizeUrl(
-								'https://support.wordpress.com/coming-from-self-hosted/'
+								'https://wordpress.com/support/coming-from-self-hosted/'
 							) }
 							showIcon={ false }
 							text={ translate( 'Need help exporting your content?' ) }
@@ -86,7 +86,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 						<InlineSupportLink
 							supportPostId={ 66764 }
 							supportLink={ localizeUrl(
-								'https://support.wordpress.com/import/coming-from-blogger/'
+								'https://wordpress.com/support/import/coming-from-blogger/'
 							) }
 							showIcon={ false }
 							text={ translate( 'Need help exporting your content?' ) }
@@ -121,7 +121,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 					<InlineSupportLink
 						supportPostId={ 154436 }
 						supportLink={ localizeUrl(
-							'https://support.wordpress.com/import/import-from-godaddy/'
+							'https://wordpress.com/support/import/import-from-godaddy/'
 						) }
 						showIcon={ false }
 						text={ translate( 'Need help?' ) }
@@ -163,7 +163,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 						<InlineSupportLink
 							supportPostId={ 93180 }
 							supportLink={ localizeUrl(
-								'https://support.wordpress.com/import/import-from-medium/'
+								'https://wordpress.com/support/import/import-from-medium/'
 							) }
 							showIcon={ false }
 							text={ translate( 'Need help exporting your content?' ) }
@@ -206,7 +206,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 						<InlineSupportLink
 							supportPostId={ 87696 }
 							supportLink={ localizeUrl(
-								'https://support.wordpress.com/import/import-from-squarespace/'
+								'https://wordpress.com/support/import/import-from-squarespace/'
 							) }
 							showIcon={ false }
 							text={ translate( 'Need help exporting your content?' ) }
@@ -240,7 +240,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 				supportLink: (
 					<InlineSupportLink
 						supportPostId={ 147777 }
-						supportLink={ localizeUrl( 'https://support.wordpress.com/import/import-from-wix/' ) }
+						supportLink={ localizeUrl( 'https://wordpress.com/support/import/import-from-wix/' ) }
 						showIcon={ false }
 						text={ translate( 'Need help?' ) }
 					/>

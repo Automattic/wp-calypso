@@ -78,7 +78,7 @@ const openSupportArticleDialogAndTrack = clickSource =>
 		),
 		openSupportArticleDialog( {
 			postId: 145498,
-			postUrl: localizeUrl( 'https://support.wordpress.com/free-photo-library/' ),
+			postUrl: localizeUrl( 'https://wordpress.com/support/free-photo-library/' ),
 		} )
 	);
 

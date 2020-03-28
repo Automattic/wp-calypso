@@ -62,7 +62,7 @@ const MailchimpSettings = ( {
 						'Start building your mailing list by adding the Mailchimp block to your posts and pages. '
 					) }
 					<a
-						href={ 'https://support.wordpress.com/mailchimp-block/' }
+						href={ 'https://wordpress.com/support/mailchimp-block/' }
 						target="_blank"
 						rel="noopener noreferrer"
 					>
