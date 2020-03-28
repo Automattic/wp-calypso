@@ -26,10 +26,6 @@
 		}
 	}
 
-	&__upsells {
-		@include grid-column( 1, 12 );
-	}
-
 	&__main .banner.card {
 		@include grid-column( 1, 12 );
 		@include grid-row( 3, 1 );
@@ -73,17 +69,6 @@
 				white-space: nowrap;
 			}
 		}
-	}
-	&__launch-button {
-		& .button {
-			font-size: 18px;
-			width: 100%;
-			height: 50px;
-		}
-	}
-
-	&__card-checklist-heading {
-		margin-bottom: -16px;
 	}
 
 	&__card-col {
@@ -147,36 +132,11 @@
 			@include card-col-right-two-col;
 		}
 	}
-	&__card-support {
-		display: flex;
-		justify-content: space-between;
-
-		img {
-			margin: 0 7% 0 0;
-			width: 137px;
-			height: 119px;
-
-			@include breakpoint( '>960px' ) {
-				display: none;
-			}
-		}
-
-		.vertical-nav {
-			width: 60%;
-
-			@include breakpoint( '>960px' ) {
-				width: 100%;
-			}
-		}
-	}
 
 	&__card-subheader {
 		color: var( --color-text-subtle );
 		font-size: 0.85rem;
 		margin: -0.5rem 0 1rem;
-	}
-	&__grow-earn {
-		padding-bottom: 12px;
 	}
 
 	&__layout {
@@ -186,55 +146,6 @@
 			@include display-grid;
 			@include grid-template-columns( 12, 24px, 1fr );
 			grid-gap: 24px;
-		}
-
-		.checklist__tasks {
-			margin-bottom: 16px;
-
-			&-completed-title {
-				margin-top: 24px;
-
-				@include breakpoint( '480px-660px' ) {
-					margin-left: 24px;
-				}
-			}
-
-			.checklist__task-icon {
-				width: 5px;
-				height: 5px;
-				border-color: var( --color-neutral-20 );
-				background: var( --color-surface );
-				top: 21px;
-				left: 16px;
-
-				@include breakpoint( '>480px' ) {
-					left: 24px;
-				}
-			}
-
-			.checklist__task.is-collapsed .checklist__task-icon {
-				border-color: var( --color-neutral-20 );
-				background: var( --color-surface );
-			}
-
-			.checklist__task.is-completed .checklist__task-icon {
-				border-color: var( --color-neutral-10 );
-				background: var( --color-neutral-10 );
-				top: 15px;
-				left: 16px;
-
-				@include breakpoint( '>480px' ) {
-					left: 24px;
-				}
-			}
-
-			.checklist__task.is-completed .gridicons-checkmark {
-				display: none;
-			}
-
-			.checklist__task::before {
-				display: none;
-			}
 		}
 	}
 	&__layout-col {

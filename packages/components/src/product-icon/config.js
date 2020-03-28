@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import jetpackBackup from './images/jetpack-backup.svg';
+import jetpackScan from './images/jetpack-scan.svg';
 import jetpackFree from './images/jetpack-free.svg';
 import jetpackPersonal from './images/jetpack-personal.svg';
 import jetpackPremium from './images/jetpack-premium.svg';
@@ -15,6 +16,7 @@ import wpcomPersonal from './images/wpcom-personal.svg';
 import wpcomPremium from './images/wpcom-premium.svg';
 
 export const paths = {
+	'jetpack-scan': jetpackScan,
 	'jetpack-backup-daily': jetpackBackup,
 	'jetpack-backup-realtime': jetpackBackup,
 	'jetpack-free': jetpackFree,

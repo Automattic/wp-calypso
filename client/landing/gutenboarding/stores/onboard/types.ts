@@ -20,5 +20,8 @@ export interface Design {
 	title: string;
 	slug: string;
 	src: string;
-	srcset: string;
+	theme: string;
+	template: string;
+	fonts: Array< string >;
+	categories: Array< string >;
 }

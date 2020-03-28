@@ -18,7 +18,6 @@ import { SITE_STORE } from '../../stores/site';
 import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
 import SignupForm from '../../components/signup-form';
-import LoginForm from '../../components/login-form';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 
 import wp from '../../../../lib/wp';
@@ -58,18 +57,25 @@ interface Cart {
 const Header: FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 
-	const [ isDomainFlow, setDomainFlow ] = useState( false );
-
 	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
 	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
 
 	const newSite = useSelect( select => select( SITE_STORE ).getNewSite() );
 
-	const { domain, selectedDesign, siteTitle, siteVertical } = useSelect( select =>
-		select( ONBOARD_STORE ).getState()
-	);
+	const {
+		domain,
+		selectedDesign,
+		siteTitle,
+		siteVertical,
+		siteWasCreatedForDomainPurchase,
+	} = useSelect( select => select( ONBOARD_STORE ).getState() );
 	const hasSelectedDesign = !! selectedDesign;
-	const { createSite, setDomain, resetOnboardStore } = useDispatch( ONBOARD_STORE );
+	const {
+		createSite,
+		setDomain,
+		resetOnboardStore,
+		setSiteWasCreatedForDomainPurchase,
+	} = useDispatch( ONBOARD_STORE );
 
 	const freeDomainSuggestion = useFreeDomainSuggestion();
 
@@ -80,7 +86,6 @@ const Header: FunctionComponent = () => {
 	}, [ siteTitle, setDomain ] );
 
 	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
-	const [ showLoginDialog, setShowLoginDialog ] = useState( false );
 
 	const {
 		location: { pathname },
@@ -91,8 +96,7 @@ const Header: FunctionComponent = () => {
 		// this header isn't unmounted on route changes so we need to
 		// explicitly hide the dialog.
 		setShowSignupDialog( false );
-		setShowLoginDialog( false );
-	}, [ pathname, setShowSignupDialog, setShowLoginDialog ] );
+	}, [ pathname, setShowSignupDialog ] );
 
 	const currentDomain = domain ?? freeDomainSuggestion;
 
@@ -123,28 +127,21 @@ const Header: FunctionComponent = () => {
 	);
 
 	const handleCreateSiteForDomains: typeof handleCreateSite = ( ...args ) => {
-		setDomainFlow( true );
+		setSiteWasCreatedForDomainPurchase( true );
 		handleCreateSite( ...args );
 	};
 
 	const handleSignup = () => {
 		setShowSignupDialog( true );
-		setShowLoginDialog( false );
-	};
-
-	const handleLogin = () => {
-		setShowSignupDialog( false );
-		setShowLoginDialog( true );
 	};
 
 	const closeAuthDialog = () => {
 		setShowSignupDialog( false );
-		setShowLoginDialog( false );
 	};
 
 	const handleSignupForDomains = () => {
 		setShowSignupDialog( true );
-		setDomainFlow( true );
+		setSiteWasCreatedForDomainPurchase( true );
 	};
 
 	useEffect( () => {
@@ -155,7 +152,7 @@ const Header: FunctionComponent = () => {
 
 	useEffect( () => {
 		if ( newSite ) {
-			if ( isDomainFlow ) {
+			if ( siteWasCreatedForDomainPurchase ) {
 				// I'd rather not make my own product, but this works.
 				// lib/cart-items helpers did not perform well.
 				const domainProduct = {
@@ -186,7 +183,7 @@ const Header: FunctionComponent = () => {
 			resetOnboardStore();
 			window.location.replace( `/block-editor/page/${ newSite.site_slug }/home?is-gutenboarding` );
 		}
-	}, [ domain, isDomainFlow, newSite, resetOnboardStore ] );
+	}, [ domain, siteWasCreatedForDomainPurchase, newSite, resetOnboardStore ] );
 
 	return (
 		<div
@@ -196,8 +193,8 @@ const Header: FunctionComponent = () => {
 			tabIndex={ -1 }
 		>
 			<section className="gutenboarding__header-section">
-				<div className="gutenboarding__header-section-item">
-					<Icon icon="wordpress-alt" size={ 24 } className="gutenboarding__header-wp-icon" />
+				<div className="gutenboarding__header-section-item gutenboarding__header-wp-logo">
+					<Icon icon="wordpress-alt" size={ 24 } />
 				</div>
 				<div className="gutenboarding__header-section-item">{ siteTitleElement }</div>
 				<div className="gutenboarding__header-section-item">
@@ -236,16 +233,7 @@ const Header: FunctionComponent = () => {
 					) }
 				</div>
 			</section>
-			{ showSignupDialog && (
-				<SignupForm onRequestClose={ closeAuthDialog } onOpenLogin={ handleLogin } />
-			) }
-			{ showLoginDialog && (
-				<LoginForm
-					onRequestClose={ closeAuthDialog }
-					onOpenSignup={ handleSignup }
-					onLogin={ handleCreateSite }
-				/>
-			) }
+			{ showSignupDialog && <SignupForm onRequestClose={ closeAuthDialog } /> }
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */

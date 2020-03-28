@@ -78,7 +78,7 @@ export interface DomainSuggestion {
 	 *
 	 * @example [ "exact-match" ]
 	 */
-	match_reasons: string[];
+	match_reasons?: string[];
 
 	/**
 	 * Rendered cost with currency

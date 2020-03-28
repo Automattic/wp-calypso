@@ -101,6 +101,37 @@ class Layout extends Component {
 		// intentionally don't remove these in unmount
 	}
 
+	shouldLoadInlineHelp() {
+		if ( ! config.isEnabled( 'inline-help' ) ) {
+			return false;
+		}
+
+		if (
+			'jetpack-connect' === this.props.sectionName &&
+			'/jetpack/new' !== this.props.currentRoute
+		) {
+			return false;
+		}
+
+		if ( '/log-in/jetpack' === this.props.currentRoute ) {
+			return false;
+		}
+
+		if ( '/me/account/closed' === this.props.currentRoute ) {
+			return false;
+		}
+
+		if ( 'happychat' === this.props.sectionName ) {
+			return false;
+		}
+
+		if ( 'devdocs' === this.props.sectionName ) {
+			return false;
+		}
+
+		return true;
+	}
+
 	renderMasterbar() {
 		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
 			? JetpackCloudMasterbar
@@ -196,14 +227,9 @@ class Layout extends Component {
 				{ 'development' === process.env.NODE_ENV && (
 					<AsyncLoad require="components/webpack-build-monitor" placeholder={ null } />
 				) }
-				{ ( 'jetpack-connect' !== this.props.sectionName ||
-					this.props.currentRoute === '/jetpack/new' ) &&
-					this.props.currentRoute !== '/log-in/jetpack' &&
-					'devdocs' !== this.props.sectionName &&
-					this.props.currentRoute !== '/me/account/closed' &&
-					'happychat' !== this.props.sectionName && (
-						<AsyncLoad require="blocks/inline-help" placeholder={ null } />
-					) }
+				{ this.shouldLoadInlineHelp() && (
+					<AsyncLoad require="blocks/inline-help" placeholder={ null } />
+				) }
 				<AsyncLoad require="blocks/support-article-dialog" placeholder={ null } />
 				<AsyncLoad require="blocks/app-banner" placeholder={ null } />
 				{ config.isEnabled( 'gdpr-banner' ) && (

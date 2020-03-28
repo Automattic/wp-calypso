@@ -1,6 +1,7 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import 'assets/stylesheets/shared/mixins/placeholder'; // Contains the placeholder mixin
 @import 'assets/stylesheets/shared/animation'; // Needed for the placeholder
+@import '../../variables.scss';
 
 // Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-widgets/src/components/header/style.scss
 .gutenboarding__header {
@@ -8,7 +9,7 @@
 	align-items: center;
 	justify-content: space-between;
 	border-bottom: 1px solid $light-gray-500;
-	height: $header-height;
+	height: $gutenboarding-header-height;
 	background: $white;
 	z-index: z-index( '.block-editor-editor-skeleton__header' );
 
@@ -25,19 +26,23 @@
 	}
 }
 
-.gutenboarding__header-wp-icon {
+.gutenboarding__header-wp-logo {
 	color: var( --studio-blue-90 );
+	display: flex;
 }
 
 .gutenboarding__header-section {
 	display: flex;
 	align-items: center;
 	font-size: 14px;
-	padding: 10px;
 }
 
 .gutenboarding__header-section-item {
 	margin-left: 10px;
+
+	&.gutenboarding__header-wp-logo {
+		margin-left: 24px - $grid-size; // ( 24 - header padding )
+	}
 }
 
 $padding--gutenboarding__header-domain-picker-button: 0.3em 0.5em;
@@ -80,4 +85,5 @@ $padding--gutenboarding__header-domain-picker-button: 0.3em 0.5em;
 
 .gutenboarding__site-title {
 	padding: $padding--gutenboarding__header-domain-picker-button;
+	font-weight: 600;
 }

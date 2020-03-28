@@ -56,7 +56,7 @@ import {
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities, preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { setThemePreviewOptions } from 'state/themes/actions';
 import ThemeNotFoundError from './theme-not-found-error';
@@ -661,11 +661,12 @@ class ThemeSheet extends React.Component {
 					plan={ PLAN_PREMIUM }
 					className="theme__page-upsell-banner"
 					title={ translate( 'Access this theme for FREE with a Premium or Business plan!' ) }
-					description={ translate(
-						'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
+					description={ preventWidows(
+						translate(
+							'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
+						)
 					) }
 					event="themes_plan_particular_free_with_plan"
-					callToAction={ translate( 'View Plans' ) }
 					forceHref={ true }
 					href={ plansUrl }
 				/>

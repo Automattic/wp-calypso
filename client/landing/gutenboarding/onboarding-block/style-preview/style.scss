@@ -41,6 +41,7 @@
 	// Extra specificity to override core style
 	// This is effectively a more-specific synonmy of the same selector
 	&.components-button {
+		color: var( --studio-gray-90 );
 		height: auto;
 		border-radius: 2px;
 	}
@@ -48,6 +49,10 @@
 	&.is-selected {
 		box-shadow: inset 0 0 0 1px var( --highlightColor );
 		color: var( --highlightColor );
+	}
+
+	&:hover {
+		box-shadow: inset 0 0 0 1px var( --studio-gray-90 );
 	}
 
 	span {
@@ -63,6 +68,8 @@
 	border-radius: 4px;
 	overflow: hidden;
 	width: 100%;
+	position: relative;
+	height: 700px;
 
 	&.is-viewport-mobile,
 	&.is-viewport-tablet {
@@ -122,5 +129,16 @@
 		&.is-selected {
 			color: var( --studio-black );
 		}
+	}
+}
+.block-editor__container iframe.style-preview__iframe {
+	transform: scale( 0.7 );
+	transform-origin: 0 0;
+	width: 143%;
+	height: 143%;
+	position: absolute;
+
+	&.hideScroll {
+		width: 145%;
 	}
 }

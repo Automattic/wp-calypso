@@ -222,10 +222,10 @@ export class DomainWarnings extends React.PureComponent {
 		};
 		let children;
 		if ( this.props.isCompact ) {
-			noticeProps.text = translate( 'DNS configuration required' );
+			noticeProps.text = translate( 'Complete domain setup' );
 			children = (
 				<NoticeAction href={ domainManagementList( this.props.selectedSite.slug ) }>
-					{ translate( 'Fix' ) }
+					{ translate( 'Go' ) }
 				</NoticeAction>
 			);
 		} else {

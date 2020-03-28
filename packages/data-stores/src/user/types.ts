@@ -33,7 +33,7 @@ export interface NewUserSuccessResponse {
 	username?: string;
 	signup_sandbox_username?: string;
 	user_id?: number;
-	signup_sandbox_user_id?: string;
+	signup_sandbox_user_id?: number;
 }
 
 export interface NewUserErrorResponse {

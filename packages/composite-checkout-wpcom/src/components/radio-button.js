@@ -19,7 +19,7 @@ export default function RadioButton( {
 	const [ isFocused, changeFocus ] = useState( false );
 
 	return (
-		<RadioButtonWrapper isFocused={ isFocused } checked={ checked }>
+		<RadioButtonWrapper isDisabled={ isDisabled } isFocused={ isFocused } checked={ checked }>
 			<Radio
 				type="radio"
 				name={ name }
@@ -99,6 +99,8 @@ const RadioButtonWrapper = styled.div`
 	:hover svg {
 		filter: grayscale( 0 );
 	}
+
+	${handleWrapperDisabled};
 `;
 
 const Radio = styled.input`
@@ -133,7 +135,7 @@ const Label = styled.label`
 		transform: translateY( -50% );
 		left: 16px;
 		position: absolute;
-		background: ${getRadioBackgroundColor};
+		background: ${props => props.theme.colors.surface};
 		box-sizing: border-box;
 		z-index: 2;
 	}
@@ -152,6 +154,8 @@ const Label = styled.label`
 		box-sizing: border-box;
 		z-index: 3;
 	}
+
+	${handleLabelDisabled};
 `;
 
 const RadioButtonChildren = styled.div`
@@ -164,10 +168,6 @@ function getBorderColor( { checked, theme } ) {
 
 function getRadioColor( { checked, theme } ) {
 	return checked ? theme.colors.highlight : theme.colors.surface;
-}
-
-function getRadioBackgroundColor( { isDisabled, theme } ) {
-	return isDisabled ? 'lightgray' : theme.colors.surface;
 }
 
 function getBorderWidth( { checked } ) {
@@ -183,4 +183,45 @@ function getOutline( { isFocused, theme } ) {
 		return theme.colors.outline + ' solid 2px';
 	}
 	return '0';
+}
+
+function handleWrapperDisabled( { isDisabled } ) {
+	if ( ! isDisabled ) {
+		return null;
+	}
+
+	return `
+		:before,
+		:hover:before {
+			border: 1px solid lightgray;
+		}
+	`;
+}
+
+function handleLabelDisabled( { isDisabled } ) {
+	if ( ! isDisabled ) {
+		return null;
+	}
+
+	return `
+		color: lightgray;
+		font-style: italic;
+		
+		:hover {
+			cursor: default;
+		}
+		
+		:before {
+			border: 1px solid lightgray;
+			background: lightgray;
+		}
+		
+		:after {
+			background: white;
+		}
+		
+		span {
+			color: lightgray;
+		}
+	`;
 }

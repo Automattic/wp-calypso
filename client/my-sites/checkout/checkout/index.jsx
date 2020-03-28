@@ -38,7 +38,7 @@ import {
 	hasTransferProduct,
 	jetpackProductItem,
 } from 'lib/cart-values/cart-items';
-import { JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
+import { JETPACK_BACKUP_PRODUCTS, JETPACK_SEARCH_PRODUCTS } from 'lib/products-values/constants';
 import PendingPaymentBlocker from './pending-payment-blocker';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';
@@ -298,7 +298,8 @@ export class Checkout extends React.Component {
 
 		if (
 			( startsWith( this.props.product, 'jetpack_backup' ) ||
-				startsWith( this.props.product, 'jetpack_search' ) ) &&
+				startsWith( this.props.product, 'jetpack_search' ) ||
+				startsWith( this.props.product, 'jetpack_scan' ) ) &&
 			isJetpackNotAtomic
 		) {
 			cartItem = jetpackProductItem( this.props.product );
@@ -391,7 +392,10 @@ export class Checkout extends React.Component {
 		// - has a receipt number
 		// - does not have a receipt number but has an item in cart(as in the case of paying with a redirect payment type)
 		if ( selectedSiteSlug && ( ! isReceiptEmpty || ! isCartEmpty ) ) {
-			const isJetpackProduct = product && includes( JETPACK_BACKUP_PRODUCTS, product );
+			const isJetpackProduct =
+				product &&
+				( includes( JETPACK_BACKUP_PRODUCTS, product ) ||
+					includes( JETPACK_SEARCH_PRODUCTS, product ) );
 			// If we just purchased a Jetpack product, redirect to the my plans page.
 			if ( isJetpackNotAtomic && isJetpackProduct ) {
 				return `/plans/my-plan/${ selectedSiteSlug }?thank-you&product=${ product }`;

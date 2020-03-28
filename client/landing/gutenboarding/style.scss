@@ -27,13 +27,16 @@ $admin-sidebar-width-collapsed: 0;
 @import '~@wordpress/block-editor/src/style.scss';
 @import '~@wordpress/format-library/src/style.scss';
 
+// Own/Gutenboarding styles
+@import './variables.scss';
+
 .gutenboarding__content {
 	position: static;
 }
 
 .gutenboarding__content-editor {
 	// overrides .edit-post-visual-editor
-	padding-top: $header-height;
+	padding-top: $gutenboarding-header-height;
 }
 
 .wp-block {

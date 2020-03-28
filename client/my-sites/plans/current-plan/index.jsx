@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
+import { startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -35,6 +36,7 @@ import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
 import BackupProductThankYou from './current-plan-thank-you/backup-thank-you';
+import SearchProductThankYou from './current-plan-thank-you/search-thank-you';
 import { isFreeJetpackPlan, isFreePlan } from 'lib/products-values';
 
 /**
@@ -50,6 +52,8 @@ class CurrentPlan extends Component {
 		path: PropTypes.string.isRequired,
 		domains: PropTypes.array,
 		currentPlan: PropTypes.object,
+		plan: PropTypes.string,
+		product: PropTypes.bool,
 		requestThankYou: PropTypes.bool,
 		shouldShowDomainWarnings: PropTypes.bool,
 		hasDomainsLoaded: PropTypes.bool,
@@ -73,10 +77,13 @@ class CurrentPlan extends Component {
 	}
 
 	renderThankYou() {
-		const { currentPlan, requestProduct } = this.props;
+		const { currentPlan, product, requestProduct } = this.props;
 
-		if ( requestProduct ) {
+		if ( requestProduct && startsWith( requestProduct, 'jetpack_backup' ) ) {
 			return <BackupProductThankYou />;
+		}
+		if ( requestProduct && startsWith( product, 'jetpack_search' ) ) {
+			return <SearchProductThankYou />;
 		}
 		if ( ! currentPlan || isFreePlan( currentPlan ) || isFreeJetpackPlan( currentPlan ) ) {
 			return <FreePlanThankYou />;

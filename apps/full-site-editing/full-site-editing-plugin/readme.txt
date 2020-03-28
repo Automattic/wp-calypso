@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons,
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.3
-Stable tag: 0.24
+Stable tag: 0.26
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -41,6 +41,15 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 0.26 =
+* SPT IE bug fix.
+
+= 0.25 =
+* G2 and Gutenberg 7.7.1 compatibility fixes.
+* Update to blog posts block v1.2.
+* Add custom WordPress.com block patterns.
+* SPT and NUX compatibility improvements.
 
 = 0.24 =
 

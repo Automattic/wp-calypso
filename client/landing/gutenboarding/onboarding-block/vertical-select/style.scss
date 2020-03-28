@@ -12,6 +12,10 @@
 				color: var( --mainColor );
 				margin: 0;
 				margin-left: 0; // zeroing this out to inherit the parent's width and not overflow
+
+				&::placeholder {
+					color: var( --studio-gray-5 );
+				}
 			}
 
 			.suggestions {
@@ -35,7 +39,7 @@
 				font-size: 12px;
 				font-weight: bold;
 				border-color: transparent;
-				color: var( --studio-gray-20 );
+				color: var( --studio-gray-30 );
 
 				.suggestions__label.is-emphasized {
 					color: var( --studio-gray-80 );

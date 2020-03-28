@@ -11,7 +11,12 @@ import React, { Component } from 'react';
  */
 import DocumentHead from 'components/data/document-head';
 import { updateFilter } from 'state/activity-log/actions';
-import { getBackupAttemptsForDate, getDailyBackupDeltas, getEventsInDailyBackup } from './utils';
+import {
+	getBackupAttemptsForDate,
+	getDailyBackupDeltas,
+	getEventsInDailyBackup,
+	getMetaDiffForDailyBackup,
+} from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestActivityLogs } from 'state/data-getters';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -29,6 +34,8 @@ import Filterbar from 'my-sites/activity/filterbar';
 import ActivityCard from '../../components/activity-card';
 import siteSupportsRealtimeBackup from 'state/selectors/site-supports-realtime-backup';
 import Pagination from 'components/pagination';
+import MissingCredentialsWarning from '../../components/missing-credentials';
+import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials.js';
 
 /**
  * Style dependencies
@@ -48,10 +55,6 @@ class BackupsPage extends Component {
 
 	onDateChange = date => {
 		this.setState( { selectedDate: date } );
-	};
-
-	onDateRangeSelection = () => {
-		//todo: go to the log activity view
 	};
 
 	isEmptyFilter = filter => {
@@ -74,13 +77,22 @@ class BackupsPage extends Component {
 	};
 
 	renderMain() {
-		const { allowRestore, hasRealtimeBackups, logs, moment, siteId, siteSlug } = this.props;
+		const {
+			allowRestore,
+			doesRewindNeedCredentials,
+			hasRealtimeBackups,
+			logs,
+			moment,
+			siteId,
+			siteSlug,
+		} = this.props;
 		const { selectedDate } = this.state;
 		const selectedDateString = this.TO_REMOVE_getSelectedDateString();
 
 		const backupAttempts = getBackupAttemptsForDate( logs, selectedDateString );
 		const deltas = getDailyBackupDeltas( logs, selectedDateString );
 		const realtimeEvents = getEventsInDailyBackup( logs, selectedDateString );
+		const metaDiff = getMetaDiffForDailyBackup( logs, selectedDateString );
 
 		return (
 			<Main>
@@ -91,7 +103,6 @@ class BackupsPage extends Component {
 
 				<DatePicker
 					onDateChange={ this.onDateChange }
-					onDateRangeSelection={ this.onDateRangeSelection }
 					selectedDate={ selectedDate }
 					siteId={ siteId }
 				/>
@@ -101,6 +112,9 @@ class BackupsPage extends Component {
 					backupAttempts={ backupAttempts }
 					siteSlug={ siteSlug }
 				/>
+				{ doesRewindNeedCredentials && (
+					<MissingCredentialsWarning settingsLink={ `/settings/${ siteSlug }` } />
+				) }
 				<BackupDelta
 					{ ...{
 						deltas,
@@ -110,6 +124,7 @@ class BackupsPage extends Component {
 						allowRestore,
 						moment,
 						siteSlug,
+						metaDiff,
 					} }
 				/>
 			</Main>
@@ -207,11 +222,13 @@ const mapStateToProps = state => {
 	const logs = siteId && requestActivityLogs( siteId, filter );
 	const rewind = getRewindState( state, siteId );
 	const restoreStatus = rewind.rewind && rewind.rewind.status;
+	const doesRewindNeedCredentials = getDoesRewindNeedCredentials( state, siteId );
 	const allowRestore =
 		'active' === rewind.state && ! ( 'queued' === restoreStatus || 'running' === restoreStatus );
 
 	return {
 		allowRestore,
+		doesRewindNeedCredentials,
 		filter,
 		hasRealtimeBackups: siteSupportsRealtimeBackup( state, siteId ),
 		logs: logs?.data ?? [],

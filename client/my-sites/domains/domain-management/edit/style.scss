@@ -111,6 +111,10 @@
 			}
 		}
 
+		.mapped-domain-type__name-server-list {
+			margin-bottom: 0.5em;
+		}
+
 		.mapped-domain-type__small-message {
 			font-size: 14px;
 		}
@@ -145,5 +149,13 @@
 
 	.subscription-settings {
 		margin-top: 0;
+	}
+
+	.domain-types__auto-renew-placeholder {
+		width: 20%;
+		p {
+			@include placeholder( --color-neutral-5 );
+			margin: 0 auto;
+		}
 	}
 }

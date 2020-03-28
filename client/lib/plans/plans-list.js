@@ -12,9 +12,7 @@ import { isEnabled } from 'config';
 import * as constants from './constants';
 
 const WPComGetBillingTimeframe = annualPriceText =>
-	annualPriceText
-		? `Billed at ${ annualPriceText } per year`
-		: i18n.translate( 'per month, billed annually' );
+	annualPriceText ? `billed annually` : i18n.translate( 'per month, billed annually' );
 const WPComGetBiennialBillingTimeframe = () => i18n.translate( '/month, billed every two years' );
 
 const plansDescriptionHeadingComponent = {
@@ -748,6 +746,8 @@ export const PLANS_LIST = {
 		getHiddenFeatures: () => [
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+			constants.FEATURE_JETPACK_SCAN_DAILY,
+			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 		],
 		getInferiorHiddenFeatures: () => [],
 	},
@@ -813,6 +813,8 @@ export const PLANS_LIST = {
 		getHiddenFeatures: () => [
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+			constants.FEATURE_JETPACK_SCAN_DAILY,
+			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 		],
 		getInferiorHiddenFeatures: () => [],
 	},
@@ -975,6 +977,8 @@ export const PLANS_LIST = {
 		getHiddenFeatures: () => [
 			constants.FEATURE_JETPACK_BACKUP_REALTIME,
 			constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+			constants.FEATURE_JETPACK_SCAN_DAILY,
+			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 		],
 		getInferiorHiddenFeatures: () => [
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
@@ -1048,6 +1052,8 @@ export const PLANS_LIST = {
 		getInferiorHiddenFeatures: () => [
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+			constants.FEATURE_JETPACK_SCAN_DAILY,
+			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 		],
 	},
 };

@@ -21,10 +21,8 @@ import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
 import GSuiteStatsNudge from 'blocks/gsuite-stats-nudge';
 import isGoogleMyBusinessStatsNudgeVisibleSelector from 'state/selectors/is-google-my-business-stats-nudge-visible';
 import isUpworkStatsNudgeDismissed from 'state/selectors/is-upwork-stats-nudge-dismissed';
-import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import UpworkStatsNudge from 'blocks/upwork-stats-nudge';
-import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import QueryEmailForwards from 'components/data/query-email-forwards';
 import canCurrentUser from 'state/selectors/can-current-user';
 
@@ -32,7 +30,6 @@ class StatsBanners extends Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		gsuiteDomainName: PropTypes.string,
-		isCustomerHomeEnabled: PropTypes.bool.isRequired,
 		isAllowedToManageSite: PropTypes.bool.isRequired,
 		isGoogleMyBusinessStatsNudgeVisible: PropTypes.bool.isRequired,
 		isGSuiteStatsNudgeVisible: PropTypes.bool.isRequired,
@@ -113,14 +110,7 @@ class StatsBanners extends Component {
 	}
 
 	render() {
-		const {
-			gsuiteDomainName,
-			isCustomerHomeEnabled,
-			isAllowedToManageSite,
-			planSlug,
-			siteId,
-			domains,
-		} = this.props;
+		const { gsuiteDomainName, isAllowedToManageSite, planSlug, siteId, domains } = this.props;
 
 		if ( isEmpty( domains ) ) {
 			return null;
@@ -134,10 +124,6 @@ class StatsBanners extends Component {
 
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 
-				{ /* Hide `WpcomChecklist` on the Customer Home because the checklist is displayed on the page. */ }
-				{ ! isEcommercePlan( planSlug ) && ! isCustomerHomeEnabled && (
-					<WpcomChecklist viewMode="banner" />
-				) }
 				{ isEcommercePlan( planSlug ) && <ECommerceManageNudge siteId={ siteId } /> }
 
 				{ this.renderBanner() }
@@ -152,7 +138,6 @@ export default connect( ( state, ownProps ) => {
 	return {
 		domains,
 		gsuiteDomainName: getEligibleGSuiteDomain( null, domains ),
-		isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, ownProps.siteId ),
 		isAllowedToManageSite: canCurrentUser( state, ownProps.siteId, 'manage_options' ),
 		isGoogleMyBusinessStatsNudgeVisible: isGoogleMyBusinessStatsNudgeVisibleSelector(
 			state,

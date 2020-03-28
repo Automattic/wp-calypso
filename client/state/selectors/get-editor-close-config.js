@@ -46,20 +46,21 @@ export default function getEditorCloseConfig( state, siteId, postType, fseParent
 		};
 	}
 
-	// If a user comes from Home or from a fresh page load (i.e. Signup),
-	// redirect to Customer Home.
-	if ( ! lastNonEditorRoute || doesRouteMatch( /^\/home\/?/ ) ) {
-		return {
-			url: `/home/${ getSiteSlug( state, siteId ) }`,
-			label: translate( 'Home' ),
-		};
-	}
-
 	// Back to the themes list.
 	if ( doesRouteMatch( /^\/themes\/?/ ) ) {
 		return {
 			url: `/themes/${ getSiteSlug( state, siteId ) }`,
 			label: translate( 'Themes' ),
+		};
+	}
+
+	// If a user comes from Home or from a fresh page load (i.e. Signup),
+	// redirect to Customer Home.
+	// If no postType, assume site editor and land on home.
+	if ( ! lastNonEditorRoute || ! postType || doesRouteMatch( /^\/home\/?/ ) ) {
+		return {
+			url: `/home/${ getSiteSlug( state, siteId ) }`,
+			label: translate( 'Home' ),
 		};
 	}
 
