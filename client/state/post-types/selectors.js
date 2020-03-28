@@ -27,6 +27,23 @@ export function getPostType( state, siteId, slug ) {
 }
 
 /**
+ * Returns the label for the post type.
+ *
+ * @param  {object}   state   Global state tree
+ * @param  {number}   siteId  Site ID
+ * @param  {string}   slug    Post type slug
+ * @param  {string}   label   Feature label
+ * @returns {?boolean}         Whether post type supports feature
+ */
+export function getPostTypeLabel( state, siteId, slug, label ) {
+	const postType = getPostType( state, siteId, slug );
+	if ( postType ) {
+		return postType.labels[ label ];
+	}
+	return null;
+}
+
+/**
  * Returns true if the post type supports the specified feature, false if the
  * post type does not support the specified feature, or null if post type
  * support cannot be determined.

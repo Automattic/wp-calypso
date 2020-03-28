@@ -7,7 +7,6 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import titlecase from 'to-title-case';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,7 +25,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import FormattedHeader from 'components/formatted-header';
 import { mapPostStatus as mapStatus } from 'lib/route';
 import { POST_STATUSES } from 'state/posts/constants';
-import { getPostType } from 'state/post-types/selectors';
+import { getPostTypeLabel } from 'state/post-types/selectors';
 
 /**
  * Style dependencies
@@ -97,8 +96,6 @@ class PagesMain extends React.Component {
 			type: 'page',
 		};
 
-		const typeLabel = get( getPostType( state, siteId, query.type ), 'labels.name' );
-
 		return (
 			<Main wideLayout classname="pages">
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
@@ -118,11 +115,7 @@ class PagesMain extends React.Component {
 						fitsContainer
 						onSearch={ doSearch }
 						initialValue={ search }
-						placeholder={ this.props.translate( 'Search %(postTypes)s…', {
-							args: {
-								postTypes: typeLabel,
-							},
-						} ) }
+						placeholder={ getPostTypeLabel( state, siteId, query.type, 'search_items' ) }
 						analyticsGroup="Pages"
 						delaySearch={ true }
 					/>
