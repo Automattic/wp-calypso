@@ -17,11 +17,11 @@ import ProductCard from 'components/product-card';
 import ProductCardAction from 'components/product-card/action';
 import ProductCardOptions from 'components/product-card/options';
 import ProductCardPromoNudge from 'components/product-card/promo-nudge';
-import QueryProductsList from 'components/data/query-products-list';
+import QuerySiteProducts from 'components/data/query-site-products';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ProductExpiration from 'components/product-expiration';
 import { extractProductSlugs, filterByProductSlugs } from './utils';
-import { getAvailableProductsList } from 'state/products-list/selectors';
+import { getAvailableProductsBySiteId } from 'state/sites/products/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePlanSlug, isRequestingSitePlans } from 'state/sites/plans/selectors';
@@ -53,7 +53,12 @@ export class ProductSelector extends Component {
 				optionShortNames: PropTypes.objectOf(
 					PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
 				),
+				optionShortNamesCallback: PropTypes.func,
+				optionActionButtonNames: PropTypes.objectOf(
+					PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
+				),
 				optionsLabel: PropTypes.string,
+				optionsLabelCallback: PropTypes.func,
 			} )
 		).isRequired,
 		productPriceMatrix: PropTypes.shape( {
@@ -225,6 +230,14 @@ export class ProductSelector extends Component {
 		return description;
 	}
 
+	getActionButtonName( product, productSlug ) {
+		if ( product.optionActionButtonNames && product.optionActionButtonNames[ productSlug ] ) {
+			return product.optionActionButtonNames[ productSlug ];
+		}
+
+		return this.getProductName( product, productSlug );
+	}
+
 	getProductName( product, productSlug ) {
 		if ( product.optionShortNames && product.optionShortNames[ productSlug ] ) {
 			return product.optionShortNames[ productSlug ];
@@ -236,6 +249,13 @@ export class ProductSelector extends Component {
 		}
 
 		const productObject = storeProducts[ productSlug ];
+
+		if ( product.optionShortNamesCallback ) {
+			const productName = product.optionShortNamesCallback( productObject );
+			if ( productName ) {
+				return productName;
+			}
+		}
 
 		return productObject.product_name;
 	}
@@ -334,7 +354,7 @@ export class ProductSelector extends Component {
 				intro={ this.getIntervalDiscount( selectedProductSlug ) }
 				label={ translate( 'Get %(productName)s', {
 					args: {
-						productName: this.getProductName( product, productObject.product_slug ),
+						productName: this.getActionButtonName( product, productObject.product_slug ),
 					},
 				} ) }
 			/>
@@ -503,6 +523,8 @@ export class ProductSelector extends Component {
 
 		return map( products, product => {
 			const stateKey = this.getStateKey( product.id, intervalType );
+			const selectedSlug = this.state[ stateKey ];
+			const productObject = storeProducts[ selectedSlug ];
 
 			let purchase, isCurrent;
 			if ( this.currentPlanIncludesProduct( product ) ) {
@@ -514,6 +536,13 @@ export class ProductSelector extends Component {
 			}
 
 			const hasProductPurchase = !! purchase;
+
+			let optionsLabel;
+			if ( product.optionsLabel ) {
+				optionsLabel = product.optionsLabel;
+			} else if ( product.optionsLabelCallback ) {
+				optionsLabel = product.optionsLabelCallback( productObject );
+			}
 
 			return (
 				<ProductCard
@@ -539,12 +568,13 @@ export class ProductSelector extends Component {
 							/>
 
 							<ProductCardOptions
-								optionsLabel={ product.optionsLabel }
+								optionsLabel={ optionsLabel }
 								options={ this.getProductOptions( product ) }
-								selectedSlug={ this.state[ stateKey ] }
+								selectedSlug={ selectedSlug }
 								handleSelect={ productSlug =>
 									this.handleProductOptionSelect( stateKey, productSlug, product.id )
 								}
+								forceRadiosEvenIfOnlyOneOption={ !! product.forceRadios }
 							/>
 
 							{ this.renderCheckoutButton( product ) }
@@ -560,7 +590,7 @@ export class ProductSelector extends Component {
 
 		return (
 			<div className="product-selector">
-				<QueryProductsList />
+				<QuerySiteProducts siteId={ selectedSiteId } />
 				<QuerySitePurchases siteId={ selectedSiteId } />
 
 				{ this.renderProducts() }
@@ -573,7 +603,7 @@ const connectComponent = connect(
 	( state, { products, siteId } ) => {
 		const selectedSiteId = siteId || getSelectedSiteId( state );
 		const productSlugs = extractProductSlugs( products );
-		const availableProducts = getAvailableProductsList( state );
+		const availableProducts = getAvailableProductsBySiteId( state, selectedSiteId ).data;
 
 		return {
 			availableProducts,
@@ -586,7 +616,9 @@ const connectComponent = connect(
 			purchases: getSitePurchases( state, selectedSiteId ),
 			selectedSiteId,
 			selectedSiteSlug: getSiteSlug( state, selectedSiteId ),
-			storeProducts: filterByProductSlugs( availableProducts, productSlugs ),
+			storeProducts: isEmpty( availableProducts )
+				? {}
+				: filterByProductSlugs( availableProducts, productSlugs ),
 		};
 	},
 	{
