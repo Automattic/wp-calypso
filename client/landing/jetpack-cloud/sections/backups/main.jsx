@@ -159,7 +159,8 @@ class BackupsPage extends Component {
 			siteTimezone,
 			siteGmtOffset,
 		} = this.props;
-		const { selectedDate } = this.state;
+		const { selectedDate, backupsOnSelectedDate } = this.state;
+
 		const selectedDateString = this.TO_REMOVE_getSelectedDateString();
 
 		const backupAttempts = getBackupAttemptsForDate( logs, selectedDateString );
@@ -189,7 +190,7 @@ class BackupsPage extends Component {
 						<DailyBackupStatus
 							allowRestore={ allowRestore }
 							siteSlug={ siteSlug }
-							backup={ this.state.backupsOnSelectedDate.lastBackup }
+							backup={ backupsOnSelectedDate.lastBackup }
 							timezone={ siteTimezone }
 							gmtOffset={ siteGmtOffset }
 						/>
@@ -344,12 +345,13 @@ const mapStateToProps = state => {
 	}
 
 	const filter = getActivityLogFilter( state, siteId );
-	const logs = siteId && requestActivityLogs( siteId, filter );
+	const logs = requestActivityLogs( siteId, filter );
 	const siteGmtOffset = getSiteGmtOffset( state, siteId );
 	const siteTimezone = getSiteTimezoneValue( state, siteId );
 	const rewind = getRewindState( state, siteId );
 	const restoreStatus = rewind.rewind && rewind.rewind.status;
 	const doesRewindNeedCredentials = getDoesRewindNeedCredentials( state, siteId );
+	const hasRealtimeBackups = siteSupportsRealtimeBackup( state, siteId );
 	const allowRestore =
 		'active' === rewind.state && ! ( 'queued' === restoreStatus || 'running' === restoreStatus );
 
@@ -361,7 +363,7 @@ const mapStateToProps = state => {
 		allowRestore,
 		doesRewindNeedCredentials,
 		filter,
-		hasRealtimeBackups: siteSupportsRealtimeBackup( state, siteId ),
+		hasRealtimeBackups,
 		logs: logs?.data ?? [],
 		rewind,
 		siteId,
