@@ -11,6 +11,8 @@ import registerPresence from '../presence';
 import { socket } from '../socket';
 
 let channel = null;
+const channelTopicPrefix = 'public:uni~presence:wp_post:';
+
 const debug = debugFactory( 'lasagna:channel:public-post' );
 
 export default store => next => action => {
@@ -25,7 +27,7 @@ export default store => next => action => {
 				break;
 			}
 
-			channel = socket.channel( `public:uni~presence:${ post.global_ID }` );
+			channel = socket.channel( channelTopicPrefix + post.global_ID );
 			registerEventHandlers( channel, store );
 			registerPresence( channel, store, post.global_ID );
 			channel

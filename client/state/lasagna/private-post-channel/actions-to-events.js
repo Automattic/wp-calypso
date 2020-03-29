@@ -12,6 +12,8 @@ import registerPresence from '../presence';
 import { socket } from '../socket';
 
 let channel = null;
+const channelTopicPrefix = 'private:uni~presence:wp_post:';
+
 const debug = debugFactory( 'lasagna:channel:private-post' );
 
 export default store => next => action => {
@@ -27,7 +29,7 @@ export default store => next => action => {
 			}
 
 			const postKey = keyToString( keyForPost( post ) );
-			channel = socket.channel( `private:uni~presence:${ postKey }` );
+			channel = socket.channel( channelTopicPrefix + postKey );
 			registerEventHandlers( channel, store );
 			registerPresence( channel, store, postKey );
 			channel
