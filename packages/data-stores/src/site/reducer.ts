@@ -55,7 +55,7 @@ export const isFetchingSite: Reducer< boolean | undefined, Action > = ( state = 
 	return state;
 };
 
-export const sites: Reducer< { [ key: string ]: SiteDetails | undefined }, Action > = (
+export const sites: Reducer< { [ key: number ]: SiteDetails | undefined }, Action > = (
 	state = {},
 	action
 ) => {
