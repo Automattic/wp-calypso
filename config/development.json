@@ -133,7 +133,7 @@
 		"publicize-preview": true,
 		"push-notifications": true,
 		"reader": true,
-		"reader/comment-polling": true,
+		"reader/comment-polling": false,
 		"reader/full-errors": true,
 		"reader/user-mention-suggestions": true,
 		"recommend-plugins": true,

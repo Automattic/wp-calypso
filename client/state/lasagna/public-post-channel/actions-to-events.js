@@ -25,7 +25,7 @@ export default store => next => action => {
 				break;
 			}
 
-			channel = socket.channel( `public_post:${ post.global_ID }` );
+			channel = socket.channel( `public:uni~presence:${ post.global_ID }` );
 			registerEventHandlers( channel, store );
 			registerPresence( channel, store, post.global_ID );
 			channel

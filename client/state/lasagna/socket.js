@@ -18,12 +18,12 @@ export let socket = null;
 const debug = createDebug( 'lasagna:socket' );
 const url = config( 'lasagna_url' );
 
-export function socketConnect( store, calypsoJwt, userId ) {
+export function socketConnect( store, jwt, userId ) {
 	if ( socket !== null ) {
 		return;
 	}
 
-	socket = new Socket( url, { params: { calypso_jwt: calypsoJwt, user_id: userId } } );
+	socket = new Socket( url, { params: { auth_strategy: 'wpcom_api_jwt', jwt, user_id: userId } } );
 
 	socket.onOpen( () => {
 		debug( 'socket opened' );

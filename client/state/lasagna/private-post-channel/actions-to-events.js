@@ -27,7 +27,7 @@ export default store => next => action => {
 			}
 
 			const postKey = keyToString( keyForPost( post ) );
-			channel = socket.channel( `private_post:${ postKey }` );
+			channel = socket.channel( `private:uni~presence:${ postKey }` );
 			registerEventHandlers( channel, store );
 			registerPresence( channel, store, postKey );
 			channel

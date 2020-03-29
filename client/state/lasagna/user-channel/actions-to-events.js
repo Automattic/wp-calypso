@@ -10,7 +10,7 @@ let channel = null;
 export default store => next => action => {
 	if ( ! channel && socket && action.type === 'LASAGNA_SOCKET_CONNECTED' ) {
 		const userId = getCurrentUserId( store.getState() );
-		channel = socket.channel( `user:${ userId }` );
+		channel = socket.channel( `user:wpcom:${ userId }` );
 		// registerEventHandlers( channel, store );
 		channel.join();
 	}
