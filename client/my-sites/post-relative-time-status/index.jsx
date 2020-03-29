@@ -36,6 +36,7 @@ class PostRelativeTime extends React.PureComponent {
 			case 'new':
 				return null;
 			case 'draft':
+			case 'future':
 			case 'pending':
 				return this.props.post.modified;
 			default:
@@ -73,7 +74,14 @@ class PostRelativeTime extends React.PureComponent {
 			statusText = this.props.translate( 'pending review' );
 			statusClassName += ' is-pending';
 		} else if ( status === 'future' ) {
-			statusText = this.props.translate( 'scheduled' );
+			const scheduledTime = this.props.moment( this.props.post.date ).fromNow();
+			statusText = this.props.translate( 'scheduled %(scheduledTime)s', {
+				args: {
+					scheduledTime,
+				},
+				context: 'Scheduled status  with time',
+				text: true,
+			} );
 			statusClassName += ' is-scheduled';
 			statusIcon = 'calendar';
 		} else if ( status === 'trash' ) {
