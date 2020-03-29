@@ -10,14 +10,16 @@ import React from 'react';
  */
 import Gridicon from 'components/gridicon';
 import { withLocalizedMoment } from 'components/localized-moment';
-
 /**
  * Style dependencies
  */
 import './style.scss';
 
+const ICON_SIZE = 12;
+
 class PostRelativeTime extends React.PureComponent {
 	static propTypes = {
+		showPublishedStatus: PropTypes.bool.isRequired,
 		post: PropTypes.object.isRequired,
 		includeNonDraftStatuses: PropTypes.bool,
 		link: PropTypes.string,
@@ -109,6 +111,23 @@ class PostRelativeTime extends React.PureComponent {
 	}
 
 	render() {
+		const { post, showPublishedStatus } = this.props;
+
+		if ( ! ( post.status === 'future' || showPublishedStatus ) ) {
+			return (
+				<span className="post-relative-time-status__item">
+					<Gridicon
+						icon="time"
+						size={ ICON_SIZE }
+						className="post-relative-time-status__item-icon"
+					/>
+					<span className="post-relative-time-status__item-text">
+						{ this.props.moment( post.modified ).fromNow() }
+					</span>
+				</span>
+			);
+		}
+
 		const timeText = this.getRelativeTimeText();
 		const statusText = this.getStatusText();
 		const relativeTimeClass = timeText ? 'post-relative-time-status' : null;

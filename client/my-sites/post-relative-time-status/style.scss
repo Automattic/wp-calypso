@@ -39,3 +39,25 @@ a.post-relative-time-status__link {
 		text-transform: capitalize;
 	}
 }
+
+.post-relative-time-status__item {
+	display: inline-block;
+	margin-right: 12px;
+}
+
+.post-relative-time-status__item-icon {
+	margin-right: 4px;
+}
+
+.post-relative-time-status__item-icon,
+.post-relative-time-status__item-text {
+	vertical-align: middle;
+}
+
+.post-relative-time-status__item-text {
+	line-height: 1;
+
+	&::first-letter {
+		text-transform: capitalize;
+	}
+}
