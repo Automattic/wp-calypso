@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import titlecase from 'to-title-case';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,6 +24,9 @@ import Search from 'components/search';
 import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import FormattedHeader from 'components/formatted-header';
+import { mapPostStatus as mapStatus } from 'lib/route';
+import { POST_STATUSES } from 'state/posts/constants';
+import { getPostType } from 'state/post-types/selectors';
 
 /**
  * Style dependencies
@@ -73,7 +77,7 @@ class PagesMain extends React.Component {
 	}
 
 	render() {
-		const { doSearch, siteId, search, status = 'published', translate } = this.props;
+		const { doSearch, siteId, search, status = 'published', translate, state } = this.props;
 
 		const filterStrings = {
 			published: translate( 'Published', { context: 'Filter label for pages list' } ),
@@ -81,6 +85,20 @@ class PagesMain extends React.Component {
 			scheduled: translate( 'Scheduled', { context: 'Filter label for pages list' } ),
 			trashed: translate( 'Trashed', { context: 'Filter label for pages list' } ),
 		};
+
+		const query = {
+			number: 20, // all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
+			search,
+			// When searching, search across all statuses so the user can
+			// always find what they are looking for, regardless of what tab
+			// the search was initiated from. Use POST_STATUSES rather than
+			// "any" to do this, since the latter excludes trashed posts.
+			status: search ? POST_STATUSES.join( ',' ) : mapStatus( status ),
+			type: 'page',
+		};
+
+		const typeLabel = get( getPostType( state, siteId, query.type ), 'labels.name' );
+
 		return (
 			<Main wideLayout classname="pages">
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
@@ -100,12 +118,16 @@ class PagesMain extends React.Component {
 						fitsContainer
 						onSearch={ doSearch }
 						initialValue={ search }
-						placeholder={ this.props.translate( 'Search Pages' ) }
+						placeholder={ this.props.translate( 'Search %(postTypes)s…', {
+							args: {
+								postTypes: typeLabel,
+							},
+						} ) }
 						analyticsGroup="Pages"
 						delaySearch={ true }
 					/>
 				</SectionNav>
-				<PageList siteId={ siteId } status={ status } search={ search } />
+				<PageList siteId={ siteId } status={ status } search={ search } query={ query } />
 			</Main>
 		);
 	}
@@ -134,6 +156,7 @@ class PagesMain extends React.Component {
 }
 
 const mapState = state => ( {
+	state,
 	siteId: getSelectedSiteId( state ),
 } );
 
