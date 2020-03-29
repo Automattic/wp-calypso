@@ -3,7 +3,7 @@
  *
  * @param contentDocument the document you want to process
  */
-function disarmAnchorsAndMetaRefreshes( contentDocument: HTMLDocument ) {
+export function disarmAnchorsAndMetaRefreshes( contentDocument: HTMLDocument ) {
 	// dis-arm anchors
 	contentDocument.body
 		?.querySelectorAll( 'a[href]:not([href="#!"])' )
@@ -35,9 +35,6 @@ export function disableNavigation( iframe: HTMLIFrameElement ) {
 			event.preventDefault();
 			return false;
 		} );
-
-		// run right after the HTML is injected
-		disarmAnchorsAndMetaRefreshes( contentDocument );
 
 		// run again after the iframe loads
 		iframe.addEventListener( 'load', () => disarmAnchorsAndMetaRefreshes( contentDocument ) );

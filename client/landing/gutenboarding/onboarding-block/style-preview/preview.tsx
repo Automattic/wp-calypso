@@ -9,7 +9,7 @@ import { ValuesType } from 'utility-types';
 /**
  * Internal dependencies
  */
-import { disableNavigation } from './disableNavigation';
+import { disableNavigation, disarmAnchorsAndMetaRefreshes } from './disableNavigation';
 import { STORE_KEY } from '../../stores/onboard';
 import * as T from './types';
 import { useLangRouteParam } from '../../path';
@@ -63,7 +63,14 @@ const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 					return;
 				}
 				const html = await resp.text();
-				setPreviewHtml( html );
+
+				// disarm anchors before inserting them into the preview iframe
+				const domParser = new window.DOMParser();
+				const parsedDoc = domParser.parseFromString( html, 'text/html' );
+				disarmAnchorsAndMetaRefreshes( parsedDoc );
+
+				setPreviewHtml( parsedDoc.documentElement.innerHTML );
+
 				setRequestedFonts( new Set( [ fontHeadings, fontBase ] ) );
 			};
 			eff();
