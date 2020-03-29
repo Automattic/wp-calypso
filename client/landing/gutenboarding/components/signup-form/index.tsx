@@ -7,6 +7,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -99,9 +100,13 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		Step.CreateSite
 	) }?new`;
 
+	const modalClasses = classnames( 'signup-form', {
+		'signup-form__fullscreen': true,
+	} );
+
 	return (
 		<Modal
-			className="signup-form"
+			className={ modalClasses }
 			title={ NO__( 'Sign up to save your changes' ) }
 			onRequestClose={ closeModal }
 			focusOnMount={ false }
@@ -110,16 +115,13 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 			shouldCloseOnClickOutside={ false }
 		>
 			<form onSubmit={ handleSignUp }>
+				<h2>Enter an email and password to save your progress and continue</h2>
 				<TextControl
-					label={ NO__( 'Your Email Address' ) }
 					value={ emailVal }
 					disabled={ isFetchingNewUser }
 					type="email"
 					onChange={ setEmailVal }
-					placeholder={ NO_x(
-						'E.g., yourname@email.com',
-						"An example of a person's email, use something appropriate for the locale"
-					) }
+					placeholder={ NO__( 'Your Email Address' ) }
 					required
 					autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 				/>

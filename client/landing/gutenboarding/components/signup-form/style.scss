@@ -31,4 +31,71 @@
 		margin-top: 20px;
 		text-align: center;
 	}
+
+	.components-button.modal-submit-button {
+		width: auto;
+		margin: 0 auto;
+		border: 0;
+		background-color: #4a2512; // TODO: check color add to a var
+		&:hover {
+			background: #4a2512;
+			border-color: #4a2512;
+		}
+	}
+
+	&.signup-form__fullscreen {
+		min-width: 100%;
+		top: 0;
+		right: auto;
+		bottom: auto;
+		left: 0;
+		max-width: 100%;
+		max-height: 100%;
+		height: 100%;
+		width: 100%;
+		transform: none;
+		border-radius: 0;
+
+		h2 {
+			margin-bottom: 20px;
+		}
+
+		.components-modal__content {
+			width: 100%;
+			text-align: center;
+		}
+
+		.components-modal__header {
+			padding-top: 20%;
+			border: 0;
+			.components-button {
+				position: absolute;
+				top: 0;
+				right: 0;
+				left: auto;
+			}
+		}
+
+		.components-modal__header-heading-container,
+		form {
+			max-width: 380px;
+			margin: 0 auto;
+		}
+
+		.components-modal__header-heading-container {
+			justify-content: center;
+		}
+
+		.components-text-control__input {
+			border-radius: 0;
+			border-color: #777; // TODO: check color add to a var
+		}
+
+		.signup-form__login-links {
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: 10;
+		}
+	}
 }
