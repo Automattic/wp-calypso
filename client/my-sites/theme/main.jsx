@@ -654,7 +654,8 @@ class ThemeSheet extends React.Component {
 		}
 
 		let pageUpsellBanner, previewUpsellBanner;
-		const hasUpsellBanner = ! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip;
+		const hasUpsellBanner =
+			! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired;
 		if ( hasUpsellBanner ) {
 			pageUpsellBanner = (
 				<Banner
