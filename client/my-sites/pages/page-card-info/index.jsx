@@ -16,7 +16,6 @@ import getEditorUrl from 'state/selectors/get-editor-url';
 import PostMetadata from 'lib/post-metadata';
 import { getTheme } from 'state/themes/selectors';
 import QueryTheme from 'components/data/query-theme';
-import { useLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -51,26 +50,17 @@ function PageCardInfo( {
 	themeId,
 } ) {
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
 
 	const renderTimestamp = function() {
-		if ( page.status === 'future' || showPublishedStatus ) {
-			return (
-				<PostRelativeTimeStatus
-					post={ page }
-					link={ contentLink.contentLinkURL }
-					target={ contentLink.contentLinkTarget }
-					gridiconSize={ ICON_SIZE }
-					includeBasicStatus={ true }
-				/>
-			);
-		}
-
 		return (
-			<span className="page-card-info__item">
-				<Gridicon icon="time" size={ ICON_SIZE } className="page-card-info__item-icon" />
-				<span className="page-card-info__item-text">{ moment( page.modified ).fromNow() }</span>
-			</span>
+			<PostRelativeTimeStatus
+				showPublishedStatus={ showPublishedStatus }
+				post={ page }
+				link={ contentLink.contentLinkURL }
+				target={ contentLink.contentLinkTarget }
+				gridiconSize={ ICON_SIZE }
+				includeBasicStatus={ true }
+			/>
 		);
 	};
 
