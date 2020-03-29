@@ -22,9 +22,10 @@ export function disarmAnchorsAndMetaRefreshes( contentDocument: HTMLDocument ) {
 }
 
 /**
- * Removes `href` attributes from all anchor elements, prevents submit events from all forms, and removes all meta-redirects
+ * Handles all submit events in hte iframe and prevents their default behavior.
+ * Also it handles `load` event for the iframe and calls {@link disarmAnchorsAndMetaRefreshes} on the iframe document when it fires
  *
- * @param iframe The iframe you want to disable navigation for.
+ * @param iframe The iframe you want to process
  */
 export function disableNavigation( iframe: HTMLIFrameElement ) {
 	const { contentDocument, contentWindow } = iframe;
