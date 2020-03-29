@@ -29,9 +29,10 @@ declare module '@wordpress/element' {
 
 interface Props {
 	onRequestClose: () => void;
+	onSuccess: ( username: string ) => void;
 }
 
-const SignupForm = ( { onRequestClose }: Props ) => {
+const SignupForm = ( { onRequestClose, onSuccess }: Props ) => {
 	const { __: NO__ } = useI18n();
 	const [ emailVal, setEmailVal ] = useState( '' );
 	const { createAccount, clearErrors } = useDispatch( USER_STORE );
@@ -71,6 +72,9 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 
 		if ( success ) {
 			closeModal();
+			if ( success.response.username ) {
+				onSuccess( success.response.username );
+			}
 		}
 	};
 

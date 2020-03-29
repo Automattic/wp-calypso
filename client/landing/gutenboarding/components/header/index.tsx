@@ -233,7 +233,9 @@ const Header: FunctionComponent = () => {
 					) }
 				</div>
 			</section>
-			{ showSignupDialog && <SignupForm onRequestClose={ closeAuthDialog } /> }
+			{ showSignupDialog && (
+				<SignupForm onRequestClose={ closeAuthDialog } onSuccess={ handleCreateSite } />
+			) }
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
