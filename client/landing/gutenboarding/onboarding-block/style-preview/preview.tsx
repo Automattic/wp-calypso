@@ -67,6 +67,14 @@ const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 				// disarm anchors before inserting them into the preview iframe
 				const domParser = new window.DOMParser();
 				const parsedDoc = domParser.parseFromString( html, 'text/html' );
+
+				// Disallow all form submission using a CSP. This fails all submissions silently
+				const CSPTag = document.createElement( 'meta' );
+				CSPTag.setAttribute( 'http-equiv', 'Content-Security-Policy' );
+				CSPTag.setAttribute( 'content', "form-action 'none'" );
+
+				parsedDoc.head.appendChild( CSPTag );
+
 				disarmAnchorsAndMetaRefreshes( parsedDoc );
 
 				setPreviewHtml( parsedDoc.documentElement.innerHTML );
