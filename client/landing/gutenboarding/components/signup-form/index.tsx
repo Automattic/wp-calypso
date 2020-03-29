@@ -8,6 +8,8 @@ import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
+type NewUser = import('@automattic/data-stores').User.NewUser;
+
 /**
  * Internal dependencies
  */
@@ -29,7 +31,7 @@ declare module '@wordpress/element' {
 
 interface Props {
 	onRequestClose: () => void;
-	onSuccess: ( username: string ) => void;
+	onSuccess: ( newUser: NewUser ) => void;
 }
 
 const SignupForm = ( { onRequestClose, onSuccess }: Props ) => {
@@ -72,9 +74,8 @@ const SignupForm = ( { onRequestClose, onSuccess }: Props ) => {
 
 		if ( success ) {
 			closeModal();
-			if ( success.response.username ) {
-				onSuccess( success.response.username );
-			}
+			const { bearer_token, user_id, username } = success.response;
+			onSuccess( { bearerToken: bearer_token, userId: user_id, username } );
 		}
 	};
 

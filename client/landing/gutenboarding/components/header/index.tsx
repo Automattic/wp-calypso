@@ -9,6 +9,9 @@ import React, { FunctionComponent, useEffect, useCallback, useState } from 'reac
 import classnames from 'classnames';
 import { useHistory } from 'react-router-dom';
 
+type CurrentUser = import('@automattic/data-stores').User.CurrentUser;
+type NewUser = import('@automattic/data-stores').User.NewUser;
+
 /**
  * Internal dependencies
  */
@@ -21,6 +24,7 @@ import SignupForm from '../../components/signup-form';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 
 import wp from '../../../../lib/wp';
+import { CurrentUser } from '@automattic/data-stores/dist/types/user';
 const wpcom = wp.undocumented();
 
 interface Cart {
@@ -58,7 +62,6 @@ const Header: FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 
 	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
-	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
 
 	const newSite = useSelect( select => select( SITE_STORE ).getNewSite() );
 
@@ -114,8 +117,8 @@ const Header: FunctionComponent = () => {
 	);
 
 	const handleCreateSite = useCallback(
-		( username: string, bearerToken?: string ) => {
-			createSite( username, freeDomainSuggestion, bearerToken );
+		( user: NewUser | CurrentUser ) => {
+			createSite( user.username, freeDomainSuggestion, ( user as NewUser )?.bearerToken );
 		},
 		[ createSite, freeDomainSuggestion ]
 	);
@@ -137,12 +140,6 @@ const Header: FunctionComponent = () => {
 		setShowSignupDialog( true );
 		setSiteWasCreatedForDomainPurchase( true );
 	};
-
-	useEffect( () => {
-		if ( newUser && newUser.bearerToken && newUser.username ) {
-			handleCreateSite( newUser.username, newUser.bearerToken );
-		}
-	}, [ newUser, handleCreateSite ] );
 
 	useEffect( () => {
 		if ( newSite ) {
@@ -206,9 +203,7 @@ const Header: FunctionComponent = () => {
 							currentDomain={ currentDomain }
 							onDomainSelect={ setDomain }
 							onDomainPurchase={ () =>
-								currentUser
-									? handleCreateSiteForDomains( currentUser.username )
-									: handleSignupForDomains()
+								currentUser ? handleCreateSiteForDomains( currentUser ) : handleSignupForDomains()
 							}
 							queryParameters={ { vertical: siteVertical?.id } }
 						>
@@ -224,9 +219,7 @@ const Header: FunctionComponent = () => {
 							className="gutenboarding__header-next-button"
 							isPrimary
 							isLarge
-							onClick={ () =>
-								currentUser ? handleCreateSite( currentUser.username ) : handleSignup()
-							}
+							onClick={ () => ( currentUser ? handleCreateSite( currentUser ) : handleSignup() ) }
 						>
 							{ NO__( 'Create my site' ) }
 						</Button>
