@@ -94,7 +94,51 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( { rewindId } ) => {
 		</>
 	);
 
-	return <div>{ renderInProgress() }</div>;
+	const renderReady = () => (
+		<>
+			<div className="rewind-flow__header">
+				<img
+					src="/calypso/images/illustrations/jetpack-cloud-download-success.svg"
+					alt="jetpack cloud download success"
+				/>
+			</div>
+			<h3 className="rewind-flow__title">
+				{ translate( 'Your site has been successfully restored.' ) }
+			</h3>
+			<p className="rewind-flow__info">
+				{ translate(
+					'All of your selected files are now restored back to {{strong}}%(restoreTimestamp)s{{/strong}}.',
+					{
+						args: {
+							restoreTimestamp,
+						},
+						components: {
+							strong: <strong />,
+						},
+					}
+				) }
+			</p>
+			<Button primary className="rewind-flow__primary-button">
+				{ translate( 'View your website' ) }
+			</Button>
+		</>
+	);
+
+	const renderError = () => (
+		<>
+			<div className="rewind-flow__header">
+				<img
+					src="/calypso/images/illustrations/jetpack-cloud-download-failure.svg"
+					alt="jetpack cloud download error"
+				/>
+			</div>
+			<h3 className="rewind-flow__title">
+				{ translate( 'An error occurred while restoring your site' ) }
+			</h3>
+		</>
+	);
+
+	return <div>{ renderReady() }</div>;
 };
 
 export default BackupRestoreFlow;
