@@ -23,7 +23,6 @@ import {
 } from '@automattic/composite-checkout-wpcom';
 import {
 	CheckoutProvider,
-	createFreePaymentMethod,
 	createApplePayMethod,
 	createExistingCardMethod,
 	defaultRegistry,
@@ -53,9 +52,6 @@ import {
 	getDomainDetails,
 	isPaymentMethodEnabled,
 	wpcomTransaction,
-	submitFreePurchaseTransaction,
-	WordPressFreePurchaseLabel,
-	WordPressFreePurchaseSummary,
 	submitApplePayPayment,
 	submitExistingCardPayment,
 	useIsApplePayAvailable,
@@ -89,6 +85,7 @@ import {
 	useCreatePayPal,
 	useCreateStripe,
 	useCreateFullCredits,
+	useCreateFree,
 } from './composite-checkout/use-create-payment-methods';
 import { useGetThankYouUrl } from './composite-checkout/use-get-thank-you-url';
 
@@ -279,40 +276,7 @@ export default function CompositeCheckout( {
 		credits,
 	} );
 
-	const shouldLoadFreePaymentMethod = onlyLoadPaymentMethods
-		? onlyLoadPaymentMethods.includes( 'free-purchase' )
-		: true;
-	const freePaymentMethod = useMemo( () => {
-		if ( ! shouldLoadFreePaymentMethod ) {
-			return null;
-		}
-		return createFreePaymentMethod( {
-			registerStore,
-			submitTransaction: submitData => {
-				const pending = submitFreePurchaseTransaction(
-					{
-						...submitData,
-						siteId: select( 'wpcom' )?.getSiteId?.(),
-						domainDetails: getDomainDetails( select ),
-						// this data is intentionally empty so we do not charge taxes
-						country: null,
-						postalCode: null,
-					},
-					wpcomTransaction
-				);
-				// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-				pending.then( result => {
-					debug( 'saving transaction response', result );
-					dispatch( 'wpcom' ).setTransactionResponse( result );
-				} );
-				return pending;
-			},
-		} );
-	}, [ shouldLoadFreePaymentMethod ] );
-	if ( freePaymentMethod ) {
-		freePaymentMethod.label = <WordPressFreePurchaseLabel />;
-		freePaymentMethod.inactiveContent = <WordPressFreePurchaseSummary />;
-	}
+	const freePaymentMethod = useCreateFree( { onlyLoadPaymentMethods } );
 
 	const {
 		canMakePayment: isApplePayAvailable,

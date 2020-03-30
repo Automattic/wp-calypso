@@ -7,6 +7,7 @@ import {
 	createStripePaymentMethodStore,
 	createStripeMethod,
 	createFullCreditsMethod,
+	createFreePaymentMethod,
 	registerStore,
 	defaultRegistry,
 } from '@automattic/composite-checkout';
@@ -25,6 +26,9 @@ import {
 	submitCreditsTransaction,
 	WordPressCreditsLabel,
 	WordPressCreditsSummary,
+	submitFreePurchaseTransaction,
+	WordPressFreePurchaseLabel,
+	WordPressFreePurchaseSummary,
 } from '../composite-checkout-payment-methods';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-create-payment-methods' );
@@ -162,4 +166,42 @@ export function useCreateFullCredits( { onlyLoadPaymentMethods, credits } ) {
 		fullCreditsPaymentMethod.inactiveContent = <WordPressCreditsSummary />;
 	}
 	return fullCreditsPaymentMethod;
+}
+
+export function useCreateFree( { onlyLoadPaymentMethods } ) {
+	const shouldLoadFreePaymentMethod = onlyLoadPaymentMethods
+		? onlyLoadPaymentMethods.includes( 'free-purchase' )
+		: true;
+	const freePaymentMethod = useMemo( () => {
+		if ( ! shouldLoadFreePaymentMethod ) {
+			return null;
+		}
+		return createFreePaymentMethod( {
+			registerStore,
+			submitTransaction: submitData => {
+				const pending = submitFreePurchaseTransaction(
+					{
+						...submitData,
+						siteId: select( 'wpcom' )?.getSiteId?.(),
+						domainDetails: getDomainDetails( select ),
+						// this data is intentionally empty so we do not charge taxes
+						country: null,
+						postalCode: null,
+					},
+					wpcomTransaction
+				);
+				// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+				pending.then( result => {
+					debug( 'saving transaction response', result );
+					dispatch( 'wpcom' ).setTransactionResponse( result );
+				} );
+				return pending;
+			},
+		} );
+	}, [ shouldLoadFreePaymentMethod ] );
+	if ( freePaymentMethod ) {
+		freePaymentMethod.label = <WordPressFreePurchaseLabel />;
+		freePaymentMethod.inactiveContent = <WordPressFreePurchaseSummary />;
+	}
+	return freePaymentMethod;
 }
