@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useI18n } from '@automattic/react-i18n';
 import { useHistory } from 'react-router-dom';
@@ -12,7 +12,7 @@ import { Spring, animated } from 'react-spring/renderprops';
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import designs from './available-designs.json';
+import pageTemplatesMetadata from '../../../../../static/page-templates/page-templates.json';
 import { usePath, Step } from '../../path';
 import { isEnabled } from '../../../../config';
 import Link from '../../components/link';
@@ -21,6 +21,8 @@ import { SubTitle, Title } from '../../components/titles';
 import './style.scss';
 
 type Design = import('../../stores/onboard/types').Design;
+
+const templates = pageTemplatesMetadata.templates;
 
 // Values for springs:
 const ZOOM_OFF = { transform: 'scale(1)' };
@@ -32,7 +34,6 @@ const DesignSelector: React.FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 	const { push } = useHistory();
 	const makePath = usePath();
-	const { siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
 	const { setSelectedDesign, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
 	const handleStartOverButtonClick = () => {
@@ -42,7 +43,6 @@ const DesignSelector: React.FunctionComponent = () => {
 	const getDesignUrl = ( design: Design ) => {
 		const mshotsUrl = 'https://s.wordpress.com/mshots/v1/';
 		const previewUrl = addQueryArgs( design.src, {
-			vertical: siteVertical?.label,
 			font_headings: design.fonts[ 0 ],
 			font_base: design.fonts[ 1 ],
 		} );
@@ -74,7 +74,10 @@ const DesignSelector: React.FunctionComponent = () => {
 			</div>
 			<div className="design-selector__design-grid">
 				<div className="design-selector__grid">
-					{ designs.featured.map( design => {
+					{ templates.map( design => {
+						if ( ! design.categories.find( category => category === 'featured' ) ) {
+							return null;
+						}
 						const isFocused = hoverDesign === design.slug || focusDesign === design.slug;
 						return (
 							<Spring

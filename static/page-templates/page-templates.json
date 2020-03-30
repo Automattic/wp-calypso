@@ -2,84 +2,94 @@
 	"description": "WordPress.com page templates",
 	"templates": [
 		{
-			"title": "rockfield",
-			"defaults": "rockfield",
-			"vertical-whitelist": []
+			"title": "Vesta",
+			"slug": "vesta",
+			"template": "mayland2",
+			"theme": "mayland",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/mayland/mayland2/",
+			"fonts": [ "Cabin", "Raleway" ],
+			"categories": [ "featured", "portfolio" ]
 		},
 		{
-			"title": "rockfield2",
-			"defaults": "rockfield",
-			"vertical-whitelist": []
+			"title": "WIP Event Template",
+			"slug": "rivington",
+			"template": "rivington",
+			"theme": "rivington",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/rivington/rivington/",
+			"fonts": [ "Arvo", "Montserrat" ],
+			"categories": [ "featured", "event" ]
 		},
 		{
-			"title": "leven",
-			"defaults": "leven",
-			"vertical-whitelist": []
+			"title": "Reynolds",
+			"slug": "reynolds",
+			"template": "rockfield2",
+			"theme": "rockfield",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/rockfield/rockfield2/",
+			"fonts": [ "Playfair Display", "Fira Sans" ],
+			"categories": [ "featured", "portfolio" ]
 		},
 		{
-			"title": "alves",
-			"defaults": "alves",
-			"vertical-whitelist": []
+			"title": "Easley",
+			"slug": "easley",
+			"template": "maywood",
+			"theme": "maywood",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/maywood/maywood/",
+			"fonts": [ "Space Mono", "Roboto" ],
+			"categories": [ "featured", "portfolio" ]
 		},
 		{
-			"title": "alves2",
-			"defaults": "alves",
-			"vertical-whitelist": []
+			"title": "Camden",
+			"slug": "Camden",
+			"template": "maywood2",
+			"theme": "maywood",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/maywood/maywood2/",
+			"fonts": [ "Space Mono", "Roboto" ],
+			"categories": [ "featured", "portfolio" ]
 		},
 		{
-			"title": "balasana",
-			"defaults": "balasana",
-			"vertical-whitelist": []
+			"title": "Bowen",
+			"slug": "bowen",
+			"template": "bowen",
+			"theme": "coutoire",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/coutoire/bowen/",
+			"fonts": [ "Playfair Display", "Fira Sans" ],
+			"categories": [ "featured", "blog" ]
 		},
 		{
-			"title": "coutoire",
-			"defaults": "coutoire",
-			"vertical-whitelist": []
+			"title": "Edison",
+			"slug": "edison",
+			"template": "stratford2",
+			"theme": "stratford",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/stratford/stratford2/",
+			"fonts": [ "Chivo", "Open Sans" ],
+			"categories": [ "featured", "blog" ]
 		},
 		{
-			"title": "exford",
-			"defaults": "exford",
-			"vertical-whitelist": []
+			"title": "Cassel",
+			"slug": "cassel",
+			"template": "mayland",
+			"theme": "mayland",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/mayland/mayland/",
+			"fonts": [ "Playfair Display", "Fira Sans" ],
+			"categories": [ "featured", "blog" ]
 		},
 		{
-			"title": "rockfield",
-			"defaults": "rockfield",
-			"vertical-whitelist": []
+			"title": "Overton",
+			"slug": "overton",
+			"template": "alves",
+			"theme": "alves",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/alves/alves/",
+			"fonts": [ "Cabin", "Raleway" ],
+			"categories": [ "featured", "business" ]
 		},
 		{
-			"title": "stratford",
-			"defaults": "stratford",
-			"vertical-whitelist": []
-		},
-		{
-			"title": "stratford2",
-			"defaults": "stratford",
-			"vertical-whitelist": []
-		},
-		{
-			"title": "mayland",
-			"defaults": "mayland",
-			"vertical-whitelist": []
-		},
-		{
-			"title": "mayland2",
-			"defaults": "mayland",
-			"vertical-whitelist": []
-		},
-		{
-			"title": "maywood",
-			"defaults": "maywood",
-			"vertical-whitelist": []
-		},
-		{
-			"title": "maywood2",
-			"defaults": "maywood",
-			"vertical-whitelist": []
-		},
-		{
-			"title": "rivington",
-			"defaults": "rivington",
-			"vertical-whitelist": []
+			"title": "Doyle",
+			"slug": "doyle",
+			"template": "alves2",
+			"theme": "alves",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/alves/alves2/",
+			"fonts": [ "Playfair Display", "Fira Sans" ],
+			"categories": [ "featured", "business" ]
 		}
 	],
 	"themes": [
