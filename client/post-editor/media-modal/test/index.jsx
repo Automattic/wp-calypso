@@ -36,11 +36,6 @@ jest.mock( 'lib/accept', () =>
 		.stub()
 		.callsArgWithAsync( 1, true )
 );
-jest.mock( 'lib/analytics', () => ( {
-	mc: {
-		bumpStat: () => {},
-	},
-} ) );
 jest.mock( 'lib/media/actions', () => ( {
 	delete: () => {},
 	setLibrarySelectedItems: () => {},

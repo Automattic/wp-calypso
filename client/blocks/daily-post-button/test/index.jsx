@@ -24,11 +24,6 @@ jest.mock( 'reader/stats', () => ( {
 	recordGaEvent: () => {},
 	recordTrackForPost: () => {},
 } ) );
-jest.mock( 'lib/analytics', () => ( {
-	mc: {
-		bumpStat: () => {},
-	},
-} ) );
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'page', () => require( 'sinon' ).spy() );
 const markPostSeen = jest.fn();

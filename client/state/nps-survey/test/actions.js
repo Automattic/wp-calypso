@@ -27,7 +27,6 @@ jest.mock( 'lib/wp', () => ( {
 	} ),
 } ) );
 jest.mock( 'lib/analytics', () => ( {
-	mc: { bumpStat: jest.fn() },
 	tracks: { recordEvent: jest.fn() },
 } ) );
 jest.mock( 'lib/analytics/mc', () => ( {
