@@ -169,11 +169,6 @@ class BackupsPage extends Component {
 		);
 	}
 
-	changePage = pageNumber => {
-		this.props.selectPage( this.props.siteId, pageNumber );
-		window.scrollTo( 0, 0 );
-	};
-
 	renderBackupPicker() {
 		const {
 			allowRestore,
