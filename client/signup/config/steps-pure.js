@@ -592,8 +592,8 @@ export function generateSteps( {
 			unstorableDependencies: [ 'bearer_token' ],
 		},
 
-		'wp-for-teams-site': {
-			stepName: 'wp-for-teams-site',
+		'team-site': {
+			stepName: 'team-site',
 			apiRequestFunction: createWpForTeamsSite,
 			providesDependencies: [ 'siteSlug' ],
 		},
