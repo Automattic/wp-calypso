@@ -33,7 +33,7 @@ import {
 	WordPressFreePurchaseSummary,
 	submitApplePayPayment,
 	submitExistingCardPayment,
-} from '../composite-checkout-payment-methods';
+} from './payment-method-helpers';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-create-payment-methods' );
 const { select, dispatch } = defaultRegistry;

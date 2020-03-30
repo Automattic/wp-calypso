@@ -46,7 +46,7 @@ import {
 	useStoredCards,
 	useIsApplePayAvailable,
 	isPaymentMethodEnabled,
-} from './composite-checkout-payment-methods';
+} from './composite-checkout/payment-method-helpers';
 import notices from 'notices';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import { isJetpackSite } from 'state/sites/selectors';

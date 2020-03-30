@@ -11,7 +11,7 @@ import wp from 'lib/wp';
  */
 import CheckoutContainer from './checkout-container';
 import CompositeCheckout from './composite-checkout';
-import { fetchStripeConfiguration } from './composite-checkout-payment-methods';
+import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
 import { StripeHookProvider } from 'lib/stripe';
 import config from 'config';
 import { getCurrentUserLocale, getCurrentUserCountryCode } from 'state/current-user/selectors';
