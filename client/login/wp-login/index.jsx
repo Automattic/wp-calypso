@@ -15,7 +15,6 @@ import { startCase } from 'lodash';
 import AutomatticLogo from 'components/automattic-logo';
 import DocumentHead from 'components/data/document-head';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import getCurrentRoute from 'state/selectors/get-current-route';
 import LocaleSuggestions from 'components/locale-suggestions';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
 import TranslatorInvite from 'components/translator-invite';
@@ -45,6 +44,7 @@ export class Login extends React.Component {
 		isLoggedIn: PropTypes.bool.isRequired,
 		isLoginView: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
+		isGutenboarding: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
 		path: PropTypes.string.isRequired,
@@ -57,7 +57,7 @@ export class Login extends React.Component {
 		twoFactorAuthType: PropTypes.string,
 	};
 
-	static defaultProps = { isJetpack: false, isLoginView: true };
+	static defaultProps = { isJetpack: false, isGutenboarding: false, isLoginView: true };
 
 	componentDidMount() {
 		this.recordPageView( this.props );
@@ -107,10 +107,10 @@ export class Login extends React.Component {
 	}
 
 	renderFooter() {
-		const { currentRoute, translate } = this.props;
+		const { isJetpack, isGutenboarding, translate } = this.props;
 		const isOauthLogin = !! this.props.oauth2Client;
 
-		if ( currentRoute === '/log-in/jetpack' ) {
+		if ( isJetpack || isGutenboarding ) {
 			return null;
 		}
 
@@ -187,6 +187,7 @@ export class Login extends React.Component {
 			domain,
 			isLoggedIn,
 			isJetpack,
+			isGutenboarding,
 			oauth2Client,
 			privateSite,
 			socialConnect,
@@ -210,6 +211,7 @@ export class Login extends React.Component {
 						locale={ locale }
 						privateSite={ privateSite }
 						twoFactorAuthType={ twoFactorAuthType }
+						isGutenboarding={ isGutenboarding }
 					/>
 				) }
 				{ isLoginView && <TranslatorInvite path={ path } /> }
@@ -258,7 +260,6 @@ export class Login extends React.Component {
 
 export default connect(
 	( state, props ) => ( {
-		currentRoute: getCurrentRoute( state ),
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
 		locale: getCurrentLocaleSlug( state ),
 		oauth2Client: getCurrentOAuth2Client( state ),

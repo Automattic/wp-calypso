@@ -19,7 +19,7 @@ import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selecto
 
 const enhanceContextWithLogin = context => {
 	const {
-		params: { flow, isJetpack, socialService, twoFactorAuthType },
+		params: { flow, isJetpack, isGutenboarding, socialService, twoFactorAuthType },
 		path,
 		query,
 	} = context;
@@ -33,6 +33,7 @@ const enhanceContextWithLogin = context => {
 	context.primary = (
 		<WPLogin
 			isJetpack={ isJetpack === 'jetpack' }
+			isGutenboarding={ isGutenboarding === 'gutenboarding' }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }
 			socialService={ socialService }

@@ -27,6 +27,7 @@ import { login } from 'lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import { isDomainConnectAuthorizePath } from 'lib/domains/utils';
+import { localizeUrl } from 'lib/i18n-utils';
 
 export class LoginLinks extends React.Component {
 	static propTypes = {
@@ -39,6 +40,7 @@ export class LoginLinks extends React.Component {
 		resetMagicLoginRequestForm: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
+		isGutenboarding: PropTypes.bool.isRequired,
 	};
 
 	recordBackToWpcomLinkClick = () => {
@@ -224,7 +226,15 @@ export class LoginLinks extends React.Component {
 
 	renderSignUpLink() {
 		// Taken from client/layout/masterbar/logged-out.jsx
-		const { currentQuery, currentRoute, oauth2Client, pathname, translate, wccomFrom } = this.props;
+		const {
+			currentQuery,
+			currentRoute,
+			oauth2Client,
+			pathname,
+			translate,
+			wccomFrom,
+			isGutenboarding,
+		} = this.props;
 
 		let signupUrl = config( 'signup_url' );
 		const signupFlow = get( currentQuery, 'signup_flow' );
@@ -279,6 +289,10 @@ export class LoginLinks extends React.Component {
 			signupUrl = `${ signupUrl }/wpcc?${ stringify( oauth2Params ) }`;
 		}
 
+		if ( isGutenboarding ) {
+			signupUrl = localizeUrl( window.location.origin + '/gutenboarding' );
+		}
+
 		return (
 			<a
 				href={ signupUrl }
@@ -299,7 +313,9 @@ export class LoginLinks extends React.Component {
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
 				{ this.renderResetPasswordLink() }
-				{ ! isCrowdsignalOAuth2Client( this.props.oauth2Client ) && this.renderBackLink() }
+				{ ! isCrowdsignalOAuth2Client( this.props.oauth2Client ) &&
+					! this.props.isGutenboarding &&
+					this.renderBackLink() }
 			</div>
 		);
 	}

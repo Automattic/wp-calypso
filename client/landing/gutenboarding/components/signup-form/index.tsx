@@ -52,6 +52,8 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		} );
 	}, [] );
 
+	const lang = useLangRouteParam();
+
 	const handleSignUp = async ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 
@@ -96,6 +98,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		}
 	}
 
+	const langFragment = lang ? `/${ lang }` : '';
 	const loginRedirectUrl = `${ window.location.origin }/gutenboarding${ makePath(
 		Step.CreateSite
 	) }?new`;
@@ -113,7 +116,9 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		>
 			<SignupFormHeader
 				onRequestClose={ closeModal }
-				loginUrl={ '/log-in?redirect_to=' + encodeURIComponent( loginRedirectUrl ) }
+				loginUrl={ `/log-in/gutenboarding${ langFragment }?redirect_to=${ encodeURIComponent(
+					loginRedirectUrl
+				) }` }
 			/>
 
 			<div className="signup-form__body">
