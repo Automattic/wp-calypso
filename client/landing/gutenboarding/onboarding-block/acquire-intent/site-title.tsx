@@ -12,6 +12,7 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import { STORE_KEY } from '../../stores/onboard';
 import { Step, usePath } from '../../path';
+import Arrow from './arrow';
 
 interface Props {
 	inputRef: React.RefObject< HTMLInputElement >;
@@ -52,7 +53,12 @@ const SiteTitle: React.FunctionComponent< Props > = ( { inputRef } ) => {
 		history.push( makePath( Step.DesignSelection ) );
 	};
 
-	return <form onSubmit={ handleSubmit }>{ madlib }</form>;
+	return (
+		<form onSubmit={ handleSubmit }>
+			{ madlib }
+			{ !! value.length && <Arrow /> }
+		</form>
+	);
 };
 
 export default SiteTitle;

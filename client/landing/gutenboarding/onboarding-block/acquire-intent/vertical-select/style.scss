@@ -15,9 +15,6 @@
 			border-radius: 2px;
 		}
 	}
-	.vertical-select__terminal-punctuation {
-		opacity: 1;
-	}
 	&--without-value {
 		.madlib__input {
 			border-bottom: 2px solid var( --studio-gray-5 );
@@ -25,9 +22,6 @@
 			&::placeholder {
 				color: var( --studio-gray-5 );
 			}
-		}
-		.vertical-select__terminal-punctuation {
-			opacity: 0;
 		}
 	}
 }

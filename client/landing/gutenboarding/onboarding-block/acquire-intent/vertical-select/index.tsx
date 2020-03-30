@@ -16,6 +16,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../../../stores/onboard';
 import { Verticals } from '@automattic/data-stores';
 import { SiteVertical } from '../../../stores/onboard/types';
 import useTyper from '../../../hooks/use-typer';
+import Arrow from '../arrow';
 
 /**
  * Style dependencies
@@ -135,8 +136,8 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	// TODO: Write a better translators comment.
-	// translators: Form input for a site's topic where "<Input />" is replaced by user input and must be preserved verbatim in translated string. <TerminalPunctuation /> is full-stop or an arrow depending on focus state.
-	const madlibTemplate = NO__( 'My site is about <Input /><TerminalPunctuation />' );
+	// translators: Form input for a site's topic where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
+	const madlibTemplate = NO__( 'My site is about <Input />' );
 	const madlib = __experimentalCreateInterpolateElement( madlibTemplate, {
 		Input: (
 			<span className="vertical-select__suggestions-wrapper">
@@ -168,24 +169,6 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 				</div>
 			</span>
 		),
-		TerminalPunctuation: (
-			<span className="vertical-select__terminal-punctuation">
-				{ isFocused ? (
-					<svg
-						className="vertical-select__terminal-arrow"
-						width="26"
-						height="18"
-						viewBox="0 0 26 18"
-						fill="none"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path d="M16 1L24 9M24 9L16 17M24 9H0" stroke="currentColor" strokeWidth="2" />
-					</svg>
-				) : (
-					'.'
-				) }
-			</span>
-		),
 	} );
 
 	return (
@@ -195,6 +178,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 			} ) }
 		>
 			{ madlib }
+			{ hasValue && ( isFocused ? <Arrow /> : '.' ) }
 		</form>
 	);
 };
