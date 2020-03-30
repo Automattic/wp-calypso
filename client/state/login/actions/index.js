@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, defer, replace } from 'lodash';
+import { get, defer } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -26,9 +26,6 @@ import {
 	SOCIAL_DISCONNECT_ACCOUNT_REQUEST,
 	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS,
-	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
-	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
-	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED,
@@ -49,58 +46,13 @@ import 'state/data-layer/wpcom/login-2fa';
 import 'state/data-layer/wpcom/users/auth-options';
 
 import { remoteLoginUser } from 'state/login/actions/remote-login-user';
-import { updateNonce } from 'state/login/actions/login-user';
 
 import 'state/login/init';
 
 export { loginUser } from 'state/login/actions/login-user';
 export { updateNonce } from 'state/login/actions/login-user';
 export { loginUserWithSecurityKey } from 'state/login/actions/login-user-with-security-key';
-
-/**
- * Logs a user in with a two factor verification code.
- *
- * @param  {string}   twoStepCode       Verification code received by the user
- * @param  {string}   twoFactorAuthType Two factor authentication method (sms, push ...)
- * @returns {Function}                   A thunk that can be dispatched
- */
-export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAuthType ) => (
-	dispatch,
-	getState
-) => {
-	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
-
-	return postLoginRequest( 'two-step-authentication-endpoint', {
-		user_id: getTwoFactorUserId( getState() ),
-		auth_type: twoFactorAuthType,
-		two_step_code: replace( twoStepCode, /\s/g, '' ),
-		two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
-		remember_me: true,
-		client_id: config( 'wpcom_signup_id' ),
-		client_secret: config( 'wpcom_signup_key' ),
-	} )
-		.then( response => {
-			return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
-				dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
-			} );
-		} )
-		.catch( httpError => {
-			const twoStepNonce = get( httpError, 'response.body.data.two_step_nonce' );
-
-			if ( twoStepNonce ) {
-				dispatch( updateNonce( twoFactorAuthType, twoStepNonce ) );
-			}
-
-			const error = getErrorFromHTTPError( httpError );
-
-			dispatch( {
-				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
-				error,
-			} );
-
-			return Promise.reject( error );
-		} );
-};
+export { loginUserWithTwoFactorVerificationCode } from 'state/login/actions/login-user-with-two-factor-verification-code';
 
 /**
  * Logs a user in from a third-party social account (Google ...).
