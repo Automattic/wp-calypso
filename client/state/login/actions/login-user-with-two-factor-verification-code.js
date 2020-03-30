@@ -18,7 +18,7 @@ import 'state/data-layer/wpcom/login-2fa';
 import 'state/data-layer/wpcom/users/auth-options';
 
 import { remoteLoginUser } from 'state/login/actions/remote-login-user';
-import { updateNonce } from 'state/login/actions/login-user';
+import { updateNonce } from 'state/login/actions/update-nonce';
 
 import 'state/login/init';
 

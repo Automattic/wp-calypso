@@ -47,7 +47,7 @@ import { remoteLoginUser } from 'state/login/actions/remote-login-user';
 import 'state/login/init';
 
 export { loginUser } from 'state/login/actions/login-user';
-export { updateNonce } from 'state/login/actions/login-user';
+export { updateNonce } from 'state/login/actions/update-nonce';
 export { loginUserWithSecurityKey } from 'state/login/actions/login-user-with-security-key';
 export { loginUserWithTwoFactorVerificationCode } from 'state/login/actions/login-user-with-two-factor-verification-code';
 export { loginSocialUser } from 'state/login/actions/login-social-user';

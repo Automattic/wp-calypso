@@ -19,7 +19,7 @@ import 'state/data-layer/wpcom/users/auth-options';
 import { get as webauthn_auth } from '@github/webauthn-json';
 
 import { remoteLoginUser } from 'state/login/actions/remote-login-user';
-import { updateNonce } from 'state/login/actions/login-user';
+import { updateNonce } from 'state/login/actions/update-nonce';
 
 import 'state/login/init';
 
