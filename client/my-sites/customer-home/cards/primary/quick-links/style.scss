@@ -1,14 +1,22 @@
 .quick-links__boxes {
-	display: flex;
-	flex-flow: row wrap;
-	justify-content: space-between;
-	align-items: stretch;
+	margin-left: -16px;
+	margin-right: -16px;
+
+	@include breakpoint( '>480px' ) {
+		margin-left: -24px;
+		margin-right: -24px;
+	}
+}
+
+.quick-links.card {
+	padding-bottom: 0;
+
+	.card-heading {
+		margin-bottom: 16px;
+	}
 }
 
 .quick-links.foldable-card {
-	&.is-expanded .foldable-card__header {
-		padding-bottom: 0;
-	}
 	.foldable-card {
 		@include breakpoint( '<480px' ) {
 			&__header {
@@ -19,6 +27,8 @@
 
 		&__content {
 			border: 0;
+			padding-bottom: 0;
+			padding-top: 0;
 		}
 	}
 }
@@ -37,38 +47,50 @@
 	}
 }
 
-.quick-links__action-box {
-	margin-bottom: 16px;
-	width: 100%;
+.card.quick-links__action-box {
+	display: flex;
+	align-items: center;
+	transition: all 0.1s;
 
-	@include breakpoint( '>480px' ) {
-		width: 48%;
-		margin-bottom: 24px;
+	.quick-links__action-box-image {
+		display: flex;
+		flex-shrink: 0;
+		align-items: center;
+		width: 24px;
+		margin-right: 16px;
 	}
 
-	.button {
-		border-width: 1px;
-		display: flex;
-		height: 100%;
-		min-width: 100%;
-		padding: 16px;
-		text-align: center;
+	.quick-links__action-box-icon {
+		width: 24px;
+		height: 24px;
+		fill: var( --color-neutral-60 );
+		transition: all 0.1s;
+	}
+
+	.quick-links__action-box-label {
+		color: var( --color-text );
+		font-size: 16px;
+	}
+
+	.quick-links__action-box-subtitle {
+		color: var( --color-text-subtle );
+		font-size: 14px;
+		display: none;
 
 		@include breakpoint( '>480px' ) {
 			display: block;
-			min-height: 85px;
-			padding: 24px;
 		}
 	}
-	.button:hover {
-		box-shadow: 0 2px 3px 0 rgba( 98, 109, 118, 0.15 );
-	}
 
-	span {
-		display: block;
+	&:hover {
+		background: var( --color-neutral-0 );
 
-		@include breakpoint( '<480px' ) {
-			margin: auto 14px;
+		.quick-links__action-box-icon {
+			fill: var( --color-neutral-80 );
 		}
 	}
+}
+
+.quick-links__action-box-label {
+	font-size: 16px;
 }

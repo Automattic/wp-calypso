@@ -12,6 +12,10 @@
 				color: var( --mainColor );
 				margin: 0;
 				margin-left: 0; // zeroing this out to inherit the parent's width and not overflow
+
+				&::placeholder {
+					color: var( --studio-gray-5 );
+				}
 			}
 
 			.suggestions {

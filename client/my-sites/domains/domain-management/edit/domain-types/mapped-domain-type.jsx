@@ -10,16 +10,8 @@ import { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import { Card } from '@automattic/components';
-import VerticalNav from 'components/vertical-nav';
 import { withLocalizedMoment } from 'components/localized-moment';
 import DomainStatus from '../card/domain-status';
-import VerticalNavItem from 'components/vertical-nav/item';
-import { emailManagement } from 'my-sites/email/paths';
-import {
-	domainManagementDns,
-	domainManagementDomainConnectMapping,
-	domainTransferIn,
-} from 'my-sites/domains/paths';
 import { isExpiringSoon } from 'lib/domains/utils';
 import SubscriptionSettings from '../card/subscription-settings';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
@@ -36,114 +28,12 @@ import {
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 } from 'state/purchases/selectors';
-import { isRechargeable, isExpired, isCancelable } from 'lib/purchases';
-import { cancelPurchase } from 'me/purchases/paths';
-import RemovePurchase from 'me/purchases/remove-purchase';
+import { isRechargeable, isExpired } from 'lib/purchases';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
-
-/**
- * Style dependencies
- */
-import './style.scss';
+import DomainManagementNavigation from '../navigation';
 
 class MappedDomainType extends React.Component {
-	getVerticalNavigation() {
-		return (
-			<VerticalNav>
-				{ this.emailNavItem() }
-				{ this.dnsRecordsNavItem() }
-				{ this.domainConnectMappingNavItem() }
-				{ this.transferMappedDomainNavItem() }
-				{ this.deleteMappingNavItem() }
-			</VerticalNav>
-		);
-	}
-
-	deleteMappingNavItem() {
-		const { domain, isLoadingPurchase, mappingPurchase, selectedSite, translate } = this.props;
-
-		if ( ! domain.currentUserCanManage ) {
-			return null;
-		}
-
-		const title = translate( 'Delete Domain Mapping' );
-
-		if ( isLoadingPurchase ) {
-			return <VerticalNavItem isPlaceholder />;
-		}
-
-		if ( ! selectedSite || ! mappingPurchase ) {
-			return null;
-		}
-
-		if ( isCancelable( mappingPurchase ) ) {
-			const link = cancelPurchase( selectedSite.slug, mappingPurchase.id );
-
-			return <VerticalNavItem path={ link }>{ title }</VerticalNavItem>;
-		}
-
-		return (
-			<RemovePurchase
-				hasLoadedSites={ true }
-				hasLoadedUserPurchasesFromServer={ true }
-				site={ selectedSite }
-				purchase={ mappingPurchase }
-				title={ title }
-				hideTrashIcon={ true }
-				displayButtonAsLink={ true }
-			/>
-		);
-	}
-
-	emailNavItem() {
-		const path = emailManagement( this.props.selectedSite.slug, this.props.domain.name );
-
-		return <VerticalNavItem path={ path }>{ this.props.translate( 'Email' ) }</VerticalNavItem>;
-	}
-
-	dnsRecordsNavItem() {
-		const path = domainManagementDns( this.props.selectedSite.slug, this.props.domain.name );
-
-		return (
-			<VerticalNavItem path={ path }>{ this.props.translate( 'DNS records' ) }</VerticalNavItem>
-		);
-	}
-
-	domainConnectMappingNavItem() {
-		const { supportsDomainConnect, hasWpcomNameservers, pointsToWpcom } = this.props.domain;
-		if ( ! supportsDomainConnect || hasWpcomNameservers || pointsToWpcom ) {
-			return;
-		}
-
-		const path = domainManagementDomainConnectMapping(
-			this.props.selectedSite.slug,
-			this.props.domain.name
-		);
-
-		return (
-			<VerticalNavItem path={ path }>
-				{ this.props.translate( 'Connect Your Domain' ) }
-			</VerticalNavItem>
-		);
-	}
-
-	transferMappedDomainNavItem() {
-		const { domain, selectedSite, translate } = this.props;
-
-		if ( domain.expired || domain.isSubdomain || ! domain.isEligibleForInboundTransfer ) {
-			return null;
-		}
-
-		const path = domainTransferIn( selectedSite.slug, domain.name, true );
-
-		return (
-			<VerticalNavItem path={ path }>
-				{ translate( 'Transfer Domain to WordPress.com' ) }
-			</VerticalNavItem>
-		);
-	}
-
 	resolveStatus() {
 		const { domain, translate, moment } = this.props;
 		const { expiry } = domain;
@@ -242,7 +132,7 @@ class MappedDomainType extends React.Component {
 				<div>
 					<p>{ primaryMessage }</p>
 					{ ! isSubdomain( domain.name ) && (
-						<ul>
+						<ul className="mapped-domain-type__name-server-list">
 							{ WPCOM_DEFAULTS.map( nameServer => {
 								return <li key={ nameServer }>{ nameServer }</li>;
 							} ) }
@@ -334,12 +224,21 @@ class MappedDomainType extends React.Component {
 	};
 
 	render() {
-		const { domain, selectedSite, purchase, moment, translate } = this.props;
+		const {
+			domain,
+			selectedSite,
+			purchase,
+			mappingPurchase,
+			isLoadingPurchase,
+			moment,
+			translate,
+		} = this.props;
 		const { name: domain_name } = domain;
 
 		const { statusText, statusClass, icon } = this.resolveStatus();
 
 		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
+
 		let expiresText;
 
 		if ( ! domain.expiry ) {
@@ -389,9 +288,14 @@ class MappedDomainType extends React.Component {
 							/>
 						</div>
 					) }
-					{ newStatusDesignAutoRenew && this.renderAutoRenew() }
+					{ newStatusDesignAutoRenew && domain.currentUserCanManage && this.renderAutoRenew() }
 				</Card>
-				{ this.getVerticalNavigation() }
+				<DomainManagementNavigation
+					domain={ domain }
+					selectedSite={ this.props.selectedSite }
+					purchase={ mappingPurchase }
+					isLoadingPurchase={ isLoadingPurchase }
+				/>
 			</div>
 		);
 	}

@@ -123,3 +123,37 @@ export const getDailyBackupDeltas = ( logs, date ) => {
 		),
 	};
 };
+
+/**
+ * Check if the activity is the type of backup
+ *
+ * @param activity {object} Activity to check
+ */
+export const isActivityBackup = activity => {
+	return (
+		'rewind__backup_complete_full' === activity.activityName ||
+		'rewind__backup_complete_initial' === activity.activityName ||
+		'rewind__backup_error' === activity.activityName
+	);
+};
+
+/**
+ * Check if the backup is completed
+ *
+ * @param backup {object} Backup to check
+ */
+export const isSuccessfulBackup = backup => {
+	return (
+		'rewind__backup_complete_full' === backup.activityName ||
+		'rewind__backup_complete_initial' === backup.activityName
+	);
+};
+
+// TODO: now that we are reusing URLs we should have a dedicated paths file
+export const getRestorePath = ( siteSlug, rewindId ) => {
+	return `/backups/${ siteSlug }/restore/${ rewindId }`;
+};
+
+export const getDownloadPath = ( siteSlug, rewindId ) => {
+	return `/backups/${ siteSlug }/download/${ rewindId }`;
+};

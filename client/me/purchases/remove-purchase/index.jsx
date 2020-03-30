@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -42,6 +43,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import RemoveDomainDialog from './remove-domain-dialog';
 import NonPrimaryDomainDialog from 'me/purchases/non-primary-domain-dialog';
+import VerticalNavItem from 'components/vertical-nav/item';
 
 /**
  * Style dependencies
@@ -60,9 +62,7 @@ class RemovePurchase extends Component {
 		site: PropTypes.object,
 		setAllSitesSelected: PropTypes.func.isRequired,
 		userId: PropTypes.number.isRequired,
-		title: PropTypes.string,
-		hideTrashIcon: PropTypes.bool,
-		displayButtonAsLink: PropTypes.bool,
+		useVerticalNavItem: PropTypes.bool,
 	};
 
 	state = {
@@ -355,24 +355,28 @@ class RemovePurchase extends Component {
 			return null;
 		}
 
-		const { purchase, translate } = this.props;
+		const { purchase, className, useVerticalNavItem, translate } = this.props;
 		const productName = getName( purchase );
 
 		if ( ! isRemovable( purchase ) ) {
 			return null;
 		}
 
+		const defaultContent = (
+			<>
+				<Gridicon icon="trash" />
+				{ translate( 'Remove %(productName)s', { args: { productName } } ) }
+			</>
+		);
+
+		const wrapperClassName = classNames( 'remove-purchase__card', className );
+		const Wrapper = useVerticalNavItem ? VerticalNavItem : CompactCard;
+
 		return (
 			<>
-				<CompactCard
-					displayAsLink={ !! this.props.displayButtonAsLink }
-					tagName="button"
-					className="remove-purchase__card"
-					onClick={ this.openDialog }
-				>
-					{ ! this.props.hideTrashIcon && <Gridicon icon="trash" /> }
-					{ this.props.title || translate( 'Remove %(productName)s', { args: { productName } } ) }
-				</CompactCard>
+				<Wrapper tagName="button" className={ wrapperClassName } onClick={ this.openDialog }>
+					{ this.props.children ? this.props.children : defaultContent }
+				</Wrapper>
 				{ this.shouldShowNonPrimaryDomainWarning() && this.renderNonPrimaryDomainWarningDialog() }
 				{ this.renderDialog() }
 			</>

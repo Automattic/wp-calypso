@@ -11,6 +11,12 @@ import page from 'page';
 import { withLocalizedMoment } from 'components/localized-moment';
 import Gridicon from 'components/gridicon';
 import Button from 'components/forms/form-button';
+import {
+	isSuccessfulBackup,
+	getRestorePath,
+	getDownloadPath,
+} from 'landing/jetpack-cloud/sections/backups/utils';
+import { applySiteOffset } from 'lib/site/timezone';
 
 /**
  * Style dependencies
@@ -18,30 +24,51 @@ import Button from 'components/forms/form-button';
 import './style.scss';
 
 class DailyBackupStatus extends Component {
-	// TODO: now that we are reusing URLs we should have a dedicated paths file
-	createRestoreUrl = restoreId => `/backups/${ this.props.siteSlug }/restore/${ restoreId }`;
-	createDownloadUrl = downloadId => `/backups/${ this.props.siteSlug }/download/${ downloadId }`;
-
 	triggerRestore = () => {
-		const restoreId = this.props.backupAttempts.complete[ 0 ].rewindId;
-		page.redirect( this.createRestoreUrl( restoreId ) );
+		page.redirect( getRestorePath( this.props.siteSlug, this.props.backup.rewindId ) );
 	};
 
 	triggerDownload = () => {
-		const downloadId = this.props.backupAttempts.complete[ 0 ].rewindId;
-		page.redirect( this.createDownloadUrl( downloadId ) );
+		page.redirect( getDownloadPath( this.props.siteSlug, this.props.backup.rewindId ) );
 	};
 
-	renderGoodBackup() {
-		const { allowRestore, backupAttempts, moment, translate } = this.props;
+	goToDetailsPage() {
+		//page.redirect( '/backups/' + this.props.siteSlug + '/detail/' + this.props.backup.rewindId );
+	}
 
-		const displayDate = moment( backupAttempts.complete[ 0 ].activityDate ).format(
-			'MMMM Do YYYY, h:mm:ss a'
-		);
+	getDisplayDate = date => {
+		const { translate, moment, timezone, gmtOffset } = this.props;
+
+		//Apply the time offset
+		const backupDate = applySiteOffset( moment( date ), { timezone, gmtOffset } );
+		const today = applySiteOffset( moment(), { timezone, gmtOffset } );
+
+		const isToday = today.isSame( backupDate, 'day' );
+		const yearToday = today.format( 'YYYY' );
+		const yearDate = backupDate.format( 'YYYY' );
+
+		const dateFormat = yearToday === yearDate ? 'MMM D' : 'MMM D, YYYY';
+
+		let displayableDate;
+
+		if ( isToday ) {
+			displayableDate =
+				translate( 'Latest' ) + ': ' + translate( 'Today' ) + ' ' + backupDate.format( 'LT' );
+		} else {
+			displayableDate = backupDate.format( dateFormat + ' LT' );
+		}
+
+		return displayableDate;
+	};
+
+	renderGoodBackup( backup ) {
+		const { allowRestore, translate } = this.props;
+
+		const displayDate = this.getDisplayDate( backup.activityTs );
 
 		return (
 			<Fragment>
-				<Gridicon icon="cloud-upload" />
+				<Gridicon className="daily-backup-status__status-icon" icon="cloud-upload" />
 				<div className="daily-backup-status__label">
 					{ translate( 'Latest backup completed:' ) }
 				</div>
@@ -60,34 +87,84 @@ class DailyBackupStatus extends Component {
 		);
 	}
 
-	renderFailedBackup() {
-		const { backupAttempts, translate } = this.props;
+	renderFailedBackup( backup ) {
+		const { translate, timezone, gmtOffset } = this.props;
 
-		const hasBackupError = backupAttempts.error.length;
-		const errorMessage =
-			hasBackupError && backupAttempts.error[ 0 ].activityDescription[ 0 ].children[ 0 ].text;
+		const backupTitleDate = this.getDisplayDate( backup.activityTs );
+		const backupDate = applySiteOffset( backup.activityTs, { timezone, gmtOffset } );
+
+		const displayDate = backupDate.format( 'L' );
+		const displayTime = backupDate.format( 'LT' );
 
 		return (
 			<Fragment>
 				<Gridicon icon="cross-circle" className="daily-backup-status__gridicon-error-state" />
-
-				<div className="daily-backup-status__date">{ translate( 'Backup error' ) }</div>
+				<div className="daily-backup-status__date">{ translate( 'Backup attempt failed' ) }</div>
+				<div className="daily-backup-status__date">{ backupTitleDate }</div>
 				<div className="daily-backup-status__label">
-					{ hasBackupError ? errorMessage : translate( 'This day has no backups.' ) }
+					<p>
+						{ translate(
+							'A backup for your site was attempted on %(displayDate)s at %(displayTime)s and was not able to be completed.',
+							{ args: { displayDate, displayTime } }
+						) }
+					</p>
+					<p>
+						{ /* todo: Add the link of the guide: "backups help guide" */ }
+						{ translate(
+							'Check out the backups help guide or contact our support team to resolve the issue. View to get the issue resolved'
+						) }
+					</p>
+					<Button className="daily-backup-status__download-button">
+						{ translate( 'Contact support' ) }
+					</Button>
 				</div>
 			</Fragment>
 		);
 	}
 
-	render() {
-		const { backupAttempts } = this.props;
-		const dateHasGoodBackup = backupAttempts.complete.length;
+	renderNoBackups() {
+		const { translate } = this.props;
 
 		return (
-			<div className="daily-backup-status">
-				{ dateHasGoodBackup ? this.renderGoodBackup() : this.renderFailedBackup() }
-			</div>
+			<Fragment>
+				<Gridicon icon="sync" />
+
+				<div className="daily-backup-status__date">Next backup at...</div>
+				{ /* translate( 'This day has no backups.' ) */ }
+				<Button className="daily-backup-status__download-button" disabled={ true }>
+					{ translate( 'Download backup' ) }
+				</Button>
+				<Button className="daily-backup-status__restore-button" disabled={ true }>
+					{ translate( 'Restore to this point' ) }
+				</Button>
+
+				<div>
+					<strong>{ translate( 'Get Real-Time Backups' ) }</strong>
+				</div>
+				<div>
+					{ /* todo: add a link to the page for the upgrade: "Upgrade to real-time backups" */ }
+					{ translate(
+						'Upgrade to real-time backups to have your work saved, in real-time as you make changes.'
+					) }
+				</div>
+			</Fragment>
 		);
+	}
+
+	renderBackupStatus( backup ) {
+		if ( ! backup ) {
+			return this.renderNoBackups();
+		} else if ( isSuccessfulBackup( backup ) ) {
+			return this.renderGoodBackup( backup );
+		}
+
+		return this.renderFailedBackup( backup );
+	}
+
+	render() {
+		const backup = this.props.backup;
+
+		return <div className="daily-backup-status">{ this.renderBackupStatus( backup ) }</div>;
 	}
 }
 

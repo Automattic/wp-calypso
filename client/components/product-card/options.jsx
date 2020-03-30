@@ -12,28 +12,34 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import ProductCardPriceGroup from './price-group';
 
-const ProductCardOptions = ( { handleSelect, options, optionsLabel, selectedSlug } ) => {
+const ProductCardOptions = ( {
+	handleSelect,
+	options,
+	optionsLabel,
+	selectedSlug,
+	forceRadiosEvenIfOnlyOneOption,
+} ) => {
 	if ( isEmpty( options ) ) {
 		return null;
 	}
 
-	const hasOneOption = options.length === 1;
+	const hideRadios = options.length === 1 && ! forceRadiosEvenIfOnlyOneOption;
 
 	return (
 		<div className="product-card__options">
-			{ ! hasOneOption && optionsLabel && (
+			{ ! hideRadios && optionsLabel && (
 				<h4 className="product-card__options-label">{ optionsLabel }</h4>
 			) }
 			{ options.map( option => (
 				<FormLabel key={ `product-option-${ option.slug }` } className="product-card__option">
-					{ ! hasOneOption && (
+					{ ! hideRadios && (
 						<FormRadio
 							checked={ option.slug === selectedSlug }
 							onChange={ () => handleSelect( option.slug ) }
 						/>
 					) }
 					<div className="product-card__option-description">
-						{ ! hasOneOption && <div className="product-card__option-name">{ option.title }</div> }
+						{ ! hideRadios && <div className="product-card__option-name">{ option.title }</div> }
 						<ProductCardPriceGroup
 							billingTimeFrame={ option.billingTimeFrame }
 							currencyCode={ option.currencyCode }
@@ -64,6 +70,7 @@ ProductCardOptions.propTypes = {
 	),
 	optionsLabel: PropTypes.string,
 	selectedSlug: PropTypes.string,
+	forceRadiosEvenIfOnlyOneOption: PropTypes.bool,
 };
 
 export default ProductCardOptions;

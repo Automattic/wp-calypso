@@ -35,16 +35,7 @@ import ActionBox from './action-box';
 /**
  * Image dependencies
  */
-import commentIcon from 'assets/images/customer-home/comment.svg';
-import customDomainIcon from 'assets/images/customer-home/custom-domain.svg';
-import customizeIcon from 'assets/images/customer-home/customize.svg';
-import gSuiteIcon from 'assets/images/customer-home/gsuite.svg';
-import imagesIcon from 'assets/images/customer-home/images.svg';
-import logoIcon from 'assets/images/customer-home/looka-logo.svg';
-import menuIcon from 'assets/images/customer-home/menus.svg';
-import pageIcon from 'assets/images/customer-home/page.svg';
-import postIcon from 'assets/images/customer-home/post.svg';
-import themeIcon from 'assets/images/customer-home/theme.svg';
+import logoIcon from 'assets/images/customer-home/looka-logo-60.svg';
 
 /**
  * Style dependencies
@@ -76,39 +67,39 @@ export const QuickLinks = ( {
 				<ActionBox
 					onClick={ editHomepageAction }
 					label={ translate( 'Edit homepage' ) }
-					iconSrc={ imagesIcon }
+					materialIcon="laptop"
 				/>
 			) : (
 				<ActionBox
 					onClick={ writePostAction }
 					label={ translate( 'Write blog post' ) }
-					iconSrc={ postIcon }
+					materialIcon="edit"
 				/>
 			) }
 			{ isStaticHomePage ? (
 				<ActionBox
 					onClick={ addPageAction }
 					label={ translate( 'Add a page' ) }
-					iconSrc={ pageIcon }
+					materialIcon="insert_drive_file"
 				/>
 			) : (
 				<ActionBox
 					onClick={ manageCommentsAction }
 					label={ translate( 'Manage comments' ) }
-					iconSrc={ commentIcon }
+					materialIcon="mode_comment"
 				/>
 			) }
 			{ isStaticHomePage ? (
 				<ActionBox
 					onClick={ writePostAction }
 					label={ translate( 'Write blog post' ) }
-					iconSrc={ postIcon }
+					materialIcon="edit"
 				/>
 			) : (
 				<ActionBox
 					onClick={ addPageAction }
 					label={ translate( 'Add a page' ) }
-					iconSrc={ pageIcon }
+					materialIcon="insert_drive_file"
 				/>
 			) }
 			{ showCustomizer && (
@@ -116,7 +107,7 @@ export const QuickLinks = ( {
 					href={ menusUrl }
 					onClick={ trackEditMenusAction }
 					label={ translate( 'Edit menus' ) }
-					iconSrc={ menuIcon }
+					materialIcon="list"
 				/>
 			) }
 			{ showCustomizer && (
@@ -124,14 +115,27 @@ export const QuickLinks = ( {
 					href={ customizeUrl }
 					onClick={ trackCustomizeThemeAction }
 					label={ translate( 'Customize theme' ) }
-					iconSrc={ customizeIcon }
+					materialIcon="palette"
 				/>
 			) }
 			<ActionBox
 				onClick={ changeThemeAction }
 				label={ translate( 'Change theme' ) }
-				iconSrc={ themeIcon }
+				materialIcon="view_quilt"
 			/>
+			{ hasCustomDomain ? (
+				<ActionBox
+					onClick={ addEmailAction }
+					label={ translate( 'Add email' ) }
+					materialIcon="email"
+				/>
+			) : (
+				<ActionBox
+					onClick={ addDomainAction }
+					label={ translate( 'Add a domain' ) }
+					gridicon="domains"
+				/>
+			) }
 			<ActionBox
 				href="https://wp.me/logo-maker"
 				onClick={ trackDesignLogoAction }
@@ -140,19 +144,6 @@ export const QuickLinks = ( {
 				external
 				iconSrc={ logoIcon }
 			/>
-			{ hasCustomDomain ? (
-				<ActionBox
-					onClick={ addEmailAction }
-					label={ translate( 'Add email' ) }
-					iconSrc={ gSuiteIcon }
-				/>
-			) : (
-				<ActionBox
-					onClick={ addDomainAction }
-					label={ translate( 'Add a domain' ) }
-					iconSrc={ customDomainIcon }
-				/>
-			) }
 		</div>
 	);
 

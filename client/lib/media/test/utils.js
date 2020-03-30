@@ -674,6 +674,7 @@ describe( 'MediaUtils', () => {
 
 	describe( '#createTransientMedia()', () => {
 		const GUID = 'URL';
+		const originalURL = window.URL;
 
 		beforeEach( () => {
 			window.URL = {
@@ -681,6 +682,10 @@ describe( 'MediaUtils', () => {
 					return GUID;
 				},
 			};
+		} );
+
+		afterEach( () => {
+			window.URL = originalURL;
 		} );
 
 		test( 'should return a transient for a file blob', () => {
@@ -759,6 +764,84 @@ describe( 'MediaUtils', () => {
 				MediaValidationErrors.FILE_TYPE_UNSUPPORTED,
 				MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE,
 			] );
+		} );
+	} );
+
+	describe( '#mediaURLToProxyConfig()', () => {
+		test( 'should detect media relative to site URL', () => {
+			expect( MediaUtils.mediaURLToProxyConfig( 'https://test.com/media.jpg', 'test.com' ) ).to.eql(
+				{
+					query: '',
+					filePath: '/media.jpg',
+					isRelativeToSiteRoot: true,
+				}
+			);
+		} );
+
+		test( 'should detect query string of given URL', () => {
+			expect(
+				MediaUtils.mediaURLToProxyConfig( 'https://test.com/media.jpg?w=100&h=98', 'test.com' )
+			).to.eql( {
+				query: '?w=100&h=98',
+				filePath: '/media.jpg',
+				isRelativeToSiteRoot: true,
+			} );
+		} );
+
+		test( 'should detect domain mismatch', () => {
+			expect(
+				MediaUtils.mediaURLToProxyConfig( 'https://test.com/media.jpg', 'test2.com' )
+			).to.eql( {
+				query: '',
+				filePath: '/media.jpg',
+				isRelativeToSiteRoot: false,
+			} );
+		} );
+
+		test( 'should recognize photon URLs as ones relative to site URL', () => {
+			expect(
+				MediaUtils.mediaURLToProxyConfig( 'https://i0.wp.com/test.com/media.jpg?w=100', 'test.com' )
+			).to.eql( {
+				query: '?w=100',
+				filePath: '/media.jpg',
+				isRelativeToSiteRoot: true,
+			} );
+		} );
+
+		test( 'should not recognize non-photon wp.com URLs as ones relative to site URL', () => {
+			expect(
+				MediaUtils.mediaURLToProxyConfig(
+					'https://bad.wp.com/test.com/media.jpg?w=100',
+					'test.com'
+				)
+			).to.eql( {
+				query: '?w=100',
+				filePath: '/test.com/media.jpg',
+				isRelativeToSiteRoot: false,
+			} );
+		} );
+
+		test( 'should recognize domain mismatch in photon URL', () => {
+			expect(
+				MediaUtils.mediaURLToProxyConfig(
+					'https://i0.wp.com/test.com/media.jpg?w=100',
+					'test2.com'
+				)
+			).to.eql( {
+				query: '?w=100',
+				filePath: '/media.jpg',
+				isRelativeToSiteRoot: false,
+			} );
+		} );
+
+		test( 'should not consider URLs with non-http protocols as relative to domain root', () => {
+			expect(
+				MediaUtils.mediaURLToProxyConfig( 'blob://test.com/media.jpg?w=100', 'test.com' )
+			).to.eql( {
+				query: '?w=100',
+				filePath: '/media.jpg',
+				isRelativeToSiteRoot: false,
+			} );
 		} );
 	} );
 } );
