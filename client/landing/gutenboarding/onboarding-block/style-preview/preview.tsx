@@ -4,7 +4,6 @@
 import * as React from 'react';
 import { addQueryArgs } from '@wordpress/url';
 import { useSelect } from '@wordpress/data';
-import { ValuesType } from 'utility-types';
 import classNames from 'classnames';
 
 /**
@@ -13,39 +12,39 @@ import classNames from 'classnames';
 import { STORE_KEY } from '../../stores/onboard';
 import * as T from './types';
 import { useLangRouteParam } from '../../path';
+import { Fonts } from 'landing/gutenboarding/constants';
 
 type Design = import('../../stores/onboard/types').Design;
 type SiteVertical = import('../../stores/onboard/types').SiteVertical;
 
 interface Props {
 	viewport: T.Viewport;
-	fonts: ValuesType< typeof import('../../constants').fontPairings >;
 }
-
-const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
+const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 	const [ previewHtml, setPreviewHtml ] = React.useState< string >();
-	const [ requestedFonts, setRequestedFonts ] = React.useState< Set< string > >( new Set() );
+	const [ requestedFonts, setRequestedFonts ] = React.useState< Set< Fonts > >( new Set() );
 
-	// Cast reason: Our flow should ensure these are not `undefined`. Cast to defined types.
-	const { selectedDesign, siteVertical, siteTitle } = useSelect( select =>
+	const { selectedDesign, selectedFonts, siteVertical, siteTitle } = useSelect( select =>
 		select( STORE_KEY ).getState()
-	) as { selectedDesign: Design; siteVertical: SiteVertical; siteTitle: string };
+	);
 
 	const iframe = React.useRef< HTMLIFrameElement >( null );
 	const language = useLangRouteParam();
 
 	React.useEffect(
 		() => {
+			if ( ! selectedDesign ) {
+				return;
+			}
 			const eff = async () => {
-				const [ { fontFamily: fontHeadings }, { fontFamily: fontBase } ] = fonts;
 				const templateUrl = `https://public-api.wordpress.com/rest/v1/template/demo/${ encodeURIComponent(
 					selectedDesign.theme
 				) }/${ encodeURIComponent( selectedDesign.template ) }/`;
 				const url = addQueryArgs( templateUrl, {
 					language: language,
-					vertical: siteVertical.label,
-					font_headings: fontHeadings,
-					font_base: fontBase,
+					vertical: siteVertical?.label,
+					font_headings: selectedFonts?.headings.fontFamily,
+					font_base: selectedFonts?.base.fontFamily,
 					site_title: siteTitle,
 				} );
 				let resp;
@@ -67,7 +66,13 @@ const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 				}
 				const html = await resp.text();
 				setPreviewHtml( html );
-				setRequestedFonts( new Set( [ fontHeadings, fontBase ] ) );
+				setRequestedFonts(
+					new Set(
+						[ selectedFonts?.headings.fontFamily, selectedFonts?.base.fontFamily ].filter(
+							Boolean
+						) as Fonts[]
+					)
+				);
 			};
 			eff();
 		},
@@ -88,9 +93,12 @@ const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 
 	React.useEffect( () => {
 		const iframeWindow = iframe.current?.contentWindow;
-		if ( iframeWindow?.document.body ) {
+		if ( selectedFonts && iframeWindow?.document.body ) {
 			const iframeDocument = iframeWindow.document;
-			const [ { fontFamily: headings }, { fontFamily: base } ] = fonts;
+			const {
+				headings: { fontFamily: headings },
+				base: { fontFamily: base },
+			} = selectedFonts;
 
 			const baseURL = 'https://fonts.googleapis.com/css2';
 
@@ -121,7 +129,7 @@ const Preview: React.FunctionComponent< Props > = ( { fonts, viewport } ) => {
 			iframeDocument.body.style.setProperty( '--font-headings', `${ headings }` );
 			iframeDocument.body.style.setProperty( '--font-base', `${ headings }` );
 		}
-	}, [ fonts, previewHtml, requestedFonts ] );
+	}, [ previewHtml, requestedFonts, selectedFonts ] );
 
 	return (
 		<div className={ `style-preview__preview is-viewport-${ viewport }` }>

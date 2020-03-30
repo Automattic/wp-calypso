@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { ValuesType } from 'utility-types';
+
+/**
  * Debounce our input + HTTP dependent select changes
  *
  * Rapidly changing input generates excessive HTTP requests.
@@ -9,24 +14,27 @@
 export const selectorDebounce = 300;
 
 export const fontPairings = [
-	[
-		{ title: 'Cabin', fontFamily: 'Cabin' },
-		{ title: 'Raleway', fontFamily: 'Raleway' },
-	],
-	[
-		{ title: 'Chivo', fontFamily: 'Chivo' },
-		{ title: 'Open Sans', fontFamily: 'Open Sans' },
-	],
-	[
-		{ title: 'Playfair', fontFamily: 'Playfair Display' },
-		{ title: 'Fira Sans', fontFamily: 'Fira Sans' },
-	],
-	[
-		{ title: 'Arvo', fontFamily: 'Arvo' },
-		{ title: 'Montserrat', fontFamily: 'Montserrat' },
-	],
-	[
-		{ title: 'Space Mono', fontFamily: 'Space Mono' },
-		{ title: 'Roboto', fontFamily: 'Roboto' },
-	],
+	{
+		headings: { title: 'Cabin', fontFamily: 'Cabin' },
+		base: { title: 'Raleway', fontFamily: 'Raleway' },
+	},
+	{
+		headings: { title: 'Chivo', fontFamily: 'Chivo' },
+		base: { title: 'Open Sans', fontFamily: 'Open Sans' },
+	},
+	{
+		headings: { title: 'Playfair', fontFamily: 'Playfair Display' },
+		base: { title: 'Fira Sans', fontFamily: 'Fira Sans' },
+	},
+	{
+		headings: { title: 'Arvo', fontFamily: 'Arvo' },
+		base: { title: 'Montserrat', fontFamily: 'Montserrat' },
+	},
+	{
+		headings: { title: 'Space Mono', fontFamily: 'Space Mono' },
+		base: { title: 'Roboto', fontFamily: 'Roboto' },
+	},
 ] as const;
+
+export type FontPair = ValuesType< typeof fontPairings >;
+export type Fonts = FontPair[ keyof FontPair ][ 'fontFamily' ];

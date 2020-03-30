@@ -9,6 +9,7 @@ import { combineReducers } from '@wordpress/data';
  */
 import { SiteVertical, Design } from './types';
 import { OnboardAction } from './actions';
+import { FontPair } from 'landing/gutenboarding/constants';
 
 const domain: Reducer<
 	import('@automattic/data-stores').DomainSuggestions.DomainSuggestion | undefined,
@@ -83,8 +84,19 @@ const siteWasCreatedForDomainPurchase: Reducer< boolean, OnboardAction > = (
 	}
 };
 
+const selectedFonts: Reducer< FontPair | undefined, OnboardAction > = (
+	state = undefined,
+	action
+) => {
+	if ( action.type === 'SET_FONTS' ) {
+		return action.fonts;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
+	selectedFonts,
 	selectedDesign,
 	siteTitle,
 	siteVertical,
