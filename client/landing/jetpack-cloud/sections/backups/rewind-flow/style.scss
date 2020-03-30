@@ -22,7 +22,13 @@
 	align-items: center;
 	display: flex;
 	font-size: 16px;
+	font-weight: normal;
 	margin-bottom: 15px;
+
+	// this is the margin between the checkbox and the label text
+	span.rewind-flow__rewind-config-editor-label-text {
+		margin-left: 10px;
+	}
 }
 
 // this rule is extremely specific to override other stylings
