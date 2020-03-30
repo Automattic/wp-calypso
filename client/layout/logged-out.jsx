@@ -41,6 +41,7 @@ const hasSidebar = section => {
 const LayoutLoggedOut = ( {
 	currentRoute,
 	isJetpackLogin,
+	isGutenboardingLogin,
 	isPopup,
 	isJetpackWooCommerceFlow,
 	wccomFrom,
@@ -63,6 +64,7 @@ const LayoutLoggedOut = ( {
 		'has-no-sidebar': ! hasSidebar( section ),
 		'has-no-masterbar': masterbarIsHidden,
 		'is-jetpack-login': isJetpackLogin,
+		'is-gutenboarding-login': isGutenboardingLogin,
 		'is-popup': isPopup,
 		'is-jetpack-woocommerce-flow':
 			config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow,
@@ -137,6 +139,7 @@ export default connect( state => {
 	const section = getSection( state );
 	const currentRoute = getCurrentRoute( state );
 	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
+	const isGutenboardingLogin = startsWith( currentRoute, '/log-in/gutenboarding' );
 	const noMasterbarForRoute = startsWith( currentRoute, '/log-in/jetpack' );
 	const isPopup = '1' === get( getCurrentQueryArguments( state ), 'is_popup' );
 	const noMasterbarForSection = 'signup' === section.name || 'jetpack-connect' === section.name;
@@ -147,6 +150,7 @@ export default connect( state => {
 	return {
 		currentRoute,
 		isJetpackLogin,
+		isGutenboardingLogin,
 		isPopup,
 		isJetpackWooCommerceFlow,
 		wccomFrom,

@@ -1,6 +1,17 @@
 @import 'jetpack-connect/colors.scss';
 @import 'woocommerce/components/text-control/style.scss';
 
+@font-face {
+	font-display: swap;
+	font-family: 'Recoleta';
+	font-weight: 400;
+	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.eot' );
+	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.eot?#iefix' ) format( 'embedded-opentype' ),
+		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff2' ) format( 'woff2' ),
+		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff' ) format( 'woff' ),
+		url( 'https://s1.wp.com/i/fonts/recoleta/400.ttf' ) format( 'truetype' );
+}
+
 $image-height: 47px;
 
 .layout.is-section-login {
@@ -329,5 +340,17 @@ $image-height: 47px;
 				border: 0;
 			}
 		}
+	}
+}
+
+.layout.is-gutenboarding-login {
+	background-color: #fff;
+
+	.login__form-header {
+		font-family: Recoleta;
+	}
+
+	.wp-login__container .card {
+		box-shadow: none;
 	}
 }
