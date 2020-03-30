@@ -51,25 +51,21 @@ function PageCardInfo( {
 } ) {
 	const translate = useTranslate();
 
-	const renderTimestamp = function() {
-		return (
-			<PostRelativeTimeStatus
-				showPublishedStatus={ showPublishedStatus }
-				post={ page }
-				link={ contentLink.contentLinkURL }
-				target={ contentLink.contentLinkTarget }
-				gridiconSize={ ICON_SIZE }
-				includeBasicStatus={ true }
-			/>
-		);
-	};
-
 	return (
 		<div className="page-card-info">
 			{ themeId && <QueryTheme siteId="wpcom" themeId={ themeId } /> }
 			{ siteUrl && <div className="page-card-info__site-url">{ siteUrl }</div> }
 			<div>
-				{ showTimestamp && renderTimestamp() }
+				{ showTimestamp && (
+					<PostRelativeTimeStatus
+						showPublishedStatus={ showPublishedStatus }
+						post={ page }
+						link={ contentLink.contentLinkURL }
+						target={ contentLink.contentLinkTarget }
+						gridiconSize={ ICON_SIZE }
+						includeBasicStatus={ true }
+					/>
+				) }
 				{ isFront && (
 					<span className="page-card-info__badge">
 						<Gridicon icon="house" size={ ICON_SIZE } className="page-card-info__badge-icon" />
