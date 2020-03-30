@@ -129,7 +129,6 @@ export default function CompositeCheckout( {
 	couponCode: couponCodeFromUrl,
 } ) {
 	const translate = useTranslate();
-	const planSlug = useSelector( state => getUpgradePlanSlugFromPath( state, siteId, product ) );
 	const isJetpackNotAtomic = useSelector(
 		state => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
 	);
@@ -244,7 +243,7 @@ export default function CompositeCheckout( {
 	const countriesList = useCountryList( overrideCountryList || [] );
 
 	const { productForCart, canInitializeCart } = usePrepareProductForCart(
-		planSlug,
+		siteId,
 		product,
 		isJetpackNotAtomic
 	);
@@ -1479,7 +1478,10 @@ function getProductSlugFromAlias( productAlias ) {
 	return null;
 }
 
-function usePrepareProductForCart( planSlug, productAlias, isJetpackNotAtomic ) {
+function usePrepareProductForCart( siteId, productAlias, isJetpackNotAtomic ) {
+	const planSlug = useSelector( state =>
+		getUpgradePlanSlugFromPath( state, siteId, productAlias )
+	);
 	const plans = useSelector( state => getPlans( state ) );
 	const plan = useSelector( state => getPlanBySlug( state, planSlug ) );
 	const products = useSelector( state => getProductsList( state ) );
