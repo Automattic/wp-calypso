@@ -93,41 +93,46 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 
 	React.useEffect( () => {
 		const iframeWindow = iframe.current?.contentWindow;
-		if ( selectedFonts && iframeWindow?.document.body ) {
+		if ( iframeWindow?.document.body ) {
 			const iframeDocument = iframeWindow.document;
-			const {
-				headings: { fontFamily: headings },
-				base: { fontFamily: base },
-			} = selectedFonts;
+			if ( selectedFonts ) {
+				const {
+					headings: { fontFamily: headings },
+					base: { fontFamily: base },
+				} = selectedFonts;
 
-			const baseURL = 'https://fonts.googleapis.com/css2';
+				const baseURL = 'https://fonts.googleapis.com/css2';
 
-			// matrix: regular,bold * regular,italic
-			const axis = 'ital,wght@0,400;0,700;1,400;1,700';
-			const query = [];
+				// matrix: regular,bold * regular,italic
+				const axis = 'ital,wght@0,400;0,700;1,400;1,700';
+				const query = [];
 
-			// To replace state
-			const nextFonts = new Set( requestedFonts );
+				// To replace state
+				const nextFonts = new Set( requestedFonts );
 
-			if ( ! requestedFonts.has( headings ) ) {
-				query.push( `family=${ encodeURI( headings ) }:${ axis }` );
-				nextFonts.add( headings );
+				if ( ! requestedFonts.has( headings ) ) {
+					query.push( `family=${ encodeURI( headings ) }:${ axis }` );
+					nextFonts.add( headings );
+				}
+				if ( ! requestedFonts.has( base ) ) {
+					query.push( `family=${ encodeURI( base ) }:${ axis }` );
+					nextFonts.add( base );
+				}
+
+				if ( query.length ) {
+					const l = iframeDocument.createElement( 'link' );
+					l.rel = 'stylesheet';
+					l.type = 'text/css';
+					l.href = `${ baseURL }?${ query.join( '&' ) }&display=swap`;
+					iframeDocument.head.appendChild( l );
+					setRequestedFonts( nextFonts );
+				}
+				iframeDocument.body.style.setProperty( '--font-headings', headings );
+				iframeDocument.body.style.setProperty( '--font-base', headings );
+			} else {
+				iframeDocument.body.style.removeProperty( '--font-headings' );
+				iframeDocument.body.style.removeProperty( '--font-base' );
 			}
-			if ( ! requestedFonts.has( base ) ) {
-				query.push( `family=${ encodeURI( base ) }:${ axis }` );
-				nextFonts.add( base );
-			}
-
-			if ( query.length ) {
-				const l = iframeDocument.createElement( 'link' );
-				l.rel = 'stylesheet';
-				l.type = 'text/css';
-				l.href = `${ baseURL }?${ query.join( '&' ) }&display=swap`;
-				iframeDocument.head.appendChild( l );
-				setRequestedFonts( nextFonts );
-			}
-			iframeDocument.body.style.setProperty( '--font-headings', `${ headings }` );
-			iframeDocument.body.style.setProperty( '--font-base', `${ headings }` );
 		}
 	}, [ previewHtml, requestedFonts, selectedFonts ] );
 
