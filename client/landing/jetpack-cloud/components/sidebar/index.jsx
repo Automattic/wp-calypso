@@ -95,7 +95,9 @@ class JetpackCloudSidebar extends Component {
 									label={ translate( 'Activity Log', {
 										comment: 'Jetpack Cloud / Activity Log status sidebar navigation item',
 									} ) }
-									link={ selectedSiteSlug ? `/activity/${ selectedSiteSlug }` : '/activity' }
+									link={
+										selectedSiteSlug ? `/activity-log/${ selectedSiteSlug }` : '/activity-log'
+									}
 									onNavigate={ this.onNavigate }
 									selected={ itemLinkMatches( '/activity', this.props.path ) }
 								/>

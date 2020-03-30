@@ -24,7 +24,8 @@
 		"jetpack-cloud": true,
 		"scan": true,
 		"backups": true,
-		"jetpack-cloud-settings": true
+		"jetpack-cloud-settings": true,
+		"activity": true
 	},
 	"theme": "jetpack-cloud"
 }
