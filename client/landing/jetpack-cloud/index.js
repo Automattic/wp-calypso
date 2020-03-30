@@ -6,10 +6,22 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { navigation, siteSelection } from 'my-sites/controller';
-import { makeLayout, render as clientRender } from 'controller';
-import { dashboard } from 'landing/jetpack-cloud/sections/dashboard/controller';
+import config from 'config';
 
 export default function() {
-	page( '/', siteSelection, navigation, dashboard, makeLayout, clientRender );
+	page( '/', context => {
+		let redirectPath = '/error';
+
+		if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
+			redirectPath = '/backups';
+		} else if ( config.isEnabled( 'jetpack-cloud/scan' ) ) {
+			redirectPath = '/scan';
+		}
+
+		if ( context.querystring ) {
+			redirectPath += `?${ context.querystring }`;
+		}
+
+		page.redirect( redirectPath );
+	} );
 }

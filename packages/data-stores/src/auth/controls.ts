@@ -42,10 +42,7 @@ const makeRemoteLoginRequest = ( loginLink: string, requestTimeout = 25000 ) => 
 };
 
 export const remoteLoginUser = ( loginLinks: string[] ) =>
-	( {
-		type: 'REMOTE_LOGIN_USER',
-		loginLinks,
-	} as const );
+	( { type: 'REMOTE_LOGIN_USER', loginLinks } as const );
 
 export const controls = {
 	REMOTE_LOGIN_USER: ( { loginLinks }: ReturnType< typeof remoteLoginUser > ) =>

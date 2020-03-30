@@ -18,13 +18,13 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 
 const Primary = ( { checklistMode, displayChecklist } ) => {
 	return (
-		<div className="primary">
+		<>
 			{ // "Go Mobile" is displayed on the primary location when viewed in smaller viewports, so folks
 			// can see it on their phone without needing to scroll.
 			isMobile() && <GoMobile /> }
 			{ displayChecklist && <ChecklistSiteSetup checklistMode={ checklistMode } /> }
 			{ ! displayChecklist && <QuickLinks /> }
-		</div>
+		</>
 	);
 };
 

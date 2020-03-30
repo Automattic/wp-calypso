@@ -16,9 +16,9 @@ import isPrivateSite from 'state/selectors/is-private-site';
  * @returns {?boolean}            Whether the module is active
  */
 export default function isJetpackModuleActive( state, siteId, moduleSlug ) {
-	if ( moduleSlug === 'photon' || moduleSlug === 'photon-cdn' ) {
-		// When site is atomic and private, we filter out photon from active modules list.
-		// This isn't actually changing any stored preferences, which means photon is going to
+	if ( moduleSlug === 'photon' || moduleSlug === 'photon-cdn' || moduleSlug === 'videopress' ) {
+		// When site is atomic and private, we filter out certain modules from active modules list.
+		// This isn't actually changing any stored preferences, which means they are going to
 		// keep working once privacy is disabled.
 		const siteIsAtomicPrivate =
 			isSiteAutomatedTransfer( state, siteId ) && isPrivateSite( state, siteId );

@@ -1,0 +1,39 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+
+// Restyle `<Suggestion />` component
+.vertical-select {
+	.suggestions__category-heading {
+		display: none;
+	}
+	.suggestions__item {
+		border: none;
+		background-color: var( --studio-white );
+
+		&.has-highlight {
+			box-shadow: inset 0 0 0 1px var( --studio-blue-30 );
+			background-color: var( --studio-white );
+			border-radius: 2px;
+		}
+	}
+	&--without-value {
+		.madlib__input {
+			border-bottom: 2px solid var( --studio-gray-5 );
+
+			&::placeholder {
+				color: var( --studio-gray-5 );
+			}
+		}
+	}
+}
+
+.vertical-select__suggestions-wrapper {
+	position: relative;
+}
+
+.vertical-select__suggestions {
+	position: absolute;
+	left: 0;
+	width: 250px;
+	max-height: 400px;
+	overflow: auto;
+}

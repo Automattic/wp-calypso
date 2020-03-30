@@ -11,17 +11,13 @@ import { connect } from 'react-redux';
  */
 import { Card } from '@automattic/components';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import EligibilityWarnings from 'blocks/eligibility-warnings';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import isPrivateSite from 'state/selectors/is-private-site';
+import { isJetpackSite } from 'state/sites/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
-import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import SupportInfo from 'components/support-info';
 
@@ -36,8 +32,6 @@ class SpeedUpSiteSettings extends Component {
 		photonModuleUnavailable: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
 		siteAcceleratorStatus: PropTypes.bool,
-		siteIsAtomicPrivate: PropTypes.bool,
-		siteSlug: PropTypes.string,
 	};
 
 	handleCdnChange = () => {
@@ -60,26 +54,11 @@ class SpeedUpSiteSettings extends Component {
 			photonModuleUnavailable,
 			selectedSiteId,
 			siteAcceleratorStatus,
-			siteSlug,
-			siteIsAtomicPrivate,
 			siteIsJetpack,
-			siteIsUnlaunched,
 			translate,
 		} = this.props;
-		const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
 
-		if ( siteIsAtomicPrivate ) {
-			return (
-				<EligibilityWarnings
-					className="site-settings__card"
-					isEligible={ true }
-					backUrl={ `/settings/performance/${ siteSlug }` }
-					eligibilityData={ {
-						eligibilityHolds: [ siteIsUnlaunched ? 'SITE_UNLAUNCHED' : 'SITE_NOT_PUBLIC' ],
-					} }
-				/>
-			);
-		}
+		const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
 
 		return (
 			<div className="site-settings__module-settings site-settings__speed-up-site-settings">
@@ -157,8 +136,6 @@ export default connect( state => {
 		selectedSiteId,
 		'photon'
 	);
-	const siteIsAtomicPrivate =
-		isSiteAutomatedTransfer( state, selectedSiteId ) && isPrivateSite( state, selectedSiteId );
 	const photonModuleActive = isJetpackModuleActive( state, selectedSiteId, 'photon' );
 	const assetCdnModuleActive = isJetpackModuleActive( state, selectedSiteId, 'photon-cdn' );
 
@@ -169,9 +146,6 @@ export default connect( state => {
 		photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 		selectedSiteId,
 		siteAcceleratorStatus,
-		siteIsAtomicPrivate,
 		siteIsJetpack: isJetpackSite( state, selectedSiteId ),
-		siteIsUnlaunched: isUnlaunchedSite( state, selectedSiteId ),
-		siteSlug: getSiteSlug( state, selectedSiteId ),
 	};
 } )( localize( SpeedUpSiteSettings ) );

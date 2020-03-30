@@ -419,6 +419,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async closeEditor() {
+		if ( driverManager.currentScreenSize() === 'mobile' ) {
+			return await this.driver.navigate().back();
+		}
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css(

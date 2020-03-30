@@ -6,20 +6,31 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import { CompactCard } from '@automattic/components';
+import MaterialIcon from 'components/material-icon';
 import Gridicon from 'components/gridicon';
-import { Button } from '@automattic/components';
 
-const ActionBox = ( { external, href, onClick, target, iconSrc, label } ) => {
+const ActionBox = ( { href, onClick, target, iconSrc, label, materialIcon, gridicon } ) => {
 	const buttonAction = { href, onClick, target };
+	const getIcon = () => {
+		if ( materialIcon ) {
+			return <MaterialIcon className="quick-links__action-box-icon" icon={ materialIcon } />;
+		}
+
+		if ( gridicon ) {
+			return <Gridicon className="quick-links__action-box-icon" icon={ gridicon } />;
+		}
+
+		return <img className="quick-links__action-box-icon" src={ iconSrc } alt="" />;
+	};
+
 	return (
-		<div className="quick-links__action-box">
-			<Button { ...buttonAction }>
-				<img src={ iconSrc } alt="" />
-				<span>
-					{ label } { external && <Gridicon icon="external" /> }
-				</span>
-			</Button>
-		</div>
+		<CompactCard { ...buttonAction } displayAsLink className="quick-links__action-box">
+			<div className="quick-links__action-box-image">{ getIcon() }</div>
+			<div className="quick-links__action-box-text">
+				<h6 className="quick-links__action-box-label">{ label }</h6>
+			</div>
+		</CompactCard>
 	);
 };
 

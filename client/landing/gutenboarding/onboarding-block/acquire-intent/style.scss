@@ -1,0 +1,73 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+@import '../../mixins';
+
+.acquire-intent {
+	@include onboarding-font-recoleta;
+	align-items: center;
+	background-color: var( --contrastColor );
+	color: var( --mainColor );
+	display: flex;
+	font-size: 64px;
+	height: 100%;
+	justify-content: center;
+	left: 0%;
+	position: fixed;
+	tab-size: 4;
+	top: 0;
+	transition: color 0.5s ease-in-out 1s, background-color 0.5s ease-in-out 1s;
+	width: 100%;
+}
+
+.acquire-intent__questions {
+	max-width: 1200px;
+}
+
+.madlib__input {
+	@include onboarding-font-recoleta;
+	background: transparent;
+	border: none;
+	font-size: inherit;
+	line-height: inherit;
+	height: 1.01em;
+	padding: 0;
+	min-width: 400px;
+
+	color: var( --mainColor );
+	border-bottom: 3px solid var( --mainColor );
+
+	transition: border-bottom 0.5s ease-in-out 1s, color 0.5s ease-in-out 1s;
+
+	&:focus {
+		outline: none;
+	}
+
+	// TODO focus for accessibility?
+	// .accessible-focus &:focus {
+	// 	outline: 2px solid var( --highlightColor );
+	// }
+}
+
+// Themed core button component
+.components-button.is-primary.acquire-intent__question-skip:not( :disabled ):not( [aria-disabled='true'] ) {
+	background: var( --mainColor );
+	border-color: var( --mainColor );
+	border-radius: 4px;
+	box-shadow: none;
+	color: var( --contrastColor );
+	font-size: 14px;
+	font-weight: 500;
+	padding: 20px 32px;
+	// @TODO: work out hover-state animations
+	transition: background 0.5s ease-in-out 1s, border-color 0.5s ease-in-out 1s,
+		color 0.5s ease-in-out 1s;
+
+	&:active,
+	&:hover,
+	&:focus {
+		background: var( --highlightColor );
+		border-color: var( --highlightColor );
+		color: var( --contrastColor );
+		outline-color: transparent;
+		box-shadow: none;
+	}
+}
