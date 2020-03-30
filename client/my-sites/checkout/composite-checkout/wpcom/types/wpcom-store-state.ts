@@ -2,10 +2,15 @@
  * Internal dependencies
  */
 import {
-    DomainContactDetails,
-    DomainContactValidationRequestExtraFields,
-    PossiblyCompleteDomainContactDetails,
-    DomainContactDetailsErrors,
+	DomainContactDetails,
+	PossiblyCompleteDomainContactDetails,
+	DomainContactDetailsErrors,
+	CaDomainContactExtraDetails,
+	CaDomainContactExtraDetailsErrors,
+	UkDomainContactExtraDetails,
+	UkDomainContactExtraDetailsErrors,
+	FrDomainContactExtraDetails,
+	FrDomainContactExtraDetailsErrors,
 } from './backend/domain-contact-details-components';
 import {
 	DomainContactValidationRequest,
@@ -29,10 +34,10 @@ type ManagedContactDetailsShape< T > = {
 	countryCode: T;
 	fax: T;
 	vatId: T;
-	tldExtraFields: ManagedContactDetailsTldExtraFields< T >;
+	tldExtraFields: ManagedContactDetailsTldExtraFieldsShape< T >;
 };
 
-type ManagedContactDetailsTldExtraFields< T > = {
+type ManagedContactDetailsTldExtraFieldsShape< T > = {
 	ca?: {
 		lang: T;
 		legalType: T;
@@ -241,10 +246,10 @@ function touchIfDifferent( newValue: undefined | string, oldData: ManagedValue )
 }
 
 function setValueUnlessTouched(
-	newValue: undefined | string,
+	newValue: undefined | null | string,
 	oldData: ManagedValue
 ): ManagedValue {
-	if ( newValue === undefined ) {
+	if ( newValue === undefined || newValue === null ) {
 		return oldData;
 	}
 	return oldData.isTouched ? oldData : { ...oldData, value: newValue, errors: [] };
@@ -478,6 +483,7 @@ export function prepareDomainContactValidationRequest(
 			email: details.email.value,
 			alternateEmail: details.alternateEmail.value,
 			phone: details.phone.value,
+			phoneNumberCountry: details.phoneNumberCountry.value,
 			address1: details.address1.value,
 			address2: details.address2.value,
 			city: details.city.value,
