@@ -134,7 +134,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) =
 		</>
 	);
 
-	const renderReady = () => (
+	const renderFinished = () => (
 		<>
 			<div className="rewind-flow__header">
 				<img
@@ -198,7 +198,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) =
 		) {
 			return renderInProgress();
 		} else if ( inProgressRewindStatus !== null && inProgressRewindStatus === 'finished' ) {
-			return renderReady();
+			return renderFinished();
 		}
 
 		return renderError();
