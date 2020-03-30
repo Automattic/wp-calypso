@@ -84,7 +84,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 		};
 
 		this.props.updateContactDetailsCache( payload );
-		this.props?.onContactDetailsChange( payload );
+		this.props.onContactDetailsChange?.( payload );
 	}
 
 	handleChangeEvent = event => {
@@ -94,7 +94,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 			},
 		};
 		this.props.updateContactDetailsCache( payload );
-		this.props.onContactDetailsChange( payload );
+		this.props.onContactDetailsChange?.( payload );
 	};
 
 	isTradingNameRequired( registrantType ) {

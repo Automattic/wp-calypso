@@ -91,7 +91,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		};
 
 		this.props.updateContactDetailsCache( payload );
-		this.props?.onContactDetailsChange( payload );
+		this.props?.onContactDetailsChange?.( payload );
 	}
 
 	updateContactDetails( field, value ) {
@@ -99,7 +99,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		debug( 'Setting ' + field + ' to ' + value );
 		const payload = set( {}, field, sanitizedValue );
 		this.props.updateContactDetailsCache( payload );
-		this.props.onContactDetailsChange( payload );
+		this.props.onContactDetailsChange?.( payload );
 	}
 
 	handleChangeContactEvent = event => {
