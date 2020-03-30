@@ -41,5 +41,8 @@ export interface CreateSiteParams {
 		};
 		site_creation_flow?: string;
 		theme?: string;
+		template?: string;
+		font_headings?: string;
+		font_base?: string;
 	};
 }
