@@ -26,7 +26,7 @@ import { addQueryArgs } from 'lib/url';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
-import { Button, Card, ProductIcon } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import DismissibleCard from 'blocks/dismissible-card';
 import PlanPrice from 'my-sites/plan-price';
 import TrackComponentView from 'lib/analytics/track-component-view';
@@ -137,15 +137,7 @@ export class Banner extends Component {
 	};
 
 	getIcon() {
-		const { icon, jetpack, showIcon, plan } = this.props;
-
-		if ( plan && ! icon ) {
-			return (
-				<div className="banner__icon-plan">
-					<ProductIcon slug={ plan } />
-				</div>
-			);
-		}
+		const { icon, jetpack, showIcon } = this.props;
 
 		if ( ! showIcon ) {
 			return;
@@ -162,10 +154,10 @@ export class Banner extends Component {
 		return (
 			<div className="banner__icons">
 				<div className="banner__icon">
-					<Gridicon icon={ icon || 'info-outline' } size={ 18 } />
+					<Gridicon icon={ icon || 'star' } size={ 18 } />
 				</div>
 				<div className="banner__icon-circle">
-					<Gridicon icon={ icon || 'info-outline' } size={ 18 } />
+					<Gridicon icon={ icon || 'star' } size={ 18 } />
 				</div>
 			</div>
 		);

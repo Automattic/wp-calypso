@@ -20,29 +20,7 @@
 		cursor: pointer;
 	}
 
-	@include banner-color( var( --color-primary-40 ) );
-
-	&.is-wpcom-plan {
-		&.is-upgrade-blogger {
-			@include banner-color( var( --color-plan-blogger ) );
-		}
-
-		&.is-upgrade-personal {
-			@include banner-color( var( --color-plan-personal ) );
-		}
-
-		&.is-upgrade-premium {
-			@include banner-color( var( --color-plan-premium ) );
-		}
-
-		&.is-upgrade-business {
-			@include banner-color( var( --color-plan-business ) );
-		}
-
-		&.is-upgrade-ecommerce {
-			@include banner-color( var( --color-plan-ecommerce ) );
-		}
-	}
+	@include banner-color( var( --color-accent ) );
 
 	&.is-jetpack-plan {
 		&.is-upgrade-personal {
