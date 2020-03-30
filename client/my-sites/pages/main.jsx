@@ -3,7 +3,7 @@
  */
 
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import titlecase from 'to-title-case';
@@ -96,6 +96,15 @@ class PagesMain extends React.Component {
 			type: 'page',
 		};
 
+		const localeSlug = getLocaleSlug( state );
+		const searchPagesPlaceholder = getPostTypeLabel(
+			state,
+			siteId,
+			query.type,
+			'search_items',
+			localeSlug
+		);
+
 		return (
 			<Main wideLayout classname="pages">
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
@@ -116,7 +125,7 @@ class PagesMain extends React.Component {
 						isOpen={ this.props.getSearchOpen() }
 						onSearch={ this.props.doSearch }
 						initialValue={ search }
-						placeholder={ getPostTypeLabel( state, siteId, query.type, 'search_items' ) }
+						placeholder={ `${ searchPagesPlaceholder }...` }
 						analyticsGroup="Pages"
 						delaySearch={ true }
 					/>

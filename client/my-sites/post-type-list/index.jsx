@@ -24,7 +24,7 @@ import {
 	getPostsFoundForQuery,
 	getPostsLastPageForQuery,
 } from 'state/posts/selectors';
-import { getPostType } from 'state/post-types/selectors';
+import { getPostType, getPostTypeLabel } from 'state/post-types/selectors';
 import { getEditorUrl } from 'state/selectors/get-editor-url';
 import ListEnd from 'components/list-end';
 import PostItem from 'blocks/post-item';
@@ -196,29 +196,16 @@ class PostTypeList extends Component {
 	}
 
 	renderSectionHeader() {
-		const { editorUrl, postLabels, localeSlug } = this.props;
+		const { editorUrl, postLabels, addNewItemLabel } = this.props;
 
 		if ( ! postLabels ) {
 			return null;
 		}
 
-		/*
-		 * Temporary workaround to Sentence case label from core API for EN langs
-		 * @TODO: Remove when https://core.trac.wordpress.org/ticket/49616 is merged
-		 */
-
-		let addNewLabel = postLabels.add_new_item;
-
-		if ( 'en' === localeSlug || 'en-gb' === localeSlug ) {
-			addNewLabel =
-				postLabels.add_new_item[ 0 ].toUpperCase() +
-				postLabels.add_new_item.slice( 1 ).toLowerCase();
-		}
-
 		return (
 			<SectionHeader label={ postLabels.name }>
 				<Button primary compact className="post-type-list__add-post" href={ editorUrl }>
-					{ addNewLabel }
+					{ addNewItemLabel }
 				</Button>
 			</SectionHeader>
 		);
@@ -320,7 +307,7 @@ export default connect( ( state, ownProps ) => {
 	const totalPageCount = getPostsLastPageForQuery( state, siteId, ownProps.query );
 	const lastPageToRequest =
 		siteId === null ? Math.min( MAX_ALL_SITES_PAGES, totalPageCount ) : totalPageCount;
-
+	const localeSlug = getLocaleSlug( state );
 	return {
 		siteId,
 		posts: getPostsForQueryIgnoringPage( state, siteId, ownProps.query ),
@@ -331,6 +318,12 @@ export default connect( ( state, ownProps ) => {
 		lastPageToRequest,
 		editorUrl: getEditorUrl( state, siteId, null, ownProps.query.type ),
 		postLabels: get( getPostType( state, siteId, ownProps.query.type ), 'labels' ),
-		localeSlug: getLocaleSlug( state ),
+		addNewItemLabel: getPostTypeLabel(
+			state,
+			siteId,
+			ownProps.query.type,
+			'add_new_item',
+			localeSlug
+		),
 	};
 } )( localize( PostTypeList ) );

@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { compact, find, flow, includes, reduce } from 'lodash';
 
@@ -172,6 +172,15 @@ export class PostTypeFilter extends Component {
 			everyone: this.props.translate( 'Everyone', { context: 'Filter label for posts list' } ),
 		};
 
+		const localeSlug = getLocaleSlug( state );
+		const searchPagesPlaceholder = getPostTypeLabel(
+			state,
+			siteId,
+			query.type,
+			'search_items',
+			localeSlug
+		);
+
 		return (
 			<div className="post-type-filter">
 				{ siteId && false === jetpack && <QueryPostCounts siteId={ siteId } type={ query.type } /> }
@@ -206,7 +215,7 @@ export class PostTypeFilter extends Component {
 							initialValue={ query.search }
 							isOpen={ this.props.getSearchOpen() }
 							onSearch={ this.props.doSearch }
-							placeholder={ getPostTypeLabel( state, siteId, query.type, 'search_items' ) }
+							placeholder={ `${ searchPagesPlaceholder }...` }
 							delaySearch={ true }
 						/>
 					) }
