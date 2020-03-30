@@ -11,6 +11,7 @@ import { Design, SiteVertical } from './types';
 import { STORE_KEY as ONBOARD_STORE } from './constants';
 import { SITE_STORE } from '../site';
 
+type FontPair = import('../../constants').FontPair;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 type Template = VerticalsTemplates.Template;
 
@@ -41,6 +42,11 @@ export const setSiteTitle = ( siteTitle: string ) => ( {
 export const togglePageLayout = ( pageLayout: Template ) => ( {
 	type: 'TOGGLE_PAGE_LAYOUT' as const,
 	pageLayout,
+} );
+
+export const setFonts = ( fonts: FontPair | undefined ) => ( {
+	type: 'SET_FONTS' as const,
+	fonts,
 } );
 
 export const resetOnboardStore = () => ( {
@@ -86,12 +92,13 @@ export function* createSite(
 }
 
 export type OnboardAction = ReturnType<
-	| typeof setDomain
-	| typeof setSelectedDesign
-	| typeof setSiteVertical
-	| typeof resetSiteVertical
-	| typeof setSiteTitle
-	| typeof togglePageLayout
 	| typeof resetOnboardStore
+	| typeof resetSiteVertical
+	| typeof setDomain
+	| typeof setFonts
+	| typeof setSelectedDesign
+	| typeof setSiteTitle
+	| typeof setSiteVertical
 	| typeof setSiteWasCreatedForDomainPurchase
+	| typeof togglePageLayout
 >;

@@ -3,7 +3,6 @@
  */
 import * as React from 'react';
 import { useI18n } from '@automattic/react-i18n';
-import { ValuesType } from 'utility-types';
 
 /**
  * Internal dependencies
@@ -14,7 +13,6 @@ import { usePath, Step } from '../../path';
 import ViewportSelect from './viewport-select';
 import FontSelect from './font-select';
 import { Title, SubTitle } from '../../components/titles';
-import { fontPairings } from '../../constants';
 import * as T from './types';
 
 import './style.scss';
@@ -23,9 +21,6 @@ const StylePreview: React.FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 	const makePath = usePath();
 	const [ selectedViewport, setSelectedViewport ] = React.useState< T.Viewport >( 'desktop' );
-	const [ selectedFonts, setSelectedFonts ] = React.useState< ValuesType< typeof fontPairings > >(
-		fontPairings[ 0 ]
-	);
 	return (
 		<div className="style-preview">
 			<div className="style-preview__header">
@@ -41,8 +36,8 @@ const StylePreview: React.FunctionComponent = () => {
 				</div>
 			</div>
 			<div className="style-preview__content">
-				<FontSelect selected={ selectedFonts } onSelect={ setSelectedFonts } />
-				<Preview fonts={ selectedFonts } viewport={ selectedViewport } />
+				<FontSelect />
+				<Preview viewport={ selectedViewport } />
 			</div>
 		</div>
 	);

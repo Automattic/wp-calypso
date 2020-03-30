@@ -21,7 +21,7 @@ import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytic
 import Header from './components/header';
 import { name, settings } from './onboarding-block';
 import './style.scss';
-import { fontPairings } from './constants';
+import { fontPairings, FontPair } from './constants';
 
 registerBlockType( name, settings );
 
@@ -41,18 +41,18 @@ export function Gutenboard() {
 	// TODO: Don't load like this
 	useEffect( () => {
 		fontPairings.forEach( pair =>
-			pair.forEach(
-				( { title, fontFamily }: { title: string; fontFamily: string }, index: number ) => {
-					const isPrimary = index === 0;
-					const l = document.createElement( 'link' );
-					l.href = `https://fonts.googleapis.com/css2?family=${ encodeURI(
-						`${ fontFamily }${ isPrimary ? ':wght@700' : '' }`
-					) }&text=${ encodeURI( title ) }&display=swap`;
-					l.rel = 'stylesheet';
-					l.type = 'text/css';
-					document.head.appendChild( l );
-				}
-			)
+			Object.keys( pair ).forEach( k => {
+				const fontKey = k as keyof FontPair;
+				const { title, fontFamily }: { title: string; fontFamily: string } = pair[ fontKey ];
+				const isBold = fontKey === 'headings';
+				const l = document.createElement( 'link' );
+				l.href = `https://fonts.googleapis.com/css2?family=${ encodeURI(
+					`${ fontFamily }${ isBold ? ':wght@700' : '' }`
+				) }&text=${ encodeURI( title ) }&display=swap`;
+				l.rel = 'stylesheet';
+				l.type = 'text/css';
+				document.head.appendChild( l );
+			} )
 		);
 	}, [] );
 
