@@ -674,6 +674,7 @@ describe( 'MediaUtils', () => {
 
 	describe( '#createTransientMedia()', () => {
 		const GUID = 'URL';
+		const originalURL = window.URL;
 
 		beforeEach( () => {
 			window.URL = {
@@ -681,6 +682,10 @@ describe( 'MediaUtils', () => {
 					return GUID;
 				},
 			};
+		} );
+
+		afterEach( () => {
+			window.URL = originalURL;
 		} );
 
 		test( 'should return a transient for a file blob', () => {
