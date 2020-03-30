@@ -11,12 +11,20 @@ import { useDispatch, useSelect } from '@wordpress/data';
  */
 import { fontPairings } from '../../constants';
 import { STORE_KEY } from '../../stores/onboard';
+import { useI18n } from '@automattic/react-i18n';
 
 const FontSelect: React.FunctionComponent = () => {
+	const { __: NO__ } = useI18n();
 	const { selectedFonts } = useSelect( select => select( STORE_KEY ).getState() );
 	const { setFonts } = useDispatch( STORE_KEY );
 	return (
 		<div className="style-preview__font-options">
+			<Button
+				className={ classnames( 'style-preview__font-option', { 'is-selected': ! selectedFonts } ) }
+				onClick={ () => setFonts( undefined ) }
+			>
+				{ NO__( 'Theme default' ) }
+			</Button>
 			{ fontPairings.map( fontPair => {
 				const isSelected = fontPair === selectedFonts;
 				const {
