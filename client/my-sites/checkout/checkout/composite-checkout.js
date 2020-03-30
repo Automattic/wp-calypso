@@ -3,7 +3,7 @@
  */
 import page from 'page';
 import wp from 'lib/wp';
-import React, { useMemo, useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -21,11 +21,7 @@ import {
 	taxManagedContactDetails,
 	areRequiredFieldsNotEmpty,
 } from '@automattic/composite-checkout-wpcom';
-import {
-	CheckoutProvider,
-	createExistingCardMethod,
-	defaultRegistry,
-} from '@automattic/composite-checkout';
+import { CheckoutProvider, defaultRegistry } from '@automattic/composite-checkout';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
@@ -48,10 +44,7 @@ import {
 } from 'state/products-list/selectors';
 import {
 	useStoredCards,
-	getDomainDetails,
 	isPaymentMethodEnabled,
-	wpcomTransaction,
-	submitExistingCardPayment,
 	useIsApplePayAvailable,
 } from './composite-checkout-payment-methods';
 import notices from 'notices';
@@ -85,6 +78,7 @@ import {
 	useCreateFullCredits,
 	useCreateFree,
 	useCreateApplePay,
+	useCreateExistingCards,
 } from './composite-checkout/use-create-payment-methods';
 import { useGetThankYouUrl } from './composite-checkout/use-get-thank-you-url';
 
@@ -291,47 +285,11 @@ export default function CompositeCheckout( {
 		isApplePayLoading,
 	} );
 
-	const shouldLoadExistingCardsMethods = onlyLoadPaymentMethods
-		? onlyLoadPaymentMethods.includes( 'existingCard' )
-		: true;
-	const existingCardMethods = useMemo( () => {
-		if ( ! shouldLoadExistingCardsMethods ) {
-			return [];
-		}
-		return storedCards.map( storedDetails =>
-			createExistingCardMethod( {
-				id: `existingCard-${ storedDetails.stored_details_id }`,
-				cardholderName: storedDetails.name,
-				cardExpiry: storedDetails.expiry,
-				brand: storedDetails.card_type,
-				last4: storedDetails.card,
-				stripeConfiguration,
-				submitTransaction: submitData => {
-					const pending = submitExistingCardPayment(
-						{
-							...submitData,
-							siteId: select( 'wpcom' )?.getSiteId?.(),
-							storedDetailsId: storedDetails.stored_details_id,
-							paymentMethodToken: storedDetails.mp_ref,
-							paymentPartnerProcessorId: storedDetails.payment_partner,
-							domainDetails: getDomainDetails( select ),
-						},
-						wpcomTransaction
-					);
-					// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-					pending.then( result => {
-						debug( 'saving transaction response', result );
-						dispatch( 'wpcom' ).setTransactionResponse( result );
-					} );
-					return pending;
-				},
-				registerStore,
-				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-			} )
-		);
-	}, [ stripeConfiguration, storedCards, shouldLoadExistingCardsMethods ] );
+	const existingCardMethods = useCreateExistingCards( {
+		onlyLoadPaymentMethods,
+		storedCards,
+		stripeConfiguration,
+	} );
 
 	const isPurchaseFree = ! isLoadingCart && total.amount.value === 0;
 	debug( 'is purchase free?', isPurchaseFree );
