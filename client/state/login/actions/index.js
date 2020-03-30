@@ -35,7 +35,6 @@ import {
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
-	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 } from 'state/action-types';
 import { getTwoFactorAuthNonce, getTwoFactorUserId } from 'state/login/selectors';
 import {
@@ -51,16 +50,12 @@ import 'state/data-layer/wpcom/users/auth-options';
 import { get as webauthn_auth } from '@github/webauthn-json';
 
 import { remoteLoginUser } from 'state/login/actions/remote-login-user';
+import { updateNonce } from 'state/login/actions/login-user';
 
 import 'state/login/init';
 
 export { loginUser } from 'state/login/actions/login-user';
-
-export const updateNonce = ( nonceType, twoStepNonce ) => ( {
-	type: TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
-	nonceType,
-	twoStepNonce,
-} );
+export { updateNonce } from 'state/login/actions/login-user';
 
 export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 	const twoFactorAuthType = 'webauthn';
