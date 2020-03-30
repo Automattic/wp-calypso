@@ -16,7 +16,7 @@ import FormLabel from 'components/forms/form-label';
 import QueryPluginKeys from 'components/data/query-plugin-keys';
 import SectionHeader from 'components/section-header';
 import PlanBillingPeriod from './billing-period';
-import { isRequestingSites } from 'state/sites/selectors';
+import { isRequestingSites, getSite } from 'state/sites/selectors';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { isDataLoading } from 'me/purchases/utils';
 import { getName, isExpired, isPartnerPurchase } from 'lib/purchases';
@@ -28,7 +28,7 @@ import { getPluginsForSite } from 'state/plugins/premium/selectors';
  */
 import './style.scss';
 
-class PurchasePlanDetails extends Component {
+export class PurchasePlanDetails extends Component {
 	static propTypes = {
 		purchaseId: PropTypes.number,
 		isPlaceholder: PropTypes.bool,
@@ -43,6 +43,7 @@ class PurchasePlanDetails extends Component {
 				key: PropTypes.string,
 			} ).isRequired
 		).isRequired,
+		site: PropTypes.object,
 		siteId: PropTypes.number,
 	};
 
@@ -68,7 +69,7 @@ class PurchasePlanDetails extends Component {
 	}
 
 	render() {
-		const { pluginList, purchase, siteId, translate } = this.props;
+		const { pluginList, purchase, site, siteId, translate } = this.props;
 
 		// Short out as soon as we know it's not a Jetpack plan
 		if ( purchase && ( ! isJetpackPlan( purchase ) || isFreeJetpackPlan( purchase ) ) ) {
@@ -94,7 +95,9 @@ class PurchasePlanDetails extends Component {
 				{ siteId && <QueryPluginKeys siteId={ siteId } /> }
 				<SectionHeader label={ headerText } />
 				<Card>
-					{ ! isPartnerPurchase( purchase ) && <PlanBillingPeriod purchase={ purchase } /> }
+					{ ! isPartnerPurchase( purchase ) && (
+						<PlanBillingPeriod purchase={ purchase } site={ site } />
+					) }
 
 					{ pluginList.map( ( plugin, i ) => {
 						return (
@@ -118,6 +121,7 @@ export default connect( ( state, props ) => {
 	const siteId = purchase ? purchase.siteId : null;
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
+		site: purchase ? getSite( state, purchase.siteId ) : null,
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		purchase,
 		pluginList: getPluginsForSite( state, siteId ),
