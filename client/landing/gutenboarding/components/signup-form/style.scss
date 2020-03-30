@@ -39,14 +39,19 @@
 	}
 
 	.signup-form__body {
-		padding: 0 20px 20px;
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		width: 100%;
-		max-width: 500px;
-		transform: translate( -50%, -50% );
-		text-align: center;
+		position: relative;
+		padding: 44px 20px 0;
+
+		@include break-mobile {
+			padding: 0 20px 20px;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: 100%;
+			max-width: 500px;
+			transform: translate( -50%, -50% );
+			text-align: center;
+		}
 	}
 
 	.signup-form__legend p {
@@ -70,6 +75,10 @@
 
 	.signup-form__error-notice {
 		margin: 0;
+
+		@include break-mobile {
+			margin: 0 30px;
+		}
 	}
 
 	.signup-form__login-links {

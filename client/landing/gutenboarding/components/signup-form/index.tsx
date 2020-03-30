@@ -116,7 +116,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 				loginUrl={ '/log-in?redirect_to=' + encodeURIComponent( loginRedirectUrl ) }
 			/>
 
-			<main className="signup-form__body">
+			<div className="signup-form__body">
 				<h1 className="signup-form__title">{ NO__( 'Save your progress' ) }</h1>
 
 				<form onSubmit={ handleSignUp }>
@@ -150,7 +150,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 						</div>
 					</fieldset>
 				</form>
-			</main>
+			</div>
 		</Modal>
 	);
 };

@@ -12,14 +12,12 @@ interface SignupFormHeaderProps {
 
 interface CloseButtonProps {
 	onClose: () => void;
-	closeLabel?: string;
 }
 
-const CustomCloseButton = ( { onClose, closeLabel }: CloseButtonProps ) => {
+const CustomCloseButton = ( { onClose }: CloseButtonProps ) => {
 	const { __: NO__ } = useI18n();
-	const label = closeLabel ? closeLabel : NO__( 'Close dialog' );
 	return (
-		<Button onClick={ onClose } label={ label }>
+		<Button onClick={ onClose } label={ NO__( 'Close dialog' ) }>
 			<svg
 				width="16"
 				height="16"
