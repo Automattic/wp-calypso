@@ -19,7 +19,7 @@ interface Props {
 	siteId: number;
 }
 
-const BackupRestoreFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) => {
+const BackupRestoreFlow: FunctionComponent< Props > = ( { rewindId } ) => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
