@@ -30,7 +30,7 @@
 }
 
 // List item styles for all links
-.pagination__list-item {
+.pagination__list-item.pagination__list-item {
 	.button,
 	&.pagination__ellipsis span {
 		@extend %mobile-link-element;
@@ -68,7 +68,7 @@
 }
 
 // Left/right navigation arrows
-.pagination__list-item.pagination__arrow {
+.pagination__list-item.pagination__list-item.pagination__arrow {
 	display: flex;
 	align-items: center;
 
@@ -105,13 +105,13 @@
 }
 
 // Selected state
-.pagination__list-item.is-selected .button {
+.pagination__list-item.pagination__list-item.is-selected .button {
 	border-color: var( --color-primary );
 	background-color: var( --color-primary );
 	color: var( --color-text-inverted );
 }
 
-.pagination__list-item.is-selected .button:hover {
+.pagination__list-item.pagination__list-item.is-selected .button:hover {
 	color: var( --color-text-inverted );
 }
 
