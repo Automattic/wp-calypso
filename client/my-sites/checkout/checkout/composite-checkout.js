@@ -15,11 +15,9 @@ import {
 	useWpcomStore,
 	useShoppingCart,
 	FormFieldAnnotation,
-	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	areDomainsInLineItems,
 	domainManagedContactDetails,
 	taxManagedContactDetails,
-	areRequiredFieldsNotEmpty,
 } from '@automattic/composite-checkout-wpcom';
 import { CheckoutProvider, defaultRegistry } from '@automattic/composite-checkout';
 
@@ -60,6 +58,7 @@ import useShowStripeLoadingErrors from './composite-checkout/use-show-stripe-loa
 import useCreatePaymentMethods from './composite-checkout/use-create-payment-methods';
 import { useGetThankYouUrl } from './composite-checkout/use-get-thank-you-url';
 import createAnalyticsEventHandler from './composite-checkout/record-analytics';
+import createContactValidationCallback from './composite-checkout/contact-validation';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -269,54 +268,12 @@ export default function CompositeCheckout( {
 				serverAllowedPaymentMethods,
 		  } );
 
-	const validateDomainContact =
-		validateDomainContactDetails || wpcomValidateDomainContactInformation;
-
-	const domainContactValidationCallback = (
-		paymentMethodId,
-		contactDetails,
-		domainNames,
-		applyDomainContactValidationResults,
-		decoratedContactDetails
-	) => {
-		return new Promise( resolve => {
-			validateDomainContact( contactDetails, domainNames, ( httpErrors, data ) => {
-				recordEvent( {
-					type: 'VALIDATE_DOMAIN_CONTACT_INFO',
-					payload: {
-						credits: null,
-						payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ),
-					},
-				} );
-				debug(
-					'Domain contact info validation for domains',
-					domainNames,
-					'and contact info',
-					contactDetails,
-					'result:',
-					data
-				);
-				if ( ! data ) {
-					showErrorMessage(
-						translate(
-							'There was an error validating your contact information. Please contact support.'
-						)
-					);
-					resolve( false );
-					return;
-				}
-				if ( data.messages ) {
-					showErrorMessage(
-						translate(
-							'We could not validate your contact information. Please review and update all the highlighted fields.'
-						)
-					);
-				}
-				applyDomainContactValidationResults( { ...data.messages } );
-				resolve( ! ( data.success && areRequiredFieldsNotEmpty( decoratedContactDetails ) ) );
-			} );
-		} );
-	};
+	const domainContactValidationCallback = createContactValidationCallback( {
+		validateDomainContact: validateDomainContactDetails || wpcomValidateDomainContactInformation,
+		recordEvent,
+		showErrorMessage,
+		translate,
+	} );
 
 	const renderDomainContactFields = (
 		contactDetails,
