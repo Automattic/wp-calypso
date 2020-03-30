@@ -101,12 +101,6 @@ const Header: FunctionComponent = () => {
 	const currentDomain = domain ?? freeDomainSuggestion;
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
-	const siteTitleElement = (
-		<span className="gutenboarding__site-title">
-			{ siteTitle ? siteTitle : NO__( 'Start your website' ) }
-		</span>
-	);
-
 	const domainElement = (
 		<span
 			className={ classnames( 'gutenboarding__header-domain-picker-button-domain', {
@@ -193,10 +187,16 @@ const Header: FunctionComponent = () => {
 			tabIndex={ -1 }
 		>
 			<section className="gutenboarding__header-section">
-				<div className="gutenboarding__header-section-item gutenboarding__header-wp-logo">
-					<Icon icon="wordpress-alt" size={ 24 } />
+				<div className="gutenboarding__header-section-item">
+					<div className="gutenboarding__header-wp-logo">
+						<Icon icon="wordpress-alt" size={ 24 } />
+					</div>
 				</div>
-				<div className="gutenboarding__header-section-item">{ siteTitleElement }</div>
+				<div className="gutenboarding__header-section-item">
+					<div className="gutenboarding__header-site-title">
+						{ siteTitle ? siteTitle : NO__( 'Start your website' ) }
+					</div>
+				</div>
 				<div className="gutenboarding__header-section-item">
 					{ siteTitle && (
 						<DomainPickerButton

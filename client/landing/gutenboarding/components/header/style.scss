@@ -37,17 +37,17 @@
 	font-size: 14px;
 }
 
+$margin-left--gutenboarding__header-section-item: 13px; // matches design
 .gutenboarding__header-section-item {
-	margin-left: 10px;
-
-	&.gutenboarding__header-wp-logo {
-		margin-left: 24px - $grid-size; // ( 24 - header padding )
-	}
+	margin-left: $margin-left--gutenboarding__header-section-item;
 }
 
-$padding--gutenboarding__header-domain-picker-button: 0.3em 0.5em;
+.gutenboarding__header-wp-logo {
+	margin-left: 24px - $grid-size - $margin-left--gutenboarding__header-section-item; // we want 24px exact on spec: ( 24 - header padding - own margin )
+}
+
 .gutenboarding__header-domain-picker-button {
-	padding: $padding--gutenboarding__header-domain-picker-button;
+	padding: 0.3em 0.5em;
 	border-radius: $radius-round-rectangle;
 
 	&:focus,
@@ -58,22 +58,6 @@ $padding--gutenboarding__header-domain-picker-button: 0.3em 0.5em;
 
 	&:disabled {
 		opacity: 1;
-		.gutenboarding__site-title {
-			color: black;
-		}
-	}
-
-	.gutenboarding__site-title {
-		padding: 0;
-	}
-
-	> span {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-	}
-	> .dashicon {
-		align-self: flex-end;
 	}
 }
 
@@ -83,7 +67,6 @@ $padding--gutenboarding__header-domain-picker-button: 0.3em 0.5em;
 	}
 }
 
-.gutenboarding__site-title {
-	padding: $padding--gutenboarding__header-domain-picker-button;
+.gutenboarding__header-site-title {
 	font-weight: 600;
 }
