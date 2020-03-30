@@ -96,6 +96,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import analytics from 'lib/analytics';
 import { useStripe } from 'lib/stripe';
 import CheckoutTerms from './checkout-terms.jsx';
+import useShowStripeLoadingErrors from './composite-checkout/use-show-stripe-loading-errors';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
@@ -191,12 +192,7 @@ export default function CompositeCheckout( {
 		);
 	};
 
-	useEffect( () => {
-		if ( stripeLoadingError ) {
-			debug( 'showing error for loading', stripeLoadingError );
-			showErrorMessage( stripeLoadingError );
-		}
-	}, [ showErrorMessage, stripeLoadingError ] );
+	useShowStripeLoadingErrors( showErrorMessage, stripeLoadingError );
 
 	const countriesList = useCountryList( overrideCountryList || [] );
 
