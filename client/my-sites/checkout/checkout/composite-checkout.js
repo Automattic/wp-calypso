@@ -85,7 +85,6 @@ import getCountries from 'state/selectors/get-countries';
 import { fetchPaymentCountries } from 'state/countries/actions';
 import { StateSelect } from 'my-sites/domains/components/form';
 import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
-import { useGetThankYouUrl } from './composite-checkout-thank-you';
 import { getSelectedSite } from 'state/ui/selectors';
 import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-signup-destination';
 import getPreviousPath from 'state/selectors/get-previous-path.js';
@@ -97,6 +96,7 @@ import analytics from 'lib/analytics';
 import { useStripe } from 'lib/stripe';
 import CheckoutTerms from './checkout-terms.jsx';
 import useShowStripeLoadingErrors from './composite-checkout/use-show-stripe-loading-errors';
+import { useGetThankYouUrl } from './composite-checkout/use-get-thank-you-url';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 

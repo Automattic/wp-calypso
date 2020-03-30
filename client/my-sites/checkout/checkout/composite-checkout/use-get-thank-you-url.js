@@ -43,22 +43,7 @@ export function getThankYouPageUrl( {
 	saveUrlToCookie = persistSignupDestination,
 	previousRoute,
 	isEligibleForSignupDestination,
-}: {
-	siteSlug?: string | number;
-	adminUrl?: string;
-	redirectTo?: string;
-	receiptId?: string | number;
-	orderId?: string | number;
-	purchaseId?: string | number;
-	feature?: string;
-	cart?: object;
-	isJetpackNotAtomic?: boolean;
-	product?: string;
-	getUrlFromCookie: () => string | null;
-	saveUrlToCookie: ( _: string ) => void;
-	previousRoute?: string;
-	isEligibleForSignupDestination?: boolean;
-} ) {
+}) {
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
 	// (i.e. on WordPress.com), or a Jetpack or WP.com site's block editor (in wp-admin).
 	// This is required for Jetpack's (and WP.com's) paid blocks Upgrade Nudge.
@@ -143,9 +128,9 @@ export function getThankYouPageUrl( {
 }
 
 function getPendingOrReceiptId(
-	receiptId: string | number | undefined,
-	orderId: string | number | undefined,
-	purchaseId: string | number | undefined
+	receiptId,
+	orderId,
+	purchaseId
 ) {
 	if ( receiptId ) {
 		return receiptId;

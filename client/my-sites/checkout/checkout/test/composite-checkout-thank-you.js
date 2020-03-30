@@ -7,7 +7,7 @@
 /**
  * Internal dependencies
  */
-import { getThankYouPageUrl } from '../composite-checkout-thank-you';
+import { getThankYouPageUrl } from '../composite-checkout/use-get-thank-you-url';
 import { isEnabled } from 'config';
 
 let mockGSuiteCountryIsValid = true;
