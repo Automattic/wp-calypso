@@ -11,15 +11,19 @@ import { useTranslate } from 'i18n-calypso';
 import { Button } from '@automattic/components';
 import { defaultRewindConfig, RewindConfig } from './types';
 import { rewindBackup } from 'state/activity-log/actions';
-import { useLocalizedMoment } from 'components/localized-moment';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 import getBackupDownloadId from 'state/selectors/get-backup-download-id';
 import getBackupDownloadUrl from 'state/selectors/get-backup-download-url';
 import getBackupDownloadProgress from 'state/selectors/get-backup-download-progress';
+import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
+import { isRequestingSiteSettings } from 'state/site-settings/selectors';
 import ProgressBar from './progress-bar';
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import RewindConfigEditor from './rewind-config-editor';
+import QuerySiteSettings from 'components/data/query-site-settings'; // Required to get site time offset
+import { applySiteOffset } from 'lib/site/timezone';
 
 interface Props {
 	rewindId: string;
@@ -28,7 +32,6 @@ interface Props {
 
 const BackupDownloadFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) => {
 	const dispatch = useDispatch();
-	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
 	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
@@ -39,7 +42,15 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) 
 		getBackupDownloadProgress( state, siteId, rewindId )
 	);
 
-	const downloadTimestamp = moment.unix( rewindId ).format( 'LLL' );
+	const timezone = useSelector( state => getSiteTimezoneValue( state, siteId ) );
+	const gmtOffset = useSelector( state => getSiteGmtOffset( state, siteId ) );
+
+	const downloadTimestamp = applySiteOffset( rewindId * 1000, {
+		timezone,
+		gmtOffset,
+	} ).format( 'LLL' );
+
+	const isSiteSettingLoading = useSelector( state => isRequestingSiteSettings( state, siteId ) );
 
 	const requestDownload = useCallback(
 		() => dispatch( rewindBackup( siteId, rewindId, rewindConfig ) ),
@@ -168,20 +179,23 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) 
 	);
 
 	const render = () => {
-		if ( downloadProgress === null && downloadUrl === null ) {
-			return renderConfirm();
-		} else if ( downloadProgress !== null && downloadUrl === null ) {
-			return renderInProgress();
-		} else if ( downloadUrl !== null ) {
-			return renderReady();
-		}
+		if ( ! isSiteSettingLoading ) {
+			if ( downloadProgress === null && downloadUrl === null ) {
+				return renderConfirm();
+			} else if ( downloadProgress !== null && downloadUrl === null ) {
+				return renderInProgress();
+			} else if ( downloadUrl !== null ) {
+				return renderReady();
+			}
 
-		return renderError();
+			return renderError();
+		}
 	};
 
 	return (
 		<div>
 			<QueryRewindBackupStatus downloadId={ downloadId } siteId={ siteId } />
+			<QuerySiteSettings siteId={ siteId } />
 			{ render() }
 		</div>
 	);
