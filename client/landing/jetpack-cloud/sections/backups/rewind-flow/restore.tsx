@@ -13,13 +13,16 @@ import { defaultRewindConfig, RewindConfig } from './types';
 import { rewindRestore } from 'state/activity-log/actions';
 import { useLocalizedMoment } from 'components/localized-moment';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
+import getInProgressRewindPercentComplete from 'state/selectors/get-in-progress-rewind-percent-complete';
+import getInProgressRewindStatus from 'state/selectors/get-in-progress-rewind-status';
+import getRewindState from 'state/selectors/get-rewind-state';
 import getSiteUrl from 'state/selectors/get-site-url';
 import Gridicon from 'components/gridicon';
 import ProgressBar from './progress-bar';
+import QueryRewindState from 'components/data/query-rewind-state';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
-import getInProgressRewindStatus from 'state/selectors/get-in-progress-rewind-status';
-import getInProgressRewindPercentComplete from 'state/selectors/get-in-progress-rewind-percent-complete';
+import Spinner from 'components/spinner';
 
 interface Props {
 	rewindId: string;
@@ -43,12 +46,17 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) =
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
 
 	const siteUrl = useSelector( state => getSiteUrl( state, siteId ) );
+	const rewindState = useSelector( state => getRewindState( state, siteId ) ) as RewindState;
+
+	const loading = rewindState.state === 'uninitialized';
 
 	const restoreTimestamp = moment.unix( rewindId ).format( 'LLL' );
 
-	const inProgressRewindStatus = useSelector( state => getInProgressRewindStatus( state, siteId ) );
+	const inProgressRewindStatus = useSelector( state =>
+		getInProgressRewindStatus( state, siteId, rewindId )
+	);
 	const inProgressRewindPercentComplete = useSelector( state =>
-		getInProgressRewindPercentComplete( state, siteId )
+		getInProgressRewindPercentComplete( state, siteId, rewindId )
 	);
 
 	const requestRestore = useCallback(
@@ -171,7 +179,9 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) =
 	);
 
 	const render = () => {
-		if ( ! inProgressRewindStatus && ! userHasRequestedRestore ) {
+		if ( loading ) {
+			return <Spinner />;
+		} else if ( ! inProgressRewindStatus && ! userHasRequestedRestore ) {
 			return renderConfirm();
 		} else if (
 			( ! inProgressRewindStatus && userHasRequestedRestore ) ||
@@ -185,7 +195,12 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) =
 		return renderError();
 	};
 
-	return <div>{ render() }</div>;
+	return (
+		<div>
+			<QueryRewindState siteId={ siteId } />
+			{ render() }
+		</div>
+	);
 };
 
 export default BackupRestoreFlow;
