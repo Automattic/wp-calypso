@@ -55,7 +55,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 			} ) )
 	);
 
-	const { siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
+	const { siteVertical, siteTitle } = useSelect( select => select( ONBOARD_STORE ).getState() );
 	const { setSiteVertical, resetSiteVertical } = useDispatch( ONBOARD_STORE );
 
 	const [ inputValue, setInputValue ] = React.useState( siteVertical?.label ?? '' );
@@ -171,6 +171,8 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 		),
 	} );
 
+	const showArrow = isFocused && ! siteTitle && ! siteVertical;
+
 	return (
 		<form
 			className={ classnames( 'vertical-select', {
@@ -178,7 +180,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 			} ) }
 		>
 			{ madlib }
-			{ hasValue && ( isFocused ? <Arrow /> : '.' ) }
+			{ showArrow ? <Arrow /> : '.' }
 		</form>
 	);
 };
