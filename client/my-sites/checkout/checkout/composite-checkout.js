@@ -72,14 +72,7 @@ import analytics from 'lib/analytics';
 import { useStripe } from 'lib/stripe';
 import CheckoutTerms from './checkout-terms.jsx';
 import useShowStripeLoadingErrors from './composite-checkout/use-show-stripe-loading-errors';
-import {
-	useCreatePayPal,
-	useCreateStripe,
-	useCreateFullCredits,
-	useCreateFree,
-	useCreateApplePay,
-	useCreateExistingCards,
-} from './composite-checkout/use-create-payment-methods';
+import useCreatePaymentMethods from './composite-checkout/use-create-payment-methods';
 import { useGetThankYouUrl } from './composite-checkout/use-get-thank-you-url';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
@@ -249,46 +242,23 @@ export default function CompositeCheckout( {
 	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
 		getStoredCards || wpcomGetStoredCards
 	);
-
-	const paypalMethod = useCreatePayPal( {
-		onlyLoadPaymentMethods,
-		getThankYouUrl,
-		getItems: () => items,
-	} );
-
-	const stripeMethod = useCreateStripe( {
-		onlyLoadPaymentMethods,
-		isStripeLoading,
-		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
-	} );
-
-	const fullCreditsPaymentMethod = useCreateFullCredits( {
-		onlyLoadPaymentMethods,
-		credits,
-	} );
-
-	const freePaymentMethod = useCreateFree( { onlyLoadPaymentMethods } );
-
 	const {
 		canMakePayment: isApplePayAvailable,
 		isLoading: isApplePayLoading,
 	} = useIsApplePayAvailable( stripe, stripeConfiguration, !! stripeLoadingError, items );
-	const applePayMethod = useCreateApplePay( {
+
+	const paymentMethodObjects = useCreatePaymentMethods( {
 		onlyLoadPaymentMethods,
+		getThankYouUrl,
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
+		credits,
+		items,
 		isApplePayAvailable,
 		isApplePayLoading,
-	} );
-
-	const existingCardMethods = useCreateExistingCards( {
-		onlyLoadPaymentMethods,
 		storedCards,
-		stripeConfiguration,
 	} );
 
 	const isPurchaseFree = ! isLoadingCart && total.amount.value === 0;
@@ -302,15 +272,7 @@ export default function CompositeCheckout( {
 			: isApplePayLoading ) ||
 		items.length < 1
 			? []
-			: [
-					freePaymentMethod,
-					fullCreditsPaymentMethod,
-					applePayMethod,
-					...existingCardMethods,
-					stripeMethod,
-					paypalMethod,
-			  ]
-					.filter( methodObject => Boolean( methodObject ) )
+			: paymentMethodObjects
 					.filter( methodObject => {
 						// If the purchase is free, only display the free-purchase method
 						if ( methodObject.id === 'free-purchase' ) {

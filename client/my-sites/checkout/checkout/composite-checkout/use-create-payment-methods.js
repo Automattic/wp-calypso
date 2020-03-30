@@ -38,7 +38,7 @@ import {
 const debug = debugFactory( 'calypso:composite-checkout:use-create-payment-methods' );
 const { select, dispatch } = defaultRegistry;
 
-export function useCreatePayPal( { onlyLoadPaymentMethods, getThankYouUrl, getItems } ) {
+function useCreatePayPal( { onlyLoadPaymentMethods, getThankYouUrl, getItems } ) {
 	const shouldLoadPayPalMethod = onlyLoadPaymentMethods
 		? onlyLoadPaymentMethods.includes( 'paypal' )
 		: true;
@@ -85,7 +85,7 @@ export function useCreatePayPal( { onlyLoadPaymentMethods, getThankYouUrl, getIt
 	return paypalMethod;
 }
 
-export function useCreateStripe( {
+function useCreateStripe( {
 	onlyLoadPaymentMethods,
 	isStripeLoading,
 	stripeLoadingError,
@@ -134,7 +134,7 @@ export function useCreateStripe( {
 	return stripeMethod;
 }
 
-export function useCreateFullCredits( { onlyLoadPaymentMethods, credits } ) {
+function useCreateFullCredits( { onlyLoadPaymentMethods, credits } ) {
 	const shouldLoadFullCreditsMethod = onlyLoadPaymentMethods
 		? onlyLoadPaymentMethods.includes( 'full-credits' )
 		: true;
@@ -172,7 +172,7 @@ export function useCreateFullCredits( { onlyLoadPaymentMethods, credits } ) {
 	return fullCreditsPaymentMethod;
 }
 
-export function useCreateFree( { onlyLoadPaymentMethods } ) {
+function useCreateFree( { onlyLoadPaymentMethods } ) {
 	const shouldLoadFreePaymentMethod = onlyLoadPaymentMethods
 		? onlyLoadPaymentMethods.includes( 'free-purchase' )
 		: true;
@@ -210,7 +210,7 @@ export function useCreateFree( { onlyLoadPaymentMethods } ) {
 	return freePaymentMethod;
 }
 
-export function useCreateApplePay( {
+function useCreateApplePay( {
 	onlyLoadPaymentMethods,
 	isStripeLoading,
 	stripeLoadingError,
@@ -269,11 +269,7 @@ export function useCreateApplePay( {
 	return applePayMethod;
 }
 
-export function useCreateExistingCards( {
-	onlyLoadPaymentMethods,
-	storedCards,
-	stripeConfiguration,
-} ) {
+function useCreateExistingCards( { onlyLoadPaymentMethods, storedCards, stripeConfiguration } ) {
 	const shouldLoadExistingCardsMethods = onlyLoadPaymentMethods
 		? onlyLoadPaymentMethods.includes( 'existingCard' )
 		: true;
@@ -316,4 +312,64 @@ export function useCreateExistingCards( {
 		);
 	}, [ stripeConfiguration, storedCards, shouldLoadExistingCardsMethods ] );
 	return existingCardMethods;
+}
+
+export default function useCreatePaymentMethods( {
+	onlyLoadPaymentMethods,
+	getThankYouUrl,
+	isStripeLoading,
+	stripeLoadingError,
+	stripeConfiguration,
+	stripe,
+	credits,
+	items,
+	isApplePayAvailable,
+	isApplePayLoading,
+	storedCards,
+} ) {
+	const paypalMethod = useCreatePayPal( {
+		onlyLoadPaymentMethods,
+		getThankYouUrl,
+		getItems: () => items,
+	} );
+
+	const stripeMethod = useCreateStripe( {
+		onlyLoadPaymentMethods,
+		isStripeLoading,
+		stripeLoadingError,
+		stripeConfiguration,
+		stripe,
+	} );
+
+	const fullCreditsPaymentMethod = useCreateFullCredits( {
+		onlyLoadPaymentMethods,
+		credits,
+	} );
+
+	const freePaymentMethod = useCreateFree( { onlyLoadPaymentMethods } );
+
+	const applePayMethod = useCreateApplePay( {
+		onlyLoadPaymentMethods,
+		isStripeLoading,
+		stripeLoadingError,
+		stripeConfiguration,
+		stripe,
+		isApplePayAvailable,
+		isApplePayLoading,
+	} );
+
+	const existingCardMethods = useCreateExistingCards( {
+		onlyLoadPaymentMethods,
+		storedCards,
+		stripeConfiguration,
+	} );
+
+	return [
+		freePaymentMethod,
+		fullCreditsPaymentMethod,
+		applePayMethod,
+		...existingCardMethods,
+		stripeMethod,
+		paypalMethod,
+	].filter( Boolean );
 }
