@@ -270,3 +270,43 @@ export function useIsApplePayAvailable( stripe, stripeConfiguration, isStripeErr
 	debug( 'useIsApplePayAvailable', canMakePayment );
 	return { canMakePayment: canMakePayment.value, isLoading: canMakePayment.isLoading };
 }
+
+export function filterAppropriatePaymentMethods( {
+	paymentMethodObjects,
+	total,
+	credits,
+	subtotal,
+	allowedPaymentMethods,
+	serverAllowedPaymentMethods,
+} ) {
+	const isPurchaseFree = total.amount.value === 0;
+	debug( 'is purchase free?', isPurchaseFree );
+
+	return paymentMethodObjects
+		.filter( methodObject => {
+			// If the purchase is free, only display the free-purchase method
+			if ( methodObject.id === 'free-purchase' ) {
+				return isPurchaseFree ? true : false;
+			}
+			return isPurchaseFree ? false : true;
+		} )
+		.filter( methodObject => {
+			if ( methodObject.id === 'full-credits' ) {
+				return credits.amount.value > 0 && credits.amount.value >= subtotal.amount.value;
+			}
+			if ( methodObject.id.startsWith( 'existingCard-' ) ) {
+				return isPaymentMethodEnabled(
+					'card',
+					allowedPaymentMethods || serverAllowedPaymentMethods
+				);
+			}
+			if ( methodObject.id === 'free-purchase' ) {
+				// If the free payment method still exists here (see above filter), it's enabled
+				return true;
+			}
+			return isPaymentMethodEnabled(
+				methodObject.id,
+				allowedPaymentMethods || serverAllowedPaymentMethods
+			);
+		} );
+}
