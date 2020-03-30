@@ -32,6 +32,8 @@ export function disableNavigation( iframe: HTMLIFrameElement ) {
 
 	if ( contentDocument && contentWindow ) {
 		// submit event bubbles up, we only need to catch it on the window level
+		// we enforce a none form-action CSP in the iframe, but also need to block the submit event here explicitly
+		// for IE support (IE does not support form-action directive. See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/form-action).
 		contentWindow.addEventListener( 'submit', ( event: Event ) => {
 			event.preventDefault();
 			return false;
