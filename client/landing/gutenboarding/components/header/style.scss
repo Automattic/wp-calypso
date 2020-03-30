@@ -16,17 +16,16 @@ $padding--gutenboarding__header: $grid-size;
 	height: $gutenboarding-header-height;
 	background: $white;
 	z-index: z-index( '.block-editor-editor-skeleton__header' );
-
 	left: 0;
 	right: 0;
 	// Stick the toolbar to the top, because the admin bar is not fixed on mobile.
 	top: 0;
 	position: sticky;
+	padding: $padding--gutenboarding__header;
 
 	// On mobile the main content area has to scroll, otherwise you can invoke the overscroll bounce on the non-scrolling container.
 	@include break-small {
 		position: fixed;
-		padding: $padding--gutenboarding__header;
 	}
 }
 
