@@ -3,8 +3,11 @@
  */
 import { format as formatUrl, parse as parseUrl } from 'url';
 import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
+import { defaultRegistry } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 
+const { select } = defaultRegistry;
 const debug = debugFactory( 'calypso:composite-checkout-thank-you' );
 
 /**
@@ -27,6 +30,9 @@ import { managePurchase } from 'me/purchases/paths';
 import { isValidFeatureKey } from 'lib/plans/features-list';
 import { JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
 import { persistSignupDestination, retrieveSignupDestination } from 'signup/utils';
+import { getSelectedSite } from 'state/ui/selectors';
+import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-signup-destination';
+import getPreviousPath from 'state/selectors/get-previous-path.js';
 
 export function getThankYouPageUrl( {
 	siteSlug,
@@ -42,8 +48,8 @@ export function getThankYouPageUrl( {
 	getUrlFromCookie = retrieveSignupDestination,
 	saveUrlToCookie = persistSignupDestination,
 	previousRoute,
-	isEligibleForSignupDestination,
-}) {
+	isEligibleForSignupDestinationResult,
+} ) {
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
 	// (i.e. on WordPress.com), or a Jetpack or WP.com site's block editor (in wp-admin).
 	// This is required for Jetpack's (and WP.com's) paid blocks Upgrade Nudge.
@@ -121,17 +127,13 @@ export function getThankYouPageUrl( {
 	// Display mode is used to show purchase specific messaging, for e.g. the Schedule Session button
 	// when purchasing a concierge session.
 	const displayModeParam = getDisplayModeParamFromCart( cart );
-	if ( isEligibleForSignupDestination && signupDestination ) {
+	if ( isEligibleForSignupDestinationResult && signupDestination ) {
 		return getUrlWithQueryParam( signupDestination, displayModeParam );
 	}
 	return getUrlWithQueryParam( fallbackUrl, displayModeParam );
 }
 
-function getPendingOrReceiptId(
-	receiptId,
-	orderId,
-	purchaseId
-) {
+function getPendingOrReceiptId( receiptId, orderId, purchaseId ) {
 	if ( receiptId ) {
 		return receiptId;
 	}
@@ -257,18 +259,22 @@ function modifyCookieUrlIfAtomic( getUrlFromCookie, saveUrlToCookie, siteSlug ) 
 }
 
 export function useGetThankYouUrl( {
-	select,
 	siteSlug,
-	adminUrl,
 	redirectTo,
 	purchaseId,
 	feature,
 	cart,
 	isJetpackNotAtomic,
 	product,
-	previousRoute,
-	isEligibleForSignupDestination: isEligibleForSignupDestinationResult,
+	siteId,
 } ) {
+	const selectedSiteData = useSelector( state => getSelectedSite( state ) );
+	const adminUrl = selectedSiteData?.options?.admin_url;
+	const isEligibleForSignupDestinationResult = useSelector( state =>
+		isEligibleForSignupDestination( state, siteId, cart )
+	);
+	const previousRoute = useSelector( state => getPreviousPath( state ) );
+
 	const getThankYouUrl = useCallback( () => {
 		const transactionResult = select( 'wpcom' ).getTransactionResult();
 		debug( 'for getThankYouUrl, transactionResult is', transactionResult );
@@ -287,7 +293,7 @@ export function useGetThankYouUrl( {
 			isJetpackNotAtomic,
 			product,
 			previousRoute,
-			isEligibleForSignupDestination: isEligibleForSignupDestinationResult,
+			isEligibleForSignupDestinationResult,
 		} );
 		const url = getThankYouPageUrl( {
 			siteSlug,
@@ -301,7 +307,7 @@ export function useGetThankYouUrl( {
 			isJetpackNotAtomic,
 			product,
 			previousRoute,
-			isEligibleForSignupDestination: isEligibleForSignupDestinationResult,
+			isEligibleForSignupDestinationResult,
 		} );
 		debug( 'getThankYouUrl returned', url );
 		return url;
@@ -316,7 +322,6 @@ export function useGetThankYouUrl( {
 		feature,
 		purchaseId,
 		cart,
-		select,
 	] );
 	return getThankYouUrl;
 }

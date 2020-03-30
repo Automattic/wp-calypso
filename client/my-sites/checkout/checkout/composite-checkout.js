@@ -45,9 +45,6 @@ import getCountries from 'state/selectors/get-countries';
 import { fetchPaymentCountries } from 'state/countries/actions';
 import { StateSelect } from 'my-sites/domains/components/form';
 import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
-import { getSelectedSite } from 'state/ui/selectors';
-import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-signup-destination';
-import getPreviousPath from 'state/selectors/get-previous-path.js';
 import { getPlan, findPlansKeys } from 'lib/plans';
 import { GROUP_WPCOM, TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
 import { requestProductsList } from 'state/products-list/actions';
@@ -62,7 +59,7 @@ import createContactValidationCallback from './composite-checkout/contact-valida
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
-const { select, dispatch, registerStore } = defaultRegistry;
+const { dispatch, registerStore } = defaultRegistry;
 
 const wpcom = wp.undocumented();
 
@@ -96,28 +93,19 @@ export default function CompositeCheckout( {
 	const isJetpackNotAtomic = useSelector(
 		state => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
 	);
-	const selectedSiteData = useSelector( state => getSelectedSite( state ) );
-	const adminUrl = selectedSiteData?.options?.admin_url;
-	const isEligibleForSignupDestinationResult = useSelector( state =>
-		isEligibleForSignupDestination( state, siteId, cart )
-	);
-	const previousRoute = useSelector( state => getPreviousPath( state ) );
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const isLoadingCartSynchronizer =
 		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
 
 	const getThankYouUrl = useGetThankYouUrl( {
-		select,
 		siteSlug,
-		adminUrl,
 		redirectTo,
 		purchaseId,
 		feature,
 		cart,
 		isJetpackNotAtomic,
 		product,
-		previousRoute,
-		isEligibleForSignupDestination: isEligibleForSignupDestinationResult,
+		siteId,
 	} );
 	const reduxDispatch = useDispatch();
 	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [] );
