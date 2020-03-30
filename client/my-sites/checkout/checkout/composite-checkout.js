@@ -264,41 +264,46 @@ export default function CompositeCheckout( {
 	const isPurchaseFree = ! isLoadingCart && total.amount.value === 0;
 	debug( 'is purchase free?', isPurchaseFree );
 
-	const paymentMethods =
+	// Once we pass paymentMethods into CompositeCheckout, we should try to avoid
+	// changing them because it can cause awkward UX. Here we try to wait for
+	// them to be all finished loading before we pass them along.
+	const arePaymentMethodsLoading =
+		items.length < 1 ||
 		isLoadingCart ||
 		isLoadingStoredCards ||
 		( onlyLoadPaymentMethods
 			? onlyLoadPaymentMethods.includes( 'apple-pay' ) && isApplePayLoading
-			: isApplePayLoading ) ||
-		items.length < 1
-			? []
-			: paymentMethodObjects
-					.filter( methodObject => {
-						// If the purchase is free, only display the free-purchase method
-						if ( methodObject.id === 'free-purchase' ) {
-							return isPurchaseFree ? true : false;
-						}
-						return isPurchaseFree ? false : true;
-					} )
-					.filter( methodObject => {
-						if ( methodObject.id === 'full-credits' ) {
-							return credits.amount.value > 0 && credits.amount.value >= subtotal.amount.value;
-						}
-						if ( methodObject.id.startsWith( 'existingCard-' ) ) {
-							return isPaymentMethodEnabled(
-								'card',
-								allowedPaymentMethods || serverAllowedPaymentMethods
-							);
-						}
-						if ( methodObject.id === 'free-purchase' ) {
-							// If the free payment method still exists here (see above filter), it's enabled
-							return true;
-						}
+			: isApplePayLoading );
+
+	const paymentMethods = arePaymentMethodsLoading
+		? []
+		: paymentMethodObjects
+				.filter( methodObject => {
+					// If the purchase is free, only display the free-purchase method
+					if ( methodObject.id === 'free-purchase' ) {
+						return isPurchaseFree ? true : false;
+					}
+					return isPurchaseFree ? false : true;
+				} )
+				.filter( methodObject => {
+					if ( methodObject.id === 'full-credits' ) {
+						return credits.amount.value > 0 && credits.amount.value >= subtotal.amount.value;
+					}
+					if ( methodObject.id.startsWith( 'existingCard-' ) ) {
 						return isPaymentMethodEnabled(
-							methodObject.id,
+							'card',
 							allowedPaymentMethods || serverAllowedPaymentMethods
 						);
-					} );
+					}
+					if ( methodObject.id === 'free-purchase' ) {
+						// If the free payment method still exists here (see above filter), it's enabled
+						return true;
+					}
+					return isPaymentMethodEnabled(
+						methodObject.id,
+						allowedPaymentMethods || serverAllowedPaymentMethods
+					);
+				} );
 
 	const validateDomainContact =
 		validateDomainContactDetails || wpcomValidateDomainContactInformation;
