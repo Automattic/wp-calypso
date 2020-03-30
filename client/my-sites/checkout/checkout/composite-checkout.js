@@ -73,7 +73,7 @@ import {
 } from './composite-checkout-payment-methods';
 import notices from 'notices';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
-import { isJetpackSite, isNewSite } from 'state/sites/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import {
@@ -85,7 +85,7 @@ import getCountries from 'state/selectors/get-countries';
 import { fetchPaymentCountries } from 'state/countries/actions';
 import { StateSelect } from 'my-sites/domains/components/form';
 import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
-import { getThankYouPageUrl } from './composite-checkout-thank-you';
+import { useGetThankYouUrl } from './composite-checkout-thank-you';
 import { getSelectedSite } from 'state/ui/selectors';
 import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-signup-destination';
 import getPreviousPath from 'state/selectors/get-previous-path.js';
@@ -135,7 +135,6 @@ export default function CompositeCheckout( {
 	);
 	const selectedSiteData = useSelector( state => getSelectedSite( state ) );
 	const adminUrl = selectedSiteData?.options?.admin_url;
-	const isNewlyCreatedSite = useSelector( state => isNewSite( state, siteId ) );
 	const isEligibleForSignupDestinationResult = useSelector( state =>
 		isEligibleForSignupDestination( state, siteId, cart )
 	);
@@ -144,61 +143,19 @@ export default function CompositeCheckout( {
 	const isLoadingCartSynchronizer =
 		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
 
-	const getThankYouUrl = useCallback( () => {
-		const transactionResult = select( 'wpcom' ).getTransactionResult();
-		debug( 'for getThankYouUrl, transactionResult is', transactionResult );
-		const didPurchaseFail = Object.keys( transactionResult.failed_purchases ?? {} ).length > 0;
-		const receiptId = transactionResult.receipt_id;
-		const orderId = transactionResult.order_id;
-
-		debug( 'getThankYouUrl called with', {
-			siteSlug,
-			adminUrl,
-			didPurchaseFail,
-			receiptId,
-			orderId,
-			redirectTo,
-			purchaseId,
-			feature,
-			cart,
-			isJetpackNotAtomic,
-			product,
-			isNewlyCreatedSite,
-			previousRoute,
-			isEligibleForSignupDestination: isEligibleForSignupDestinationResult,
-		} );
-		const url = getThankYouPageUrl( {
-			siteSlug,
-			adminUrl,
-			didPurchaseFail,
-			receiptId,
-			orderId,
-			redirectTo,
-			purchaseId,
-			feature,
-			cart,
-			isJetpackNotAtomic,
-			product,
-			isNewlyCreatedSite,
-			previousRoute,
-			isEligibleForSignupDestination: isEligibleForSignupDestinationResult,
-		} );
-		debug( 'getThankYouUrl returned', url );
-		return url;
-	}, [
-		previousRoute,
-		isNewlyCreatedSite,
-		isEligibleForSignupDestinationResult,
+	const getThankYouUrl = useGetThankYouUrl( {
+		select,
 		siteSlug,
 		adminUrl,
+		redirectTo,
+		purchaseId,
+		feature,
+		cart,
 		isJetpackNotAtomic,
 		product,
-		redirectTo,
-		feature,
-		purchaseId,
-		cart,
-	] );
-
+		previousRoute,
+		isEligibleForSignupDestination: isEligibleForSignupDestinationResult,
+	} );
 	const reduxDispatch = useDispatch();
 	const recordEvent = useCallback( getCheckoutEventHandler( reduxDispatch ), [] );
 

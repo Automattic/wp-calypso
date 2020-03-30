@@ -2,6 +2,10 @@
  * External dependencies
  */
 import { format as formatUrl, parse as parseUrl } from 'url';
+import { useCallback } from 'react';
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:composite-checkout-thank-you' );
 
 /**
  * Internal dependencies
@@ -265,4 +269,69 @@ function modifyCookieUrlIfAtomic( getUrlFromCookie, saveUrlToCookie, siteSlug ) 
 		);
 		saveUrlToCookie( wpcomStagingDestination );
 	}
+}
+
+export function useGetThankYouUrl( {
+	select,
+	siteSlug,
+	adminUrl,
+	redirectTo,
+	purchaseId,
+	feature,
+	cart,
+	isJetpackNotAtomic,
+	product,
+	previousRoute,
+	isEligibleForSignupDestination: isEligibleForSignupDestinationResult,
+} ) {
+	const getThankYouUrl = useCallback( () => {
+		const transactionResult = select( 'wpcom' ).getTransactionResult();
+		debug( 'for getThankYouUrl, transactionResult is', transactionResult );
+		const receiptId = transactionResult.receipt_id;
+		const orderId = transactionResult.order_id;
+
+		debug( 'getThankYouUrl called with', {
+			siteSlug,
+			adminUrl,
+			receiptId,
+			orderId,
+			redirectTo,
+			purchaseId,
+			feature,
+			cart,
+			isJetpackNotAtomic,
+			product,
+			previousRoute,
+			isEligibleForSignupDestination: isEligibleForSignupDestinationResult,
+		} );
+		const url = getThankYouPageUrl( {
+			siteSlug,
+			adminUrl,
+			receiptId,
+			orderId,
+			redirectTo,
+			purchaseId,
+			feature,
+			cart,
+			isJetpackNotAtomic,
+			product,
+			previousRoute,
+			isEligibleForSignupDestination: isEligibleForSignupDestinationResult,
+		} );
+		debug( 'getThankYouUrl returned', url );
+		return url;
+	}, [
+		previousRoute,
+		isEligibleForSignupDestinationResult,
+		siteSlug,
+		adminUrl,
+		isJetpackNotAtomic,
+		product,
+		redirectTo,
+		feature,
+		purchaseId,
+		cart,
+		select,
+	] );
+	return getThankYouUrl;
 }
