@@ -53,10 +53,12 @@ import 'state/data-layer/wpcom/login-2fa';
 import 'state/data-layer/wpcom/users/auth-options';
 import { get as webauthn_auth } from '@github/webauthn-json';
 
+import 'state/login/init';
+
 /**
  * Creates a promise that will be rejected after a given timeout
  *
- * @param {int} ms amount of milliseconds till reject the promise
+ * @param {number} ms amount of milliseconds till reject the promise
  * @returns {Promise} a promise that will be rejected after ms milliseconds
  */
 export const createTimingOutPromise = ms =>
@@ -68,7 +70,7 @@ export const createTimingOutPromise = ms =>
  * Makes a request to a given link in an iframe
  *
  * @param {string} loginLink the login link to load
- * @param {int} requestTimeout amount of time to allow the link to load, default 25s
+ * @param {number} requestTimeout amount of time to allow the link to load, default 25s
  * @returns {Promise} a promise that will be resolved if the link was successfully loaded
  */
 export const makeRemoteLoginRequest = ( loginLink, requestTimeout = 25000 ) => {
