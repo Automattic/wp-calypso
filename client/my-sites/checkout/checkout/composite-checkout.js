@@ -23,8 +23,6 @@ import {
 } from '@automattic/composite-checkout-wpcom';
 import {
 	CheckoutProvider,
-	createStripeMethod,
-	createStripePaymentMethodStore,
 	createFullCreditsMethod,
 	createFreePaymentMethod,
 	createApplePayMethod,
@@ -55,7 +53,6 @@ import {
 	useStoredCards,
 	getDomainDetails,
 	isPaymentMethodEnabled,
-	sendStripeTransaction,
 	wpcomTransaction,
 	submitCreditsTransaction,
 	submitFreePurchaseTransaction,
@@ -92,7 +89,7 @@ import analytics from 'lib/analytics';
 import { useStripe } from 'lib/stripe';
 import CheckoutTerms from './checkout-terms.jsx';
 import useShowStripeLoadingErrors from './composite-checkout/use-show-stripe-loading-errors';
-import { useCreatePayPal } from './composite-checkout/use-create-payment-methods';
+import { useCreatePayPal, useCreateStripe } from './composite-checkout/use-create-payment-methods';
 import { useGetThankYouUrl } from './composite-checkout/use-get-thank-you-url';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
@@ -269,45 +266,13 @@ export default function CompositeCheckout( {
 		getItems: () => items,
 	} );
 
-	// If this PM is allowed by props, allowed by the cart, stripe is not loading, and there is no stripe error, then create the PM.
-	const isStripeMethodAllowed = onlyLoadPaymentMethods
-		? onlyLoadPaymentMethods.includes( 'card' )
-		: isPaymentMethodEnabled( 'card', allowedPaymentMethods || serverAllowedPaymentMethods );
-	const shouldLoadStripeMethod = isStripeMethodAllowed && ! isStripeLoading && ! stripeLoadingError;
-	const stripePaymentMethodStore = useMemo(
-		() =>
-			createStripePaymentMethodStore( {
-				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-				getSiteId: () => select( 'wpcom' )?.getSiteId?.(),
-				getDomainDetails: () => getDomainDetails( select ),
-				submitTransaction: submitData => {
-					const pending = sendStripeTransaction( submitData, wpcomTransaction );
-					// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-					pending.then( result => {
-						debug( 'saving transaction response', result );
-						dispatch( 'wpcom' ).setTransactionResponse( result );
-					} );
-					return pending;
-				},
-			} ),
-		[]
-	);
-	const stripeMethod = useMemo(
-		() =>
-			shouldLoadStripeMethod
-				? createStripeMethod( {
-						store: stripePaymentMethodStore,
-						stripe,
-						stripeConfiguration,
-				  } )
-				: null,
-		[ shouldLoadStripeMethod, stripePaymentMethodStore, stripe, stripeConfiguration ]
-	);
-	if ( stripeMethod ) {
-		stripeMethod.id = 'card';
-	}
+	const stripeMethod = useCreateStripe( {
+		onlyLoadPaymentMethods,
+		isStripeLoading,
+		stripeLoadingError,
+		stripeConfiguration,
+		stripe,
+	} );
 
 	const shouldLoadFullCreditsMethod = onlyLoadPaymentMethods
 		? onlyLoadPaymentMethods.includes( 'full-credits' )
