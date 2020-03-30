@@ -116,7 +116,7 @@ function canRedirect( siteId, domainName, onComplete ) {
 		domainName = 'http://' + domainName;
 	}
 
-	if ( domainName.includes(`@`) ) {
+	if ( includes( domainName, '@' ) ) {
 		onComplete( new ValidationError( 'invalid_domain' ) );
 		return;
 	}
