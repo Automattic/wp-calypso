@@ -45,7 +45,7 @@ import {
 	jetpackProductItem,
 } from 'lib/cart-values/cart-items';
 import { requestPlans } from 'state/plans/actions';
-import { getPlanBySlug, getPlans } from 'state/plans/selectors';
+import { getPlanBySlug, getPlans, isRequestingPlans } from 'state/plans/selectors';
 import {
 	computeProductsWithPrices,
 	getProductBySlug,
@@ -1489,24 +1489,40 @@ function usePrepareProductForCart( siteId, productAlias, isJetpackNotAtomic ) {
 		getProductBySlug( state, getProductSlugFromAlias( productAlias ) )
 	);
 	const isFetchingProducts = useSelector( state => isProductsListFetching( state ) );
+	const isFetchingPlans = useSelector( state => isRequestingPlans( state ) );
 	const reduxDispatch = useDispatch();
 	const [ { canInitializeCart, productForCart }, setState ] = useState( {
 		canInitializeCart: ! planSlug && ! productAlias,
 		productForCart: null,
 	} );
 
-	// Add a plan if one is requested
 	useEffect( () => {
-		if ( ! planSlug ) {
+		if ( ! isFetchingProducts && Object.keys( products || {} ).length < 1 ) {
+			debug( 'fetching products list' );
+			reduxDispatch( requestProductsList() );
 			return;
 		}
-		if ( ! plans?.length > 0 ) {
-			debug( 'there is a request to add a plan but no plans are loaded; fetching plans' );
+	}, [ isFetchingProducts, products, reduxDispatch ] );
+
+	useEffect( () => {
+		if ( ! isFetchingPlans && plans?.length < 1 ) {
+			debug( 'fetching plans list' );
 			reduxDispatch( requestPlans() );
 			return;
 		}
+	}, [ isFetchingPlans, plans, reduxDispatch ] );
+
+	// Add a plan if one is requested
+	useEffect( () => {
+		if ( ! planSlug || isFetchingPlans ) {
+			return;
+		}
+		if ( isFetchingPlans ) {
+			debug( 'waiting on plans fetch' );
+			return;
+		}
 		if ( ! plan ) {
-			debug( 'there is a request to add a plan but no plan was found' );
+			debug( 'there is a request to add a plan but no plan was found', planSlug );
 			setState( { canInitializeCart: true } );
 			return;
 		}
@@ -1521,24 +1537,22 @@ function usePrepareProductForCart( siteId, productAlias, isJetpackNotAtomic ) {
 			cartProduct
 		);
 		setState( { productForCart: cartProduct, canInitializeCart: true } );
-	}, [ reduxDispatch, planSlug, plan, plans, isJetpackNotAtomic ] );
+	}, [ isFetchingPlans, reduxDispatch, planSlug, plan, plans, isJetpackNotAtomic ] );
 
 	// Add a supported product if one is requested
 	useEffect( () => {
 		if ( ! productAlias ) {
 			return;
 		}
-		if ( isFetchingProducts ) {
-			debug( 'waiting on products fetch' );
+		if ( planSlug ) {
 			return;
 		}
-		if ( ! products || Object.keys( products ).length < 1 ) {
-			debug( 'there is a request to add a product but no products are loaded; fetching' );
-			reduxDispatch( requestProductsList() );
+		if ( isFetchingPlans || isFetchingProducts ) {
+			debug( 'waiting on products/plans fetch' );
 			return;
 		}
 		if ( ! product ) {
-			debug( 'there is a request to add a product but no product was found' );
+			debug( 'there is a request to add a product but no product was found', productAlias );
 			setState( { canInitializeCart: true } );
 			return;
 		}
@@ -1553,7 +1567,16 @@ function usePrepareProductForCart( siteId, productAlias, isJetpackNotAtomic ) {
 			cartProduct
 		);
 		setState( { productForCart: cartProduct, canInitializeCart: true } );
-	}, [ reduxDispatch, isJetpackNotAtomic, productAlias, product, products, isFetchingProducts ] );
+	}, [
+		isFetchingPlans,
+		planSlug,
+		reduxDispatch,
+		isJetpackNotAtomic,
+		productAlias,
+		product,
+		products,
+		isFetchingProducts,
+	] );
 
 	return { productForCart, canInitializeCart };
 }
