@@ -38,7 +38,11 @@ import {
 	hasTransferProduct,
 	jetpackProductItem,
 } from 'lib/cart-values/cart-items';
-import { JETPACK_BACKUP_PRODUCTS, JETPACK_SEARCH_PRODUCTS } from 'lib/products-values/constants';
+import {
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_SCAN_PRODUCTS,
+	JETPACK_SEARCH_PRODUCTS,
+} from 'lib/products-values/constants';
 import PendingPaymentBlocker from './pending-payment-blocker';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';
@@ -395,7 +399,8 @@ export class Checkout extends React.Component {
 			const isJetpackProduct =
 				product &&
 				( includes( JETPACK_BACKUP_PRODUCTS, product ) ||
-					includes( JETPACK_SEARCH_PRODUCTS, product ) );
+					includes( JETPACK_SEARCH_PRODUCTS, product ) ||
+					includes( JETPACK_SCAN_PRODUCTS, product ) );
 			// If we just purchased a Jetpack product, redirect to the my plans page.
 			if ( isJetpackNotAtomic && isJetpackProduct ) {
 				return `/plans/my-plan/${ selectedSiteSlug }?thank-you&product=${ product }`;
