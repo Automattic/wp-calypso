@@ -638,15 +638,16 @@ export function mediaURLToProxyConfig( mediaUrl, siteSlug ) {
 
 	if ( [ 'http:', 'https:' ].indexOf( protocol ) === -1 ) {
 		isRelativeToSiteRoot = false;
-	} else if (
-		hostname !== siteSlug &&
-		( hostname.endsWith( 'wp.com' ) || hostname.endsWith( 'wordpress.com' ) )
-	) {
-		const [ first, ...rest ] = filePath.substr( 1 ).split( '/' );
-		filePath = '/' + rest.join( '/' );
+	} else if ( hostname !== siteSlug ) {
+		isRelativeToSiteRoot = false;
+		// CDN URLs like i0.wp.com/mysite.com/media.jpg should also be considered relative to mysite.com
+		if ( /^i[0-2]\.wp\.com$/.test( hostname ) ) {
+			const [ first, ...rest ] = filePath.substr( 1 ).split( '/' );
+			filePath = '/' + rest.join( '/' );
 
-		if ( first !== siteSlug ) {
-			isRelativeToSiteRoot = false;
+			if ( first === siteSlug ) {
+				isRelativeToSiteRoot = true;
+			}
 		}
 	}
 
