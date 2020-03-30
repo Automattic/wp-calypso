@@ -34,6 +34,7 @@ export const JETPACK_BACKUP_PRODUCTS = [
 ];
 
 export const JETPACK_SEARCH_PRODUCTS = [ PRODUCT_JETPACK_SEARCH, PRODUCT_JETPACK_SEARCH_MONTHLY ];
+export const isJetpackSearch = slug => JETPACK_SEARCH_PRODUCTS.includes( slug );
 
 export const JETPACK_SCAN_PRODUCTS = [ PRODUCT_JETPACK_SCAN, PRODUCT_JETPACK_SCAN_MONTHLY ];
 
@@ -155,7 +156,10 @@ export const getJetpackProductsTaglines = () => {
 };
 
 export const getJetpackProductsDescriptions = () => {
-	const searchDescription = translate( 'Search your site.' );
+	const searchDescription = translate(
+		'Enhanced Search for more relevant results using modern ranking algorithms, ' +
+			'boosting of specific results, advanced filtering and faceting, and more.'
+	);
 	const scanDescription = 'Scan your site.';
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: translate(
