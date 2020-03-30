@@ -101,6 +101,14 @@ class WpForTeamsSite extends React.Component {
 	};
 
 	validate = ( fields, onComplete ) => {
+		const messages = {};
+
+		if ( isEmpty( fields.siteTitle ) ) {
+			messages.siteTitle = {
+				123: this.props.translate( 'Please enter your team or project name.' ),
+			};
+		}
+
 		wpcom.undocumented().sitesNew(
 			{
 				blog_name: fields.site,
@@ -108,8 +116,6 @@ class WpForTeamsSite extends React.Component {
 				validate: true,
 			},
 			function( error, response ) {
-				let messages = {};
-
 				debug( error, response );
 
 				if ( error && error.message ) {
@@ -127,10 +133,8 @@ class WpForTeamsSite extends React.Component {
 
 					timesValidationFailed++;
 
-					messages = {
-						site: {
-							[ error.error ]: error.message,
-						},
+					messages.site = {
+						[ error.error ]: error.message,
 					};
 				}
 				onComplete( null, messages );
@@ -250,23 +254,29 @@ class WpForTeamsSite extends React.Component {
 
 		return (
 			<React.Fragment>
-				<FormLabel htmlFor="site-title">
-					{ this.props.translate( "What's the name of your team or project?" ) }
-				</FormLabel>
-				<FormTextInput
-					autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
-					autoCapitalize={ 'off' }
-					className="wp-for-teams-site__site-title"
-					disabled={ fieldDisabled }
-					type="text"
-					name="site-title"
-					value={ formState.getFieldValue( this.state.form, 'siteTitle' ) }
-					onBlur={ this.handleBlur }
-					onChange={ this.handleChangeEvent }
-				/>
+				<ValidationFieldset
+					errorMessages={ this.getErrorMessagesWithLogin( 'siteTitle' ) }
+					className="wp-for-teams-site__validation-site-title"
+				>
+					<FormLabel htmlFor="site-title">
+						{ this.props.translate( "What's the name of your team or project?" ) }
+					</FormLabel>
+					<FormTextInput
+						autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
+						autoCapitalize={ 'off' }
+						className="wp-for-teams-site__site-title"
+						disabled={ fieldDisabled }
+						type="text"
+						name="site-title"
+						value={ formState.getFieldValue( this.state.form, 'siteTitle' ) }
+						isValid={ formState.isFieldValid( this.state.form, 'siteTitle' ) }
+						onBlur={ this.handleBlur }
+						onChange={ this.handleChangeEvent }
+					/>
+				</ValidationFieldset>
 				<ValidationFieldset
 					errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }
-					className="wp-for-teams-site__validation"
+					className="wp-for-teams-site__validation-site"
 				>
 					<FormLabel htmlFor="site">{ this.props.translate( 'Choose a site address' ) }</FormLabel>
 					<FormTextInput

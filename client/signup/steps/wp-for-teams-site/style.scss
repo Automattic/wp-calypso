@@ -10,10 +10,13 @@
 	position: absolute;
 }
 
-.wp-for-teams-site__validation .validation-fieldset__validation-message {
-	min-height: 0;
+.wp-for-teams-site__validation-site,
+.wp-for-teams-site__validation-site-title {
+	.validation-fieldset__validation-message {
+		min-height: 0;
+	}
 }
 
-.wp-for-teams-site__site-title.form-text-input {
+.wp-for-teams-site__validation-site-title {
 	margin-bottom: 20px;
 }
