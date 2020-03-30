@@ -178,9 +178,18 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) =
 		</>
 	);
 
+	const renderLoading = () => (
+		<>
+			<div className="rewind-flow__header">
+				<Spinner size={ 48 } />
+			</div>
+			<h3 className="rewind-flow__title-placeholder">{ translate( 'Loading restore status…' ) }</h3>
+		</>
+	);
+
 	const render = () => {
 		if ( loading ) {
-			return <Spinner />;
+			return renderLoading();
 		} else if ( ! inProgressRewindStatus && ! userHasRequestedRestore ) {
 			return renderConfirm();
 		} else if (
