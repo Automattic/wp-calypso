@@ -3,18 +3,20 @@
  */
 import { subscribe } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
-import { isEmpty } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
 
 /**
  * DOM updater
  *
  * @param {string[]} options A list of option names to keep track of.
  * @param {Function} getOptionValue A function that given an option name as a string, returns the current option value.
+ * @param {Function} getOptions A function that when called returns an object representing the current options.
  */
-export default ( options, getOptionValue ) => {
+export default ( options, getOptionValue, getOptions ) => {
 	domReady( () => {
 		const current = {};
 		const cssVariables = {};
+		let previousOptions = {};
 		const styleElement = document.createElement( 'style' );
 		document.body.appendChild( styleElement );
 		options.forEach( option => {
@@ -24,6 +26,12 @@ export default ( options, getOptionValue ) => {
 
 		subscribe( () => {
 			let styleProps = '';
+			const currentOptions = getOptions();
+			if ( isEmpty( currentOptions ) || isEqual( currentOptions, previousOptions ) ) {
+				return;
+			}
+			previousOptions = { ...currentOptions };
+
 			Object.keys( current ).forEach( key => {
 				const value = getOptionValue( key );
 				if ( ! isEmpty( value ) ) {

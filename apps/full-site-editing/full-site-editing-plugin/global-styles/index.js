@@ -28,7 +28,11 @@ import './editor.scss';
 const { PLUGIN_NAME, STORE_NAME, REST_PATH } = JETPACK_GLOBAL_STYLES_EDITOR_CONSTANTS; // eslint-disable-line no-undef
 
 registerStore( STORE_NAME, REST_PATH );
-registerDOMUpdater( [ FONT_BASE, FONT_HEADINGS ], select( STORE_NAME ).getOption );
+registerDOMUpdater(
+	[ FONT_BASE, FONT_HEADINGS ],
+	select( STORE_NAME ).getOption,
+	select( STORE_NAME ).getOptions
+);
 
 registerPlugin( PLUGIN_NAME, {
 	render: compose(

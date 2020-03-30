@@ -43,6 +43,7 @@ const actions = {
  * Selectors under `wp.data.select( STORE_NAME )`:
  *
  * - getOption( String optionName )
+ * - getOptions()
  * - hasLocalChanges()
  *
  * Actions under `wp.data.dispatch( STORE_NAME )`:
@@ -76,14 +77,17 @@ export default ( storeName, optionsPath ) => {
 			getOption( state, key ) {
 				return state ? state[ key ] : undefined;
 			},
+			getOptions( state ) {
+				return state ? state : undefined;
+			},
 			hasLocalChanges( state ) {
 				return !! state && Object.keys( cache ).some( key => cache[ key ] !== state[ key ] );
 			},
 		},
 
 		resolvers: {
+			// eslint-disable-next-line no-unused-vars
 			*getOption( key ) {
-				// eslint-disable-line no-unused-vars
 				if ( alreadyFetchedOptions ) {
 					return; // do nothing
 				}
