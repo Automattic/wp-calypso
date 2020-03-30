@@ -1,11 +1,16 @@
 .upsell-nudge.banner.card {
-	border-left-color: var( --color-accent );
-	border-left-width: 6px;
-	background-color: var( --color-neutral-80 );
-	box-shadow: none;
-	color: var( --color-text-inverted );
 	display: flex;
 	align-items: center;
+}
+
+.upsell-nudge.banner.card.is-compact {
+	background-color: var( --color-neutral-80 );
+	border-left-color: var( --color-accent );
+	box-shadow: none;
+	border-left-width: 4px;
+	color: var( --color-text-inverted );
+	margin-top: -1px;
+	margin-bottom: -1px;
 
 	a,
 	button {
@@ -13,12 +18,6 @@
 		box-shadow: none;
 		color: var( --color-text-inverted );
 	}
-}
-
-.upsell-nudge.banner.card.is-compact {
-	border-left-width: 4px;
-	margin-top: -1px;
-	margin-bottom: -1px;
 
 	.banner__icon-circle,
 	.banner__icon {
@@ -26,10 +25,31 @@
 		margin-right: 0.25em;
 	}
 	.dismissible-card__close-icon {
+		fill: var( --color-text-inverted );
 		margin-left: 0.75em;
 	}
 	.banner__content {
+		color: var( --color-text-inverted );
 		padding: 0 0 0 8px;
+	}
+	.banner__description {
+		color: var( --color-neutral-5 );
+	}
+	.banner__info .banner__title {
+		color: var( --color-text-inverted );
+		font-weight: normal;
+	}
+	.card__link-indicator {
+		fill: var( --color-text-inverted );
+	}
+	.banner__icon-circle,
+	.banner__icon {
+		width: auto;
+		height: auto;
+		color: var( --color-text-inverted );
+		border-radius: 0;
+		background: none;
+		padding: 0;
 	}
 
 	&:hover {
@@ -49,33 +69,12 @@
 	}
 }
 
-.upsell-nudge.banner.card .banner__icon-circle,
-.upsell-nudge.banner.card .banner__icon {
-	width: auto;
-	height: auto;
-	color: var( --color-text-inverted );
-	border-radius: 0;
-	background: none;
-	padding: 0;
-}
-
-.upsell-nudge.banner.card .card__link-indicator {
-	fill: var( --color-text-inverted );
-}
-
 .upsell-nudge .banner__content {
 	margin-right: auto;
-	color: var( --color-text-inverted );
 }
 
 .upsell-nudge .banner__info .banner__title {
-	color: var( --color-text-inverted );
-	font-weight: normal;
 	margin-right: 8px;
-}
-
-.upsell-nudge .banner__description {
-	color: var( --color-neutral-5 );
 }
 
 .upsell-nudge .banner__action {
@@ -84,7 +83,6 @@
 }
 
 .upsell-nudge .dismissible-card__close-icon {
-	fill: var( --color-text-inverted );
 	margin-left: 1em;
 	order: 2;
 
