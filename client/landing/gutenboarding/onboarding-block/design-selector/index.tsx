@@ -6,7 +6,9 @@ import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useI18n } from '@automattic/react-i18n';
 import { useHistory } from 'react-router-dom';
-
+import { Spring, animated } from 'react-spring/renderprops';
+import classnames from 'classnames';
+import { loadmShotsPreview, prefetchmShotsPreview } from '../../../../lib/mshots';
 /**
  * Internal dependencies
  */
@@ -20,6 +22,22 @@ import { SubTitle, Title } from '../../components/titles';
 import './style.scss';
 
 type Design = import('../../stores/onboard/types').Design;
+interface LoadedImages<T> {
+	[ index: string ]: T
+}
+type PreviewImage = {
+	isLoading: boolean;
+	src: string;
+}
+
+// Values for springs:
+const ZOOM_OFF = { transform: 'scale(1)' };
+const ZOOM_ON = { transform: 'scale(1.015)' };
+const SHADOW_OFF = { boxShadow: '0 0px 0px rgba(0,0,0,.12)' };
+const SHADOW_ON = { boxShadow: '0 2px 12px rgba(0,0,0,.12)' };
+
+
+const previewImageData = {};
 
 const makeOptionId = ( { slug }: Design ): string => `design-selector__option-name__${ slug }`;
 
@@ -43,8 +61,30 @@ const DesignSelector: React.FunctionComponent = () => {
 			font_headings: design.fonts.headings,
 			font_base: design.fonts.base,
 		} );
-		return mshotsUrl + encodeURIComponent( previewUrl );
+		return encodeURIComponent( previewUrl );
 	};
+
+	// Track hover/focus
+	const [ hoverDesign, setHoverDesign ] = React.useState< string >();
+	const [ focusDesign, setFocusDesign ] = React.useState< string >();
+
+/*	// Track and manage loaded images
+	const [ loadedImages, setIsPreviewImageLoaded ] = React.useState< LoadedImages< PreviewImage > >(
+		designs.featured.reduce( ( result, design ) => ( {
+			...result,
+			[ design.slug ]: { isLoading: false, src: undefined },
+		} ), {} )
+	);
+	const getImagedata = ( imageId: string ) => loadedImages[ imageId ];
+	const setImageData = ( imageId: string, imageBlob: string | undefined, isLoading = false ): void => {
+		setIsPreviewImageLoaded( {
+			...loadedImages,
+			[ imageId ]: {
+				isLoading,
+				src: imageBlob,
+			},
+		} );
+	};*/
 
 	return (
 		<div className="design-selector">
@@ -68,35 +108,80 @@ const DesignSelector: React.FunctionComponent = () => {
 			</div>
 			<div className="design-selector__design-grid">
 				<div className="design-selector__grid">
-					{ designs.featured.map( design => (
-						<button
-							key={ design.slug }
-							className="design-selector__design-option"
-							onClick={ () => {
-								setSelectedDesign( design );
+					{ designs.featured.map( design => {
+						const isFocused = hoverDesign === design.slug || focusDesign === design.slug;
+						const designUrl = getDesignUrl( design );
+						const imageData = previewImageData[ design.slug ];
 
-								// Update fonts to the design defaults
-								setFonts( design.fonts );
+						if ( ! imageData ) {
+							previewImageData[ design.slug ] = {};
+							loadmShotsPreview( {
+								url: designUrl,
+								maxRetries: 30,
+								retryTimeout: 1000,
+							} ).then(imageBlob => {
+								previewImageData[ design.slug ].src = imageBlob;
+							} ) ;
+						}
 
-								if ( isEnabled( 'gutenboarding/style-preview' ) ) {
-									push( makePath( Step.Style ) );
-								}
-							} }
-						>
-							<span className="design-selector__image-frame">
-								<img
-									alt=""
-									aria-labelledby={ makeOptionId( design ) }
-									src={ getDesignUrl( design ) }
-								/>
-							</span>
-							<span className="design-selector__option-overlay">
-								<span id={ makeOptionId( design ) } className="design-selector__option-name">
-									{ design.title }
-								</span>
-							</span>
-						</button>
-					) ) }
+						return (
+							<Spring
+								native
+								key={ design.slug }
+								from={ ZOOM_OFF }
+								to={ isFocused ? ZOOM_ON : ZOOM_OFF }
+							>
+								{ ( props: React.CSSProperties ) => (
+									<animated.button
+										style={ props }
+										onMouseEnter={ () => setHoverDesign( design.slug ) }
+										onMouseLeave={ () =>
+											setHoverDesign( s => ( s === design.slug ? undefined : s ) )
+										}
+										onFocus={ () => setFocusDesign( design.slug ) }
+										onBlur={ () => setFocusDesign( s => ( s === design.slug ? undefined : s ) ) }
+										className="design-selector__design-option"
+										onClick={ () => {
+											setSelectedDesign( design );
+
+											// Update fonts to the design defaults
+											setFonts( design.fonts );
+
+											if ( isEnabled( 'gutenboarding/style-preview' ) ) {
+												push( makePath( Step.Style ) );
+											}
+										} }
+									>
+										<Spring
+											native
+											key={ design.slug }
+											from={ SHADOW_OFF }
+											to={ isFocused ? SHADOW_ON : SHADOW_OFF }
+										>
+											{ ( props2: React.CSSProperties ) => (
+												<animated.span style={ props2 } className={ classnames( 'design-selector__image-frame', {
+													'is-loaded': imageData && imageData.src,
+												} ) }>
+													{ imageData && imageData.src &&
+														<img
+															className={ `design-selector__preview-image-${ design.slug }` }
+															alt={ design.title }
+															src={ imageData.src }
+															aria-labelledby={ makeOptionId( design ) }
+														/>
+													}
+
+												</animated.span>
+											) }
+										</Spring>
+										<span className="design-selector__option-overlay">
+											<span  id={ makeOptionId( design ) } className="design-selector__option-name">{ design.title }</span>
+										</span>
+									</animated.button>
+								) }
+							</Spring>
+						);
+					} ) }
 				</div>
 			</div>
 		</div>
