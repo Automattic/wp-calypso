@@ -23,7 +23,6 @@ import {
 } from '@automattic/composite-checkout-wpcom';
 import {
 	CheckoutProvider,
-	createFullCreditsMethod,
 	createFreePaymentMethod,
 	createApplePayMethod,
 	createExistingCardMethod,
@@ -54,10 +53,7 @@ import {
 	getDomainDetails,
 	isPaymentMethodEnabled,
 	wpcomTransaction,
-	submitCreditsTransaction,
 	submitFreePurchaseTransaction,
-	WordPressCreditsLabel,
-	WordPressCreditsSummary,
 	WordPressFreePurchaseLabel,
 	WordPressFreePurchaseSummary,
 	submitApplePayPayment,
@@ -89,7 +85,11 @@ import analytics from 'lib/analytics';
 import { useStripe } from 'lib/stripe';
 import CheckoutTerms from './checkout-terms.jsx';
 import useShowStripeLoadingErrors from './composite-checkout/use-show-stripe-loading-errors';
-import { useCreatePayPal, useCreateStripe } from './composite-checkout/use-create-payment-methods';
+import {
+	useCreatePayPal,
+	useCreateStripe,
+	useCreateFullCredits,
+} from './composite-checkout/use-create-payment-methods';
 import { useGetThankYouUrl } from './composite-checkout/use-get-thank-you-url';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
@@ -274,40 +274,10 @@ export default function CompositeCheckout( {
 		stripe,
 	} );
 
-	const shouldLoadFullCreditsMethod = onlyLoadPaymentMethods
-		? onlyLoadPaymentMethods.includes( 'full-credits' )
-		: true;
-	const fullCreditsPaymentMethod = useMemo( () => {
-		if ( ! shouldLoadFullCreditsMethod ) {
-			return null;
-		}
-		return createFullCreditsMethod( {
-			registerStore,
-			submitTransaction: submitData => {
-				const pending = submitCreditsTransaction(
-					{
-						...submitData,
-						siteId: select( 'wpcom' )?.getSiteId?.(),
-						domainDetails: getDomainDetails( select ),
-						// this data is intentionally empty so we do not charge taxes
-						country: null,
-						postalCode: null,
-					},
-					wpcomTransaction
-				);
-				// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-				pending.then( result => {
-					debug( 'saving transaction response', result );
-					dispatch( 'wpcom' ).setTransactionResponse( result );
-				} );
-				return pending;
-			},
-		} );
-	}, [ shouldLoadFullCreditsMethod ] );
-	if ( fullCreditsPaymentMethod ) {
-		fullCreditsPaymentMethod.label = <WordPressCreditsLabel credits={ credits } />;
-		fullCreditsPaymentMethod.inactiveContent = <WordPressCreditsSummary />;
-	}
+	const fullCreditsPaymentMethod = useCreateFullCredits( {
+		onlyLoadPaymentMethods,
+		credits,
+	} );
 
 	const shouldLoadFreePaymentMethod = onlyLoadPaymentMethods
 		? onlyLoadPaymentMethods.includes( 'free-purchase' )

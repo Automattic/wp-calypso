@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import {
 	createPayPalMethod,
 	createStripePaymentMethodStore,
 	createStripeMethod,
+	createFullCreditsMethod,
 	registerStore,
 	defaultRegistry,
 } from '@automattic/composite-checkout';
@@ -21,6 +22,9 @@ import {
 	getDomainDetails,
 	sendStripeTransaction,
 	wpcomTransaction,
+	submitCreditsTransaction,
+	WordPressCreditsLabel,
+	WordPressCreditsSummary,
 } from '../composite-checkout-payment-methods';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-create-payment-methods' );
@@ -120,4 +124,42 @@ export function useCreateStripe( {
 		stripeMethod.id = 'card';
 	}
 	return stripeMethod;
+}
+
+export function useCreateFullCredits( { onlyLoadPaymentMethods, credits } ) {
+	const shouldLoadFullCreditsMethod = onlyLoadPaymentMethods
+		? onlyLoadPaymentMethods.includes( 'full-credits' )
+		: true;
+	const fullCreditsPaymentMethod = useMemo( () => {
+		if ( ! shouldLoadFullCreditsMethod ) {
+			return null;
+		}
+		return createFullCreditsMethod( {
+			registerStore,
+			submitTransaction: submitData => {
+				const pending = submitCreditsTransaction(
+					{
+						...submitData,
+						siteId: select( 'wpcom' )?.getSiteId?.(),
+						domainDetails: getDomainDetails( select ),
+						// this data is intentionally empty so we do not charge taxes
+						country: null,
+						postalCode: null,
+					},
+					wpcomTransaction
+				);
+				// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+				pending.then( result => {
+					debug( 'saving transaction response', result );
+					dispatch( 'wpcom' ).setTransactionResponse( result );
+				} );
+				return pending;
+			},
+		} );
+	}, [ shouldLoadFullCreditsMethod ] );
+	if ( fullCreditsPaymentMethod ) {
+		fullCreditsPaymentMethod.label = <WordPressCreditsLabel credits={ credits } />;
+		fullCreditsPaymentMethod.inactiveContent = <WordPressCreditsSummary />;
+	}
+	return fullCreditsPaymentMethod;
 }
