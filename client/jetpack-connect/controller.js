@@ -143,6 +143,7 @@ export function connect( context, next ) {
 			path={ path }
 			type={ type }
 			url={ query.url }
+			forceRemoteInstall={ query.forceInstall }
 		/>
 	);
 	next();
