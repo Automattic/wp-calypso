@@ -30,7 +30,6 @@ export function getThankYouPageUrl( {
 	redirectTo,
 	receiptId,
 	orderId,
-	didPurchaseFail,
 	purchaseId,
 	feature,
 	cart = {},
@@ -38,7 +37,6 @@ export function getThankYouPageUrl( {
 	product,
 	getUrlFromCookie = retrieveSignupDestination,
 	saveUrlToCookie = persistSignupDestination,
-	isNewlyCreatedSite,
 	previousRoute,
 	isEligibleForSignupDestination,
 }: {
@@ -47,7 +45,6 @@ export function getThankYouPageUrl( {
 	redirectTo?: string;
 	receiptId?: string | number;
 	orderId?: string | number;
-	didPurchaseFail?: boolean;
 	purchaseId?: string | number;
 	feature?: string;
 	cart?: object;
@@ -55,7 +52,6 @@ export function getThankYouPageUrl( {
 	product?: string;
 	getUrlFromCookie: () => string | null;
 	saveUrlToCookie: ( _: string ) => void;
-	isNewlyCreatedSite?: boolean;
 	previousRoute?: string;
 	isEligibleForSignupDestination?: boolean;
 } ) {
