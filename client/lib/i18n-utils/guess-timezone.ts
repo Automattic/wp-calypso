@@ -79,7 +79,7 @@ function isLinkedTimezone( timezone: string ): timezone is keyof typeof linkedTi
 	return timezone in linkedTimezones;
 }
 
-export default function guessTimezone() {
+export default function guessTimezone(): string | undefined {
 	// use Intl API when available and returning valid time zone
 	try {
 		const intlName = Intl.DateTimeFormat().resolvedOptions().timeZone;
