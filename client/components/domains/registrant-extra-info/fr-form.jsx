@@ -58,6 +58,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 	static propTypes = {
 		contactDetails: PropTypes.object,
 		ccTldDetails: PropTypes.object,
+		onContactDetailsChange: PropTypes.func,
 		contactDetailsValidationErrors: PropTypes.object,
 		isVisible: PropTypes.bool,
 		onSubmit: PropTypes.func,
@@ -83,17 +84,22 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		//    fields so we can keep them together in one place
 		defaultRegistrantType = this.props.contactDetails.organization ? 'organization' : 'individual';
 
-		this.props.updateContactDetailsCache( {
+		const payload = {
 			extra: {
 				fr: { registrantType: defaultRegistrantType },
 			},
-		} );
+		};
+
+		this.props.updateContactDetailsCache( payload );
+		this.props?.onContactDetailsChange( payload );
 	}
 
 	updateContactDetails( field, value ) {
 		const sanitizedValue = this.sanitizeField( field, value );
 		debug( 'Setting ' + field + ' to ' + value );
-		this.props.updateContactDetailsCache( set( {}, field, sanitizedValue ) );
+		const payload = set( {}, field, sanitizedValue );
+		this.props.updateContactDetailsCache( payload );
+		this.props.onContactDetailsChange( payload );
 	}
 
 	handleChangeContactEvent = event => {
