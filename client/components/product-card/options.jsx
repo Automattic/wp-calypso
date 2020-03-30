@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 import { isEmpty } from 'lodash';
 
 /**
@@ -31,9 +32,15 @@ const ProductCardOptions = ( {
 				<h4 className="product-card__options-label">{ optionsLabel }</h4>
 			) }
 			{ options.map( option => (
-				<FormLabel key={ `product-option-${ option.slug }` } className="product-card__option">
+				<FormLabel
+					key={ `product-option-${ option.slug }` }
+					className={ classnames( 'product-card__option', {
+						'is-selected': option.slug === selectedSlug,
+					} ) }
+				>
 					{ ! hideRadios && (
 						<FormRadio
+							className="product-card__radio"
 							checked={ option.slug === selectedSlug }
 							onChange={ () => handleSelect( option.slug ) }
 						/>

@@ -4,7 +4,6 @@
 	@include breakpoint( '>480px' ) {
 		min-width: 460px;
 	}
-
 }
 // Header
 .product-card__header {
@@ -59,7 +58,6 @@
 	.gridicons-checkmark {
 		fill: var( --color-jetpack );
 	}
-
 }
 
 .product-card__secondary {
@@ -218,12 +216,18 @@
 	margin: 24px 0;
 
 	@include breakpoint( '>960px' ) {
-		align-items: flex-start;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		min-width: 180px;
+		padding: 16px;
 		margin-bottom: 8px;
+		border: 1px solid var( --color-neutral-20 );
+		border-radius: 4px;
 
-		& + & {
-			padding-left: 20px;
-			border-left: 1px solid var( --color-border-subtle );
+		&.is-selected {
+			background: var( --color-neutral-0 );
+			border: 1px solid var( --color-primary );
 		}
 	}
 }
@@ -235,8 +239,15 @@
 	margin-left: 8px;
 
 	@include breakpoint( '>960px' ) {
-		margin-left: 4px;
 		flex-flow: column nowrap;
+		align-items: center;
+		margin-left: 0;
+	}
+}
+
+.product-card__radio.form-radio {
+	@include breakpoint( '>960px' ) {
+		margin-bottom: 10px;
 	}
 }
 

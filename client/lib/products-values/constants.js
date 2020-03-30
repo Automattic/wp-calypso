@@ -202,6 +202,7 @@ export const getJetpackProducts = () => {
 			// TODO: Add new description copy for Search
 			description: 'Always-on scan ensure you never lose your site.',
 			id: PRODUCT_JETPACK_SCAN,
+			forceRadios: true,
 			options: {
 				yearly: [ PRODUCT_JETPACK_SCAN ],
 				monthly: [ PRODUCT_JETPACK_SCAN_MONTHLY ],
