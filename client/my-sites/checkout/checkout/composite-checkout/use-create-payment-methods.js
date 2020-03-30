@@ -8,6 +8,7 @@ import {
 	createStripeMethod,
 	createFullCreditsMethod,
 	createFreePaymentMethod,
+	createApplePayMethod,
 	registerStore,
 	defaultRegistry,
 } from '@automattic/composite-checkout';
@@ -29,6 +30,7 @@ import {
 	submitFreePurchaseTransaction,
 	WordPressFreePurchaseLabel,
 	WordPressFreePurchaseSummary,
+	submitApplePayPayment,
 } from '../composite-checkout-payment-methods';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-create-payment-methods' );
@@ -204,4 +206,63 @@ export function useCreateFree( { onlyLoadPaymentMethods } ) {
 		freePaymentMethod.inactiveContent = <WordPressFreePurchaseSummary />;
 	}
 	return freePaymentMethod;
+}
+
+export function useCreateApplePay( {
+	onlyLoadPaymentMethods,
+	isStripeLoading,
+	stripeLoadingError,
+	stripeConfiguration,
+	stripe,
+	isApplePayAvailable,
+	isApplePayLoading,
+} ) {
+	const shouldLoadApplePay = onlyLoadPaymentMethods
+		? onlyLoadPaymentMethods.includes( 'apple-pay' ) && isApplePayAvailable
+		: isApplePayAvailable;
+	const applePayMethod = useMemo( () => {
+		if (
+			! shouldLoadApplePay ||
+			isStripeLoading ||
+			stripeLoadingError ||
+			! stripe ||
+			! stripeConfiguration ||
+			isApplePayLoading ||
+			! isApplePayAvailable
+		) {
+			return null;
+		}
+		return createApplePayMethod( {
+			getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+			getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+			registerStore,
+			submitTransaction: submitData => {
+				const pending = submitApplePayPayment(
+					{
+						...submitData,
+						siteId: select( 'wpcom' )?.getSiteId?.(),
+						domainDetails: getDomainDetails( select ),
+					},
+					wpcomTransaction
+				);
+				// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+				pending.then( result => {
+					debug( 'saving transaction response', result );
+					dispatch( 'wpcom' ).setTransactionResponse( result );
+				} );
+				return pending;
+			},
+			stripe,
+			stripeConfiguration,
+		} );
+	}, [
+		shouldLoadApplePay,
+		isApplePayLoading,
+		stripe,
+		stripeConfiguration,
+		isStripeLoading,
+		stripeLoadingError,
+		isApplePayAvailable,
+	] );
+	return applePayMethod;
 }

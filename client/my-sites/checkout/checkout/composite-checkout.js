@@ -23,7 +23,6 @@ import {
 } from '@automattic/composite-checkout-wpcom';
 import {
 	CheckoutProvider,
-	createApplePayMethod,
 	createExistingCardMethod,
 	defaultRegistry,
 } from '@automattic/composite-checkout';
@@ -52,7 +51,6 @@ import {
 	getDomainDetails,
 	isPaymentMethodEnabled,
 	wpcomTransaction,
-	submitApplePayPayment,
 	submitExistingCardPayment,
 	useIsApplePayAvailable,
 } from './composite-checkout-payment-methods';
@@ -86,6 +84,7 @@ import {
 	useCreateStripe,
 	useCreateFullCredits,
 	useCreateFree,
+	useCreateApplePay,
 } from './composite-checkout/use-create-payment-methods';
 import { useGetThankYouUrl } from './composite-checkout/use-get-thank-you-url';
 
@@ -282,53 +281,15 @@ export default function CompositeCheckout( {
 		canMakePayment: isApplePayAvailable,
 		isLoading: isApplePayLoading,
 	} = useIsApplePayAvailable( stripe, stripeConfiguration, !! stripeLoadingError, items );
-	const shouldLoadApplePay = onlyLoadPaymentMethods
-		? onlyLoadPaymentMethods.includes( 'apple-pay' ) && isApplePayAvailable
-		: isApplePayAvailable;
-	const applePayMethod = useMemo( () => {
-		if (
-			! shouldLoadApplePay ||
-			isStripeLoading ||
-			stripeLoadingError ||
-			! stripe ||
-			! stripeConfiguration ||
-			isApplePayLoading ||
-			! isApplePayAvailable
-		) {
-			return null;
-		}
-		return createApplePayMethod( {
-			getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-			getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-			registerStore,
-			submitTransaction: submitData => {
-				const pending = submitApplePayPayment(
-					{
-						...submitData,
-						siteId: select( 'wpcom' )?.getSiteId?.(),
-						domainDetails: getDomainDetails( select ),
-					},
-					wpcomTransaction
-				);
-				// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-				pending.then( result => {
-					debug( 'saving transaction response', result );
-					dispatch( 'wpcom' ).setTransactionResponse( result );
-				} );
-				return pending;
-			},
-			stripe,
-			stripeConfiguration,
-		} );
-	}, [
-		shouldLoadApplePay,
-		isApplePayLoading,
-		stripe,
-		stripeConfiguration,
+	const applePayMethod = useCreateApplePay( {
+		onlyLoadPaymentMethods,
 		isStripeLoading,
 		stripeLoadingError,
+		stripeConfiguration,
+		stripe,
 		isApplePayAvailable,
-	] );
+		isApplePayLoading,
+	} );
 
 	const shouldLoadExistingCardsMethods = onlyLoadPaymentMethods
 		? onlyLoadPaymentMethods.includes( 'existingCard' )
