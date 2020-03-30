@@ -42,6 +42,7 @@ export interface CreateSiteParams {
 		site_creation_flow?: string;
 		theme?: string;
 		template?: string;
+		timezone_string?: string;
 		font_headings?: string;
 		font_base?: string;
 	};
