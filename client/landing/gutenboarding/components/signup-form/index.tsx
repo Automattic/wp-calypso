@@ -2,12 +2,11 @@
  * External dependencies
  */
 import React, { useState, useEffect } from 'react';
-import { Button, ExternalLink, TextControl, Icon, Modal, Notice } from '@wordpress/components';
+import { ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -17,7 +16,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { useLangRouteParam, usePath, Step } from '../../path';
 import ModalSubmitButton from '../modal-submit-button';
 import './style.scss';
-import { __ } from '@wordpress/i18n';
+import SignupFormHeader from './header';
 
 // TODO: deploy this change to @types/wordpress__element
 declare module '@wordpress/element' {
@@ -31,28 +30,6 @@ declare module '@wordpress/element' {
 interface Props {
 	onRequestClose: () => void;
 }
-
-interface CloseButtonProps {
-	onClose: () => void;
-	closeLabel?: string;
-}
-
-const CustomCloseButton = ( { onClose, closeLabel }: CloseButtonProps ) => {
-	const label = closeLabel ? closeLabel : __( 'Close dialog' );
-	return (
-		<Button onClick={ onClose } label={ label }>
-			<svg
-				width="16"
-				height="16"
-				viewBox="0 0 16 16"
-				fill="none"
-				xmlns="http://www.w3.org/2000/svg"
-			>
-				<path d="M1.40456 1L15 15M1 15L14.5954 1" stroke="#1E1E1E" stroke-width="1.5" />
-			</svg>
-		</Button>
-	);
-};
 
 const SignupForm = ( { onRequestClose }: Props ) => {
 	const { __: NO__ } = useI18n();
@@ -123,13 +100,9 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		Step.CreateSite
 	) }?new`;
 
-	const modalClasses = classnames( 'signup-form', {
-		'signup-form__fullscreen': true,
-	} );
-
 	return (
 		<Modal
-			className={ modalClasses }
+			className={ 'signup-form' }
 			title={ NO__( 'Save your progress' ) }
 			onRequestClose={ closeModal }
 			focusOnMount={ false }
@@ -138,29 +111,10 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 			// set to false so that 1password's autofill doesn't automatically close the modal
 			shouldCloseOnClickOutside={ false }
 		>
-			<div className="signup-form__header">
-				<div className="signup-form__header-section">
-					<div className="signup-form__header-section-item signup-form__header-wp-logo">
-						<Icon icon="wordpress-alt" size={ 24 } />
-					</div>
-				</div>
-
-				<div className="signup-form__header-section">
-					<div className="signup-form__header-section-item">
-						<Button
-							className="signup-form__link"
-							isLink
-							href={ '/log-in?redirect_to=' + encodeURIComponent( loginRedirectUrl ) }
-						>
-							{ NO__( 'Log in' ) }
-						</Button>
-					</div>
-
-					<div className="signup-form__header-section-item signup-form__header-close-button">
-						<CustomCloseButton onClose={ onRequestClose } />
-					</div>
-				</div>
-			</div>
+			<SignupFormHeader
+				onRequestClose={ closeModal }
+				loginUrl={ '/log-in?redirect_to=' + encodeURIComponent( loginRedirectUrl ) }
+			/>
 
 			<main className="signup-form__body">
 				<h1 className="signup-form__title">{ NO__( 'Save your progress' ) }</h1>
@@ -168,8 +122,9 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 				<form onSubmit={ handleSignUp }>
 					<fieldset>
 						<legend className="signup-form__legend">
-							{ NO__( 'Enter an email and password to save your progress and continue' ) }
+							<p>{ NO__( 'Enter an email and password to save your progress and continue' ) }</p>
 						</legend>
+
 						<TextControl
 							value={ emailVal }
 							disabled={ isFetchingNewUser }
@@ -179,13 +134,15 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 							required
 							autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 						/>
+
 						{ errorMessage && (
 							<Notice className="signup-form__error-notice" status="error" isDismissible={ false }>
 								{ errorMessage }
 							</Notice>
 						) }
+
 						<div className="signup-form__footer">
-							<p className="signup-form__terms-of-service-link">{ tos }</p>
+							<p className="signup-form__link signup-form__terms-of-service-link">{ tos }</p>
 
 							<ModalSubmitButton disabled={ isFetchingNewUser } isBusy={ isFetchingNewUser }>
 								{ NO__( 'Create account' ) }

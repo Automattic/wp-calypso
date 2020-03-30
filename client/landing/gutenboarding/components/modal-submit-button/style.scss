@@ -1,8 +1,16 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+
 .components-button.modal-submit-button {
-	display: inline-block;
-	min-width: 10em;
+	display: block;
+	width: 100%;
+	min-width: 170px;
 	text-align: center;
 	font-size: 14px;
-	line-height: 17px;
+	line-height: 14px;
 	height: 42px;
+
+	@include break-mobile {
+		display: inline-block;
+		width: auto;
+	}
 }

@@ -30,10 +30,12 @@
 	}
 
 	.signup-form__title {
-		@include onboarding-font-recoleta;
-		font-size: 42px;
-		line-height: 57px;
+		@include onboarding-heading-text-mobile;
 		text-align: center;
+
+		@include break-mobile {
+			@include onboarding-heading-text;
+		}
 	}
 
 	.signup-form__body {
@@ -47,26 +49,23 @@
 		text-align: center;
 	}
 
-	.signup-form__legend {
-		font-size: 14px;
-		line-height: 17px;
-		margin: 30px 0;
+	.signup-form__legend p {
+		@include onboarding-medium-text;
+		margin: 15px 0 30px;
 		color: var( --studio-gray-40 );
 	}
 
 	.components-text-control__input {
 		padding: 21px 14px;
-		font-size: 14px;
-		line-height: 17px;
+		@include onboarding-medium-text;
 		border-radius: 0;
 		border: 1px solid var( --studio-gray-10 );
-		max-width: 400px;
-	}
+		width: 100%;
+		max-width: 100%;
 
-	.signup-form__terms-of-service-link {
-		text-align: center;
-		color: var( --color-text-subtle );
-		margin: 20px 0 40px;
+		@include break-mobile {
+			max-width: 400px;
+		}
 	}
 
 	.signup-form__error-notice {
@@ -78,17 +77,21 @@
 		text-align: center;
 	}
 
-	.signup-form__link {
+	.signup-form__link,
+	.signup-form__link a {
 		color: var( --studio-gray-80 );
+	}
+
+	.signup-form__terms-of-service-link {
+		@include onboarding-x-small-text;
+		text-align: center;
+		color: var( --studio-gray-40 );
+		margin: 30px 0 20px;
 	}
 
 	.signup-form__footer {
 		text-align: center;
 	}
-
-	// &.signup-form__fullscreen {
-	// 	overflow: visible;
-	// }
 
 	.signup-form__header {
 		display: flex;
@@ -123,12 +126,14 @@
 			margin-left: 24px - $grid-size; // ( 24 - header padding )
 		}
 
-		&.signup-form__link {
+		&.signup-form__header-close-button {
 			margin-right: 24px - $grid-size; // ( 24 - header padding )
 		}
 
-		&.signup-form__header-close-button {
+		.signup-form__link {
 			margin-right: 24px - $grid-size; // ( 24 - header padding )
+			font-weight: 600;
+			@include onboarding-small-text;
 		}
 	}
 
