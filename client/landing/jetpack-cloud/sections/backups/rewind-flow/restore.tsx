@@ -138,8 +138,8 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) =
 		<>
 			<div className="rewind-flow__header">
 				<img
-					src="/calypso/images/illustrations/jetpack-cloud-download-success.svg"
-					alt="jetpack cloud download success"
+					src="/calypso/images/illustrations/jetpack-restore-success.svg"
+					alt="jetpack cloud restore success"
 				/>
 			</div>
 			<h3 className="rewind-flow__title">
