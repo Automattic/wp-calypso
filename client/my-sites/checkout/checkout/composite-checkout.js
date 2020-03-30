@@ -23,7 +23,6 @@ import {
 } from '@automattic/composite-checkout-wpcom';
 import {
 	CheckoutProvider,
-	createPayPalMethod,
 	createStripeMethod,
 	createStripePaymentMethodStore,
 	createFullCreditsMethod,
@@ -33,7 +32,6 @@ import {
 	defaultRegistry,
 } from '@automattic/composite-checkout';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { format as formatUrl, parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
@@ -56,8 +54,6 @@ import {
 import {
 	useStoredCards,
 	getDomainDetails,
-	makePayPalExpressRequest,
-	wpcomPayPalExpress,
 	isPaymentMethodEnabled,
 	sendStripeTransaction,
 	wpcomTransaction,
@@ -96,6 +92,7 @@ import analytics from 'lib/analytics';
 import { useStripe } from 'lib/stripe';
 import CheckoutTerms from './checkout-terms.jsx';
 import useShowStripeLoadingErrors from './composite-checkout/use-show-stripe-loading-errors';
+import { useCreatePayPal } from './composite-checkout/use-create-payment-methods';
 import { useGetThankYouUrl } from './composite-checkout/use-get-thank-you-url';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
@@ -266,49 +263,11 @@ export default function CompositeCheckout( {
 		getStoredCards || wpcomGetStoredCards
 	);
 
-	const shouldLoadPayPalMethod = onlyLoadPaymentMethods
-		? onlyLoadPaymentMethods.includes( 'paypal' )
-		: true;
-	const paypalMethod = useMemo( () => {
-		if ( ! shouldLoadPayPalMethod ) {
-			return null;
-		}
-		return createPayPalMethod( { registerStore } );
-	}, [ shouldLoadPayPalMethod ] );
-	if ( paypalMethod ) {
-		paypalMethod.id = 'paypal';
-		// This is defined afterward so that getThankYouUrl can be dynamic without having to re-create payment method
-		paypalMethod.submitTransaction = () => {
-			const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
-			const successUrl = formatUrl( {
-				protocol,
-				hostname,
-				port,
-				pathname: getThankYouUrl(),
-			} );
-			const cancelUrl = formatUrl( {
-				protocol,
-				hostname,
-				port,
-				pathname,
-			} );
-
-			return makePayPalExpressRequest(
-				{
-					items,
-					successUrl,
-					cancelUrl,
-					siteId: select( 'wpcom' )?.getSiteId?.() ?? '',
-					domainDetails: getDomainDetails( select ),
-					couponId: null, // TODO: get couponId
-					country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '',
-					postalCode: select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '',
-					subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value ?? '',
-				},
-				wpcomPayPalExpress
-			);
-		};
-	}
+	const paypalMethod = useCreatePayPal( {
+		onlyLoadPaymentMethods,
+		getThankYouUrl,
+		getItems: () => items,
+	} );
 
 	// If this PM is allowed by props, allowed by the cart, stripe is not loading, and there is no stripe error, then create the PM.
 	const isStripeMethodAllowed = onlyLoadPaymentMethods
