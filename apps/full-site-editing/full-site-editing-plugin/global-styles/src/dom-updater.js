@@ -33,9 +33,9 @@ export default ( options, getOptionValue ) => {
 			} );
 			// We need this to be a stylesheet rather than inline styles
 			// so the styles apply to all editor instances incl. previews.
-			if ( ! isEmpty( styleProps ) ) {
-				styleElement.textContent = `.editor-styles-wrapper{${ styleProps }}`;
-			}
+			styleElement.textContent = ! isEmpty( styleProps )
+				? `.editor-styles-wrapper{${ styleProps }}`
+				: '';
 		} );
 	} );
 };
