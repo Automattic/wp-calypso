@@ -47,7 +47,7 @@ const JetpackCloudBackupUpsell: FunctionComponent< Props > = ( { siteSlug } ) =>
 			</p>
 			<Button
 				className="upsell__upgrade-button"
-				href={ `https://wordpress.com/plans/${ siteSlug }` }
+				href={ `https://jetpack.com/upgrade/backup/?site=${ siteSlug }` }
 				primary
 			>
 				{ translate( 'Upgrade' ) }
