@@ -3,6 +3,10 @@
 @import 'assets/stylesheets/shared/animation'; // Needed for the placeholder
 @import '../../variables.scss';
 
+$margin-left--gutenboarding__header-section-item: 13px; // matches design
+$padding--gutenboarding__header: $grid-size;
+
+
 // Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-widgets/src/components/header/style.scss
 .gutenboarding__header {
 	display: flex;
@@ -22,13 +26,8 @@
 	// On mobile the main content area has to scroll, otherwise you can invoke the overscroll bounce on the non-scrolling container.
 	@include break-small {
 		position: fixed;
-		padding: $grid-size;
+		padding: $padding--gutenboarding__header;
 	}
-}
-
-.gutenboarding__header-wp-logo {
-	color: var( --studio-blue-90 );
-	display: flex;
 }
 
 .gutenboarding__header-section {
@@ -37,13 +36,14 @@
 	font-size: 14px;
 }
 
-$margin-left--gutenboarding__header-section-item: 13px; // matches design
 .gutenboarding__header-section-item {
 	margin-left: $margin-left--gutenboarding__header-section-item;
 }
 
 .gutenboarding__header-wp-logo {
-	margin-left: 24px - $grid-size - $margin-left--gutenboarding__header-section-item; // we want 24px exact on spec: ( 24 - header padding - own margin )
+	margin-left: 24px - $padding--gutenboarding__header - $margin-left--gutenboarding__header-section-item; // we want 24px exact on spec: ( 24 - header padding - own margin )
+	color: var( --studio-blue-90 );
+	display: flex;
 }
 
 .gutenboarding__header-domain-picker-button {
