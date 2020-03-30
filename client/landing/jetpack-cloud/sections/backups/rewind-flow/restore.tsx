@@ -1,33 +1,65 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
+import React, { FunctionComponent, useCallback, useState } from 'react';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
 import { defaultRewindConfig, RewindConfig } from './types';
+import { rewindRestore } from 'state/activity-log/actions';
 import { useLocalizedMoment } from 'components/localized-moment';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
+import getSiteUrl from 'state/selectors/get-site-url';
 import Gridicon from 'components/gridicon';
 import ProgressBar from './progress-bar';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
+import getInProgressRewindStatus from 'state/selectors/get-in-progress-rewind-status';
+import getInProgressRewindPercentComplete from 'state/selectors/get-in-progress-rewind-percent-complete';
 
 interface Props {
 	rewindId: string;
 	siteId: number;
 }
 
-const BackupRestoreFlow: FunctionComponent< Props > = ( { rewindId } ) => {
+//todo: move to dedicated types file
+interface RewindState {
+	state: string;
+	rewind?: {
+		status: 'queued' | 'running' | 'finished' | 'fail';
+	};
+}
+
+const BackupRestoreFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) => {
+	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
 	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
+	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
+
+	const siteUrl = useSelector( state => getSiteUrl( state, siteId ) );
 
 	const restoreTimestamp = moment.unix( rewindId ).format( 'LLL' );
+
+	const inProgressRewindStatus = useSelector( state => getInProgressRewindStatus( state, siteId ) );
+	const inProgressRewindPercentComplete = useSelector( state =>
+		getInProgressRewindPercentComplete( state, siteId )
+	);
+
+	const requestRestore = useCallback(
+		() => dispatch( rewindRestore( siteId, rewindId, rewindConfig ) ),
+		[ dispatch, rewindConfig, rewindId, siteId ]
+	);
+
+	const onConfirm = () => {
+		setUserHasRequestedRestore( true );
+		requestRestore();
+	};
 
 	const renderConfirm = () => (
 		<>
@@ -58,7 +90,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( { rewindId } ) => {
 			<Button
 				className="rewind-flow__primary-button"
 				primary
-				// onClick={ requestDownload }
+				onClick={ onConfirm }
 				disabled={ Object.values( rewindConfig ).every( setting => ! setting ) }
 			>
 				{ translate( 'Confirm restore' ) }
@@ -72,7 +104,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( { rewindId } ) => {
 				<Gridicon icon="history" size={ 48 } />
 			</div>
 			<h3 className="rewind-flow__title">{ translate( 'Currently restoring your site' ) }</h3>
-			<ProgressBar percent={ 88 } />
+			<ProgressBar percent={ inProgressRewindPercentComplete } />
 			<p className="rewind-flow__info">
 				{ translate(
 					'We are restoring your site back to {{strong}}%(restoreTimestamp)s{{/strong}}.',
@@ -118,7 +150,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( { rewindId } ) => {
 					}
 				) }
 			</p>
-			<Button primary className="rewind-flow__primary-button">
+			<Button primary href={ siteUrl } className="rewind-flow__primary-button">
 				{ translate( 'View your website' ) }
 			</Button>
 		</>
@@ -138,7 +170,22 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( { rewindId } ) => {
 		</>
 	);
 
-	return <div>{ renderReady() }</div>;
+	const render = () => {
+		if ( ! inProgressRewindStatus && ! userHasRequestedRestore ) {
+			return renderConfirm();
+		} else if (
+			( ! inProgressRewindStatus && userHasRequestedRestore ) ||
+			( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) )
+		) {
+			return renderInProgress();
+		} else if ( inProgressRewindStatus !== null && inProgressRewindStatus === 'finished' ) {
+			return renderReady();
+		}
+
+		return renderError();
+	};
+
+	return <div>{ render() }</div>;
 };
 
 export default BackupRestoreFlow;
