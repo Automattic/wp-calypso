@@ -19,6 +19,7 @@ import AcquireIntent from './acquire-intent';
 import StylePreview from './style-preview';
 import { isEnabled } from '../../../config';
 
+import './colors.scss';
 import './style.scss';
 
 const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
