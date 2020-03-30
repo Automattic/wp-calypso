@@ -20,11 +20,6 @@ import CelebrateSiteLaunch from 'my-sites/customer-home/cards/notices/celebrate-
 import CelebrateSiteMigration from 'my-sites/customer-home/cards/notices/celebrate-site-migration';
 import CelebrateSiteSetupComplete from 'my-sites/customer-home/cards/notices/celebrate-site-setup-complete';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 const Notices = ( {
 	checklistMode,
 	displayChecklist,
@@ -61,40 +56,44 @@ const Notices = ( {
 		maybeShowSiteSetupComplete();
 	}, [ isChecklistComplete, showSiteSetupComplete ] );
 
-	const getNotice = () => {
-		// Show a thank-you message 30 mins post site creation/purchase
-		if (
-			isNewlyCreatedSite &&
-			! isRecentlyMigratedSite &&
-			displayChecklist &&
-			'launched' !== checklistMode
-		) {
-			if ( siteIsUnlaunched || isAtomic ) {
-				//Only show pre-launch, or for Atomic sites
-				return (
-					<CelebrateSiteCreation displayChecklist={ displayChecklist } checklistMode={ checklistMode } />
-				);
-			}
-		}
-
-		if ( isRecentlyMigratedSite ) {
+	// Show a thank-you message 30 mins post site creation/purchase
+	if (
+		isNewlyCreatedSite &&
+		! isRecentlyMigratedSite &&
+		displayChecklist &&
+		'launched' !== checklistMode
+	) {
+		if ( siteIsUnlaunched || isAtomic ) {
+			//Only show pre-launch, or for Atomic sites
 			return (
-				<CelebrateSiteMigration displayChecklist={ displayChecklist } checklistMode={ checklistMode } />
+				<CelebrateSiteCreation
+					displayChecklist={ displayChecklist }
+					checklistMode={ checklistMode }
+				/>
 			);
 		}
+	}
 
-		if ( ! siteIsUnlaunched && 'launched' === checklistMode ) {
-			return (
-				<CelebrateSiteLaunch displayChecklist={ displayChecklist } checklistMode={ checklistMode } />
-			);
-		}
+	if ( isRecentlyMigratedSite ) {
+		return (
+			<CelebrateSiteMigration
+				displayChecklist={ displayChecklist }
+				checklistMode={ checklistMode }
+			/>
+		);
+	}
 
-		if ( showSiteSetupComplete && ! isRecentlyMigratedSite ) {
-			return <CelebrateSiteSetupComplete displayChecklist={ displayChecklist } />;
-		}
-	};
+	if ( ! siteIsUnlaunched && 'launched' === checklistMode ) {
+		return (
+			<CelebrateSiteLaunch displayChecklist={ displayChecklist } checklistMode={ checklistMode } />
+		);
+	}
 
-	return <div className="notices">{ getNotice() }</div>;
+	if ( showSiteSetupComplete && ! isRecentlyMigratedSite ) {
+		return <CelebrateSiteSetupComplete displayChecklist={ displayChecklist } />;
+	}
+
+	return null;
 };
 
 const mapStateToProps = state => {

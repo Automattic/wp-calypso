@@ -116,7 +116,6 @@ class DatePicker extends Component {
 				<Button compact borderless onClick={ this.goToNextDay }>
 					<Gridicon icon="chevron-right" className={ ! this.canGoToNextDay() && 'disabled' } />
 				</Button>
-				<div>Date selected: { this.getDisplayDate( selectedDate ) }</div>
 			</div>
 		);
 	}

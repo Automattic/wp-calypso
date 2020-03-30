@@ -14,11 +14,6 @@ import { getSiteOption } from 'state/sites/selectors';
 import StatsBanners from 'my-sites/stats/stats-banners';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 const Upsells = ( {
 	isChecklistComplete,
 	isEstablishedSite,
@@ -27,7 +22,7 @@ const Upsells = ( {
 	siteSlug,
 } ) => {
 	return (
-		<div className="upsells">
+		<>
 			{ // Only show upgrade nudges to sites > 2 days old
 			isEstablishedSite && (
 				<StatsBanners
@@ -36,7 +31,7 @@ const Upsells = ( {
 					primaryButton={ isChecklistComplete && ! siteIsUnlaunched }
 				/>
 			) }
-		</div>
+		</>
 	);
 };
 
