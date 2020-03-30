@@ -8,6 +8,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { getUser } from 'state/users/selectors';
+import config from 'config';
 
 /**
  * Returns the current user ID
@@ -91,6 +92,9 @@ export function getCurrentUserSiteCount( state ) {
 	if ( ! user ) {
 		return null;
 	}
+	if ( config.isEnabled( 'jetpack-cloud' ) ) {
+		return user.jetpack_site_count || 0;
+	}
 
 	return user.site_count || 0;
 }
@@ -105,6 +109,9 @@ export function getCurrentUserVisibleSiteCount( state ) {
 	const user = getCurrentUser( state );
 	if ( ! user ) {
 		return null;
+	}
+	if ( config.isEnabled( 'jetpack-cloud' ) ) {
+		return user.visible_jetpack_site_count || 0;
 	}
 
 	return user.visible_site_count || 0;

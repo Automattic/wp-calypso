@@ -17,6 +17,8 @@ const allowedKeys = [
 	'avatar_URL',
 	'site_count',
 	'visible_site_count',
+	'jetpack_site_count',
+	'visible_jetpack_site_count',
 	'date',
 	'has_unseen_notes',
 	'newest_note_type',
