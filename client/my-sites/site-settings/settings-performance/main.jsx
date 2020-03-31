@@ -63,6 +63,13 @@ class SiteSettingsPerformance extends Component {
 				/>
 				<SiteSettingsNavigation site={ site } section="performance" />
 
+				<Search
+					handleAutosavingToggle={ handleAutosavingToggle }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+				/>
+
 				{ siteIsJetpack && (
 					<Fragment>
 						<QueryJetpackModules siteId={ siteId } />
@@ -100,13 +107,6 @@ class SiteSettingsPerformance extends Component {
 						) }
 					</Fragment>
 				) }
-
-				<Search
-					handleAutosavingToggle={ handleAutosavingToggle }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
-					fields={ fields }
-				/>
 
 				{ siteIsJetpack ? (
 					<AmpJetpack />
