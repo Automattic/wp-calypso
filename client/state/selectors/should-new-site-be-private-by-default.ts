@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import { abtest } from 'lib/abtest';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { isEcommercePlan } from 'lib/plans';
 
@@ -17,7 +17,7 @@ import { isEcommercePlan } from 'lib/plans';
  * @returns `true` for private by default & `false` for not
  */
 export default function shouldNewSiteBePrivateByDefault( state: object ): boolean {
-	if ( config.isEnabled( 'coming-soon' ) ) {
+	if ( 'variant' === abtest( 'ATPrivacy' ) ) {
 		// When coming-soon feature flag is enabled, we want all new sites to be private
 		return true;
 	}

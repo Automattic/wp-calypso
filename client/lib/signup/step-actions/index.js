@@ -10,13 +10,12 @@ import { parse as parseURL } from 'url';
  */
 
 // Libraries
-import config from 'config';
 import wpcom from 'lib/wp';
 import guessTimezone from 'lib/i18n-utils/guess-timezone';
 
 /* eslint-enable no-restricted-imports */
 import userFactory from 'lib/user';
-import { getSavedVariations } from 'lib/abtest';
+import { abtest, getSavedVariations } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import { recordRegistration, recordSocialRegistration } from 'lib/analytics/signup';
 import {
@@ -186,7 +185,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		validate: false,
 	};
 
-	if ( config.isEnabled( 'coming-soon' ) ) {
+	if ( 'variant' === abtest( 'ATPrivacy' ) ) {
 		newSiteParams.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
 	}
 
@@ -512,7 +511,7 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 		validate: false,
 	};
 
-	if ( config.isEnabled( 'coming-soon' ) ) {
+	if ( 'variant' === abtest( 'ATPrivacy' ) ) {
 		data.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
 	}
 
