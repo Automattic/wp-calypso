@@ -11,9 +11,9 @@ import ChecklistSiteSetup from 'my-sites/customer-home/cards/primary/checklist-s
 import QuickLinks from 'my-sites/customer-home/cards/primary/quick-links';
 
 const cardComponents = {
-	'feature.go-mobile-phones': GoMobile,
-	'primary.checklist-site-setup': ChecklistSiteSetup,
-	'primary.quick-links': QuickLinks,
+	'home-feature-go-mobile-phones': GoMobile,
+	'home-primary-checklist-site-setup': ChecklistSiteSetup,
+	'home-primary-quick-links': QuickLinks,
 };
 
 const Primary = ( { checklistMode, cards } ) => {
