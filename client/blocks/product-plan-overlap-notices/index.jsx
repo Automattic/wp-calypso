@@ -19,7 +19,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePlanSlug } from 'state/sites/plans/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
 import { planHasFeature, planHasSuperiorFeature } from 'lib/plans';
-import { getJetpackProductsShortNames } from 'lib/products-values/constants';
+import { managePurchase } from 'me/purchases/paths';
 
 class ProductPlanOverlapNotices extends Component {
 	static propTypes = {
@@ -92,26 +92,26 @@ class ProductPlanOverlapNotices extends Component {
 		return availableProducts[ currentPlanSlug ].product_name;
 	}
 
-	getOverlappingFeatureName( currentProductSlug ) {
-		const { availableProducts } = this.props;
-		if ( ! currentProductSlug ) {
-			return null;
+	getProductItem( productSlug ) {
+		const { purchases } = this.props;
+		const productPurchase = purchases.find( purchase => purchase.productSlug === productSlug );
+
+		if ( ! productPurchase ) {
+			return false;
 		}
 
-		const productsShortNames = getJetpackProductsShortNames();
-		if ( productsShortNames[ currentProductSlug ] ) {
-			return productsShortNames[ currentProductSlug ].toLowerCase();
-		}
-
-		if ( availableProducts[ currentProductSlug ] ) {
-			return availableProducts[ currentProductSlug ].product_name;
-		}
-
-		return null;
+		return (
+			<li key={ productSlug }>
+				<a href={ managePurchase( productPurchase.domain, productPurchase.id ) }>
+					{ this.getProductName( productSlug ) }
+				</a>
+			</li>
+		);
 	}
 
 	render() {
 		const { selectedSiteId, translate } = this.props;
+		const overlappingProductSlugs = this.getOverlappingProducts();
 
 		return (
 			<Fragment>
@@ -119,25 +119,31 @@ class ProductPlanOverlapNotices extends Component {
 				<QuerySitePurchases siteId={ selectedSiteId } />
 				<QueryProductsList />
 
-				{ this.getOverlappingProducts().map( productSlug => (
+				{ 0 !== overlappingProductSlugs.length && (
 					<Notice
-						key={ productSlug }
 						showDismiss={ false }
 						status="is-warning"
 						text={ translate(
-							'Your %(planName)s Plan includes %(featureName)s. ' +
-								'Looks like you also purchased the %(productName)s product. ' +
-								'Consider removing %(productName)s.',
+							'Your %(planName)s Plan includes:' +
+								'{{list/}}' +
+								'Consider removing conflicting products.',
 							{
 								args: {
-									featureName: this.getOverlappingFeatureName( productSlug ),
 									planName: this.getCurrentPlanName(),
-									productName: this.getProductName( productSlug ),
+								},
+								components: {
+									list: (
+										<ul>
+											{ overlappingProductSlugs.map( productSlug =>
+												this.getProductItem( productSlug )
+											) }
+										</ul>
+									),
 								},
 							}
 						) }
 					/>
-				) ) }
+				) }
 			</Fragment>
 		);
 	}
