@@ -12,8 +12,11 @@ import { Design, SiteVertical } from './types';
 import { STORE_KEY as ONBOARD_STORE } from './constants';
 import { SITE_STORE } from '../site';
 
+type State = import('.').State;
+type FontPair = import('../../constants').FontPair;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 type Template = VerticalsTemplates.Template;
+type CreateSiteParams = import('@automattic/data-stores').Site.CreateSiteParams;
 
 export const setDomain = ( domain: DomainSuggestion | undefined ) => ( {
 	type: 'SET_DOMAIN' as const,
@@ -44,6 +47,11 @@ export const togglePageLayout = ( pageLayout: Template ) => ( {
 	pageLayout,
 } );
 
+export const setFonts = ( fonts: FontPair | undefined ) => ( {
+	type: 'SET_FONTS' as const,
+	fonts,
+} );
+
 export const resetOnboardStore = () => ( {
 	type: 'RESET_ONBOARD_STORE' as const,
 } );
@@ -60,7 +68,7 @@ export function* createSite(
 	freeDomainSuggestion?: DomainSuggestion,
 	bearerToken?: string
 ) {
-	const { domain, selectedDesign, siteTitle, siteVertical } = yield select(
+	const { domain, selectedDesign, selectedFonts, siteTitle, siteVertical }: State = yield select(
 		ONBOARD_STORE,
 		'getState'
 	);
@@ -68,7 +76,7 @@ export function* createSite(
 	const currentDomain = domain ?? freeDomainSuggestion;
 	const siteUrl = currentDomain?.domain_name || siteTitle || username;
 
-	const success = yield dispatch( SITE_STORE, 'createSite', {
+	const params: CreateSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
 		blog_title: siteTitle,
 		options: {
@@ -80,20 +88,28 @@ export function* createSite(
 			site_creation_flow: 'gutenboarding',
 			theme: `pub/${ selectedDesign?.slug || 'twentytwenty' }`,
 			timezone_string: guessTimezone(),
+			template: selectedDesign?.slug || 'twentytwenty',
+			...( selectedFonts && {
+				font_base: selectedFonts.base.fontFamily,
+				font_headings: selectedFonts.headings.fontFamily,
+			} ),
 		},
 		...( bearerToken && { authToken: bearerToken } ),
-	} );
+	};
+
+	const success = yield dispatch( SITE_STORE, 'createSite', params );
 
 	return success;
 }
 
 export type OnboardAction = ReturnType<
-	| typeof setDomain
-	| typeof setSelectedDesign
-	| typeof setSiteVertical
-	| typeof resetSiteVertical
-	| typeof setSiteTitle
-	| typeof togglePageLayout
 	| typeof resetOnboardStore
+	| typeof resetSiteVertical
+	| typeof setDomain
+	| typeof setFonts
+	| typeof setSelectedDesign
+	| typeof setSiteTitle
+	| typeof setSiteVertical
 	| typeof setSiteWasCreatedForDomainPurchase
+	| typeof togglePageLayout
 >;

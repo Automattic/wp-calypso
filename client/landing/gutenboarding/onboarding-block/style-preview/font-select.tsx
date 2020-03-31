@@ -3,40 +3,51 @@
  */
 import * as React from 'react';
 import { Button } from '@wordpress/components';
-import { ValuesType } from 'utility-types';
 import classnames from 'classnames';
+import { useDispatch, useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import { fontPairings } from '../../constants';
+import { STORE_KEY } from '../../stores/onboard';
+import { useI18n } from '@automattic/react-i18n';
 
-interface Props {
-	onSelect: ( selection: ValuesType< typeof fontPairings > ) => void;
-	selected: ValuesType< typeof fontPairings >;
-}
-const FontSelect: React.FunctionComponent< Props > = ( { onSelect, selected } ) => (
-	<div className="style-preview__font-options">
-		{ fontPairings.map( fonts => {
-			const isSelected = fonts === selected;
-			const [
-				{ title: a, fontFamily: fontFamilyA },
-				{ title: b, fontFamily: fontFamilyB },
-			] = fonts;
+const FontSelect: React.FunctionComponent = () => {
+	const { __: NO__ } = useI18n();
+	const { selectedFonts } = useSelect( select => select( STORE_KEY ).getState() );
+	const { setFonts } = useDispatch( STORE_KEY );
+	return (
+		<div className="style-preview__font-options">
+			<Button
+				className={ classnames( 'style-preview__font-option', { 'is-selected': ! selectedFonts } ) }
+				onClick={ () => setFonts( undefined ) }
+			>
+				{ NO__( 'Theme default' ) }
+			</Button>
+			{ fontPairings.map( fontPair => {
+				const isSelected = fontPair === selectedFonts;
+				const {
+					headings: { title: fontHeadings, fontFamily: fontFamilyHeadings },
+					base: { title: fontBase, fontFamily: fontFamilyBase },
+				} = fontPair;
 
-			return (
-				<Button
-					className={ classnames( 'style-preview__font-option', { 'is-selected': isSelected } ) }
-					onClick={ () => onSelect( fonts ) }
-					key={ a + b }
-				>
-					<span style={ { fontFamily: fontFamilyA, fontWeight: 700 } }>{ a }</span>
-					&nbsp;/&nbsp;
-					<span style={ { fontFamily: fontFamilyB } }>{ b }</span>
-				</Button>
-			);
-		} ) }
-	</div>
-);
+				return (
+					<Button
+						className={ classnames( 'style-preview__font-option', { 'is-selected': isSelected } ) }
+						onClick={ () => setFonts( fontPair ) }
+						key={ fontHeadings + fontBase }
+					>
+						<span style={ { fontFamily: fontFamilyHeadings, fontWeight: 700 } }>
+							{ fontHeadings }
+						</span>
+						&nbsp;/&nbsp;
+						<span style={ { fontFamily: fontFamilyBase } }>{ fontBase }</span>
+					</Button>
+				);
+			} ) }
+		</div>
+	);
+};
 
 export default FontSelect;
