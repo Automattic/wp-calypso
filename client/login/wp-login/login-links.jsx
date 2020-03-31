@@ -27,7 +27,6 @@ import { login } from 'lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import { isDomainConnectAuthorizePath } from 'lib/domains/utils';
-import { localizeUrl } from 'lib/i18n-utils';
 
 export class LoginLinks extends React.Component {
 	static propTypes = {
@@ -234,7 +233,10 @@ export class LoginLinks extends React.Component {
 			translate,
 			wccomFrom,
 			isGutenboarding,
+			locale,
 		} = this.props;
+
+		const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
 
 		let signupUrl = config( 'signup_url' );
 		const signupFlow = get( currentQuery, 'signup_flow' );
@@ -290,7 +292,7 @@ export class LoginLinks extends React.Component {
 		}
 
 		if ( isGutenboarding ) {
-			signupUrl = localizeUrl( window.location.origin + '/gutenboarding' );
+			signupUrl = window.location.origin + '/gutenboarding' + langFragment;
 		}
 
 		return (

@@ -389,6 +389,7 @@ class Login extends Component {
 		const {
 			domain,
 			isJetpack,
+			isGutenboarding,
 			privateSite,
 			twoFactorAuthType,
 			twoFactorEnabled,
@@ -397,6 +398,7 @@ class Login extends Component {
 			socialService,
 			socialServiceResponse,
 			disableAutoFocus,
+			locale,
 		} = this.props;
 
 		if ( twoFactorEnabled && twoFactorAuthType === 'webauthn' && this.state.isBrowserSupported ) {
@@ -457,6 +459,8 @@ class Login extends Component {
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
 				isJetpack={ isJetpack }
+				isGutenboarding={ isGutenboarding }
+				locale={ locale }
 			/>
 		);
 	}

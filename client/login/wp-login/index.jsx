@@ -232,6 +232,7 @@ export class Login extends React.Component {
 				domain={ domain }
 				fromSite={ fromSite }
 				footer={ footer }
+				locale={ locale }
 			/>
 		);
 	}
