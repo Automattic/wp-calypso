@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useI18n } from '@automattic/react-i18n';
 import { useHistory } from 'react-router-dom';
@@ -32,7 +32,6 @@ const DesignSelector: React.FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 	const { push } = useHistory();
 	const makePath = usePath();
-	const { siteVertical } = useSelect( select => select( ONBOARD_STORE ).getState() );
 	const { setSelectedDesign, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
 	const handleStartOverButtonClick = () => {
@@ -42,7 +41,6 @@ const DesignSelector: React.FunctionComponent = () => {
 	const getDesignUrl = ( design: Design ) => {
 		const mshotsUrl = 'https://s.wordpress.com/mshots/v1/';
 		const previewUrl = addQueryArgs( design.src, {
-			vertical: siteVertical?.label,
 			font_headings: design.fonts[ 0 ],
 			font_base: design.fonts[ 1 ],
 		} );
