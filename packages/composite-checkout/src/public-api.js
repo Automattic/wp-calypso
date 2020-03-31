@@ -31,7 +31,10 @@ import {
 } from './lib/registry';
 import { createFullCreditsMethod } from './lib/payment-methods/full-credits';
 import { createFreePaymentMethod } from './lib/payment-methods/free-purchase';
-import { createStripeMethod } from './lib/payment-methods/stripe-credit-card-fields';
+import {
+	createStripeMethod,
+	createStripePaymentMethodStore,
+} from './lib/payment-methods/stripe-credit-card-fields';
 import { createApplePayMethod } from './lib/payment-methods/apple-pay';
 import { createPayPalMethod } from './lib/payment-methods/paypal';
 import { createExistingCardMethod } from './lib/payment-methods/existing-credit-card';
@@ -66,6 +69,7 @@ export {
 	createPayPalMethod,
 	createRegistry,
 	createStripeMethod,
+	createStripePaymentMethodStore,
 	defaultRegistry,
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummaryStep,
