@@ -36,7 +36,7 @@
  * External dependencies
  */
 const { po } = require( 'gettext-parser' );
-const { merge, isEmpty } = require( 'lodash' );
+const { merge, isEmpty, forEach } = require( 'lodash' );
 const { relative, sep } = require( 'path' );
 const { existsSync, mkdirSync, writeFileSync } = require( 'fs' );
 
@@ -69,6 +69,66 @@ const DEFAULT_FUNCTIONS_ARGUMENTS_ORDER = {
 	_nx: [ 'msgid_plural', null, 'msgctxt' ],
 	translate: [ 'msgid_plural', 'options_object' ],
 };
+
+/**
+ * Regular expression matching translator comment value.
+ *
+ * @type {RegExp}
+ */
+const REGEXP_TRANSLATOR_COMMENT = /^\s*translators:\s*([\s\S]+)/im;
+
+/**
+ * Returns the extracted comment for a given AST traversal path if one exists.
+ *
+ * @param {object} path              Traversal path.
+ * @param {number} _originalNodeLine Private: In recursion, line number of
+ *                                     the original node passed.
+ *
+ * @returns {?string} Extracted comment.
+ */
+function getExtractedComment( path, _originalNodeLine ) {
+	const { node, parent, parentPath } = path;
+
+	// Assign original node line so we can keep track in recursion whether a
+	// matched comment or parent occurs on the same or previous line
+	if ( ! _originalNodeLine ) {
+		_originalNodeLine = node.loc.start.line;
+	}
+
+	let comment;
+	forEach( node.leadingComments, commentNode => {
+		const { line } = commentNode.loc.end;
+		if ( line < _originalNodeLine - 1 || line > _originalNodeLine ) {
+			return;
+		}
+
+		const match = commentNode.value.match( REGEXP_TRANSLATOR_COMMENT );
+		if ( match ) {
+			// Extract text from matched translator prefix
+			comment = match[ 1 ]
+				.split( '\n' )
+				.map( text => text.trim() )
+				.join( ' ' );
+
+			// False return indicates to Lodash to break iteration
+			return false;
+		}
+	} );
+
+	if ( comment ) {
+		return comment;
+	}
+
+	if ( ! parent || ! parent.loc || ! parentPath ) {
+		return;
+	}
+
+	// Only recurse as long as parent node is on the same or previous line
+	const { line } = parent.loc.start;
+	if ( line >= _originalNodeLine - 1 && line <= _originalNodeLine ) {
+		return getExtractedComment( parentPath, _originalNodeLine );
+	}
+}
 
 /**
  * Given an argument node (or recursed node), attempts to return a string
@@ -199,6 +259,12 @@ module.exports = function() {
 					if ( pluralsMatch ) {
 						nplurals = pluralsMatch[ 1 ];
 					}
+				}
+
+				// If exists, also assign translator comment
+				const translator = getExtractedComment( path );
+				if ( translator ) {
+					translation.comments.extracted = translator;
 				}
 
 				const { filename } = this.file.opts;
