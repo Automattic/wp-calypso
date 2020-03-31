@@ -245,7 +245,6 @@
 	flex-flow: column nowrap;
 	align-items: flex-start;
 	margin-left: 8px;
-	
 
 	@include breakpoint( '>480px' ) {
 		align-items: center;
@@ -265,7 +264,6 @@
 }
 
 .product-card__option-name {
-	flex: 0 0 100%;
 	margin-bottom: 2px;
 	font-size: 14px;
 	font-weight: 700;
