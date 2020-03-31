@@ -34,6 +34,7 @@ interface Props {
 const SignupForm = ( { onRequestClose }: Props ) => {
 	const { __: NO__ } = useI18n();
 	const [ emailVal, setEmailVal ] = useState( '' );
+	const [ passwordVal, setPasswordVal ] = useState( '' );
 	const { createAccount, clearErrors } = useDispatch( USER_STORE );
 	const isFetchingNewUser = useSelect( select => select( USER_STORE ).isFetchingNewUser() );
 	const newUserError = useSelect( select => select( USER_STORE ).getNewUserError() );
@@ -59,7 +60,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 
 		const success = await createAccount( {
 			email: emailVal,
-			is_passwordless: true,
+			password: passwordVal,
 			signup_flow_name: 'gutenboarding',
 			locale: langParam,
 			...( username_hint && {
@@ -87,7 +88,11 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 			case 'email_exists':
 				errorMessage = NO__( 'An account with this email address already exists.' );
 				break;
-
+			case 'password_invalid':
+				errorMessage = NO__(
+					'Your password must be at least six characters long. Strong passwords use upper and lower case letters, numbers, and symbols like ! ” ? $ % ^ & ).'
+				);
+				break;
 			default:
 				errorMessage = NO__(
 					'Sorry, something went wrong when trying to create your account. Please try again.'
@@ -133,6 +138,15 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 							placeholder={ NO__( 'Email address' ) }
 							required
 							autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
+						/>
+
+						<TextControl
+							value={ passwordVal }
+							disabled={ isFetchingNewUser }
+							type="password"
+							onChange={ setPasswordVal }
+							placeholder={ NO__( 'Password' ) }
+							required
 						/>
 
 						{ errorMessage && (
