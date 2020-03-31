@@ -124,7 +124,7 @@ cp -R $CODE/src/shared $TARGET/
 cp -R $CODE/src/components $TARGET/
 
 # Replace text domain
-find $TARGET/blocks/ -name \*.js -or -name \*.php -exec sed "${sedi[@]}" "s/, 'newspack-blocks' )/, 'full-site-editing' )/g" "{}" \;
+find $TARGET/blocks/ \( -name \*.js -or -name \*.php \) -exec sed "${sedi[@]}" "s/, 'newspack-blocks' )/, 'full-site-editing' )/g" "{}" \;
 sed "${sedi[@]}" "s/'newspack-blocks',/'full-site-editing',/g" $TARGET/class-newspack-blocks.php
 
 if [ "$MODE" = "npm" ] ; then
