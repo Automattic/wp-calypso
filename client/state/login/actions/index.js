@@ -1,12 +1,3 @@
-/**
- * Internal dependencies
- */
-import { LOGIN_FORM_UPDATE } from 'state/action-types';
-import 'state/data-layer/wpcom/login-2fa';
-import 'state/data-layer/wpcom/users/auth-options';
-
-import 'state/login/init';
-
 export { loginUser } from 'state/login/actions/login-user';
 export { updateNonce } from 'state/login/actions/update-nonce';
 export { loginUserWithSecurityKey } from 'state/login/actions/login-user-with-security-key';
@@ -22,6 +13,5 @@ export {
 	startPollAppPushAuth,
 	stopPollAppPushAuth,
 } from 'state/login/actions/push';
-export { getAuthAccountType, resetAuthAccountType } from 'state/login/actions/auth-account-type.js';
-
-export const formUpdate = () => ( { type: LOGIN_FORM_UPDATE } );
+export { getAuthAccountType, resetAuthAccountType } from 'state/login/actions/auth-account-type';
+export { formUpdate } from 'state/login/actions/form-update';
