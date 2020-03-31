@@ -90,6 +90,7 @@ export function Gutenboard() {
 						value={ [ onboardingBlock.current ] }
 						settings={ {
 							templateLock: 'all',
+							alignWide: true,
 						} }
 					>
 						<div className="gutenboarding__content edit-post-layout__content">
