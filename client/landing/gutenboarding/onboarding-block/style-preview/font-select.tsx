@@ -51,7 +51,7 @@ const FontSelect: React.FunctionComponent = () => {
 				className={ classnames( 'style-preview__font-option', { 'is-selected': ! selectedFonts } ) }
 				onClick={ () => setFonts( undefined ) }
 			>
-				{ defaultFontOption }
+				<span className="style-preview__font-option-contents">{ defaultFontOption }</span>
 			</Button>
 			{ fontPairings.filter( fontPairingsFilter ).map( fontPair => {
 				const isSelected = fontPair === selectedFonts;
@@ -63,11 +63,13 @@ const FontSelect: React.FunctionComponent = () => {
 						onClick={ () => setFonts( fontPair ) }
 						key={ headings + base }
 					>
-						<span style={ { fontFamily: headings, fontWeight: 700 } }>
-							{ getFontTitle( headings ) }
+						<span className="style-preview__font-option-contents">
+							<span style={ { fontFamily: headings, fontWeight: 700 } }>
+								{ getFontTitle( headings ) }
+							</span>
+							&nbsp;/&nbsp;
+							<span style={ { fontFamily: base } }>{ getFontTitle( base ) }</span>
 						</span>
-						&nbsp;/&nbsp;
-						<span style={ { fontFamily: base } }>{ getFontTitle( base ) }</span>
 					</Button>
 				);
 			} ) }
