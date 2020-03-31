@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 import { isEmpty } from 'lodash';
 
 /**
@@ -26,30 +27,38 @@ const ProductCardOptions = ( {
 	const hideRadios = options.length === 1 && ! forceRadiosEvenIfOnlyOneOption;
 
 	return (
-		<div className="product-card__options">
+		<Fragment>
 			{ ! hideRadios && optionsLabel && (
 				<h4 className="product-card__options-label">{ optionsLabel }</h4>
 			) }
-			{ options.map( option => (
-				<FormLabel key={ `product-option-${ option.slug }` } className="product-card__option">
-					{ ! hideRadios && (
-						<FormRadio
-							checked={ option.slug === selectedSlug }
-							onChange={ () => handleSelect( option.slug ) }
-						/>
-					) }
-					<div className="product-card__option-description">
-						{ ! hideRadios && <div className="product-card__option-name">{ option.title }</div> }
-						<ProductCardPriceGroup
-							billingTimeFrame={ option.billingTimeFrame }
-							currencyCode={ option.currencyCode }
-							discountedPrice={ option.discountedPrice }
-							fullPrice={ option.fullPrice }
-						/>
-					</div>
-				</FormLabel>
-			) ) }
-		</div>
+			<div className="product-card__options">
+				{ options.map( option => (
+					<FormLabel
+						key={ `product-option-${ option.slug }` }
+						className={ classnames( 'product-card__option', {
+							'is-selected': option.slug === selectedSlug,
+						} ) }
+					>
+						{ ! hideRadios && (
+							<FormRadio
+								className="product-card__radio"
+								checked={ option.slug === selectedSlug }
+								onChange={ () => handleSelect( option.slug ) }
+							/>
+						) }
+						<div className="product-card__option-description">
+							{ ! hideRadios && <div className="product-card__option-name">{ option.title }</div> }
+							<ProductCardPriceGroup
+								billingTimeFrame={ option.billingTimeFrame }
+								currencyCode={ option.currencyCode }
+								discountedPrice={ option.discountedPrice }
+								fullPrice={ option.fullPrice }
+							/>
+						</div>
+					</FormLabel>
+				) ) }
+			</div>
+		</Fragment>
 	);
 };
 
