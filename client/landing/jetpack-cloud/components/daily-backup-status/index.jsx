@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
-import { localize } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 
 /**
@@ -53,9 +53,9 @@ class DailyBackupStatus extends Component {
 
 		if ( isToday ) {
 			displayableDate =
-				translate( 'Latest' ) + ': ' + translate( 'Today' ) + ' ' + backupDate.format( 'LT' );
+				translate( 'Latest' ) + ': ' + translate( 'Today' ) + ' ' + backupDate.format( 'H:mm' );
 		} else {
-			displayableDate = backupDate.format( dateFormat + ' LT' );
+			displayableDate = backupDate.format( dateFormat + ' H:mm' );
 		}
 
 		return displayableDate;
@@ -73,16 +73,11 @@ class DailyBackupStatus extends Component {
 					{ translate( 'Latest backup completed:' ) }
 				</div>
 				<div className="daily-backup-status__date">{ displayDate }</div>
-				<Button className="daily-backup-status__download-button" onClick={ this.triggerDownload }>
-					{ translate( 'Download backup' ) }
-				</Button>
-				<Button
-					className="daily-backup-status__restore-button"
-					disabled={ ! allowRestore }
-					onClick={ this.triggerRestore }
-				>
-					{ translate( 'Restore to this point' ) }
-				</Button>
+				<ActionButtons
+					onDownloadClick={ this.triggerDownload }
+					onRestoreClick={ this.triggerRestore }
+					disabledRestore={ ! allowRestore }
+				/>
 			</Fragment>
 		);
 	}
@@ -94,7 +89,7 @@ class DailyBackupStatus extends Component {
 		const backupDate = applySiteOffset( backup.activityTs, { timezone, gmtOffset } );
 
 		const displayDate = backupDate.format( 'L' );
-		const displayTime = backupDate.format( 'LT' );
+		const displayTime = backupDate.format( 'H:mm' );
 
 		return (
 			<Fragment>
@@ -109,12 +104,27 @@ class DailyBackupStatus extends Component {
 						) }
 					</p>
 					<p>
-						{ /* todo: Add the link of the guide: "backups help guide" */ }
 						{ translate(
-							'Check out the backups help guide or contact our support team to resolve the issue. View to get the issue resolved'
+							'Check out the {{a}}backups help guide{{/a}} or contact our support team to resolve the issue. View to get the issue resolved',
+							{
+								components: {
+									a: (
+										<a
+											href="https://jetpack.com/support/backup/"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
 						) }
 					</p>
-					<Button className="daily-backup-status__download-button">
+					<Button
+						className="daily-backup-status__download-button"
+						href="https://jetpack.com/contact-support/"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
 						{ translate( 'Contact support' ) }
 					</Button>
 				</div>
@@ -125,28 +135,20 @@ class DailyBackupStatus extends Component {
 	renderNoBackups() {
 		const { translate } = this.props;
 
+		// todo: remove the mock dates by the real dates
+		const lastBackupAt = 'Yesterday 16:02';
+		const nextBackupAt = 'Today 16:02';
+
 		return (
 			<Fragment>
 				<Gridicon icon="sync" />
 
-				<div className="daily-backup-status__date">Next backup at...</div>
-				{ /* translate( 'This day has no backups.' ) */ }
-				<Button className="daily-backup-status__download-button" disabled={ true }>
-					{ translate( 'Download backup' ) }
-				</Button>
-				<Button className="daily-backup-status__restore-button" disabled={ true }>
-					{ translate( 'Restore to this point' ) }
-				</Button>
+				<div className="daily-backup-status__date">
+					{ translate( 'Backup Scheduled' ) }: { nextBackupAt }
+				</div>
+				<div>{ translate( 'Last daily backup' ) + ` ${ lastBackupAt }` }</div>
 
-				<div>
-					<strong>{ translate( 'Get Real-Time Backups' ) }</strong>
-				</div>
-				<div>
-					{ /* todo: add a link to the page for the upgrade: "Upgrade to real-time backups" */ }
-					{ translate(
-						'Upgrade to real-time backups to have your work saved, in real-time as you make changes.'
-					) }
-				</div>
+				<ActionButtons disabledDownload={ true } disabledRestore={ true } />
 			</Fragment>
 		);
 	}
@@ -167,5 +169,37 @@ class DailyBackupStatus extends Component {
 		return <div className="daily-backup-status">{ this.renderBackupStatus( backup ) }</div>;
 	}
 }
+
+const ActionButtons = ( {
+	disabledDownload,
+	disabledRestore,
+	onDownloadClick,
+	onRestoreClick,
+} ) => {
+	const translate = useTranslate();
+
+	return (
+		<>
+			<Button
+				className="daily-backup-status__download-button"
+				onClick={ onDownloadClick }
+				disabled={ disabledDownload }
+			>
+				{ translate( 'Download backup' ) }
+			</Button>
+			<Button
+				className="daily-backup-status__restore-button"
+				disabled={ disabledRestore }
+				onClick={ onRestoreClick }
+			>
+				{ translate( 'Restore to this point' ) }
+			</Button>
+		</>
+	);
+};
+ActionButtons.defaultProps = {
+	disabledDownload: false,
+	disabledRestore: false,
+};
 
 export default localize( withLocalizedMoment( DailyBackupStatus ) );
