@@ -243,7 +243,7 @@ export function generateFlows( {
 		flows[ 'wp-for-teams' ] = {
 			steps: [ 'team-site', 'user' ],
 			destination: dependencies => `https://${ dependencies.siteSlug }`,
-			description: 'WordPress.com Connect signup flow',
+			description: 'WordPress for Teams signup flow',
 			lastModified: '2020-03-23',
 		};
 	}
