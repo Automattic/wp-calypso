@@ -1,7 +1,8 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import '../../mixins';
 
-$acquire-intent-vertical-transition-duration: 250ms;
+$acquire-intent-vertical-transition-duration: 200ms;
+$acquire-intent-vertical-transition-algorithm: ease-in-out;
 
 .acquire-intent {
 	@include onboarding-font-recoleta;
@@ -16,8 +17,10 @@ $acquire-intent-vertical-transition-duration: 250ms;
 	position: fixed;
 	tab-size: 4;
 	top: 0;
-	transition: color $acquire-intent-vertical-transition-duration ease-in-out,
-		background-color $acquire-intent-vertical-transition-duration ease-in-out;
+	transition: color $acquire-intent-vertical-transition-duration
+			$acquire-intent-vertical-transition-algorithm,
+		background-color $acquire-intent-vertical-transition-duration
+			$acquire-intent-vertical-transition-algorithm;
 	width: 100%;
 }
 
@@ -38,8 +41,9 @@ $acquire-intent-vertical-transition-duration: 250ms;
 	color: var( --mainColor );
 	border-bottom: 3px solid var( --mainColor );
 
-	transition: border-bottom $acquire-intent-vertical-transition-duration ease-in-out,
-		color $acquire-intent-vertical-transition-duration ease-in-out;
+	transition: border-bottom $acquire-intent-vertical-transition-duration
+			$acquire-intent-vertical-transition-algorithm,
+		color $acquire-intent-vertical-transition-duration $acquire-intent-vertical-transition-algorithm;
 
 	&:focus {
 		outline: none;
@@ -62,9 +66,11 @@ $acquire-intent-vertical-transition-duration: 250ms;
 	font-weight: 500;
 	padding: 20px 32px;
 	// @TODO: work out hover-state animations
-	transition: background $acquire-intent-vertical-transition-duration ease-in-out,
-		border-color $acquire-intent-vertical-transition-duration ease-in-out,
-		color $acquire-intent-vertical-transition-duration ease-in-out;
+	transition: background $acquire-intent-vertical-transition-duration
+			$acquire-intent-vertical-transition-algorithm,
+		border-color $acquire-intent-vertical-transition-duration
+			$acquire-intent-vertical-transition-algorithm,
+		color $acquire-intent-vertical-transition-duration $acquire-intent-vertical-transition-algorithm;
 
 	&:active,
 	&:hover,
