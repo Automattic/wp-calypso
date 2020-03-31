@@ -1,7 +1,9 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+
 .onboarding-block {
 	margin: 0 20px;
 
-	@media ( min-width: 600px ) {
+	@include break-small {
 		margin: 0 88px;
 	}
 }

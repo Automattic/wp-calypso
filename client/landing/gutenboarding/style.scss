@@ -30,9 +30,15 @@ $admin-sidebar-width-collapsed: 0;
 // Own/Gutenboarding styles
 @import './variables.scss';
 
+
 .gutenboarding__content-editor {
 	// overrides .edit-post-visual-editor
-	padding-top: $gutenboarding-header-height;
+	padding-top: 0;
+
+	@include break-small {
+		padding-top: $gutenboarding-header-height;
+
+	}
 }
 
 .components-button.is-link {

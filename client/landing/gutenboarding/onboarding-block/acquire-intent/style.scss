@@ -11,19 +11,20 @@ $acquire-intent-vertical-transition-algorithm: ease-in-out;
 	color: var( --mainColor );
 	font-size: 64px;
 	tab-size: 4;
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	min-height: calc( 100vh - #{$gutenboarding-header-height} );
+	padding: 20px;
 	transition: color $acquire-intent-vertical-transition-duration
 			$acquire-intent-vertical-transition-algorithm,
 		background-color $acquire-intent-vertical-transition-duration
 			$acquire-intent-vertical-transition-algorithm;
 
-	@media ( min-width: 600px ) {
+	@include break-small {
 		display: flex;
 		align-items: center;
-		position: absolute;
-		left: 0;
-		top: 0;
-		width: 100%;
-		min-height: calc( 100vh - #{$gutenboarding-header-height} );
 		padding: 0 120px;
 	}
 }
