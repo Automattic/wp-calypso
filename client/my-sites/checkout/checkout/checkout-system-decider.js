@@ -145,11 +145,16 @@ function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, is
 		return false;
 	}
 
-	// If the URL is adding a product, only allow wpcom plans
-	const slugFragmentsToAllow = [ 'personal', 'premium', 'blogger', 'ecommerce', 'business' ];
-	if ( productSlug && ! slugFragmentsToAllow.find( fragment => productSlug === fragment ) ) {
+	// If the URL is adding a product, only allow things already supported
+	const slugsToAllow = [ 'personal', 'premium', 'blogger', 'ecommerce', 'business' ];
+	const slugPrefixesToAllow = [ 'domain-mapping:' ];
+	if (
+		productSlug &&
+		! slugsToAllow.find( slug => productSlug === slug ) &&
+		! slugPrefixesToAllow.find( slugPrefix => productSlug.startsWith( slugPrefix ) )
+	) {
 		debug(
-			'shouldShowCompositeCheckout false because product does not match whitelist',
+			'shouldShowCompositeCheckout false because product does not match list of allowed products',
 			productSlug
 		);
 		return false;
