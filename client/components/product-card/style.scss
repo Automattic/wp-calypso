@@ -188,13 +188,13 @@
 
 // Product options
 .product-card__options {
-	padding: 10px 0 0;
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: space-around; // IE11 fallback.
+	justify-content: space-evenly;
 
-	@include breakpoint( '>960px' ) {
-		display: flex;
+	@include breakpoint( '>480px' ) {
 		flex-flow: row wrap;
-		justify-content: space-around; // IE11 fallback.
-		justify-content: space-evenly;
 	}
 }
 
@@ -211,37 +211,50 @@
 // We need a higher specificity here to override .form-label styles
 .product-card__option.form-label {
 	display: flex;
-	flex-flow: row nowrap;
+	flex: 1;
+	flex-direction: row;
 	align-items: center;
-	margin: 24px 0;
+	margin: 16px 0 8px;
+	padding: 16px;
+	border: 1px solid var( --color-neutral-20 );
+	border-radius: 4px;
+	cursor: pointer;
 
-	@include breakpoint( '>960px' ) {
-		display: flex;
+	@include breakpoint( '>480px' ) {
 		flex-direction: column;
-		align-items: center;
-		min-width: 180px;
-		padding: 16px;
-		margin-bottom: 8px;
-		border: 1px solid var( --color-neutral-20 );
-		border-radius: 4px;
+	}
 
-		&.is-selected {
-			background: var( --color-neutral-0 );
-			border: 1px solid var( --color-primary );
+	&.is-selected {
+		// Matches the feature highlight on the plans tables
+		background-color: rgba( var( --color-primary-rgb ), 0.1 );
+		border-color: var( --color-primary );
+	}
+
+	& + .product-card__option.form-label {
+		margin-top: 0;
+
+		@include breakpoint( '>480px' ) {
+			margin-top: 16px;
+			margin-left: 8px;
 		}
 	}
 }
 
 .product-card__option-description {
 	display: flex;
-	flex-flow: row wrap;
-	flex-grow: 1;
+	flex-flow: column nowrap;
+	align-items: flex-start;
 	margin-left: 8px;
+	
+
+	@include breakpoint( '>480px' ) {
+		align-items: center;
+		margin-top: 6px;
+		margin-left: 0;
+	}
 
 	@include breakpoint( '>960px' ) {
-		flex-flow: column nowrap;
-		align-items: center;
-		margin-left: 0;
+		margin-top: 0;
 	}
 }
 
@@ -252,17 +265,12 @@
 }
 
 .product-card__option-name {
-	flex-grow: 1;
-	margin-right: 10px;
-	font-size: 16px;
+	flex: 0 0 100%;
+	margin-bottom: 2px;
+	font-size: 14px;
 	font-weight: 700;
-
-	@include breakpoint( '>960px' ) {
-		margin-bottom: 2px;
-		flex: 0 0 100%;
-		font-size: 14px;
-		line-height: 20px;
-	}
+	line-height: 20px;
+	text-align: center;
 }
 
 // Action
