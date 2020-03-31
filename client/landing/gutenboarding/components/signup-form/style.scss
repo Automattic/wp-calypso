@@ -41,6 +41,7 @@
 	.signup-form__body {
 		position: relative;
 		padding: 44px 20px 0;
+		text-align: center;
 
 		@include break-mobile {
 			padding: 0 20px 20px;
@@ -50,7 +51,6 @@
 			width: 100%;
 			max-width: 500px;
 			transform: translate( -50%, -50% );
-			text-align: center;
 		}
 	}
 

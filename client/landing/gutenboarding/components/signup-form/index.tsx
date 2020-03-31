@@ -66,6 +66,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 			...( username_hint && {
 				extra: { username_hint },
 			} ),
+			is_passwordless: false,
 		} );
 
 		if ( success ) {
@@ -89,9 +90,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 				errorMessage = NO__( 'An account with this email address already exists.' );
 				break;
 			case 'password_invalid':
-				errorMessage = NO__(
-					'Your password must be at least six characters long. Strong passwords use upper and lower case letters, numbers, and symbols like ! ” ? $ % ^ & ).'
-				);
+				errorMessage = newUserError.message;
 				break;
 			default:
 				errorMessage = NO__(
