@@ -15,9 +15,6 @@ import {
 	LOGIN_AUTH_ACCOUNT_TYPE_RESET,
 	LOGIN_FORM_UPDATE,
 	SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
-	SOCIAL_DISCONNECT_ACCOUNT_REQUEST,
-	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE,
-	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED,
@@ -32,7 +29,6 @@ import {
 	getSMSMessageFromResponse,
 	postLoginRequest,
 } from 'state/login/utils';
-import wpcom from 'lib/wp';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import 'state/data-layer/wpcom/login-2fa';
 import 'state/data-layer/wpcom/users/auth-options';
@@ -48,43 +44,7 @@ export { loginUserWithTwoFactorVerificationCode } from 'state/login/actions/logi
 export { loginSocialUser } from 'state/login/actions/login-social-user';
 export { createSocialUser } from 'state/login/actions/create-social-user';
 export { connectSocialUser } from 'state/login/actions/connect-social-user';
-
-/**
- * Disconnects the current WordPress.com account from a third-party social account (Google ...).
- *
- * @param  {string}   socialService The social service name
- * @returns {Function}               A thunk that can be dispatched
- */
-export const disconnectSocialUser = socialService => dispatch => {
-	dispatch( {
-		type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST,
-		notice: {
-			message: translate( 'Creating your account' ),
-		},
-	} );
-
-	return wpcom
-		.undocumented()
-		.me()
-		.socialDisconnect( socialService )
-		.then(
-			() => {
-				dispatch( {
-					type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS,
-				} );
-			},
-			wpcomError => {
-				const error = getErrorFromWPCOMError( wpcomError );
-
-				dispatch( {
-					type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE,
-					error,
-				} );
-
-				return Promise.reject( error );
-			}
-		);
-};
+export { disconnectSocialUser } from 'state/login/actions/disconnect-social-user';
 
 export const createSocialUserFailed = ( socialInfo, error ) => ( {
 	type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
