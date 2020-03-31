@@ -1,6 +1,8 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import '../../mixins';
 
+$acquire-intent-vertical-transition-duration: 250ms;
+
 .acquire-intent {
 	@include onboarding-font-recoleta;
 	align-items: center;
@@ -14,7 +16,8 @@
 	position: fixed;
 	tab-size: 4;
 	top: 0;
-	transition: color 0.5s ease-in-out 1s, background-color 0.5s ease-in-out 1s;
+	transition: color $acquire-intent-vertical-transition-duration ease-in-out,
+		background-color $acquire-intent-vertical-transition-duration ease-in-out;
 	width: 100%;
 }
 
@@ -35,7 +38,8 @@
 	color: var( --mainColor );
 	border-bottom: 3px solid var( --mainColor );
 
-	transition: border-bottom 0.5s ease-in-out 1s, color 0.5s ease-in-out 1s;
+	transition: border-bottom $acquire-intent-vertical-transition-duration ease-in-out,
+		color $acquire-intent-vertical-transition-duration ease-in-out;
 
 	&:focus {
 		outline: none;
@@ -58,8 +62,9 @@
 	font-weight: 500;
 	padding: 20px 32px;
 	// @TODO: work out hover-state animations
-	transition: background 0.5s ease-in-out 1s, border-color 0.5s ease-in-out 1s,
-		color 0.5s ease-in-out 1s;
+	transition: background $acquire-intent-vertical-transition-duration ease-in-out,
+		border-color $acquire-intent-vertical-transition-duration ease-in-out,
+		color $acquire-intent-vertical-transition-duration ease-in-out;
 
 	&:active,
 	&:hover,
