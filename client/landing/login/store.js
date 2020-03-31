@@ -27,7 +27,7 @@ import oauth2Clients from 'state/oauth2-clients/reducer';
 
 // Legacy reducers
 // The reducers in this list are not modularized, and are always loaded on boot.
-const reducer = combineReducers( {
+const rootReducer = combineReducers( {
 	application,
 	documentHead,
 	httpData,
@@ -48,10 +48,27 @@ const reducer = combineReducers( {
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
+const addReducerEnhancer = nextCreator => ( reducer, initialState ) => {
+	const nextStore = nextCreator( reducer, initialState );
+
+	let currentReducer = reducer;
+	function addReducer( keys, subReducer ) {
+		currentReducer = currentReducer.addReducer( keys, subReducer );
+		this.replaceReducer( currentReducer );
+	}
+
+	function getCurrentReducer() {
+		return currentReducer;
+	}
+
+	return { ...nextStore, addReducer, getCurrentReducer };
+};
+
 export default () =>
 	createStore(
-		reducer,
+		rootReducer,
 		composeEnhancers(
+			addReducerEnhancer,
 			httpDataEnhancer,
 			applyMiddleware( thunkMiddleware, wpcomApiMiddleware, analyticsMiddleware )
 		)
