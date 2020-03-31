@@ -33,7 +33,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 		onContactDetailsChange: PropTypes.func,
 		contactDetailsValidationErrors: PropTypes.object,
 		translate: PropTypes.func.isRequired,
-        updateContactDetailsCache: PropTypes.func.isRequired,
+		updateContactDetailsCache: PropTypes.func.isRequired,
 	};
 
 	constructor( props ) {
@@ -189,7 +189,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 	};
 
 	render() {
-		const { translate, contactDetailsValidationErrors } = this.props;
+		const { translate } = this.props;
 		const { registrantType } = {
 			...defaultValues,
 			...this.props.ccTldDetails,
@@ -199,11 +199,9 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 			this.isTradingNameRequired( registrantType ) && 'tradingName',
 			this.isRegistrationNumberRequired( registrantType ) && 'registrationNumber',
 		] );
-		const relevantErrors = pick(
-			get( contactDetailsValidationErrors, 'extra.uk', {} ),
-			relevantExtraFields
+		const isValid = Object.keys( this.props.contactDetailsValidationErrors?.extra?.uk ?? {} ).every(
+			errorKey => ! relevantExtraFields.includes( errorKey )
 		);
-		const isValid = isEmpty( relevantErrors );
 
 		return (
 			<form className="registrant-extra-info__form">
