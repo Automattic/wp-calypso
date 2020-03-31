@@ -14,7 +14,6 @@ import {
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
 	LOGIN_AUTH_ACCOUNT_TYPE_RESET,
 	LOGIN_FORM_UPDATE,
-	SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED,
@@ -25,7 +24,6 @@ import {
 import { getTwoFactorAuthNonce, getTwoFactorUserId } from 'state/login/selectors';
 import {
 	getErrorFromHTTPError,
-	getErrorFromWPCOMError,
 	getSMSMessageFromResponse,
 	postLoginRequest,
 } from 'state/login/utils';
@@ -45,12 +43,7 @@ export { loginSocialUser } from 'state/login/actions/login-social-user';
 export { createSocialUser } from 'state/login/actions/create-social-user';
 export { connectSocialUser } from 'state/login/actions/connect-social-user';
 export { disconnectSocialUser } from 'state/login/actions/disconnect-social-user';
-
-export const createSocialUserFailed = ( socialInfo, error ) => ( {
-	type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
-	authInfo: socialInfo,
-	error: error.field ? error : getErrorFromWPCOMError( error ),
-} );
+export { createSocialUserFailed } from 'state/login/actions/create-social-user-failed';
 
 /**
  * Sends a two factor authentication recovery code to a user.
