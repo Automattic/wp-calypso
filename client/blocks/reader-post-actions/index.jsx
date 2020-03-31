@@ -12,6 +12,7 @@ import CommentButton from 'blocks/comment-button';
 import LikeButton from 'reader/like-button';
 import ShareButton from 'blocks/reader-share';
 import PostEditButton from 'blocks/post-edit-button';
+import PresenceButton from 'blocks/presence-button';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
 import { shouldShowComments } from 'blocks/comments/helper';
 import { shouldShowLikes } from 'reader/like-helper';
@@ -88,6 +89,17 @@ const ReaderPostActions = props => {
 					<CommentButton
 						key="comment-button"
 						commentCount={ post.discussion.comment_count }
+						onClick={ onCommentClick }
+						tagName="div"
+						size={ iconSize }
+					/>
+				</li>
+			) }
+			{ /*shouldShowPresence( post )*/ true && (
+				<li className="reader-post-actions__item">
+					<PresenceButton
+						key="presence-button"
+						post={ post }
 						onClick={ onCommentClick }
 						tagName="div"
 						size={ iconSize }
