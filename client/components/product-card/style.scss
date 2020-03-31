@@ -121,12 +121,6 @@
 	@include breakpoint( '>960px' ) {
 		font-size: 12px;
 	}
-
-	.is-discounted & {
-		@include breakpoint( '>660px' ) {
-			color: var( --color-success );
-		}
-	}
 }
 
 // Adjust price group styles when part of product card header
@@ -162,16 +156,9 @@
 		}
 	}
 
-	.is-discounted .product-card__billing-timeframe {
-		color: var( --color-success );
-	}
-
-	@include breakpoint( '>960px' ) {
-		.plan-price.is-discounted,
-		.plan-price.is-discounted *,
-		.is-discounted .product-card__billing-timeframe {
-			color: var( --color-text-subtle );
-		}
+	.plan-price.is-discounted,
+	.plan-price.is-discounted .plan-price__currency-symbol {
+		color: var( --color-neutral-70 );
 	}
 }
 
