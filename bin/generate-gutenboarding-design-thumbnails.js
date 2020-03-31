@@ -38,7 +38,7 @@ async function run() {
 				height: 2200,
 				deviceScaleFactor: 1,
 			} );
-			await page.goto( url, { waitUntil: 'networkidle2' } );
+			await page.goto( url, { waitUntil: 'networkidle0' } );
 
 			console.log( `Taking screenshot and saving it to ${ screenshotFile }` );
 			await page.screenshot( {
