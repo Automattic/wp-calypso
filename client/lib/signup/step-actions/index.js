@@ -533,6 +533,43 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 	} );
 }
 
+export function createWpForTeamsSite( callback, dependencies, stepData, reduxStore ) {
+	const { site, siteTitle } = stepData;
+
+	// The new p2 theme for WP for Teams project.
+	// More info: https://wp.me/p9lV3a-1dM-p2
+	const themeSlugWithRepo = 'pub/p2020';
+
+	const data = {
+		blog_name: site,
+		blog_title: siteTitle,
+		public: -1, // wp for teams sites are not supposed to be public
+		options: {
+			theme: themeSlugWithRepo,
+			timezone_string: guessTimezone(),
+			is_wpforteams_site: true,
+		},
+		validate: false,
+	};
+
+	wpcom.undocumented().sitesNew( data, function( errors, response ) {
+		let providedDependencies, siteSlug;
+
+		if ( response && response.blog_details ) {
+			const parsedBlogURL = parseURL( response.blog_details.url );
+			siteSlug = parsedBlogURL.hostname;
+
+			providedDependencies = { siteSlug };
+		}
+
+		if ( user.get() && isEmpty( errors ) ) {
+			fetchSitesAndUser( siteSlug, () => callback( undefined, providedDependencies ), reduxStore );
+		} else {
+			callback( isEmpty( errors ) ? undefined : [ errors ], providedDependencies );
+		}
+	} );
+}
+
 function recordExcludeStepEvent( step, value ) {
 	analytics.tracks.recordEvent( 'calypso_signup_actions_exclude_step', {
 		step,
