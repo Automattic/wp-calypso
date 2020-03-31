@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
@@ -33,6 +32,7 @@ import { isSupportSession } from 'state/support/selectors';
 import getSites from 'state/selectors/get-sites';
 import { isBusinessPlan } from 'lib/plans';
 import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 
 /**
  * Style dependencies
@@ -93,7 +93,7 @@ class NpsSurveyNotice extends Component {
 			this.props.setNpsSurveyDialogShowing( true );
 			this.props.markNpsSurveyShownThisSession();
 
-			analytics.mc.bumpStat( 'calypso_nps_survey', 'notice_displayed' );
+			bumpStat( 'calypso_nps_survey', 'notice_displayed' );
 			analytics.tracks.recordEvent( 'calypso_nps_notice_displayed' );
 		}
 	}

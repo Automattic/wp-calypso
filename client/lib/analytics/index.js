@@ -44,38 +44,9 @@ import {
  * Module variables
  */
 const identifyUserDebug = debug( 'calypso:analytics:identifyUser' );
-const mcDebug = debug( 'calypso:analytics:mc' );
 const gaDebug = debug( 'calypso:analytics:ga' );
 const queueDebug = debug( 'calypso:analytics:queue' );
 const statsdDebug = debug( 'calypso:analytics:statsd' );
-
-function buildQuerystring( group, name ) {
-	let uriComponent = '';
-
-	if ( 'object' === typeof group ) {
-		for ( const key in group ) {
-			uriComponent += '&x_' + encodeURIComponent( key ) + '=' + encodeURIComponent( group[ key ] );
-		}
-	} else {
-		uriComponent = '&x_' + encodeURIComponent( group ) + '=' + encodeURIComponent( name );
-	}
-
-	return uriComponent;
-}
-
-function buildQuerystringNoPrefix( group, name ) {
-	let uriComponent = '';
-
-	if ( 'object' === typeof group ) {
-		for ( const key in group ) {
-			uriComponent += '&' + encodeURIComponent( key ) + '=' + encodeURIComponent( group[ key ] );
-		}
-	} else {
-		uriComponent = '&' + encodeURIComponent( group ) + '=' + encodeURIComponent( name );
-	}
-
-	return uriComponent;
-}
 
 const analytics = {
 	initialize: function( currentUser, superProps ) {
@@ -88,45 +59,6 @@ const analytics = {
 				recordAliasInFloodlight();
 			}
 		} );
-	},
-
-	mc: {
-		bumpStat: function( group, name ) {
-			if ( 'object' === typeof group ) {
-				mcDebug( 'Bumping stats %o', group );
-			} else {
-				mcDebug( 'Bumping stat %s:%s', group, name );
-			}
-
-			if ( config( 'mc_analytics_enabled' ) ) {
-				const uriComponent = buildQuerystring( group, name );
-				new window.Image().src =
-					document.location.protocol +
-					'//pixel.wp.com/g.gif?v=wpcom-no-pv' +
-					uriComponent +
-					'&t=' +
-					Math.random();
-			}
-		},
-
-		bumpStatWithPageView: function( group, name ) {
-			// this function is fairly dangerous, as it bumps page views for wpcom and should only be called in very specific cases.
-			if ( 'object' === typeof group ) {
-				mcDebug( 'Bumping page view with props %o', group );
-			} else {
-				mcDebug( 'Bumping page view %s:%s', group, name );
-			}
-
-			if ( config( 'mc_analytics_enabled' ) ) {
-				const uriComponent = buildQuerystringNoPrefix( group, name );
-				new window.Image().src =
-					document.location.protocol +
-					'//pixel.wp.com/g.gif?v=wpcom' +
-					uriComponent +
-					'&t=' +
-					Math.random();
-			}
-		},
 	},
 
 	// pageView is a wrapper for pageview events across Tracks and GA.
@@ -456,7 +388,6 @@ emitter( analytics );
 
 export default analytics;
 export const ga = analytics.ga;
-export const mc = analytics.mc;
 export const queue = analytics.queue;
 export const tracks = analytics.tracks;
 export const pageView = analytics.pageView;
