@@ -28,6 +28,11 @@ const ZOOM_ON = { transform: 'scale(1.03)' };
 const SHADOW_OFF = { boxShadow: '0 0 0px rgba(0,0,0,.2)' };
 const SHADOW_ON = { boxShadow: '0 0 15px rgba(0,0,0,.2)' };
 
+// We temporarily show pre-generated screenshots until we can generate tall versions dynamically using mshots
+// https://github.com/Automattic/mShots/issues/16
+// https://github.com/Automattic/wp-calypso/issues/40564
+const USE_PRE_GENERATED_PREVIEWS = true;
+
 const DesignSelector: React.FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 	const { push } = useHistory();
@@ -39,6 +44,10 @@ const DesignSelector: React.FunctionComponent = () => {
 	};
 
 	const getDesignUrl = ( design: Design ) => {
+		if ( USE_PRE_GENERATED_PREVIEWS ) {
+			return `/calypso/page-templates/design-screenshots/${ design.slug }_${ design.template }_${ design.theme }.jpg`;
+		}
+
 		const mshotsUrl = 'https://s.wordpress.com/mshots/v1/';
 		const previewUrl = addQueryArgs( design.src, {
 			font_headings: design.fonts[ 0 ],
@@ -46,6 +55,7 @@ const DesignSelector: React.FunctionComponent = () => {
 		} );
 		return mshotsUrl + encodeURIComponent( previewUrl );
 	};
+
 	// Track hover/focus
 	const [ hoverDesign, setHoverDesign ] = React.useState< string >();
 	const [ focusDesign, setFocusDesign ] = React.useState< string >();
