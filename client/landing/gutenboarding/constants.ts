@@ -37,4 +37,4 @@ export const fontPairings = [
 ] as const;
 
 export type FontPair = ValuesType< typeof fontPairings >;
-export type Fonts = FontPair[ keyof FontPair ][ 'fontFamily' ];
+export type Font = FontPair[ keyof FontPair ][ 'fontFamily' ];

@@ -12,9 +12,9 @@ import classNames from 'classnames';
 import { STORE_KEY } from '../../stores/onboard';
 import * as T from './types';
 import { useLangRouteParam } from '../../path';
-import { Fonts } from 'landing/gutenboarding/constants';
 
 type Design = import('../../stores/onboard/types').Design;
+type Font = import('../../constants').Font;
 type SiteVertical = import('../../stores/onboard/types').SiteVertical;
 
 interface Props {
@@ -22,7 +22,7 @@ interface Props {
 }
 const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 	const [ previewHtml, setPreviewHtml ] = React.useState< string >();
-	const [ requestedFonts, setRequestedFonts ] = React.useState< Set< Fonts > >( new Set() );
+	const [ requestedFonts, setRequestedFonts ] = React.useState< Set< Font > >( new Set() );
 
 	const { selectedDesign, selectedFonts, siteVertical, siteTitle } = useSelect( select =>
 		select( STORE_KEY ).getState()
@@ -70,7 +70,7 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 					new Set(
 						[ selectedFonts?.headings.fontFamily, selectedFonts?.base.fontFamily ].filter(
 							Boolean
-						) as Fonts[]
+						) as Font[]
 					)
 				);
 			};
