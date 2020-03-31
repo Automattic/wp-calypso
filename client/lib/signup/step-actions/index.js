@@ -536,7 +536,6 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 
 export function createWpForTeamsSite( callback, dependencies, stepData, reduxStore ) {
 	const { site, siteTitle } = stepData;
-	const state = reduxStore.getState();
 
 	// The new p2 theme for WP for Teams project.
 	// More info: https://wp.me/p9lV3a-1dM-p2
@@ -545,8 +544,12 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 	const data = {
 		blog_name: site,
 		blog_title: siteTitle,
-		public: getNewSitePublicSetting( state ),
-		options: { theme: themeSlugWithRepo, timezone_string: guessTimezone() },
+		public: -1, // wp for teams sites are not supposed to be public
+		options: {
+			theme: themeSlugWithRepo,
+			timezone_string: guessTimezone(),
+			is_wpforteams_site: true,
+		},
 		validate: false,
 	};
 

@@ -36,6 +36,7 @@ const debug = debugFactory( 'calypso:steps:wp-for-teams-site' );
  * Constants
  */
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500;
+const ERROR_CODE_MISSING_SITE_TITLE = 123; // Random number, we don't need it.
 
 /**
  * Module variables
@@ -51,7 +52,7 @@ class WpForTeamsSite extends React.Component {
 
 		let initialState;
 
-		if ( props.step && props.step.form ) {
+		if ( props?.step.form ) {
 			initialState = props.step.form;
 
 			if ( ! isEmpty( props.step.errors ) ) {
@@ -105,7 +106,9 @@ class WpForTeamsSite extends React.Component {
 
 		if ( isEmpty( fields.siteTitle ) ) {
 			messages.siteTitle = {
-				123: this.props.translate( 'Please enter your team or project name.' ),
+				[ ERROR_CODE_MISSING_SITE_TITLE ]: this.props.translate(
+					'Please enter your team or project name.'
+				),
 			};
 		}
 
@@ -156,34 +159,32 @@ class WpForTeamsSite extends React.Component {
 
 		this.setState( { submitting: true } );
 
-		this.formStateController.handleSubmit(
-			function( hasErrors ) {
-				const site = formState.getFieldValue( this.state.form, 'site' );
-				const siteTitle = formState.getFieldValue( this.state.form, 'siteTitle' );
+		this.formStateController.handleSubmit( hasErrors => {
+			const site = formState.getFieldValue( this.state.form, 'site' );
+			const siteTitle = formState.getFieldValue( this.state.form, 'siteTitle' );
 
-				this.setState( { submitting: false } );
+			this.setState( { submitting: false } );
 
-				if ( hasErrors ) {
-					return;
-				}
+			if ( hasErrors ) {
+				return;
+			}
 
-				analytics.tracks.recordEvent( 'calypso_signup_wp_for_teams_site_step_submit', {
-					unique_site_urls_searched: siteUrlsSearched.length,
-					times_validation_failed: timesValidationFailed,
-				} );
+			analytics.tracks.recordEvent( 'calypso_signup_wp_for_teams_site_step_submit', {
+				unique_site_urls_searched: siteUrlsSearched.length,
+				times_validation_failed: timesValidationFailed,
+			} );
 
-				this.resetAnalyticsData();
+			this.resetAnalyticsData();
 
-				this.props.submitSignupStep( {
-					stepName: this.props.stepName,
-					form: this.state.form,
-					site,
-					siteTitle,
-				} );
+			this.props.submitSignupStep( {
+				stepName: this.props.stepName,
+				form: this.state.form,
+				site,
+				siteTitle,
+			} );
 
-				this.props.goToNextStep();
-			}.bind( this )
-		);
+			this.props.goToNextStep();
+		} );
 	};
 
 	handleBlur = () => {
@@ -223,37 +224,34 @@ class WpForTeamsSite extends React.Component {
 			return;
 		}
 
-		return map(
-			messages,
-			function( message, error_code ) {
-				if ( error_code === 'blog_name_reserved' ) {
-					return (
-						<span>
-							<p>
-								{ message }
-								&nbsp;
-								{ this.props.translate(
-									'Is this your username? {{a}}Log in now to claim this site address{{/a}}.',
-									{
-										components: {
-											a: <a href={ link } />,
-										},
-									}
-								) }
-							</p>
-						</span>
-					);
-				}
-				return message;
-			}.bind( this )
-		);
+		return map( messages, ( message, error_code ) => {
+			if ( error_code === 'blog_name_reserved' ) {
+				return (
+					<span>
+						<p>
+							{ message }
+							&nbsp;
+							{ this.props.translate(
+								'Is this your username? {{a}}Log in now to claim this site address{{/a}}.',
+								{
+									components: {
+										a: <a href={ link } />,
+									},
+								}
+							) }
+						</p>
+					</span>
+				);
+			}
+			return message;
+		} );
 	};
 
 	formFields = () => {
 		const fieldDisabled = this.state.submitting;
 
 		return (
-			<React.Fragment>
+			<>
 				<ValidationFieldset
 					errorMessages={ this.getErrorMessagesWithLogin( 'siteTitle' ) }
 					className="wp-for-teams-site__validation-site-title"
@@ -293,7 +291,7 @@ class WpForTeamsSite extends React.Component {
 					/>
 					<span className="wp-for-teams-site__wordpress-domain-suffix">.wordpress.com</span>
 				</ValidationFieldset>
-			</React.Fragment>
+			</>
 		);
 	};
 
