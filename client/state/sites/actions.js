@@ -85,13 +85,13 @@ export function requestSites() {
 		return wpcom
 			.me()
 			.sites( {
-				apiVersion: '1.3',
+				apiVersion: '1.2',
 				site_visibility: 'all',
 				include_domain_only: true,
 				site_activity: 'active',
 				fields: SITE_REQUEST_FIELDS,
 				options: SITE_REQUEST_OPTIONS,
-				filters: config.isEnabled( 'jetpack-cloud' ) ? 'jetpack' : 'jetpack,atomic,wpcom',
+				filters: config.isEnabled( 'jetpack-cloud' ) ? 'jetpack' : '',
 			} )
 			.then( response => {
 				dispatch( receiveSites( response.sites ) );
