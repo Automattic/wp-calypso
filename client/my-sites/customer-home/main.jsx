@@ -89,7 +89,7 @@ const Home = ( {
 					</div>
 				) }
 			</div>
-			<Notices checklistMode={ checklistMode } />
+			{ layout && <Notices cards={ layout.notices } checklistMode={ checklistMode } /> }
 			{ layout && <Upsells cards={ layout.upsells } /> }
 			{ hasChecklistData && layout ? (
 				<div className="customer-home__layout">
