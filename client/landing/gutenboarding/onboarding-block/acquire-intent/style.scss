@@ -19,7 +19,6 @@ $acquire-intent-vertical-transition-algorithm: ease-in-out;
 	@media ( min-width: 600px ) {
 		display: flex;
 		align-items: center;
-		justify-content: center;
 		position: absolute;
 		left: 0;
 		top: 0;
@@ -27,10 +26,6 @@ $acquire-intent-vertical-transition-algorithm: ease-in-out;
 		min-height: calc( 100vh - #{$gutenboarding-header-height} );
 		padding: 0 120px;
 	}
-}
-
-.acquire-intent__questions {
-	max-width: 1200px;
 }
 
 .madlib__input {
