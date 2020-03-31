@@ -15,9 +15,6 @@ import {
 	LOGIN_AUTH_ACCOUNT_TYPE_RESET,
 	LOGIN_FORM_UPDATE,
 	SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
-	SOCIAL_CONNECT_ACCOUNT_REQUEST,
-	SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
-	SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
 	SOCIAL_DISCONNECT_ACCOUNT_REQUEST,
 	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS,
@@ -50,48 +47,7 @@ export { loginUserWithSecurityKey } from 'state/login/actions/login-user-with-se
 export { loginUserWithTwoFactorVerificationCode } from 'state/login/actions/login-user-with-two-factor-verification-code';
 export { loginSocialUser } from 'state/login/actions/login-social-user';
 export { createSocialUser } from 'state/login/actions/create-social-user';
-
-/**
- * Connects the current WordPress.com account with a third-party social account (Google ...).
- *
- * @param  {object}   socialInfo     Object containing { service, access_token, id_token, redirectTo }
- *           {string}   service      The external social service name
- *           {string}   access_token OAuth2 access token provided by the social service
- *           {string}   id_token     JWT ID token such as the one provided by Google OpenID Connect
- * @param  {string}   redirectTo     Url to redirect the user to upon successful login
- * @returns {Function}                A thunk that can be dispatched
- */
-export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
-	dispatch( {
-		type: SOCIAL_CONNECT_ACCOUNT_REQUEST,
-		notice: {
-			message: translate( 'Creating your account' ),
-		},
-	} );
-
-	return wpcom
-		.undocumented()
-		.me()
-		.socialConnect( { ...socialInfo, redirect_to: redirectTo } )
-		.then(
-			wpcomResponse => {
-				dispatch( {
-					type: SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
-					redirect_to: wpcomResponse.redirect_to,
-				} );
-			},
-			wpcomError => {
-				const error = getErrorFromWPCOMError( wpcomError );
-
-				dispatch( {
-					type: SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
-					error,
-				} );
-
-				return Promise.reject( error );
-			}
-		);
-};
+export { connectSocialUser } from 'state/login/actions/connect-social-user';
 
 /**
  * Disconnects the current WordPress.com account from a third-party social account (Google ...).
