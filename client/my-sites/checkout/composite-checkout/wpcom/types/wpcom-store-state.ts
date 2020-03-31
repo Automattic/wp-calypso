@@ -312,7 +312,7 @@ function setManagedContactDetailsErrors(
 ): ManagedContactDetails {
 	return combineManagedContactDetailsShape(
 		( error, detail ) => setErrors( error, detail ),
-		errors => getInitialManagedValue( { errors } ),
+		error => getInitialManagedValue( { errors: error } ),
 		errors,
 		details
 	);
