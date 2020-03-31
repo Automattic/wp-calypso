@@ -26,10 +26,12 @@ const Secondary = ( { cards } ) => {
 	return (
 		<>
 			{ cards &&
-				cards.map( ( card, index ) =>
-					React.createElement( cardComponents[ card ], {
-						key: index,
-					} )
+				cards.map(
+					( card, index ) =>
+						cardComponents[ card ] &&
+						React.createElement( cardComponents[ card ], {
+							key: index,
+						} )
 				) }
 		</>
 	);
