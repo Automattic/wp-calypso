@@ -156,6 +156,10 @@
 		}
 	}
 
+	.plan-price.is-discounted {
+		margin-right: 4px;
+	}
+
 	.plan-price.is-discounted,
 	.plan-price.is-discounted .plan-price__currency-symbol {
 		color: var( --color-neutral-70 );
