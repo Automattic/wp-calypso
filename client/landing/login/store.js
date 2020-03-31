@@ -10,7 +10,7 @@ import thunkMiddleware from 'redux-thunk';
 import wpcomApiMiddleware from 'state/data-layer/wpcom-api-middleware';
 import analyticsMiddleware from 'state/analytics/middleware';
 import { reducer as httpData, enhancer as httpDataEnhancer } from 'state/data-layer/http-data';
-import { combineReducers } from 'state/utils';
+import { combineReducers, addReducerEnhancer } from 'state/utils';
 import application from 'state/application/reducer';
 import documentHead from 'state/document-head/reducer';
 import language from 'state/ui/language/reducer';
@@ -47,22 +47,6 @@ const rootReducer = combineReducers( {
 } );
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
-const addReducerEnhancer = nextCreator => ( reducer, initialState ) => {
-	const nextStore = nextCreator( reducer, initialState );
-
-	let currentReducer = reducer;
-	function addReducer( keys, subReducer ) {
-		currentReducer = currentReducer.addReducer( keys, subReducer );
-		this.replaceReducer( currentReducer );
-	}
-
-	function getCurrentReducer() {
-		return currentReducer;
-	}
-
-	return { ...nextStore, addReducer, getCurrentReducer };
-};
 
 export default () =>
 	createStore(
