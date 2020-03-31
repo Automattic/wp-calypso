@@ -3,7 +3,6 @@
  */
 import { connect } from 'react-redux';
 import { isMobile } from '@automattic/viewport';
-import page from 'page';
 import React, { Component } from 'react';
 import momentDate from 'moment';
 
@@ -61,12 +60,7 @@ class BackupsPage extends Component {
 
 	getDefaultState() {
 		return {
-			selectedDate: new Date(),
-			backupsOnSelectedDate: {
-				lastBackup: null,
-				activities: [],
-				nextBackupAt: null,
-			},
+			selectedDate: null,
 		};
 	}
 
@@ -74,14 +68,6 @@ class BackupsPage extends Component {
 		if ( prevProps.siteId !== this.props.siteId ) {
 			//If we switch the site, reset the current state to default
 			this.resetState();
-		}
-		if ( prevProps.isLoadingBackups && ! this.props.isLoadingBackups ) {
-			const today = applySiteOffset( momentDate(), {
-				timezone: this.props.siteTimezone,
-				gmtOffset: this.props.gmtOffset,
-			} );
-
-			this.setBackupLogsFor( today );
 		}
 	}
 
@@ -91,15 +77,25 @@ class BackupsPage extends Component {
 
 	onDateChange = date => {
 		this.setState( { selectedDate: date } );
-		this.setBackupLogsFor( date );
 	};
 
+	getSelectedDate() {
+		const { siteTimezone, siteGmtOffset, moment } = this.props;
+
+		const today = applySiteOffset( moment(), {
+			timezone: siteTimezone,
+			gmtOffset: siteGmtOffset,
+		} );
+
+		return this.state.selectedDate || today;
+	}
+
 	/**
-	 *  Create a list of backups in the selected date
+	 *  Return an object with the last backup from the date and the rest of the activities
 	 *
 	 * @param date {Date} The current selected date
 	 */
-	setBackupLogsFor = date => {
+	getBackupLogsFor = date => {
 		const { moment } = this.props;
 
 		const index = moment( date ).format( INDEX_FORMAT );
@@ -123,7 +119,7 @@ class BackupsPage extends Component {
 			} );
 		}
 
-		this.setState( { backupsOnSelectedDate } );
+		return backupsOnSelectedDate;
 	};
 
 	isEmptyFilter = filter => {
@@ -159,7 +155,8 @@ class BackupsPage extends Component {
 			siteTimezone,
 			siteGmtOffset,
 		} = this.props;
-		const { selectedDate, backupsOnSelectedDate } = this.state;
+
+		const backupsOnSelectedDate = this.getBackupLogsFor( this.getSelectedDate() );
 
 		const selectedDateString = this.TO_REMOVE_getSelectedDateString();
 
@@ -178,7 +175,7 @@ class BackupsPage extends Component {
 
 				<DatePicker
 					onDateChange={ this.onDateChange }
-					selectedDate={ selectedDate }
+					selectedDate={ this.getSelectedDate() }
 					siteId={ siteId }
 					oldestDateAvailable={ oldestDateAvailable }
 				/>
@@ -303,7 +300,10 @@ class BackupsPage extends Component {
  */
 const createIndexedLog = ( logs, timezone, gmtOffset ) => {
 	const indexedLog = {};
-	let oldestDateAvailable = new Date();
+	let oldestDateAvailable = applySiteOffset( momentDate(), {
+		timezone,
+		gmtOffset,
+	} );
 
 	if ( 'success' === logs.state ) {
 		logs.data.forEach( log => {
@@ -322,7 +322,7 @@ const createIndexedLog = ( logs, timezone, gmtOffset ) => {
 
 				//Check if the backup date is the oldest
 				if ( backupDate < oldestDateAvailable ) {
-					oldestDateAvailable = backupDate.toDate();
+					oldestDateAvailable = backupDate;
 				}
 			}
 
@@ -338,12 +338,6 @@ const createIndexedLog = ( logs, timezone, gmtOffset ) => {
 
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
-
-	//The section require a valid site, if not, redirect to backups
-	if ( false === !! siteId ) {
-		return page.redirect( '/backups' );
-	}
-
 	const filter = getActivityLogFilter( state, siteId );
 	const logs = requestActivityLogs( siteId, filter );
 	const siteGmtOffset = getSiteGmtOffset( state, siteId );

@@ -22,9 +22,9 @@ import './style.scss';
 class DatePicker extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
-		selectedDate: PropTypes.instanceOf( Date ).isRequired,
+		selectedDate: PropTypes.object.isRequired,
 		onDateChange: PropTypes.func.isRequired,
-		oldestDateAvailable: PropTypes.instanceOf( Date ),
+		oldestDateAvailable: PropTypes.object.isRequired,
 	};
 
 	getDisplayDate = ( date, showTodayYesterday = true ) => {
@@ -56,7 +56,7 @@ class DatePicker extends Component {
 
 		const newSelectedDate = moment( selectedDate ).subtract( 1, 'days' );
 
-		onDateChange( newSelectedDate.toDate() );
+		onDateChange( newSelectedDate );
 	};
 
 	goToNextDay = () => {
@@ -67,7 +67,7 @@ class DatePicker extends Component {
 
 		const newSelectedDate = moment( selectedDate ).add( 1, 'days' );
 
-		onDateChange( newSelectedDate.toDate() );
+		onDateChange( newSelectedDate );
 	};
 
 	canGoToPreviousDay = () => {
