@@ -26,9 +26,12 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 	}
 
 	if ( config.isEnabled( 'use-translation-chunks' ) && '__requireChunkCallback__' in window ) {
-		const languagesPath = `${ window.__requireChunkCallback__.getPublicPath() }languages/`;
+		const languageRevisions = window.languageRevisions || {};
+		const languagesPath = `${ window.__requireChunkCallback__.getPublicPath() }languages`;
 		const getTranslationChunkPath = ( chunkId, langSlug = currentUser.localeSlug ) => {
-			return `${ languagesPath }/${ langSlug }/${ chunkId }.json`;
+			const languageRevision = languageRevisions[ langSlug ] || '';
+
+			return `${ languagesPath }/${ langSlug }/${ chunkId }.json?${ languageRevision }`;
 		};
 
 		const loadedTranslationChunks = {};
@@ -44,10 +47,13 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 				.catch( error => error );
 		};
 
+		const languageRevision = languageRevisions[ currentUser.localeSlug ] || '';
 		let translatedChunks; // should we get these bootstrapped on page load, similarly to `languageRevisions`?
 
 		window
-			.fetch( `${ languagesPath }/${ currentUser.localeSlug }/language-manifest.json` )
+			.fetch(
+				`${ languagesPath }/${ currentUser.localeSlug }/language-manifest.json?v=${ languageRevision }`
+			)
 			.then( response => response.json() )
 			.then( data => {
 				translatedChunks = data.translatedChunks;
