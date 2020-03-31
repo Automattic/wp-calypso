@@ -14,7 +14,19 @@ import Gridicon from 'components/gridicon';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import PopoverMenuSeparator from 'components/popover/menu-separator';
-import { isOutsideCalypso } from 'lib/url';
+
+/**
+ * Check if a URL is located outside of Calypso.
+ * Note that the check this function implements is incomplete --
+ * it only returns false for absolute URLs, so it misses
+ * relative URLs, or pure query strings, or hashbangs.
+ *
+ * @param  url URL to check
+ * @returns     true if the given URL is located outside of Calypso
+ */
+function isOutsideCalypso( url ) {
+	return !! url && ( url.startsWith( '//' ) || ! url.startsWith( '/' ) );
+}
 
 class ThemeMoreButton extends Component {
 	state = { showPopover: false };
