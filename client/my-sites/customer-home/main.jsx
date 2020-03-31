@@ -92,7 +92,7 @@ const Home = ( {
 						<Primary cards={ layout.primary } checklistMode={ checklistMode } />
 					</div>
 					<div className="customer-home__layout-col customer-home__layout-col-right">
-						<Secondary />
+						<Secondary cards={ layout.secondary } />
 					</div>
 				</div>
 			) : (
