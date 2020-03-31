@@ -180,7 +180,11 @@ class JetpackCloudSidebar extends Component {
 							label={ translate( 'Manage site', {
 								comment: 'Jetpack Cloud sidebar navigation item',
 							} ) }
-							link="https://wordpress.com/stats" // @todo: Confirm a correct link is used here
+							link={
+								selectedSiteSlug
+									? `https://wordpress.com/home/${ selectedSiteSlug }`
+									: 'https://wordpress.com/stats'
+							}
 							materialIcon="arrow_back"
 							materialIconStyle="filled"
 						/>
