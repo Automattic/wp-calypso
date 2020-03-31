@@ -1,5 +1,8 @@
 @import 'jetpack-connect/colors.scss';
 @import 'woocommerce/components/text-control/style.scss';
+@import 'landing/gutenboarding/mixins.scss';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
 
 @font-face {
 	font-display: swap;
@@ -347,7 +350,11 @@ $image-height: 47px;
 	background-color: #fff;
 
 	.login__form-header {
-		font-family: Recoleta;
+		@include onboarding-heading-text-mobile;
+
+		@include break-mobile {
+			@include onboarding-heading-text;
+		}
 	}
 
 	.wp-login__container .card {

@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .layout:not( .is-jetpack-woocommerce-flow ):not( .is-wccom-oauth-flow ) {
 	.login.is-jetpack {
 		.button.is-primary {
@@ -237,12 +240,8 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	border-bottom: 1px solid transparent;
-}
 
-// Manual breakpoint in order to match the Gutenboarding breakpoint perfectly
-@media ( min-width: 600px ) {
-	.login__form-gutenboarding-wordpress-logo {
+	@include break-mobile {
 		padding: 8px 24px;
 	}
 }
