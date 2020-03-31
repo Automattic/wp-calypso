@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { get } from 'lodash';
+import { get as webauthn_auth } from '@github/webauthn-json';
 
 /**
  * Internal dependencies
@@ -14,8 +15,6 @@ import {
 } from 'state/action-types';
 import { getTwoFactorAuthNonce, getTwoFactorUserId } from 'state/login/selectors';
 import { getErrorFromHTTPError, postLoginRequest } from 'state/login/utils';
-import 'state/data-layer/wpcom/users/auth-options';
-import { get as webauthn_auth } from '@github/webauthn-json';
 
 import { remoteLoginUser } from 'state/login/actions/remote-login-user';
 import { updateNonce } from 'state/login/actions/update-nonce';

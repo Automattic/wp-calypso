@@ -18,7 +18,6 @@ import {
 	getSMSMessageFromResponse,
 	postLoginRequest,
 } from 'state/login/utils';
-import 'state/data-layer/wpcom/users/auth-options';
 
 import { remoteLoginUser } from 'state/login/actions/remote-login-user';
 
