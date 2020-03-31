@@ -353,4 +353,11 @@ $image-height: 47px;
 	.wp-login__container .card {
 		box-shadow: none;
 	}
+
+	.login .button.is-primary {
+		// Match primary button color in Gutenboarding and
+		// change border color to remove 3D effect
+		background-color: #007cba;
+		border-color: #007cba;
+	}
 }
