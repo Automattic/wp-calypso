@@ -225,6 +225,7 @@ export class Login extends React.Component {
 				privateSite={ privateSite }
 				clientId={ clientId }
 				isJetpack={ isJetpack }
+				isGutenboarding={ isGutenboarding }
 				oauth2Client={ oauth2Client }
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }

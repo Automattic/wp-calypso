@@ -226,3 +226,23 @@
 		margin-top: 20px;
 	}
 }
+
+.login__form-gutenboarding-wordpress-logo {
+	height: 64px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	padding: 0 16px;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border-bottom: 1px solid transparent;
+}
+
+// Manual breakpoint in order to match the Gutenboarding breakpoint perfectly
+@media ( min-width: 600px ) {
+	.login__form-gutenboarding-wordpress-logo {
+		padding: 8px 24px;
+	}
+}
