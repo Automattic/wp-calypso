@@ -9,6 +9,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
+import config from 'config';
 import {
 	SITE_DELETE,
 	SITE_DELETE_FAILURE,
@@ -84,12 +85,13 @@ export function requestSites() {
 		return wpcom
 			.me()
 			.sites( {
-				apiVersion: '1.2',
+				apiVersion: '1.3',
 				site_visibility: 'all',
 				include_domain_only: true,
 				site_activity: 'active',
 				fields: SITE_REQUEST_FIELDS,
 				options: SITE_REQUEST_OPTIONS,
+				filters: config.isEnabled( 'jetpack-cloud' ) ? 'jetpack' : 'jetpack,atomic,wpcom',
 			} )
 			.then( response => {
 				dispatch( receiveSites( response.sites ) );
