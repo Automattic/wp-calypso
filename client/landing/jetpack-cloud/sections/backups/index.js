@@ -20,8 +20,6 @@ import { backupsMain, backupsRestore, backupsDownload, backupsDetail } from './p
 
 export default function() {
 	if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
-		page( backupsMain(), siteSelection, sites, makeLayout, clientRender );
-		page( backupsMain( ':site' ), siteSelection, navigation, backups, makeLayout, clientRender );
 		page(
 			backupsDetail( ':site', ':backupId' ),
 			siteSelection,
@@ -49,5 +47,8 @@ export default function() {
 				clientRender
 			);
 		}
+
+		page( backupsMain( ':site' ), siteSelection, navigation, backups, makeLayout, clientRender );
+		page( backupsMain(), siteSelection, sites, makeLayout, clientRender );
 	}
 }
