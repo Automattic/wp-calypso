@@ -48,7 +48,7 @@ import initialReducer from 'state/reducer';
 import { getInitialState, persistOnChange, loadAllState } from 'state/initial-state';
 import detectHistoryNavigation from 'lib/detect-history-navigation';
 import userFactory from 'lib/user';
-import { getUrlParts } from 'lib/url/url-parts';
+import { getUrlParts, isOutsideCalypso } from 'lib/url';
 import { setStore } from 'state/redux-store';
 
 const debug = debugFactory( 'calypso' );
@@ -95,12 +95,7 @@ const setupContextMiddleware = reduxStore => {
 
 		// Some paths live outside of Calypso and should be opened separately
 		// Examples: /support, /forums
-		if (
-			/^\/support($|\/)/i.test( context.pathname ) || // /support or /support/*
-			/^\/([a-z]{2}|[a-z]{2}-[a-z]{2})\/support($|\/)/i.test( context.pathname ) || // /en/support or /pt-br/support/*, etc
-			/^\/forums($|\/)/i.test( context.pathname ) || // /forums or /forums/*
-			/^\/([a-z]{2}|[a-z]{2}-[a-z]{2})\/forums($|\/)/i.test( context.pathname ) // /en/forums or /pt-br/forums/*, etc
-		) {
+		if ( isOutsideCalypso( context.pathname ) ) {
 			window.location.href = context.pathname;
 			return;
 		}
