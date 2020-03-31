@@ -26,6 +26,7 @@ import { getStatusForPlugin } from 'state/plugins/installed/selectors';
 import { errorNotice, infoNotice, successNotice } from 'state/notices/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { navigate } from 'state/ui/actions';
+import { decodeEntities } from 'lib/formatting';
 
 /**
  * Style dependencies
@@ -238,7 +239,7 @@ class ActivityLogTasklist extends Component {
 
 		showInfoNotice(
 			translate( 'Updating %(item)s on %(siteName)s.', {
-				args: { item: item.name, siteName },
+				args: { item: decodeEntities( item.name ), siteName },
 			} ),
 			{
 				id: `alitemupdate-${ item.slug }`,
@@ -293,7 +294,7 @@ class ActivityLogTasklist extends Component {
 			}
 
 			const noticeArgs = {
-				args: { item: name, siteName },
+				args: { item: decodeEntities( name ), siteName },
 			};
 
 			switch ( updateStatus.status ) {
@@ -432,9 +433,9 @@ class ActivityLogTasklist extends Component {
  * Normalizes the state result so it's the same than plugins.
  * This normalization allows to reuse methods for plugins, themes, and core.
  *
- * @param {string} state            Current state of update progress.
- * @param {bool}   isUpdateComplete If update actually produced what is expected to be after a successful update.
- *                                  In themes, the 'update' prop of the theme object is nullified when an update is succesful.
+ * @param {string}  state            Current state of update progress.
+ * @param {boolean} isUpdateComplete If update actually produced what is expected to be after a successful update.
+ *                                   In themes, the 'update' prop of the theme object is nullified when an update is succesful.
  *
  * @returns {boolean|object} False is update hasn't started. One of 'inProgress', 'error', 'completed', when
  * the update is running, failed, or was successfully completed, respectively.
@@ -473,6 +474,7 @@ const getStatusForTheme = ( siteId, themeId ) => {
 
 /**
  * Get data about the status of a core update.
+ *
  * @param {number} siteId      Site Id.
  * @param {string} coreVersion Version of core that the WP installation will be updated to.
  * @returns {boolean|object}      False is update hasn't started. One of 'inProgress', 'error', 'completed', when
@@ -497,6 +499,7 @@ const getStatusForCore = ( siteId, coreVersion ) => {
 		state: PropTypes.oneOf( [ 'uninitialized', 'failure', 'success', 'pending' ] ),
 		error: PropTypes.object,
 	} )
+ *
  * @param {Array}  itemList Collection of plugins/themes that will be updated.
  * @param {number} siteId   ID of the site where the plugin/theme is installed.
  * @param {object} state    App state tree.
