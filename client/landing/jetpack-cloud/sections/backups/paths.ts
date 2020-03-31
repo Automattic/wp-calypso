@@ -1,7 +1,7 @@
-export const backupsMain = ( siteName?: string ) =>
+export const backupsMain = ( siteName?: string | null ) =>
 	undefined === siteName ? '/backups' : `/backups/${ siteName }`;
 
-const backupsSubSection = ( siteName: string, subSection: string, subSectionId?: string ) =>
+const backupsSubSection = ( siteName: string, subSection: string, subSectionId?: string | null ) =>
 	subSectionId
 		? `/backups/${ siteName }/${ subSection }/${ subSectionId }`
 		: `/backups/${ siteName }/${ subSection }`;

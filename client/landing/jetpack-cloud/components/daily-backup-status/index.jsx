@@ -11,11 +11,11 @@ import page from 'page';
 import { withLocalizedMoment } from 'components/localized-moment';
 import Gridicon from 'components/gridicon';
 import Button from 'components/forms/form-button';
+import { isSuccessfulBackup } from 'landing/jetpack-cloud/sections/backups/utils';
 import {
-	isSuccessfulBackup,
-	getRestorePath,
-	getDownloadPath,
-} from 'landing/jetpack-cloud/sections/backups/utils';
+	/*backupsDetail,*/ backupsDownload,
+	backupsRestore,
+} from 'landing/jetpack-cloud/sections/backups/paths';
 import { applySiteOffset } from 'lib/site/timezone';
 
 /**
@@ -25,15 +25,15 @@ import './style.scss';
 
 class DailyBackupStatus extends Component {
 	triggerRestore = () => {
-		page.redirect( getRestorePath( this.props.siteSlug, this.props.backup.rewindId ) );
+		page.redirect( backupsRestore( this.props.siteSlug, this.props.backup.rewindId ) );
 	};
 
 	triggerDownload = () => {
-		page.redirect( getDownloadPath( this.props.siteSlug, this.props.backup.rewindId ) );
+		page.redirect( backupsDownload( this.props.siteSlug, this.props.backup.rewindId ) );
 	};
 
 	goToDetailsPage() {
-		//page.redirect( '/backups/' + this.props.siteSlug + '/detail/' + this.props.backup.rewindId );
+		//page.redirect( backupsDetail( this.props.siteSlug, this.props.backup.rewindId ) );
 	}
 
 	getDisplayDate = date => {

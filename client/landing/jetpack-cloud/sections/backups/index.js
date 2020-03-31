@@ -16,13 +16,14 @@ import {
 	backupDownload,
 	backupRestore,
 } from 'landing/jetpack-cloud/sections/backups/controller';
+import { backupsMain, backupsRestore, backupsDownload, backupsDetail } from './paths';
 
 export default function() {
 	if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
-		page( '/backups', siteSelection, sites, navigation, makeLayout, clientRender );
-		page( '/backups/:site', siteSelection, navigation, backups, makeLayout, clientRender );
+		page( backupsMain(), siteSelection, sites, makeLayout, clientRender );
+		page( backupsMain( ':site' ), siteSelection, navigation, backups, makeLayout, clientRender );
 		page(
-			'/backups/:site/detail',
+			backupsDetail( ':site', ':backupId' ),
 			siteSelection,
 			navigation,
 			backupDetail,
@@ -30,15 +31,7 @@ export default function() {
 			clientRender
 		);
 		page(
-			'/backups/:site/detail/:backupId',
-			siteSelection,
-			navigation,
-			backupDetail,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/backups/:site/download/:rewindId',
+			backupsDownload( ':site', ':rewindId' ),
 			siteSelection,
 			navigation,
 			backupDownload,
@@ -47,17 +40,8 @@ export default function() {
 		);
 
 		if ( config.isEnabled( 'jetpack-cloud/backups-restore' ) ) {
-			page( '/backups/restore', siteSelection, sites, navigation, makeLayout, clientRender );
 			page(
-				'/backups/:site/restore',
-				siteSelection,
-				navigation,
-				backupRestore,
-				makeLayout,
-				clientRender
-			);
-			page(
-				'/backups/:site/restore/:rewindId',
+				backupsRestore( ':site', ':rewindId' ),
 				siteSelection,
 				navigation,
 				backupRestore,
