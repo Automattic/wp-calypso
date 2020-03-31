@@ -61,6 +61,7 @@
 		"jetpack/connect/remote-install": true,
 		"jetpack/connect/woocommerce": true,
 		"jetpack/happychat": true,
+		"jetpack/search-product": true,
 		"jitms": true,
 		"legal-updates-banner": false,
 		"login/magic-login": true,
