@@ -9,7 +9,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { fontPairings } from '../../constants';
+import { fontPairings, getFontTitle } from '../../constants';
 import { STORE_KEY } from '../../stores/onboard';
 import { useI18n } from '@automattic/react-i18n';
 
@@ -27,22 +27,19 @@ const FontSelect: React.FunctionComponent = () => {
 			</Button>
 			{ fontPairings.map( fontPair => {
 				const isSelected = fontPair === selectedFonts;
-				const {
-					headings: { title: fontHeadings, fontFamily: fontFamilyHeadings },
-					base: { title: fontBase, fontFamily: fontFamilyBase },
-				} = fontPair;
+				const { headings, base } = fontPair;
 
 				return (
 					<Button
 						className={ classnames( 'style-preview__font-option', { 'is-selected': isSelected } ) }
 						onClick={ () => setFonts( fontPair ) }
-						key={ fontHeadings + fontBase }
+						key={ headings + base }
 					>
-						<span style={ { fontFamily: fontFamilyHeadings, fontWeight: 700 } }>
-							{ fontHeadings }
+						<span style={ { fontFamily: headings, fontWeight: 700 } }>
+							{ getFontTitle( headings ) }
 						</span>
 						&nbsp;/&nbsp;
-						<span style={ { fontFamily: fontFamilyBase } }>{ fontBase }</span>
+						<span style={ { fontFamily: base } }>{ getFontTitle( base ) }</span>
 					</Button>
 				);
 			} ) }

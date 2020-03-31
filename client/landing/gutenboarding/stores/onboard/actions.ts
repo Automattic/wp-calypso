@@ -90,8 +90,8 @@ export function* createSite(
 			timezone_string: guessTimezone(),
 			template: selectedDesign?.slug || 'twentytwenty',
 			...( selectedFonts && {
-				font_base: selectedFonts.base.fontFamily,
-				font_headings: selectedFonts.headings.fontFamily,
+				font_base: selectedFonts.base,
+				font_headings: selectedFonts.headings,
 			} ),
 		},
 		...( bearerToken && { authToken: bearerToken } ),

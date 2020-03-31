@@ -43,8 +43,8 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 				const url = addQueryArgs( templateUrl, {
 					language: language,
 					vertical: siteVertical?.label,
-					font_headings: selectedFonts?.headings.fontFamily,
-					font_base: selectedFonts?.base.fontFamily,
+					font_headings: selectedFonts?.headings,
+					font_base: selectedFonts?.base,
 					site_title: siteTitle,
 				} );
 				let resp;
@@ -67,11 +67,7 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 				const html = await resp.text();
 				setPreviewHtml( html );
 				setRequestedFonts(
-					new Set(
-						[ selectedFonts?.headings.fontFamily, selectedFonts?.base.fontFamily ].filter(
-							Boolean
-						) as Font[]
-					)
+					new Set( [ selectedFonts?.headings, selectedFonts?.base ].filter( Boolean ) as Font[] )
 				);
 			};
 			eff();
@@ -96,10 +92,7 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 		if ( iframeWindow?.document.body ) {
 			const iframeDocument = iframeWindow.document;
 			if ( selectedFonts ) {
-				const {
-					headings: { fontFamily: headings },
-					base: { fontFamily: base },
-				} = selectedFonts;
+				const { headings, base } = selectedFonts;
 
 				const baseURL = 'https://fonts.googleapis.com/css2';
 
