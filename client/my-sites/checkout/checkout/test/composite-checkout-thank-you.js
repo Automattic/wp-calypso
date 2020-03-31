@@ -1,4 +1,10 @@
 /**
+ * This is required to prevent "ReferenceError: window is not defined"
+ *
+ * @jest-environment jsdom
+ */
+
+/**
  * Internal dependencies
  */
 import { getThankYouPageUrl } from '../composite-checkout-thank-you';
