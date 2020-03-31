@@ -12,7 +12,7 @@ import { Spring, animated } from 'react-spring/renderprops';
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import designs from './available-designs.json';
+import designs from '../../available-designs.json';
 import { usePath, Step } from '../../path';
 import { isEnabled } from '../../../../config';
 import Link from '../../components/link';

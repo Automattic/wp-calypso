@@ -13,28 +13,41 @@ import { ValuesType } from 'utility-types';
  */
 export const selectorDebounce = 300;
 
+const fontTitles: Partial< Record< Font, string > > = {
+	'Playfair Display': 'Playfair',
+};
+
+export function getFontTitle( fontFamily: string ): string {
+	return fontTitles[ fontFamily as Font ] ?? fontFamily;
+}
+
+/**
+ * Pairings of fontFamilies
+ *
+ * To get the name of the font for display, use `getFontTitle( fontName )`.
+ */
 export const fontPairings = [
 	{
-		headings: { title: 'Cabin', fontFamily: 'Cabin' },
-		base: { title: 'Raleway', fontFamily: 'Raleway' },
+		headings: 'Cabin',
+		base: 'Raleway',
 	},
 	{
-		headings: { title: 'Chivo', fontFamily: 'Chivo' },
-		base: { title: 'Open Sans', fontFamily: 'Open Sans' },
+		headings: 'Chivo',
+		base: 'Open Sans',
 	},
 	{
-		headings: { title: 'Playfair', fontFamily: 'Playfair Display' },
-		base: { title: 'Fira Sans', fontFamily: 'Fira Sans' },
+		headings: 'Playfair Display',
+		base: 'Fira Sans',
 	},
 	{
-		headings: { title: 'Arvo', fontFamily: 'Arvo' },
-		base: { title: 'Montserrat', fontFamily: 'Montserrat' },
+		headings: 'Arvo',
+		base: 'Montserrat',
 	},
 	{
-		headings: { title: 'Space Mono', fontFamily: 'Space Mono' },
-		base: { title: 'Roboto', fontFamily: 'Roboto' },
+		headings: 'Space Mono',
+		base: 'Roboto',
 	},
 ] as const;
 
 export type FontPair = ValuesType< typeof fontPairings >;
-export type Font = FontPair[ keyof FontPair ][ 'fontFamily' ];
+export type Font = FontPair[ keyof FontPair ];
