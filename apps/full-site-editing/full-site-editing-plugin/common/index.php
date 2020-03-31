@@ -25,6 +25,12 @@ function is_block_editor_screen() {
  */
 function admin_body_classes( $classes ) {
 	global $post;
+
+	// Handle the case where we are not rendering a post.
+	if ( ! isset( $post ) ) {
+		return $classes;
+	}
+
 	$hide_homepage_title = (bool) get_theme_mod( 'hide_front_page_title', false );
 	$is_homepage         = ( (int) get_option( 'page_on_front' ) === $post->ID );
 
