@@ -122,7 +122,6 @@ class ProductPlanOverlapNotices extends Component {
 				{ 0 !== overlappingProductSlugs.length && (
 					<Notice
 						showDismiss={ false }
-						status="is-warning"
 						text={ translate(
 							'Your %(planName)s Plan includes:' +
 								'{{list/}}' +
