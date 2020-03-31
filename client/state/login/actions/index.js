@@ -14,9 +14,7 @@ import {
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
 	LOGIN_AUTH_ACCOUNT_TYPE_RESET,
 	LOGIN_FORM_UPDATE,
-	SOCIAL_CREATE_ACCOUNT_REQUEST,
 	SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
-	SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
@@ -51,49 +49,7 @@ export { updateNonce } from 'state/login/actions/update-nonce';
 export { loginUserWithSecurityKey } from 'state/login/actions/login-user-with-security-key';
 export { loginUserWithTwoFactorVerificationCode } from 'state/login/actions/login-user-with-two-factor-verification-code';
 export { loginSocialUser } from 'state/login/actions/login-social-user';
-
-/**
- * Creates a WordPress.com account from a third-party social account (Google ...).
- *
- * @param  {object}   socialInfo     Object containing { service, access_token, id_token }
- *           {string}   service      The external social service name
- *           {string}   access_token OAuth2 access token provided by the social service
- *           {string}   id_token     JWT ID token such as the one provided by Google OpenID Connect
- * @param  {string}   flowName       The name of the current signup flow
- * @returns {Function}                A thunk that can be dispatched
- */
-export const createSocialUser = ( socialInfo, flowName ) => dispatch => {
-	dispatch( {
-		type: SOCIAL_CREATE_ACCOUNT_REQUEST,
-		notice: {
-			message: translate( 'Creating your account' ),
-		},
-	} );
-
-	return wpcom
-		.undocumented()
-		.usersSocialNew( { ...socialInfo, signup_flow_name: flowName } )
-		.then(
-			wpcomResponse => {
-				const data = {
-					username: wpcomResponse.username,
-					bearerToken: wpcomResponse.bearer_token,
-				};
-				dispatch( { type: SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS, data } );
-				return data;
-			},
-			wpcomError => {
-				const error = getErrorFromWPCOMError( wpcomError );
-
-				dispatch( {
-					type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
-					error,
-				} );
-
-				return Promise.reject( error );
-			}
-		);
-};
+export { createSocialUser } from 'state/login/actions/create-social-user';
 
 /**
  * Connects the current WordPress.com account with a third-party social account (Google ...).
