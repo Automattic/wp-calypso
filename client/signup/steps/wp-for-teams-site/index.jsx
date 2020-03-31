@@ -52,7 +52,7 @@ class WpForTeamsSite extends React.Component {
 
 		let initialState;
 
-		if ( props?.step.form ) {
+		if ( props?.step?.form ) {
 			initialState = props.step.form;
 
 			if ( ! isEmpty( props.step.errors ) ) {
