@@ -25,28 +25,29 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		reduxStore.dispatch( setLocale( currentUser.localeSlug, currentUser.localeVariant ) );
 	}
 
-	const getTranslationChunkPath = ( chunkId, langSlug = currentUser.localeSlug ) => {
-		return `/calypso/evergreen/languages/${ langSlug }/${ chunkId }.json`;
-	};
-
-	const loadedTranslationChunks = {};
-	const fetchTranslationChunk = translationChunkPath => {
-		return window
-			.fetch( translationChunkPath )
-			.then( response => response.json() )
-			.then( data => {
-				i18n.addTranslations( data );
-				loadedTranslationChunks[ translationChunkPath ] = true;
-				return;
-			} )
-			.catch( error => error );
-	};
-
 	if ( config.isEnabled( 'use-translation-chunks' ) && '__requireChunkCallback__' in window ) {
+		const languagesPath = `${ window.__requireChunkCallback__.getPublicPath() }languages/`;
+		const getTranslationChunkPath = ( chunkId, langSlug = currentUser.localeSlug ) => {
+			return `${ languagesPath }/${ langSlug }/${ chunkId }.json`;
+		};
+
+		const loadedTranslationChunks = {};
+		const fetchTranslationChunk = translationChunkPath => {
+			return window
+				.fetch( translationChunkPath )
+				.then( response => response.json() )
+				.then( data => {
+					i18n.addTranslations( data );
+					loadedTranslationChunks[ translationChunkPath ] = true;
+					return;
+				} )
+				.catch( error => error );
+		};
+
 		let translatedChunks; // should we get these bootstrapped on page load, similarly to `languageRevisions`?
 
 		window
-			.fetch( `/calypso/evergreen/languages/${ currentUser.localeSlug }/language-manifest.json` )
+			.fetch( `${ languagesPath }/${ currentUser.localeSlug }/language-manifest.json` )
 			.then( response => response.json() )
 			.then( data => {
 				translatedChunks = data.translatedChunks;

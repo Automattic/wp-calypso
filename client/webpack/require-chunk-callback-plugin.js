@@ -56,6 +56,10 @@ class RequireChunkCallbackPlugin {
 							} );
 						};
 
+						RequireChunkCallback.prototype.getPublicPath = function() {
+							return __webpack_require__.p;
+						};
+
 						var requireChunkCallback = new RequireChunkCallback();
 
 						window.__requireChunkCallback__ = requireChunkCallback;
