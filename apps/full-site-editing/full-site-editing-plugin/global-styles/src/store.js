@@ -43,7 +43,6 @@ const actions = {
  * Selectors under `wp.data.select( STORE_NAME )`:
  *
  * - getOption( String optionName )
- * - getOptions()
  * - hasLocalChanges()
  *
  * Actions under `wp.data.dispatch( STORE_NAME )`:
@@ -76,9 +75,6 @@ export default ( storeName, optionsPath ) => {
 		selectors: {
 			getOption( state, key ) {
 				return state ? state[ key ] : undefined;
-			},
-			getOptions( state ) {
-				return state;
 			},
 			hasLocalChanges( state ) {
 				return !! state && Object.keys( cache ).some( key => cache[ key ] !== state[ key ] );

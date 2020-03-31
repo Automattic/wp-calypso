@@ -10,40 +10,38 @@ import { isEmpty, isEqual } from 'lodash';
  *
  * @param {string[]} options A list of option names to keep track of.
  * @param {Function} getOptionValue A function that given an option name as a string, returns the current option value.
- * @param {Function} getOptions A function that when called returns an object representing the current options.
  */
-export default ( options, getOptionValue, getOptions ) => {
+export default ( options, getOptionValue ) => {
 	domReady( () => {
-		const current = {};
-		const cssVariables = {};
-		let previousOptions = {};
+		// Create style node.
 		const styleElement = document.createElement( 'style' );
 		document.body.appendChild( styleElement );
+
+		// Book-keeping.
+		const currentOptions = {};
+		let previousOptions = {};
+		const cssVariables = {};
 		options.forEach( option => {
-			current[ option ] = null;
 			cssVariables[ option ] = `--${ option.replace( '_', '-' ) }`;
 		} );
 
 		subscribe( () => {
-			let styleProps = '';
-			const currentOptions = getOptions();
+			// Maybe bail-out early.
+			options.forEach( option => {
+				currentOptions[ option ] = getOptionValue( option );
+			} );
 			if ( isEmpty( currentOptions ) || isEqual( currentOptions, previousOptions ) ) {
 				return;
 			}
 			previousOptions = { ...currentOptions };
 
-			Object.keys( current ).forEach( key => {
-				const value = getOptionValue( key );
-				if ( ! isEmpty( value ) ) {
-					current[ key ] = value;
-					styleProps += `${ cssVariables[ key ] }:${ value };`;
-				}
-			} );
-			// We need this to be a stylesheet rather than inline styles
+			// Update style node. We need this to be a stylesheet rather than inline styles
 			// so the styles apply to all editor instances incl. previews.
-			styleElement.textContent = ! isEmpty( styleProps )
-				? `.editor-styles-wrapper{${ styleProps }}`
-				: '';
+			let declarationList = '';
+			Object.keys( currentOptions ).forEach( key => {
+				declarationList += `${ cssVariables[ key ] }:${ currentOptions[ key ] };`;
+			} );
+			styleElement.textContent = `.editor-styles-wrapper{${ declarationList }}`;
 		} );
 	} );
 };
