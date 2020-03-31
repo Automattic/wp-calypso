@@ -39,6 +39,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		contactDetailsValidationErrors: PropTypes.object,
 		userWpcomLang: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+        updateContactDetailsCache: PropTypes.func.isRequired,
 	};
 
 	constructor( props ) {

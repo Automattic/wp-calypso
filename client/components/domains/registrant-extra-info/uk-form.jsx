@@ -33,6 +33,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 		onContactDetailsChange: PropTypes.func,
 		contactDetailsValidationErrors: PropTypes.object,
 		translate: PropTypes.func.isRequired,
+        updateContactDetailsCache: PropTypes.func.isRequired,
 	};
 
 	constructor( props ) {

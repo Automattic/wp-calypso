@@ -57,13 +57,13 @@ function renderValidationError( message ) {
 class RegistrantExtraInfoFrForm extends React.PureComponent {
 	static propTypes = {
 		contactDetails: PropTypes.object,
-		ccTldDetails: PropTypes.object,
+		ccTldDetails: PropTypes.object.isRequired,
 		onContactDetailsChange: PropTypes.func,
 		contactDetailsValidationErrors: PropTypes.object,
 		isVisible: PropTypes.bool,
 		onSubmit: PropTypes.func,
-		translate: PropTypes.func,
-		updateContactDetailsCache: PropTypes.func,
+		translate: PropTypes.func.isRequired,
+		updateContactDetailsCache: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
