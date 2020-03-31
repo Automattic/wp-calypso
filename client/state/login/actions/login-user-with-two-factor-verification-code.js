@@ -14,7 +14,6 @@ import {
 } from 'state/action-types';
 import { getTwoFactorAuthNonce, getTwoFactorUserId } from 'state/login/selectors';
 import { getErrorFromHTTPError, postLoginRequest } from 'state/login/utils';
-import 'state/data-layer/wpcom/login-2fa';
 import 'state/data-layer/wpcom/users/auth-options';
 
 import { remoteLoginUser } from 'state/login/actions/remote-login-user';

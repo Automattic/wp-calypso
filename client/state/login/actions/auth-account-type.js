@@ -14,7 +14,6 @@ import {
 	LOGIN_AUTH_ACCOUNT_TYPE_RESET,
 } from 'state/action-types';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import 'state/data-layer/wpcom/login-2fa';
 import 'state/data-layer/wpcom/users/auth-options';
 
 import 'state/login/init';

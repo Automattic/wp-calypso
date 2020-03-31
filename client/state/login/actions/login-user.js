@@ -13,7 +13,6 @@ import {
 	LOGIN_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 } from 'state/action-types';
-import 'state/data-layer/wpcom/login-2fa';
 import 'state/data-layer/wpcom/users/auth-options';
 import { remoteLoginUser } from 'state/login/actions/remote-login-user';
 import {

@@ -19,7 +19,6 @@ import {
 	getSMSMessageFromResponse,
 	postLoginRequest,
 } from 'state/login/utils';
-import 'state/data-layer/wpcom/login-2fa';
 import 'state/data-layer/wpcom/users/auth-options';
 
 import 'state/login/init';

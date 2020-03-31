@@ -13,7 +13,6 @@ import {
 } from 'state/action-types';
 import { getErrorFromWPCOMError } from 'state/login/utils';
 import wpcom from 'lib/wp';
-import 'state/data-layer/wpcom/login-2fa';
 import 'state/data-layer/wpcom/users/auth-options';
 
 import 'state/login/init';
