@@ -204,7 +204,7 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			getUrlFromCookie,
-			isEligibleForSignupDestination: true,
+			isEligibleForSignupDestinationResult: true,
 		} );
 		expect( url ).toBe( '/cookie' );
 	} );
