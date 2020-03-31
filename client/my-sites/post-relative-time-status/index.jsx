@@ -77,12 +77,12 @@ class PostRelativeTime extends React.PureComponent {
 			statusClassName += ' is-pending';
 		} else if ( status === 'future' ) {
 			const scheduledTime = this.props.moment( this.props.post.date ).fromNow();
+
 			statusText = this.props.translate( 'scheduled %(scheduledTime)s', {
+				comment: '%(scheduledTime)s is a future human time, for example "in 3 days"',
 				args: {
 					scheduledTime,
 				},
-				context: 'Scheduled status  with time',
-				text: true,
 			} );
 			statusClassName += ' is-scheduled';
 			statusIcon = 'calendar';
