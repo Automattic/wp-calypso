@@ -55,8 +55,16 @@ type ManagedContactDetailsTldExtraFieldsShape< T > = {
 	};
 };
 
-function liftManagedContactDetailsShape< A, B >(
+/*
+ * Combine two ManagedContactDetailsShape<T> objects x and y using two
+ * helper functions.
+ *
+ *   f: (A,B) => B merges fields which exist in both,
+ *   g: (A) => B constructs new fields which don't exist in y, but do in x.
+ */
+function combineManagedContactDetailsShape< A, B >(
 	f: ( A, B ) => B,
+	g: ( A ) => B,
 	x: ManagedContactDetailsShape< A >,
 	y: ManagedContactDetailsShape< B >
 ): ManagedContactDetailsShape< B > {
@@ -75,6 +83,12 @@ function liftManagedContactDetailsShape< A, B >(
 		} else {
 			tldExtraFields.ca = y.tldExtraFields.ca;
 		}
+	} else if ( x.tldExtraFields?.ca ) {
+		tldExtraFields.ca = {
+			lang: g( x.tldExtraFields.ca.lang ),
+			legalType: g( x.tldExtraFields.ca.legalType ),
+			ciraAgreementAccepted: g( x.tldExtraFields.ca.ciraAgreementAccepted ),
+		};
 	}
 
 	if ( y.tldExtraFields?.uk ) {
@@ -90,6 +104,12 @@ function liftManagedContactDetailsShape< A, B >(
 		} else {
 			tldExtraFields.uk = y.tldExtraFields.uk;
 		}
+	} else if ( x.tldExtraFields?.uk ) {
+		tldExtraFields.uk = {
+			registrantType: g( x.tldExtraFields.uk.registrantType ),
+			registrationNumber: g( x.tldExtraFields.uk.registrationNumber ),
+			tradingName: g( x.tldExtraFields.uk.tradingName ),
+		};
 	}
 
 	if ( y.tldExtraFields?.fr ) {
@@ -105,6 +125,12 @@ function liftManagedContactDetailsShape< A, B >(
 		} else {
 			tldExtraFields.fr = y.tldExtraFields.fr;
 		}
+	} else if ( x.tldExtraFields?.fr ) {
+		tldExtraFields.fr = {
+			registrantType: g( x.tldExtraFields.fr.registrantType ),
+			trademarkNumber: g( x.tldExtraFields.fr.trademarkNumber ),
+			sirenSirat: g( x.tldExtraFields.fr.sirenSirat ),
+		};
 	}
 
 	return {
@@ -284,8 +310,9 @@ function setManagedContactDetailsErrors(
 	errors: ManagedContactDetailsErrors,
 	details: ManagedContactDetails
 ): ManagedContactDetails {
-	return liftManagedContactDetailsShape(
+	return combineManagedContactDetailsShape(
 		( error, detail ) => setErrors( error, detail ),
+		errors => getInitialManagedValue( { errors } ),
 		errors,
 		details
 	);
@@ -571,10 +598,11 @@ function applyDomainContactDetailsUpdate(
 	oldDetails: ManagedContactDetails,
 	update: ManagedContactDetailsUpdate
 ): ManagedContactDetails {
-	return liftManagedContactDetailsShape(
+	return combineManagedContactDetailsShape(
 		( newField: undefined | string, detail: ManagedValue ) => {
 			return touchIfDifferent( newField, detail );
 		},
+		( newField: undefined | string ) => getInitialManagedValue( { value: newField } ),
 		update,
 		oldDetails
 	);
@@ -836,10 +864,11 @@ export function applyContactDetailsRequiredMask(
 	details: ManagedContactDetails,
 	requiredMask: ManagedContactDetailsRequiredMask
 ): ManagedContactDetails {
-	return liftManagedContactDetailsShape(
+	return combineManagedContactDetailsShape(
 		( isRequired, managedValue ) => {
 			return { ...managedValue, isRequired };
 		},
+		isRequired => getInitialManagedValue( { isRequired } ),
 		requiredMask,
 		details
 	);
