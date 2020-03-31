@@ -29,7 +29,7 @@ export default store => next => action => {
 
 			channel = socket.channel( channelTopicPrefix + post.global_ID );
 			registerEventHandlers( channel, store );
-			registerPresence( channel, store, post.global_ID );
+			registerPresence( channel, store, 'posts', post.global_ID );
 			channel
 				.join()
 				.receive( 'ok', () => debug( 'channel join ok' ) )

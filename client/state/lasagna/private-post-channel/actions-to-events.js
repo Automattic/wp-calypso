@@ -29,9 +29,9 @@ export default store => next => action => {
 			}
 
 			const postKey = keyToString( keyForPost( post ) );
-			channel = socket.channel( channelTopicPrefix + postKey );
+			channel = socket.channel( channelTopicPrefix + post.global_ID, { post_key: postKey } );
 			registerEventHandlers( channel, store );
-			registerPresence( channel, store, postKey );
+			registerPresence( channel, store, 'posts', post.global_ID );
 			channel
 				.join()
 				.receive( 'ok', () => debug( 'channel join ok' ) )

@@ -1,0 +1,36 @@
+.presence-button {
+	align-items: center;
+	box-sizing: border-box;
+	color: var( --color-text-subtle );
+	cursor: pointer;
+	display: inline-flex;
+	list-style-type: none;
+	padding: 4px;
+	position: relative;
+
+	&:hover,
+	&:focus,
+	&:active {
+		color: var( --color-primary );
+	}
+
+	.presence-button__label-count {
+		margin-right: 4px;
+	}
+
+	.presence-button__label-status {
+		@include breakpoint( '<480px' ) {
+			display: none;
+		}
+	}
+}
+
+.presence-button__label {
+	font-size: 17px;
+	margin-left: 4px;
+}
+
+.presence-button__icon {
+	position: relative;
+	top: 2px;
+}

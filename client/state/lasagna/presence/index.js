@@ -6,12 +6,11 @@ import { Presence } from 'phoenix';
 /**
  * Internal dependencies
  */
-import { updateUsersViewingPostCount } from 'state/posts/actions';
+import { setPresenceMeta } from 'state/presence/actions';
 
-export default ( channel, store, globalId ) => {
+export default ( channel, store, entity, uid ) => {
 	const presence = new Presence( channel );
 	presence.onSync( () => {
-		const presenceCount = presence.list().length;
-		//store.dispatch( updateUsersViewingPostCount( globalId, presenceCount ) );
+		store.dispatch( setPresenceMeta( entity, uid, presence.list().length ) );
 	} );
 };
