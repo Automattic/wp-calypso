@@ -8,6 +8,7 @@ import { useI18n } from '@automattic/react-i18n';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { ENTER } from '@wordpress/keycodes';
 import classnames from 'classnames';
+import Textarea from 'react-autosize-textarea';
 
 /**
  * Internal dependencies
@@ -27,12 +28,9 @@ type Suggestion = SiteVertical & { category?: string };
 
 const VERTICALS_STORE = Verticals.register();
 
-interface Props {
-	onSubmit: () => void;
-}
-const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
+const VerticalSelect: React.FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
-	const inputRef = React.useRef< HTMLInputElement >( null );
+	const inputRef = React.useRef< HTMLTextAreaElement >( null );
 	const [ isFocused, setIsFocused ] = React.useState< boolean >( false );
 
 	/**
@@ -44,7 +42,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 	 *
 	 * Using `Suggestions` here would effectively be `any`.
 	 */
-	const suggestionRef = React.createRef< any >();
+	const suggestionRef = React.createRef< HTMLTextAreaElement | any >();
 
 	const verticals = useSelect( select =>
 		select( VERTICALS_STORE )
@@ -66,7 +64,10 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 	);
 
 	const normalizedInputValue = inputValue.trim().toLowerCase();
+
 	const hasValue = !! normalizedInputValue.length;
+
+	const showArrow = isFocused && ! siteTitle && ! siteVertical && inputValue.length > 2;
 
 	let suggestions: Suggestion[];
 
@@ -101,14 +102,13 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 		setSiteVertical( vertical );
 		setInputValue( vertical.label );
 		setIsFocused( false ); // prevent executing handleBlur()
-		onSubmit();
 	};
 
-	const handleSuggestionChangeEvent = ( e: React.ChangeEvent< HTMLInputElement > ) => {
+	const handleSuggestionChangeEvent = ( e: React.ChangeEvent< HTMLTextAreaElement > ) => {
 		setInputValue( e.target.value );
 	};
 
-	const handleInputKeyDownEvent = ( e: React.KeyboardEvent< HTMLInputElement > ) => {
+	const handleInputKeyDownEvent = ( e: React.KeyboardEvent< HTMLTextAreaElement > ) => {
 		if ( e.keyCode === ENTER ) {
 			e.preventDefault();
 			handleSelect( { label: inputValue } );
@@ -140,21 +140,21 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 	const madlibTemplate = NO__( 'My site is about <Input />' );
 	const madlib = __experimentalCreateInterpolateElement( madlibTemplate, {
 		Input: (
-			<span className="vertical-select__suggestions-wrapper">
-				<input
+			<div className="vertical-select__suggestions-wrapper madlib__input-wrapper">
+				<Textarea
 					ref={ inputRef }
 					/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
 					className="madlib__input"
 					autoComplete="off"
-					style={ {
-						width: `${ inputValue.length * 0.85 }ch`,
-					} }
+					autoCapitalize="off"
+					spellCheck="false"
 					onBlur={ handleBlur }
 					onFocus={ () => setIsFocused( true ) }
 					onChange={ handleSuggestionChangeEvent }
 					onKeyDown={ handleInputKeyDownEvent }
 					placeholder={ animatedPlaceholder }
 					value={ inputValue }
+					cols={ showArrow && inputValue.length < 10 ? inputValue.length + 1 : undefined }
 				/>
 				<div className="vertical-select__suggestions">
 					{ isFocused && !! verticals.length && (
@@ -167,11 +167,9 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 						/>
 					) }
 				</div>
-			</span>
+			</div>
 		),
 	} );
-
-	const showArrow = isFocused && ! siteTitle && ! siteVertical;
 
 	return (
 		<form
@@ -180,7 +178,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 			} ) }
 		>
 			{ madlib }
-			{ showArrow ? <Arrow /> : '.' }
+			{ showArrow && <Arrow /> }
 		</form>
 	);
 };

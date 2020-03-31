@@ -27,9 +27,13 @@ $acquire-intent-vertical-transition-algorithm: ease-in-out;
 		align-items: center;
 		padding: 0 120px;
 	}
+
+	.vertical-select > svg {
+		vertical-align: middle;
+	}
 }
 
-.madlib__input {
+.acquire-intent .madlib__input {
 	@include onboarding-font-recoleta;
 	background: transparent;
 	border: none;
@@ -37,10 +41,12 @@ $acquire-intent-vertical-transition-algorithm: ease-in-out;
 	line-height: inherit;
 	height: 1.01em;
 	padding: 0;
-	min-width: 400px;
-
 	color: var( --mainColor );
-	border-bottom: 3px solid var( --mainColor );
+	box-shadow: none;
+	vertical-align: top;
+	text-decoration: underline;
+	width: 100%;
+	resize: none;
 
 	transition: border-bottom $acquire-intent-vertical-transition-duration
 			$acquire-intent-vertical-transition-algorithm,
@@ -48,6 +54,12 @@ $acquire-intent-vertical-transition-algorithm: ease-in-out;
 
 	&:focus {
 		outline: none;
+		box-shadow: none;
+		color: var( --mainColor );
+	}
+
+	&-wrapper {
+		display: inline-block;
 	}
 
 	// TODO focus for accessibility?
