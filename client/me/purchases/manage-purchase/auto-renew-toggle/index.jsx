@@ -141,6 +141,10 @@ class AutoRenewToggle extends Component {
 	renderTextStatus() {
 		const { translate, isEnabled } = this.props;
 
+		if ( this.isUpdatingAutoRenew() ) {
+			return translate( 'Auto-renew (…)' );
+		}
+
 		return isEnabled ? translate( 'Auto-renew (on)' ) : translate( 'Auto-renew (off)' );
 	}
 
