@@ -116,6 +116,11 @@ function canRedirect( siteId, domainName, onComplete ) {
 		domainName = 'http://' + domainName;
 	}
 
+	if ( includes( domainName, '@' ) ) {
+		onComplete( new ValidationError( 'invalid_domain' ) );
+		return;
+	}
+
 	wpcom.undocumented().canRedirect( siteId, domainName, function( serverError, data ) {
 		if ( serverError ) {
 			onComplete( new ValidationError( serverError.error ) );
