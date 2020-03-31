@@ -52,6 +52,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 			.map( x => ( {
 				label: x.vertical_name,
 				id: x.vertical_id,
+				slug: x.vertical_slug,
 			} ) )
 	);
 
