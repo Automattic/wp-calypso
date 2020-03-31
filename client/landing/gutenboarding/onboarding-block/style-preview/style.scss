@@ -51,8 +51,10 @@
 	}
 
 	&.is-selected {
-		box-shadow: inset 0 0 0 1px var( --highlightColor );
-		color: var( --highlightColor );
+		// override default focus and hover styles for selected-fonts buttons
+		// `!important` is used because there are default `focus` and `hover` styles with high specificities.
+		color: var( --highlightColor ) !important;
+		box-shadow: inset 0 0 0 1px var( --highlightColor ) !important;
 	}
 
 	&:hover {
