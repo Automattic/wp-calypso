@@ -39,7 +39,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		contactDetailsValidationErrors: PropTypes.object,
 		userWpcomLang: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
-        updateContactDetailsCache: PropTypes.func.isRequired,
+		updateContactDetailsCache: PropTypes.func.isRequired,
 	};
 
 	constructor( props ) {
@@ -161,9 +161,9 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	}
 
 	getOrganizationErrorMessage() {
-		let message = this.props?.contactDetailsValidationErrors?.organization
-			? this.props.contactDetailsValidationErrors.organization
-			: ( this.state.errorMessages.organization || [] ).join( '\n' );
+		let message =
+			this.props.contactDetailsValidationErrors?.organization ||
+			( this.state.errorMessages.organization || [] ).join( '\n' );
 		if ( this.needsOrganization() && isEmpty( this.props.contactDetails.organization ) ) {
 			message = this.props.translate(
 				'An organization name is required for Canadian corporations'
