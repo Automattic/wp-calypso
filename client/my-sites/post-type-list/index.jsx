@@ -36,6 +36,11 @@ import UpsellNudge from 'blocks/upsell-nudge';
 import { FEATURE_NO_ADS } from 'lib/plans/constants';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Constants
  */
 // The maximum number of pages of results that can be displayed in "All My
