@@ -147,6 +147,7 @@ class Login extends Component {
 				login( {
 					isNative: true,
 					isJetpack: this.props.isJetpack,
+					isGutenboarding: this.props.isGutenboarding,
 					// If no notification is sent, the user is using the authenticator for 2FA by default
 					twoFactorAuthType: defaultAuthType,
 				} )
@@ -420,6 +421,7 @@ class Login extends Component {
 					{ poller }
 					<VerificationCodeForm
 						isJetpack={ isJetpack }
+						isGutenboarding={ isGutenboarding }
 						onSuccess={ this.handleValid2FACode }
 						twoFactorAuthType={ twoFactorAuthType }
 					/>
@@ -431,7 +433,10 @@ class Login extends Component {
 			return (
 				<div>
 					{ poller }
-					<WaitingTwoFactorNotificationApproval isJetpack={ isJetpack } />
+					<WaitingTwoFactorNotificationApproval
+						isJetpack={ isJetpack }
+						isGutenboarding={ isGutenboarding }
+					/>
 				</div>
 			);
 		}

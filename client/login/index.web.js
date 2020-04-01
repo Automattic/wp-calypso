@@ -72,6 +72,7 @@ export default router => {
 				`/log-in/:isJetpack(jetpack)/${ lang }`,
 				`/log-in/:isJetpack(jetpack)/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
 				`/log-in/:isGutenboarding(gutenboarding)/${ lang }`,
+				`/log-in/:isGutenboarding(gutenboarding)/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
 				`/log-in/${ lang }`,
 			],
 			redirectJetpack,
