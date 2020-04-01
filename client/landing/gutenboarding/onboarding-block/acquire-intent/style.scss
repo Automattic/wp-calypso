@@ -37,10 +37,9 @@ $acquire-intent-vertical-transition-algorithm: ease-in-out;
 	line-height: 1em;
 	height: 1.01em;
 	padding: 0;
-	min-width: 400px;
 
 	color: var( --mainColor );
-	border-bottom: 3px solid var( --mainColor );
+	border-bottom: 2px solid var( --mainColor );
 
 	transition: border-bottom $acquire-intent-vertical-transition-duration
 			$acquire-intent-vertical-transition-algorithm,
@@ -81,5 +80,14 @@ $acquire-intent-vertical-transition-algorithm: ease-in-out;
 		color: var( --contrastColor );
 		outline-color: transparent;
 		box-shadow: none;
+	}
+}
+
+.site-title--without-value {
+	.madlib__input {
+		width: 200px;
+		display: inline-block;
+		vertical-align: middle;
+    	border: none;
 	}
 }

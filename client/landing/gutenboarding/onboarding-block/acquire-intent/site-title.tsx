@@ -7,6 +7,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { ENTER } from '@wordpress/keycodes';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -64,7 +65,11 @@ const SiteTitle: React.FunctionComponent = () => {
 		),
 	} );
 
-	return <form>{ madlib }</form>;
+	return (
+		<form className={ classnames( { 'site-title--without-value': ! siteTitle.length } ) }>
+			{ madlib }
+		</form>
+	);
 };
 
 export default SiteTitle;

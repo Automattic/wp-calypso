@@ -59,7 +59,7 @@ const VerticalSelect: React.FunctionComponent = () => {
 
 	const inputText = inputRef?.current?.innerText || '';
 	const isInputEmpty = ! inputText.length;
-	const showResults = inputText.length > 2;
+	const showArrow = ! siteTitle && ! siteVertical && inputText.length > 2;
 
 	const animatedPlaceholder = useTyper(
 		[ NO__( 'football' ), NO__( 'shopping' ), NO__( 'cars' ), NO__( 'design' ), NO__( 'travel' ) ],
@@ -154,23 +154,27 @@ const VerticalSelect: React.FunctionComponent = () => {
 	const madlib = __experimentalCreateInterpolateElement( madlibTemplate, {
 		Input: (
 			<span className="vertical-select__suggestions-wrapper">
-				<span
-					contentEditable
-					tabIndex={ 0 }
-					role="textbox"
-					aria-multiline="true"
-					spellCheck={ false }
-					ref={ inputRef }
-					/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
-					className="madlib__input"
-					onKeyDown={ handleInputKeyDownEvent }
-					onKeyUp={ handleInputKeyUpEvent }
-					onFocus={ () => setIsFocused( true ) }
-					onBlur={ handleBlur }
-				/>
-				{ isInputEmpty && (
-					<span className="vertical-select__placeholder">{ animatedPlaceholder }</span>
-				) }
+				<span className="vertical-select__input-wrapper">
+					{ isInputEmpty && (
+						<span className="vertical-select__placeholder">{ animatedPlaceholder }</span>
+					) }
+					<span
+						contentEditable
+						tabIndex={ 0 }
+						role="textbox"
+						aria-multiline="true"
+						spellCheck={ false }
+						ref={ inputRef }
+						/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
+						className="madlib__input"
+						onKeyDown={ handleInputKeyDownEvent }
+						onKeyUp={ handleInputKeyUpEvent }
+						onFocus={ () => setIsFocused( true ) }
+						onBlur={ handleBlur }
+					/>
+				</span>
+				{ /* us visibility to keep the layout fixed with and without the arrow */ }
+				{ showArrow && <Arrow className="vertical-select__arrow" /> }
 				<div className="vertical-select__suggestions">
 					{ isFocused && !! verticals.length && (
 						<Suggestions
@@ -186,8 +190,6 @@ const VerticalSelect: React.FunctionComponent = () => {
 		),
 	} );
 
-	const showArrow = isFocused && ! siteTitle && ! siteVertical && showResults;
-
 	return (
 		<form
 			className={ classnames( 'vertical-select', {
@@ -195,11 +197,6 @@ const VerticalSelect: React.FunctionComponent = () => {
 			} ) }
 		>
 			{ madlib }
-			{ /* us visibility to keep the layout fixed with and without the arrow */ }
-			<Arrow
-				className="vertical-select__arrow"
-				style={ { visibility: showArrow ? 'visible' : 'hidden' } }
-			/>
 		</form>
 	);
 };
