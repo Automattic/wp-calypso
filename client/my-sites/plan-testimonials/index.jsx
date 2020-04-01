@@ -18,7 +18,7 @@ export class PlanTestimonials extends Component {
 				</div>
 				<div className="plan-testimonials__content-right-container">
 					<div className="plan-testimonials__content-right">
-						Did you know that WordPress powers 36% of the entire internet? WordPress.com is the best
+						Did you know that WordPress powers 35% of the entire internet? WordPress.com is the best
 						WordPress solution out there, as trusted by:
 					</div>
 					<div className="plan-testimonials__content-testimonial-image"></div>
