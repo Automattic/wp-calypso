@@ -32,6 +32,7 @@ class AutoRenewToggle extends Component {
 		recordTracksEvent: PropTypes.func.isRequired,
 		compact: PropTypes.bool,
 		withTextStatus: PropTypes.bool,
+		toggleSource: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -114,6 +115,7 @@ class AutoRenewToggle extends Component {
 			product_slug: productSlug,
 			is_atomic: isAtomicSite,
 			is_toggling_toward: isTogglingToward,
+			toggle_source: this.props.toggleSource,
 		} );
 	};
 

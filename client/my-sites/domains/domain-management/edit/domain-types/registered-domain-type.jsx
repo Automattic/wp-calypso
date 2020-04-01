@@ -266,6 +266,7 @@ class RegisteredDomainType extends React.Component {
 				purchase={ purchase }
 				compact={ true }
 				withTextStatus={ true }
+				toggleSource="registered-domain-status"
 			/>
 		);
 

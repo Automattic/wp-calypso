@@ -199,6 +199,7 @@ class MappedDomainType extends React.Component {
 				purchase={ purchase }
 				compact={ true }
 				withTextStatus={ true }
+				toggleSource="mapped-domain-status"
 			/>
 		);
 
