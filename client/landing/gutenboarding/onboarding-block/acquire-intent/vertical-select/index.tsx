@@ -115,6 +115,16 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 		onSubmit();
 	};
 
+	const handleBlur = () => {
+		const lastQuery = inputText.trim();
+		if ( isFocused && lastQuery.length ) {
+			const vertical = suggestions.find( ( { label } ) =>
+				label.toLowerCase().includes( lastQuery )
+			) ?? { label: lastQuery, id: '', slug: '' };
+			handleSelect( vertical );
+		}
+	};
+
 	const handleInputKeyDownEvent = ( e: React.KeyboardEvent< HTMLSpanElement > ) => {
 		const input = e.currentTarget.innerText.trim();
 
@@ -128,23 +138,13 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 		}
 		if ( e.keyCode === TAB ) {
 			e.preventDefault();
+			handleBlur();
 		}
-	};
-
-	const handleBlur = () => {
-		// if ( isFocused ) {
-		// 	const vertical = suggestions.find( ( { label } ) =>
-		// 		label.toLowerCase().includes( normalizedInputValue )
-		// 	) ?? { label: inputValue.trim() };
-		// 	handleSelect( vertical );
-		// }
 	};
 
 	React.useEffect( () => {
 		if ( isInputEmpty ) {
-			inputRef?.current?.focus();
-		} else {
-			inputRef.current.innerText = siteVertical?.label || '';
+			inputRef.current.focus();
 		}
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
