@@ -43,7 +43,6 @@ const Home = ( {
 	canUserUseCustomerHome,
 	checklistMode,
 	hasChecklistData,
-	layout,
 	site,
 	siteId,
 	siteIsUnlaunched,
@@ -86,10 +85,10 @@ const Home = ( {
 			</div>
 			<Notices checklistMode={ checklistMode } />
 			<Upsells />
-			{ hasChecklistData && layout ? (
+			{ hasChecklistData ? (
 				<div className="customer-home__layout">
 					<div className="customer-home__layout-col customer-home__layout-col-left">
-						<Primary cards={ layout.primary } checklistMode={ checklistMode } />
+						<Primary checklistMode={ checklistMode } />
 					</div>
 					<div className="customer-home__layout-col customer-home__layout-col-right">
 						<Secondary />
@@ -104,7 +103,6 @@ const Home = ( {
 
 Home.propTypes = {
 	checklistMode: PropTypes.string,
-	layout: PropTypes.object.isRequired,
 	site: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
 	siteSlug: PropTypes.string.isRequired,
@@ -131,7 +129,7 @@ const mapStateToProps = state => {
 			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 		siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 		user,
-		layout: getHomeLayout( state, siteId ),
+		cards: getHomeLayout( state, siteId ),
 	};
 };
 
