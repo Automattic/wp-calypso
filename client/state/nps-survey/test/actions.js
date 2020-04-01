@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import {
 	submitNpsSurvey,
 	submitNpsSurveyWithNoScore,
@@ -26,8 +27,10 @@ jest.mock( 'lib/wp', () => ( {
 	} ),
 } ) );
 jest.mock( 'lib/analytics', () => ( {
-	mc: { bumpStat: jest.fn() },
 	tracks: { recordEvent: jest.fn() },
+} ) );
+jest.mock( 'lib/analytics/mc', () => ( {
+	bumpStat: jest.fn(),
 } ) );
 
 describe( 'actions', () => {
@@ -35,22 +38,19 @@ describe( 'actions', () => {
 
 	describe( '#submitNpsSurvey()', () => {
 		beforeEach( () => {
-			analytics.mc.bumpStat.mockClear();
+			bumpStat.mockClear();
 			analytics.tracks.recordEvent.mockClear();
 			dispatch.mockClear();
 		} );
 
 		test( 'should track the successful survey submission', async () => {
-			expect( analytics.mc.bumpStat.mock.calls ).toHaveLength( 0 );
+			expect( bumpStat.mock.calls ).toHaveLength( 0 );
 			expect( analytics.tracks.recordEvent.mock.calls ).toHaveLength( 0 );
 
 			await submitNpsSurvey( 'nps_test', 10 )( dispatch );
 
-			expect( analytics.mc.bumpStat.mock.calls ).toHaveLength( 1 );
-			expect( analytics.mc.bumpStat.mock.calls[ 0 ] ).toEqual( [
-				'calypso_nps_survey',
-				'survey_submitted',
-			] );
+			expect( bumpStat.mock.calls ).toHaveLength( 1 );
+			expect( bumpStat.mock.calls[ 0 ] ).toEqual( [ 'calypso_nps_survey', 'survey_submitted' ] );
 
 			expect( analytics.tracks.recordEvent.mock.calls ).toHaveLength( 1 );
 			expect( analytics.tracks.recordEvent.mock.calls[ 0 ] ).toEqual( [
@@ -61,22 +61,19 @@ describe( 'actions', () => {
 
 	describe( '#submitNpsSurveyWithNoScore', () => {
 		beforeEach( () => {
-			analytics.mc.bumpStat.mockClear();
+			bumpStat.mockClear();
 			analytics.tracks.recordEvent.mockClear();
 			dispatch.mockClear();
 		} );
 
 		test( 'should track the successful survey dismissal', async () => {
-			expect( analytics.mc.bumpStat.mock.calls ).toHaveLength( 0 );
+			expect( bumpStat.mock.calls ).toHaveLength( 0 );
 			expect( analytics.tracks.recordEvent.mock.calls ).toHaveLength( 0 );
 
 			await submitNpsSurveyWithNoScore( 'nps_test' )( dispatch );
 
-			expect( analytics.mc.bumpStat.mock.calls ).toHaveLength( 1 );
-			expect( analytics.mc.bumpStat.mock.calls[ 0 ] ).toEqual( [
-				'calypso_nps_survey',
-				'survey_dismissed',
-			] );
+			expect( bumpStat.mock.calls ).toHaveLength( 1 );
+			expect( bumpStat.mock.calls[ 0 ] ).toEqual( [ 'calypso_nps_survey', 'survey_dismissed' ] );
 
 			expect( analytics.tracks.recordEvent.mock.calls ).toHaveLength( 1 );
 			expect( analytics.tracks.recordEvent.mock.calls[ 0 ] ).toEqual( [
@@ -87,22 +84,19 @@ describe( 'actions', () => {
 
 	describe( '#sendNpsSurveyFeedback', () => {
 		beforeEach( () => {
-			analytics.mc.bumpStat.mockClear();
+			bumpStat.mockClear();
 			analytics.tracks.recordEvent.mockClear();
 			dispatch.mockClear();
 		} );
 
 		test( 'should track the successful feedback submission', async () => {
-			expect( analytics.mc.bumpStat.mock.calls ).toHaveLength( 0 );
+			expect( bumpStat.mock.calls ).toHaveLength( 0 );
 			expect( analytics.tracks.recordEvent.mock.calls ).toHaveLength( 0 );
 
 			await sendNpsSurveyFeedback( 'nps_test', 'dummy feedback data' )( dispatch );
 
-			expect( analytics.mc.bumpStat.mock.calls ).toHaveLength( 1 );
-			expect( analytics.mc.bumpStat.mock.calls[ 0 ] ).toEqual( [
-				'calypso_nps_survey',
-				'feedback_submitted',
-			] );
+			expect( bumpStat.mock.calls ).toHaveLength( 1 );
+			expect( bumpStat.mock.calls[ 0 ] ).toEqual( [ 'calypso_nps_survey', 'feedback_submitted' ] );
 
 			expect( analytics.tracks.recordEvent.mock.calls ).toHaveLength( 1 );
 			expect( analytics.tracks.recordEvent.mock.calls[ 0 ] ).toEqual( [

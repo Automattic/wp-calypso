@@ -61,7 +61,6 @@ export async function submitExistingCardPayment(
 ): Promise< WPCOMTransactionEndpointResponse > {
 	debug( 'formatting existing card transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
-		debug,
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
 	} );
@@ -75,7 +74,6 @@ export async function submitApplePayPayment(
 ): Promise< WPCOMTransactionEndpointResponse > {
 	debug( 'formatting apple-pay transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
-		debug,
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
 		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
@@ -89,7 +87,6 @@ export async function makePayPalExpressRequest(
 	submit: PayPalExpressEndpoint
 ): Promise< WPCOMTransactionEndpointResponse > {
 	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
-		debug,
 		...transactionData,
 	} );
 	debug( 'sending paypal transaction', formattedTransactionData );
@@ -110,7 +107,6 @@ export async function sendStripeTransaction(
 	submit: WPCOMTransactionEndpoint
 ): Promise< WPCOMTransactionEndpointResponse > {
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
-		debug,
 		...transactionData,
 		paymentMethodToken: transactionData.paymentMethodToken.id,
 		paymentMethodType: 'WPCOM_Billing_Stripe_Payment_Method',
@@ -126,7 +122,6 @@ export function submitCreditsTransaction(
 ): Promise< WPCOMTransactionEndpointResponse > {
 	debug( 'formatting full credits transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
-		debug,
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_WPCOM',
 	} );
@@ -140,7 +135,6 @@ export function submitFreePurchaseTransaction(
 ): Promise< WPCOMTransactionEndpointResponse > {
 	debug( 'formatting free transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
-		debug,
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_WPCOM',
 	} );

@@ -118,6 +118,7 @@ exports[`Plans should render plans 1`] = `
           "is_multi_network": false,
           "is_multi_site": false,
           "is_redirect": false,
+          "is_wpforteams_site": false,
           "jetpack_version": "5.4",
           "main_network_site": "http://an.example.site",
           "max_upload_size": false,

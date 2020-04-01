@@ -18,6 +18,7 @@ import NoticeAction from 'components/notice/notice-action';
 import LanguagePicker from 'components/language-picker';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import config from 'config';
+import { abtest } from 'lib/abtest';
 import { languages } from 'languages';
 import FormInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -478,24 +479,25 @@ export class SiteSettingsFormGeneral extends Component {
 
 				<FormSettingExplanation>
 					{ translate( 'Choose a city in your timezone.' ) }{ ' ' }
-					{ translate(
-						'You might want to follow our guess: {{button}}Select %(timezoneName)s{{/button}}',
-						{
-							args: {
-								timezoneName: guessedTimezone,
-							},
-							components: {
-								button: (
-									<Button
-										onClick={ setGuessedTimezone }
-										borderless
-										compact
-										className="site-settings__general-settings-set-guessed-timezone"
-									/>
-								),
-							},
-						}
-					) }
+					{ guessedTimezone &&
+						translate(
+							'You might want to follow our guess: {{button}}Select %(timezoneName)s{{/button}}',
+							{
+								args: {
+									timezoneName: guessedTimezone,
+								},
+								components: {
+									button: (
+										<Button
+											onClick={ setGuessedTimezone }
+											borderless
+											compact
+											className="site-settings__general-settings-set-guessed-timezone"
+										/>
+									),
+								},
+							}
+						) }
 				</FormSettingExplanation>
 			</FormFieldset>
 		);
@@ -698,7 +700,7 @@ const connectComponent = connect(
 		return {
 			withComingSoonOption: ownProps.hasOwnProperty( 'withComingSoonOption' )
 				? ownProps.withComingSoonOption
-				: config.isEnabled( 'coming-soon' ),
+				: 'variant' === abtest( 'ATPrivacy' ),
 			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			siteIsJetpack,

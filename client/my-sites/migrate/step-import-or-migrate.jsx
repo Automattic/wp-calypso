@@ -104,6 +104,10 @@ class StepImportOrMigrate extends Component {
 		}
 	};
 
+	componentDidMount() {
+		this.props.recordTracksEvent( 'calypso_importer_wordpress_type_viewed' );
+	}
+
 	render() {
 		const {
 			targetSite,

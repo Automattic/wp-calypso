@@ -18,7 +18,7 @@ import './style.scss';
 
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
-interface Props extends DomainPickerProps, Button.BaseProps {
+interface Props extends Omit< DomainPickerProps, 'onClose' >, Button.BaseProps {
 	className?: string;
 	currentDomain?: DomainSuggestion;
 }
@@ -91,11 +91,12 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				/>
 			) }
 			{ isDomainPopoverVisible && (
-				<Popover onClose={ handleClose } onFocusOutside={ handleClose }>
+				<Popover onClose={ handleClose } onFocusOutside={ handleClose } focusOnMount={ false }>
 					<DomainPicker
 						defaultQuery={ defaultQuery }
 						onDomainSelect={ handleDomainSelect }
 						onDomainPurchase={ handlePaidDomainSelect }
+						onClose={ handleClose }
 						queryParameters={ queryParameters }
 						currentDomain={ currentDomain }
 					/>

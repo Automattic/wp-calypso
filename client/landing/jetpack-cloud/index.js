@@ -8,88 +8,20 @@ import page from 'page';
  */
 import config from 'config';
 
-import { navigation, siteSelection, sites } from 'my-sites/controller';
-import { makeLayout, render as clientRender } from 'controller';
-import { dashboard } from 'landing/jetpack-cloud/sections/dashboard/controller';
-import {
-	backups,
-	backupDetail,
-	backupDownload,
-	backupRestore,
-} from 'landing/jetpack-cloud/sections/backups/controller';
-import { scan, scanHistory } from 'landing/jetpack-cloud/sections/scan/controller';
-import { settings } from 'landing/jetpack-cloud/sections/settings/controller';
-
 export default function() {
-	page( '/', siteSelection, navigation, dashboard, makeLayout, clientRender );
+	page( '/', context => {
+		let redirectPath = '/error';
 
-	if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
-		page( '/backups', siteSelection, sites, navigation, makeLayout, clientRender );
-		page( '/backups/:site', siteSelection, navigation, backups, makeLayout, clientRender );
-		page(
-			'/backups/:site/detail',
-			siteSelection,
-			navigation,
-			backupDetail,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/backups/:site/detail/:backupId',
-			siteSelection,
-			navigation,
-			backupDetail,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/backups/:site/download/:rewindId',
-			siteSelection,
-			navigation,
-			backupDownload,
-			makeLayout,
-			clientRender
-		);
-
-		if ( config.isEnabled( 'jetpack-cloud/backups-restore' ) ) {
-			page( '/backups/restore', siteSelection, sites, navigation, makeLayout, clientRender );
-			page(
-				'/backups/:site/restore',
-				siteSelection,
-				navigation,
-				backupRestore,
-				makeLayout,
-				clientRender
-			);
-			page(
-				'/backups/:site/restore/:restoreId',
-				siteSelection,
-				navigation,
-				backupRestore,
-				makeLayout,
-				clientRender
-			);
+		if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
+			redirectPath = '/backups';
+		} else if ( config.isEnabled( 'jetpack-cloud/scan' ) ) {
+			redirectPath = '/scan';
 		}
-	}
 
-	if ( config.isEnabled( 'jetpack-cloud/scan' ) ) {
-		page( '/scan', siteSelection, sites, navigation, makeLayout, clientRender );
-		page( '/scan/:site', siteSelection, navigation, scan, makeLayout, clientRender );
-
-		if ( config.isEnabled( 'jetpack-cloud/scan-history' ) ) {
-			page(
-				'/scan/history/:site/',
-				siteSelection,
-				navigation,
-				scanHistory,
-				makeLayout,
-				clientRender
-			);
+		if ( context.querystring ) {
+			redirectPath += `?${ context.querystring }`;
 		}
-	}
 
-	if ( config.isEnabled( 'jetpack-cloud/settings' ) ) {
-		page( '/settings', siteSelection, sites, navigation, makeLayout, clientRender );
-		page( '/settings/:site', siteSelection, navigation, settings, makeLayout, clientRender );
-	}
+		page.redirect( redirectPath );
+	} );
 }

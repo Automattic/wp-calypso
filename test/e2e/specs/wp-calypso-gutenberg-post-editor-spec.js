@@ -130,6 +130,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 		step( 'Can see correct post title in preview', async function() {
 			this.postPreviewComponent = await PostPreviewComponent.Expect( driver );
+
 			const postTitle = await this.postPreviewComponent.postTitle();
 			assert.strictEqual(
 				postTitle.toLowerCase(),
@@ -243,7 +244,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 	} );
 
-	describe( 'Basic Public Post @canary @ie11canary @parallel', function() {
+	describe( 'Basic Public Post @canary @parallel', function() {
 		describe( 'Publish a New Post', function() {
 			const blogPostTitle = dataHelper.randomPhrase();
 			const blogPostQuote =
@@ -278,10 +279,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			} );
 
 			step( 'Can see the Jetpack blocks', async function() {
-				// Jetpack blocks are broken in IE11. See https://github.com/Automattic/jetpack/issues/14273
-				if ( dataHelper.getTargetType() === 'IE11' ) {
-					return this.skip();
-				}
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 				await gEditorComponent.openBlockInserterAndSearch( 'Jetpack' );
 				assert.strictEqual(
@@ -1015,7 +1012,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		step( 'Can insert the payment button', async function() {
 			const blogPostTitle = 'Payment Button: ' + dataHelper.randomPhrase();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			const blockId = await gEditorComponent.addBlock( 'Simple Payments button' );
+			const blockId = await gEditorComponent.addBlock( 'Simple Payments' );
 
 			const gPaymentComponent = await SimplePaymentsBlockComponent.Expect( driver, blockId );
 			await gPaymentComponent.insertPaymentButtonDetails( paymentButtonDetails );

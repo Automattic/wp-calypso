@@ -8,6 +8,14 @@ export interface SiteVertical {
 	label: string;
 
 	/**
+	 * Untranslated Vertical Label. Obtained from WP.com.
+	 *
+	 * @example
+	 * Christmas Tree Farm
+	 */
+	slug?: string;
+
+	/**
 	 * Vertical ID. Can be undefined for user-specified verticals that don't exist in WP.com's curated list.
 	 *
 	 * @example
@@ -20,5 +28,8 @@ export interface Design {
 	title: string;
 	slug: string;
 	src: string;
-	srcset: string;
+	theme: string;
+	template: string;
+	fonts: Array< string >;
+	categories: Array< string >;
 }

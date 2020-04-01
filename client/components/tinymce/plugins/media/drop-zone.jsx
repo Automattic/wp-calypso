@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { isEmpty, noop } from 'lodash';
@@ -10,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import getMediaErrors from 'state/selectors/get-media-errors';
 import MediaDropZone from 'my-sites/media-library/drop-zone';
 import MediaActions from 'lib/media/actions';
@@ -116,7 +115,7 @@ class TinyMCEDropZone extends React.Component {
 			onRenderModal( { visible: true } );
 		}
 
-		analytics.mc.bumpStat( 'editor_upload_via', 'editor_drop' );
+		bumpStat( 'editor_upload_via', 'editor_drop' );
 	};
 
 	render() {

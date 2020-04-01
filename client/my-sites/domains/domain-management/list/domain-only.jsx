@@ -77,7 +77,7 @@ const DomainOnly = ( { primaryDomain, hasNotice, recordTracks, siteId, slug, tra
 			{ hasNotice && (
 				<div className="domain-only-site__settings-notice">
 					{ translate(
-						'Your domain should start working immediately, but may be unreliable during the first 72 hours.'
+						'Your domain should start working immediately, but may be unreliable during the first 30 minutes.'
 					) }
 				</div>
 			) }

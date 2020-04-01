@@ -68,9 +68,10 @@ export class CartItem extends React.Component {
 
 		if ( isGSuiteProductSlug( cartItem.product_slug ) ) {
 			const {
-				cost_before_coupon: costBeforeCoupon,
+				cost_before_coupon: costPerProductBeforeCoupon,
 				is_sale_coupon_applied: isSaleCouponApplied,
 			} = cartItem;
+			const costBeforeCoupon = costPerProductBeforeCoupon * cartItem.volume;
 
 			if ( isSaleCouponApplied ) {
 				const { is_coupon_applied: isCouponApplied } = cart;

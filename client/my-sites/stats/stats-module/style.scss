@@ -31,7 +31,6 @@
 .stats-insights__nonperiodic {
 	&.has-no-recent {
 		color: var( --color-neutral-70 );
-		font-weight: 300;
 
 		p {
 			@include breakpoint( '<660px' ) {

@@ -11,3 +11,5 @@ export const getFirstError = ( state: State ) =>
 export const getLoginFlowState = ( state: State ) => state.loginFlowState;
 
 export const getUsernameOrEmail = ( state: State ) => state.usernameOrEmail;
+
+export const getPollingTaskId = ( state: State ) => state.pollingTaskId;

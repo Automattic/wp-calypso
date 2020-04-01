@@ -125,7 +125,7 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 		}
 
 		// Omit Instagram Basic Display, which is still in testing
-		if ( 'instagram_basic_display' === service.ID ) {
+		if ( 'instagram-basic-display' === service.ID ) {
 			return false;
 		}
 

@@ -1,18 +1,24 @@
 .continue-as-user {
 	display: flex;
+	animation: 1s appear 0s ease-in;
 	align-items: center;
 	justify-content: center;
+	flex-direction: column;
 	color: var( --color-text-subtle );
 	font-size: 14px;
 
-	> a {
-		display: inline-flex;
-		align-items: center;
-		// Match avatar height.
-		height: 16px;
+	& > a.button {
+		margin: 20px 0;
 	}
 
-	.gravatar {
-		margin: 0 4px;
+	.continue-as-user__change-user-link {
+		color: var( --color-link );
+		cursor: pointer;
+
+		&:hover,
+		&:focus,
+		&:active {
+			color: var( --color-link-dark );
+		}
 	}
 }

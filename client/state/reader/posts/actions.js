@@ -13,12 +13,13 @@ import wpcom from 'lib/wp';
 import { keyForPost, keyToString } from 'reader/post-key';
 import { hasPostBeenSeen } from './selectors';
 import { receiveLikes } from 'state/posts/likes/actions';
+import { bumpStat } from 'lib/analytics/mc';
 
 import 'state/reader/init';
 
 // TODO: make underlying lib/analytics and reader/stats capable of existing in test code without mocks
 // OR switch to analytics middleware
-let analytics = { tracks: { recordEvent: () => {} }, mc: { bumpStat: () => {} } };
+let analytics = { tracks: { recordEvent: () => {} } };
 let pageViewForPost = () => {};
 if ( process.env.NODE_ENV !== 'test' ) {
 	pageViewForPost = require( 'reader/stats' ).pageViewForPost;
@@ -155,10 +156,7 @@ export const markPostSeen = ( post, site ) => ( dispatch, getState ) => {
 		if ( site && site.ID ) {
 			if ( site.is_private || ! isAdmin ) {
 				pageViewForPost( site.ID, site.URL, post.ID, site.is_private );
-				analytics.mc.bumpStat(
-					'reader_pageviews',
-					site.is_private ? 'private_view' : 'public_view'
-				);
+				bumpStat( 'reader_pageviews', site.is_private ? 'private_view' : 'public_view' );
 			}
 		}
 	}

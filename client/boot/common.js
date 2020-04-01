@@ -30,6 +30,7 @@ import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
 import { init as pushNotificationsInit } from 'state/push-notifications/actions';
 import { setSupportSessionReduxStore } from 'lib/user/support-user-interop';
 import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import getSuperProps from 'lib/analytics/super-props';
 import { getSiteFragment, normalize } from 'lib/route';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
@@ -89,6 +90,18 @@ const setupContextMiddleware = reduxStore => {
 		// Break routing and do full load for logout link in /me
 		if ( context.pathname === '/wp-login.php' ) {
 			window.location.href = context.path;
+			return;
+		}
+
+		// Some paths live outside of Calypso and should be opened separately
+		// Examples: /support, /forums
+		if (
+			/^\/support($|\/)/i.test( context.pathname ) || // /support or /support/*
+			/^\/([a-z]{2}|[a-z]{2}-[a-z]{2})\/support($|\/)/i.test( context.pathname ) || // /en/support or /pt-br/support/*, etc
+			/^\/forums($|\/)/i.test( context.pathname ) || // /forums or /forums/*
+			/^\/([a-z]{2}|[a-z]{2}-[a-z]{2})\/forums($|\/)/i.test( context.pathname ) // /en/forums or /pt-br/forums/*, etc
+		) {
+			window.location.href = context.pathname;
 			return;
 		}
 
@@ -284,7 +297,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		}
 
 		// Bump general stat tracking overall Newdash usage
-		analytics.mc.bumpStat( { newdash_pageviews: 'route' } );
+		bumpStat( { newdash_pageviews: 'route' } );
 
 		next();
 	} );

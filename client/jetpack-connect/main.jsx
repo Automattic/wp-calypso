@@ -104,11 +104,12 @@ export class JetpackConnectMain extends Component {
 	}
 
 	componentDidUpdate() {
-		const { isMobileAppFlow, skipRemoteInstall } = this.props;
+		const { isMobileAppFlow, skipRemoteInstall, forceRemoteInstall } = this.props;
 
 		if (
 			this.getStatus() === NOT_CONNECTED_JETPACK &&
 			this.isCurrentUrlFetched() &&
+			! forceRemoteInstall &&
 			! this.state.redirecting
 		) {
 			return this.goToRemoteAuth( this.props.siteHomeUrl );
@@ -126,7 +127,10 @@ export class JetpackConnectMain extends Component {
 			this.checkUrl( this.state.currentUrl );
 		}
 
-		if ( includes( [ NOT_JETPACK, NOT_ACTIVE_JETPACK ], this.getStatus() ) ) {
+		if (
+			includes( [ NOT_JETPACK, NOT_ACTIVE_JETPACK ], this.getStatus() ) ||
+			( this.getStatus() === NOT_CONNECTED_JETPACK && forceRemoteInstall )
+		) {
 			if (
 				config.isEnabled( 'jetpack/connect/remote-install' ) &&
 				! isMobileAppFlow &&

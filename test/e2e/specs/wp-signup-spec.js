@@ -467,6 +467,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			const checklistPage = await ChecklistPage.Expect( this.driver );
 			await checklistPage.updateHomepage();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			await gEditorComponent.initEditor();
 
 			const errorShown = await gEditorComponent.errorDisplayed();
 			assert.strictEqual(
@@ -476,11 +477,12 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 			);
 
 			const hasInvalidBlocks = await gEditorComponent.hasInvalidBlocks();
-			return assert.strictEqual(
+			assert.strictEqual(
 				hasInvalidBlocks,
 				false,
 				'There are invalid blocks when editing the homepage'
 			);
+			return await gEditorComponent.closeEditor();
 		} );
 
 		step( 'Can delete the plan', async function() {
@@ -1093,9 +1095,15 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can update the homepage', async function() {
+			// Skipping if IE11 due to JS errors caused by missing DOMRect polyfill.
+			// See https://github.com/Automattic/wp-calypso/issues/40502
+			if ( dataHelper.getTargetType() === 'IE11' ) {
+				return this.skip();
+			}
 			const checklistPage = await ChecklistPage.Expect( this.driver );
 			await checklistPage.updateHomepage();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			await gEditorComponent.initEditor();
 
 			const errorShown = await gEditorComponent.errorDisplayed();
 			assert.strictEqual(
@@ -1104,17 +1112,13 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 				'There is a block editor error when editing the homepage'
 			);
 
-			// Jetpack blocks are broken in IE11. See https://github.com/Automattic/jetpack/issues/14273
-			if ( dataHelper.getTargetType() === 'IE11' ) {
-				return this.skip();
-			}
-
 			const hasInvalidBlocks = await gEditorComponent.hasInvalidBlocks();
-			return assert.strictEqual(
+			assert.strictEqual(
 				hasInvalidBlocks,
 				false,
 				'There are invalid blocks when editing the homepage'
 			);
+			return await gEditorComponent.closeEditor();
 		} );
 
 		after( 'Can delete our newly created account', async function() {
@@ -1483,7 +1487,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function() {
 		} );
 	} );
 
-	describe( 'Import a site while signing up @parallel', function() {
+	describe.skip( 'Import a site while signing up @parallel', function() {
 		// Currently must use a Wix or GoDaddy site to be importable through this flow.
 		const siteURL = 'https://hi6822.wixsite.com/eat-here-its-good';
 		const userName = dataHelper.getNewBlogName();

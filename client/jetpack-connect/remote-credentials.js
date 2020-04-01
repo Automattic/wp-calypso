@@ -254,7 +254,7 @@ export class OrgCredentialsForm extends Component {
 				<div className="jetpack-connect__note">
 					{ translate(
 						'Note: WordPress credentials are not the same as WordPress.com credentials. ' +
-						'Be sure to enter the username and password for your self-hosted WordPress site.'
+							'Be sure to enter the username and password for your self-hosted WordPress site.'
 					) }
 				</div>
 			</Fragment>

@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/full-site-editing",
-	"version": "0.23.0",
+	"version": "0.26.0",
 	"description": "Plugin for full site editing with the block editor.",
 	"sideEffects": true,
 	"repository": {
@@ -22,6 +22,9 @@
 		"posts-list-block": "calypso-build --source='posts-list-block'",
 		"dev:posts-list-block": "npm run posts-list-block",
 		"build:posts-list-block": "NODE_ENV=production npm run posts-list-block",
+		"common": "calypso-build --source='common'",
+		"dev:common": "npm run common",
+		"build:common": "NODE_ENV=production npm run common",
 		"blog-posts-block-editor": "calypso-build --source='blog-posts-block/editor'",
 		"blog-posts-block-view": "calypso-build --source='blog-posts-block/view'",
 		"blog-posts-block": "npm-run-all --parallel blog-posts-block-*",
@@ -78,6 +81,6 @@
 		"classnames": "2.2.6",
 		"lodash": "*",
 		"moment": "*",
-		"newspack-blocks": "github:Automattic/newspack-blocks#1.0.0-alpha.26"
+		"newspack-blocks": "github:Automattic/newspack-blocks#v1.2.1"
 	}
 }

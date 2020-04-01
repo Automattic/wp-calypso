@@ -50,7 +50,7 @@ const ConfirmPurchaseModal: FunctionComponent< Props > = props => {
 					{ DomainName: <em /> }
 				) }
 				<ul>
-					{ isLoggedIn && <li>{ NO__( 'Create an account' ) }</li> }
+					{ ! isLoggedIn && <li>{ NO__( 'Create an account' ) }</li> }
 					<li>{ NO__( 'Create your site' ) }</li>
 					<li>{ NO__( 'Purchase a paid plan' ) }</li>
 				</ul>

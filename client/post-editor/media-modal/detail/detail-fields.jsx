@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import { getMimePrefix, url } from 'lib/media/utils';
 import MediaActions from 'lib/media/actions';
 import ClipboardButtonInput from 'components/clipboard-button-input';
@@ -40,22 +41,22 @@ class EditorMediaModalDetailFields extends Component {
 
 	bumpTitleStat = () => {
 		analytics.ga.recordEvent( 'Media', 'Changed Item Title' );
-		analytics.mc.bumpStat( 'calypso_media_edit_details', 'title' );
+		bumpStat( 'calypso_media_edit_details', 'title' );
 	};
 
 	bumpAltStat = () => {
 		analytics.ga.recordEvent( 'Media', 'Changed Image Alt' );
-		analytics.mc.bumpStat( 'calypso_media_edit_details', 'alt' );
+		bumpStat( 'calypso_media_edit_details', 'alt' );
 	};
 
 	bumpCaptionStat = () => {
 		analytics.ga.recordEvent( 'Media', 'Changed Item Caption' );
-		analytics.mc.bumpStat( 'calypso_media_edit_details', 'caption' );
+		bumpStat( 'calypso_media_edit_details', 'caption' );
 	};
 
 	bumpDescriptionStat = () => {
 		analytics.ga.recordEvent( 'Media', 'Changed Item Description' );
-		analytics.mc.bumpStat( 'calypso_media_edit_details', 'description' );
+		bumpStat( 'calypso_media_edit_details', 'description' );
 	};
 
 	isMimePrefix( prefix ) {

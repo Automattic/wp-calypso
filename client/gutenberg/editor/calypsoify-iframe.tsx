@@ -440,15 +440,22 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		previewPort.onmessage = ( message: MessageEvent ) => {
 			previewPort.close();
 
-			const { frameNonce } = this.props;
+			const { frameNonce, unmappedSiteUrl } = this.props;
 			const { previewUrl, editedPost } = message.data;
-
 			const parsedPreviewUrl = url.parse( previewUrl, true );
+
 			if ( frameNonce ) {
 				parsedPreviewUrl.query[ 'frame-nonce' ] = frameNonce;
 			}
+
 			parsedPreviewUrl.query.iframe = 'true';
 			delete parsedPreviewUrl.search;
+
+			const { host: unmappedSiteUrlHost } = url.parse( unmappedSiteUrl );
+			if ( unmappedSiteUrlHost ) {
+				parsedPreviewUrl.host = unmappedSiteUrlHost;
+				parsedPreviewUrl.hostname = unmappedSiteUrlHost;
+			}
 
 			this.setState( {
 				previewUrl: url.format( parsedPreviewUrl ),
@@ -620,7 +627,14 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 const mapStateToProps = (
 	state: T.AppState,
-	{ postId, postType, duplicatePostId, fseParentPageId, creatingNewHomepage, editorType = 'post' }: Props
+	{
+		postId,
+		postType,
+		duplicatePostId,
+		fseParentPageId,
+		creatingNewHomepage,
+		editorType = 'post',
+	}: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
@@ -683,6 +697,7 @@ const mapStateToProps = (
 			partial.placeholder,
 			'wp_template_part'
 		),
+		unmappedSiteUrl: getSiteOption( state, siteId, 'unmapped_url' ),
 	};
 };
 

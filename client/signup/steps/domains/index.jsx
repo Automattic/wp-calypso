@@ -122,7 +122,6 @@ class DomainsStep extends React.Component {
 		}
 
 		this.showTestCopy = false;
-		this.showDesignUpdate = false;
 
 		// Do not assign user to the test if either in the launch flow or in /start/{PLAN_SLUG} flow
 		if (
@@ -130,11 +129,7 @@ class DomainsStep extends React.Component {
 			! props.isPlanStepFulfilled &&
 			'variantShowUpdates' === abtest( 'domainStepCopyUpdates' )
 		) {
-			if ( 'variantDesignUpdates' === abtest( 'domainStepDesignUpdates' ) ) {
-				this.showDesignUpdate = true;
-			} else {
-				this.showTestCopy = true;
-			}
+			this.showTestCopy = true;
 		}
 	}
 
@@ -158,7 +153,7 @@ class DomainsStep extends React.Component {
 	}
 
 	isEligibleVariantForDomainTest() {
-		return this.showTestCopy || this.showDesignUpdate;
+		return this.showTestCopy;
 	}
 
 	getMapDomainUrl = () => {
@@ -471,8 +466,6 @@ class DomainsStep extends React.Component {
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
 				showExampleSuggestions={ showExampleSuggestions }
-				showTestCopy={ this.showTestCopy }
-				showDesignUpdate={ this.showDesignUpdate }
 				isEligibleVariantForDomainTest={ this.isEligibleVariantForDomainTest() }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
