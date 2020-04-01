@@ -11,7 +11,7 @@ import { useI18n } from '@automattic/react-i18n';
 /**
  * Internal dependencies
  */
-import { fontPairings, getFontTitle, FontPair } from '../../constants';
+import { fontPairings, getFontTitle, FontPair, Font } from '../../constants';
 import { STORE_KEY } from '../../stores/onboard';
 import designs from '../../available-designs.json';
 
@@ -49,8 +49,12 @@ const FontSelect: React.FunctionComponent = () => {
 	return (
 		<div className="style-preview__font-options">
 			<Button
-				className={ classnames( 'style-preview__font-option', { 'is-selected': ! selectedFonts } ) }
-				onClick={ () => setFonts( undefined ) }
+				className={ classnames( 'style-preview__font-option', {
+					'is-selected':
+						selectedFonts?.headings === selectedDesignDefaultFonts?.[ 0 ] &&
+						selectedFonts?.base === selectedDesignDefaultFonts?.[ 1 ],
+				} ) }
+				onClick={ () => setFonts( ( selectedDesignDefaultFonts as [ Font, Font ] ) ?? undefined ) }
 			>
 				<span className="style-preview__font-option-contents">{ defaultFontOption }</span>
 			</Button>

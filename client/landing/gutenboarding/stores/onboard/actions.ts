@@ -12,11 +12,12 @@ import { Design, SiteVertical } from './types';
 import { STORE_KEY as ONBOARD_STORE } from './constants';
 import { SITE_STORE } from '../site';
 
-type State = import('.').State;
-type FontPair = import('../../constants').FontPair;
-type DomainSuggestion = DomainSuggestions.DomainSuggestion;
-type Template = VerticalsTemplates.Template;
 type CreateSiteParams = import('@automattic/data-stores').Site.CreateSiteParams;
+type DomainSuggestion = DomainSuggestions.DomainSuggestion;
+type Font = import('../../constants').Font;
+type FontPair = import('../../constants').FontPair;
+type State = import('.').State;
+type Template = VerticalsTemplates.Template;
 
 export const setDomain = ( domain: DomainSuggestion | undefined ) => ( {
 	type: 'SET_DOMAIN' as const,
@@ -51,10 +52,16 @@ export const resetFonts = () => ( {
 	type: 'RESET_FONTS' as const,
 } );
 
-export const setFonts = ( fonts: FontPair | undefined ) => ( {
-	type: 'SET_FONTS' as const,
-	fonts,
-} );
+// Handles { headings, base } and [ headings, base ] formats
+export const setFonts = ( fonts: FontPair | [ Font, Font ] | undefined ) => {
+	const nextFonts: FontPair | undefined = Array.isArray( fonts )
+		? { headings: fonts[ 0 ], base: fonts[ 1 ] }
+		: fonts;
+	return {
+		type: 'SET_FONTS' as const,
+		fonts: nextFonts,
+	};
+};
 
 export const resetOnboardStore = () => ( {
 	type: 'RESET_ONBOARD_STORE' as const,

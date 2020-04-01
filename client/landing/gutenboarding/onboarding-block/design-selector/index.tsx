@@ -20,6 +20,7 @@ import { SubTitle, Title } from '../../components/titles';
 
 import './style.scss';
 
+type Font = import('../../constants').Font;
 type Design = import('../../stores/onboard/types').Design;
 
 // Values for springs:
@@ -32,11 +33,7 @@ const DesignSelector: React.FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 	const { push } = useHistory();
 	const makePath = usePath();
-	const { setSelectedDesign, resetFonts, resetOnboardStore } = useDispatch( ONBOARD_STORE );
-
-	const handleStartOverButtonClick = () => {
-		resetOnboardStore();
-	};
+	const { setSelectedDesign, setFonts, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
 	const getDesignUrl = ( design: Design ) => {
 		const mshotsUrl = 'https://s.wordpress.com/mshots/v1/';
@@ -63,7 +60,7 @@ const DesignSelector: React.FunctionComponent = () => {
 				</div>
 				<Link
 					className="design-selector__start-over-button"
-					onClick={ handleStartOverButtonClick }
+					onClick={ () => resetOnboardStore() }
 					to={ makePath( Step.IntentGathering ) }
 					isLink
 				>
@@ -94,9 +91,8 @@ const DesignSelector: React.FunctionComponent = () => {
 										onClick={ () => {
 											setSelectedDesign( design );
 
-											// Our design selector shows each template's default fonts, so the user expects to see those
-											// in the style preview. To match that expectation, we reset any previously user-selected fonts.
-											resetFonts();
+											// Update fonts to the design defaults
+											setFonts( design.fonts as [ Font, Font ] );
 
 											if ( isEnabled( 'gutenboarding/style-preview' ) ) {
 												push( makePath( Step.Style ) );
