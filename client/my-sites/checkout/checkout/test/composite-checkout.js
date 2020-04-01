@@ -475,6 +475,25 @@ describe( 'CompositeCheckout', () => {
 		);
 	} );
 
+	it( 'adds the coupon to the cart when the url has a coupon code', async () => {
+		let renderResult;
+		const cartChanges = { products: [ planWithoutDomain ] };
+		const additionalProps = { couponCode: 'MYCOUPONCODE' };
+		await act( async () => {
+			renderResult = render(
+				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+				container
+			);
+		} );
+		const { getAllByLabelText } = renderResult;
+		getAllByLabelText( 'WordPress.com Personal' ).map( element =>
+			expect( element ).toHaveTextContent( 'R$144' )
+		);
+		getAllByLabelText( 'Coupon: MYCOUPONCODE' ).map( element =>
+			expect( element ).toHaveTextContent( '-$0' )
+		);
+	} );
+
 	it( 'displays loading while old cart store is loading', async () => {
 		let renderResult;
 		const additionalProps = {
