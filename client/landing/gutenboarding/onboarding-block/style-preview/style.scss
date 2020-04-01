@@ -1,16 +1,17 @@
 @import '../../mixins.scss';
+@import '../../variables.scss';
 
 .style-preview__header {
 	display: grid;
 	grid-template-areas: 'title viewport-select actions';
 	column-gap: 1em;
-	margin-top: 60px;
 	align-items: center;
+	margin-top: $gutenboarding-page-content-padding;
 }
 
 .style-preview__content {
 	display: grid;
-	margin-top: 64px;
+	margin-top: $gutenboarding-page-content-padding + 8px;
 	grid-template-areas: 'fonts preview';
 	grid-template-columns: 163px auto;
 	column-gap: 100px;
