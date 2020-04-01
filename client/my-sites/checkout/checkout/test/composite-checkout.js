@@ -474,4 +474,40 @@ describe( 'CompositeCheckout', () => {
 			expect( element ).toHaveTextContent( 'R$0' )
 		);
 	} );
+
+	it( 'displays loading while old cart store is loading', async () => {
+		let renderResult;
+		const additionalProps = {
+			cart: { hasLoadedFromServer: false, hasPendingServerUpdates: false },
+		};
+		await act( async () => {
+			renderResult = render( <MyCheckout additionalProps={ additionalProps } />, container );
+		} );
+		const { getByText } = renderResult;
+		expect( getByText( 'Loading checkout' ) ).toBeInTheDocument();
+	} );
+
+	it( 'displays loading while old cart store has pending updates', async () => {
+		let renderResult;
+		const additionalProps = { cart: { hasLoadedFromServer: true, hasPendingServerUpdates: true } };
+		await act( async () => {
+			renderResult = render( <MyCheckout additionalProps={ additionalProps } />, container );
+		} );
+		const { getByText } = renderResult;
+		expect( getByText( 'Loading checkout' ) ).toBeInTheDocument();
+	} );
+
+	it( 'does not display loading when old cart store has pending updates and then they complete', async () => {
+		let renderResult;
+		let additionalProps = { cart: { hasLoadedFromServer: true, hasPendingServerUpdates: true } };
+		await act( async () => {
+			renderResult = render( <MyCheckout additionalProps={ additionalProps } />, container );
+		} );
+		const { queryByText, rerender } = renderResult;
+		additionalProps = { cart: { hasLoadedFromServer: true, hasPendingServerUpdates: false } };
+		await act( async () => {
+			rerender( <MyCheckout additionalProps={ additionalProps } />, container );
+		} );
+		expect( queryByText( 'Loading checkout' ) ).not.toBeInTheDocument();
+	} );
 } );
