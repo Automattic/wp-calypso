@@ -88,7 +88,7 @@ export function* createSite(
 			site_creation_flow: 'gutenboarding',
 			theme: `pub/${ selectedDesign?.slug || 'twentytwenty' }`,
 			timezone_string: guessTimezone(),
-			template: selectedDesign?.slug || 'twentytwenty',
+			template: selectedDesign?.template || 'twentytwenty',
 			...( selectedFonts && {
 				font_base: selectedFonts.base,
 				font_headings: selectedFonts.headings,
