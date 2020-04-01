@@ -65,7 +65,6 @@ import getCurrentStream from 'state/selectors/get-reader-current-stream';
 import { getReaderFullViewPostKey } from 'state/reader/full-view/selectors/get-reader-full-view-post-key';
 import { setReaderFullViewPostKey } from 'state/reader/full-view/actions';
 import { getNextItem, getPreviousItem } from 'state/reader/streams/selectors';
-import { getPostPresenceCount } from 'state/presence/selectors';
 
 /**
  * Style dependencies
@@ -282,17 +281,7 @@ export class FullPostView extends React.Component {
 	};
 
 	render() {
-		const {
-			blogId,
-			feed,
-			feedId,
-			post,
-			postId,
-			presenceCount,
-			referral,
-			referralPost,
-			site,
-		} = this.props;
+		const { post, site, feed, referralPost, referral, blogId, feedId, postId } = this.props;
 
 		if ( post.is_error ) {
 			return <ReaderFullPostUnavailable post={ post } onBackClick={ this.handleBack } />;
@@ -425,7 +414,6 @@ export class FullPostView extends React.Component {
 								site={ site }
 								onCommentClick={ this.handleCommentClick }
 								fullPost={ true }
-								presenceCount={ presenceCount }
 							/>
 
 							{ showRelatedPosts && (
@@ -501,7 +489,6 @@ export default connect(
 			post,
 			liked: isLikedPost( state, siteId, post.ID ),
 			postKey,
-			presenceCount: getPostPresenceCount( state, post.global_ID ),
 		};
 
 		if ( ! isExternal && siteId ) {
