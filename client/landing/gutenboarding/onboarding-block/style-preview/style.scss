@@ -4,13 +4,13 @@
 	display: grid;
 	grid-template-areas: 'title viewport-select actions';
 	column-gap: 1em;
-	margin-top: 53px;
+	margin-top: 60px;
 	align-items: center;
 }
 
 .style-preview__content {
 	display: grid;
-	margin-top: 55px;
+	margin-top: 64px;
 	grid-template-areas: 'fonts preview';
 	grid-template-columns: 163px auto;
 	column-gap: 100px;
