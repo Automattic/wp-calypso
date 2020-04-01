@@ -1,3 +1,22 @@
+.date-picker {
+	display: flex;
+	max-width: 30rem;
+}
+
+.date-picker__select-date {
+	flex-grow: 1;
+	display: flex;
+	justify-content: space-evenly;
+}
+
+.date-picker__button--previous {
+	margin-right: 0.5rem;
+}
+
+.date-picker__button--next {
+	margin-left: 0.5rem;
+}
+
 .date-picker .button,
 .date-picker__display-date,
 .date-picker .date-range {
@@ -7,4 +26,12 @@
 
 .date-picker .button .gridicon.disabled {
 	fill: #dcdcde;
+}
+
+.date-picker__search-icon {
+	margin-right: 1rem;
+}
+
+.date-picker__search-icon.gridicon {
+	fill: green;
 }
