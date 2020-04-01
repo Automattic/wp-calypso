@@ -174,7 +174,10 @@ const setLocalizedUrlHost = ( hostname, validLocales = [] ) => ( urlParts, local
 	}
 
 	if ( validLocales.includes( localeSlug ) && localeSlug !== 'en' ) {
-		urlParts.host = `${ localesToSubdomains[ localeSlug ] || localeSlug }.${ hostname }`;
+		// Avoid changing the hostname when the locale is set via the path.
+		if ( urlParts.pathname.substr( 0, localeSlug.length + 2 ) !== '/' + localeSlug + '/' ) {
+			urlParts.host = `${ localesToSubdomains[ localeSlug ] || localeSlug }.${ hostname }`;
+		}
 	}
 	return urlParts;
 };

@@ -280,6 +280,36 @@ describe( 'utils', () => {
 			);
 		} );
 
+		test( 'handles double localizeUrl', () => {
+			getLocaleSlug.mockImplementationOnce( () => 'de' ).mockImplementationOnce( () => 'de' );
+			expect( localizeUrl( localizeUrl( 'https://automattic.com/cookies/' ) ) ).toEqual(
+				'https://automattic.com/de/cookies/'
+			);
+			getLocaleSlug();
+			getLocaleSlug(); // make sure to consume it.
+
+			getLocaleSlug.mockImplementationOnce( () => 'de' ).mockImplementationOnce( () => 'de' );
+			expect(
+				localizeUrl( localizeUrl( 'https://en.support.wordpress.com/all-about-domains/' ) )
+			).toEqual( 'https://wordpress.com/de/support/all-about-domains/' );
+			getLocaleSlug();
+			getLocaleSlug(); // make sure to consume it.
+
+			getLocaleSlug.mockImplementationOnce( () => 'de' ).mockImplementationOnce( () => 'de' );
+			expect( localizeUrl( localizeUrl( 'https://wordpress.com/' ) ) ).toEqual(
+				'https://de.wordpress.com/'
+			);
+			getLocaleSlug();
+			getLocaleSlug(); // make sure to consume it.
+
+			getLocaleSlug.mockImplementationOnce( () => 'de' ).mockImplementationOnce( () => 'de' );
+			expect( localizeUrl( localizeUrl( 'https://en.blog.wordpress.com/' ) ) ).toEqual(
+				'https://wordpress.com/blog/'
+			);
+			getLocaleSlug();
+			getLocaleSlug(); // make sure to consume it.
+		} );
+
 		test( 'trailing slash variations', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'de' );
 			expect( localizeUrl( 'https://automattic.com/cookies/' ) ).toEqual(

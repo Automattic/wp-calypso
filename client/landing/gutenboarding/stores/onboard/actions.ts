@@ -47,6 +47,10 @@ export const togglePageLayout = ( pageLayout: Template ) => ( {
 	pageLayout,
 } );
 
+export const resetFonts = () => ( {
+	type: 'RESET_FONTS' as const,
+} );
+
 export const setFonts = ( fonts: FontPair | undefined ) => ( {
 	type: 'SET_FONTS' as const,
 	fonts,
@@ -108,6 +112,7 @@ export function* createSite(
 }
 
 export type OnboardAction = ReturnType<
+	| typeof resetFonts
 	| typeof resetOnboardStore
 	| typeof resetSiteVertical
 	| typeof setDomain

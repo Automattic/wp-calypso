@@ -11,7 +11,6 @@ import { useTranslate } from 'i18n-calypso';
 import { Button } from '@automattic/components';
 import { defaultRewindConfig, RewindConfig } from './types';
 import { rewindBackup } from 'state/activity-log/actions';
-import { useLocalizedMoment } from 'components/localized-moment';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 import getBackupDownloadId from 'state/selectors/get-backup-download-id';
@@ -26,9 +25,12 @@ interface Props {
 	siteId: number;
 }
 
-const BackupDownloadFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) => {
+const BackupDownloadFlow: FunctionComponent< Props > = ( {
+	rewindId,
+	siteId,
+	backupDisplayDate,
+} ) => {
 	const dispatch = useDispatch();
-	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
 	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
@@ -38,8 +40,6 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) 
 	const downloadProgress = useSelector( state =>
 		getBackupDownloadProgress( state, siteId, rewindId )
 	);
-
-	const downloadTimestamp = moment.unix( rewindId ).format( 'LLL' );
 
 	const requestDownload = useCallback(
 		() => dispatch( rewindBackup( siteId, rewindId, rewindConfig ) ),
@@ -57,10 +57,10 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) 
 			<h3 className="rewind-flow__title">{ translate( 'Create downloadable backup' ) }</h3>
 			<p className="rewind-flow__info">
 				{ translate(
-					'{{strong}}%(downloadTimestamp)s{{/strong}} is the selected point to create a download backup of. ',
+					'{{strong}}%(backupDisplayDate)s{{/strong}} is the selected point to create a download backup of. ',
 					{
 						args: {
-							downloadTimestamp,
+							backupDisplayDate,
 						},
 						components: {
 							strong: <strong />,
@@ -101,10 +101,10 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) 
 			<ProgressBar percent={ downloadProgress } />
 			<p className="rewind-flow__info">
 				{ translate(
-					"We're creating a downloadable backup of your site from {{strong}}%(downloadTimestamp)s{{/strong}}.",
+					"We're creating a downloadable backup of your site from {{strong}}%(backupDisplayDate)s{{/strong}}.",
 					{
 						args: {
-							downloadTimestamp,
+							backupDisplayDate,
 						},
 						components: {
 							strong: <strong />,
@@ -131,10 +131,10 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) 
 			</h3>
 			<p className="rewind-flow__info">
 				{ translate(
-					'We successfully created a backup of your site from {{strong}}%(downloadTimestamp)s{{/strong}}.',
+					'We successfully created a backup of your site from {{strong}}%(backupDisplayDate)s{{/strong}}.',
 					{
 						args: {
-							downloadTimestamp,
+							backupDisplayDate,
 						},
 						components: {
 							strong: <strong />,
