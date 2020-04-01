@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -26,7 +25,7 @@ import {
  * Internal dependencies
  */
 import MediaLibrary from 'my-sites/media-library';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import { bumpStat as mcBumpStat } from 'lib/analytics/mc';
 import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
 import MediaModalGallery from './gallery';
@@ -459,7 +458,7 @@ export class EditorMediaModal extends Component {
 		this.setDetailSelectedIndex( findIndex( items, { ID: item.ID } ) );
 
 		mcBumpStat( 'editor_media_actions', 'edit_button_contextual' );
-		analytics.ga.recordEvent( 'Media', 'Clicked Contextual Edit Button' );
+		gaRecordEvent( 'Media', 'Clicked Contextual Edit Button' );
 
 		this.props.setView( ModalViews.DETAIL );
 	};

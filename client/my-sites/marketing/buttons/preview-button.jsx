@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -12,6 +11,7 @@ import photon from 'photon';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import SocialLogo from 'components/social-logo';
@@ -67,7 +67,7 @@ class SharingButtonsPreviewButton extends React.Component {
 			enabled: ! this.props.enabled, // during onClick enabled is the old state, so negating gives the new state
 			path: this.props.path,
 		} );
-		analytics.ga.recordEvent( 'Sharing', 'Clicked Share Button', this.props.button.ID );
+		gaRecordEvent( 'Sharing', 'Clicked Share Button', this.props.button.ID );
 		this.props.onClick();
 	};
 

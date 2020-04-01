@@ -1,16 +1,15 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import Gridicon from 'components/gridicon';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import titlecase from 'to-title-case';
 
 class StatsInfoPanel extends React.PureComponent {
@@ -21,7 +20,7 @@ class StatsInfoPanel extends React.PureComponent {
 	};
 
 	recordEvent = () => {
-		analytics.ga.recordEvent(
+		gaRecordEvent(
 			'Stats',
 			'Clicked More Panel Information Help Link',
 			titlecase( this.props.module )

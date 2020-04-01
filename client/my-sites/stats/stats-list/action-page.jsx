@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:stats:action-page' );
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import Gridicon from 'components/gridicon';
+
+const debug = debugFactory( 'calypso:stats:action-page' );
 
 class StatsActionPage extends React.Component {
 	static displayName = 'StatsActionPage';
@@ -21,7 +21,7 @@ class StatsActionPage extends React.Component {
 		event.stopPropagation();
 		event.preventDefault();
 		debug( 'handling page click', this.props );
-		analytics.ga.recordEvent(
+		gaRecordEvent(
 			'Stats',
 			'Clicked on Summary Link in ' + this.props.moduleName + ' List Action Menu'
 		);

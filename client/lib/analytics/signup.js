@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import {
 	adTrackSignupStart,
 	adTrackSignupComplete,
@@ -12,7 +13,7 @@ export function recordSignupStart( flow, ref ) {
 	// Tracks
 	analytics.tracks.recordEvent( 'calypso_signup_start', { flow, ref } );
 	// Google Analytics
-	analytics.ga.recordEvent( 'Signup', 'calypso_signup_start' );
+	gaRecordEvent( 'Signup', 'calypso_signup_start' );
 	// Marketing
 	adTrackSignupStart( flow );
 }
@@ -45,14 +46,14 @@ export function recordSignupComplete(
 		hasCartItems && 'has_cart_items',
 	].filter( Boolean );
 
-	analytics.ga.recordEvent( 'Signup', 'calypso_signup_complete:' + flags.join( ',' ) );
+	gaRecordEvent( 'Signup', 'calypso_signup_complete:' + flags.join( ',' ) );
 
 	if ( isNew7DUserSite ) {
 		// Tracks
 		analytics.tracks.recordEvent( 'calypso_new_user_site_creation', { flow } );
 
 		// Google Analytics
-		analytics.ga.recordEvent( 'Signup', 'calypso_new_user_site_creation' );
+		gaRecordEvent( 'Signup', 'calypso_new_user_site_creation' );
 	}
 
 	adTrackSignupComplete( { isNewUserSite: isNewUser && isNewSite } );
@@ -70,7 +71,7 @@ export function recordRegistration( flow ) {
 	// Tracks
 	analytics.tracks.recordEvent( 'calypso_user_registration_complete', { flow } );
 	// Google Analytics
-	analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
+	gaRecordEvent( 'Signup', 'calypso_user_registration_complete' );
 	// Marketing
 	adTrackRegistration();
 }
@@ -79,7 +80,7 @@ export function recordPasswordlessRegistration( flow ) {
 	// Tracks
 	analytics.tracks.recordEvent( 'calypso_user_registration_passwordless_complete', { flow } );
 	// Google Analytics
-	analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_passwordless_complete' );
+	gaRecordEvent( 'Signup', 'calypso_user_registration_passwordless_complete' );
 	// Marketing
 	adTrackRegistration();
 }
@@ -88,7 +89,7 @@ export function recordSocialRegistration() {
 	// Tracks
 	analytics.tracks.recordEvent( 'calypso_user_registration_social_complete' );
 	// Google Analytics
-	analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_social_complete' );
+	gaRecordEvent( 'Signup', 'calypso_user_registration_social_complete' );
 	// Marketing
 	adTrackRegistration();
 }

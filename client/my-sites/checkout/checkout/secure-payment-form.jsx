@@ -24,7 +24,7 @@ import WechatPaymentBox from './wechat-payment-box';
 import RedirectPaymentBox from './redirect-payment-box';
 import WebPaymentBox from './web-payment-box';
 import { submit } from 'lib/store-transactions';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import { setPayment, setTransactionStep } from 'lib/transaction/actions';
 import {
 	fullCreditsPayment,
@@ -155,7 +155,7 @@ export class SecurePaymentForm extends Component {
 	}
 
 	handlePaymentBoxSubmit = event => {
-		analytics.ga.recordEvent( 'Upgrades', 'Submitted Checkout Form' );
+		gaRecordEvent( 'Upgrades', 'Submitted Checkout Form' );
 
 		this.submitTransaction( event );
 	};

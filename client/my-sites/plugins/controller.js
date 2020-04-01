@@ -10,7 +10,7 @@ import { includes, some } from 'lodash';
  */
 import { getSiteFragment, sectionify } from 'lib/route';
 import notices from 'notices';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import PlanSetup from './jetpack-plugins-setup';
 import PluginEligibility from './plugin-eligibility';
 import PluginListComponent from './main';
@@ -74,7 +74,7 @@ function renderPluginList( context, basePath ) {
 	} );
 
 	if ( search ) {
-		analytics.ga.recordEvent( 'Plugins', 'Search', 'Search term', search );
+		gaRecordEvent( 'Plugins', 'Search', 'Search term', search );
 	}
 }
 

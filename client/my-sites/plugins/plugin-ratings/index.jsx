@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -13,7 +12,7 @@ import createReactClass from 'create-react-class';
  */
 import { ProgressBar } from '@automattic/components';
 import Rating from 'components/rating';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 
 /**
  * Style dependencies
@@ -58,7 +57,7 @@ const PluginRatings = createReactClass( {
 		const { ratings, slug, numRatings } = this.props;
 		const numberOfRatings = ratings && ratings[ ratingTier ] ? ratings[ ratingTier ] : 0;
 		const onClickPluginRatingsLink = () => {
-			analytics.ga.recordEvent( 'Plugins', 'Clicked Plugin Ratings Link', 'Plugin Name', slug );
+			gaRecordEvent( 'Plugins', 'Clicked Plugin Ratings Link', 'Plugin Name', slug );
 		};
 
 		return (
