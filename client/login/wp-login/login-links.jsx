@@ -55,7 +55,13 @@ export class LoginLinks extends React.Component {
 
 		this.props.recordTracksEvent( 'calypso_login_lost_phone_link_click' );
 
-		page( login( { isNative: true, twoFactorAuthType: 'backup' } ) );
+		page(
+			login( {
+				isNative: true,
+				twoFactorAuthType: 'backup',
+				isGutenboarding: this.props.isGutenboarding,
+			} )
+		);
 	};
 
 	handleMagicLoginLinkClick = event => {
