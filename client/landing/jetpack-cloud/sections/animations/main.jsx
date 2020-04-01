@@ -2,44 +2,41 @@
  * External dependencies
  */
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { useSpring, animated } from 'react-spring';
-
-/**
- * Internal dependencies
- */
-import { getCurrentUserName } from 'state/current-user/selectors';
+import { Keyframes, animated } from 'react-spring/renderprops';
 
 export default function() {
-	const user = useSelector( state => getCurrentUserName( state ) );
-	const animHello = useSpring( { opacity: 1, from: { opacity: 0 } } );
-
-	const animScanIconShield = useSpring( {
-		from: { opacity: 0 },
-		to: async next => {
-			for (;;) {
-				await next( { opacity: 1 } );
-			}
-		},
-		config: { duration: 900 },
-		reset: true,
+	const AnimScanIconShield = Keyframes.Spring( async next => {
+		// eslint-disable-next-line no-constant-condition
+		while ( true ) {
+			await next( {
+				from: { opacity: 0 },
+				opacity: 1,
+				config: { duration: 900 },
+			} );
+			await next( {
+				opacity: 0,
+				config: { duration: 900 },
+			} );
+		}
 	} );
 
-	const animScanIconHead = useSpring( {
-		from: { transform: 'translateY(0px)' },
-		to: async next => {
-			for (;;) {
-				await next( { transform: 'translateY(260px)' } );
-			}
-		},
-		config: { duration: 1800 },
-		reset: true,
+	const AnimScanIconHead = Keyframes.Spring( async next => {
+		// eslint-disable-next-line no-constant-condition
+		while ( true ) {
+			await next( {
+				from: { transform: 'translateY(0px)' },
+				transform: 'translateY(260px)',
+				config: { duration: 1800 },
+			} );
+			await next( {
+				transform: 'translateY(0px)',
+				config: { duration: 0 },
+			} );
+		}
 	} );
 
 	return (
 		<div>
-			<animated.p style={ animHello }>Welcome to the animated world of icons, { user }!</animated.p>
-
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				viewBox="0 0 124 150"
@@ -52,23 +49,24 @@ export default function() {
 					/>
 				</mask>
 				<g mask="url(#scan-shield-mask)">
-					<animated.rect
-						style={ animScanIconShield }
-						x="0"
-						y="0"
-						width="124"
-						height="150"
-						fill="#D0E6B8"
-					/>
-					<animated.line
-						style={ animScanIconHead }
-						x1="0"
-						x2="124"
-						y1="0"
-						y2="0"
-						stroke="#069E08"
-						strokeWidth="7"
-					/>
+					<AnimScanIconShield native>
+						{ props => (
+							<animated.rect style={ props } x="0" y="0" width="124" height="150" fill="#D0E6B8" />
+						) }
+					</AnimScanIconShield>
+					<AnimScanIconHead native>
+						{ props => (
+							<animated.line
+								style={ props }
+								x1="0"
+								x2="124"
+								y1="0"
+								y2="0"
+								stroke="#069E08"
+								strokeWidth="7"
+							/>
+						) }
+					</AnimScanIconHead>
 				</g>
 			</svg>
 		</div>
