@@ -28,7 +28,7 @@
 		grid-template-columns: 1fr 1fr;
 		column-gap: 4em;
 		row-gap: 5em;
-		margin-top: #{$gutenboarding-page-content-padding} + 8px;
+		margin-top: $gutenboarding-page-content-padding + 8px;
 	}
 
 	.design-selector__image-frame {
