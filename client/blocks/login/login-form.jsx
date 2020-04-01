@@ -473,7 +473,7 @@ export class LoginForm extends Component {
 		}
 
 		if ( isGutenboarding ) {
-			signupUrl = window.location.origin + '/gutenboarding' + langFragment;
+			signupUrl = '/gutenboarding' + langFragment;
 		}
 
 		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {

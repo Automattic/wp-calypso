@@ -346,7 +346,7 @@ class Login extends Component {
 
 		if ( isGutenboarding ) {
 			preHeader = (
-				<div class="login__form-gutenboarding-wordpress-logo">
+				<div className="login__form-gutenboarding-wordpress-logo">
 					<svg
 						aria-hidden="true"
 						role="img"
