@@ -7,13 +7,12 @@ import debugFactory from 'debug';
  * Internal Dependencies
  */
 import registerEventHandlers from './events-to-actions';
-import registerPresence from '../presence';
 import { socket } from '../socket';
 
 let channel = null;
-const channelTopicPrefix = 'public:uni~presence:wp_post:';
+const channelTopicPrefix = 'public:push:wp_post:';
 
-const debug = debugFactory( 'lasagna:channel:public-post' );
+const debug = debugFactory( 'lasagna:channel:public:push:wp_post' );
 
 export default store => next => action => {
 	switch ( action.type ) {
@@ -29,7 +28,6 @@ export default store => next => action => {
 
 			channel = socket.channel( channelTopicPrefix + post.global_ID );
 			registerEventHandlers( channel, store );
-			registerPresence( channel, store, 'posts', post.global_ID );
 			channel
 				.join()
 				.receive( 'ok', () => debug( 'channel join ok' ) )
