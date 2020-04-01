@@ -113,7 +113,7 @@ export class ThankYouCard extends Component {
 							<Button href={ `/settings/security/${ selectedSiteSlug }#credentials` } primary>
 								{ translate( 'Add server credentials now' ) }
 							</Button>
-							<Button href={ dismissUrl } onClick={ this.startChecklistTour } primary>
+							<Button href={ dismissUrl } onClick={ this.startChecklistTour }>
 								{ translate( 'See checklist' ) }
 							</Button>
 						</p>
