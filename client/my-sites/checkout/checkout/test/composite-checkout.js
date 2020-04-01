@@ -138,7 +138,7 @@ describe( 'CompositeCheckout', () => {
 						getCart={ mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ) }
 						getStoredCards={ async () => [] }
 						allowedPaymentMethods={ [ 'paypal' ] }
-						onlyLoadPaymentMethods={ [ 'paypal', 'full-credits' ] }
+						onlyLoadPaymentMethods={ [ 'paypal', 'full-credits', 'free-purchase' ] }
 						overrideCountryList={ countryList }
 					/>
 				</ReduxProvider>
@@ -216,5 +216,49 @@ describe( 'CompositeCheckout', () => {
 		} );
 		const { getByText } = renderResult;
 		expect( getByText( 'Paypal' ) ).toBeInTheDocument();
+	} );
+
+	it( 'does not render the free payment method option when the purchase is not free', async () => {
+		let renderResult;
+		await act( async () => {
+			renderResult = render( <MyCheckout />, container );
+		} );
+		const { queryByText } = renderResult;
+		expect( queryByText( 'Free Purchase' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'does not render the paypal payment method option when the purchase is free', async () => {
+		let renderResult;
+		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
+		await act( async () => {
+			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		} );
+		const { queryByText } = renderResult;
+		expect( queryByText( 'Paypal' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'does not render the full credits payment method option when full credits are available but the purchase is free', async () => {
+		let renderResult;
+		const cartChanges = {
+			total_cost_integer: 0,
+			total_cost_display: '0',
+			credits_integer: 15600,
+			credits_display: 'R$156',
+		};
+		await act( async () => {
+			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		} );
+		const { queryByText } = renderResult;
+		expect( queryByText( /WordPress.com Credits:/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders the free payment method option when the purchase is free', async () => {
+		let renderResult;
+		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
+		await act( async () => {
+			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		} );
+		const { getByText } = renderResult;
+		expect( getByText( 'Free Purchase' ) ).toBeInTheDocument();
 	} );
 } );
