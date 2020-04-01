@@ -245,6 +245,26 @@ describe( 'CompositeCheckout', () => {
 		expect( queryByText( /WordPress.com Credits:/ ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'does not render the full credits payment method option when partial credits are available', async () => {
+		let renderResult;
+		const cartChanges = { credits_integer: 15400, credits_display: 'R$154' };
+		await act( async () => {
+			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		} );
+		const { queryByText } = renderResult;
+		expect( queryByText( /WordPress.com Credits:/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders the paypal payment method option when partial credits are available', async () => {
+		let renderResult;
+		const cartChanges = { credits_integer: 15400, credits_display: 'R$154' };
+		await act( async () => {
+			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		} );
+		const { getByText } = renderResult;
+		expect( getByText( 'Paypal' ) ).toBeInTheDocument();
+	} );
+
 	it( 'renders the full credits payment method option when full credits are available', async () => {
 		let renderResult;
 		const cartChanges = { credits_integer: 15600, credits_display: 'R$156' };
