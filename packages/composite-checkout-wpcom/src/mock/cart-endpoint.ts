@@ -1,3 +1,6 @@
+/**
+ * External dependencies
+ */
 import '@automattic/calypso-polyfills';
 
 /**
@@ -5,15 +8,16 @@ import '@automattic/calypso-polyfills';
  */
 import { RequestCart } from '../types';
 
-/**
- * A fake WPCOM shopping cart endpoint.
- */
-export async function mockSetCartEndpoint( {
-	products: requestProducts,
-	currency: requestCurrency,
-	coupon: requestCoupon,
-	locale: requestLocale,
-}: RequestCart ): Promise< object > {
+export async function mockSetCartEndpoint(
+	_: string,
+	requestCart: RequestCart
+): Promise< object > {
+	const {
+		products: requestProducts,
+		currency: requestCurrency,
+		coupon: requestCoupon,
+		locale: requestLocale,
+	}: RequestCart = requestCart;
 	const products = requestProducts.map( convertRequestProductToResponseProduct( requestCurrency ) );
 
 	const taxInteger = products.reduce( ( accum, current ) => {
