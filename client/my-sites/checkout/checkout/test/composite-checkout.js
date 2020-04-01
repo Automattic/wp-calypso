@@ -4,6 +4,7 @@
 /**
  * External dependencies
  */
+import page from 'page';
 import React from 'react';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
@@ -17,6 +18,10 @@ import { render, act, fireEvent } from '@testing-library/react'; // eslint-disab
  */
 import CompositeCheckout from '../composite-checkout';
 import { StripeHookProvider } from 'lib/stripe';
+
+jest.mock( 'page', () => ( {
+	redirect: jest.fn(),
+} ) );
 
 const domainProduct = {
 	product_name: '.cash Domain',
@@ -102,6 +107,7 @@ describe( 'CompositeCheckout', () => {
 	let MyCheckout;
 
 	beforeEach( () => {
+		page.redirect.mockReset();
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
 
@@ -169,7 +175,7 @@ describe( 'CompositeCheckout', () => {
 			};
 		} );
 
-		MyCheckout = ( { cartChanges } ) => (
+		MyCheckout = ( { cartChanges, additionalProps } ) => (
 			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
 				<ReduxProvider store={ store }>
 					<CompositeCheckout
@@ -180,6 +186,7 @@ describe( 'CompositeCheckout', () => {
 						allowedPaymentMethods={ [ 'paypal' ] }
 						onlyLoadPaymentMethods={ [ 'paypal', 'full-credits', 'free-purchase' ] }
 						overrideCountryList={ countryList }
+						{ ...additionalProps }
 					/>
 				</ReduxProvider>
 			</StripeHookProvider>
@@ -389,5 +396,40 @@ describe( 'CompositeCheckout', () => {
 		expect( getByText( 'City' ) ).toBeInTheDocument();
 		expect( getByText( 'State' ) ).toBeInTheDocument();
 		expect( getByText( 'ZIP code' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders the checkout greeting header', async () => {
+		let renderResult;
+		await act( async () => {
+			renderResult = render( <MyCheckout />, container );
+		} );
+		const { getByText } = renderResult;
+		expect( getByText( 'You are all set to check out' ) ).toBeInTheDocument();
+		expect( page.redirect ).not.toHaveBeenCalled();
+	} );
+
+	it( 'redirects to the plans page if the cart is empty when it loads', async () => {
+		const cartChanges = { products: [] };
+		await act( async () => {
+			render( <MyCheckout cartChanges={ cartChanges } />, container );
+		} );
+		expect( page.redirect ).toHaveBeenCalledWith( '/plans/foo.com' );
+	} );
+
+	it( 'does not redirect if the cart is empty when it loads but the url has a plan alias', async () => {
+		let renderResult;
+		const cartChanges = { products: [] };
+		const additionalProps = { product: 'personal' };
+		await act( async () => {
+			renderResult = render(
+				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+				container
+			);
+		} );
+		expect( page.redirect ).not.toHaveBeenCalled();
+		const { getAllByLabelText } = renderResult;
+		getAllByLabelText( 'WordPress.com Personal' ).map( element =>
+			expect( element ).toHaveTextContent( 'R$144' )
+		);
 	} );
 } );
