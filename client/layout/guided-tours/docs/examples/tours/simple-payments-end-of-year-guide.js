@@ -60,6 +60,7 @@ export const SimplePaymentsEndOfYearGuide = makeTour(
 						<img
 							src="/calypso/images/illustrations/illustration-shopping-bags.svg"
 							style={ { width: '210px', height: '160px', marginBottom: '10px' } }
+							alt=""
 						/>
 					</div>
 					<ButtonRow>

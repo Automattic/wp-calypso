@@ -58,7 +58,7 @@ class HostSelect extends React.Component {
 									key={ index }
 									aria-label={ label }
 								>
-									<img className="guided-transfer__host-button-image" src={ logo } />
+									<img className="guided-transfer__host-button-image" src={ logo } alt="" />
 								</Button>
 							);
 						} ) }
