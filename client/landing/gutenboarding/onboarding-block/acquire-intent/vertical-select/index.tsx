@@ -123,7 +123,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 		}
 		if ( e.keyCode === ENTER ) {
 			e.preventDefault();
-			input.length && handleSelect( { label: input } );
+			input.length && ! suggestions.length && handleSelect( { label: input } );
 			return;
 		}
 		if ( e.keyCode === TAB ) {
