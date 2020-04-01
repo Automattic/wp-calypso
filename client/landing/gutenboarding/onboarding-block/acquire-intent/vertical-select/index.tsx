@@ -172,7 +172,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 		),
 	} );
 
-	const showArrow = isFocused && ! siteTitle && ! siteVertical;
+	const showArrow = isFocused && ! siteTitle && ! siteVertical && inputValue.length > 2;
 
 	return (
 		<form
@@ -181,7 +181,8 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 			} ) }
 		>
 			{ madlib }
-			{ showArrow ? <Arrow /> : '.' }
+			{ /* us visibility to keep the layout fixed with and without the arrow */ }
+			<Arrow style={ { visibility: showArrow ? 'visible' : 'hidden' } } />
 		</form>
 	);
 };
