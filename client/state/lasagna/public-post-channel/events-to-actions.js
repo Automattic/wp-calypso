@@ -8,7 +8,7 @@ import debugFactory from 'debug';
  */
 import { receiveComments } from 'state/comments/actions';
 
-const debug = debugFactory( 'lasagna:channel:public-post' );
+const debug = debugFactory( 'lasagna:channel:public:push:wp_post' );
 
 export default function( channel, store ) {
 	channel.on( 'new_comment', ( { payload: comment } ) => {
