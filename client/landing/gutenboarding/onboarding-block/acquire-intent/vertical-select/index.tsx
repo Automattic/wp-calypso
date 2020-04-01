@@ -32,7 +32,7 @@ interface Props {
 }
 const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 	const { __: NO__ } = useI18n();
-	const inputRef = React.useRef< HTMLElement >( null );
+	const inputRef = React.useRef< HTMLSpanElement >( document.createElement( 'span' ) );
 	const [ isFocused, setIsFocused ] = React.useState< boolean >( false );
 	const [ suggestions, setSuggestions ] = React.useState< Suggestion[] >( [] );
 
@@ -87,7 +87,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 			! newSuggestions.some( suggestion => suggestion.label.toLowerCase() === normalizedInputValue )
 		) {
 			// User-supplied verticals don't have IDs.
-			newSuggestions.unshift( { label: inputValue.trim() } );
+			newSuggestions.unshift( { label: inputValue.trim(), id: '', slug: '' } );
 		}
 
 		// If there is only one suggestion and that suggestion matches the user input value,
@@ -160,6 +160,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 			<span className="vertical-select__suggestions-wrapper">
 				<span
 					role="textbox"
+					aria-multiline="true"
 					tabIndex={ 0 }
 					contentEditable
 					ref={ inputRef }
