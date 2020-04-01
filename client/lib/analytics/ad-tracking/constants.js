@@ -11,6 +11,7 @@ import config from 'config';
 // Enable/disable ad-tracking
 // These should not be put in the json config as they must not differ across environments
 export const isGoogleAnalyticsEnabled = true;
+export const isGoogleAnalyticsEnhancedEcommerceEnabled = true;
 export const isFloodlightEnabled = true;
 export const isFacebookEnabled = true;
 export const isBingEnabled = true;

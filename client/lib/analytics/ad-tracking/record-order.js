@@ -19,6 +19,8 @@ import {
 	isPandoraEnabled,
 	isQuoraEnabled,
 	isAdRollEnabled,
+	isGoogleAnalyticsEnabled,
+	isGoogleAnalyticsEnhancedEcommerceEnabled,
 	TRACKING_IDS,
 	EXPERIAN_CONVERSION_PIXEL_URL,
 	YAHOO_GEMINI_CONVERSION_PIXEL_URL,
@@ -74,7 +76,7 @@ export async function recordOrder( cart, orderId ) {
 	recordOrderInBing( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInCriteo( cart, orderId );
-	// recordOrderInGAEnhancedEcommerce( cart, orderId );
+	recordOrderInGAEnhancedEcommerce( cart, orderId );
 
 	// Fire a single tracking event without any details about what was purchased
 
@@ -433,32 +435,65 @@ function recordOrderInGoogleAds( cart, orderId ) {
 	}
 }
 
-// function recordOrderInGAEnhancedEcommerce( cart, orderId ) {
-// 	if ( ! isAdTrackingAllowed() ) {
-// 		debug( 'recordOrderInGAEnhancedEcommerce: skipping as ad tracking is disallowed' );
-// 		return;
-// 	}
+function recordOrderInGAEnhancedEcommerce( cart, orderId ) {
+	if ( ! isAdTrackingAllowed() ) {
+		debug( 'recordOrderInGAEnhancedEcommerce: [Skipping] ad tracking is disallowed' );
+		return;
+	}
 
-// 	if ( 'function' !== typeof ga ) {
-// 		debug( 'recordOrderInGAEnhancedEcommerce: ga() is not defined' );
-// 		return;
-// 	}
+	if ( ! isGoogleAnalyticsEnabled || ! isGoogleAnalyticsEnhancedEcommerceEnabled ) {
+		debug( 'recordOrderInGAEnhancedEcommerce: [Skipping] Google Analytics is not enabled' );
+		return;
+	}
 
-// 	// Load the enhanced ecommerce plugin
-// 	// ga( 'require', 'ec' );
+	if ( 'function' !== typeof ga ) {
+		debug( 'recordOrderInGAEnhancedEcommerce: [Skipping] ga() is not defined' );
+		return;
+	}
 
-// 	// TODO: verify tax and coupon aren't passed through from the new composite checkout
-// 	const params = {
-// 		id: orderId,
-// 		affiliation: 'travistesting123',
-// 		revenue: cart.total_cost,
-// 		tax: cart.total_tax ?? undefined,
-// 		shipping: undefined,
-// 		coupon: cart.coupon ?? undefined,
-// 	};
+	// Create tracker
+	// eslint-disable-next-line no-undef
+	ga( 'create', TRACKING_IDS.wpcomGoogleAnalyticsGtag );
 
-// 	// ga( 'ec:setAction', 'purchase', params );
-// }
+	// Load the enhanced ecommerce plugin
+	// eslint-disable-next-line no-undef
+	ga( 'require', 'ec' );
+
+	// eslint-disable-next-line no-undef
+	ga( 'set', 'currencyCode', cart.currency ?? 'USD' );
+
+	// Add products
+	cart.products.map( cartItem => {
+		// eslint-disable-next-line no-undef
+		ga( 'ec:addProduct', {
+			id: cartItem.product_id,
+			name: cartItem.product_name_en,
+			category: undefined,
+			brand: undefined,
+			variant: undefined,
+			price: cartItem.item_total,
+			quantity: cartItem.volume,
+		} );
+	} );
+
+	// TODO: tax and coupon aren't passed through from the new composite checkout
+	const params = {
+		id: orderId,
+		affiliation: 'travistesting123',
+		revenue: cart.total_cost,
+		tax: cart.total_tax ?? undefined,
+		shipping: undefined,
+		coupon: cart.coupon ?? undefined,
+	};
+
+	// eslint-disable-next-line no-undef
+	ga( 'ec:setAction', 'purchase', params );
+
+	// eslint-disable-next-line no-undef
+	ga( 'send', 'transaction' ); // TODO event = 'transaction' ??
+
+	debug( 'recordOrderInGAEnhancedEcommerce: Record WPCom Purchase', params );
+}
 
 /**
  * Records an order in Criteo
