@@ -118,7 +118,7 @@ export function countrySpecificFieldRules( country ) {
 				nik: {
 					description: i18n.translate( 'NIK - Indonesia Identity Card Number', {
 						comment:
-							'NIK - Indonesia Identity Card Number required ' + 'for Indonesian payment methods.',
+							'NIK - Indonesia Identity Card Number required for Indonesian payment methods.',
 					} ),
 					rules: [ 'validIndonesiaNik' ],
 				},
