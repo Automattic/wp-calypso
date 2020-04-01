@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -20,6 +21,9 @@ import { createNotice } from 'state/notices/actions';
 import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
 import FormToggle from 'components/forms/form-toggle';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
+import { isExpired, isOneTimePurchase, isRechargeable } from '../../../../lib/purchases';
+import { getEditCardDetailsPath } from '../../utils';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 class AutoRenewToggle extends Component {
 	static propTypes = {
@@ -33,6 +37,7 @@ class AutoRenewToggle extends Component {
 		compact: PropTypes.bool,
 		withTextStatus: PropTypes.bool,
 		toggleSource: PropTypes.string,
+		siteSlug: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -74,6 +79,11 @@ class AutoRenewToggle extends Component {
 
 		const updateAutoRenew = isEnabled ? disableAutoRenew : enableAutoRenew;
 		const isTogglingToward = ! isEnabled;
+
+		if ( isTogglingToward && ! isRechargeable( this.props.purchase ) ) {
+			this.goToUpdatePaymentMethod();
+			return;
+		}
 
 		this.setState( {
 			isTogglingToward,
@@ -150,8 +160,21 @@ class AutoRenewToggle extends Component {
 		return isEnabled ? translate( 'Auto-renew (on)' ) : translate( 'Auto-renew (off)' );
 	}
 
+	goToUpdatePaymentMethod() {
+		const { purchase, siteSlug } = this.props;
+		page( getEditCardDetailsPath( siteSlug, purchase ) );
+	}
+
+	shouldRender( purchase ) {
+		return ! isExpired( purchase ) && ! isOneTimePurchase( purchase );
+	}
+
 	render() {
 		const { planName, siteDomain, purchase, compact, withTextStatus } = this.props;
+
+		if ( ! this.shouldRender( purchase ) ) {
+			return null;
+		}
 
 		const ToggleComponent = compact ? CompactFormToggle : FormToggle;
 
@@ -184,6 +207,7 @@ export default connect(
 		isEnabled: ! isExpiring( purchase ),
 		currentUserId: getCurrentUserId( state ),
 		isAtomicSite: isSiteAtomic( state, purchase.siteId ),
+		siteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{
 		fetchUserPurchases,
