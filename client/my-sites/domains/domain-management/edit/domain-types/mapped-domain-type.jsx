@@ -32,6 +32,8 @@ import { isRechargeable, isExpired } from 'lib/purchases';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainManagementNavigation from '../navigation';
+import { WrapDomainStatusButtons } from './helpers';
+
 
 class MappedDomainType extends React.Component {
 	resolveStatus() {
@@ -190,7 +192,7 @@ class MappedDomainType extends React.Component {
 			return null;
 		}
 
-		return (
+		const content = (
 			<AutoRenewToggle
 				planName={ selectedSite.plan.product_name_short }
 				siteDomain={ selectedSite.domain }
@@ -199,24 +201,26 @@ class MappedDomainType extends React.Component {
 				withTextStatus={ true }
 			/>
 		);
+
+		return content && <WrapDomainStatusButtons>{ content }</WrapDomainStatusButtons>;
 	}
 
 	renderAutoRenew() {
 		const { isLoadingPurchase, domain } = this.props;
 
 		if ( domain && domain.bundledPlanSubscriptionId ) {
-			return <div />;
+			return null;
 		}
 
 		if ( isLoadingPurchase ) {
 			return (
-				<div className="domain-types__auto-renew-placeholder">
+				<WrapDomainStatusButtons className="domain-types__auto-renew-placeholder">
 					<p />
-				</div>
+				</WrapDomainStatusButtons>
 			);
 		}
 
-		return <div>{ this.renderAutoRenewToggle() }</div>;
+		return this.renderAutoRenewToggle();
 	}
 
 	handlePaymentSettingsClick = () => {
@@ -278,7 +282,7 @@ class MappedDomainType extends React.Component {
 					<div>{ expiresText }</div>
 					{ this.renderDefaultRenewButton() }
 					{ ! newStatusDesignAutoRenew && domain.subscriptionId && (
-						<div>
+						<WrapDomainStatusButtons>
 							<SubscriptionSettings
 								type={ domain.type }
 								compact={ true }
@@ -286,7 +290,7 @@ class MappedDomainType extends React.Component {
 								siteSlug={ this.props.selectedSite.slug }
 								onClick={ this.handlePaymentSettingsClick }
 							/>
-						</div>
+						</WrapDomainStatusButtons>
 					) }
 					{ newStatusDesignAutoRenew && domain.currentUserCanManage && this.renderAutoRenew() }
 				</Card>
