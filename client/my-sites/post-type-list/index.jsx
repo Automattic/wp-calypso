@@ -259,6 +259,9 @@ class PostTypeList extends Component {
 		const classes = classnames( 'post-type-list', {
 			'is-empty': isLoadedAndEmpty,
 		} );
+
+		const isSingleSite = !! siteId;
+
 		const showUpgradeNudge =
 			siteId &&
 			posts.length > 10 &&
@@ -274,7 +277,8 @@ class PostTypeList extends Component {
 					range( 1, maxRequestedPage + 1 ).map( page => (
 						<QueryPosts key={ `query-${ page }` } siteId={ siteId } query={ { ...query, page } } />
 					) ) }
-				{ recentViewIds.length > 0 && (
+				{ /* Disable search in all-sites mode because it doesn't work. */ }
+				{ isSingleSite && recentViewIds.length > 0 && (
 					<QueryRecentPostViews siteId={ siteId } postIds={ recentViewIds } num={ 30 } />
 				) }
 				{ posts.slice( 0, 10 ).map( this.renderPost ) }
