@@ -35,8 +35,8 @@ const handleTargetDisappear = () => {
 };
 
 // IE9+ polyfill for `Element.matches()` used in `DelegatingQuit`
-if ( ! Element.prototype.matches ) {
-	Element.prototype.matches = Element.prototype.msMatchesSelector;
+if ( ! window.Element.prototype.matches ) {
+	window.Element.prototype.matches = window.Element.prototype.msMatchesSelector;
 }
 
 class DelegatingQuit extends Quit {
