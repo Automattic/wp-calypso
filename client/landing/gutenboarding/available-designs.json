@@ -50,7 +50,7 @@
 			"slug": "bowen",
 			"template": "bowen",
 			"theme": "coutoire",
-			"src": "https://public-api.wordpress.com/rest/v1/template/demo/coutoire/coutoire/",
+			"src": "https://public-api.wordpress.com/rest/v1/template/demo/coutoire/bowen/",
 			"fonts": [ "Playfair Display", "Fira Sans" ],
 			"categories": [ "featured", "blog" ]
 		},
