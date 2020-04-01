@@ -51,6 +51,7 @@ import {
 import EmptyContent from 'components/empty-content';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { DEFAULT_CURRENCY } from 'lib/simple-payments/constants';
+import { localizeUrl } from 'lib/i18n-utils';
 
 // Utility function for checking the state of the Payment Buttons list
 const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
@@ -489,7 +490,7 @@ class SimplePaymentsDialog extends Component {
 					secondaryAction={
 						<a
 							className="empty-content__action button"
-							href="https://wordpress.com/support/simple-payments/"
+							href={ localizeUrl( 'https://wordpress.com/support/simple-payments/' ) }
 						>
 							{ translate( 'Learn more about Simple Payments' ) }
 						</a>
@@ -522,7 +523,7 @@ class SimplePaymentsDialog extends Component {
 					secondaryAction={
 						<a
 							className="empty-content__action button"
-							href="https://wordpress.com/support/simple-payments/"
+							href={ localizeUrl( 'https://wordpress.com/support/simple-payments/' ) }
 						>
 							{ translate( 'Learn more about Simple Payments' ) }
 						</a>

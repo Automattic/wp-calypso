@@ -12,6 +12,7 @@ import Gridicon from 'components/gridicon';
  */
 import ExternalLink from 'components/external-link';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -72,7 +73,7 @@ class InlineSupportLink extends Component {
 		return (
 			<LinkComponent
 				className="inline-support-link"
-				href={ supportLink }
+				href={ localizeUrl( supportLink ) }
 				onClick={ this.handleClick }
 				target="_blank"
 				rel="noopener noreferrer"

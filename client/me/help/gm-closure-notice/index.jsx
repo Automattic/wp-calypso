@@ -17,6 +17,7 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import { useLocalizedMoment } from 'components/localized-moment';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getUserPurchases } from 'state/purchases/selectors';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -115,7 +116,7 @@ const GMClosureNotice = ( {
 			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, check our support site at {{supportLink}}https://wordpress.com/support{{/supportLink}}',
 			{
 				components: {
-					supportLink: <a href="https://wordpress.com/support" />,
+					supportLink: <a href={ localizeUrl( 'https://wordpress.com/support/' ) } />,
 				},
 			}
 		),
@@ -125,7 +126,7 @@ const GMClosureNotice = ( {
 		'Our staff will be keeping an eye on the {{link}}Forums{{/link}} for urgent matters.',
 		{
 			components: {
-				link: <a href="https://en.forums.wordpress.com/forum/support/" />,
+				link: <a href={ localizeUrl( 'https://en.forums.wordpress.com/forum/support/' ) } />,
 			},
 		}
 	);

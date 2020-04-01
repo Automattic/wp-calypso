@@ -10,6 +10,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
+import { localizeUrl } from 'lib/i18n-utils';
 
 const PurchaseButton = ( {
 	className,
@@ -25,7 +26,7 @@ const PurchaseButton = ( {
 		<Button
 			className={ classNames( 'purchase-detail__button', className ) }
 			disabled={ disabled }
-			href={ href }
+			href={ localizeUrl( href ) }
 			onClick={ onClick }
 			target={ target }
 			rel={ rel }
