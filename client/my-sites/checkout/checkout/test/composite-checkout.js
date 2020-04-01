@@ -417,6 +417,18 @@ describe( 'CompositeCheckout', () => {
 	} );
 
 	it( 'does not redirect if the cart is empty when it loads but the url has a plan alias', async () => {
+		const cartChanges = { products: [] };
+		const additionalProps = { product: 'personal' };
+		await act( async () => {
+			render(
+				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+				container
+			);
+		} );
+		expect( page.redirect ).not.toHaveBeenCalled();
+	} );
+
+	it( 'adds the aliased plan to the cart when the url has a plan alias', async () => {
 		let renderResult;
 		const cartChanges = { products: [] };
 		const additionalProps = { product: 'personal' };
@@ -426,7 +438,6 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		expect( page.redirect ).not.toHaveBeenCalled();
 		const { getAllByLabelText } = renderResult;
 		getAllByLabelText( 'WordPress.com Personal' ).map( element =>
 			expect( element ).toHaveTextContent( 'R$144' )
