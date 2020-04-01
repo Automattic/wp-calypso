@@ -85,6 +85,8 @@ describe( 'CompositeCheckout', () => {
 			total_tax_display: 'R$7',
 			total_cost_integer: 15600,
 			total_cost_display: 'R$156',
+			sub_total_integer: 15600,
+			sub_total_display: 'R$156',
 			coupon_discounts_integer: [],
 		};
 
@@ -127,16 +129,16 @@ describe( 'CompositeCheckout', () => {
 			};
 		} );
 
-		MyCheckout = () => (
+		MyCheckout = ( { cartChanges } ) => (
 			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
 				<ReduxProvider store={ store }>
 					<CompositeCheckout
 						siteSlug={ 'foo.com' }
 						setCart={ mockSetCartEndpoint }
-						getCart={ mockGetCartEndpointWith( initialCart ) }
+						getCart={ mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ) }
 						getStoredCards={ async () => [] }
 						allowedPaymentMethods={ [ 'paypal' ] }
-						onlyLoadPaymentMethods={ [ 'paypal' ] }
+						onlyLoadPaymentMethods={ [ 'paypal', 'full-credits' ] }
 						overrideCountryList={ countryList }
 					/>
 				</ReduxProvider>
@@ -176,5 +178,43 @@ describe( 'CompositeCheckout', () => {
 		} );
 		const { getAllByLabelText } = renderResult;
 		getAllByLabelText( 'Total' ).map( element => expect( element ).toHaveTextContent( 'R$156' ) );
+	} );
+
+	it( 'renders the paypal payment method option', async () => {
+		let renderResult;
+		await act( async () => {
+			renderResult = render( <MyCheckout />, container );
+		} );
+		const { getByText } = renderResult;
+		expect( getByText( 'Paypal' ) ).toBeInTheDocument();
+	} );
+
+	it( 'does not render the full credits payment method option when no credits are available', async () => {
+		let renderResult;
+		await act( async () => {
+			renderResult = render( <MyCheckout />, container );
+		} );
+		const { queryByText } = renderResult;
+		expect( queryByText( /WordPress.com Credits:/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders the full credits payment method option when full credits are available', async () => {
+		let renderResult;
+		const cartChanges = { credits_integer: 15600, credits_display: 'R$156' };
+		await act( async () => {
+			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		} );
+		const { getByText } = renderResult;
+		expect( getByText( /WordPress.com Credits:/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders the paypal payment method option when full credits are available', async () => {
+		let renderResult;
+		const cartChanges = { credits_integer: 15600, credits_display: 'R$156' };
+		await act( async () => {
+			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		} );
+		const { getByText } = renderResult;
+		expect( getByText( 'Paypal' ) ).toBeInTheDocument();
 	} );
 } );
