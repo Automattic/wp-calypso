@@ -21,9 +21,9 @@ export interface CurrentUser {
 }
 
 export interface NewUser {
-	userId: string | number | undefined;
-	username: string | undefined;
-	bearerToken: string | null | undefined;
+	userId: string | number;
+	username: string;
+	bearerToken: string | null;
 }
 
 export interface NewUserSuccessResponse {
