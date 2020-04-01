@@ -19,6 +19,78 @@ import { render } from '@testing-library/react'; // eslint-disable-line import/n
 import CompositeCheckout from '../composite-checkout';
 import { StripeHookProvider } from 'lib/stripe';
 
+const domainProduct = {
+	product_name: '.cash Domain',
+	product_slug: 'domain_reg',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+		domain_registration_agreement_url:
+			'https://wordpress.com/automattic-domain-name-registration-agreement/',
+		privacy: true,
+		privacy_available: true,
+		registrar: 'KS_RAM',
+	},
+	free_trial: false,
+	meta: 'foo.cash',
+	product_id: 106,
+	volume: 1,
+	is_domain_registration: true,
+	item_subtotal_integer: 500,
+	item_subtotal_display: 'R$5',
+};
+
+const domainTransferProduct = {
+	product_name: '.cash Domain',
+	product_slug: 'domain_transfer',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+		domain_registration_agreement_url:
+			'https://wordpress.com/automattic-domain-name-registration-agreement/',
+		privacy: true,
+		privacy_available: true,
+		registrar: 'KS_RAM',
+	},
+	free_trial: false,
+	meta: 'foo.cash',
+	product_id: 106,
+	volume: 1,
+	item_subtotal_integer: 500,
+	item_subtotal_display: 'R$5',
+};
+
+const planWithBundledDomain = {
+	product_name: 'WordPress.com Personal',
+	product_slug: 'personal_bundle',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+		domain_to_bundle: 'foo.cash',
+	},
+	free_trial: false,
+	meta: '',
+	product_id: 1009,
+	volume: 1,
+	item_subtotal_integer: 14400,
+	item_subtotal_display: 'R$144',
+};
+
+const planWithoutDomain = {
+	product_name: 'WordPress.com Personal',
+	product_slug: 'personal_bundle',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	free_trial: false,
+	meta: '',
+	product_id: 1009,
+	volume: 1,
+	item_subtotal_integer: 14400,
+	item_subtotal_display: 'R$144',
+};
+
 const fetchStripeConfiguration = async () => {
 	return {
 		public_key: 'abc123',
@@ -39,42 +111,7 @@ describe( 'CompositeCheckout', () => {
 			currency: 'BRL',
 			locale: 'br-pt',
 			is_coupon_applied: false,
-			products: [
-				{
-					product_name: '.cash Domain',
-					product_slug: 'domain',
-					currency: 'BRL',
-					extra: {
-						context: 'signup',
-						domain_registration_agreement_url:
-							'https://wordpress.com/automattic-domain-name-registration-agreement/',
-						privacy: true,
-						privacy_available: true,
-						registrar: 'KS_RAM',
-					},
-					free_trial: false,
-					meta: 'foo.cash',
-					product_id: 106,
-					volume: 1,
-					item_subtotal_integer: 500,
-					item_subtotal_display: 'R$5',
-				},
-				{
-					product_name: 'WordPress.com Personal',
-					product_slug: 'personal_bundle',
-					currency: 'BRL',
-					extra: {
-						context: 'signup',
-						domain_to_bundle: 'foo.cash',
-					},
-					free_trial: false,
-					meta: '',
-					product_id: 1009,
-					volume: 1,
-					item_subtotal_integer: 14400,
-					item_subtotal_display: 'R$144',
-				},
-			],
+			products: [ planWithoutDomain ],
 			tax: {
 				display_taxes: true,
 				location: {},
@@ -260,5 +297,61 @@ describe( 'CompositeCheckout', () => {
 		} );
 		const { getByText } = renderResult;
 		expect( getByText( 'Free Purchase' ) ).toBeInTheDocument();
+	} );
+
+	it( 'does not render the contact step when the purchase is free', async () => {
+		let renderResult;
+		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
+		await act( async () => {
+			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		} );
+		const { queryByText } = renderResult;
+		expect( queryByText( /Enter your (billing|contact) information/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders the contact step when the purchase is not free', async () => {
+		let renderResult;
+		await act( async () => {
+			renderResult = render( <MyCheckout />, container );
+		} );
+		const { getByText } = renderResult;
+		expect( getByText( /Enter your (billing|contact) information/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders the tax fields only when no domain is in the cart', async () => {
+		let renderResult;
+		const cartChanges = { products: [ planWithoutDomain ] };
+		await act( async () => {
+			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		} );
+		const { getByText, queryByText } = renderResult;
+		expect( getByText( 'Postal code' ) ).toBeInTheDocument();
+		expect( getByText( 'Country' ) ).toBeInTheDocument();
+		expect( queryByText( 'Phone' ) ).not.toBeInTheDocument();
+		expect( queryByText( 'Email' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders the domain fields when a domain is in the cart', async () => {
+		let renderResult;
+		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
+		await act( async () => {
+			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		} );
+		const { getByText } = renderResult;
+		expect( getByText( 'Country' ) ).toBeInTheDocument();
+		expect( getByText( 'Phone' ) ).toBeInTheDocument();
+		expect( getByText( 'Email' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders the domain fields when a domain transfer is in the cart', async () => {
+		let renderResult;
+		const cartChanges = { products: [ planWithBundledDomain, domainTransferProduct ] };
+		await act( async () => {
+			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		} );
+		const { getByText } = renderResult;
+		expect( getByText( 'Country' ) ).toBeInTheDocument();
+		expect( getByText( 'Phone' ) ).toBeInTheDocument();
+		expect( getByText( 'Email' ) ).toBeInTheDocument();
 	} );
 } );
