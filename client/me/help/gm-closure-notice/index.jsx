@@ -105,18 +105,24 @@ const GMClosureNotice = ( {
 
 	const REASON_MESSAGES = {
 		hasPlan: translate(
-			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, you can submit an email ticket through the contact form: {{contactLink}}https://wordpress.com/help/contact{{/contactLink}}',
+			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, you can submit an email ticket through the contact form: {{contactLink}}{{/contactLink}}',
 			{
 				components: {
 					contactLink: <a href="/help/contact" />,
 				},
+				args: {
+					linkUrl: 'https://wordpress.com/help/contact',
+				},
 			}
 		),
 		nonPlan: translate(
-			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, check our support site at {{supportLink}}https://wordpress.com/support{{/supportLink}}',
+			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, check our support site at {{supportLink}}%(linkUrl)s{{/supportLink}}',
 			{
 				components: {
 					supportLink: <a href={ localizeUrl( 'https://wordpress.com/support/' ) } />,
+				},
+				args: {
+					linkUrl: localizeUrl( 'https://wordpress.com/support/' ),
 				},
 			}
 		),
