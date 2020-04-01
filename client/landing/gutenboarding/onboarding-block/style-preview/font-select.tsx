@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { Button } from '@wordpress/components';
 import classnames from 'classnames';
+import isShallowEqual from '@wordpress/is-shallow-equal';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 
@@ -54,7 +55,9 @@ const FontSelect: React.FunctionComponent = () => {
 				<span className="style-preview__font-option-contents">{ defaultFontOption }</span>
 			</Button>
 			{ fontPairings.filter( fontPairingsFilter ).map( fontPair => {
-				const isSelected = fontPair === selectedFonts;
+				// Font pairs are objects, we need `isShallowEqual` as we can't guarantee referential equality
+				// (E.g. if `selectedFonts` is coming from persisted state)
+				const isSelected = !! selectedFonts && isShallowEqual( fontPair, selectedFonts );
 				const { headings, base } = fontPair;
 
 				return (
