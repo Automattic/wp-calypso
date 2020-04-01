@@ -205,9 +205,7 @@ export const getJetpackProducts = () => {
 	isEnabled( 'jetpack/search-product' ) &&
 		output.push( {
 			title: translate( 'Jetpack Search' ),
-			description: translate(
-				'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content – right when they need it.'
-			),
+			description: getJetpackProductsDescriptions()[ PRODUCT_JETPACK_SEARCH ],
 			id: PRODUCT_JETPACK_SEARCH,
 			// There is only one option per billing interval, but this
 			// component still needs the full display with radio buttons.
@@ -271,15 +269,17 @@ export const getJetpackProducts = () => {
 	isEnabled( 'jetpack/scan-product' ) &&
 		output.push( {
 			title: translate( 'Jetpack Scan' ),
-			description:
-				'Automatic scanning and one-click fixes keep your site one step ahead of security threats.',
+			description: getJetpackProductsDescriptions()[ PRODUCT_JETPACK_SCAN ],
 			id: PRODUCT_JETPACK_SCAN,
+			// There is only one option per billing interval, but this
+			// component still needs the full display with radio buttons.
+			forceRadios: true,
 			hasPromo: false,
 			options: {
 				yearly: [ PRODUCT_JETPACK_SCAN ],
 				monthly: [ PRODUCT_JETPACK_SCAN_MONTHLY ],
 			},
-			optionShortNames: getJetpackProductsShortNames(),
+			optionShortNames: getJetpackProductsShortNames()[ PRODUCT_JETPACK_SCAN ],
 			optionDisplayNames: getJetpackProductsDisplayNames(),
 			optionDescriptions: getJetpackProductsDescriptions(),
 			optionsLabel: translate( 'Select a product option:' ),
