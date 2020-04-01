@@ -67,7 +67,21 @@ function convertRequestProductToResponseProduct( currency ) {
 					item_subtotal_integer: 14400,
 					item_subtotal_display: 'R$144',
 					item_tax: 0,
-					meta: '',
+					meta: product.meta,
+					volume: 1,
+					extra: {},
+				};
+			case 5:
+				return {
+					product_id: 5,
+					product_name: 'Domain Mapping',
+					product_slug: 'domain_map',
+					currency: currency,
+					is_domain_registration: false,
+					item_subtotal_integer: 0,
+					item_subtotal_display: 'R$0',
+					item_tax: 0,
+					meta: product.meta,
 					volume: 1,
 					extra: {},
 				};
