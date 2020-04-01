@@ -12,7 +12,7 @@ import ThankYou from './thank-you';
 const ScanProductThankYou = ( { translate } ) => (
 	<ThankYou
 		illustration="/calypso/images/illustrations/security.svg"
-		showContinueButton
+		showScanCTAs
 		title={ translate( 'Welcome to Jetpack Scan!' ) }
 	>
 		<p>{ translate( 'We just finished setting up automated malware scanning for you.' ) }</p>
