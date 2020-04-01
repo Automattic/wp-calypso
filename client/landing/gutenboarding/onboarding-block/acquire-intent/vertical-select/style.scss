@@ -18,10 +18,6 @@
 	&--without-value {
 		.madlib__input {
 			border-bottom: 2px solid var( --studio-gray-5 );
-
-			&::placeholder {
-				color: var( --studio-gray-5 );
-			}
 		}
 	}
 }
@@ -36,4 +32,13 @@
 	width: 250px;
 	max-height: 400px;
 	overflow: auto;
+}
+
+.vertical-select__placeholder {
+	color: var( --studio-gray-5 );
+}
+
+.vertical-select__arrow {
+	margin-left: 15px;
+	vertical-align: middle;
 }
