@@ -41,11 +41,8 @@ function dedupedGet( url ) {
  */
 export function getLanguageFilePathUrl() {
 	const protocol = typeof window === 'undefined' ? 'https://' : '//'; // use a protocol-relative path in the browser
-	const base = config.isEnabled( 'use-internal-translations' )
-		? `${ window.location.host }/calypso/evergreen/languages/`
-		: 'widgets.wp.com/languages/calypso/';
 
-	return `${ protocol }${ base }`;
+	return `${ protocol }widgets.wp.com/languages/calypso/`;
 }
 
 /**
