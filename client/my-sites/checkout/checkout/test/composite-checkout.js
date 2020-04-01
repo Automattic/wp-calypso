@@ -443,4 +443,35 @@ describe( 'CompositeCheckout', () => {
 			expect( element ).toHaveTextContent( 'R$144' )
 		);
 	} );
+
+	it( 'does not redirect if the cart is empty when it loads but the url has a domain map', async () => {
+		const cartChanges = { products: [] };
+		const additionalProps = { product: 'domain-mapping:bar.com' };
+		await act( async () => {
+			render(
+				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+				container
+			);
+		} );
+		expect( page.redirect ).not.toHaveBeenCalled();
+	} );
+
+	it( 'adds the domain mapping product to the cart when the url has a domain map', async () => {
+		let renderResult;
+		const cartChanges = { products: [ planWithoutDomain ] };
+		const additionalProps = { product: 'domain-mapping:bar.com' };
+		await act( async () => {
+			renderResult = render(
+				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+				container
+			);
+		} );
+		const { getAllByLabelText } = renderResult;
+		getAllByLabelText( 'WordPress.com Personal' ).map( element =>
+			expect( element ).toHaveTextContent( 'R$144' )
+		);
+		getAllByLabelText( 'Domain Mapping: bar.com' ).map( element =>
+			expect( element ).toHaveTextContent( 'R$0' )
+		);
+	} );
 } );
