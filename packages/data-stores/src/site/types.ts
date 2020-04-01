@@ -36,6 +36,7 @@ export interface CreateSiteParams {
 	options?: {
 		site_vertical?: string;
 		site_vertical_name?: string;
+		site_vertical_slug?: string;
 		site_information?: {
 			title?: string;
 		};
