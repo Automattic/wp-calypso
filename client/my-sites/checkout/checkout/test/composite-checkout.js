@@ -5,13 +5,12 @@
  * External dependencies
  */
 import React from 'react';
-import { act } from 'react-dom/test-utils';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider as ReduxProvider } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect'; // eslint-disable-line import/no-extraneous-dependencies
 import { mockSetCartEndpoint, mockGetCartEndpointWith } from '@automattic/composite-checkout-wpcom';
-import { render } from '@testing-library/react'; // eslint-disable-line import/no-extraneous-dependencies
+import { render, act, fireEvent } from '@testing-library/react'; // eslint-disable-line import/no-extraneous-dependencies
 
 /**
  * Internal dependencies
@@ -128,6 +127,10 @@ describe( 'CompositeCheckout', () => {
 		};
 
 		const countryList = [
+			{
+				code: 'US',
+				name: 'United States',
+			},
 			{
 				code: 'AU',
 				name: 'Australia',
@@ -353,5 +356,38 @@ describe( 'CompositeCheckout', () => {
 		expect( getByText( 'Country' ) ).toBeInTheDocument();
 		expect( getByText( 'Phone' ) ).toBeInTheDocument();
 		expect( getByText( 'Email' ) ).toBeInTheDocument();
+	} );
+
+	it( 'does not render country-specific domain fields when no country has been chosen and a domain is in the cart', async () => {
+		let renderResult;
+		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
+		await act( async () => {
+			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		} );
+		const { getByText, queryByText } = renderResult;
+		expect( getByText( 'Country' ) ).toBeInTheDocument();
+		expect( getByText( 'Phone' ) ).toBeInTheDocument();
+		expect( getByText( 'Email' ) ).toBeInTheDocument();
+		expect( queryByText( 'Address' ) ).not.toBeInTheDocument();
+		expect( queryByText( 'City' ) ).not.toBeInTheDocument();
+		expect( queryByText( 'State' ) ).not.toBeInTheDocument();
+		expect( queryByText( 'ZIP code' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders country-specific domain fields when a country has been chosen and a domain is in the cart', async () => {
+		let renderResult;
+		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
+		await act( async () => {
+			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		} );
+		const { getByText, getByLabelText } = renderResult;
+		fireEvent.change( getByLabelText( 'Country' ), { target: { value: 'US' } } );
+		expect( getByText( 'Country' ) ).toBeInTheDocument();
+		expect( getByText( 'Phone' ) ).toBeInTheDocument();
+		expect( getByText( 'Email' ) ).toBeInTheDocument();
+		expect( getByText( 'Address' ) ).toBeInTheDocument();
+		expect( getByText( 'City' ) ).toBeInTheDocument();
+		expect( getByText( 'State' ) ).toBeInTheDocument();
+		expect( getByText( 'ZIP code' ) ).toBeInTheDocument();
 	} );
 } );
