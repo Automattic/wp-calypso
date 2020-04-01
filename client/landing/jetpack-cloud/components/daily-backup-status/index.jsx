@@ -13,8 +13,8 @@ import Gridicon from 'components/gridicon';
 import Button from 'components/forms/form-button';
 import { isSuccessfulBackup } from 'landing/jetpack-cloud/sections/backups/utils';
 import {
-	/*backupsDetailPath,*/ backupsDownloadPath,
-	backupsRestorePath,
+	/*backupDetailPath,*/ backupDownloadPath,
+	backupRestorePath,
 } from 'landing/jetpack-cloud/sections/backups/paths';
 import { applySiteOffset } from 'lib/site/timezone';
 
@@ -25,15 +25,15 @@ import './style.scss';
 
 class DailyBackupStatus extends Component {
 	triggerRestore = () => {
-		page.redirect( backupsRestorePath( this.props.siteSlug, this.props.backup.rewindId ) );
+		page.redirect( backupRestorePath( this.props.siteSlug, this.props.backup.rewindId ) );
 	};
 
 	triggerDownload = () => {
-		page.redirect( backupsDownloadPath( this.props.siteSlug, this.props.backup.rewindId ) );
+		page.redirect( backupDownloadPath( this.props.siteSlug, this.props.backup.rewindId ) );
 	};
 
 	goToDetailsPage() {
-		//page.redirect( backupsDetailPath( this.props.siteSlug, this.props.backup.rewindId ) );
+		//page.redirect( backupDetailPath( this.props.siteSlug, this.props.backup.rewindId ) );
 	}
 
 	getDisplayDate = date => {

@@ -1,7 +1,7 @@
 export const backupMainPath = ( siteName?: string | null ) =>
 	siteName ? '/backups' : `/backups/${ siteName }`;
 
-const backupsSubSectionPath = (
+const backupSubSectionPath = (
 	siteName: string,
 	subSection: string,
 	subSectionId?: string | null
@@ -10,11 +10,11 @@ const backupsSubSectionPath = (
 		? `/backups/${ siteName }/${ subSection }/${ subSectionId }`
 		: `/backups/${ siteName }/${ subSection }`;
 
-export const backupsRestorePath = ( siteName: string, rewindId: string ) =>
-	backupsSubSectionPath( siteName, 'restore', rewindId );
+export const backupDetailPath = ( siteName: string, backupId: string ) =>
+	backupSubSectionPath( siteName, 'detail', backupId );
 
-export const backupsDownloadPath = ( siteName: string, rewindId: string ) =>
-	backupsSubSectionPath( siteName, 'download', rewindId );
+export const backupRestorePath = ( siteName: string, rewindId: string ) =>
+	backupSubSectionPath( siteName, 'restore', rewindId );
 
-export const backupsDetailPath = ( siteName: string, backupId: string ) =>
-	backupsSubSectionPath( siteName, 'detail', backupId );
+export const backupDownloadPath = ( siteName: string, rewindId: string ) =>
+	backupSubSectionPath( siteName, 'download', rewindId );

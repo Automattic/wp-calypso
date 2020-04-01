@@ -16,25 +16,22 @@ import {
 	backupDownload,
 	backupRestore,
 } from 'landing/jetpack-cloud/sections/backups/controller';
-import {
-	backupMainPath,
-	backupsRestorePath,
-	backupsDownloadPath,
-	backupsDetailPath,
-} from './paths';
+import { backupMainPath, backupRestorePath, backupDownloadPath, backupDetailPath } from './paths';
 
 export default function() {
 	if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
+		/* handles /backups/:site/detail/:backupId, see `backupDetailPath` */
 		page(
-			backupsDetailPath( ':site', ':backupId' ),
+			backupDetailPath( ':site', ':backupId' ),
 			siteSelection,
 			navigation,
 			backupDetail,
 			makeLayout,
 			clientRender
 		);
+		/* handles /backups/:site/download/:rewindId, see `backupDownloadPath` */
 		page(
-			backupsDownloadPath( ':site', ':rewindId' ),
+			backupDownloadPath( ':site', ':rewindId' ),
 			siteSelection,
 			navigation,
 			backupDownload,
@@ -43,8 +40,9 @@ export default function() {
 		);
 
 		if ( config.isEnabled( 'jetpack-cloud/backups-restore' ) ) {
+			/* handles /backups/:site/restore/:restoreId, see `backupRestorePath` */
 			page(
-				backupsRestorePath( ':site', ':rewindId' ),
+				backupRestorePath( ':site', ':rewindId' ),
 				siteSelection,
 				navigation,
 				backupRestore,
@@ -52,8 +50,9 @@ export default function() {
 				clientRender
 			);
 		}
-
+		/* handles /backups/:site, see `backupMainPath` */
 		page( backupMainPath( ':site' ), siteSelection, navigation, backups, makeLayout, clientRender );
+		/* handles /backups, see `backupMainPath` */
 		page( backupMainPath(), siteSelection, sites, makeLayout, clientRender );
 	}
 }

@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { backupsDetailPath } from 'landing/jetpack-cloud/sections/backups/paths';
+import { backupDetailPath } from 'landing/jetpack-cloud/sections/backups/paths';
 import Gridicon from 'components/gridicon';
 import Button from 'components/forms/form-button';
 import ActivityCard from '../../components/activity-card';
@@ -216,7 +216,7 @@ class BackupDelta extends Component {
 					<Button
 						isPrimary={ false }
 						className="backup-delta__view-all-button"
-						href={ backupsDetailPath( siteSlug, mainBackup.rewindId ) }
+						href={ backupDetailPath( siteSlug, mainBackup.rewindId ) }
 					>
 						{ translate( 'View all backup details' ) }
 					</Button>
