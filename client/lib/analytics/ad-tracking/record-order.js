@@ -479,7 +479,7 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId ) {
 	// TODO: tax and coupon aren't passed through from the new composite checkout
 	const params = {
 		id: orderId,
-		affiliation: 'travistesting123',
+		affiliation: undefined,
 		revenue: cart.total_cost,
 		tax: cart.total_tax ?? undefined,
 		shipping: undefined,
