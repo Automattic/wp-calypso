@@ -16,21 +16,20 @@ import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 import getBackupDownloadId from 'state/selectors/get-backup-download-id';
 import getBackupDownloadUrl from 'state/selectors/get-backup-download-url';
 import getBackupDownloadProgress from 'state/selectors/get-backup-download-progress';
-import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
-import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
-import { isRequestingSiteSettings } from 'state/site-settings/selectors';
 import ProgressBar from './progress-bar';
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import RewindConfigEditor from './rewind-config-editor';
-import QuerySiteSettings from 'components/data/query-site-settings'; // Required to get site time offset
-import { applySiteOffset } from 'lib/site/timezone';
 
 interface Props {
 	rewindId: string;
 	siteId: number;
 }
 
-const BackupDownloadFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) => {
+const BackupDownloadFlow: FunctionComponent< Props > = ( {
+	rewindId,
+	siteId,
+	backupDisplayDate,
+} ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -41,16 +40,6 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) 
 	const downloadProgress = useSelector( state =>
 		getBackupDownloadProgress( state, siteId, rewindId )
 	);
-
-	const timezone = useSelector( state => getSiteTimezoneValue( state, siteId ) );
-	const gmtOffset = useSelector( state => getSiteGmtOffset( state, siteId ) );
-
-	const downloadTimestamp = applySiteOffset( rewindId * 1000, {
-		timezone,
-		gmtOffset,
-	} ).format( 'LLL' );
-
-	const isSiteSettingLoading = useSelector( state => isRequestingSiteSettings( state, siteId ) );
 
 	const requestDownload = useCallback(
 		() => dispatch( rewindBackup( siteId, rewindId, rewindConfig ) ),
@@ -68,10 +57,10 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) 
 			<h3 className="rewind-flow__title">{ translate( 'Create downloadable backup' ) }</h3>
 			<p className="rewind-flow__info">
 				{ translate(
-					'{{strong}}%(downloadTimestamp)s{{/strong}} is the selected point to create a download backup of. ',
+					'{{strong}}%(backupDisplayDate)s{{/strong}} is the selected point to create a download backup of. ',
 					{
 						args: {
-							downloadTimestamp,
+							backupDisplayDate,
 						},
 						components: {
 							strong: <strong />,
@@ -112,10 +101,10 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) 
 			<ProgressBar percent={ downloadProgress } />
 			<p className="rewind-flow__info">
 				{ translate(
-					"We're creating a downloadable backup of your site from {{strong}}%(downloadTimestamp)s{{/strong}}.",
+					"We're creating a downloadable backup of your site from {{strong}}%(backupDisplayDate)s{{/strong}}.",
 					{
 						args: {
-							downloadTimestamp,
+							backupDisplayDate,
 						},
 						components: {
 							strong: <strong />,
@@ -142,10 +131,10 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) 
 			</h3>
 			<p className="rewind-flow__info">
 				{ translate(
-					'We successfully created a backup of your site from {{strong}}%(downloadTimestamp)s{{/strong}}.',
+					'We successfully created a backup of your site from {{strong}}%(backupDisplayDate)s{{/strong}}.',
 					{
 						args: {
-							downloadTimestamp,
+							backupDisplayDate,
 						},
 						components: {
 							strong: <strong />,
@@ -179,23 +168,20 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) 
 	);
 
 	const render = () => {
-		if ( ! isSiteSettingLoading ) {
-			if ( downloadProgress === null && downloadUrl === null ) {
-				return renderConfirm();
-			} else if ( downloadProgress !== null && downloadUrl === null ) {
-				return renderInProgress();
-			} else if ( downloadUrl !== null ) {
-				return renderReady();
-			}
-
-			return renderError();
+		if ( downloadProgress === null && downloadUrl === null ) {
+			return renderConfirm();
+		} else if ( downloadProgress !== null && downloadUrl === null ) {
+			return renderInProgress();
+		} else if ( downloadUrl !== null ) {
+			return renderReady();
 		}
+
+		return renderError();
 	};
 
 	return (
 		<div>
 			<QueryRewindBackupStatus downloadId={ downloadId } siteId={ siteId } />
-			<QuerySiteSettings siteId={ siteId } />
 			{ render() }
 		</div>
 	);
