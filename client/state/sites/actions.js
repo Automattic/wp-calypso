@@ -91,7 +91,7 @@ export function requestSites() {
 				site_activity: 'active',
 				fields: SITE_REQUEST_FIELDS,
 				options: SITE_REQUEST_OPTIONS,
-				filters: config.isEnabled( 'jetpack-cloud' ) ? 'jetpack' : '',
+				filters: config.isEnabled( 'jetpack-cloud' ) ? 'atomic,jetpack' : '',
 			} )
 			.then( response => {
 				dispatch( receiveSites( response.sites ) );
