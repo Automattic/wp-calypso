@@ -121,7 +121,7 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 					setRequestedFonts( nextFonts );
 				}
 				iframeDocument.body.style.setProperty( '--font-headings', headings );
-				iframeDocument.body.style.setProperty( '--font-base', headings );
+				iframeDocument.body.style.setProperty( '--font-base', base );
 			} else {
 				iframeDocument.body.style.removeProperty( '--font-headings' );
 				iframeDocument.body.style.removeProperty( '--font-base' );
