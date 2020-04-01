@@ -24,6 +24,7 @@ import { GOOGLE_CREDITS } from 'state/sites/vouchers/service-types';
 import { getVouchersBySite, getGoogleAdCredits } from 'state/sites/vouchers/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -189,7 +190,7 @@ class GoogleVoucherDetails extends Component {
 									a: (
 										<a
 											className="google-voucher__help-link"
-											href="https://wordpress.com/support/google-ads-credit/"
+											href={ localizeUrl( 'https://wordpress.com/support/google-ads-credit/' ) }
 											target="_blank"
 											rel="noopener noreferrer"
 										/>
