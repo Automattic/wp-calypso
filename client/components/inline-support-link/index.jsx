@@ -65,6 +65,7 @@ class InlineSupportLink extends Component {
 		}
 
 		const LinkComponent = supportPostId ? 'a' : ExternalLink;
+		const url = supportPostId ? localizeUrl( supportLink ) : supportLink;
 		const externalLinkProps = ! supportPostId && {
 			icon: showIcon,
 			iconSize,
@@ -73,7 +74,7 @@ class InlineSupportLink extends Component {
 		return (
 			<LinkComponent
 				className="inline-support-link"
-				href={ localizeUrl( supportLink ) }
+				href={ url }
 				onClick={ this.handleClick }
 				target="_blank"
 				rel="noopener noreferrer"
