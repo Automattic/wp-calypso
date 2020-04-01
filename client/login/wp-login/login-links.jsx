@@ -292,7 +292,7 @@ export class LoginLinks extends React.Component {
 		}
 
 		if ( isGutenboarding ) {
-			signupUrl = window.location.origin + '/gutenboarding' + langFragment;
+			signupUrl = '/gutenboarding' + langFragment;
 		}
 
 		return (
