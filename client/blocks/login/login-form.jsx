@@ -78,6 +78,8 @@ export class LoginForm extends Component {
 		translate: PropTypes.func.isRequired,
 		userEmail: PropTypes.string,
 		isJetpack: PropTypes.bool,
+		isGutenboarding: PropTypes.bool,
+		locale: PropTypes.string,
 	};
 
 	state = {
@@ -420,13 +422,17 @@ export class LoginForm extends Component {
 			requestError,
 			socialAccountIsLinking: linkingSocialUser,
 			isJetpackWooCommerceFlow,
+			isGutenboarding,
 			wccomFrom,
 			currentRoute,
 			currentQuery,
 			pathname,
+			locale,
 		} = this.props;
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
+
+		const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
 
 		let signupUrl = config( 'signup_url' );
 		const signupFlow = get( currentQuery, 'signup_flow' );
@@ -464,6 +470,10 @@ export class LoginForm extends Component {
 			};
 
 			signupUrl = `/start/${ oauth2Flow }?${ stringify( oauth2Params ) }`;
+		}
+
+		if ( isGutenboarding ) {
+			signupUrl = window.location.origin + '/gutenboarding' + langFragment;
 		}
 
 		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {

@@ -74,6 +74,11 @@ describe( 'index', () => {
 			expect( url ).toEqual( '/log-in/jetpack' );
 		} );
 
+		test( 'should return the login url for Gutenboarding specific login', () => {
+			const url = login( { isNative: true, isGutenboarding: true } );
+			expect( url ).toEqual( '/log-in/gutenboarding' );
+		} );
+
 		test( 'should return the login url with WooCommerce from handler', () => {
 			const url = login( { isNative: true, isJetpack: true, isWoo: true } );
 
