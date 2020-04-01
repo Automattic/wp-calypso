@@ -118,7 +118,7 @@ const Header: FunctionComponent = () => {
 
 	const handleCreateSite = useCallback(
 		( user: NewUser | CurrentUser ) => {
-			createSite( user.username, freeDomainSuggestion, ( user as NewUser )?.bearerToken );
+			createSite( user.username, freeDomainSuggestion, ( user as NewUser ).bearerToken );
 		},
 		[ createSite, freeDomainSuggestion ]
 	);
