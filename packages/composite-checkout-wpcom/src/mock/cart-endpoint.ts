@@ -48,6 +48,7 @@ export async function mockSetCartEndpoint(
 		coupon: requestCoupon,
 		is_coupon_applied: true,
 		coupon_discounts_integer: [],
+		tax: {},
 	};
 }
 
