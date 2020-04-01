@@ -135,7 +135,7 @@ describe( 'index', () => {
 				links.some(
 					link =>
 						link.href ===
-						'https://en.support.wordpress.com/domains/map-existing-domain/#change-your-domains-name-servers'
+						'https://wordpress.com/support/domains/map-existing-domain/#change-your-domains-name-servers'
 				)
 			).toBeTruthy();
 		} );
