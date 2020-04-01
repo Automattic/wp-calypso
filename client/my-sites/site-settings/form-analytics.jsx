@@ -31,6 +31,7 @@ import { FEATURE_GOOGLE_ANALYTICS, TYPE_PREMIUM, TERM_ANNUALLY } from 'lib/plans
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
+import { localizeUrl } from 'lib/i18n-utils';
 
 const validateGoogleAnalyticsCode = code => ! code || code.match( /^UA-\d+-\d+$/i );
 const hasPlanWithAnalytics = overSome(
@@ -253,7 +254,13 @@ export class GoogleAnalyticsForm extends Component {
 								'Learn more about using {{a}}Google Analytics with WordPress.com{{/a}}.',
 								{
 									components: {
-										a: <a href={ analyticsSupportUrl } target="_blank" rel="noopener noreferrer" />,
+										a: (
+											<a
+												href={ localizeUrl( analyticsSupportUrl ) }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
 									},
 								}
 							) }

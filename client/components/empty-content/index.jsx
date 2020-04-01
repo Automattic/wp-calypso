@@ -10,6 +10,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style Dependencies
@@ -52,7 +53,7 @@ class EmptyContent extends Component {
 					primary
 					className="empty-content__action"
 					onClick={ this.props.actionCallback }
-					href={ this.props.actionURL }
+					href={ localizeUrl( this.props.actionURL ) }
 					target={ this.props.actionTarget }
 					onMouseEnter={ this.props.actionHoverCallback }
 					onTouchStart={ this.props.actionHoverCallback }

@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { localizeUrl } from 'lib/i18n-utils';
 
 class SharingServiceDescription extends Component {
 	static propTypes = {
@@ -154,7 +155,7 @@ class SharingServiceDescription extends Component {
 					components: {
 						a: (
 							<a
-								href="https://wordpress.com/support/publicize/#facebook-pages"
+								href={ localizeUrl( 'https://wordpress.com/support/publicize/#facebook-pages' ) }
 								target="_blank"
 								rel="noopener noreferrer"
 							/>
