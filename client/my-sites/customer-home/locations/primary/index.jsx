@@ -23,7 +23,7 @@ const Primary = ( { checklistMode, cards } ) => {
 				cards.map( ( card, index ) =>
 					React.createElement( cardComponents[ card ], {
 						key: index,
-						checklistMode: card === 'primary.checklist-site-setup' ? checklistMode : null,
+						checklistMode: card === 'home-primary-checklist-site-setup' ? checklistMode : null,
 					} )
 				) }
 		</div>
