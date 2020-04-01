@@ -1,5 +1,5 @@
 .card.upgrade-nudge {
-	border-left: 3px solid var( --color-plan-premium );
+	border-left: 3px solid var( --color-accent );
 	display: flex;
 	margin: 16px 0;
 	padding: 12px 16px;
@@ -31,7 +31,7 @@
 }
 
 .upgrade-nudge__icon {
-	background: var( --color-plan-premium );
+	background: var( --color-accent );
 	border-radius: 50%;
 	margin-right: 16px;
 	color: var( --color-text-inverted );
@@ -46,7 +46,7 @@
 	display: inline-flex;
 
 	.upgrade-nudge__icon {
-		background: var( --color-success );
+		background: var( --color-accent );
 	}
 
 	&.is-full-width {

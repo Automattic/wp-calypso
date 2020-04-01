@@ -3,6 +3,7 @@
  */
 import { DomainSuggestions, VerticalsTemplates } from '@automattic/data-stores';
 import { dispatch, select } from '@wordpress/data-controls';
+import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
 
 /**
  * Internal dependencies
@@ -11,8 +12,11 @@ import { Design, SiteVertical } from './types';
 import { STORE_KEY as ONBOARD_STORE } from './constants';
 import { SITE_STORE } from '../site';
 
+type State = import('.').State;
+type FontPair = import('../../constants').FontPair;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 type Template = VerticalsTemplates.Template;
+type CreateSiteParams = import('@automattic/data-stores').Site.CreateSiteParams;
 
 export const setDomain = ( domain: DomainSuggestion | undefined ) => ( {
 	type: 'SET_DOMAIN' as const,
@@ -43,6 +47,15 @@ export const togglePageLayout = ( pageLayout: Template ) => ( {
 	pageLayout,
 } );
 
+export const resetFonts = () => ( {
+	type: 'RESET_FONTS' as const,
+} );
+
+export const setFonts = ( fonts: FontPair | undefined ) => ( {
+	type: 'SET_FONTS' as const,
+	fonts,
+} );
+
 export const resetOnboardStore = () => ( {
 	type: 'RESET_ONBOARD_STORE' as const,
 } );
@@ -59,7 +72,7 @@ export function* createSite(
 	freeDomainSuggestion?: DomainSuggestion,
 	bearerToken?: string
 ) {
-	const { domain, selectedDesign, siteTitle, siteVertical } = yield select(
+	const { domain, selectedDesign, selectedFonts, siteTitle, siteVertical }: State = yield select(
 		ONBOARD_STORE,
 		'getState'
 	);
@@ -67,31 +80,46 @@ export function* createSite(
 	const currentDomain = domain ?? freeDomainSuggestion;
 	const siteUrl = currentDomain?.domain_name || siteTitle || username;
 
-	const success = yield dispatch( SITE_STORE, 'createSite', {
+	const params: CreateSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
 		blog_title: siteTitle,
 		options: {
 			site_vertical: siteVertical?.id,
 			site_vertical_name: siteVertical?.label,
+			// untranslated vertical slug
+			// so we can match directories in
+			// https://github.com/Automattic/wp-calypso/tree/master/static/page-templates/verticals
+			// TODO: determine default vertical should user input match no official vertical
+			site_vertical_slug: siteVertical?.slug || 'football',
 			site_information: {
 				title: siteTitle,
 			},
 			site_creation_flow: 'gutenboarding',
-			theme: `pub/${ selectedDesign?.slug || 'twentytwenty' }`,
+			theme: `pub/${ selectedDesign?.theme || 'twentytwenty' }`,
+			timezone_string: guessTimezone(),
+			template: selectedDesign?.slug || 'twentytwenty',
+			...( selectedFonts && {
+				font_base: selectedFonts.base,
+				font_headings: selectedFonts.headings,
+			} ),
 		},
 		...( bearerToken && { authToken: bearerToken } ),
-	} );
+	};
+
+	const success = yield dispatch( SITE_STORE, 'createSite', params );
 
 	return success;
 }
 
 export type OnboardAction = ReturnType<
-	| typeof setDomain
-	| typeof setSelectedDesign
-	| typeof setSiteVertical
-	| typeof resetSiteVertical
-	| typeof setSiteTitle
-	| typeof togglePageLayout
+	| typeof resetFonts
 	| typeof resetOnboardStore
+	| typeof resetSiteVertical
+	| typeof setDomain
+	| typeof setFonts
+	| typeof setSelectedDesign
+	| typeof setSiteTitle
+	| typeof setSiteVertical
 	| typeof setSiteWasCreatedForDomainPurchase
+	| typeof togglePageLayout
 >;

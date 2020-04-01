@@ -34,7 +34,7 @@ const DesignSelector: React.FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 	const { push } = useHistory();
 	const makePath = usePath();
-	const { setSelectedDesign, resetOnboardStore } = useDispatch( ONBOARD_STORE );
+	const { setSelectedDesign, resetFonts, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
 	const handleStartOverButtonClick = () => {
 		resetOnboardStore();
@@ -98,6 +98,11 @@ const DesignSelector: React.FunctionComponent = () => {
 										className="design-selector__design-option"
 										onClick={ () => {
 											setSelectedDesign( design );
+
+											// Our design selector shows each template's default fonts, so the user expects to see those
+											// in the style preview. To match that expectation, we reset any previously user-selected fonts.
+											resetFonts();
+
 											if ( isEnabled( 'gutenboarding/style-preview' ) ) {
 												push( makePath( Step.Style ) );
 											}

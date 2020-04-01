@@ -12,91 +12,91 @@
 		--highlightColor: var( --studio-blue-20 );
 	}
 
-	&[data-vertical*='football'] {
+	&[data-vertical~='football' i] {
 		--contrastColor: var( --studio-green-40 );
 		--mainColor: var( --studio-gray-0 );
 		--highlightColor: var( --studio-green-20 );
 	}
 
-	&[data-vertical*='web'] {
+	&[data-vertical~='web' i] {
 		--contrastColor: var( --studio-blue-40 );
 		--mainColor: var( --studio-blue-0 );
 		--highlightColor: var( --studio-blue-20 );
 	}
 
-	&[data-vertical*='animals'] {
+	&[data-vertical~='animals' i] {
 		--contrastColor: var( --studio-blue-40 );
 		--mainColor: var( --studio-blue-0 );
 		--highlightColor: var( --studio-blue-20 );
 	}
 
-	&[data-vertical*='coffee'] {
+	&[data-vertical~='coffee' i] {
 		--contrastColor: #4a2512;
 		--mainColor: var( --studio-white );
 		--highlightColor: var( --studio-gray-0 );
 	}
 
-	&[data-vertical*='cats'] {
+	&[data-vertical~='cats' i] {
 		--contrastColor: #1382d2;
 		--mainColor: var( --studio-white );
 		--highlightColor: var( --studio-gray-0 );
 	}
 
-	&[data-vertical*='car'] {
+	&[data-vertical~='car' i] {
 		--contrastColor: #c33939;
 		--mainColor: var( --studio-white );
 		--highlightColor: var( --studio-gray-0 );
 	}
 
-	&[data-vertical*='doctor'] {
+	&[data-vertical~='doctor' i] {
 		--contrastColor: #1382d2;
 		--mainColor: var( --studio-white );
 		--highlightColor: var( --studio-gray-0 );
 	}
 
-	&[data-vertical*='dogs'] {
+	&[data-vertical~='dogs' i] {
 		--contrastColor: #f3e4be;
 		--mainColor: #a68b46;
 		--highlightColor: #a68b46;
 	}
 
-	&[data-vertical*='food'] {
+	&[data-vertical~='food' i] {
 		--contrastColor: #e35f27;
 		--mainColor: var( --studio-white );
 		--highlightColor: var( --studio-gray-0 );
 	}
 
-	&[data-vertical*='fashion'] {
+	&[data-vertical~='fashion' i] {
 		--contrastColor: #000;
 		--mainColor: var( --studio-white );
 		--highlightColor: var( --studio-gray-0 );
 	}
 
-	&[data-vertical*='football'] {
+	&[data-vertical~='football' i] {
 		--contrastColor: #47b845;
 		--mainColor: #0e390d;
 		--highlightColor: #0e390d;
 	}
 
-	&[data-vertical*='movies'] {
+	&[data-vertical~='movies' i] {
 		--contrastColor: #1382d2;
 		--mainColor: var( --studio-white );
 		--highlightColor: var( --studio-gray-0 );
 	}
 
-	&[data-vertical*='photo'] {
+	&[data-vertical~='photo' i] {
 		--contrastColor: #1382d2;
 		--mainColor: var( --studio-white );
 		--highlightColor: var( --studio-gray-0 );
 	}
 
-	&[data-vertical*='tv'] {
+	&[data-vertical~='tv' i] {
 		--contrastColor: #1382d2;
 		--mainColor: var( --studio-white );
 		--highlightColor: var( --studio-gray-0 );
 	}
 
-	&[data-vertical*='jersey'] {
+	&[data-vertical~='jersey' i] {
 		--contrastColor: #1382d2;
 		--mainColor: var( --studio-white );
 		--highlightColor: var( --studio-gray-0 );

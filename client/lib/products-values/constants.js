@@ -34,6 +34,7 @@ export const JETPACK_BACKUP_PRODUCTS = [
 ];
 
 export const JETPACK_SEARCH_PRODUCTS = [ PRODUCT_JETPACK_SEARCH, PRODUCT_JETPACK_SEARCH_MONTHLY ];
+export const isJetpackSearch = slug => JETPACK_SEARCH_PRODUCTS.includes( slug );
 
 export const JETPACK_SCAN_PRODUCTS = [ PRODUCT_JETPACK_SCAN, PRODUCT_JETPACK_SCAN_MONTHLY ];
 
@@ -155,8 +156,12 @@ export const getJetpackProductsTaglines = () => {
 };
 
 export const getJetpackProductsDescriptions = () => {
-	const searchDescription = translate( 'Search your site.' );
-	const scanDescription = 'Scan your site.';
+	const searchDescription = translate(
+		'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content – right when they need it.'
+	);
+	const scanDescription = translate(
+		'Automatic scanning and one-click fixes keep your site one step ahead of security threats.'
+	);
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: translate(
 			'Always-on backups ensure you never lose your site. Your changes are saved every day with a 30-day archive.'
@@ -185,6 +190,7 @@ export const getJetpackProducts = () => {
 				'Always-on backups ensure you never lose your site. Choose from real-time or daily backups.'
 			),
 			id: PRODUCT_JETPACK_BACKUP,
+			hasPromo: true,
 			options: {
 				yearly: JETPACK_BACKUP_PRODUCTS_YEARLY,
 				monthly: JETPACK_BACKUP_PRODUCTS_MONTHLY,
@@ -196,33 +202,15 @@ export const getJetpackProducts = () => {
 			slugs: JETPACK_BACKUP_PRODUCTS,
 		},
 	];
-	isEnabled( 'jetpack/scan-product' ) &&
-		output.push( {
-			title: translate( 'Jetpack Scan' ),
-			// TODO: Add new description copy for Search
-			description: 'Always-on scan ensure you never lose your site.',
-			id: PRODUCT_JETPACK_SCAN,
-			options: {
-				yearly: [ PRODUCT_JETPACK_SCAN ],
-				monthly: [ PRODUCT_JETPACK_SCAN_MONTHLY ],
-			},
-			optionShortNames: getJetpackProductsShortNames(),
-			optionDisplayNames: getJetpackProductsDisplayNames(),
-			optionDescriptions: getJetpackProductsDescriptions(),
-			optionsLabel: translate( 'Select a product option:' ),
-			slugs: JETPACK_SCAN_PRODUCTS,
-		} );
 	isEnabled( 'jetpack/search-product' ) &&
 		output.push( {
 			title: translate( 'Jetpack Search' ),
-			// TODO: Add new description copy for Search
-			description: translate(
-				'Always-on backups ensure you never lose your site. Choose from real-time or daily backups.'
-			),
+			description: getJetpackProductsDescriptions()[ PRODUCT_JETPACK_SEARCH ],
 			id: PRODUCT_JETPACK_SEARCH,
 			// There is only one option per billing interval, but this
 			// component still needs the full display with radio buttons.
 			forceRadios: true,
+			hasPromo: false,
 			options: {
 				yearly: [ PRODUCT_JETPACK_SEARCH ],
 				monthly: [ PRODUCT_JETPACK_SEARCH_MONTHLY ],
@@ -277,6 +265,25 @@ export const getJetpackProducts = () => {
 				);
 			},
 			slugs: JETPACK_SEARCH_PRODUCTS,
+		} );
+	isEnabled( 'jetpack/scan-product' ) &&
+		output.push( {
+			title: translate( 'Jetpack Scan' ),
+			description: getJetpackProductsDescriptions()[ PRODUCT_JETPACK_SCAN ],
+			id: PRODUCT_JETPACK_SCAN,
+			// There is only one option per billing interval, but this
+			// component still needs the full display with radio buttons.
+			forceRadios: true,
+			hasPromo: false,
+			options: {
+				yearly: [ PRODUCT_JETPACK_SCAN ],
+				monthly: [ PRODUCT_JETPACK_SCAN_MONTHLY ],
+			},
+			optionShortNames: getJetpackProductsShortNames()[ PRODUCT_JETPACK_SCAN ],
+			optionDisplayNames: getJetpackProductsDisplayNames(),
+			optionDescriptions: getJetpackProductsDescriptions(),
+			optionsLabel: translate( 'Select a product option:' ),
+			slugs: JETPACK_SCAN_PRODUCTS,
 		} );
 
 	return output;

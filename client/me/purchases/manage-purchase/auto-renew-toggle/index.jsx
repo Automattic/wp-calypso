@@ -32,6 +32,7 @@ class AutoRenewToggle extends Component {
 		recordTracksEvent: PropTypes.func.isRequired,
 		compact: PropTypes.bool,
 		withTextStatus: PropTypes.bool,
+		toggleSource: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -114,6 +115,7 @@ class AutoRenewToggle extends Component {
 			product_slug: productSlug,
 			is_atomic: isAtomicSite,
 			is_toggling_toward: isTogglingToward,
+			toggle_source: this.props.toggleSource,
 		} );
 	};
 
@@ -135,15 +137,15 @@ class AutoRenewToggle extends Component {
 	};
 
 	getToggleUiStatus() {
-		if ( this.isUpdatingAutoRenew() ) {
-			return this.state.isTogglingToward;
-		}
-
 		return this.props.isEnabled;
 	}
 
 	renderTextStatus() {
 		const { translate, isEnabled } = this.props;
+
+		if ( this.isUpdatingAutoRenew() ) {
+			return translate( 'Auto-renew (…)' );
+		}
 
 		return isEnabled ? translate( 'Auto-renew (on)' ) : translate( 'Auto-renew (off)' );
 	}

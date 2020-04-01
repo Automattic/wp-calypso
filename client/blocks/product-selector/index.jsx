@@ -555,17 +555,19 @@ export class ProductSelector extends Component {
 					{ hasProductPurchase && isCurrent && this.renderManageButton( product, purchase ) }
 					{ ! hasProductPurchase && ! isCurrent && (
 						<Fragment>
-							<ProductCardPromoNudge
-								badgeText={ translate( 'Up to %(discount)s off!', {
-									args: { discount: '70%' },
-								} ) }
-								text={ translate(
-									'Hurry, these are {{strong}}Limited time introductory prices!{{/strong}}',
-									{
-										components: { strong: <strong /> },
-									}
-								) }
-							/>
+							{ product.hasPromo && (
+								<ProductCardPromoNudge
+									badgeText={ translate( 'Up to %(discount)s off!', {
+										args: { discount: '70%' },
+									} ) }
+									text={ translate(
+										'Hurry, these are {{strong}}Limited time introductory prices!{{/strong}}',
+										{
+											components: { strong: <strong /> },
+										}
+									) }
+								/>
+							) }
 
 							<ProductCardOptions
 								optionsLabel={ optionsLabel }

@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import SidebarItem from 'layout/sidebar/item';
 import config from 'config';
-import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import compareProps from 'lib/compare-props';
 import { getSiteAdminUrl, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser as canCurrentUserStateSelector } from 'state/selectors/can-current-user';
@@ -83,7 +83,7 @@ class ToolsMenu extends PureComponent {
 
 	onNavigate = postType => () => {
 		if ( ! includes( [ 'post', 'page' ], postType ) ) {
-			analytics.mc.bumpStat( 'calypso_publish_menu_click', postType );
+			bumpStat( 'calypso_publish_menu_click', postType );
 		}
 		this.props.recordTracksEvent( 'calypso_mysites_tools_sidebar_item_clicked', {
 			menu_item: postType,

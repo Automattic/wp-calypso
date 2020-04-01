@@ -22,6 +22,7 @@ import {
 import { analyticsMiddleware } from '../middleware.js';
 import { spy as mockAnalytics } from 'lib/analytics';
 import { spy as mockAdTracking } from 'lib/analytics/ad-tracking';
+import { spy as mockMC } from 'lib/analytics/mc';
 import { addHotJarScript } from 'lib/analytics/hotjar';
 
 jest.mock( 'lib/analytics', () => {
@@ -44,6 +45,16 @@ jest.mock( 'lib/analytics/ad-tracking', () => {
 	return mock;
 } );
 
+jest.mock( 'lib/analytics/mc', () => {
+	const mcSpy = require( 'sinon' ).spy();
+	const { mcMock } = require( './helpers/analytics-mock' );
+
+	const mock = mcMock( mcSpy );
+	mock.spy = mcSpy;
+
+	return mock;
+} );
+
 jest.mock( 'lib/analytics/hotjar', () => ( {
 	addHotJarScript: require( 'sinon' ).spy(),
 } ) );
@@ -60,7 +71,7 @@ describe( 'middleware', () => {
 		test( 'should call mc.bumpStat', () => {
 			dispatch( bumpStat( 'test', 'value' ) );
 
-			expect( mockAnalytics ).to.have.been.calledWithExactly( 'mc.bumpStat', 'test', 'value' );
+			expect( mockMC ).to.have.been.calledWithExactly( 'bumpStat', 'test', 'value' );
 		} );
 
 		test( 'should call tracks.recordEvent', () => {
@@ -123,7 +134,7 @@ describe( 'middleware', () => {
 		test( 'should call analytics events with wrapped actions', () => {
 			dispatch( withAnalytics( bumpStat( 'name', 'value' ), { type: 'TEST_ACTION' } ) );
 
-			expect( mockAnalytics ).to.have.been.calledWithExactly( 'mc.bumpStat', 'name', 'value' );
+			expect( mockMC ).to.have.been.calledWithExactly( 'bumpStat', 'name', 'value' );
 		} );
 
 		test( 'should call `setOptOut`', () => {

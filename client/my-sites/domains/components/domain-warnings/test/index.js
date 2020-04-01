@@ -135,7 +135,7 @@ describe( 'index', () => {
 				links.some(
 					link =>
 						link.href ===
-						'https://en.support.wordpress.com/domains/map-existing-domain/#change-your-domains-name-servers'
+						'https://wordpress.com/support/domains/map-existing-domain/#change-your-domains-name-servers'
 				)
 			).toBeTruthy();
 		} );
@@ -288,8 +288,8 @@ describe( 'index', () => {
 			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
 			const domNode = ReactDom.findDOMNode( component ),
-				textContent = domNode.textContent,
-				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+				textContent = domNode ? domNode.textContent : '',
+				links = domNode ? [].slice.call( domNode.querySelectorAll( 'a' ) ) : [];
 
 			expect( textContent ).not.toContain( 'Please verify ownership of domains' );
 			expect(

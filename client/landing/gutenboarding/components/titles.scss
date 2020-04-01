@@ -1,19 +1,23 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import '../mixins';
 
-.gutenboarding-title,
-.gutenboarding-subtitle {
-	color: var( --mainColor );
-}
 .gutenboarding-title {
-	@include onboarding-font-recoleta;
-	font-size: 42px;
+	@include onboarding-heading-text-mobile;
+	color: var( --mainColor );
+
+	@include break-mobile {
+		@include onboarding-heading-text;
+	}
 }
 
 .gutenboarding-subtitle {
-	font-size: 16px;
+	@include onboarding-large-text;
 	font-family: $default-font;
-	line-height: 19px;
 	letter-spacing: 0.2px;
 	color: var( --studio-gray-60 );
+	margin-top: 5px;
+
+	@include break-small {
+		margin-top: 0;
+	}
 }

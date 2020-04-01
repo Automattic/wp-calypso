@@ -4,7 +4,6 @@
 	@include breakpoint( '>480px' ) {
 		min-width: 460px;
 	}
-
 }
 // Header
 .product-card__header {
@@ -59,7 +58,6 @@
 	.gridicons-checkmark {
 		fill: var( --color-jetpack );
 	}
-
 }
 
 .product-card__secondary {
@@ -123,12 +121,6 @@
 	@include breakpoint( '>960px' ) {
 		font-size: 12px;
 	}
-
-	.is-discounted & {
-		@include breakpoint( '>660px' ) {
-			color: var( --color-success );
-		}
-	}
 }
 
 // Adjust price group styles when part of product card header
@@ -164,16 +156,13 @@
 		}
 	}
 
-	.is-discounted .product-card__billing-timeframe {
-		color: var( --color-success );
+	.plan-price.is-discounted {
+		margin-right: 4px;
 	}
 
-	@include breakpoint( '>960px' ) {
-		.plan-price.is-discounted,
-		.plan-price.is-discounted *,
-		.is-discounted .product-card__billing-timeframe {
-			color: var( --color-text-subtle );
-		}
+	.plan-price.is-discounted,
+	.plan-price.is-discounted .plan-price__currency-symbol {
+		color: var( --color-neutral-70 );
 	}
 }
 
@@ -190,17 +179,18 @@
 
 // Product options
 .product-card__options {
-	padding: 10px 0 0;
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: space-around; // IE11 fallback.
+	justify-content: space-evenly;
 
-	@include breakpoint( '>960px' ) {
-		display: flex;
+	@include breakpoint( '>480px' ) {
 		flex-flow: row wrap;
-		justify-content: space-around; // IE11 fallback.
-		justify-content: space-evenly;
 	}
 }
 
 .product-card__options-label {
+	margin-top: 16px;
 	font-size: 14px;
 	text-align: center;
 	color: var( --color-text-subtle );
@@ -213,45 +203,64 @@
 // We need a higher specificity here to override .form-label styles
 .product-card__option.form-label {
 	display: flex;
-	flex-flow: row nowrap;
+	flex: 1;
+	flex-direction: row;
 	align-items: center;
-	margin: 24px 0;
+	margin: 16px 0 8px;
+	padding: 16px;
+	border: 1px solid var( --color-neutral-20 );
+	border-radius: 4px;
+	cursor: pointer;
 
-	@include breakpoint( '>960px' ) {
-		align-items: flex-start;
-		margin-bottom: 8px;
+	@include breakpoint( '>480px' ) {
+		flex-direction: column;
+	}
 
-		& + & {
-			padding-left: 20px;
-			border-left: 1px solid var( --color-border-subtle );
+	&.is-selected {
+		// Matches the feature highlight on the plans tables
+		background-color: rgba( var( --color-primary-rgb ), 0.1 );
+		border-color: var( --color-primary );
+	}
+
+	& + .product-card__option.form-label {
+		margin-top: 0;
+
+		@include breakpoint( '>480px' ) {
+			margin-top: 16px;
+			margin-left: 8px;
 		}
 	}
 }
 
 .product-card__option-description {
 	display: flex;
-	flex-flow: row wrap;
-	flex-grow: 1;
+	flex-flow: column nowrap;
+	align-items: flex-start;
 	margin-left: 8px;
 
+	@include breakpoint( '>480px' ) {
+		align-items: center;
+		margin-top: 6px;
+		margin-left: 0;
+	}
+
 	@include breakpoint( '>960px' ) {
-		margin-left: 4px;
-		flex-flow: column nowrap;
+		margin-top: 0;
+	}
+}
+
+.product-card__radio.form-radio {
+	@include breakpoint( '>960px' ) {
+		margin-bottom: 10px;
 	}
 }
 
 .product-card__option-name {
-	flex-grow: 1;
-	margin-right: 10px;
-	font-size: 16px;
+	margin-bottom: 2px;
+	font-size: 14px;
 	font-weight: 700;
-
-	@include breakpoint( '>960px' ) {
-		margin-bottom: 2px;
-		flex: 0 0 100%;
-		font-size: 14px;
-		line-height: 20px;
-	}
+	line-height: 20px;
+	text-align: center;
 }
 
 // Action
@@ -279,6 +288,10 @@
 	justify-content: center;
 	align-items: center;
 	margin: 24px auto 8px;
+
+	& + .product-card__options-label {
+		margin-top: 8px;
+	}
 }
 
 .product-card__promo-nudge-badge {

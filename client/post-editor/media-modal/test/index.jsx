@@ -20,7 +20,14 @@ import { ModalViews } from 'state/ui/media-modal/constants';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 jest.mock( 'component-closest', () => {} );
-jest.mock( 'event', () => require( 'component-event' ), { virtual: true } );
+jest.mock(
+	'event',
+	() => ( {
+		bind: jest.fn,
+		unbind: jest.fn,
+	} ),
+	{ virtual: true }
+);
 jest.mock( 'post-editor/media-modal/detail', () => ( {
 	default: require( 'components/empty-component' ),
 } ) );
@@ -36,11 +43,6 @@ jest.mock( 'lib/accept', () =>
 		.stub()
 		.callsArgWithAsync( 1, true )
 );
-jest.mock( 'lib/analytics', () => ( {
-	mc: {
-		bumpStat: () => {},
-	},
-} ) );
 jest.mock( 'lib/media/actions', () => ( {
 	delete: () => {},
 	setLibrarySelectedItems: () => {},
@@ -86,11 +88,10 @@ describe( 'EditorMediaModal', () => {
 		expect( setLibrarySelectedItems ).to.have.been.calledWith( DUMMY_SITE.ID, [] );
 	} );
 
-	test( 'should prompt to delete a single item from the list view', done => {
-		let media = DUMMY_MEDIA.slice( 0, 1 ),
-			tree;
+	test( 'should prompt to delete a single item from the list view', () => {
+		const media = DUMMY_MEDIA.slice( 0, 1 );
 
-		tree = shallow(
+		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
 				mediaLibrarySelectedItems={ media }
@@ -104,13 +105,15 @@ describe( 'EditorMediaModal', () => {
 				'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
 				'This cannot be undone.'
 		);
-		process.nextTick( function() {
-			expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, media );
-			done();
+		return new Promise( resolve => {
+			process.nextTick( function() {
+				expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, media );
+				resolve();
+			} );
 		} );
 	} );
 
-	test( 'should prompt to delete multiple items from the list view', done => {
+	test( 'should prompt to delete multiple items from the list view', () => {
 		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
@@ -125,17 +128,19 @@ describe( 'EditorMediaModal', () => {
 				'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
 				'This cannot be undone.'
 		);
-		process.nextTick( function() {
-			expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, DUMMY_MEDIA );
-			done();
+
+		return new Promise( resolve => {
+			process.nextTick( function() {
+				expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, DUMMY_MEDIA );
+				resolve();
+			} );
 		} );
 	} );
 
-	test( 'should prompt to delete a single item from the detail view', done => {
-		let media = DUMMY_MEDIA[ 0 ],
-			tree;
+	test( 'should prompt to delete a single item from the detail view', () => {
+		const media = DUMMY_MEDIA[ 0 ];
 
-		tree = shallow(
+		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
 				mediaLibrarySelectedItems={ [ media ] }
@@ -149,13 +154,15 @@ describe( 'EditorMediaModal', () => {
 				'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
 				'This cannot be undone.'
 		);
-		process.nextTick( function() {
-			expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, media );
-			done();
+		return new Promise( resolve => {
+			process.nextTick( function() {
+				expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, media );
+				resolve();
+			} );
 		} );
 	} );
 
-	test( 'should prompt to delete a single item from the detail view, even when multiple selected', done => {
+	test( 'should prompt to delete a single item from the detail view, even when multiple selected', () => {
 		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
@@ -170,13 +177,16 @@ describe( 'EditorMediaModal', () => {
 				'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
 				'This cannot be undone.'
 		);
-		process.nextTick( function() {
-			expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, DUMMY_MEDIA[ 0 ] );
-			done();
+
+		return new Promise( resolve => {
+			process.nextTick( function() {
+				expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, DUMMY_MEDIA[ 0 ] );
+				resolve();
+			} );
 		} );
 	} );
 
-	test( 'should return to the list view after deleting the only item in detail view', done => {
+	test( 'should return to the list view after deleting the only item in detail view', () => {
 		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
@@ -188,13 +198,15 @@ describe( 'EditorMediaModal', () => {
 
 		tree.deleteMedia();
 
-		process.nextTick( function() {
-			expect( spy ).to.have.been.calledWith( ModalViews.LIST );
-			done();
+		return new Promise( resolve => {
+			process.nextTick( function() {
+				expect( spy ).to.have.been.calledWith( ModalViews.LIST );
+				resolve();
+			} );
 		} );
 	} );
 
-	test( 'should revert to an earlier media item when the last item is deleted from detail view', done => {
+	test( 'should revert to an earlier media item when the last item is deleted from detail view', () => {
 		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
@@ -206,10 +218,12 @@ describe( 'EditorMediaModal', () => {
 		tree.setDetailSelectedIndex( 1 );
 		tree.deleteMedia();
 
-		process.nextTick( function() {
-			expect( spy ).to.not.have.been.called;
-			expect( tree.state.detailSelectedIndex ).to.equal( 0 );
-			done();
+		return new Promise( resolve => {
+			process.nextTick( function() {
+				expect( spy ).to.not.have.been.called;
+				expect( tree.state.detailSelectedIndex ).to.equal( 0 );
+				resolve();
+			} );
 		} );
 	} );
 
@@ -333,7 +347,7 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	describe( '#confirmSelection()', () => {
-		test( 'should close modal if viewing local media and button is pressed', done => {
+		test( 'should close modal if viewing local media and button is pressed', () => {
 			const tree = shallow(
 				<EditorMediaModal
 					site={ DUMMY_SITE }
@@ -346,18 +360,20 @@ describe( 'EditorMediaModal', () => {
 
 			tree.confirmSelection();
 
-			process.nextTick( () => {
-				expect( onClose ).to.have.been.calledWith( {
-					items: DUMMY_MEDIA,
-					settings: undefined,
-					type: 'media',
-				} );
+			return new Promise( resolve => {
+				process.nextTick( () => {
+					expect( onClose ).to.have.been.calledWith( {
+						items: DUMMY_MEDIA,
+						settings: undefined,
+						type: 'media',
+					} );
 
-				done();
+					resolve();
+				} );
 			} );
 		} );
 
-		test( 'should copy external media after loading WordPress library if 1 or more media are selected and button is pressed', done => {
+		test( 'should copy external media after loading WordPress library if 1 or more media are selected and button is pressed', () => {
 			const tree = shallow(
 				<EditorMediaModal
 					site={ DUMMY_SITE }
@@ -377,13 +393,16 @@ describe( 'EditorMediaModal', () => {
 				Object.assign( {}, DUMMY_MEDIA[ 0 ], { ID: 'media-1', transient: true } ),
 				Object.assign( {}, DUMMY_MEDIA[ 1 ], { ID: 'media-2', transient: true } ),
 			];
-			process.nextTick( () => {
-				expect( onClose ).to.have.been.calledWith( transientItems, 'external' );
-				done();
+
+			return new Promise( resolve => {
+				process.nextTick( () => {
+					expect( onClose ).to.have.been.calledWith( transientItems, 'external' );
+					resolve();
+				} );
 			} );
 		} );
 
-		test( 'should copy external after loading WordPress library if 1 video is selected and button is pressed', done => {
+		test( 'should copy external after loading WordPress library if 1 video is selected and button is pressed', () => {
 			const tree = shallow(
 				<EditorMediaModal
 					site={ DUMMY_SITE }
@@ -402,9 +421,11 @@ describe( 'EditorMediaModal', () => {
 			const transientItems = [
 				Object.assign( {}, DUMMY_VIDEO_MEDIA[ 0 ], { ID: 'media-3', transient: true } ),
 			];
-			process.nextTick( () => {
-				expect( onClose ).to.have.been.calledWith( transientItems, 'external' );
-				done();
+			return new Promise( resolve => {
+				process.nextTick( () => {
+					expect( onClose ).to.have.been.calledWith( transientItems, 'external' );
+					resolve();
+				} );
 			} );
 		} );
 	} );

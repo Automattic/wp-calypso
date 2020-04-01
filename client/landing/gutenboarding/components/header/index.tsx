@@ -3,7 +3,7 @@
  */
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
-import { Button, Icon } from '@wordpress/components';
+import { Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { FunctionComponent, useEffect, useCallback, useState } from 'react';
 import classnames from 'classnames';
@@ -62,14 +62,10 @@ const Header: FunctionComponent = () => {
 
 	const newSite = useSelect( select => select( SITE_STORE ).getNewSite() );
 
-	const {
-		domain,
-		selectedDesign,
-		siteTitle,
-		siteVertical,
-		siteWasCreatedForDomainPurchase,
-	} = useSelect( select => select( ONBOARD_STORE ).getState() );
-	const hasSelectedDesign = !! selectedDesign;
+	const { domain, siteTitle, siteVertical, siteWasCreatedForDomainPurchase } = useSelect( select =>
+		select( ONBOARD_STORE ).getState()
+	);
+
 	const {
 		createSite,
 		setDomain,
@@ -101,12 +97,6 @@ const Header: FunctionComponent = () => {
 	const currentDomain = domain ?? freeDomainSuggestion;
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
-	const siteTitleElement = (
-		<span className="gutenboarding__site-title">
-			{ siteTitle ? siteTitle : NO__( 'Start your website' ) }
-		</span>
-	);
-
 	const domainElement = (
 		<span
 			className={ classnames( 'gutenboarding__header-domain-picker-button-domain', {
@@ -129,10 +119,6 @@ const Header: FunctionComponent = () => {
 	const handleCreateSiteForDomains: typeof handleCreateSite = ( ...args ) => {
 		setSiteWasCreatedForDomainPurchase( true );
 		handleCreateSite( ...args );
-	};
-
-	const handleSignup = () => {
-		setShowSignupDialog( true );
 	};
 
 	const closeAuthDialog = () => {
@@ -193,10 +179,16 @@ const Header: FunctionComponent = () => {
 			tabIndex={ -1 }
 		>
 			<section className="gutenboarding__header-section">
-				<div className="gutenboarding__header-section-item gutenboarding__header-wp-logo">
-					<Icon icon="wordpress-alt" size={ 24 } />
+				<div className="gutenboarding__header-section-item">
+					<div className="gutenboarding__header-wp-logo">
+						<Icon icon="wordpress-alt" size={ 24 } />
+					</div>
 				</div>
-				<div className="gutenboarding__header-section-item">{ siteTitleElement }</div>
+				<div className="gutenboarding__header-section-item">
+					<div className="gutenboarding__header-site-title">
+						{ siteTitle ? siteTitle : NO__( 'Start your website' ) }
+					</div>
+				</div>
 				<div className="gutenboarding__header-section-item">
 					{ siteTitle && (
 						<DomainPickerButton
@@ -217,26 +209,9 @@ const Header: FunctionComponent = () => {
 					) }
 				</div>
 			</section>
-			<section className="gutenboarding__header-section">
-				<div className="gutenboarding__header-section-item">
-					{ hasSelectedDesign && (
-						<Button
-							className="gutenboarding__header-next-button"
-							isPrimary
-							isLarge
-							onClick={ () =>
-								currentUser ? handleCreateSite( currentUser.username ) : handleSignup()
-							}
-						>
-							{ NO__( 'Create my site' ) }
-						</Button>
-					) }
-				</div>
-			</section>
 			{ showSignupDialog && <SignupForm onRequestClose={ closeAuthDialog } /> }
 		</div>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 export default Header;

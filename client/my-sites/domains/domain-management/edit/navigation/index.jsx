@@ -23,7 +23,7 @@ import {
 	domainManagementChangeSiteAddress,
 } from 'my-sites/domains/paths';
 import { emailManagement } from 'my-sites/email/paths';
-import { type as domainTypes } from 'lib/domains/constants';
+import { type as domainTypes, transferStatus } from 'lib/domains/constants';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import { isCancelable } from 'lib/purchases';
 import { cancelPurchase } from 'me/purchases/paths';
@@ -251,10 +251,25 @@ class DomainManagementNavigation extends React.Component {
 			return null;
 		}
 
-		const title =
-			domainTypes.MAPPED === domainType
-				? translate( 'Delete domain mapping' )
-				: translate( 'Delete your domain permanently' );
+		let title;
+
+		if ( domainTypes.TRANSFER === domainType ) {
+			const status = domain.transferStatus;
+
+			if ( transferStatus.PENDING_OWNER === status || transferStatus.PENDING_REGISTRY === status ) {
+				return null;
+			}
+
+			if ( status === transferStatus.CANCELLED ) {
+				title = translate( 'Remove transfer from your account' );
+			} else {
+				title = translate( 'Cancel transfer' );
+			}
+		} else if ( domainTypes.MAPPED === domainType ) {
+			title = translate( 'Delete domain mapping' );
+		} else {
+			title = translate( 'Delete your domain permanently' );
+		}
 
 		if ( isLoadingPurchase ) {
 			return <VerticalNavItem isPlaceholder />;
@@ -309,6 +324,10 @@ class DomainManagementNavigation extends React.Component {
 		);
 	}
 
+	renderTransferInDomainNavigation() {
+		return <React.Fragment>{ this.getDeleteDomain() }</React.Fragment>;
+	}
+
 	renderWpcomDomainNavigation() {
 		return (
 			<React.Fragment>
@@ -327,6 +346,7 @@ class DomainManagementNavigation extends React.Component {
 				{ domainType === domainTypes.WPCOM && this.renderWpcomDomainNavigation() }
 				{ domainType === domainTypes.MAPPED && this.renderMappedDomainNavigation() }
 				{ domainType === domainTypes.REGISTERED && this.renderRegisteredDomainNavigation() }
+				{ domainType === domainTypes.TRANSFER && this.renderTransferInDomainNavigation() }
 			</VerticalNav>
 		);
 	}

@@ -27,6 +27,7 @@ import {
  */
 import MediaLibrary from 'my-sites/media-library';
 import analytics from 'lib/analytics';
+import { bumpStat as mcBumpStat } from 'lib/analytics/mc';
 import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
 import MediaModalGallery from './gallery';
 import MediaActions from 'lib/media/actions';
@@ -267,7 +268,7 @@ export class EditorMediaModal extends Component {
 		}
 
 		MediaActions.delete( site.ID, toDelete );
-		analytics.mc.bumpStat( 'editor_media_actions', 'delete_media' );
+		mcBumpStat( 'editor_media_actions', 'delete_media' );
 		this.props.deleteMedia( site.ID, map( toDelete, 'ID' ) );
 	};
 
@@ -400,7 +401,7 @@ export class EditorMediaModal extends Component {
 
 	onFilterChange = filter => {
 		if ( filter !== this.state.filter ) {
-			analytics.mc.bumpStat( 'editor_media_actions', 'filter_' + ( filter || 'all' ) );
+			mcBumpStat( 'editor_media_actions', 'filter_' + ( filter || 'all' ) );
 		}
 
 		this.setState( { filter } );
@@ -408,7 +409,7 @@ export class EditorMediaModal extends Component {
 
 	onScaleChange = () => {
 		if ( ! this.statsTracking.scale ) {
-			analytics.mc.bumpStat( 'editor_media_actions', 'scale' );
+			mcBumpStat( 'editor_media_actions', 'scale' );
 			this.statsTracking.scale = true;
 		}
 	};
@@ -419,7 +420,7 @@ export class EditorMediaModal extends Component {
 		} );
 
 		if ( ! this.statsTracking.search ) {
-			analytics.mc.bumpStat( 'editor_media_actions', 'search' );
+			mcBumpStat( 'editor_media_actions', 'search' );
 			this.statsTracking.search = true;
 		}
 	};
@@ -457,7 +458,7 @@ export class EditorMediaModal extends Component {
 		// Find and set detail selected index for the edited item
 		this.setDetailSelectedIndex( findIndex( items, { ID: item.ID } ) );
 
-		analytics.mc.bumpStat( 'editor_media_actions', 'edit_button_contextual' );
+		mcBumpStat( 'editor_media_actions', 'edit_button_contextual' );
 		analytics.ga.recordEvent( 'Media', 'Clicked Contextual Edit Button' );
 
 		this.props.setView( ModalViews.DETAIL );

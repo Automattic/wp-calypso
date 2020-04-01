@@ -36,10 +36,15 @@ export interface CreateSiteParams {
 	options?: {
 		site_vertical?: string;
 		site_vertical_name?: string;
+		site_vertical_slug?: string;
 		site_information?: {
 			title?: string;
 		};
 		site_creation_flow?: string;
 		theme?: string;
+		template?: string;
+		timezone_string?: string;
+		font_headings?: string;
+		font_base?: string;
 	};
 }
