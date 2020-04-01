@@ -305,7 +305,7 @@ export const getJetpackProducts = () => {
 				yearly: [ PRODUCT_JETPACK_SCAN ],
 				monthly: [ PRODUCT_JETPACK_SCAN_MONTHLY ],
 			},
-			optionShortNames: getJetpackProductsShortNames()[ PRODUCT_JETPACK_SCAN ],
+			optionShortNames: getJetpackProductsShortNames(),
 			optionDisplayNames: getJetpackProductsDisplayNames(),
 			optionDescriptions: getJetpackProductsDescriptions(),
 			optionsLabel: translate( 'Select a product option:' ),
