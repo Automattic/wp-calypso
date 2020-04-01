@@ -146,7 +146,7 @@ export class PostTypeFilter extends Component {
 			siteId,
 			statusSlug,
 			isMultiSelectEnabled: isMultiSelectButtonEnabled,
-			state,
+			searchPagesPlaceholder,
 		} = this.props;
 
 		if ( ! query ) {
@@ -171,15 +171,6 @@ export class PostTypeFilter extends Component {
 			me: this.props.translate( 'Me', { context: 'Filter label for posts list' } ),
 			everyone: this.props.translate( 'Everyone', { context: 'Filter label for posts list' } ),
 		};
-
-		const localeSlug = getLocaleSlug( state );
-		const searchPagesPlaceholder = getPostTypeLabel(
-			state,
-			siteId,
-			query.type,
-			'search_items',
-			localeSlug
-		);
 
 		return (
 			<div className="post-type-filter">
@@ -246,7 +237,6 @@ export default flow(
 
 			const props = {
 				siteId,
-				state,
 				authorToggleHidden,
 				jetpack: isJetpackSite( state, siteId ),
 				siteSlug: getSiteSlug( state, siteId ),
@@ -257,8 +247,18 @@ export default flow(
 				return props;
 			}
 
+			const localeSlug = getLocaleSlug( state );
+			const searchPagesPlaceholder = getPostTypeLabel(
+				state,
+				siteId,
+				query.type,
+				'search_items',
+				localeSlug
+			);
+
 			return {
 				...props,
+				searchPagesPlaceholder,
 				counts: query.author
 					? getNormalizedMyPostCounts( state, siteId, query.type )
 					: getNormalizedPostCounts( state, siteId, query.type ),
