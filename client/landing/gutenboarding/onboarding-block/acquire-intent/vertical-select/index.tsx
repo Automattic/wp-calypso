@@ -27,10 +27,7 @@ type Suggestion = SiteVertical & { category?: string };
 
 const VERTICALS_STORE = Verticals.register();
 
-interface Props {
-	onSubmit: () => void;
-}
-const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
+const VerticalSelect: React.FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 	const inputRef = React.useRef< HTMLSpanElement >( document.createElement( 'span' ) );
 	const [ isFocused, setIsFocused ] = React.useState< boolean >( false );
@@ -112,7 +109,6 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 	const handleSelect = ( vertical: SiteVertical ) => {
 		setSiteVertical( vertical );
 		setIsFocused( false ); // prevent executing handleBlur()
-		onSubmit();
 	};
 
 	const handleBlur = () => {
@@ -159,18 +155,18 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 		Input: (
 			<span className="vertical-select__suggestions-wrapper">
 				<span
+					contentEditable
+					tabIndex={ 0 }
 					role="textbox"
 					aria-multiline="true"
-					tabIndex={ 0 }
-					contentEditable
+					spellCheck={ false }
 					ref={ inputRef }
 					/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
 					className="madlib__input"
-					onBlur={ handleBlur }
-					onFocus={ () => setIsFocused( true ) }
 					onKeyDown={ handleInputKeyDownEvent }
 					onKeyUp={ handleInputKeyUpEvent }
-					spellCheck={ false }
+					onFocus={ () => setIsFocused( true ) }
+					onBlur={ handleBlur }
 				/>
 				{ isInputEmpty && (
 					<span className="vertical-select__placeholder">{ animatedPlaceholder }</span>

@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
-import { __experimentalCreateInterpolateElement } from '@wordpress/element';
-import { useDispatch, useSelect } from '@wordpress/data';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
+import { __experimentalCreateInterpolateElement } from '@wordpress/element';
+import { ENTER } from '@wordpress/keycodes';
 
 /**
  * Internal dependencies
@@ -13,46 +14,57 @@ import { useI18n } from '@automattic/react-i18n';
 import { STORE_KEY } from '../../stores/onboard';
 import { Step, usePath } from '../../path';
 
-interface Props {
-	inputRef: React.RefObject< HTMLInputElement >;
-}
-const SiteTitle: React.FunctionComponent< Props > = ( { inputRef } ) => {
+const SiteTitle: React.FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
-	const { siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
+	const { siteTitle, siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 	const history = useHistory();
 	const makePath = usePath();
+	const inputRef = React.useRef< HTMLSpanElement >( document.createElement( 'span' ) );
 
-	const handleChange = ( e: React.ChangeEvent< HTMLInputElement > ) =>
-		setSiteTitle( e.target.value.trim().length ? e.target.value : '' );
+	const handleKeyDown = ( e: React.KeyboardEvent< HTMLSpanElement > ) => {
+		if ( e.keyCode === ENTER ) {
+			// As last input on first step, hitting 'Enter' should direct to next step.
+			e.preventDefault();
+			history.push( makePath( Step.DesignSelection ) );
+		}
+	};
 
-	const value = siteTitle.length ? siteTitle : '';
+	const handleKeyUp = ( e: React.KeyboardEvent< HTMLSpanElement > ) =>
+		setSiteTitle( e.currentTarget.innerText.trim().length ? e.currentTarget.innerText : '' );
+
+	React.useEffect( () => {
+		if ( siteTitle ) {
+			inputRef.current.innerText = siteTitle;
+		}
+	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
+
+	React.useEffect( () => {
+		if ( siteVertical?.label ) {
+			inputRef.current.focus();
+		}
+	}, [ siteVertical, inputRef ] );
 
 	// translators: Form input for a site's title where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
 	const madlibTemplate = NO__( 'Itʼs called <Input />' );
 	const madlib = __experimentalCreateInterpolateElement( madlibTemplate, {
 		Input: (
-			<input
+			<span
+				contentEditable
+				tabIndex={ 0 }
+				role="textbox"
+				aria-multiline="true"
+				spellCheck={ false }
 				ref={ inputRef }
 				/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
 				className="madlib__input"
-				autoComplete="off"
-				style={ {
-					width: `${ value.length * 0.85 }ch`,
-				} }
-				onChange={ handleChange }
-				value={ value }
+				onKeyDown={ handleKeyDown }
+				onKeyUp={ handleKeyUp }
 			/>
 		),
 	} );
 
-	// As last input on first step, hitting 'Enter' should direct to next step.
-	const handleSubmit = ( e: React.FormEvent< HTMLFormElement > ) => {
-		e.preventDefault();
-		history.push( makePath( Step.DesignSelection ) );
-	};
-
-	return <form onSubmit={ handleSubmit }>{ madlib }</form>;
+	return <form>{ madlib }</form>;
 };
 
 export default SiteTitle;
