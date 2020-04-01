@@ -1,3 +1,6 @@
+@import './variables.scss';
+@import 'assets/stylesheets/gutenberg-base-styles';
+
 @mixin onboarding-font-recoleta {
 	font-family: Recoleta, Georgia, 'Times New Roman', Times, serif;
 	font-weight: 400;
@@ -18,7 +21,7 @@
 
 @mixin onboarding-large-text {
 	font-size: 16px;
-	line-height: 19px;
+	line-height: 20px;
 }
 
 @mixin onboarding-medium-text {
@@ -34,4 +37,12 @@
 @mixin onboarding-x-small-text {
 	font-size: 10px;
 	line-height: 12px;
+}
+
+@mixin onboarding-heading-padding {
+	margin: $gutenboarding-page-content-padding-mobile 0 $gutenboarding-page-content-padding-mobile + 4px 0;
+
+	@include break-mobile {
+		margin: $gutenboarding-page-content-padding-desktop 0 $gutenboarding-page-content-padding-desktop + 8px 0;
+	}
 }

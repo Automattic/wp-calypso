@@ -6,12 +6,11 @@
 	grid-template-areas: 'title viewport-select actions';
 	column-gap: 1em;
 	align-items: center;
-	margin-top: $gutenboarding-page-content-padding;
+	@include onboarding-heading-padding;
 }
 
 .style-preview__content {
 	display: grid;
-	margin-top: $gutenboarding-page-content-padding + 8px;
 	grid-template-areas: 'fonts preview';
 	grid-template-columns: 163px auto;
 	column-gap: 100px;

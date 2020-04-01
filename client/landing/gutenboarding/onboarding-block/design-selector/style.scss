@@ -10,7 +10,7 @@
 	.design-selector__header {
 		display: flex;
 		align-items: center;
-		margin-top: $gutenboarding-page-content-padding;
+		@include onboarding-heading-padding;
 	}
 
 	.design-selector__heading {
@@ -28,7 +28,6 @@
 		grid-template-columns: 1fr 1fr;
 		column-gap: 4em;
 		row-gap: 5em;
-		margin-top: $gutenboarding-page-content-padding + 8px;
 	}
 
 	.design-selector__image-frame {
