@@ -1,8 +1,7 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import '../mixins';
 
-.gutenboarding-title,
-.gutenboarding-subtitle {
+.gutenboarding-title {
 	color: var( --mainColor );
 }
 .gutenboarding-title {
@@ -11,7 +10,7 @@
 }
 
 .gutenboarding-subtitle {
-	font-size: 16px;
+	font-size: 14px;
 	font-family: $default-font;
 	line-height: 19px;
 	letter-spacing: 0.2px;

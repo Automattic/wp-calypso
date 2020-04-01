@@ -1,8 +1,11 @@
+@import '../../mixins.scss';
+
 .style-preview__header {
 	display: grid;
 	grid-template-areas: 'title viewport-select actions';
 	column-gap: 1em;
 	margin-top: 53px;
+	align-items: center;
 }
 
 .style-preview__content {
@@ -23,6 +26,17 @@
 
 .style-preview__actions {
 	grid-area: actions;
+	justify-self: end;
+
+	a.is-link {
+		@include onboarding-medium-text;
+		margin: 0 1em;
+		color: var( --studio-gray-40 );
+	}
+
+	&-continue-button.is-primary.is-large {
+		padding: 0 40px;
+	}
 }
 
 .style-preview__font-options {
@@ -53,8 +67,8 @@
 	&.is-selected {
 		// override default focus and hover styles for selected-fonts buttons
 		// `!important` is used because there are default `focus` and `hover` styles with high specificities.
-		color: var( --highlightColor ) !important;
-		box-shadow: inset 0 0 0 1px var( --highlightColor ) !important;
+		color: var( --studio-blue-40 ) !important;
+		box-shadow: inset 0 0 0 1px var( --studio-blue-40 ) !important;
 	}
 
 	&:hover {
@@ -125,6 +139,8 @@
 	justify-content: center;
 
 	.components-button {
+		padding: 4px;
+
 		height: auto;
 
 		svg {
@@ -132,6 +148,7 @@
 		}
 
 		color: var( --studio-gray-10 );
+
 		&.is-selected {
 			color: var( --studio-black );
 		}
