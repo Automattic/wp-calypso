@@ -60,7 +60,9 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 	const { siteVertical, siteTitle } = useSelect( select => select( ONBOARD_STORE ).getState() );
 	const { setSiteVertical, resetSiteVertical } = useDispatch( ONBOARD_STORE );
 
-	const isInputEmpty = ! inputRef?.current?.innerText.length;
+	const inputText = inputRef?.current?.innerText || '';
+	const isInputEmpty = ! inputText.length;
+	const showResults = inputText.length > 2;
 
 	const animatedPlaceholder = useTyper(
 		[ NO__( 'football' ), NO__( 'shopping' ), NO__( 'cars' ), NO__( 'design' ), NO__( 'travel' ) ],
@@ -103,9 +105,8 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 		const input = e.currentTarget.innerText.trim();
 		if ( ! input.length ) {
 			resetSiteVertical();
-		} else {
-			updateSuggestions( input );
 		}
+		updateSuggestions( input );
 	};
 
 	const handleSelect = ( vertical: SiteVertical ) => {
@@ -120,9 +121,9 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 		if ( suggestionRef.current ) {
 			suggestionRef.current.handleKeyEvent( e );
 		}
-		if ( e.keyCode === ENTER && input.length ) {
+		if ( e.keyCode === ENTER ) {
 			e.preventDefault();
-			handleSelect( { label: input } );
+			input.length && handleSelect( { label: input } );
 			return;
 		}
 		if ( e.keyCode === TAB ) {
@@ -188,8 +189,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 		),
 	} );
 
-	const showArrow =
-		isFocused && ! siteTitle && ! siteVertical && inputRef?.current?.innerText.length > 2;
+	const showArrow = isFocused && ! siteTitle && ! siteVertical && showResults;
 
 	return (
 		<form
