@@ -91,7 +91,7 @@ const selectedFonts: Reducer< FontPair | undefined, OnboardAction > = (
 	if ( action.type === 'SET_FONTS' ) {
 		return action.fonts;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( action.type === 'RESET_FONTS' || action.type === 'RESET_ONBOARD_STORE' ) {
 		return undefined;
 	}
 	return state;
