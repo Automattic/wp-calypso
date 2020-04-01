@@ -74,6 +74,7 @@ export async function recordOrder( cart, orderId ) {
 	recordOrderInBing( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInCriteo( cart, orderId );
+	// recordOrderInGAEnhancedEcommerce( cart, orderId );
 
 	// Fire a single tracking event without any details about what was purchased
 
@@ -431,6 +432,33 @@ function recordOrderInGoogleAds( cart, orderId ) {
 		window.gtag( ...params );
 	}
 }
+
+// function recordOrderInGAEnhancedEcommerce( cart, orderId ) {
+// 	if ( ! isAdTrackingAllowed() ) {
+// 		debug( 'recordOrderInGAEnhancedEcommerce: skipping as ad tracking is disallowed' );
+// 		return;
+// 	}
+
+// 	if ( 'function' !== typeof ga ) {
+// 		debug( 'recordOrderInGAEnhancedEcommerce: ga() is not defined' );
+// 		return;
+// 	}
+
+// 	// Load the enhanced ecommerce plugin
+// 	// ga( 'require', 'ec' );
+
+// 	// TODO: verify tax and coupon aren't passed through from the new composite checkout
+// 	const params = {
+// 		id: orderId,
+// 		affiliation: 'travistesting123',
+// 		revenue: cart.total_cost,
+// 		tax: cart.total_tax ?? undefined,
+// 		shipping: undefined,
+// 		coupon: cart.coupon ?? undefined,
+// 	};
+
+// 	// ga( 'ec:setAction', 'purchase', params );
+// }
 
 /**
  * Records an order in Criteo
