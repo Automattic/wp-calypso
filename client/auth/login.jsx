@@ -149,7 +149,7 @@ export class Auth extends Component {
 						target="_blank"
 						rel="noopener noreferrer"
 						title={ translate( 'Visit the WordPress.com support site for help' ) }
-						href="https://wordpress.com/support/"
+						href={ localizeUrl( 'https://wordpress.com/support/' ) }
 					>
 						<Gridicon icon="help" />
 					</a>
