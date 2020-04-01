@@ -19,6 +19,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteAdminUrl, getSiteSlug } from 'state/sites/selectors';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 import './style.scss';
 
@@ -53,6 +54,13 @@ export class ThankYouCard extends Component {
 		if ( ! siteAdminUrl ) {
 			return null;
 		}
+
+		const recordThankYouClick = value => {
+			this.props.recordTracksEvent( 'calypso_jetpack_product_thankyou', {
+				product_name: 'search',
+				value,
+			} );
+		};
 
 		return (
 			<div className="current-plan-thank-you">
@@ -99,11 +107,15 @@ export class ThankYouCard extends Component {
 							<Button
 								primary
 								href={ siteAdminUrl + 'customize.php?autofocus[section]=jetpack_search' }
+								onClick={ recordThankYouClick( 'customizer' ) }
 							>
 								{ translate( 'Customize Search now' ) }
 							</Button>
 
-							<Button href={ siteAdminUrl + 'admin.php?page=jetpack#/dashboard' }>
+							<Button
+								href={ siteAdminUrl + 'admin.php?page=jetpack#/dashboard' }
+								onClick={ recordThankYouClick( 'my_site' ) }
+							>
 								{ translate( 'Go back to my site' ) }
 							</Button>
 						</p>
@@ -139,5 +151,5 @@ export default connect(
 			queryArgs: getCurrentQueryArguments( state ),
 		};
 	},
-	{ requestGuidedTour }
+	{ recordTracksEvent, requestGuidedTour }
 )( localize( ThankYouCard ) );
