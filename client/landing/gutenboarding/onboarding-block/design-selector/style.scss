@@ -1,6 +1,7 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import '~@wordpress/base-styles/colors';
 @import '../../mixins';
+@import '../../variables.scss';
 
 .design-selector {
 	background-color: var( --contrastColor );
@@ -9,7 +10,7 @@
 	.design-selector__header {
 		display: flex;
 		align-items: center;
-		margin-top: 53px;
+		@include onboarding-heading-padding;
 	}
 
 	.design-selector__heading {
@@ -27,7 +28,6 @@
 		grid-template-columns: 1fr 1fr;
 		column-gap: 4em;
 		row-gap: 5em;
-		margin-top: 30px;
 	}
 
 	.design-selector__image-frame {

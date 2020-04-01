@@ -1,16 +1,16 @@
 @import '../../mixins.scss';
+@import '../../variables.scss';
 
 .style-preview__header {
 	display: grid;
 	grid-template-areas: 'title viewport-select actions';
 	column-gap: 1em;
-	margin-top: 53px;
 	align-items: center;
+	@include onboarding-heading-padding;
 }
 
 .style-preview__content {
 	display: grid;
-	margin-top: 55px;
 	grid-template-areas: 'fonts preview';
 	grid-template-columns: 163px auto;
 	column-gap: 100px;
