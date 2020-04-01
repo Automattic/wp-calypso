@@ -24,6 +24,7 @@ import SelfHostedInstructions from './self-hosted-instructions';
 import WordPressLogo from 'components/wordpress-logo';
 import { login } from 'lib/oauth-store/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { localizeUrl } from 'lib/i18n-utils';
 
 export class Auth extends Component {
 	state = {
