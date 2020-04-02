@@ -85,7 +85,7 @@ const Home = ( {
 				) }
 			</div>
 			<Notices checklistMode={ checklistMode } />
-			<Upsells />
+			{ layout && <Upsells cards={ layout.upsells } /> }
 			{ hasChecklistData && layout ? (
 				<div className="customer-home__layout">
 					<div className="customer-home__layout-col customer-home__layout-col-left">

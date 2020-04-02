@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import moment from 'moment';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -10,41 +9,45 @@ import { connect } from 'react-redux';
  */
 import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
-import { getSiteOption } from 'state/sites/selectors';
 import StatsBanners from 'my-sites/stats/stats-banners';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
-const Upsells = ( {
-	isChecklistComplete,
-	isEstablishedSite,
-	siteId,
-	siteIsUnlaunched,
-	siteSlug,
-} ) => {
+const cardComponents = {
+	'home-banner-legacy-stats-banners': StatsBanners,
+};
+
+const Upsells = ( { cards, primary, siteId, slug } ) => {
+	const componentProps = {
+		primary,
+		siteId,
+		slug,
+	};
 	return (
 		<>
-			{ // Only show upgrade nudges to sites > 2 days old
-			isEstablishedSite && (
-				<StatsBanners
-					siteId={ siteId }
-					slug={ siteSlug }
-					primaryButton={ isChecklistComplete && ! siteIsUnlaunched }
-				/>
-			) }
+			{ cards &&
+				cards.map(
+					( card, index ) =>
+						cardComponents[ card ] &&
+						React.createElement(
+							cardComponents[ card ],
+							card === 'home-banner-legacy-stats-banners'
+								? { key: index, ...componentProps }
+								: { key: index }
+						)
+				) }
 		</>
 	);
 };
 
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
-	const createdAt = getSiteOption( state, siteId, 'created_at' );
+	const isChecklistComplete = isSiteChecklistComplete( state, siteId );
+	const siteIsUnlaunched = isUnlaunchedSite( state, siteId );
 
 	return {
-		isChecklistComplete: isSiteChecklistComplete( state, siteId ),
-		isEstablishedSite: moment().isAfter( moment( createdAt ).add( 2, 'days' ) ),
+		primaryButton: isChecklistComplete && ! siteIsUnlaunched,
 		siteId,
-		siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
-		siteSlug: getSelectedSiteSlug( state ),
+		slug: getSelectedSiteSlug( state ),
 	};
 };
 
