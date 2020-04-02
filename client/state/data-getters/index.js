@@ -230,3 +230,33 @@ export const requestSiteAlerts = siteId => {
 		}
 	);
 };
+
+export const requestSiteScan = siteId => {
+	const requestId = `site-scan-${ siteId }`;
+
+	return requestHttpData(
+		requestId,
+		http(
+			{
+				method: 'GET',
+				path: `/sites/${ siteId }/scan`,
+				apiNamespace: 'wpcom/v2',
+			},
+			{}
+		),
+		{
+			freshness: 5 * 60 * 1000,
+			fromApi: () => ( { start_timestamp, next_timestamp, end_timestamp, ...rest } ) => [
+				[
+					requestId,
+					{
+						...rest,
+						startTimestapm: start_timestamp,
+						nextTimestamp: next_timestamp,
+						endTimestamp: end_timestamp,
+					},
+				],
+			],
+		}
+	);
+};

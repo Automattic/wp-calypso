@@ -15,6 +15,7 @@ import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import ThreatDialog from 'landing/jetpack-cloud/components/threat-dialog';
 import ThreatItem from 'landing/jetpack-cloud/components/threat-item';
 import { Threat, ThreatAction } from 'landing/jetpack-cloud/components/threat-item/types';
+import { requestSiteScan } from 'state/data-getters';
 import getJetpackCredentials from 'state/selectors/get-jetpack-credentials';
 
 /**
@@ -145,6 +146,9 @@ const ScanThreats = ( { site, threats, userHasCredentials }: Props ) => {
 };
 
 const mapStateToProps = ( state, { site } ) => {
+	const scan = requestSiteScan( site.ID );
+	// eslint-disable-next-line no-console
+	console.log( scan );
 	return {
 		userHasCredentials: ! isEmpty( getJetpackCredentials( state, site.ID, 'main' ) ),
 	};
