@@ -36,7 +36,7 @@
 			row-gap: 4em;
 		}
 
-		@include break-huge {
+		@include onboarding-break-gigantic {
 			grid-template-columns: 1fr 1fr 1fr 1fr;
 			column-gap: 2em;
 			row-gap: 3em;
