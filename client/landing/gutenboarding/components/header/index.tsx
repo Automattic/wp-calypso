@@ -80,7 +80,7 @@ const Header: FunctionComponent = () => {
 		setSiteWasCreatedForDomainPurchase,
 	} = useDispatch( ONBOARD_STORE );
 
-	const allSuggestions = useDomainSuggestions();
+	const allSuggestions = useDomainSuggestions( siteTitle );
 	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice(
 		0,
 		PAID_DOMAINS_TO_SHOW

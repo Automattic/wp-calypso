@@ -11,12 +11,15 @@ import { DOMAIN_SUGGESTIONS_STORE } from '../stores/domain-suggestions';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { selectorDebounce } from '../constants';
 
-export function useDomainSuggestions() {
+export function useDomainSuggestions( searchOverride = '' ) {
 	const { siteTitle, siteVertical, domainSearch } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
 
-	const [ searchTerm ] = useDebounce( domainSearch.trim() || siteTitle || '', selectorDebounce );
+	const [ searchTerm ] = useDebounce(
+		searchOverride.trim() || domainSearch.trim() || siteTitle || '',
+		selectorDebounce
+	);
 
 	return useSelect(
 		select => {
