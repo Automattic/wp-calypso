@@ -75,8 +75,7 @@ export default class PageList extends Component {
 
 	render() {
 		const { search, siteId, query } = this.props;
-
-		query.page = this.state.page;
+		const { page } = this.state;
 
 		if ( config.isEnabled( 'page/export' ) ) {
 			// we need the raw content of the pages to be able to export them
@@ -89,10 +88,10 @@ export default class PageList extends Component {
 
 		return (
 			<div>
-				<QueryPosts siteId={ siteId } query={ query } />
+				<QueryPosts siteId={ siteId } query={ { ...query, page } } />
 				<ConnectedPages
 					incrementPage={ this.incrementPage }
-					query={ query }
+					query={ { ...query, page } }
 					siteId={ siteId }
 					showPublishedStatus={ showPublishedStatus }
 				/>
