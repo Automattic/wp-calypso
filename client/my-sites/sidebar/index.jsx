@@ -348,6 +348,10 @@ export class MySitesSidebar extends Component {
 	upgrades() {
 		const { path, translate, canUserManageOptions } = this.props;
 
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams ) {
+			return null;
+		}
+
 		let domainsLink = '/domains/manage';
 
 		if ( this.props.siteSuffix ) {
@@ -532,6 +536,10 @@ export class MySitesSidebar extends Component {
 
 	hosting() {
 		const { translate, path, siteSuffix, canViewAtomicHosting } = this.props;
+
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams ) {
+			return null;
+		}
 
 		if ( ! canViewAtomicHosting ) {
 			return null;
