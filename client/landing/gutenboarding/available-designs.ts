@@ -13,18 +13,6 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 			categories: [ 'featured', 'portfolio' ],
 		},
 		{
-			title: 'WIP Event Template',
-			slug: 'rivington',
-			template: 'rivington',
-			theme: 'rivington',
-			src: 'https://public-api.wordpress.com/rest/v1/template/demo/rivington/rivington/',
-			fonts: {
-				headings: 'Arvo',
-				base: 'Montserrat',
-			},
-			categories: [ 'event' ],
-		},
-		{
 			title: 'Reynolds',
 			slug: 'reynolds',
 			template: 'rockfield2',

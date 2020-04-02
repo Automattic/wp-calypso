@@ -75,11 +75,6 @@
 			"title": "maywood2",
 			"defaults": "maywood",
 			"vertical-whitelist": []
-		},
-		{
-			"title": "rivington",
-			"defaults": "rivington",
-			"vertical-whitelist": []
 		}
 	],
 	"themes": [
@@ -114,10 +109,6 @@
 		{
 			"title": "maywood",
 			"demo": "https://maywooddemo.wordpress.com/"
-		},
-		{
-			"title": "rivington",
-			"demo": "https://rivingtondemo.wordpress.com/"
 		}
 	]
 }
