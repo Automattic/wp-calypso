@@ -966,6 +966,16 @@ const contextLinksForSection = {
 			),
 		},
 	],
+	domains: [
+		{
+			link: localizeUrl( 'https://en.support.wordpress.com/all-about-domains/' ),
+			post_id: 41171,
+			title: translate( 'All About Domains' ),
+			description: translate(
+				'Set up your domain whether it’s registered with WordPress.com or elsewhere.'
+			),
+		},
+	],
 };
 
 /*
