@@ -33,8 +33,8 @@ $acquire-intent-transition-algorithm: ease-in-out;
 	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
 
 	&--hidden {
+		// use this to fade-in the footer; since the buttons are disabled we don't need to hide them
 		opacity: 0;
-		visibility: hidden;
 	}
 }
 
