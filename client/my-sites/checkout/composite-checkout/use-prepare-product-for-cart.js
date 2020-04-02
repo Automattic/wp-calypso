@@ -31,15 +31,6 @@ export default function usePrepareProductForCart( siteId, productAlias, isJetpac
 	const planSlug = useSelector( state =>
 		getUpgradePlanSlugFromPath( state, siteId, productAlias )
 	);
-	const plans = useSelector( state => getPlans( state ) );
-	const plan = useSelector( state => getPlanBySlug( state, planSlug ) );
-	const products = useSelector( state => getProductsList( state ) );
-	const product = useSelector( state =>
-		getProductBySlug( state, getProductSlugFromAlias( productAlias ) )
-	);
-	const isFetchingProducts = useSelector( state => isProductsListFetching( state ) );
-	const isFetchingPlans = useSelector( state => isRequestingPlans( state ) );
-	const reduxDispatch = useDispatch();
 	const [ { canInitializeCart, productForCart }, setState ] = useState( {
 		canInitializeCart: ! planSlug && ! productAlias,
 		productForCart: null,
@@ -48,7 +39,15 @@ export default function usePrepareProductForCart( siteId, productAlias, isJetpac
 	useFetchProductsIfNotLoaded();
 	useFetchPlansIfNotLoaded();
 
-	// Add a plan if one is requested
+	useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic } );
+	useAddProductFromSlug( { productAlias, planSlug, setState, isJetpackNotAtomic } );
+
+	return { productForCart, canInitializeCart };
+}
+
+function useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic } ) {
+	const isFetchingPlans = useSelector( state => isRequestingPlans( state ) );
+	const plan = useSelector( state => getPlanBySlug( state, planSlug ) );
 	useEffect( () => {
 		if ( ! planSlug || isFetchingPlans ) {
 			return;
@@ -73,9 +72,17 @@ export default function usePrepareProductForCart( siteId, productAlias, isJetpac
 			cartProduct
 		);
 		setState( { productForCart: cartProduct, canInitializeCart: true } );
-	}, [ isFetchingPlans, reduxDispatch, planSlug, plan, plans, isJetpackNotAtomic ] );
+	}, [ isFetchingPlans, planSlug, plan, isJetpackNotAtomic, setState ] );
+}
 
-	// Add a supported product if one is requested
+function useAddProductFromSlug( { productAlias, planSlug, setState, isJetpackNotAtomic } ) {
+	// Add a supported product if one is requested and if we haven't already
+	// found a matching plan.
+	const isFetchingPlans = useSelector( state => isRequestingPlans( state ) );
+	const isFetchingProducts = useSelector( state => isProductsListFetching( state ) );
+	const product = useSelector( state =>
+		getProductBySlug( state, getProductSlugFromAlias( productAlias ) )
+	);
 	useEffect( () => {
 		if ( ! productAlias ) {
 			return;
@@ -106,15 +113,12 @@ export default function usePrepareProductForCart( siteId, productAlias, isJetpac
 	}, [
 		isFetchingPlans,
 		planSlug,
-		reduxDispatch,
 		isJetpackNotAtomic,
 		productAlias,
 		product,
-		products,
 		isFetchingProducts,
+		setState,
 	] );
-
-	return { productForCart, canInitializeCart };
 }
 
 function useFetchProductsIfNotLoaded() {
