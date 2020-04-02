@@ -12,7 +12,7 @@ import { Spring, animated } from 'react-spring/renderprops';
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import designs from '../../available-designs.json';
+import designs from '../../available-designs';
 import { usePath, Step } from '../../path';
 import { isEnabled } from '../../../../config';
 import Link from '../../components/link';
@@ -20,7 +20,6 @@ import { SubTitle, Title } from '../../components/titles';
 
 import './style.scss';
 
-type Font = import('../../constants').Font;
 type Design = import('../../stores/onboard/types').Design;
 
 // Values for springs:
@@ -38,8 +37,8 @@ const DesignSelector: React.FunctionComponent = () => {
 	const getDesignUrl = ( design: Design ) => {
 		const mshotsUrl = 'https://s.wordpress.com/mshots/v1/';
 		const previewUrl = addQueryArgs( design.src, {
-			font_headings: design.fonts[ 0 ],
-			font_base: design.fonts[ 1 ],
+			font_headings: design.fonts.headings,
+			font_base: design.fonts.base,
 		} );
 		return mshotsUrl + encodeURIComponent( previewUrl );
 	};
@@ -92,7 +91,7 @@ const DesignSelector: React.FunctionComponent = () => {
 											setSelectedDesign( design );
 
 											// Update fonts to the design defaults
-											setFonts( design.fonts as [ Font, Font ] );
+											setFonts( design.fonts );
 
 											if ( isEnabled( 'gutenboarding/style-preview' ) ) {
 												push( makePath( Step.Style ) );

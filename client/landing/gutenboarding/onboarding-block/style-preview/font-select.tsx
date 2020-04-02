@@ -11,9 +11,9 @@ import { useI18n } from '@automattic/react-i18n';
 /**
  * Internal dependencies
  */
-import { fontPairings, getFontTitle, FontPair, Font } from '../../constants';
+import { fontPairings, getFontTitle, FontPair } from '../../constants';
 import { STORE_KEY } from '../../stores/onboard';
-import designs from '../../available-designs.json';
+import designs from '../../available-designs';
 
 const FontSelect: React.FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
@@ -26,12 +26,12 @@ const FontSelect: React.FunctionComponent = () => {
 	)?.fonts;
 	const defaultFontOption = selectedDesignDefaultFonts ? (
 		<>
-			<span style={ { fontFamily: selectedDesignDefaultFonts[ 0 ], fontWeight: 700 } }>
-				{ getFontTitle( selectedDesignDefaultFonts[ 0 ] ) }
+			<span style={ { fontFamily: selectedDesignDefaultFonts.headings, fontWeight: 700 } }>
+				{ getFontTitle( selectedDesignDefaultFonts.headings ) }
 			</span>
 			&nbsp;/&nbsp;
-			<span style={ { fontFamily: selectedDesignDefaultFonts[ 1 ] } }>
-				{ getFontTitle( selectedDesignDefaultFonts[ 1 ] ) }
+			<span style={ { fontFamily: selectedDesignDefaultFonts.base } }>
+				{ getFontTitle( selectedDesignDefaultFonts.base ) }
 			</span>
 		</>
 	) : (
@@ -42,7 +42,7 @@ const FontSelect: React.FunctionComponent = () => {
 		if ( ! selectedDesignDefaultFonts ) {
 			return true;
 		}
-		const [ defaultHeadings, defaultBase ] = selectedDesignDefaultFonts;
+		const { headings: defaultHeadings, base: defaultBase } = selectedDesignDefaultFonts;
 		return pair.headings !== defaultHeadings && pair.base !== defaultBase;
 	};
 
@@ -51,10 +51,10 @@ const FontSelect: React.FunctionComponent = () => {
 			<Button
 				className={ classnames( 'style-preview__font-option', {
 					'is-selected':
-						selectedFonts?.headings === selectedDesignDefaultFonts?.[ 0 ] &&
-						selectedFonts?.base === selectedDesignDefaultFonts?.[ 1 ],
+						selectedFonts?.headings === selectedDesignDefaultFonts?.headings &&
+						selectedFonts?.base === selectedDesignDefaultFonts?.base,
 				} ) }
-				onClick={ () => setFonts( ( selectedDesignDefaultFonts as [ Font, Font ] ) ?? undefined ) }
+				onClick={ () => setFonts( selectedDesignDefaultFonts ) }
 			>
 				<span className="style-preview__font-option-contents">{ defaultFontOption }</span>
 			</Button>

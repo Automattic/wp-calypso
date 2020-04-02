@@ -52,14 +52,10 @@ export const resetFonts = () => ( {
 	type: 'RESET_FONTS' as const,
 } );
 
-// Handles { headings, base } and [ headings, base ] formats
-export const setFonts = ( fonts: FontPair | [ Font, Font ] | undefined ) => {
-	const nextFonts: FontPair | undefined = Array.isArray( fonts )
-		? { headings: fonts[ 0 ], base: fonts[ 1 ] }
-		: fonts;
+export const setFonts = ( fonts: FontPair | undefined ) => {
 	return {
 		type: 'SET_FONTS' as const,
-		fonts: nextFonts,
+		fonts: fonts,
 	};
 };
 

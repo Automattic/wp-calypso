@@ -43,9 +43,11 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 				const url = addQueryArgs( templateUrl, {
 					language: language,
 					vertical: siteVertical?.label,
-					font_headings: selectedFonts?.headings,
-					font_base: selectedFonts?.base,
 					site_title: siteTitle,
+					...( selectedFonts && {
+						font_headings: selectedFonts.headings,
+						font_base: selectedFonts.base,
+					} ),
 				} );
 				let resp;
 
@@ -67,7 +69,7 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 				const html = await resp.text();
 				setPreviewHtml( html );
 				setRequestedFonts(
-					new Set( [ selectedFonts?.headings, selectedFonts?.base ].filter( Boolean ) as Font[] )
+					new Set( selectedFonts ? [ selectedFonts.headings, selectedFonts.base ] : undefined )
 				);
 			};
 			eff();
