@@ -16,6 +16,7 @@ import { pathToRegExp } from './utils';
 import { receiveSections, load } from './sections-helper';
 import isSectionEnabled from './sections-filter';
 import { addReducerToStore } from 'state/add-reducer';
+import { getSection } from 'state/ui/selectors';
 import {
 	socketConnect as lasagnaSocketConnect,
 	socketDisconnect as lasagnaSocketDisconnect,
@@ -26,7 +27,9 @@ import sections from './sections';
 receiveSections( sections );
 
 function activateSection( sectionDefinition, context ) {
-	context.store.dispatch( setSection( sectionDefinition ) );
+	const previousSection = getSection( context.store.getState() );
+
+	context.store.dispatch( setSection( sectionDefinition, { previousSection } ) );
 	context.store.dispatch( activateNextLayoutFocus() );
 }
 
