@@ -112,10 +112,20 @@ class AutoRenewToggle extends Component {
 		const updateAutoRenew = isEnabled ? disableAutoRenew : enableAutoRenew;
 		const isTogglingToward = ! isEnabled;
 
+		const recordEvent = () => {
+			this.props.recordTracksEvent( 'calypso_purchases_manage_purchase_toggle_auto_renew', {
+				product_slug: productSlug,
+				is_atomic: isAtomicSite,
+				is_toggling_toward: isTogglingToward,
+				toggle_source: this.props.toggleSource,
+			} );
+		};
+
 		if ( isTogglingToward && ! isRechargeable( this.props.purchase ) ) {
 			this.setState( {
 				showPaymentMethodDialog: true,
 			} );
+			recordEvent();
 			return;
 		}
 
@@ -155,12 +165,7 @@ class AutoRenewToggle extends Component {
 			} );
 		} );
 
-		this.props.recordTracksEvent( 'calypso_purchases_manage_purchase_toggle_auto_renew', {
-			product_slug: productSlug,
-			is_atomic: isAtomicSite,
-			is_toggling_toward: isTogglingToward,
-			toggle_source: this.props.toggleSource,
-		} );
+		recordEvent();
 	};
 
 	onToggleAutoRenew = () => {
