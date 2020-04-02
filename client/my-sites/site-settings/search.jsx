@@ -13,6 +13,7 @@ import { overSome } from 'lodash';
  */
 import { CompactCard } from '@automattic/components';
 import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
@@ -150,7 +151,7 @@ class Search extends Component {
 	renderUpgradeNotice() {
 		return (
 			<Fragment>
-				<Banner
+				<UpsellNudge
 					description={
 						this.props.siteIsJetpack
 							? this.props.translate(
@@ -173,6 +174,7 @@ class Search extends Component {
 							  )
 					}
 					jetpack={ this.props.siteIsJetpack ? true : false }
+					showIcon={ true }
 				/>
 			</Fragment>
 		);
