@@ -36,13 +36,7 @@ ARG        commit_sha="(unknown)"
 ENV        COMMIT_SHA $commit_sha
 
 ARG        workers
-RUN        WORKERS=$workers CALYPSO_ENV=production CHUNKS_MAP=true npm run build
-
-# Build translation chunks
-#
-# This depends on having chunks map generated , which is
-# enabled in the previous step with `CHUNKS_MAP=true`
-RUN        npm run build-languages
+RUN        WORKERS=$workers CALYPSO_ENV=production BUILD_TRANSLATION_CHUNKS=true npm run build
 
 USER       nobody
 CMD        NODE_ENV=production node build/bundle.js
