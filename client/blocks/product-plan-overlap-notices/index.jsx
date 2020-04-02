@@ -19,6 +19,7 @@ import { getSitePlanSlug } from 'state/sites/plans/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
 import { planHasFeature, planHasSuperiorFeature } from 'lib/plans';
 import { managePurchase } from 'me/purchases/paths';
+import { isJetpackProduct } from 'lib/products-values';
 
 import './style.scss';
 
@@ -27,6 +28,7 @@ class ProductPlanOverlapNotices extends Component {
 		plans: PropTypes.arrayOf( PropTypes.string ).isRequired,
 		products: PropTypes.arrayOf( PropTypes.string ).isRequired,
 		siteId: PropTypes.number,
+		currentPurchase: PropTypes.object,
 
 		// Connected props
 		availableProducts: PropTypes.object,
@@ -111,8 +113,22 @@ class ProductPlanOverlapNotices extends Component {
 	}
 
 	render() {
-		const { selectedSiteId, translate } = this.props;
+		const { selectedSiteId, translate, currentPurchase } = this.props;
 		const overlappingProductSlugs = this.getOverlappingProducts();
+		overlappingProductSlugs.sort();
+
+		let showOverlap = false;
+		if ( 0 !== overlappingProductSlugs.length ) {
+			if (
+				currentPurchase &&
+				isJetpackProduct( currentPurchase ) &&
+				! overlappingProductSlugs.includes( currentPurchase.productSlug )
+			) {
+				showOverlap = false;
+			} else {
+				showOverlap = true;
+			}
+		}
 
 		return (
 			<Fragment>
@@ -120,7 +136,7 @@ class ProductPlanOverlapNotices extends Component {
 				<QuerySitePurchases siteId={ selectedSiteId } />
 				<QueryProductsList />
 
-				{ 0 !== overlappingProductSlugs.length && (
+				{ showOverlap && (
 					<Notice
 						showDismiss={ false }
 						text={ translate(

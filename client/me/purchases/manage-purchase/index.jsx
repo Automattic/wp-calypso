@@ -552,6 +552,7 @@ class ManagePurchase extends Component {
 						plans={ JETPACK_PLANS }
 						products={ JETPACK_PRODUCTS_LIST }
 						siteId={ siteId }
+						currentPurchase={ purchase }
 					/>
 					{ this.renderPurchaseDetail() }
 					{ site && this.renderNonPrimaryDomainWarningDialog( site, purchase ) }
