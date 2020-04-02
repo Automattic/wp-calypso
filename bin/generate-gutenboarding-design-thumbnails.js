@@ -5,15 +5,26 @@
  * https://github.com/Automattic/mShots/issues/16
  * https://github.com/Automattic/wp-calypso/issues/40564
  *
- * You'll need Puppeteer installed.
- * Change `PUPPETEER_SKIP_CHROMIUM_DOWNLOAD`in `package.json` to `false` and run `npm ci`
+ * You'll need capture-website and sharp:
+ *
+ * npm i capture-website sharp
+ *
+ * (I didn't want to add these to dependencies just for this script since these are kinda heavy ones)
+ * https://www.npmjs.com/package/capture-website
+ * https://www.npmjs.com/package/sharp
  */
 
+const captureWebsite = require( 'capture-website' );
 const designs = require( '../client/landing/gutenboarding/available-designs.json' );
-const puppeteer = require( 'puppeteer' );
+const sharp = require( 'sharp' );
 const wpUrl = require( '@wordpress/url' );
 
-const screenshotsPath = './static/page-templates/design-screenshots';
+const screenshotsPath = './static/page-templates/design-screenshots'; // Folder to store output images
+const captureMaxHeight = 2200; // Cap long pages to  this pixel height when capturing
+const outputWidth = 600; // Outputted file width
+const viewportHeight = 800; // Browser height for capturing the screenshot
+const viewportScaleFactor = 2; // Browser pixel density for capturing the screenshot
+const viewportWidth = 1280; // Browser width for capturing the screenshot
 
 const getDesignUrl = design => {
 	return wpUrl.addQueryArgs( design.src, {
@@ -23,37 +34,47 @@ const getDesignUrl = design => {
 };
 
 async function run() {
-	console.log( 'Taking screenshots...' );
-	const browser = await puppeteer.launch( { headless: true } );
-
 	await Promise.all(
 		designs.featured.map( async design => {
 			const url = getDesignUrl( design );
-			const screenshotFile = `${ screenshotsPath }/${ design.slug }_${ design.template }_${ design.theme }.jpg`;
+			const file = `${ screenshotsPath }/${ design.slug }_${ design.template }_${ design.theme }.jpg`;
 
-			console.log( `Opening ${ url }` );
-			const page = await browser.newPage();
-			await page.setViewport( {
-				width: 980,
-				height: 2200,
-				deviceScaleFactor: 1,
+			// Fix `reynolds_rockfield2_rockfield.jpg` first section becoming super tall
+			// @TODO: fix at the source since this will be an issue with mshots API, too.
+			const styles =
+				design.slug === 'reynolds'
+					? [ `.wp-block-cover, .wp-block-cover-image { min-height: ${ viewportHeight }px; }` ]
+					: [];
+
+			console.log( `Taking screenshot of ${ url }` );
+			const screenshot = await captureWebsite.buffer( url, {
+				fullPage: true,
+				height: viewportHeight,
+				scaleFactor: viewportScaleFactor,
+				styles,
+				type: 'png',
+				width: viewportWidth,
 			} );
-			await page.goto( url, { waitUntil: 'networkidle0' } );
 
-			console.log( `Taking screenshot and saving it to ${ screenshotFile }` );
-			await page.screenshot( {
-				fullPage: false,
-				path: screenshotFile,
-				quality: 90,
-				type: 'jpeg',
+			console.log( `Resizing and saving to ${ file }` );
+			const image = await sharp( screenshot );
+			return await image.metadata().then( metadata => {
+				return image
+					.extract( {
+						// Ensure we're not extracting taller area than screenshot actaully is
+						height: Math.min( metadata.height, captureMaxHeight * viewportScaleFactor ),
+						left: 0,
+						top: 0,
+						width: metadata.width,
+					} )
+					.resize( outputWidth )
+					.jpeg( { quality: 90 } )
+					.toFile( file );
 			} );
-
-			return page.close();
 		} )
 	);
 
-	await browser.close();
-	console.log( 'Done' );
+	console.log( 'Done!' );
 }
 
 run();
