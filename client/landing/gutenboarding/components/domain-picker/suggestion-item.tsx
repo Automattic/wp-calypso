@@ -5,6 +5,7 @@ import React, { FunctionComponent } from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import classnames from 'classnames';
 import { Button } from '@wordpress/components';
+import { sprintf } from '@wordpress/i18n';
 
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
@@ -38,8 +39,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 					'is-paid': ! suggestion.is_free,
 				} ) }
 			>
-				{ /* FIXME: What value do we show here for paid domains? */ }
-				{ suggestion.is_free ? NO__( 'Free' ) : NO__( '€4/month' ) }
+				{ suggestion.is_free ? NO__( 'Free' ) : sprintf( NO__( '%s/year' ), suggestion.cost ) }
 			</div>
 		</Button>
 	);
