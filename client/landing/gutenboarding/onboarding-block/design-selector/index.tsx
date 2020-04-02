@@ -24,9 +24,9 @@ type Design = import('../../stores/onboard/types').Design;
 
 // Values for springs:
 const ZOOM_OFF = { transform: 'scale(1)' };
-const ZOOM_ON = { transform: 'scale(1.03)' };
-const SHADOW_OFF = { boxShadow: '0 0 0px rgba(0,0,0,.2)' };
-const SHADOW_ON = { boxShadow: '0 0 15px rgba(0,0,0,.2)' };
+const ZOOM_ON = { transform: 'scale(1.015)' };
+const SHADOW_OFF = { boxShadow: '0 0px 0px rgba(0,0,0,.12)' };
+const SHADOW_ON = { boxShadow: '0 2px 12px rgba(0,0,0,.12)' };
 
 const DesignSelector: React.FunctionComponent = () => {
 	const { __: NO__ } = useI18n();

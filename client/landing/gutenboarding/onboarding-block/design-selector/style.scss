@@ -36,7 +36,6 @@
 		height: 0;
 		padding-top: 360px / 480px * 100%;
 		border: 1px solid var( --studio-gray-5 );
-		border-radius: 4px;
 		position: relative;
 		overflow: hidden;
 
@@ -52,11 +51,11 @@
 	}
 
 	.design-selector__option-name {
-		margin-top: 16px;
+		color: var( --studio-gray-40 );
 		display: block;
+		font-size: 14px;
+		margin-top: 16px;
 		text-align: center;
 		width: 100%;
-		font-size: 24px;
-		@include onboarding-font-recoleta;
 	}
 }
