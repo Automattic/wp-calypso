@@ -4,7 +4,6 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -47,7 +46,7 @@ class ProductPlanOverlapNotices extends Component {
 		}
 
 		// Is the current plan among the plans we're interested in?
-		if ( ! includes( plans, currentPlanSlug ) ) {
+		if ( ! plans.includes( currentPlanSlug ) ) {
 			return [];
 		}
 
@@ -69,7 +68,7 @@ class ProductPlanOverlapNotices extends Component {
 		const { products, purchases } = this.props;
 
 		const currentProducts = purchases.filter( purchase =>
-			includes( products, purchase.productSlug )
+			products.includes( purchase.productSlug )
 		);
 		return currentProducts.map( product => product.productSlug );
 	}
