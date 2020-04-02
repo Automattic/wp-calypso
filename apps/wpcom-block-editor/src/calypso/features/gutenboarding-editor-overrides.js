@@ -6,6 +6,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import domReady from '@wordpress/dom-ready';
 import { __ } from '@wordpress/i18n';
+import { dispatch, select } from '@wordpress/data';
+import { render } from '@wordpress/element';
+import { Modal } from '@wordpress/components';
 /* eslint-disable import/no-extraneous-dependencies */
 
 /**
@@ -15,10 +18,16 @@ import './gutenboarding-editor-overrides.scss';
 
 domReady( () => {
 	calypsoifyGutenberg.isGutenboarding && updateEditor();
+	calypsoifyGutenberg.isGutenboardingNewUser && updateWelcomeGuide();
 	// Hook fallback incase setGutenboardingStatus runs after initial dom render.
-	window.wp.hooks.addAction( 'setGutenboardingStatus', 'a8c-gutenboarding', isGutenboarding => {
-		isGutenboarding && updateEditor();
-	} );
+	window.wp.hooks.addAction(
+		'setGutenboardingStatus',
+		'a8c-gutenboarding',
+		( isGutenboarding, isGutenboardingNewUser ) => {
+			isGutenboarding && updateEditor();
+			isGutenboardingNewUser && updateWelcomeGuide();
+		}
+	);
 } );
 
 function updateEditor() {
@@ -53,4 +62,32 @@ function updateSettingsBar() {
 		settingsBar.prepend( launchLink );
 		settingsBar.prepend( saveButton );
 	} );
+}
+
+function updateWelcomeGuide() {
+	const wasGoingToShowWelcomeGuide = select( 'core/edit-post' ).isFeatureActive( 'welcomeGuide' );
+
+	if ( wasGoingToShowWelcomeGuide ) {
+		dispatch( 'core/edit-post' ).toggleFeature( 'welcomeGuide' );
+	}
+
+	const body = document.querySelector( 'body' );
+	const modalContainer = document.createElement( 'div' );
+	body.appendChild( modalContainer );
+
+	const handleClose = () => {
+		if ( wasGoingToShowWelcomeGuide ) {
+			dispatch( 'core/edit-post' ).toggleFeature( 'welcomeGuide' );
+		}
+	};
+
+	render( <UsernameModal onClose={ handleClose } />, modalContainer );
+}
+
+function UsernameModal( { onClose } ) {
+	return (
+		<Modal onRequestClose={ onClose }>
+			<div>TODO: fill in dialog</div>
+		</Modal>
+	);
 }
