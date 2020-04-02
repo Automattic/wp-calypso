@@ -8,6 +8,7 @@ import { useI18n } from '@automattic/react-i18n';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { ENTER, TAB } from '@wordpress/keycodes';
 import classnames from 'classnames';
+import { remove } from 'lodash';
 
 /**
  * Internal dependencies
@@ -78,14 +79,20 @@ const VerticalSelect: React.FunctionComponent = () => {
 			vertical.label.toLowerCase().includes( normalizedInputValue )
 		);
 
-		// Does the verticals list include an exact match? If it doesn't, we prepend the user-suppied
-		// vertical to the list.
-		if (
-			! newSuggestions.some( suggestion => suggestion.label.toLowerCase() === normalizedInputValue )
-		) {
-			// User-supplied verticals don't have IDs.
-			newSuggestions.unshift( { label: inputValue.trim(), id: '', slug: '' } );
-		}
+		// Does the verticals list include an exact match?
+		// If yes, we store it in firstSuggestion (for later use), and remove it from newSuggestions...
+		const firstSuggestion = remove(
+			newSuggestions,
+			suggestion => suggestion.label.toLowerCase() === normalizedInputValue
+		)[ 0 ] ?? {
+			// ...otherwise, we set firstSuggestion to the user-supplied vertical...
+			label: inputValue.trim(),
+			id: '', // User-supplied verticals don't have IDs or slugs
+			slug: '',
+		};
+
+		// ...and finally, we prepend firstSuggestion to our suggestions list.
+		newSuggestions.unshift( firstSuggestion );
 
 		// If there is only one suggestion and that suggestion matches the user input value,
 		// do not show any suggestions.
