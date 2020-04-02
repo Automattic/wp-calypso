@@ -607,6 +607,10 @@ export class MySitesSidebar extends Component {
 	wpAdmin() {
 		const { site } = this.props;
 
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams ) {
+			return null;
+		}
+
 		if ( ! site || ! site.options ) {
 			return null;
 		}
