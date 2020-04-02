@@ -39,19 +39,11 @@ async function run() {
 			const url = getDesignUrl( design );
 			const file = `${ screenshotsPath }/${ design.slug }_${ design.template }_${ design.theme }.jpg`;
 
-			// Fix `reynolds_rockfield2_rockfield.jpg` first section becoming super tall
-			// @TODO: fix at the source since this will be an issue with mshots API, too.
-			const styles =
-				design.slug === 'reynolds'
-					? [ `.wp-block-cover, .wp-block-cover-image { min-height: ${ viewportHeight }px; }` ]
-					: [];
-
 			console.log( `Taking screenshot of ${ url }` );
 			const screenshot = await captureWebsite.buffer( url, {
 				fullPage: true,
 				height: viewportHeight,
 				scaleFactor: viewportScaleFactor,
-				styles,
 				type: 'png',
 				width: viewportWidth,
 			} );
