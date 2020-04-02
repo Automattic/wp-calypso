@@ -49,5 +49,8 @@ export const fontPairings = [
 	},
 ] as const;
 
-export type FontPair = ValuesType< typeof fontPairings >;
-export type Font = FontPair[ keyof FontPair ];
+export type Font = ValuesType< ValuesType< typeof fontPairings > >;
+export interface FontPair {
+	headings: Font;
+	base: Font;
+}
