@@ -24,6 +24,11 @@ export const setDomain = ( domain: DomainSuggestion | undefined ) => ( {
 	domain,
 } );
 
+export const setDomainSearch = ( domainSearch: string ) => ( {
+	type: 'SET_DOMAIN_SEARCH_TERM' as const,
+	domainSearch,
+} );
+
 export const setSelectedDesign = ( selectedDesign: Design | undefined ) => ( {
 	type: 'SET_SELECTED_DESIGN' as const,
 	selectedDesign,
@@ -119,6 +124,7 @@ export type OnboardAction = ReturnType<
 	| typeof resetOnboardStore
 	| typeof resetSiteVertical
 	| typeof setDomain
+	| typeof setDomainSearch
 	| typeof setFonts
 	| typeof setSelectedDesign
 	| typeof setSiteTitle

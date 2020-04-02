@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 import { Button, Panel, PanelBody, PanelRow, TextControl } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
-import { useDebounce } from 'use-debounce';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { times } from 'lodash';
 import { useI18n } from '@automattic/react-i18n';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
@@ -13,11 +12,17 @@ import { __experimentalCreateInterpolateElement } from '@wordpress/element';
  * Internal dependencies
  */
 import { DomainSuggestions } from '@automattic/data-stores';
-import { selectorDebounce } from '../../constants';
 import { STORE_KEY } from '../../stores/onboard';
 import SuggestionItem from './suggestion-item';
 import SuggestionNone from './suggestion-none';
 import SuggestionItemPlaceholder from './suggestion-item-placeholder';
+import {
+	getFreeDomainSuggestions,
+	getPaidDomainSuggestions,
+	getRecommendedDomainSuggestion,
+} from '../../utils/domain-suggestions';
+import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
+import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 
 /**
  * Style dependencies
@@ -26,14 +31,7 @@ import './style.scss';
 
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 
-const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
-
 export interface Props {
-	/**
-	 * Term to search when no user input is provided.
-	 */
-	defaultQuery?: string;
-
 	/**
 	 * Callback that will be invoked when a domain is selected.
 	 *
@@ -62,56 +60,21 @@ export interface Props {
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
-	defaultQuery,
 	onDomainSelect,
 	onDomainPurchase,
 	onClose,
-	queryParameters,
 	currentDomain,
 } ) => {
-	const PAID_DOMAINS_TO_SHOW = 5;
 	const { __: NO__ } = useI18n();
 	const label = NO__( 'Search for a domain' );
 
-	const { siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
+	const { domainSearch } = useSelect( select => select( STORE_KEY ).getState() );
+	const { setDomainSearch } = useDispatch( STORE_KEY );
 
-	const [ domainSearch, setDomainSearch ] = useState( siteTitle );
-
-	const [ search ] = useDebounce( domainSearch.trim() || defaultQuery || '', selectorDebounce );
-	const searchOptions = {
-		include_wordpressdotcom: true,
-		include_dotblogsubdomain: false,
-		quantity: PAID_DOMAINS_TO_SHOW + 1, // Add our free subdomain
-		...queryParameters,
-	};
-
-	const allSuggestions = useSelect(
-		select => {
-			if ( search ) {
-				return select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( search, searchOptions );
-			}
-		},
-		[ search, queryParameters ]
-	);
-
-	const freeSuggestions = allSuggestions?.filter( suggestion => suggestion.is_free );
-	const paidSuggestions = allSuggestions
-		?.filter( suggestion => ! suggestion.is_free )
-		.slice( 0, PAID_DOMAINS_TO_SHOW );
-
-	// Recommend either an exact match or the highest relevance score
-	const recommendedSuggestion = paidSuggestions?.reduce( ( result, suggestion ) => {
-		if ( result.match_reasons?.includes( 'exact-match' ) ) {
-			return result;
-		}
-		if ( suggestion.match_reasons?.includes( 'exact-match' ) ) {
-			return suggestion;
-		}
-		if ( suggestion.relevance > result.relevance ) {
-			return suggestion;
-		}
-		return result;
-	} );
+	const allSuggestions = useDomainSuggestions();
+	const freeSuggestions = getFreeDomainSuggestions( allSuggestions );
+	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice( 0, 5 );
+	const recommendedSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
 
 	return (
 		<Panel className="domain-picker">
