@@ -11,6 +11,7 @@ import Button from 'components/forms/form-button';
 import { Card } from '@automattic/components';
 import ActivityActor from 'my-sites/activity/activity-log-item/activity-actor';
 import ActivityDescription from 'my-sites/activity/activity-log-item/activity-description';
+import { applySiteOffset } from 'lib/site/timezone';
 
 /**
  * Style dependencies
@@ -19,13 +20,18 @@ import './style.scss';
 
 class ActivityCard extends Component {
 	render() {
-		const { activity, moment, allowRestore } = this.props;
+		const { activity, allowRestore, timezone, gmtOffset } = this.props;
+
+		const backupTimeDisplay = applySiteOffset( activity.activityTs, {
+			timezone,
+			gmtOffset,
+		} ).format( 'H:mm' );
 
 		return (
 			<div className="activity-card">
 				<div className="activity-card__time">
 					<Gridicon icon="cloud-upload" />
-					{ moment( activity.activityDate ).format( 'LT' ) }
+					{ backupTimeDisplay }
 				</div>
 				<Card>
 					<ActivityActor

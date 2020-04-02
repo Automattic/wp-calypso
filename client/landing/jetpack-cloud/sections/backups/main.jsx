@@ -80,11 +80,11 @@ class BackupsPage extends Component {
 	};
 
 	getSelectedDate() {
-		const { siteTimezone, siteGmtOffset, moment } = this.props;
+		const { timezone, gmtOffset, moment } = this.props;
 
 		const today = applySiteOffset( moment(), {
-			timezone: siteTimezone,
-			gmtOffset: siteGmtOffset,
+			timezone: timezone,
+			gmtOffset: gmtOffset,
 		} );
 
 		return this.state.selectedDate || today;
@@ -152,8 +152,8 @@ class BackupsPage extends Component {
 			siteSlug,
 			isLoadingBackups,
 			oldestDateAvailable,
-			siteTimezone,
-			siteGmtOffset,
+			timezone,
+			gmtOffset,
 		} = this.props;
 
 		const backupsOnSelectedDate = this.getBackupLogsFor( this.getSelectedDate() );
@@ -188,8 +188,8 @@ class BackupsPage extends Component {
 							allowRestore={ allowRestore }
 							siteSlug={ siteSlug }
 							backup={ backupsOnSelectedDate.lastBackup }
-							timezone={ siteTimezone }
-							gmtOffset={ siteGmtOffset }
+							timezone={ timezone }
+							gmtOffset={ gmtOffset }
 						/>
 						{ doesRewindNeedCredentials && (
 							<MissingCredentialsWarning settingsLink={ `/settings/${ siteSlug }` } />
@@ -340,8 +340,8 @@ const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 	const filter = getActivityLogFilter( state, siteId );
 	const logs = requestActivityLogs( siteId, filter );
-	const siteGmtOffset = getSiteGmtOffset( state, siteId );
-	const siteTimezone = getSiteTimezoneValue( state, siteId );
+	const gmtOffset = getSiteGmtOffset( state, siteId );
+	const timezone = getSiteTimezoneValue( state, siteId );
 	const rewind = getRewindState( state, siteId );
 	const restoreStatus = rewind.rewind && rewind.rewind.status;
 	const doesRewindNeedCredentials = getDoesRewindNeedCredentials( state, siteId );
@@ -349,7 +349,7 @@ const mapStateToProps = state => {
 	const allowRestore =
 		'active' === rewind.state && ! ( 'queued' === restoreStatus || 'running' === restoreStatus );
 
-	const { indexedLog, oldestDateAvailable } = createIndexedLog( logs, siteTimezone, siteGmtOffset );
+	const { indexedLog, oldestDateAvailable } = createIndexedLog( logs, timezone, gmtOffset );
 
 	const isLoadingBackups = ! ( logs.state === 'success' );
 
@@ -362,8 +362,8 @@ const mapStateToProps = state => {
 		rewind,
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
-		siteTimezone,
-		siteGmtOffset,
+		timezone,
+		gmtOffset,
 		indexedLog,
 		oldestDateAvailable,
 		isLoadingBackups,

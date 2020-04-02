@@ -23,16 +23,19 @@ import mediaImage from 'assets/images/illustrations/media.svg';
 
 class BackupDelta extends Component {
 	renderRealtime() {
-		const { allowRestore, moment, translate } = this.props;
+		const { allowRestore, timezone, gmtOffset, moment, translate } = this.props;
 
 		const realtimeEvents = this.props.realtimeEvents.filter( event => event.activityIsRewindable );
 
 		const cards = realtimeEvents.map( activity => (
 			<ActivityCard
+				key={ activity.activityId }
 				{ ...{
 					moment,
 					activity,
 					allowRestore,
+					timezone,
+					gmtOffset,
 				} }
 			/>
 		) );
