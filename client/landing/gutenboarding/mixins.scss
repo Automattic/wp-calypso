@@ -46,3 +46,10 @@
 		margin: $gutenboarding-page-content-padding-desktop 0 $gutenboarding-page-content-padding-desktop + 8px 0;
 	}
 }
+
+/* (1920x1080) Full HD Display */
+@mixin onboarding-break-gigantic() {
+	@media ( min-width: 1920px ) {
+		@content;
+	}
+}

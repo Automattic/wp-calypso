@@ -28,13 +28,26 @@
 		grid-template-columns: 1fr 1fr;
 		column-gap: 4em;
 		row-gap: 5em;
+		margin-top: 30px;
+
+		@include break-large {
+			grid-template-columns: 1fr 1fr 1fr;
+			column-gap: 3em;
+			row-gap: 4em;
+		}
+
+		@include onboarding-break-gigantic {
+			grid-template-columns: 1fr 1fr 1fr 1fr;
+			column-gap: 2em;
+			row-gap: 3em;
+		}
 	}
 
 	.design-selector__image-frame {
 		display: block;
 		width: 100%;
 		height: 0;
-		padding-top: 360px / 480px * 100%;
+		padding-top: 360px / 480px * 200%;
 		border: 1px solid var( --studio-gray-5 );
 		position: relative;
 		overflow: hidden;

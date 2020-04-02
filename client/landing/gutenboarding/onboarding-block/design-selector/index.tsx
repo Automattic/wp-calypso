@@ -35,6 +35,14 @@ const DesignSelector: React.FunctionComponent = () => {
 	const { setSelectedDesign, setFonts, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
 	const getDesignUrl = ( design: Design ) => {
+		// We temporarily show pre-generated screenshots until we can generate tall versions dynamically using mshots.
+		// See `bin/generate-gutenboarding-design-thumbnails.js` for generating screenshots.
+		// https://github.com/Automattic/mShots/issues/16
+		// https://github.com/Automattic/wp-calypso/issues/40564
+		if ( ! isEnabled( 'gutenboarding/mshot-preview' ) ) {
+			return `/calypso/page-templates/design-screenshots/${ design.slug }_${ design.template }_${ design.theme }.jpg`;
+		}
+
 		const mshotsUrl = 'https://s.wordpress.com/mshots/v1/';
 		const previewUrl = addQueryArgs( design.src, {
 			font_headings: design.fonts.headings,
@@ -42,6 +50,7 @@ const DesignSelector: React.FunctionComponent = () => {
 		} );
 		return mshotsUrl + encodeURIComponent( previewUrl );
 	};
+
 	// Track hover/focus
 	const [ hoverDesign, setHoverDesign ] = React.useState< string >();
 	const [ focusDesign, setFocusDesign ] = React.useState< string >();
