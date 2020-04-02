@@ -171,12 +171,18 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		let label = translate( 'My Home' );
+
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams ) {
+			label = translate( 'Home' );
+		}
+
 		return (
 			<SidebarItem
 				materialIcon="home"
 				tipTarget="myhome"
 				onNavigate={ this.trackCustomerHomeClick }
-				label={ translate( 'My Home' ) }
+				label={ label }
 				selected={ itemLinkMatches( [ '/home' ], path ) }
 				link={ '/home' + siteSuffix }
 			/>
