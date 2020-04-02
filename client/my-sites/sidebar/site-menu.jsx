@@ -7,12 +7,12 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { compact, includes, omit, reduce, get, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
+import config from 'config';
 
 /**
  * Internal dependencies
  */
 import SidebarItem from 'layout/sidebar/item';
-import config from 'config';
 import { getPostTypes } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import { bumpStat } from 'lib/analytics/mc';
@@ -33,6 +33,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import isVipSite from 'state/selectors/is-vip-site';
 import { SIDEBAR_SECTION_SITE } from 'my-sites/sidebar/constants';
 import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
+import isSiteWPforteams from 'state/selectors/is-site-wpforteams';
 
 class SiteMenu extends PureComponent {
 	static propTypes = {
@@ -49,6 +50,7 @@ class SiteMenu extends PureComponent {
 		siteAdminUrl: PropTypes.string,
 		site: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		siteSlug: PropTypes.string,
+		isSiteWPforteams: PropTypes.bool,
 	};
 
 	// We default to `/my` posts when appropriate
@@ -199,9 +201,17 @@ class SiteMenu extends PureComponent {
 					return memo;
 				}
 
-				//Special handling for feedback (contact form entries), let's calypsoify except for VIP
-				//It doesn't make sense for the author to use the generic CPT handling in Calypso
-				if ( postTypeSlug === 'feedback' ) {
+				// Hide "Feedback" for WP for Teams sites.
+				if (
+					config.isEnabled( 'signup/wpforteams' ) &&
+					this.props.isSiteWPforteams &&
+					postTypeSlug === 'feedback'
+				) {
+					return memo;
+				} else if ( postTypeSlug === 'feedback' ) {
+					//Special handling for feedback (contact form entries), let's calypsoify except for VIP
+					//It doesn't make sense for the author to use the generic CPT handling in Calypso
+
 					return memo.concat( {
 						name: postType.name,
 						label: decodeEntities( get( postType.labels, 'menu_name', postType.label ) ),
@@ -271,6 +281,7 @@ export default connect(
 		site: getSite( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 		isVip: isVipSite( state, siteId ),
+		isSiteWPforteams: isSiteWPforteams( state, siteId ),
 	} ),
 	{ expandSection, recordTracksEvent },
 	null,
