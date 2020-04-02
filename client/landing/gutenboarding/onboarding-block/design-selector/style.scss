@@ -1,6 +1,7 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import '~@wordpress/base-styles/colors';
 @import '../../mixins';
+@import '../../variables.scss';
 
 .design-selector {
 	background-color: var( --contrastColor );
@@ -9,7 +10,7 @@
 	.design-selector__header {
 		display: flex;
 		align-items: center;
-		margin-top: 53px;
+		@include onboarding-heading-padding;
 	}
 
 	.design-selector__heading {
@@ -23,46 +24,30 @@
 	}
 
 	.design-selector__grid {
-		display: flex;
-		margin-top: 40px;
-		flex-wrap: wrap;
-		justify-content: space-between;
-	}
-
-	.design-selector__design-option {
-		width: 48%;
-		margin-bottom: 24px;
-
-		&.selected .design-selector__image-frame {
-			border: 2px solid var( --studio-green-20 );
-		}
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		column-gap: 4em;
+		row-gap: 5em;
 	}
 
 	.design-selector__image-frame {
 		display: block;
-		height: 406px;
+		width: 100%;
+		height: 0;
+		padding-top: 360px / 480px * 100%;
 		border: 1px solid var( --studio-gray-5 );
 		border-radius: 4px;
+		position: relative;
 		overflow: hidden;
-		margin: 8px;
-		transition: transform 0.2s;
-		box-shadow: rgba( 0, 0, 0, 0.2 ) 0 0 0;
 
-		&:hover {
-			transform: scale( 1.03 );
-			box-shadow: rgba( 0, 0, 0, 0.2 ) 0 0 15px;
-		}
-
-		@include breakpoint( '<1400px' ) {
-			height: 326px;
-		}
-
-		@include breakpoint( '<1280px' ) {
-			height: 243px;
-		}
-
-		@include breakpoint( '<660px' ) {
-			height: 163px;
+		img {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			margin: 0 auto;
+			width: 100%;
+			height: auto;
 		}
 	}
 

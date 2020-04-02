@@ -566,8 +566,9 @@ function handleInsertClassicBlockMedia( calypsoPort ) {
 function handleCloseEditor( calypsoPort ) {
 	const legacySelector = '.edit-post-fullscreen-mode-close__toolbar a'; // maintain support for Gutenberg plugin < v7.7
 	const selector = '.edit-post-header .edit-post-fullscreen-mode-close';
+	const siteEditorSelector = '.edit-site-header .edit-site-fullscreen-mode-close';
 
-	$( '#editor' ).on( 'click', `${ legacySelector }, ${ selector }`, e => {
+	const dispatchAction = e => {
 		e.preventDefault();
 
 		const { port2 } = new MessageChannel();
@@ -580,7 +581,10 @@ function handleCloseEditor( calypsoPort ) {
 			},
 			[ port2 ]
 		);
-	} );
+	};
+
+	$( '#editor' ).on( 'click', `${ legacySelector }, ${ selector }`, dispatchAction );
+	$( '#edit-site-editor' ).on( 'click', `${ siteEditorSelector }`, dispatchAction );
 }
 
 /**

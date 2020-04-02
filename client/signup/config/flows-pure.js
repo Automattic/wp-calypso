@@ -239,6 +239,15 @@ export function generateFlows( {
 		};
 	}
 
+	if ( isEnabled( 'signup/wpforteams' ) ) {
+		flows[ 'wp-for-teams' ] = {
+			steps: [ 'team-site', 'user' ],
+			destination: dependencies => `https://${ dependencies.siteSlug }`,
+			description: 'WordPress for Teams signup flow',
+			lastModified: '2020-03-23',
+		};
+	}
+
 	flows.domain = {
 		steps: [
 			'domain-only',

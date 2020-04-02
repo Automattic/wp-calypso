@@ -1,7 +1,10 @@
 /**
  * External dependencies
  */
-import wpcomProxyRequest from 'wpcom-proxy-request';
+import wpcomProxyRequest, {
+	reloadProxy as triggerReloadProxy,
+	requestAllBlogsAccess as triggerRequestAllBlogsAccess,
+} from 'wpcom-proxy-request';
 
 type WpcomProxyRequestOptions = Parameters< typeof wpcomProxyRequest >[ 0 ];
 
@@ -26,6 +29,18 @@ export const fetchAndParse = (
 		options,
 	} as const );
 
+export const reloadProxy = () =>
+	( {
+		type: 'RELOAD_PROXY',
+	} as const );
+
+export const requestAllBlogsAccess = () =>
+	( {
+		type: 'REQUEST_ALL_BLOGS_ACCESS',
+	} as const );
+
+export const wait = ( ms: number ) => ( { type: 'WAIT', ms } as const );
+
 export const controls = {
 	WPCOM_REQUEST: ( { request }: ReturnType< typeof wpcomRequest > ) => wpcomProxyRequest( request ),
 	FETCH_AND_PARSE: async ( { resource, options }: ReturnType< typeof fetchAndParse > ) => {
@@ -36,4 +51,10 @@ export const controls = {
 			body: await response.json(),
 		};
 	},
+	RELOAD_PROXY: () => {
+		triggerReloadProxy();
+	},
+	REQUEST_ALL_BLOGS_ACCESS: () => triggerRequestAllBlogsAccess(),
+	WAIT: ( { ms }: ReturnType< typeof wait > ) =>
+		new Promise( resolve => setTimeout( resolve, ms ) ),
 } as const;

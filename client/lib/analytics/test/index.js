@@ -11,7 +11,8 @@ import cookie from 'cookie';
 /**
  * Internal dependencies
  */
-import analytics from '../';
+import analytics from 'lib/analytics';
+import { bumpStat, bumpStatWithPageView } from 'lib/analytics/mc';
 import { recordAliasInFloodlight } from 'lib/analytics/ad-tracking';
 
 jest.mock( 'config', () => require( './mocks/config' ) );
@@ -70,14 +71,14 @@ describe( 'Analytics', () => {
 
 	describe( 'mc', () => {
 		test( 'bumpStat with group and stat', () => {
-			analytics.mc.bumpStat( 'go', 'time' );
+			bumpStat( 'go', 'time' );
 			expect( imagesLoaded[ 0 ].query.v ).toEqual( 'wpcom-no-pv' );
 			expect( imagesLoaded[ 0 ].query.x_go ).toEqual( 'time' );
 			expect( imagesLoaded[ 0 ].query.t ).toBeTruthy();
 		} );
 
 		test( 'bumpStat with value object', () => {
-			analytics.mc.bumpStat( {
+			bumpStat( {
 				go: 'time',
 				another: 'one',
 			} );
@@ -88,14 +89,14 @@ describe( 'Analytics', () => {
 		} );
 
 		test( 'bumpStatWithPageView with group and stat', () => {
-			analytics.mc.bumpStatWithPageView( 'go', 'time' );
+			bumpStatWithPageView( 'go', 'time' );
 			expect( imagesLoaded[ 0 ].query.v ).toEqual( 'wpcom' );
 			expect( imagesLoaded[ 0 ].query.go ).toEqual( 'time' );
 			expect( imagesLoaded[ 0 ].query.t ).toBeTruthy();
 		} );
 
 		test( 'bumpStatWithPageView with value object', () => {
-			analytics.mc.bumpStatWithPageView( {
+			bumpStatWithPageView( {
 				go: 'time',
 				another: 'one',
 			} );

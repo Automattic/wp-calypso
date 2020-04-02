@@ -21,7 +21,7 @@ import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytic
 import Header from './components/header';
 import { name, settings } from './onboarding-block';
 import './style.scss';
-import { fontPairings } from './constants';
+import { fontPairings, getFontTitle } from './constants';
 
 registerBlockType( name, settings );
 
@@ -40,20 +40,26 @@ export function Gutenboard() {
 	// TODO: Explore alternatives for loading fonts and optimizations
 	// TODO: Don't load like this
 	useEffect( () => {
-		fontPairings.forEach( pair =>
-			pair.forEach(
-				( { title, fontFamily }: { title: string; fontFamily: string }, index: number ) => {
-					const isPrimary = index === 0;
-					const l = document.createElement( 'link' );
-					l.href = `https://fonts.googleapis.com/css2?family=${ encodeURI(
-						`${ fontFamily }${ isPrimary ? ':wght@700' : '' }`
-					) }&text=${ encodeURI( title ) }&display=swap`;
-					l.rel = 'stylesheet';
-					l.type = 'text/css';
-					document.head.appendChild( l );
-				}
-			)
-		);
+		fontPairings.forEach( ( { base, headings } ) => {
+			const linkBase = document.createElement( 'link' );
+			const linkHeadings = document.createElement( 'link' );
+
+			linkBase.href = `https://fonts.googleapis.com/css2?family=${ encodeURI(
+				base
+			) }&text=${ encodeURI( getFontTitle( base ) ) }&display=swap`;
+			linkHeadings.href = `https://fonts.googleapis.com/css2?family=${ encodeURI(
+				headings
+			) }:wght@700&text=${ encodeURI( getFontTitle( headings ) ) }&display=swap`;
+
+			linkBase.rel = 'stylesheet';
+			linkHeadings.rel = 'stylesheet';
+
+			linkBase.type = 'text/css';
+			linkHeadings.type = 'text/css';
+
+			document.head.appendChild( linkBase );
+			document.head.appendChild( linkHeadings );
+		} );
 	}, [] );
 
 	// @TODO: This is currently needed in addition to the routing (inside the Onboarding Block)
@@ -84,6 +90,7 @@ export function Gutenboard() {
 						value={ [ onboardingBlock.current ] }
 						settings={ {
 							templateLock: 'all',
+							alignWide: true,
 						} }
 					>
 						<div className="gutenboarding__content edit-post-layout__content">

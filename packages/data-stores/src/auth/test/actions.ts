@@ -146,4 +146,89 @@ describe( 'submitPassword', () => {
 			},
 		} );
 	} );
+
+	it( 'stops polling 2fa when an error occurs', async () => {
+		const password = 'passw0rd';
+		const generator = submitPassword( password );
+
+		expect( generator.next().value ).toEqual( {
+			type: 'CLEAR_ERRORS',
+		} );
+
+		// Implementation detail; needs to select username from store
+		expect( generator.next().value ).toMatchObject( {
+			type: 'SELECT',
+			storeKey: STORE_KEY,
+		} );
+
+		const username = 'user1';
+		const fetchAction = generator.next( username ).value;
+		expect( fetchAction ).toEqual( {
+			type: 'FETCH_AND_PARSE',
+			resource: 'https://wordpress.com/wp-login.php?action=login-endpoint',
+			options: expect.objectContaining( {
+				method: 'POST',
+				body: expect.stringMatching(
+					RegExp(
+						`^(?=.*username=${ username })(?=.*password=${ password })(?=.*client_id=${ client_id })(?=.*client_secret=${ client_secret }).*$`
+					)
+				),
+			} ),
+		} );
+
+		const authType = 'push';
+		const userId = 113;
+		const nonce = 'secret-nonce';
+		const token = 'secret-token';
+		const pushSentResponse = {
+			success: true,
+			data: {
+				two_step_notification_sent: authType,
+				user_id: userId,
+				push_web_token: token,
+				two_step_nonce_push: nonce,
+			},
+		};
+		expect( generator.next( { ok: true, body: pushSentResponse } ).value ).toEqual( {
+			type: 'RECEIVE_WP_LOGIN',
+			response: pushSentResponse,
+		} );
+
+		expect( generator.next().value ).toEqual( {
+			type: 'START_POLLING_TASK',
+			pollingTaskId: 0,
+		} );
+
+		// Checking that the polling hasn't been canceled
+		expect( generator.next().value ).toMatchObject( {
+			type: 'SELECT',
+			storeKey: STORE_KEY,
+		} );
+
+		expect( generator.next( 0 ).value ).toEqual( {
+			type: 'FETCH_AND_PARSE',
+			resource: 'https://wordpress.com/wp-login.php?action=two-step-authentication-endpoint',
+			options: expect.objectContaining( {
+				method: 'POST',
+				body: expect.stringMatching(
+					RegExp(
+						`^(?=.*auth_type=${ authType })(?=.*user_id=${ userId })(?=.*two_step_nonce=${ nonce })(?=.*two_step_push_token=${ token }).*$`
+					)
+				),
+			} ),
+		} );
+
+		const pollResponse = {
+			success: false,
+			data: {
+				errors: [ { code: 'error-code', message: 'error-message' } ],
+			},
+		};
+		expect( generator.next( { ok: false, body: pollResponse } ).value ).toEqual( {
+			type: 'RECEIVE_WP_LOGIN_FAILED',
+			response: pollResponse,
+		} );
+
+		expect( generator.next().done ).toBe( true );
+	} );
 } );

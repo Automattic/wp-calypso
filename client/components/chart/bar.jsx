@@ -78,19 +78,6 @@ export default class ChartBar extends React.PureComponent {
 
 	setRef = ref => ( this.bar = ref );
 
-	renderSpacer() {
-		const percentage = this.getPercentage();
-		return (
-			<div
-				key="spacer"
-				className={ classNames( 'chart__bar-section', 'is-spacer', {
-					'is-ghost': 0 === percentage && ! this.props.active,
-				} ) }
-				style={ { height: `${ Math.max( 1, Math.floor( 100 - percentage ) ) }%` } }
-			/>
-		);
-	}
-
 	renderNestedBar() {
 		const {
 			data: { nestedValue },
@@ -114,7 +101,7 @@ export default class ChartBar extends React.PureComponent {
 				ref={ this.setRef }
 				key="value"
 				className="chart__bar-section is-bar"
-				style={ { top: `${ Math.max( 1, Math.floor( 100 - percentage ) ) }%` } }
+				style={ { transform: `scaleY( ${ percentage / 100 } )` } }
 			>
 				{ this.renderNestedBar() }
 			</div>
@@ -131,7 +118,6 @@ export default class ChartBar extends React.PureComponent {
 				onMouseLeave={ this.mouseLeave }
 				className={ classNames( 'chart__bar', this.props.className ) }
 			>
-				{ this.renderSpacer() }
 				{ this.renderBar() }
 				<div key="label" className="chart__bar-label">
 					{ this.props.label }

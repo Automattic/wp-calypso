@@ -3,6 +3,9 @@
 @import 'assets/stylesheets/shared/animation'; // Needed for the placeholder
 @import '../../variables.scss';
 
+$margin-left--gutenboarding__header-section-item: 13px; // matches design
+$padding--gutenboarding__header: $grid-size;
+
 // Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-widgets/src/components/header/style.scss
 .gutenboarding__header {
 	display: flex;
@@ -12,23 +15,17 @@
 	height: $gutenboarding-header-height;
 	background: $white;
 	z-index: z-index( '.block-editor-editor-skeleton__header' );
-
 	left: 0;
 	right: 0;
 	// Stick the toolbar to the top, because the admin bar is not fixed on mobile.
 	top: 0;
 	position: sticky;
+	padding: $padding--gutenboarding__header;
 
 	// On mobile the main content area has to scroll, otherwise you can invoke the overscroll bounce on the non-scrolling container.
 	@include break-small {
 		position: fixed;
-		padding: $grid-size;
 	}
-}
-
-.gutenboarding__header-wp-logo {
-	color: var( --studio-blue-90 );
-	display: flex;
 }
 
 .gutenboarding__header-section {
@@ -38,16 +35,17 @@
 }
 
 .gutenboarding__header-section-item {
-	margin-left: 10px;
-
-	&.gutenboarding__header-wp-logo {
-		margin-left: 24px - $grid-size; // ( 24 - header padding )
-	}
+	margin-left: $margin-left--gutenboarding__header-section-item;
 }
 
-$padding--gutenboarding__header-domain-picker-button: 0.3em 0.5em;
+.gutenboarding__header-wp-logo {
+	margin-left: 24px - $padding--gutenboarding__header - $margin-left--gutenboarding__header-section-item; // we want 24px exact on spec: ( 24 - header padding - own margin )
+	color: var( --studio-blue-90 );
+	display: flex;
+}
+
 .gutenboarding__header-domain-picker-button {
-	padding: $padding--gutenboarding__header-domain-picker-button;
+	padding: 0.3em 0.5em;
 	border-radius: $radius-round-rectangle;
 
 	&:focus,
@@ -58,22 +56,6 @@ $padding--gutenboarding__header-domain-picker-button: 0.3em 0.5em;
 
 	&:disabled {
 		opacity: 1;
-		.gutenboarding__site-title {
-			color: black;
-		}
-	}
-
-	.gutenboarding__site-title {
-		padding: 0;
-	}
-
-	> span {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-	}
-	> .dashicon {
-		align-self: flex-end;
 	}
 }
 
@@ -83,7 +65,6 @@ $padding--gutenboarding__header-domain-picker-button: 0.3em 0.5em;
 	}
 }
 
-.gutenboarding__site-title {
-	padding: $padding--gutenboarding__header-domain-picker-button;
+.gutenboarding__header-site-title {
 	font-weight: 600;
 }

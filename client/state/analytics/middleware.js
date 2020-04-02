@@ -2,13 +2,13 @@
  *  External dependencies
  *
  */
-
 import { has, invoke } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import { addHotJarScript } from 'lib/analytics/hotjar';
 import {
 	trackCustomAdWordsRemarketingEvent,
@@ -41,7 +41,7 @@ const loadTrackingTool = trackingTool => {
 	}
 };
 
-const statBump = ( { group, name } ) => analytics.mc.bumpStat( group, name );
+const statBump = ( { group, name } ) => bumpStat( group, name );
 
 const dispatcher = action => {
 	const analyticsMeta = action.meta.analytics;

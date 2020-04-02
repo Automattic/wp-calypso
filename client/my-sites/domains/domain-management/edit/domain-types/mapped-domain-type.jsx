@@ -10,16 +10,8 @@ import { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import { Card } from '@automattic/components';
-import VerticalNav from 'components/vertical-nav';
 import { withLocalizedMoment } from 'components/localized-moment';
 import DomainStatus from '../card/domain-status';
-import VerticalNavItem from 'components/vertical-nav/item';
-import { emailManagement } from 'my-sites/email/paths';
-import {
-	domainManagementDns,
-	domainManagementDomainConnectMapping,
-	domainTransferIn,
-} from 'my-sites/domains/paths';
 import { isExpiringSoon } from 'lib/domains/utils';
 import SubscriptionSettings from '../card/subscription-settings';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
@@ -39,67 +31,11 @@ import {
 import { isRechargeable, isExpired } from 'lib/purchases';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
+import DomainManagementNavigation from '../navigation';
+import { WrapDomainStatusButtons } from './helpers';
+
 
 class MappedDomainType extends React.Component {
-	getVerticalNavigation() {
-		return (
-			<VerticalNav>
-				{ this.emailNavItem() }
-				{ this.dnsRecordsNavItem() }
-				{ this.domainConnectMappingNavItem() }
-				{ this.transferMappedDomainNavItem() }
-			</VerticalNav>
-		);
-	}
-
-	emailNavItem() {
-		const path = emailManagement( this.props.selectedSite.slug, this.props.domain.name );
-
-		return <VerticalNavItem path={ path }>{ this.props.translate( 'Email' ) }</VerticalNavItem>;
-	}
-
-	dnsRecordsNavItem() {
-		const path = domainManagementDns( this.props.selectedSite.slug, this.props.domain.name );
-
-		return (
-			<VerticalNavItem path={ path }>{ this.props.translate( 'DNS records' ) }</VerticalNavItem>
-		);
-	}
-
-	domainConnectMappingNavItem() {
-		const { supportsDomainConnect, hasWpcomNameservers, pointsToWpcom } = this.props.domain;
-		if ( ! supportsDomainConnect || hasWpcomNameservers || pointsToWpcom ) {
-			return;
-		}
-
-		const path = domainManagementDomainConnectMapping(
-			this.props.selectedSite.slug,
-			this.props.domain.name
-		);
-
-		return (
-			<VerticalNavItem path={ path }>
-				{ this.props.translate( 'Connect Your Domain' ) }
-			</VerticalNavItem>
-		);
-	}
-
-	transferMappedDomainNavItem() {
-		const { domain, selectedSite, translate } = this.props;
-
-		if ( domain.expired || domain.isSubdomain || ! domain.isEligibleForInboundTransfer ) {
-			return null;
-		}
-
-		const path = domainTransferIn( selectedSite.slug, domain.name, true );
-
-		return (
-			<VerticalNavItem path={ path }>
-				{ translate( 'Transfer Domain to WordPress.com' ) }
-			</VerticalNavItem>
-		);
-	}
-
 	resolveStatus() {
 		const { domain, translate, moment } = this.props;
 		const { expiry } = domain;
@@ -198,7 +134,7 @@ class MappedDomainType extends React.Component {
 				<div>
 					<p>{ primaryMessage }</p>
 					{ ! isSubdomain( domain.name ) && (
-						<ul>
+						<ul className="mapped-domain-type__name-server-list">
 							{ WPCOM_DEFAULTS.map( nameServer => {
 								return <li key={ nameServer }>{ nameServer }</li>;
 							} ) }
@@ -256,33 +192,36 @@ class MappedDomainType extends React.Component {
 			return null;
 		}
 
-		return (
+		const content = (
 			<AutoRenewToggle
 				planName={ selectedSite.plan.product_name_short }
 				siteDomain={ selectedSite.domain }
 				purchase={ purchase }
 				compact={ true }
 				withTextStatus={ true }
+				toggleSource="mapped-domain-status"
 			/>
 		);
+
+		return content && <WrapDomainStatusButtons>{ content }</WrapDomainStatusButtons>;
 	}
 
 	renderAutoRenew() {
 		const { isLoadingPurchase, domain } = this.props;
 
 		if ( domain && domain.bundledPlanSubscriptionId ) {
-			return <div />;
+			return null;
 		}
 
 		if ( isLoadingPurchase ) {
 			return (
-				<div className="domain-types__auto-renew-placeholder">
+				<WrapDomainStatusButtons className="domain-types__auto-renew-placeholder">
 					<p />
-				</div>
+				</WrapDomainStatusButtons>
 			);
 		}
 
-		return <div>{ this.renderAutoRenewToggle() }</div>;
+		return this.renderAutoRenewToggle();
 	}
 
 	handlePaymentSettingsClick = () => {
@@ -290,12 +229,21 @@ class MappedDomainType extends React.Component {
 	};
 
 	render() {
-		const { domain, selectedSite, purchase, moment, translate } = this.props;
+		const {
+			domain,
+			selectedSite,
+			purchase,
+			mappingPurchase,
+			isLoadingPurchase,
+			moment,
+			translate,
+		} = this.props;
 		const { name: domain_name } = domain;
 
 		const { statusText, statusClass, icon } = this.resolveStatus();
 
 		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
+
 		let expiresText;
 
 		if ( ! domain.expiry ) {
@@ -335,7 +283,7 @@ class MappedDomainType extends React.Component {
 					<div>{ expiresText }</div>
 					{ this.renderDefaultRenewButton() }
 					{ ! newStatusDesignAutoRenew && domain.subscriptionId && (
-						<div>
+						<WrapDomainStatusButtons>
 							<SubscriptionSettings
 								type={ domain.type }
 								compact={ true }
@@ -343,11 +291,16 @@ class MappedDomainType extends React.Component {
 								siteSlug={ this.props.selectedSite.slug }
 								onClick={ this.handlePaymentSettingsClick }
 							/>
-						</div>
+						</WrapDomainStatusButtons>
 					) }
-					{ newStatusDesignAutoRenew && this.renderAutoRenew() }
+					{ newStatusDesignAutoRenew && domain.currentUserCanManage && this.renderAutoRenew() }
 				</Card>
-				{ this.getVerticalNavigation() }
+				<DomainManagementNavigation
+					domain={ domain }
+					selectedSite={ this.props.selectedSite }
+					purchase={ mappingPurchase }
+					isLoadingPurchase={ isLoadingPurchase }
+				/>
 			</div>
 		);
 	}
@@ -362,6 +315,9 @@ export default connect(
 		return {
 			purchase: purchaseSubscriptionId
 				? getByPurchaseId( state, parseInt( purchaseSubscriptionId, 10 ) )
+				: null,
+			mappingPurchase: subscriptionId
+				? getByPurchaseId( state, parseInt( subscriptionId, 10 ) )
 				: null,
 			isLoadingPurchase:
 				isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),

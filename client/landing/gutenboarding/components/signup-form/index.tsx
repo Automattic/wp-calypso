@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useState, useEffect } from 'react';
-import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
+import { ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
@@ -16,6 +16,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { useLangRouteParam, usePath, Step } from '../../path';
 import ModalSubmitButton from '../modal-submit-button';
 import './style.scss';
+import SignupFormHeader from './header';
 
 // TODO: deploy this change to @types/wordpress__element
 declare module '@wordpress/element' {
@@ -28,24 +29,31 @@ declare module '@wordpress/element' {
 
 interface Props {
 	onRequestClose: () => void;
-	onOpenLogin: () => void;
 }
 
-const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
-	const { __: NO__, _x: NO_x } = useI18n();
+const SignupForm = ( { onRequestClose }: Props ) => {
+	const { __: NO__ } = useI18n();
 	const [ emailVal, setEmailVal ] = useState( '' );
-	const { createAccount } = useDispatch( USER_STORE );
+	const [ passwordVal, setPasswordVal ] = useState( '' );
+	const { createAccount, clearErrors } = useDispatch( USER_STORE );
 	const isFetchingNewUser = useSelect( select => select( USER_STORE ).isFetchingNewUser() );
 	const newUserError = useSelect( select => select( USER_STORE ).getNewUserError() );
 	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ) ).getState();
 	const langParam = useLangRouteParam();
 	const makePath = usePath();
 
+	const closeModal = () => {
+		clearErrors();
+		onRequestClose();
+	};
+
 	useEffect( () => {
 		recordTracksEvent( 'calypso_gutenboarding_signup_start', {
 			flow: 'gutenboarding',
 		} );
 	}, [] );
+
+	const lang = useLangRouteParam();
 
 	const handleSignUp = async ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
@@ -54,22 +62,18 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 
 		const success = await createAccount( {
 			email: emailVal,
-			is_passwordless: true,
+			password: passwordVal,
 			signup_flow_name: 'gutenboarding',
 			locale: langParam,
 			...( username_hint && {
 				extra: { username_hint },
 			} ),
+			is_passwordless: false,
 		} );
 
 		if ( success ) {
-			onRequestClose();
+			closeModal();
 		}
-	};
-
-	const openLogin = ( e: React.MouseEvent< HTMLElement > ) => {
-		onOpenLogin();
-		e.preventDefault();
 	};
 
 	const tos = __experimentalCreateInterpolateElement(
@@ -87,7 +91,9 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 			case 'email_exists':
 				errorMessage = NO__( 'An account with this email address already exists.' );
 				break;
-
+			case 'password_invalid':
+				errorMessage = newUserError.message;
+				break;
 			default:
 				errorMessage = NO__(
 					'Sorry, something went wrong when trying to create your account. Please try again.'
@@ -96,57 +102,72 @@ const SignupForm = ( { onRequestClose, onOpenLogin }: Props ) => {
 		}
 	}
 
+	const langFragment = lang ? `/${ lang }` : '';
 	const loginRedirectUrl = `${ window.location.origin }/gutenboarding${ makePath(
 		Step.CreateSite
 	) }?new`;
 
 	return (
 		<Modal
-			className="signup-form"
-			title={ NO__( 'Sign up to save your changes' ) }
-			onRequestClose={ onRequestClose }
+			className={ 'signup-form' }
+			title={ NO__( 'Save your progress' ) }
+			onRequestClose={ closeModal }
 			focusOnMount={ false }
-			isDismissible={ ! isFetchingNewUser }
+			isDismissible={ false }
+			overlayClassName={ 'signup-form__overlay' }
 			// set to false so that 1password's autofill doesn't automatically close the modal
 			shouldCloseOnClickOutside={ false }
 		>
-			<form onSubmit={ handleSignUp }>
-				<TextControl
-					label={ NO__( 'Your Email Address' ) }
-					value={ emailVal }
-					disabled={ isFetchingNewUser }
-					type="email"
-					onChange={ setEmailVal }
-					placeholder={ NO_x(
-						'E.g., yourname@email.com',
-						"An example of a person's email, use something appropriate for the locale"
-					) }
-					required
-					autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
-				/>
-				{ errorMessage && (
-					<Notice className="signup-form__error-notice" status="error" isDismissible={ false }>
-						{ errorMessage }
-					</Notice>
-				) }
-				<div className="signup-form__footer">
-					<p className="signup-form__terms-of-service-link">{ tos }</p>
+			<SignupFormHeader
+				onRequestClose={ closeModal }
+				loginUrl={ `/log-in/gutenboarding${ langFragment }?redirect_to=${ encodeURIComponent(
+					loginRedirectUrl
+				) }` }
+			/>
 
-					<ModalSubmitButton disabled={ isFetchingNewUser } isBusy={ isFetchingNewUser }>
-						{ NO__( 'Create your account' ) }
-					</ModalSubmitButton>
-				</div>
-			</form>
-			<div className="signup-form__login-links">
-				<Button isLink href={ '/log-in?redirect_to=' + encodeURIComponent( loginRedirectUrl ) }>
-					{ NO__( 'Log in to create a site for your existing account.' ) }
-				</Button>
-			</div>
-			<div className="signup-form__login-links">
-				<Button isLink={ true } onClick={ openLogin }>
-					{ /* Removing before shipping, no need to translate */ }
-					(experimental login)
-				</Button>
+			<div className="signup-form__body">
+				<h1 className="signup-form__title">{ NO__( 'Save your progress' ) }</h1>
+
+				<form onSubmit={ handleSignUp }>
+					<fieldset>
+						<legend className="signup-form__legend">
+							<p>{ NO__( 'Enter an email and password to save your progress and continue' ) }</p>
+						</legend>
+
+						<TextControl
+							value={ emailVal }
+							disabled={ isFetchingNewUser }
+							type="email"
+							onChange={ setEmailVal }
+							placeholder={ NO__( 'Email address' ) }
+							required
+							autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
+						/>
+
+						<TextControl
+							value={ passwordVal }
+							disabled={ isFetchingNewUser }
+							type="password"
+							onChange={ setPasswordVal }
+							placeholder={ NO__( 'Password' ) }
+							required
+						/>
+
+						{ errorMessage && (
+							<Notice className="signup-form__error-notice" status="error" isDismissible={ false }>
+								{ errorMessage }
+							</Notice>
+						) }
+
+						<div className="signup-form__footer">
+							<p className="signup-form__link signup-form__terms-of-service-link">{ tos }</p>
+
+							<ModalSubmitButton disabled={ isFetchingNewUser } isBusy={ isFetchingNewUser }>
+								{ NO__( 'Create account' ) }
+							</ModalSubmitButton>
+						</div>
+					</fieldset>
+				</form>
 			</div>
 		</Modal>
 	);

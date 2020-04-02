@@ -146,14 +146,6 @@
 	}
 }
 
-.sidebar__menu-notification-dot {
-	background-color: var( --color-accent );
-	border: 1px solid var( --color-surface );
-	border-radius: 50px;
-	margin-left: 8px;
-	padding: 4px;
-}
-
 // Expandables: Some sidebar menus act like accordions where
 // you can hide and show the contained list.
 .sidebar__menu.is-togglable {

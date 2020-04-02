@@ -10,7 +10,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import MediaActions from 'lib/media/actions';
 import { getAllowedFileTypesForSite, isSiteAllowedFileTypesToBeTrusted } from 'lib/media/utils';
 import { VideoPressFileTypes } from 'lib/media/constants';
@@ -54,7 +54,7 @@ export default class extends React.Component {
 
 		this.formRef.current.reset();
 		this.props.onAddMedia();
-		analytics.mc.bumpStat( 'editor_upload_via', 'add_button' );
+		bumpStat( 'editor_upload_via', 'add_button' );
 	};
 
 	/**

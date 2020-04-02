@@ -220,7 +220,7 @@ export class List extends React.Component {
 			domain.registrationDate &&
 			this.props
 				.moment()
-				.subtract( 1, 'day' )
+				.subtract( 30, 'minutes' )
 				.isBefore( this.props.moment( domain.registrationDate ) )
 		);
 	}

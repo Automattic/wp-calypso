@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+# sed -i behaves differently between macos and linux platforms.
+# See https://stackoverflow.com/a/51060063
+# To use this, do `sed "${sedi[@]}" -e $sed_expression`
+sedi=(-i)
+case "$(uname)" in
+	# For macOS, use two parameters
+	Darwin*) sedi=(-i "")
+esac
+
 # try whether user passed --release
 if [ -n "$npm_config_release" ]
 then
@@ -115,14 +124,14 @@ cp -R $CODE/src/shared $TARGET/
 cp -R $CODE/src/components $TARGET/
 
 # Replace text domain
-find $TARGET/blocks/ -name \*.js -exec sed -i '' "s/, 'newspack-blocks' )/, 'full-site-editing' )/g" "{}" \;
-sed -i '' "s/'newspack-blocks',/'full-site-editing',/g" $TARGET/class-newspack-blocks.php
+find $TARGET/blocks/ \( -name \*.js -or -name \*.php \) -exec sed "${sedi[@]}" "s/, 'newspack-blocks' )/, 'full-site-editing' )/g" "{}" \;
+sed "${sedi[@]}" "s/'newspack-blocks',/'full-site-editing',/g" $TARGET/class-newspack-blocks.php
 
 if [ "$MODE" = "npm" ] ; then
 	# Finds and prints the version of newspack from package.json
 	NEW_VERSION=`sed -En 's|.*"newspack-blocks": "github:Automattic/newspack-blocks#?(.*)".*|\1|p' package.json`
 	# Replaces the line containing the version definition with the new version.
-	sed -i '' -e "s|define( 'NEWSPACK_BLOCKS__VERSION', '\(.*\)' );|define( 'NEWSPACK_BLOCKS__VERSION', '$NEW_VERSION' );|" $ENTRY
+	sed "${sedi[@]}" -e "s|define( 'NEWSPACK_BLOCKS__VERSION', '\(.*\)' );|define( 'NEWSPACK_BLOCKS__VERSION', '$NEW_VERSION' );|" $ENTRY
 	echo "Updated Newspack version '$NEW_VERSION'";
 fi
 

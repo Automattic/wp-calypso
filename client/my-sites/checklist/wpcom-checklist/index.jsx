@@ -12,28 +12,21 @@ import { get } from 'lodash';
 import { getTaskList } from './wpcom-task-list';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
-import { getSelectedSiteId, isSiteSection } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import AsyncLoad from 'components/async-load';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
-import { isBlockEditorSectionInTest } from 'lib/signup/page-builder';
 
 class WpcomChecklist extends Component {
 	static propTypes = {
 		designType: PropTypes.oneOf( [ 'blog', 'page', 'portfolio', 'store' ] ),
 		siteId: PropTypes.number,
 		taskStatuses: PropTypes.object,
-		viewMode: PropTypes.oneOf( [ 'checklist', 'navigation', 'notification', 'prompt' ] ),
+		viewMode: PropTypes.oneOf( [ 'checklist' ] ),
 	};
 
 	static defaultProps = {
 		viewMode: 'checklist',
-	};
-
-	setNotification = value => {
-		if ( this.props.setNotification && this.props.viewMode === 'notification' ) {
-			this.props.setNotification( value );
-		}
 	};
 
 	render() {
@@ -48,12 +41,7 @@ class WpcomChecklist extends Component {
 	}
 }
 
-function shouldChecklistRender( viewMode, isEligibleForChecklist, taskList, isSectionEligible ) {
-	// Render nothing in notification mode.
-	if ( viewMode === 'notification' ) {
-		return false;
-	}
-
+function shouldChecklistRender( viewMode, isEligibleForChecklist, taskList ) {
 	// Render nothing if not eligible for checklist. Exception: checklist mode.
 	if ( ! isEligibleForChecklist && viewMode !== 'checklist' ) {
 		return false;
@@ -64,11 +52,6 @@ function shouldChecklistRender( viewMode, isEligibleForChecklist, taskList, isSe
 		return false;
 	}
 
-	// Render nothing in navigation mode if the current section is not site-specific.
-	if ( ! isSectionEligible && viewMode === 'navigation' ) {
-		return false;
-	}
-
 	return true;
 }
 
@@ -76,7 +59,6 @@ export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const designType = getSiteOption( state, siteId, 'design_type' );
 	const isEligibleForChecklist = isEligibleForDotcomChecklist( state, siteId );
-	const isSectionEligible = isSiteSection( state ) && ! isBlockEditorSectionInTest( state );
 	const siteChecklist = getSiteChecklist( state, siteId );
 	const siteSegment = get( siteChecklist, 'segment' );
 	const siteVerticals = get( siteChecklist, 'vertical' );
@@ -93,12 +75,6 @@ export default connect( ( state, ownProps ) => {
 	const { viewMode } = ownProps;
 
 	return {
-		shouldRender: shouldChecklistRender(
-			viewMode,
-			isEligibleForChecklist,
-			taskList,
-			isSectionEligible,
-			siteId
-		),
+		shouldRender: shouldChecklistRender( viewMode, isEligibleForChecklist, taskList, siteId ),
 	};
 } )( WpcomChecklist );

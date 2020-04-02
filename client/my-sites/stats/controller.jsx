@@ -12,7 +12,7 @@ import moment from 'moment';
  * Internal dependencies
  */
 import { getSiteFragment, getStatsDefaultSitePage } from 'lib/route';
-import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import { recordPlaceholdersTiming } from 'lib/perfmon';
 import { getSite, getSiteOption } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
@@ -203,7 +203,7 @@ export default {
 			return next();
 		}
 
-		analytics.mc.bumpStat( 'calypso_stats_overview_period', activeFilter.period );
+		bumpStat( 'calypso_stats_overview_period', activeFilter.period );
 
 		context.primary = <StatsOverview period={ activeFilter.period } path={ context.pathname } />;
 		next();
@@ -258,7 +258,7 @@ export default {
 		// eslint-disable-next-line no-nested-ternary
 		const numPeriodAgo = parsedPeriod ? ( parsedPeriod > 9 ? '10plus' : '-' + parsedPeriod ) : '';
 
-		analytics.mc.bumpStat( 'calypso_stats_site_period', activeFilter.period + numPeriodAgo );
+		bumpStat( 'calypso_stats_site_period', activeFilter.period + numPeriodAgo );
 		recordPlaceholdersTiming();
 
 		const validTabs = [ 'views', 'visitors', 'likes', 'comments' ];
@@ -444,10 +444,7 @@ export default {
 		// eslint-disable-next-line no-nested-ternary
 		const numPeriodAgo = parsedPeriod ? ( parsedPeriod > 9 ? '10plus' : '-' + parsedPeriod ) : '';
 
-		analytics.mc.bumpStat(
-			'calypso_wordads_stats_site_period',
-			activeFilter.period + numPeriodAgo
-		);
+		bumpStat( 'calypso_wordads_stats_site_period', activeFilter.period + numPeriodAgo );
 
 		context.primary = (
 			<WordAds

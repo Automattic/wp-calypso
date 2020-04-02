@@ -137,6 +137,7 @@ export const SELECTED_SITE = deepFreeze( {
 		podcasting_archive: null,
 		is_domain_only: false,
 		is_automated_transfer: false,
+		is_wpforteams_site: false,
 		jetpack_version: '5.4',
 		main_network_site: `http://${ SITE_SLUG }`,
 		active_modules: [

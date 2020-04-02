@@ -3,6 +3,7 @@
  */
 import { subscribe } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
+import { isEmpty, isEqual } from 'lodash';
 
 /**
  * DOM updater
@@ -12,25 +13,35 @@ import domReady from '@wordpress/dom-ready';
  */
 export default ( options, getOptionValue ) => {
 	domReady( () => {
-		const current = {};
+		// Create style node.
+		const styleElement = document.createElement( 'style' );
+		document.body.appendChild( styleElement );
+
+		// Book-keeping.
+		const currentOptions = {};
+		let previousOptions = {};
 		const cssVariables = {};
 		options.forEach( option => {
-			current[ option ] = null;
 			cssVariables[ option ] = `--${ option.replace( '_', '-' ) }`;
 		} );
 
 		subscribe( () => {
-			Object.keys( current ).forEach( key => {
-				const value = getOptionValue( key );
-				if ( current[ key ] !== value ) {
-					current[ key ] = value;
-					// We want to scope this to the root node of the editor.
-					const node = document.getElementsByClassName( 'editor-styles-wrapper' )[ 0 ];
-					if ( node ) {
-						node.style.setProperty( cssVariables[ key ], value );
-					}
-				}
+			// Maybe bail-out early.
+			options.forEach( option => {
+				currentOptions[ option ] = getOptionValue( option );
 			} );
+			if ( isEmpty( currentOptions ) || isEqual( currentOptions, previousOptions ) ) {
+				return;
+			}
+			previousOptions = { ...currentOptions };
+
+			// Update style node. We need this to be a stylesheet rather than inline styles
+			// so the styles apply to all editor instances incl. previews.
+			let declarationList = '';
+			Object.keys( currentOptions ).forEach( key => {
+				declarationList += `${ cssVariables[ key ] }:${ currentOptions[ key ] };`;
+			} );
+			styleElement.textContent = `.editor-styles-wrapper{${ declarationList }}`;
 		} );
 	} );
 };

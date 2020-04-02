@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
-import { localize } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 
 /**
@@ -11,6 +11,12 @@ import page from 'page';
 import { withLocalizedMoment } from 'components/localized-moment';
 import Gridicon from 'components/gridicon';
 import Button from 'components/forms/form-button';
+import {
+	isSuccessfulBackup,
+	getRestorePath,
+	getDownloadPath,
+} from 'landing/jetpack-cloud/sections/backups/utils';
+import { applySiteOffset } from 'lib/site/timezone';
 
 /**
  * Style dependencies
@@ -18,77 +24,182 @@ import Button from 'components/forms/form-button';
 import './style.scss';
 
 class DailyBackupStatus extends Component {
-	// TODO: now that we are reusing URLs we should have a dedicated paths file
-	createRestoreUrl = restoreId => `/backups/${ this.props.siteSlug }/restore/${ restoreId }`;
-	createDownloadUrl = downloadId => `/backups/${ this.props.siteSlug }/download/${ downloadId }`;
-
 	triggerRestore = () => {
-		const restoreId = this.props.backupAttempts.complete[ 0 ].rewindId;
-		page.redirect( this.createRestoreUrl( restoreId ) );
+		page.redirect( getRestorePath( this.props.siteSlug, this.props.backup.rewindId ) );
 	};
 
 	triggerDownload = () => {
-		const downloadId = this.props.backupAttempts.complete[ 0 ].rewindId;
-		page.redirect( this.createDownloadUrl( downloadId ) );
+		page.redirect( getDownloadPath( this.props.siteSlug, this.props.backup.rewindId ) );
 	};
 
-	renderGoodBackup() {
-		const { allowRestore, backupAttempts, moment, translate } = this.props;
+	goToDetailsPage() {
+		//page.redirect( '/backups/' + this.props.siteSlug + '/detail/' + this.props.backup.rewindId );
+	}
 
-		const displayDate = moment( backupAttempts.complete[ 0 ].activityDate ).format(
-			'MMMM Do YYYY, h:mm:ss a'
-		);
+	getDisplayDate = date => {
+		const { translate, moment, timezone, gmtOffset } = this.props;
+
+		//Apply the time offset
+		const backupDate = applySiteOffset( moment( date ), { timezone, gmtOffset } );
+		const today = applySiteOffset( moment(), { timezone, gmtOffset } );
+
+		const isToday = today.isSame( backupDate, 'day' );
+		const yearToday = today.format( 'YYYY' );
+		const yearDate = backupDate.format( 'YYYY' );
+
+		const dateFormat = yearToday === yearDate ? 'MMM D' : 'MMM D, YYYY';
+
+		let displayableDate;
+
+		if ( isToday ) {
+			displayableDate =
+				translate( 'Latest' ) + ': ' + translate( 'Today' ) + ' ' + backupDate.format( 'H:mm' );
+		} else {
+			displayableDate = backupDate.format( dateFormat + ' H:mm' );
+		}
+
+		return displayableDate;
+	};
+
+	renderGoodBackup( backup ) {
+		const { allowRestore, translate } = this.props;
+
+		const displayDate = this.getDisplayDate( backup.activityTs );
 
 		return (
 			<Fragment>
-				<Gridicon icon="cloud-upload" />
+				<Gridicon className="daily-backup-status__status-icon" icon="cloud-upload" />
 				<div className="daily-backup-status__label">
 					{ translate( 'Latest backup completed:' ) }
 				</div>
 				<div className="daily-backup-status__date">{ displayDate }</div>
-				<Button className="daily-backup-status__download-button" onClick={ this.triggerDownload }>
-					{ translate( 'Download backup' ) }
-				</Button>
-				<Button
-					className="daily-backup-status__restore-button"
-					disabled={ ! allowRestore }
-					onClick={ this.triggerRestore }
-				>
-					{ translate( 'Restore to this point' ) }
-				</Button>
+				<ActionButtons
+					onDownloadClick={ this.triggerDownload }
+					onRestoreClick={ this.triggerRestore }
+					disabledRestore={ ! allowRestore }
+				/>
 			</Fragment>
 		);
 	}
 
-	renderFailedBackup() {
-		const { backupAttempts, translate } = this.props;
+	renderFailedBackup( backup ) {
+		const { translate, timezone, gmtOffset } = this.props;
 
-		const hasBackupError = backupAttempts.error.length;
-		const errorMessage =
-			hasBackupError && backupAttempts.error[ 0 ].activityDescription[ 0 ].children[ 0 ].text;
+		const backupTitleDate = this.getDisplayDate( backup.activityTs );
+		const backupDate = applySiteOffset( backup.activityTs, { timezone, gmtOffset } );
+
+		const displayDate = backupDate.format( 'L' );
+		const displayTime = backupDate.format( 'H:mm' );
 
 		return (
 			<Fragment>
 				<Gridicon icon="cross-circle" className="daily-backup-status__gridicon-error-state" />
-
-				<div className="daily-backup-status__date">{ translate( 'Backup error' ) }</div>
+				<div className="daily-backup-status__date">{ translate( 'Backup attempt failed' ) }</div>
+				<div className="daily-backup-status__date">{ backupTitleDate }</div>
 				<div className="daily-backup-status__label">
-					{ hasBackupError ? errorMessage : translate( 'This day has no backups.' ) }
+					<p>
+						{ translate(
+							'A backup for your site was attempted on %(displayDate)s at %(displayTime)s and was not able to be completed.',
+							{ args: { displayDate, displayTime } }
+						) }
+					</p>
+					<p>
+						{ translate(
+							'Check out the {{a}}backups help guide{{/a}} or contact our support team to resolve the issue. View to get the issue resolved',
+							{
+								components: {
+									a: (
+										<a
+											href="https://jetpack.com/support/backup/"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
+					</p>
+					<Button
+						className="daily-backup-status__download-button"
+						href="https://jetpack.com/contact-support/"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						{ translate( 'Contact support' ) }
+					</Button>
 				</div>
 			</Fragment>
 		);
 	}
 
-	render() {
-		const { backupAttempts } = this.props;
-		const dateHasGoodBackup = backupAttempts.complete.length;
+	renderNoBackups() {
+		const { translate } = this.props;
+
+		// todo: remove the mock dates by the real dates
+		const lastBackupAt = 'Yesterday 16:02';
+		const nextBackupAt = 'Today 16:02';
 
 		return (
-			<div className="daily-backup-status">
-				{ dateHasGoodBackup ? this.renderGoodBackup() : this.renderFailedBackup() }
-			</div>
+			<Fragment>
+				<Gridicon icon="sync" />
+
+				<div className="daily-backup-status__date">
+					{ translate( 'Backup Scheduled' ) }: { nextBackupAt }
+				</div>
+				<div>{ translate( 'Last daily backup' ) + ` ${ lastBackupAt }` }</div>
+
+				<ActionButtons disabledDownload={ true } disabledRestore={ true } />
+			</Fragment>
 		);
 	}
+
+	renderBackupStatus( backup ) {
+		if ( ! backup ) {
+			return this.renderNoBackups();
+		} else if ( isSuccessfulBackup( backup ) ) {
+			return this.renderGoodBackup( backup );
+		}
+
+		return this.renderFailedBackup( backup );
+	}
+
+	render() {
+		const backup = this.props.backup;
+
+		return <div className="daily-backup-status">{ this.renderBackupStatus( backup ) }</div>;
+	}
 }
+
+const ActionButtons = ( {
+	disabledDownload,
+	disabledRestore,
+	onDownloadClick,
+	onRestoreClick,
+} ) => {
+	const translate = useTranslate();
+
+	return (
+		<>
+			<Button
+				className="daily-backup-status__download-button"
+				onClick={ onDownloadClick }
+				disabled={ disabledDownload }
+			>
+				{ translate( 'Download backup' ) }
+			</Button>
+			<Button
+				className="daily-backup-status__restore-button"
+				disabled={ disabledRestore }
+				onClick={ onRestoreClick }
+			>
+				{ translate( 'Restore to this point' ) }
+			</Button>
+		</>
+	);
+};
+ActionButtons.defaultProps = {
+	disabledDownload: false,
+	disabledRestore: false,
+};
 
 export default localize( withLocalizedMoment( DailyBackupStatus ) );

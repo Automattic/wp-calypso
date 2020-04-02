@@ -82,8 +82,8 @@ export default ( storeName, optionsPath ) => {
 		},
 
 		resolvers: {
+			// eslint-disable-next-line no-unused-vars
 			*getOption( key ) {
-				// eslint-disable-line no-unused-vars
 				if ( alreadyFetchedOptions ) {
 					return; // do nothing
 				}

@@ -1016,6 +1016,15 @@
 			margin: -5px 0;
 		}
 	}
+
+	.checkout__ovo {
+		height: 35px;
+
+		@include breakpoint( '>480px' ) {
+			margin: -5px 0;
+		}
+	}
+
 	.select-dropdown__container {
 		.checkout__apple-pay {
 			margin: 0;

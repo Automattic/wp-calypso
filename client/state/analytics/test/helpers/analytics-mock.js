@@ -7,7 +7,6 @@ import { merge, set } from 'lodash';
 const analyticsMocks = [
 	'ga.recordEvent',
 	'ga.recordPageView',
-	'mc.bumpStat',
 	'pageView.record',
 	'tracks.recordEvent',
 	'tracks.recordPageView',
@@ -20,6 +19,8 @@ const adTrackingMocks = [
 	'trackCustomFacebookConversionEvent',
 ];
 
+const mcMocks = [ 'bumpStat', 'bumpStatWithPageView' ];
+
 const mockIt = spy => mock => set( {}, mock, ( ...args ) => spy( mock, ...args ) );
 
 export const moduleMock = moduleMocks => spy =>
@@ -27,5 +28,6 @@ export const moduleMock = moduleMocks => spy =>
 
 export const analyticsMock = moduleMock( analyticsMocks );
 export const adTrackingMock = moduleMock( adTrackingMocks );
+export const mcMock = moduleMock( mcMocks );
 
 export default analyticsMock;

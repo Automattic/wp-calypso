@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { stringify } from 'qs';
+
+/**
  * Internal dependencies
  */
 import {
@@ -7,7 +12,7 @@ import {
 	NewUserErrorResponse,
 	NewUserSuccessResponse,
 } from './types';
-import { wpcomRequest } from '../wpcom-request-controls';
+import { wpcomRequest, requestAllBlogsAccess, reloadProxy } from '../wpcom-request-controls';
 import { WpcomClientCredentials } from '../shared-types';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
@@ -34,6 +39,10 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		error,
 	} );
 
+	const clearErrors = () => ( {
+		type: 'CLEAR_ERRORS' as const,
+	} );
+
 	function* createAccount( params: CreateAccountParams ) {
 		yield fetchNewUser();
 		try {
@@ -53,7 +62,14 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				path: '/users/new',
 				apiVersion: '1.1',
 				method: 'post',
+				query: stringify( { locale: params.locale } ),
 			} );
+
+			yield reloadProxy();
+
+			// Need to rerequest access after the proxy is reloaded
+			yield requestAllBlogsAccess();
+
 			return receiveNewUser( newUser );
 		} catch ( err ) {
 			yield receiveNewUserFailed( err );
@@ -68,16 +84,21 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		fetchNewUser,
 		receiveNewUser,
 		receiveNewUserFailed,
+		clearErrors,
 		createAccount,
 	};
 }
 
 type ActionCreators = ReturnType< typeof createActions >;
 
-export type Action = ReturnType<
-	| ActionCreators[ 'receiveCurrentUser' ]
-	| ActionCreators[ 'receiveCurrentUserFailed' ]
-	| ActionCreators[ 'fetchNewUser' ]
-	| ActionCreators[ 'receiveNewUser' ]
-	| ActionCreators[ 'receiveNewUserFailed' ]
->;
+export type Action =
+	| ReturnType<
+			| ActionCreators[ 'receiveCurrentUser' ]
+			| ActionCreators[ 'receiveCurrentUserFailed' ]
+			| ActionCreators[ 'fetchNewUser' ]
+			| ActionCreators[ 'receiveNewUser' ]
+			| ActionCreators[ 'receiveNewUserFailed' ]
+			| ActionCreators[ 'clearErrors' ]
+	  >
+	// Type added so we can dispatch actions in tests, but has no runtime cost
+	| { type: 'TEST_ACTION' };

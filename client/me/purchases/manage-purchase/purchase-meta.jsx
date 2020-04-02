@@ -366,6 +366,7 @@ class PurchaseMeta extends Component {
 								planName={ site.plan.product_name_short }
 								siteDomain={ site.domain }
 								purchase={ purchase }
+								toggleSource="manage-purchase"
 							/>
 						</span>
 					) }

@@ -8,12 +8,13 @@ import { plugins, registerStore, use } from '@wordpress/data';
  * Internal dependencies
  */
 import { STORE_KEY } from './constants';
-import reducer, { State } from './reducer';
+import reducer from './reducer';
 import * as actions from './actions';
 import * as selectors from './selectors';
 import persistOptions from './persist';
 import { SelectFromMap, DispatchFromMap } from '@automattic/data-stores';
 
+export type State = import('./reducer').State;
 export { STORE_KEY };
 
 use( plugins.persistence, persistOptions );
@@ -23,7 +24,15 @@ registerStore< State >( STORE_KEY, {
 	controls,
 	reducer: reducer as any,
 	selectors,
-	persist: [ 'domain', 'siteTitle', 'siteVertical', 'pageLayouts', 'selectedDesign' ],
+	persist: [
+		'domain',
+		'siteTitle',
+		'siteVertical',
+		'pageLayouts',
+		'selectedDesign',
+		'selectedFonts',
+		'siteWasCreatedForDomainPurchase',
+	],
 } );
 
 declare module '@wordpress/data' {

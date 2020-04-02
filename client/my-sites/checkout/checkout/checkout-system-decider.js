@@ -145,14 +145,16 @@ function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, is
 		return false;
 	}
 
-	// If the URL is adding a product, only allow wpcom plans
-	const slugFragmentsToAllow = [ 'personal', 'premium', 'blogger', 'ecommerce', 'business' ];
+	// If the URL is adding a product, only allow things already supported
+	const slugsToAllow = [ 'personal', 'premium', 'blogger', 'ecommerce', 'business' ];
+	const slugPrefixesToAllow = [ 'domain-mapping:' ];
 	if (
 		productSlug &&
-		! slugFragmentsToAllow.find( fragment => productSlug.includes( fragment ) )
+		! slugsToAllow.find( slug => productSlug === slug ) &&
+		! slugPrefixesToAllow.find( slugPrefix => productSlug.startsWith( slugPrefix ) )
 	) {
 		debug(
-			'shouldShowCompositeCheckout false because product does not match whitelist',
+			'shouldShowCompositeCheckout false because product does not match list of allowed products',
 			productSlug
 		);
 		return false;
@@ -161,16 +163,6 @@ function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, is
 	if ( config.isEnabled( 'composite-checkout-testing' ) ) {
 		debug( 'shouldShowCompositeCheckout true because testing config is enabled' );
 		return true;
-	}
-	// Disable for domains in the cart
-	if ( cart.products?.find( product => product.is_domain_registration ) ) {
-		debug( 'shouldShowCompositeCheckout false because cart contains domain registration' );
-		return false;
-	}
-	// Disable for domain mapping
-	if ( cart.products?.find( product => product.product_slug.includes( 'domain' ) ) ) {
-		debug( 'shouldShowCompositeCheckout false because cart contains domain item' );
-		return false;
 	}
 	if ( abtest( 'showCompositeCheckout' ) === 'composite' ) {
 		debug( 'shouldShowCompositeCheckout true because user is in abtest' );

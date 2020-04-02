@@ -17,8 +17,7 @@ import Main from 'components/main';
 import { Card } from '@automattic/components';
 import Notice from 'components/notice';
 import HelpContactForm from 'me/help/help-contact-form';
-import LiveChatClosureNotice from 'me/help/live-chat-closure-notice';
-import GMClosureNotice from 'me/help/gm-closure-notice';
+import LimitedChatAvailabilityNotice from 'me/help/contact-form-notice/limited-chat-availability';
 import HelpContactConfirmation from 'me/help/help-contact-confirmation';
 import HeaderCake from 'components/header-cake';
 import wpcomLib from 'lib/wp';
@@ -547,35 +546,14 @@ class HelpContact extends React.Component {
 		const isUserAffectedByLiveChatClosure =
 			supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM;
 
-		const xmasHolidayName = translate( 'Christmas', {
-			context: 'Holiday name',
-		} );
-
 		return (
 			<div>
 				{ isUserAffectedByLiveChatClosure && (
 					<>
-						<LiveChatClosureNotice
-							holidayName={ xmasHolidayName }
+						<LimitedChatAvailabilityNotice
 							compact={ compact }
-							displayAt="2019-12-17 00:00Z"
-							closesAt="2019-12-24 00:00Z"
-							reopensAt="2019-12-26 07:00Z"
-						/>
-						<LiveChatClosureNotice
-							holidayName={ translate( "New Year's Day" ) }
-							compact={ compact }
-							displayAt="2019-12-26 07:00Z"
-							closesAt="2019-12-31 00:00Z"
-							reopensAt="2020-01-02 07:00Z"
-						/>
-						<GMClosureNotice
-							compact={ compact }
-							displayAt="2019-08-31 00:00Z"
-							basicChatClosesAt="2019-09-07 00:00Z"
-							basicChatReopensAt="2019-09-23 04:00Z"
-							priorityChatClosesAt="2019-09-10 00:00Z"
-							priorityChatReopensAt="2019-09-19 04:00Z"
+							showAt="2020-03-27 00:00Z"
+							hideAt="2021-01-01 00:00Z"
 						/>
 					</>
 				) }
