@@ -30,8 +30,8 @@ import {
 	useStoredCards,
 	useIsApplePayAvailable,
 	filterAppropriatePaymentMethods,
-} from './composite-checkout/payment-method-helpers';
-import usePrepareProductForCart from './composite-checkout/use-prepare-product-for-cart';
+} from './payment-method-helpers';
+import usePrepareProductForCart from './use-prepare-product-for-cart';
 import notices from 'notices';
 import { isJetpackSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
@@ -50,12 +50,12 @@ import { GROUP_WPCOM, TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/p
 import { requestProductsList } from 'state/products-list/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { useStripe } from 'lib/stripe';
-import CheckoutTerms from './checkout-terms.jsx';
-import useShowStripeLoadingErrors from './composite-checkout/use-show-stripe-loading-errors';
-import useCreatePaymentMethods from './composite-checkout/use-create-payment-methods';
-import { useGetThankYouUrl } from './composite-checkout/use-get-thank-you-url';
-import createAnalyticsEventHandler from './composite-checkout/record-analytics';
-import createContactValidationCallback from './composite-checkout/contact-validation';
+import CheckoutTerms from '../checkout/checkout-terms.jsx';
+import useShowStripeLoadingErrors from './use-show-stripe-loading-errors';
+import useCreatePaymentMethods from './use-create-payment-methods';
+import { useGetThankYouUrl } from './use-get-thank-you-url';
+import createAnalyticsEventHandler from './record-analytics';
+import createContactValidationCallback from './contact-validation';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 

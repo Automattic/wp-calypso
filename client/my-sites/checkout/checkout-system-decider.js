@@ -9,8 +9,8 @@ import wp from 'lib/wp';
 /**
  * Internal Dependencies
  */
-import CheckoutContainer from './checkout-container';
-import CompositeCheckout from './composite-checkout';
+import CheckoutContainer from './checkout/checkout-container';
+import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
 import { StripeHookProvider } from 'lib/stripe';
 import config from 'config';
