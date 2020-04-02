@@ -9,6 +9,11 @@
 	justify-content: space-evenly;
 }
 
+.button.is-primary.date-picker__button--previous:focus,
+.button.is-primary.date-picker__button--next:focus {
+	box-shadow: none;
+}
+
 .date-picker__button--previous {
 	margin-right: 0.5rem;
 }
