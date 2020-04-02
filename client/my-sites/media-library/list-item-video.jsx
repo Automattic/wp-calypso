@@ -17,7 +17,7 @@ import { MEDIA_IMAGE_THUMBNAIL } from 'lib/media/constants';
  * Style dependencies
  */
 import './list-item-video.scss';
-import MediaImage from './media-image';
+import MediaFile from './media-file';
 
 export default class extends React.Component {
 	static displayName = 'MediaLibraryListItemVideo';
@@ -52,7 +52,7 @@ export default class extends React.Component {
 					? thumbnail
 					: photon( thumbnail, { width: this.props.maxImageWidth } );
 
-			return <MediaImage src={ url } component={ ListItemVideo } placeholder={ ListItemVideo } />;
+			return <MediaFile src={ url } component={ ListItemVideo } placeholder={ ListItemVideo } />;
 		}
 		return <ListItemFileDetails { ...this.props } icon="video-camera" />;
 	}
