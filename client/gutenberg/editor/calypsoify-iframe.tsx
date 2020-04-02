@@ -298,8 +298,11 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			const urlParams = new URLSearchParams( window.location.search );
 			const isGutenboarding =
 				config.isEnabled( 'gutenboarding' ) && urlParams.has( 'is-gutenboarding' );
+			const isGutenboardingNewUser =
+				config.isEnabled( 'gutenboarding' ) && urlParams.has( 'is-gutenboarding-new-user' );
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
+				isGutenboardingNewUser,
 				frankenflowUrl: `${ window.location.origin }/start/frankenflow?siteSlug=${ this.props.siteId }`,
 			} );
 		}

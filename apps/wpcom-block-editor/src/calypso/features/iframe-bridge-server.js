@@ -704,11 +704,12 @@ function getGutenboardingStatus( calypsoPort ) {
 		[ port2 ]
 	);
 	port1.onmessage = ( { data } ) => {
-		const { isGutenboarding, frankenflowUrl } = data;
+		const { isGutenboarding, isGutenboardingNewUser, frankenflowUrl } = data;
 		calypsoifyGutenberg.isGutenboarding = isGutenboarding;
+		calypsoifyGutenberg.isGutenboardingNewUser = isGutenboardingNewUser;
 		calypsoifyGutenberg.frankenflowUrl = frankenflowUrl;
 		// Hook necessary if message recieved after editor has loaded.
-		window.wp.hooks.doAction( 'setGutenboardingStatus', isGutenboarding );
+		window.wp.hooks.doAction( 'setGutenboardingStatus', isGutenboarding, isGutenboardingNewUser );
 	};
 }
 

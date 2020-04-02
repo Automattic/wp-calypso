@@ -167,7 +167,9 @@ const Header: FunctionComponent = () => {
 				return;
 			}
 			resetOnboardStore();
-			window.location.replace( `/block-editor/page/${ newSite.site_slug }/home?is-gutenboarding` );
+			window.location.replace(
+				`/block-editor/page/${ newSite.site_slug }/home?is-gutenboarding&is-gutenboarding-new-user`
+			);
 		}
 	}, [ domain, siteWasCreatedForDomainPurchase, newSite, resetOnboardStore ] );
 
