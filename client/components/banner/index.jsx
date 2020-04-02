@@ -9,6 +9,7 @@ import classNames from 'classnames';
 import { noop, size } from 'lodash';
 import Gridicon from 'components/gridicon';
 import JetpackLogo from 'components/jetpack-logo';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -30,6 +31,7 @@ import { Button, Card } from '@automattic/components';
 import DismissibleCard from 'blocks/dismissible-card';
 import PlanPrice from 'my-sites/plan-price';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import isSiteWPforteams from 'state/selectors/is-site-wpforteams';
 
 /**
  * Style dependencies
@@ -68,6 +70,7 @@ export class Banner extends Component {
 		tracksClickProperties: PropTypes.object,
 		tracksDismissProperties: PropTypes.object,
 		customerType: PropTypes.string,
+		isSiteWPforteams: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -83,6 +86,7 @@ export class Banner extends Component {
 		tracksImpressionName: 'calypso_banner_cta_impression',
 		tracksClickName: 'calypso_banner_cta_click',
 		tracksDismissName: 'calypso_banner_dismiss',
+		isSiteWPforteams: false,
 	};
 
 	getHref() {
@@ -253,6 +257,11 @@ export class Banner extends Component {
 			plan,
 		} = this.props;
 
+		// No Banners for WP for Teams sites.
+		if ( config.isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams ) {
+			return null;
+		}
+
 		const classes = classNames(
 			'banner',
 			className,
@@ -300,6 +309,7 @@ export class Banner extends Component {
 const mapStateToProps = ( state, ownProps ) => ( {
 	siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
 	canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
+	isSiteWPforteams: isSiteWPforteams( state, getSelectedSiteId( state ) ),
 } );
 
 export default connect( mapStateToProps, { recordTracksEvent } )( Banner );
