@@ -233,6 +233,10 @@ export class MySitesSidebar extends Component {
 	earn() {
 		const { site, canUserUseEarn } = this.props;
 
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams ) {
+			return null;
+		}
+
 		if ( site && ! canUserUseEarn ) {
 			return null;
 		}
@@ -507,6 +511,10 @@ export class MySitesSidebar extends Component {
 	marketing() {
 		const { path, site } = this.props;
 		const marketingLink = '/marketing' + this.props.siteSuffix;
+
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams ) {
+			return null;
+		}
 
 		if ( site && ! this.props.canUserPublishPosts ) {
 			return null;

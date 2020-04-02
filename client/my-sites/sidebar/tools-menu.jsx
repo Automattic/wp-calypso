@@ -22,6 +22,7 @@ import { itemLinkMatches } from './utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
 import { SIDEBAR_SECTION_TOOLS } from 'my-sites/sidebar/constants';
+import isSiteWPforteams from 'state/selectors/is-site-wpforteams';
 
 class ToolsMenu extends PureComponent {
 	static propTypes = {
@@ -33,10 +34,15 @@ class ToolsMenu extends PureComponent {
 		isJetpack: PropTypes.bool,
 		siteAdminUrl: PropTypes.string,
 		siteSlug: PropTypes.string,
+		isSiteWPforteams: PropTypes.bool,
 	};
 
 	getPluginItem() {
 		const { canManagePlugins, isAtomicSite, translate } = this.props;
+
+		if ( config.isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams ) {
+			return {};
+		}
 
 		return {
 			name: 'plugins',
@@ -144,6 +150,7 @@ export default connect(
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
+		isSiteWPforteams: isSiteWPforteams( state, siteId ),
 	} ),
 	{ expandSection, recordTracksEvent },
 	null,
