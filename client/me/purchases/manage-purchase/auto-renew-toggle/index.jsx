@@ -19,6 +19,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import { createNotice } from 'state/notices/actions';
 import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
+import AutoRenewPaymentMethodDialog from './auto-renew-payment-method-dialog';
 import FormToggle from 'components/forms/form-toggle';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { isExpired, isOneTimePurchase, isRechargeable } from '../../../../lib/purchases';
@@ -46,6 +47,7 @@ class AutoRenewToggle extends Component {
 
 	state = {
 		showAutoRenewDisablingDialog: false,
+		showPaymentMethodDialog: false,
 		isTogglingToward: null,
 		isRequesting: false,
 	};
@@ -68,6 +70,12 @@ class AutoRenewToggle extends Component {
 		} );
 	};
 
+	onCloseAutoRenewPaymentMethodDialog = () => {
+		this.setState( {
+			showPaymentMethodDialog: false,
+		} );
+	};
+
 	toggleAutoRenew = () => {
 		const {
 			purchase: { id: purchaseId, productSlug },
@@ -81,7 +89,9 @@ class AutoRenewToggle extends Component {
 		const isTogglingToward = ! isEnabled;
 
 		if ( isTogglingToward && ! isRechargeable( this.props.purchase ) ) {
-			this.goToUpdatePaymentMethod();
+			this.setState( {
+				showPaymentMethodDialog: true,
+			} );
 			return;
 		}
 
@@ -160,10 +170,11 @@ class AutoRenewToggle extends Component {
 		return isEnabled ? translate( 'Auto-renew (on)' ) : translate( 'Auto-renew (off)' );
 	}
 
-	goToUpdatePaymentMethod() {
+	goToUpdatePaymentMethod = () => {
 		const { purchase, siteSlug } = this.props;
+		this.onCloseAutoRenewPaymentMethodDialog();
 		page( getEditCardDetailsPath( siteSlug, purchase ) );
-	}
+	};
 
 	shouldRender( purchase ) {
 		return ! isExpired( purchase ) && ! isOneTimePurchase( purchase );
@@ -195,6 +206,12 @@ class AutoRenewToggle extends Component {
 					siteDomain={ siteDomain }
 					onClose={ this.onCloseAutoRenewDisablingDialog }
 					onConfirm={ this.toggleAutoRenew }
+				/>
+				<AutoRenewPaymentMethodDialog
+					isVisible={ this.state.showPaymentMethodDialog }
+					purchase={ purchase }
+					onClose={ this.onCloseAutoRenewPaymentMethodDialog }
+					onConfirm={ this.goToUpdatePaymentMethod }
 				/>
 			</>
 		);
