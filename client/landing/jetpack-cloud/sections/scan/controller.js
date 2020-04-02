@@ -19,6 +19,7 @@ export function scan( context, next ) {
  */
 
 export function scanHistory( context, next ) {
-	context.primary = <ScanHistoryPage />;
+	const { filter } = context.params;
+	context.primary = <ScanHistoryPage filter={ filter } />;
 	next();
 }

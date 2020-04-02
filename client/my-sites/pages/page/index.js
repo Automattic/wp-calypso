@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 import pageRouter from 'page';
 import { connect } from 'react-redux';
 import { flow, get, includes, noop, partial } from 'lodash';
+import { saveAs } from 'browser-filesaver';
 
 /**
  * Internal dependencies
@@ -41,6 +42,7 @@ import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
 import { updateSiteFrontPage } from 'state/sites/actions';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
 import canCurrentUser from 'state/selectors/can-current-user';
+import config from 'config';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 
@@ -85,6 +87,7 @@ class Page extends Component {
 
 	static defaultProps = {
 		onShadowStatusChange: noop,
+		showPublishedStatus: false,
 	};
 
 	// Construct a link to the Site the page belongs too
@@ -329,6 +332,20 @@ class Page extends Component {
 		);
 	}
 
+	getExportItem() {
+		const { page } = this.props;
+		if ( ! page.content || ! config.isEnabled( 'page/export' ) ) {
+			return null;
+		}
+
+		return (
+			<PopoverMenuItem onClick={ this.exportPage }>
+				<Gridicon icon="cloud-download" size={ 18 } />
+				{ this.props.translate( 'Export page' ) }
+			</PopoverMenuItem>
+		);
+	}
+
 	getCopyLinkItem() {
 		const { page, translate } = this.props;
 		return (
@@ -424,7 +441,14 @@ class Page extends Component {
 	undoPostStatus = () => this.updatePostStatus( this.props.shadowStatus.undo );
 
 	render() {
-		const { editorUrl, page, shadowStatus, translate, isPostsPage: latestPostsPage } = this.props;
+		const {
+			editorUrl,
+			page,
+			shadowStatus,
+			showPublishedStatus,
+			translate,
+			isPostsPage: latestPostsPage,
+		} = this.props;
 		const title = page.title || translate( 'Untitled' );
 		const canEdit = utils.userCan( 'edit_post', page ) && ! latestPostsPage;
 		const depthIndicator = ! this.props.hierarchical && page.parent && '— ';
@@ -440,6 +464,7 @@ class Page extends Component {
 		const copyLinkItem = this.getCopyLinkItem();
 		const statsItem = this.getStatsItem();
 		const moreInfoItem = this.popoverMoreInfo();
+		const exportItem = this.getExportItem();
 		const hasMenuItems =
 			viewItem ||
 			publishItem ||
@@ -448,7 +473,8 @@ class Page extends Component {
 			restoreItem ||
 			frontPageItem ||
 			sendToTrashItem ||
-			moreInfoItem;
+			moreInfoItem ||
+			exportItem;
 
 		const ellipsisMenu = hasMenuItems && (
 			<EllipsisMenu
@@ -465,6 +491,7 @@ class Page extends Component {
 				{ restoreItem }
 				{ frontPageItem }
 				{ postsPageItem }
+				{ exportItem }
 				{ sendToTrashItem }
 				{ moreInfoItem }
 			</EllipsisMenu>
@@ -525,6 +552,7 @@ class Page extends Component {
 					<PageCardInfo
 						page={ page }
 						showTimestamp
+						showPublishedStatus={ showPublishedStatus }
 						siteUrl={ this.props.multisite && this.getSiteDomain() }
 					/>
 				</div>
@@ -668,6 +696,23 @@ class Page extends Component {
 
 	copyPage = () => {
 		this.props.recordEvent( 'Clicked Copy Page' );
+	};
+
+	exportPage = () => {
+		this.props.recordEvent( 'Clicked Export Page' );
+		const { page } = this.props;
+
+		const fileContent = JSON.stringify( {
+			__file: 'wp_template',
+			language: 'en',
+			title: page.title,
+			author: page.author,
+			demoURL: page.URL,
+			content: page.rawContent,
+		} );
+		const blob = new window.Blob( [ fileContent ], { type: 'application/json' } );
+		const fileName = ( page.title ? page.title : 'page' ) + '.json';
+		saveAs( blob, fileName );
 	};
 
 	copyPageLink = () => {

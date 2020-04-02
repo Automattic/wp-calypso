@@ -7,12 +7,22 @@ import page from 'page';
  * Internal dependencies
  */
 import { siteSelection, sites } from 'my-sites/controller';
-import { authenticate, post, redirect } from './controller';
+import { authenticate, post, redirect, siteEditor } from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
 	page( '/block-editor', '/block-editor/post' );
+
+	page(
+		'/site-editor/:site?',
+		siteSelection,
+		redirect,
+		authenticate,
+		siteEditor,
+		makeLayout,
+		clientRender
+	);
 
 	page( '/block-editor/post', siteSelection, sites, makeLayout, clientRender );
 	page(

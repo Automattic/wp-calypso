@@ -14,8 +14,11 @@ import AsyncBaseContainer from '../async-base-container';
 export default class ChecklistPage extends AsyncBaseContainer {
 	constructor( driver, url ) {
 		super( driver, By.css( '.customer-home__layout .checklist' ), url );
-		this.headerSelector = By.css( '.customer-home__layout .customer-home__card-checklist-heading' );
-		this.updateHomeSelector = By.css(
+		this.headerSelector = By.css( '.customer-home__layout .checklist-site-setup__heading' );
+		this.updateHomepageTaskSelector = By.css(
+			'.customer-home__layout .checklist__task:nth-child(2) button.checklist__task-title-button'
+		);
+		this.updateHomepageButtonSelector = By.css(
 			'.customer-home__layout button[data-e2e-action="update-homepage"]'
 		);
 	}
@@ -36,6 +39,7 @@ export default class ChecklistPage extends AsyncBaseContainer {
 	}
 
 	async updateHomepage() {
-		await driverHelper.clickWhenClickable( this.driver, this.updateHomeSelector );
+		await driverHelper.clickWhenClickable( this.driver, this.updateHomepageTaskSelector );
+		return await driverHelper.clickWhenClickable( this.driver, this.updateHomepageButtonSelector );
 	}
 }

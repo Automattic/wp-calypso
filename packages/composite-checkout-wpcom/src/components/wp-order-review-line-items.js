@@ -54,6 +54,7 @@ function WPLineItem( {
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const modalCopy = returnModalCopy( item.type, translate, hasDomainsInCart );
 	const onEvent = useEvents();
+	const isDisabled = formStatus !== 'ready';
 
 	const shouldShowVariantSelector = item.wpcom_meta && item.wpcom_meta.extra?.context === 'signup';
 
@@ -67,6 +68,7 @@ function WPLineItem( {
 				<React.Fragment>
 					<DeleteButton
 						buttonState="borderless"
+						disabled={ isDisabled }
 						onClick={ () => {
 							setIsModalVisible( true );
 							onEvent( {
@@ -94,6 +96,11 @@ function WPLineItem( {
 								},
 							} );
 						} }
+						cancelAction={ () => {
+							onEvent( {
+								type: 'a8c_checkout_cancel_delete_product',
+							} );
+						} }
 						title={ modalCopy.title }
 						copy={ modalCopy.description }
 					/>
@@ -107,6 +114,7 @@ function WPLineItem( {
 					variantSelectOverride={ variantSelectOverride }
 					getItemVariants={ getItemVariants }
 					onChangeItemVariant={ onChangePlanLength }
+					isDisabled={ isDisabled }
 				/>
 			) }
 		</div>
@@ -130,15 +138,27 @@ WPLineItem.propTypes = {
 };
 
 function LineItemTitle( { item, id } ) {
+	if ( isLineItemADomain( item ) ) {
+		return <LineItemDomainTitle item={ item } id={ id } />;
+	}
+	if ( item.type === 'domain_map' || item.type === 'offsite_redirect' ) {
+		return <LineItemDomainTitle item={ item } id={ id } />;
+	}
+	return (
+		<LineItemTitleUI>
+			<ProductTitleUI id={ id }>{ item.label }</ProductTitleUI>
+		</LineItemTitleUI>
+	);
+}
+
+function LineItemDomainTitle( { item, id } ) {
 	const translate = useTranslate();
 	return (
 		<LineItemTitleUI>
-			{ isLineItemADomain( item ) && item.sublabel ? (
-				<ProductTitleUI id={ id }>{ item.sublabel }</ProductTitleUI>
-			) : (
-				<ProductTitleUI id={ id }>{ item.label }</ProductTitleUI>
-			) }
-			{ isLineItemADomain( item ) && item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
+			<ProductTitleUI id={ id }>
+				{ item.label }: { item.sublabel }
+			</ProductTitleUI>
+			{ item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
 				<BundledDomainFreeUI>{ translate( 'First year free with your plan' ) }</BundledDomainFreeUI>
 			) }
 		</LineItemTitleUI>
@@ -146,14 +166,17 @@ function LineItemTitle( { item, id } ) {
 }
 
 function LineItemPrice( { lineItem } ) {
-	if ( lineItem.amount.value < lineItem.wpcom_meta?.product_cost_integer ) {
-		return (
-			<span>
-				<s>{ lineItem.wpcom_meta.product_cost_display }</s> { lineItem.amount.displayValue }
-			</span>
-		);
-	}
-	return renderDisplayValueMarkdown( lineItem.amount.displayValue );
+	return (
+		<LineItemPriceUI>
+			{ lineItem.amount.value < lineItem.wpcom_meta?.product_cost_integer ? (
+				<>
+					<s>{ lineItem.wpcom_meta.product_cost_display }</s> { lineItem.amount.displayValue }
+				</>
+			) : (
+				renderDisplayValueMarkdown( lineItem.amount.displayValue )
+			) }
+		</LineItemPriceUI>
+	);
 }
 
 const LineItemUI = styled( WPLineItem )`
@@ -172,6 +195,11 @@ const LineItemUI = styled( WPLineItem )`
 
 const LineItemTitleUI = styled.div`
 	flex: 1;
+	word-break: break-word;
+`;
+
+const LineItemPriceUI = styled.span`
+	margin-left: 12px;
 `;
 
 const BundledDomainFreeUI = styled.div`
@@ -348,6 +376,11 @@ function returnModalCopy( product, translate, hasDomainsInCart ) {
 }
 
 function canItemBeDeleted( item ) {
-	const itemTypesThatCannotBeDeleted = [ 'tax', 'credits', 'wordpress-com-credits' ];
+	const itemTypesThatCannotBeDeleted = [
+		'domain_redemption',
+		'tax',
+		'credits',
+		'wordpress-com-credits',
+	];
 	return ! itemTypesThatCannotBeDeleted.includes( item.type );
 }

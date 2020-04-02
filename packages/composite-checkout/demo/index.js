@@ -15,8 +15,9 @@ import {
 	CheckoutProvider,
 	createApplePayMethod,
 	createPayPalMethod,
-	createRegistry,
 	createStripeMethod,
+	createStripePaymentMethodStore,
+	defaultRegistry,
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
@@ -90,8 +91,7 @@ async function makePayPalExpressRequest( data ) {
 	return window.location.href;
 }
 
-const registry = createRegistry();
-const { registerStore, select } = registry;
+const { registerStore, select } = defaultRegistry;
 
 registerStore( 'demo', {
 	actions: {
@@ -306,20 +306,29 @@ function MyCheckout() {
 		setTimeout( () => setIsLoading( false ), 1500 );
 	}, [ isStripeLoading, stripeLoadingError, stripe, stripeConfiguration, isApplePayLoading ] );
 
+	const stripeStore = useMemo(
+		() =>
+			createStripePaymentMethodStore( {
+				getCountry: () => select( 'demo' ).getCountry(),
+				getPostalCode: () => 90210,
+				getSubdivisionCode: () => 'CA',
+				getSiteId: () => 12345,
+				getDomainDetails: {},
+				submitTransaction: sendStripeTransaction,
+			} ),
+		[]
+	);
+
 	const stripeMethod = useMemo( () => {
 		if ( isStripeLoading || stripeLoadingError || ! stripe || ! stripeConfiguration ) {
 			return null;
 		}
 		return createStripeMethod( {
-			getCountry: () => select( 'demo' ).getCountry(),
-			getPostalCode: () => 90210,
-			getSubdivisionCode: () => 'CA',
-			registerStore,
+			store: stripeStore,
 			stripe,
 			stripeConfiguration,
-			submitTransaction: sendStripeTransaction,
 		} );
-	}, [ stripe, stripeConfiguration, isStripeLoading, stripeLoadingError ] );
+	}, [ stripeStore, stripe, stripeConfiguration, isStripeLoading, stripeLoadingError ] );
 
 	const applePayMethod = useMemo( () => {
 		if (
@@ -370,7 +379,7 @@ function MyCheckout() {
 			showErrorMessage={ showErrorMessage }
 			showInfoMessage={ showInfoMessage }
 			showSuccessMessage={ showSuccessMessage }
-			registry={ registry }
+			registry={ defaultRegistry }
 			isLoading={ isLoading }
 			paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
 		>

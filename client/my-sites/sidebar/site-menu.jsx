@@ -15,7 +15,7 @@ import SidebarItem from 'layout/sidebar/item';
 import config from 'config';
 import { getPostTypes } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
-import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import { decodeEntities } from 'lib/formatting';
 import compareProps from 'lib/compare-props';
 import {
@@ -118,7 +118,7 @@ class SiteMenu extends PureComponent {
 
 	onNavigate = postType => () => {
 		if ( ! includes( [ 'post', 'page' ], postType ) ) {
-			analytics.mc.bumpStat( 'calypso_publish_menu_click', postType );
+			bumpStat( 'calypso_publish_menu_click', postType );
 		}
 		this.props.recordTracksEvent( 'calypso_mysites_site_sidebar_item_clicked', {
 			menu_item: postType,

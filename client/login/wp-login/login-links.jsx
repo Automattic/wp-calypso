@@ -39,6 +39,7 @@ export class LoginLinks extends React.Component {
 		resetMagicLoginRequestForm: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
+		isGutenboarding: PropTypes.bool.isRequired,
 	};
 
 	recordBackToWpcomLinkClick = () => {
@@ -224,7 +225,18 @@ export class LoginLinks extends React.Component {
 
 	renderSignUpLink() {
 		// Taken from client/layout/masterbar/logged-out.jsx
-		const { currentQuery, currentRoute, oauth2Client, pathname, translate, wccomFrom } = this.props;
+		const {
+			currentQuery,
+			currentRoute,
+			oauth2Client,
+			pathname,
+			translate,
+			wccomFrom,
+			isGutenboarding,
+			locale,
+		} = this.props;
+
+		const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
 
 		let signupUrl = config( 'signup_url' );
 		const signupFlow = get( currentQuery, 'signup_flow' );
@@ -279,6 +291,10 @@ export class LoginLinks extends React.Component {
 			signupUrl = `${ signupUrl }/wpcc?${ stringify( oauth2Params ) }`;
 		}
 
+		if ( isGutenboarding ) {
+			signupUrl = '/gutenboarding' + langFragment;
+		}
+
 		return (
 			<a
 				href={ signupUrl }
@@ -299,7 +315,9 @@ export class LoginLinks extends React.Component {
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
 				{ this.renderResetPasswordLink() }
-				{ ! isCrowdsignalOAuth2Client( this.props.oauth2Client ) && this.renderBackLink() }
+				{ ! isCrowdsignalOAuth2Client( this.props.oauth2Client ) &&
+					! this.props.isGutenboarding &&
+					this.renderBackLink() }
 			</div>
 		);
 	}

@@ -24,7 +24,10 @@ export default class MediaPage extends AsyncBaseContainer {
 			this.driver,
 			By.css( '.media-library__list-item:not(.is-placeholder)' )
 		);
-		await driverHelper.clickWhenClickable( this.driver, By.css( '.media-library__list-item' ) );
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.media-library__list-item .is-image' )
+		);
 		return await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,
 			By.css( '.media-library__list-item.is-selected' )

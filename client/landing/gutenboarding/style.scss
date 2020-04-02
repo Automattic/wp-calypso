@@ -27,10 +27,32 @@ $admin-sidebar-width-collapsed: 0;
 @import '~@wordpress/block-editor/src/style.scss';
 @import '~@wordpress/format-library/src/style.scss';
 
-.gutenboard__edit-post-layout-content {
-	position: static;
+// Own/Gutenboarding styles
+@import './variables.scss';
+
+
+.gutenboarding__content-editor {
+	// overrides .edit-post-visual-editor
+	padding-top: 0;
+
+	@include break-small {
+		padding-top: $gutenboarding-header-height;
+
+	}
 }
 
-.wp-block {
-	max-width: 1100px; // Overrides default $content-width
+input:disabled {
+	background: var( --color-neutral-0 );
+	border-color: var( --color-neutral-0 );
+	color: var( --color-neutral-20 );
+	opacity: 1;
+	-webkit-text-fill-color: var( --color-neutral-20 );
+
+	&:hover {
+		cursor: default;
+	}
+
+	&::placeholder {
+		color: var( --color-neutral-20 );
+	}
 }

@@ -4,13 +4,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
+import DocumentHead from 'components/data/document-head';
 import ScanHistoryItem from '../../../components/scan-history-item';
 import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
+import Main from 'components/main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 /**
  * Style dependencies
@@ -105,20 +109,27 @@ const scanEntries = [
 ];
 
 class ScanHistoryPage extends Component {
-	state = {
-		filter: filterOptions[ 0 ],
+	getCurrentFilter = () => {
+		const { filter } = this.props;
+
+		if ( filter ) {
+			return filterOptions.find( ( { value } ) => value === filter ) || filterOptions[ 0 ];
+		}
+		return filterOptions[ 0 ];
 	};
 
 	handleOnFilterChange = filter => {
-		// @todo: should we filter in the front end?
-		this.setState( {
-			filter,
-		} );
+		const { siteSlug } = this.props;
+		let filterValue = filter.value;
+		if ( 'all' === filterValue ) {
+			filterValue = '';
+		}
+		page.show( `/scan/history/${ siteSlug }/${ filterValue }` );
 	};
 
 	filteredEntries() {
 		const { logEntries } = this.props;
-		const { value: filter } = this.state.filter;
+		const { value: filter } = this.getCurrentFilter();
 		if ( filter === 'all' ) {
 			return logEntries;
 		}
@@ -127,25 +138,31 @@ class ScanHistoryPage extends Component {
 
 	render() {
 		const logEntries = this.filteredEntries();
+		const { value: filter } = this.getCurrentFilter();
 		return (
-			<section className="history">
+			<Main wideLayout className="history">
+				<DocumentHead title={ translate( 'History' ) } />
+				<SidebarNavigation />
 				<h1 className="history__header">{ translate( 'History' ) }</h1>
-				<p>
+				<p className="history__description">
 					{ translate(
 						'The scanning history contains a record of all previously active threats on your site.'
 					) }
 				</p>
-				<SimplifiedSegmentedControl
-					className="history__filters"
-					options={ filterOptions }
-					onSelect={ this.handleOnFilterChange }
-				/>
+				<div className="history__filters-wrapper">
+					<SimplifiedSegmentedControl
+						className="history__filters"
+						options={ filterOptions }
+						onSelect={ this.handleOnFilterChange }
+						initialSelected={ filter }
+					/>
+				</div>
 				<div className="history__entries">
 					{ logEntries.map( entry => (
 						<ScanHistoryItem entry={ entry } key={ entry.id } />
 					) ) }
 				</div>
-			</section>
+			</Main>
 		);
 	}
 }
@@ -158,6 +175,7 @@ export default connect( state => {
 
 	return {
 		siteId,
+		siteSlug: getSelectedSiteSlug( state ),
 		logEntries: scanHistoryLogEntries,
 	};
 } )( ScanHistoryPage );

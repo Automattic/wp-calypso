@@ -29,6 +29,7 @@ import {
 import {
 	isDomainRegistration,
 	isDomainTransfer,
+	isGoogleApps,
 	isConciergeSession,
 	isJetpackPlan,
 	isJetpackProduct,
@@ -328,7 +329,7 @@ class PurchaseMeta extends Component {
 		}
 
 		if (
-			( isDomainRegistration( purchase ) || isPlan( purchase ) ) &&
+			( isDomainRegistration( purchase ) || isPlan( purchase ) || isGoogleApps( purchase ) ) &&
 			isRechargeable( purchase ) &&
 			! isExpired( purchase )
 		) {
@@ -365,6 +366,7 @@ class PurchaseMeta extends Component {
 								planName={ site.plan.product_name_short }
 								siteDomain={ site.domain }
 								purchase={ purchase }
+								toggleSource="manage-purchase"
 							/>
 						</span>
 					) }

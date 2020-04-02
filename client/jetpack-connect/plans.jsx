@@ -31,7 +31,7 @@ import { getProductBySlug } from 'state/products-list/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
 import { JPC_PATH_PLANS } from './constants';
-import { mc } from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
@@ -146,7 +146,7 @@ class Plans extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_plans_submit_free', {
 			user: this.props.userId,
 		} );
-		mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_free' );
+		bumpStat( 'calypso_jpc_plan_selection', 'jetpack_free' );
 
 		this.redirectToCalypso();
 	}
@@ -166,7 +166,7 @@ class Plans extends Component {
 			user: this.props.userId,
 			product_slug: cartItem.product_slug,
 		} );
-		mc.bumpStat( 'calypso_jpc_plan_selection', cartItem.product_slug );
+		bumpStat( 'calypso_jpc_plan_selection', cartItem.product_slug );
 
 		addItem( cartItem );
 		this.props.completeFlow();

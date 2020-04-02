@@ -11,19 +11,16 @@ import isPrivateSite from 'state/selectors/is-private-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
-import ProxiedImage, { RenderedComponent } from './proxied-image';
+import ProxiedImage, { ProxiedImageProps, RenderedComponent } from './proxied-image';
 import { mediaURLToProxyConfig } from 'lib/media/utils';
 
-export interface MediaFileProps {
+export interface MediaFileProps extends ProxiedImageProps {
 	src: string;
 
 	component: RenderedComponent;
 	proxiedComponent?: RenderedComponent;
-	filePath: string;
-	query: string;
-	siteSlug: string;
+
 	onLoad: () => any;
-	placeholder: React.ReactNode | null;
 	useProxy: boolean;
 	dispatch: any;
 }
@@ -35,6 +32,7 @@ const MediaFile: React.FC< MediaFileProps > = function MediaFile( {
 	siteSlug,
 	useProxy = false,
 	placeholder = null,
+	maxSize,
 	dispatch,
 	component: Component,
 	proxiedComponent,
@@ -48,6 +46,7 @@ const MediaFile: React.FC< MediaFileProps > = function MediaFile( {
 				query={ query }
 				component={ proxiedComponent || Component }
 				placeholder={ placeholder }
+				maxSize={ maxSize }
 				{ ...rest }
 			/>
 		);

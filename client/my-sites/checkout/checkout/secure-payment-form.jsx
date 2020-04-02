@@ -11,7 +11,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import { abtest } from 'lib/abtest';
 import notices from 'notices';
 import EmptyContent from 'components/empty-content';
 import CreditsPaymentBox from './credits-payment-box';
@@ -218,7 +218,7 @@ export class SecurePaymentForm extends Component {
 			return;
 		}
 
-		if ( ! config.isEnabled( 'coming-soon' ) ) {
+		if ( 'variant' !== abtest( 'ATPrivacy' ) ) {
 			// Until Atomic sites support being private / unlaunched, set them to public on upgrade
 			debug( 'Setting site to public because it is an Atomic plan' );
 			const response = await this.props.saveSiteSettings( selectedSiteId, {
@@ -508,6 +508,7 @@ export class SecurePaymentForm extends Component {
 			case 'bancontact':
 			case 'eps':
 			case 'giropay':
+			case 'id_wallet':
 			case 'ideal':
 			case 'netbanking':
 			case 'p24':

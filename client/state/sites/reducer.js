@@ -7,6 +7,7 @@ import { omit, merge, get, includes, reduce, isEqual, stubFalse, stubTrue } from
  * Internal dependencies
  */
 import { plans } from './plans/reducer';
+import { products } from './products/reducer';
 import connection from './connection/reducer';
 import domains from './domains/reducer';
 import guidedTransfer from './guided-transfer/reducer';
@@ -383,6 +384,7 @@ export default combineReducers( {
 	items,
 	mediaStorage,
 	plans,
+	products,
 	guidedTransfer,
 	monitor,
 	vouchers,

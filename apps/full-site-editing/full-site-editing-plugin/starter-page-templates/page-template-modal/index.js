@@ -46,7 +46,6 @@ class PageTemplateModal extends Component {
 		isLoading: false,
 		previewedTemplate: null,
 		error: null,
-		isOpen: false,
 	};
 
 	// Extract titles for faster lookup.
@@ -133,7 +132,6 @@ class PageTemplateModal extends Component {
 		if ( ! state.previewedTemplate && ! isEmpty( props.templates ) ) {
 			// Show the modal, and select the first template automatically.
 			return {
-				isOpen: true,
 				previewedTemplate: PageTemplateModal.getDefaultSelectedTemplate( props ),
 			};
 		}
@@ -141,15 +139,15 @@ class PageTemplateModal extends Component {
 	}
 
 	componentDidMount() {
-		if ( this.state.isOpen ) {
+		if ( this.props.isOpen ) {
 			this.trackCurrentView();
 		}
 	}
 
-	componentDidUpdate( prevProps, prevState ) {
+	componentDidUpdate( prevProps ) {
 		// Only track when the modal is first displayed
 		// and if it didn't already happen during componentDidMount.
-		if ( ! prevState.isOpen && this.state.isOpen ) {
+		if ( ! prevProps.isOpen && this.props.isOpen ) {
 			this.trackCurrentView();
 		}
 
@@ -200,7 +198,7 @@ class PageTemplateModal extends Component {
 		// and reset the template if so.
 		if ( 'blank' === slug ) {
 			this.props.insertTemplate( '', [] );
-			this.setState( { isOpen: false } );
+			this.props.setIsOpen( false );
 			return;
 		}
 
@@ -215,7 +213,7 @@ class PageTemplateModal extends Component {
 		// Skip inserting if this is not a blank template
 		// and there's nothing to insert.
 		if ( ! blocks || ! blocks.length ) {
-			this.setState( { isOpen: false } );
+			this.props.setIsOpen( false );
 			return;
 		}
 
@@ -228,14 +226,15 @@ class PageTemplateModal extends Component {
 		// Make sure all blocks use local assets before inserting.
 		this.maybePrefetchAssets( blocks )
 			.then( blocksWithAssets => {
+				this.setState( { isLoading: false } );
 				// Don't insert anything if the user clicked Cancel/Close
 				// before we loaded everything.
-				if ( ! this.state.isOpen ) {
+				if ( ! this.props.isOpen ) {
 					return;
 				}
 
 				this.props.insertTemplate( title, blocksWithAssets );
-				this.setState( { isOpen: false } );
+				this.props.setIsOpen( false );
 			} )
 			.catch( error => {
 				this.setState( {
@@ -358,8 +357,8 @@ class PageTemplateModal extends Component {
 	};
 
 	render() {
-		const { previewedTemplate, isOpen, isLoading } = this.state;
-		const { isPromptedFromSidebar, hidePageTitle } = this.props;
+		const { previewedTemplate, isLoading } = this.state;
+		const { isPromptedFromSidebar, hidePageTitle, isOpen } = this.props;
 
 		if ( ! isOpen ) {
 			return null;
@@ -507,7 +506,9 @@ export const PageTemplatesPlugin = compose(
 	withSelect( select => {
 		const getMeta = () => select( 'core/editor' ).getEditedPostAttribute( 'meta' );
 		const { _starter_page_template } = getMeta();
+		const isOpen = select( 'automattic/starter-page-layouts' ).isOpen();
 		return {
+			isOpen,
 			getMeta,
 			_starter_page_template,
 			postContentBlock: select( 'core/editor' )
@@ -519,7 +520,9 @@ export const PageTemplatesPlugin = compose(
 	} ),
 	withDispatch( ( dispatch, ownProps ) => {
 		const editorDispatcher = dispatch( 'core/editor' );
+		const { setIsOpen } = dispatch( 'automattic/starter-page-layouts' );
 		return {
+			setIsOpen,
 			saveTemplateChoice: slug => {
 				// Save selected template slug in meta.
 				const currentMeta = ownProps.getMeta();

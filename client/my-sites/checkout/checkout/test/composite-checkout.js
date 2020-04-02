@@ -97,10 +97,32 @@ describe( 'CompositeCheckout', () => {
 
 		const store = applyMiddleware( thunk )( createStore )( () => {
 			return {
-				plans: { items: [] },
+				plans: {
+					items: [
+						{
+							product_id: 1009,
+							product_name: 'Plan',
+							meta: null,
+							prices: {},
+							path_slug: 'personal',
+							product_slug: 'personal-bundle',
+							product_type: 'bundle',
+							currency_code: 'USD',
+						},
+					],
+				},
 				sites: { items: {} },
 				ui: { selectedSiteId: 123 },
-				productsList: { items: [] },
+				productsList: {
+					items: {
+						domain_map: {
+							product_id: 5,
+							product_name: 'Product',
+							product_slug: 'domain_map',
+							prices: {},
+						},
+					},
+				},
 				countries: { payments: countryList, domains: countryList },
 			};
 		} );

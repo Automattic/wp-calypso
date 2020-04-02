@@ -43,6 +43,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'is_redirect',
 	'is_wpcom_atomic',
 	'is_wpcom_store',
+	'is_wpforteams_site',
 	'woocommerce_is_active',
 	'jetpack_frame_nonce',
 	'jetpack_version',

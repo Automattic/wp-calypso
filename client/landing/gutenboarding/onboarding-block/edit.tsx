@@ -12,26 +12,28 @@ import { Redirect, Switch, Route } from 'react-router-dom';
 import { STORE_KEY } from '../stores/onboard';
 import { SITE_STORE } from '../stores/site';
 import DesignSelector from './design-selector';
-import SignupForm from '../components/signup-form';
-import LoginForm from './login-form';
 import CreateSite from './create-site';
 import { Attributes } from './types';
-import { Step, usePath } from '../path';
+import { Step, usePath, useNewQueryParam } from '../path';
 import AcquireIntent from './acquire-intent';
 import StylePreview from './style-preview';
 import { isEnabled } from '../../../config';
 
+import './colors.scss';
 import './style.scss';
 
 const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
 	const { siteVertical, selectedDesign } = useSelect( select => select( STORE_KEY ).getState() );
 	const isCreatingSite = useSelect( select => select( SITE_STORE ).isFetchingSite() );
+	const replaceHistory = useNewQueryParam();
 
 	const makePath = usePath();
 
 	return (
-		<>
-			{ isCreatingSite && <Redirect push to={ makePath( Step.CreateSite ) } /> }
+		<div className="onboarding-block" data-vertical={ siteVertical?.label }>
+			{ isCreatingSite && (
+				<Redirect push={ replaceHistory ? undefined : true } to={ makePath( Step.CreateSite ) } />
+			) }
 			<Switch>
 				<Route exact path={ makePath( Step.IntentGathering ) }>
 					<AcquireIntent />
@@ -57,19 +59,11 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 					) }
 				</Route>
 
-				<Route path={ makePath( Step.Signup ) }>
-					<SignupForm onRequestClose={ () => undefined } />;
-				</Route>
-
-				<Route path={ makePath( Step.Login ) }>
-					<LoginForm />;
-				</Route>
-
 				<Route path={ makePath( Step.CreateSite ) }>
 					<CreateSite />
 				</Route>
 			</Switch>
-		</>
+		</div>
 	);
 };
 

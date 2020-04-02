@@ -299,7 +299,7 @@ class NameServers extends React.Component {
 				isPlaceholder={ this.isLoading() }
 				path={ domainManagementDns( this.props.selectedSite.slug, this.props.selectedDomainName ) }
 			>
-				{ this.props.translate( 'DNS Records' ) }
+				{ this.props.translate( 'DNS records' ) }
 			</VerticalNavItem>
 		);
 	}

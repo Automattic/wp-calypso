@@ -63,6 +63,11 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
 			),
 			supportUrl: null,
 		},
+		SITE_NOT_PUBLIC: {
+			title: translate( 'Make your site public' ),
+			description: translate( 'Only you and those you invite can view your site.' ),
+			supportUrl: null,
+		},
 		NON_ADMIN_USER: {
 			title: translate( 'Site administrator only' ),
 			description: translate( 'Only the site administrators can use this feature.' ),
@@ -261,6 +266,10 @@ function getCardHeading( context: string | null, translate: LocalizeProps[ 'tran
 		case 'hosting':
 			return hasLocalizedText( "To activate hosting access you'll need to:" )
 				? translate( "To activate hosting access you'll need to:" )
+				: defaultCopy;
+		case 'performance':
+			return hasLocalizedText( "To activate Performance Features you'll need to:" )
+				? translate( "To activate Performance Features you'll need to:" )
 				: defaultCopy;
 		default:
 			return hasLocalizedText( "To continue you'll need to:" )

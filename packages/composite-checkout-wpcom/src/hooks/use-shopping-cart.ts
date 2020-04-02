@@ -557,9 +557,14 @@ function useInitializeCartFromServer(
 			} )
 			.then( response => {
 				debug( 'initialized cart is', response );
+				const initialResponseCart = processRawResponse( response );
 				hookDispatch( {
 					type: 'RECEIVE_INITIAL_RESPONSE_CART',
-					initialResponseCart: processRawResponse( response ),
+					initialResponseCart,
+				} );
+				onEvent?.( {
+					type: 'CART_INIT_COMPLETE',
+					payload: initialResponseCart,
 				} );
 			} )
 			.catch( error => {

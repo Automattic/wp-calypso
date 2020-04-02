@@ -442,12 +442,24 @@ class ManagePurchase extends Component {
 		);
 	}
 
+	isDomainsLoading( props ) {
+		const { purchase, hasLoadedDomains } = props;
+		if ( purchase ) {
+			if ( ! isDomainProduct( purchase ) || isDomainTransfer( purchase ) ) {
+				return false;
+			}
+		}
+
+		return ! hasLoadedDomains;
+	}
+
 	renderPurchaseDetail() {
-		if ( isDataLoading( this.props ) || ! this.props.hasLoadedDomains ) {
+		if ( isDataLoading( this.props ) || this.isDomainsLoading( this.props ) ) {
 			return this.renderPlaceholder();
 		}
 
 		const { purchase, siteId, translate } = this.props;
+
 		const classes = classNames( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
 			'is-personal': isPersonal( purchase ),

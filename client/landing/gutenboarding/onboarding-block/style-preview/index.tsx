@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
-import { Button } from '@wordpress/components';
+import React, { useCallback, useState } from 'react';
 import { useI18n } from '@automattic/react-i18n';
-import { ValuesType } from 'utility-types';
+import { useSelect, useDispatch } from '@wordpress/data';
+import { Button } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -13,19 +13,48 @@ import Preview from './preview';
 import Link from '../../components/link';
 import { usePath, Step } from '../../path';
 import ViewportSelect from './viewport-select';
-import FontSelect, { fontPairings } from './font-select';
+import FontSelect from './font-select';
 import { Title, SubTitle } from '../../components/titles';
 import * as T from './types';
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { USER_STORE } from '../../stores/user';
+import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
+import SignupForm from '../../components/signup-form';
 
 import './style.scss';
 
 const StylePreview: React.FunctionComponent = () => {
+	const { selectedDesign } = useSelect( select => select( ONBOARD_STORE ).getState() );
+
+	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
+
+	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
+
+	const hasSelectedDesign = !! selectedDesign;
+
 	const { __: NO__ } = useI18n();
 	const makePath = usePath();
 	const [ selectedViewport, setSelectedViewport ] = React.useState< T.Viewport >( 'desktop' );
-	const [ selectedFonts, setSelectedFonts ] = React.useState< ValuesType< typeof fontPairings > >(
-		fontPairings[ 0 ]
+
+	const { createSite } = useDispatch( ONBOARD_STORE );
+
+	const freeDomainSuggestion = useFreeDomainSuggestion();
+
+	const handleSignup = () => {
+		setShowSignupDialog( true );
+	};
+
+	const closeAuthDialog = () => {
+		setShowSignupDialog( false );
+	};
+
+	const handleCreateSite = useCallback(
+		( username: string, bearerToken?: string ) => {
+			createSite( username, freeDomainSuggestion, bearerToken );
+		},
+		[ createSite, freeDomainSuggestion ]
 	);
+
 	return (
 		<div className="style-preview">
 			<div className="style-preview__header">
@@ -38,26 +67,27 @@ const StylePreview: React.FunctionComponent = () => {
 					<Link isLink to={ makePath( Step.DesignSelection ) }>
 						{ NO__( 'Choose another design' ) }
 					</Link>
-					<Button
-						isPrimary
-						onClick={ () => {
-							window.alert( 'Not implemented!' );
-						} }
-					>
-						{ NO__( 'Continue' ) }
-					</Button>
+					{ hasSelectedDesign && (
+						<Button
+							className="style-preview__actions-continue-button"
+							isPrimary
+							isLarge
+							onClick={ () =>
+								currentUser ? handleCreateSite( currentUser.username ) : handleSignup()
+							}
+						>
+							{ NO__( 'Continue' ) }
+						</Button>
+					) }
 				</div>
 			</div>
 			<div className="style-preview__content">
-				<FontSelect selected={ selectedFonts } onSelect={ setSelectedFonts } />
-				<Preview fonts={ selectedFonts } viewport={ selectedViewport } />
+				<FontSelect />
+				<Preview viewport={ selectedViewport } />
 			</div>
+			{ showSignupDialog && <SignupForm onRequestClose={ closeAuthDialog } /> }
 		</div>
 	);
 };
 
 export default StylePreview;
-
-interface ViewProps {
-	isSelected: boolean;
-}

@@ -18,31 +18,24 @@ import GridRow from '../../components/grid-row';
 import Button from '../../components/button';
 import PaymentLogo from './payment-logo';
 import { createStripePaymentMethod, showStripeModalAuth } from '../stripe';
-import {
-	useSelect,
-	useDispatch,
-	useMessages,
-	useLineItems,
-	renderDisplayValueMarkdown,
-	useEvents,
-} from '../../public-api';
+import { useMessages, useLineItems, renderDisplayValueMarkdown, useEvents } from '../../public-api';
 import { sprintf, useLocalize } from '../localize';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import Spinner from '../../components/spinner';
 import { useFormStatus } from '../form-status';
+import { registerStore, useSelect, useDispatch } from '../../lib/registry';
 
 const debug = debugFactory( 'composite-checkout:stripe-payment-method' );
 
-export function createStripeMethod( {
+export function createStripePaymentMethodStore( {
 	getCountry,
 	getPostalCode,
 	getSubdivisionCode,
-	registerStore,
-	stripe,
-	stripeConfiguration,
+	getSiteId,
+	getDomainDetails,
 	submitTransaction,
 } ) {
-	debug( 'creating a new stripe payment method' );
+	debug( 'creating a new stripe payment method store' );
 	const actions = {
 		changeBrand( payload ) {
 			return { type: 'BRAND_SET', payload };
@@ -218,11 +211,19 @@ export function createStripeMethod( {
 				return createStripePaymentMethodToken( action.payload );
 			},
 			STRIPE_TRANSACTION_BEGIN( action ) {
-				return submitTransaction( action.payload );
+				return submitTransaction( {
+					...action.payload,
+					siteId: getSiteId(),
+					domainDetails: getDomainDetails(),
+				} );
 			},
 		},
 	} );
 
+	return { ...store, actions, selectors };
+}
+
+export function createStripeMethod( { store, stripe, stripeConfiguration } ) {
 	return {
 		id: 'stripe-card',
 		label: <CreditCardLabel />,
@@ -233,18 +234,18 @@ export function createStripeMethod( {
 		inactiveContent: <StripeSummary />,
 		getAriaLabel: localize => localize( 'Credit Card' ),
 		isCompleteCallback: () => {
-			const cardholderName = selectors.getCardholderName( store.getState() );
-			const errors = selectors.getCardDataErrors( store.getState() );
-			const incompleteFieldKeys = selectors.getIncompleteFieldKeys( store.getState() );
+			const cardholderName = store.selectors.getCardholderName( store.getState() );
+			const errors = store.selectors.getCardDataErrors( store.getState() );
+			const incompleteFieldKeys = store.selectors.getIncompleteFieldKeys( store.getState() );
 			const areThereErrors = Object.keys( errors ).some( errorKey => errors[ errorKey ] );
 			if ( ! cardholderName?.value.length ) {
 				// Touch the field so it displays a validation error
-				store.dispatch( actions.changeCardholderName( '' ) );
+				store.dispatch( store.actions.changeCardholderName( '' ) );
 			}
 			if ( incompleteFieldKeys.length > 0 ) {
 				// Show "this field is required" for each incomplete field
 				incompleteFieldKeys.map( key =>
-					store.dispatch( actions.setCardDataError( key, 'This field is required' ) )
+					store.dispatch( store.actions.setCardDataError( key, 'This field is required' ) )
 				); // TODO: localize this message
 			}
 			if ( areThereErrors || ! cardholderName?.value.length || incompleteFieldKeys.length > 0 ) {

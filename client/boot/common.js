@@ -30,10 +30,12 @@ import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
 import { init as pushNotificationsInit } from 'state/push-notifications/actions';
 import { setSupportSessionReduxStore } from 'lib/user/support-user-interop';
 import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import getSuperProps from 'lib/analytics/super-props';
 import { getSiteFragment, normalize } from 'lib/route';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
 import { setCurrentUser } from 'state/current-user/actions';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { initConnection as initHappychatConnection } from 'state/happychat/connection/actions';
 import { requestHappychatEligibility } from 'state/happychat/user/actions';
 import { getHappychatAuth } from 'state/happychat/utils';
@@ -47,7 +49,7 @@ import initialReducer from 'state/reducer';
 import { getInitialState, persistOnChange, loadAllState } from 'state/initial-state';
 import detectHistoryNavigation from 'lib/detect-history-navigation';
 import userFactory from 'lib/user';
-import { getUrlParts } from 'lib/url/url-parts';
+import { getUrlParts, isOutsideCalypso } from 'lib/url';
 import { setStore } from 'state/redux-store';
 
 const debug = debugFactory( 'calypso' );
@@ -92,6 +94,13 @@ const setupContextMiddleware = reduxStore => {
 			return;
 		}
 
+		// Some paths live outside of Calypso and should be opened separately
+		// Examples: /support, /forums
+		if ( isOutsideCalypso( context.pathname ) ) {
+			window.location.href = context.pathname;
+			return;
+		}
+
 		next();
 	} );
 
@@ -102,9 +111,6 @@ const setupContextMiddleware = reduxStore => {
 		next();
 	} );
 };
-
-// We need to require sections to load React with i18n mixin
-const loadSectionsMiddleware = () => setupRoutes();
 
 const oauthTokenMiddleware = () => {
 	if ( config.isEnabled( 'oauth' ) ) {
@@ -199,13 +205,51 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 };
 
+function setupErrorLogger( reduxStore ) {
+	if ( ! config.isEnabled( 'catch-js-errors' ) ) {
+		return;
+	}
+
+	const errorLogger = new Logger();
+
+	// Save errorLogger to a singleton for use in arbitrary logging.
+	require( 'lib/catch-js-errors/log' ).registerLogger( errorLogger );
+
+	// Save data to JS error logger
+	errorLogger.saveDiagnosticData( {
+		user_id: getCurrentUserId( reduxStore.getState() ),
+		calypso_env: config( 'env_id' ),
+	} );
+
+	errorLogger.saveDiagnosticReducer( function() {
+		const state = reduxStore.getState();
+		return {
+			blog_id: getSelectedSiteId( state ),
+			calypso_section: getSectionName( state ),
+		};
+	} );
+
+	errorLogger.saveDiagnosticReducer( () => ( { tests: getSavedVariations() } ) );
+
+	analytics.on( 'record-event', ( eventName, lastTracksEvent ) =>
+		errorLogger.saveExtraData( { lastTracksEvent } )
+	);
+
+	page( '*', function( context, next ) {
+		errorLogger.saveNewPath(
+			context.canonicalPath.replace( getSiteFragment( context.canonicalPath ), ':siteId' )
+		);
+		next();
+	} );
+}
+
 const setupMiddlewares = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso setup middlewares.' );
 
 	installPerfmonPageHandlers();
 	setupContextMiddleware( reduxStore );
 	oauthTokenMiddleware();
-	loadSectionsMiddleware();
+	setupRoutes();
 	setRouteMiddleware();
 	clearNoticesMiddleware();
 	unsavedFormsMiddleware();
@@ -213,39 +257,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	// The analytics module requires user (when logged in) and superProps objects. Inject these here.
 	analytics.initialize( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
 
-	// Render Layout only for non-isomorphic sections.
-	// Isomorphic sections will take care of rendering their Layout last themselves.
-	if ( ! document.getElementById( 'primary' ) ) {
-		renderLayout( reduxStore );
-
-		if ( config.isEnabled( 'catch-js-errors' ) ) {
-			const errorLogger = new Logger();
-			//Save errorLogger to a singleton for use in arbitrary logging.
-			require( 'lib/catch-js-errors/log' ).registerLogger( errorLogger );
-			//Save data to JS error logger
-			errorLogger.saveDiagnosticData( {
-				user_id: currentUser.get().ID,
-				calypso_env: config( 'env_id' ),
-			} );
-			errorLogger.saveDiagnosticReducer( function() {
-				const state = reduxStore.getState();
-				return {
-					blog_id: getSelectedSiteId( state ),
-					calypso_section: getSectionName( state ),
-				};
-			} );
-			errorLogger.saveDiagnosticReducer( () => ( { tests: getSavedVariations() } ) );
-			analytics.on( 'record-event', ( eventName, eventProperties ) =>
-				errorLogger.saveExtraData( { lastTracksEvent: eventProperties } )
-			);
-			page( '*', function( context, next ) {
-				errorLogger.saveNewPath(
-					context.canonicalPath.replace( getSiteFragment( context.canonicalPath ), ':siteId' )
-				);
-				next();
-			} );
-		}
-	}
+	setupErrorLogger( reduxStore );
 
 	// If `?sb` or `?sp` are present on the path set the focus of layout
 	// This can be removed when the legacy version is retired.
@@ -279,7 +291,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		}
 
 		// Bump general stat tracking overall Newdash usage
-		analytics.mc.bumpStat( { newdash_pageviews: 'route' } );
+		bumpStat( { newdash_pageviews: 'route' } );
 
 		next();
 	} );
@@ -369,7 +381,7 @@ function renderLayout( reduxStore ) {
 	debug( 'Main layout rendered.' );
 }
 
-const boot = ( currentUser, router ) => {
+const boot = ( currentUser, registerRoutes ) => {
 	utils();
 	loadAllState().then( () => {
 		const initialState = getInitialState( initialReducer );
@@ -380,17 +392,24 @@ const boot = ( currentUser, router ) => {
 		configureReduxStore( currentUser, reduxStore );
 		setupMiddlewares( currentUser, reduxStore );
 		detectHistoryNavigation.start();
-		if ( router ) {
-			router();
+		if ( registerRoutes ) {
+			registerRoutes();
 		}
+
+		// Render initial `<Layout>` for non-isomorphic sections.
+		// Isomorphic sections will take care of rendering their `<Layout>` themselves.
+		if ( ! document.getElementById( 'primary' ) ) {
+			renderLayout( reduxStore );
+		}
+
 		page.start( { decodeURLComponents: false } );
 	} );
 };
 
-export const bootApp = ( appName, router ) => {
+export const bootApp = ( appName, registerRoutes ) => {
 	const user = userFactory();
 	user.initialize().then( () => {
 		debug( `Starting ${ appName }. Let's do this.` );
-		boot( user, router );
+		boot( user, registerRoutes );
 	} );
 };

@@ -382,6 +382,7 @@ export class ContactDetailsFormFields extends Component {
 						},
 						{
 							needsChildRef: true,
+							customErrorMessage: this.props.contactDetailsErrors?.organization,
 						}
 					) }
 				</div>

@@ -71,6 +71,7 @@ export default router => {
 				`/log-in/:socialService(google|apple)/callback/${ lang }`,
 				`/log-in/:isJetpack(jetpack)/${ lang }`,
 				`/log-in/:isJetpack(jetpack)/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
+				`/log-in/:isGutenboarding(gutenboarding)/${ lang }`,
 				`/log-in/${ lang }`,
 			],
 			redirectJetpack,

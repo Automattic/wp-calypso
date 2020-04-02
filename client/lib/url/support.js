@@ -33,6 +33,7 @@ export const DOMAIN_EXPIRATION = `${ root }/domains/domain-expiration/`;
 export const DOMAIN_EXPIRATION_REDEMPTION = `${ root }/domains/domain-expiration/#renewing-a-domain-in-the-redemption-period`;
 export const DOMAIN_RECENTLY_REGISTERED = `${ root }/domains/register-domain/#waiting-for-domain-changes`;
 export const DOMAIN_PRICING_AND_AVAILABLE_TLDS = `${ root }/domains/domain-pricing-and-available-tlds`;
+export const INCOMING_DOMAIN_TRANSFER_STATUSES = `${ root }/move-domain/incoming-domain-transfer/#checking-your-transfer-status-and-failed-transfers`;
 export const INCOMING_DOMAIN_TRANSFER_STATUSES_PENDING_CONFIRMATION = `${ root }/incoming-domain-transfer/status-and-failed-transfers/#confirmation`;
 export const INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS = `${ root }/incoming-domain-transfer/status-and-failed-transfers/#pending`;
 export const INCOMING_DOMAIN_TRANSFER_STATUSES_FAILED = `${ root }/incoming-domain-transfer/status-and-failed-transfers/#failed`;

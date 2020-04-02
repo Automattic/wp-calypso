@@ -226,6 +226,15 @@
 	.composing__publish-confirmation .form-toggle__label-content {
 		font-weight: 600;
 	}
+
+	.eligibility-warnings {
+		margin-top: 0;
+		margin-bottom: 16px;
+
+		.is-primary {
+			float: none;
+		}
+	}
 }
 
 .site-settings__analytics-settings,

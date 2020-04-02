@@ -219,7 +219,7 @@ export default class EditorPage extends AsyncBaseContainer {
 		return await driverHelper.waitTillNotPresent(
 			this.driver,
 			by.css( '.editor-simple-payments-modal' ),
-			this.explicitWaitMS * 3
+			this.explicitWaitMS * 7
 		);
 	}
 

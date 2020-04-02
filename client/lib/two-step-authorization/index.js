@@ -11,6 +11,7 @@ const debug = debugFactory( 'calypso:two-step-authorization' );
  * Internal Dependencies
  */
 import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import config from 'config';
 import emitter from 'lib/mixins/emitter';
 import userSettings from 'lib/user-settings';
@@ -34,7 +35,7 @@ function TwoStepAuthorization() {
 	this.smsResendThrottled = false;
 
 	this.bumpMCStat = function( eventAction ) {
-		analytics.mc.bumpStat( '2fa', eventAction );
+		bumpStat( '2fa', eventAction );
 		analytics.tracks.recordEvent( 'calypso_login_twostep_authorize', {
 			event_action: eventAction,
 		} );

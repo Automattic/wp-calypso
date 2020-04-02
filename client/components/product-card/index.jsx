@@ -46,19 +46,6 @@ function ProductCard( {
 						<h3 className="product-card__title">{ title }</h3>
 					</div>
 				) }
-				{ ( subtitle || hasPriceGroup ) && (
-					<div className="product-card__header-secondary">
-						{ subtitle && <div className="product-card__subtitle">{ subtitle }</div> }
-						{ ! subtitle && hasPriceGroup && (
-							<ProductCardPriceGroup
-								billingTimeFrame={ billingTimeFrame }
-								currencyCode={ currencyCode }
-								discountedPrice={ discountedPrice }
-								fullPrice={ fullPrice }
-							/>
-						) }
-					</div>
-				) }
 			</div>
 			{ description && (
 				<div className="product-card__description">
@@ -66,6 +53,19 @@ function ProductCard( {
 				</div>
 			) }
 			{ children }
+			{ ( subtitle || hasPriceGroup ) && (
+				<div className="product-card__secondary">
+					{ subtitle && <div className="product-card__subtitle">{ subtitle }</div> }
+					{ ! subtitle && hasPriceGroup && (
+						<ProductCardPriceGroup
+							billingTimeFrame={ billingTimeFrame }
+							currencyCode={ currencyCode }
+							discountedPrice={ discountedPrice }
+							fullPrice={ fullPrice }
+						/>
+					) }
+				</div>
+			) }
 		</Card>
 	);
 }
