@@ -23,6 +23,7 @@ import { managePurchase } from 'me/purchases/paths';
 import { isValidFeatureKey } from 'lib/plans/features-list';
 import { JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
 import { persistSignupDestination, retrieveSignupDestination } from 'signup/utils';
+import { abtest } from 'lib/abtest';
 
 export function getThankYouPageUrl( {
 	siteSlug,
@@ -204,7 +205,9 @@ function getRedirectUrlForConciergeNudge( { pendingOrReceiptId, cart, siteSlug, 
 		! previousRoute?.includes( `/checkout/${ siteSlug }/offer-plan-upgrade` )
 	) {
 		if ( hasPersonalPlan( cart ) ) {
-			return `/checkout/${ siteSlug }/offer-plan-upgrade/premium/${ pendingOrReceiptId }`;
+			if ( 'variantShowPlanBump' === abtest( 'showPremiumPlanBump' ) ) {
+				return `/checkout/${ siteSlug }/offer-plan-upgrade/premium/${ pendingOrReceiptId }`;
+			}
 		}
 
 		// A user just purchased one of the qualifying plans

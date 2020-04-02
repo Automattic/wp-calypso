@@ -94,6 +94,7 @@ import {
 } from 'signup/utils';
 import { isExternal } from 'lib/url';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -464,7 +465,9 @@ export class Checkout extends React.Component {
 			! previousRoute.includes( `/checkout/${ selectedSiteSlug }/offer-plan-upgrade` )
 		) {
 			if ( hasPersonalPlan( cart ) ) {
-				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ pendingOrReceiptId }`;
+				if ( 'variantShowPlanBump' === abtest( 'showPremiumPlanBump' ) ) {
+					return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ pendingOrReceiptId }`;
+				}
 			}
 
 			// A user just purchased one of the qualifying plans
