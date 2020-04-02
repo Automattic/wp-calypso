@@ -34,7 +34,7 @@ class AutoRenewPaymentMethodDialog extends Component {
 			{
 				action: 'add',
 				label: translate( 'Add a payment method' ),
-				onClick: this.props.onConfirm,
+				onClick: this.props.onAddClick,
 				isPrimary: true,
 			},
 		];

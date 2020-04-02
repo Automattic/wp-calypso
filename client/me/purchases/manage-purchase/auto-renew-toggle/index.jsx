@@ -70,9 +70,33 @@ class AutoRenewToggle extends Component {
 		} );
 	};
 
-	onCloseAutoRenewPaymentMethodDialog = () => {
+	closeAutoRenewPaymentMethodDialog() {
 		this.setState( {
 			showPaymentMethodDialog: false,
+		} );
+	}
+
+	goToUpdatePaymentMethod = () => {
+		const { purchase, siteSlug, productSlug, isAtomicSite, toggleSource } = this.props;
+		this.closeAutoRenewPaymentMethodDialog();
+
+		this.props.recordTracksEvent( 'calypso_auto_renew_no_payment_method_dialog_add_click', {
+			product_slug: productSlug,
+			is_atomic: isAtomicSite,
+			toggle_source: toggleSource,
+		} );
+
+		page( getEditCardDetailsPath( siteSlug, purchase ) );
+	};
+
+	onCloseAutoRenewPaymentMethodDialog = () => {
+		const { productSlug, isAtomicSite, toggleSource } = this.props;
+		this.closeAutoRenewPaymentMethodDialog();
+
+		this.props.recordTracksEvent( 'calypso_auto_renew_no_payment_method_dialog_close', {
+			product_slug: productSlug,
+			is_atomic: isAtomicSite,
+			toggle_source: toggleSource,
 		} );
 	};
 
@@ -170,12 +194,6 @@ class AutoRenewToggle extends Component {
 		return isEnabled ? translate( 'Auto-renew (on)' ) : translate( 'Auto-renew (off)' );
 	}
 
-	goToUpdatePaymentMethod = () => {
-		const { purchase, siteSlug } = this.props;
-		this.onCloseAutoRenewPaymentMethodDialog();
-		page( getEditCardDetailsPath( siteSlug, purchase ) );
-	};
-
 	shouldRender( purchase ) {
 		return ! isExpired( purchase ) && ! isOneTimePurchase( purchase );
 	}
@@ -211,7 +229,7 @@ class AutoRenewToggle extends Component {
 					isVisible={ this.state.showPaymentMethodDialog }
 					purchase={ purchase }
 					onClose={ this.onCloseAutoRenewPaymentMethodDialog }
-					onConfirm={ this.goToUpdatePaymentMethod }
+					onAddClick={ this.goToUpdatePaymentMethod }
 				/>
 			</>
 		);
