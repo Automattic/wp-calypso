@@ -138,6 +138,7 @@ class MediaSettingsPerformance extends Component {
 					title={ translate(
 						'Host video right on your site! Upgrade to Jetpack Premium to get started'
 					) }
+					jetpack={ true }
 				/>
 			)
 		);

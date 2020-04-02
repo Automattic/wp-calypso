@@ -56,6 +56,7 @@ class JetpackAds extends Component {
 				feature={ FEATURE_WORDADS_INSTANT }
 				plan={ PLAN_JETPACK_PREMIUM }
 				title={ translate( 'Enable WordAds by upgrading to Jetpack Premium' ) }
+				jetpack={ true }
 			/>
 		);
 	}

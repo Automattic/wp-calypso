@@ -141,6 +141,7 @@ export class GoogleAnalyticsForm extends Component {
 							...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
 						} ) }
 						title={ nudgeTitle }
+						jetpack={ true }
 					/>
 				) : (
 					<Card className="analytics-settings site-settings__analytics-settings">

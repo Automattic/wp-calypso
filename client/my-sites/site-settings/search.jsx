@@ -172,6 +172,7 @@ class Search extends Component {
 									'Add faster, more advanced searching to your site with WordPress.com Business'
 							  )
 					}
+					jetpack={ this.props.siteIsJetpack ? true : false }
 				/>
 			</Fragment>
 		);
