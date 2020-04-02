@@ -148,47 +148,51 @@ const VerticalSelect: React.FunctionComponent = () => {
 		inputRef.current.innerText = siteVertical?.label || '';
 	}, [ siteVertical, inputRef ] );
 
-	// TODO: Write a better translators comment.
 	// translators: Form input for a site's topic where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
 	const madlibTemplate = NO__( 'My site is about <Input />' );
-	const madlib = __experimentalCreateInterpolateElement( madlibTemplate, {
-		Input: (
-			<span className="vertical-select__suggestions-wrapper">
-				<span className="vertical-select__input-wrapper">
-					{ isInputEmpty && (
-						<span className="vertical-select__placeholder">{ animatedPlaceholder }</span>
-					) }
-					<span
-						contentEditable
-						tabIndex={ 0 }
-						role="textbox"
-						aria-multiline="true"
-						spellCheck={ false }
-						ref={ inputRef }
-						/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
-						className="madlib__input"
-						onKeyDown={ handleInputKeyDownEvent }
-						onKeyUp={ handleInputKeyUpEvent }
-						onFocus={ () => setIsFocused( true ) }
-						onBlur={ handleBlur }
-					/>
-				</span>
-				{ /* us visibility to keep the layout fixed with and without the arrow */ }
-				{ showArrow && <Arrow className="vertical-select__arrow" /> }
-				<div className="vertical-select__suggestions">
-					{ isFocused && !! verticals.length && (
-						<Suggestions
-							ref={ suggestionRef }
-							query={ inputRef?.current?.innerText }
-							suggestions={ suggestions }
-							suggest={ handleSelect }
-							title={ NO__( 'Suggestions' ) }
+	// translators: Form input for a site's topic where "<Input />" is replaced with the topic selected by the user.
+	const madlibTemplateWithPeriod = NO__( 'My site is about <Input />.' );
+	const madlib = __experimentalCreateInterpolateElement(
+		siteVertical ? madlibTemplateWithPeriod : madlibTemplate,
+		{
+			Input: (
+				<span className="vertical-select__suggestions-wrapper">
+					<span className="vertical-select__input-wrapper">
+						{ isInputEmpty && (
+							<span className="vertical-select__placeholder">{ animatedPlaceholder }</span>
+						) }
+						<span
+							contentEditable
+							tabIndex={ 0 }
+							role="textbox"
+							aria-multiline="true"
+							spellCheck={ false }
+							ref={ inputRef }
+							/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
+							className="madlib__input"
+							onKeyDown={ handleInputKeyDownEvent }
+							onKeyUp={ handleInputKeyUpEvent }
+							onFocus={ () => setIsFocused( true ) }
+							onBlur={ handleBlur }
 						/>
-					) }
-				</div>
-			</span>
-		),
-	} );
+					</span>
+					{ /* us visibility to keep the layout fixed with and without the arrow */ }
+					{ showArrow && <Arrow className="vertical-select__arrow" /> }
+					<div className="vertical-select__suggestions">
+						{ isFocused && !! verticals.length && (
+							<Suggestions
+								ref={ suggestionRef }
+								query={ inputRef?.current?.innerText }
+								suggestions={ suggestions }
+								suggest={ handleSelect }
+								title={ NO__( 'Suggestions' ) }
+							/>
+						) }
+					</div>
+				</span>
+			),
+		}
+	);
 
 	return (
 		<form
