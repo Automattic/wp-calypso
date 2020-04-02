@@ -22,7 +22,7 @@ class GenerateChunksMapPlugin {
 			const { chunks } = compilation;
 
 			const chunksMap = chunks.reduce( ( map, chunk ) => {
-				const files = chunk.files || [];
+				const files = chunk.files;
 				const name = files.find( file => /\.js$/.test( file ) ) || files[ 0 ];
 				const modules = [ ...chunk.modulesIterable ]
 					.reduce( ( acc, item ) => acc.concat( item.modules || item ), [] )
