@@ -263,13 +263,11 @@ function buildLanguageChunks( downloadedLanguages ) {
 					.value();
 
 				// Write language translated chunks map
-				const languageChunksDir = path.join( publicPath, langSlug );
 				const translatedChunksKeys = Object.keys( languageChunks ).map(
 					chunk => path.parse( chunk ).name
 				);
-				mkdirp.sync( languageChunksDir );
 				fs.writeFileSync(
-					path.join( languageChunksDir, LANGUAGE_MANIFEST_FILENAME ),
+					path.join( publicPath, `${ langSlug }-${ LANGUAGE_MANIFEST_FILENAME }` ),
 					JSON.stringify( {
 						locale: _.pick( languageTranslations, [ '' ] ),
 						translatedChunks: translatedChunksKeys,
@@ -279,7 +277,7 @@ function buildLanguageChunks( downloadedLanguages ) {
 				// Write language translation chunks
 				_.forEach( languageChunks, ( chunkTranslations, chunkId ) => {
 					const chunkFilename = path.basename( chunkId, path.extname( chunkId ) ) + '.json';
-					const chunkFilepath = path.join( languageChunksDir, chunkFilename );
+					const chunkFilepath = path.join( publicPath, `${ langSlug }-${ chunkFilename }` );
 
 					fs.writeFileSync( chunkFilepath, JSON.stringify( chunkTranslations ) );
 				} );

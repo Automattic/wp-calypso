@@ -31,7 +31,7 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		const getTranslationChunkPath = ( chunkId, langSlug = currentUser.localeSlug ) => {
 			const languageRevision = languageRevisions[ langSlug ] || '';
 
-			return `${ languagesPath }/${ langSlug }/${ chunkId }.json?${ languageRevision }`;
+			return `${ languagesPath }/${ langSlug }-${ chunkId }.json?${ languageRevision }`;
 		};
 
 		const loadedTranslationChunks = {};
@@ -52,7 +52,7 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 
 		window
 			.fetch(
-				`${ languagesPath }/${ currentUser.localeSlug }/language-manifest.json?v=${ languageRevision }`
+				`${ languagesPath }/${ currentUser.localeSlug }-language-manifest.json?v=${ languageRevision }`
 			)
 			.then( response => response.json() )
 			.then( data => {
