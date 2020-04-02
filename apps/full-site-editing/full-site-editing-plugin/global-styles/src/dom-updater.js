@@ -23,7 +23,13 @@ export default ( options, getOptionValue ) => {
 
 		let styleElement = null;
 		subscribe( () => {
-			// Do nothing until the editor is ready.
+			/**
+			 * Do nothing until the editor is ready. This is required when
+			 * working in wpcom iframe environment to avoid running code before
+			 * everything has loaded, which can cause bugs like the following.
+			 *
+			 * @see https://github.com/Automattic/wp-calypso/pull/40690
+			 */
 			const isEditorReady = select( 'core/editor' ).__unstableIsEditorReady;
 			if ( isEditorReady && isEditorReady() === false ) {
 				return;
