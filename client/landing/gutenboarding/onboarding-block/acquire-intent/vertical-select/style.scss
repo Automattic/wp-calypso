@@ -16,12 +16,18 @@
 		}
 	}
 	&--without-value {
+		.vertical-select__input-wrapper {
+			position: relative;
+			width: 400px;
+			display: inline-block;
+			vertical-align: middle;
+			height: 1.05em;
+			line-height: 1em;
+		}
 		.madlib__input {
+			position: absolute;
+			width: 100%;
 			border-bottom: 2px solid var( --studio-gray-5 );
-
-			&::placeholder {
-				color: var( --studio-gray-5 );
-			}
 		}
 	}
 }
@@ -36,4 +42,17 @@
 	width: 250px;
 	max-height: 400px;
 	overflow: auto;
+}
+
+.vertical-select__placeholder {
+	color: var( --studio-gray-5 );
+	position: absolute;
+	left: 0;
+}
+
+.vertical-select__arrow {
+	//TODO: find a way to prevent overflow on mobile (only 20px horizontal padding)
+	position: absolute;
+	bottom: 25px;
+	margin-left: 15px;
 }

@@ -2,8 +2,8 @@
 @import '../../mixins';
 @import '../../variables.scss';
 
-$acquire-intent-vertical-transition-duration: 200ms;
-$acquire-intent-vertical-transition-algorithm: ease-in-out;
+$acquire-intent-transition-duration: 200ms;
+$acquire-intent-transition-algorithm: ease-in-out;
 
 .acquire-intent {
 	@include onboarding-font-recoleta;
@@ -17,10 +17,10 @@ $acquire-intent-vertical-transition-algorithm: ease-in-out;
 	width: 100%;
 	min-height: calc( 100vh - #{$gutenboarding-header-height} );
 	padding: 20px;
-	transition: color $acquire-intent-vertical-transition-duration
-			$acquire-intent-vertical-transition-algorithm,
-		background-color $acquire-intent-vertical-transition-duration
-			$acquire-intent-vertical-transition-algorithm;
+	transition: color $acquire-intent-transition-duration
+			$acquire-intent-transition-algorithm,
+		background-color $acquire-intent-transition-duration
+			$acquire-intent-transition-algorithm;
 
 	@include break-small {
 		display: flex;
@@ -29,22 +29,30 @@ $acquire-intent-vertical-transition-algorithm: ease-in-out;
 	}
 }
 
+.acquire-intent__footer {
+	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
+
+	&--hidden {
+		// use this to fade-in the footer; since the buttons are disabled we don't need to hide them
+		opacity: 0;
+	}
+}
+
 .madlib__input {
 	@include onboarding-font-recoleta;
 	background: transparent;
 	border: none;
 	font-size: inherit;
-	line-height: inherit;
+	line-height: 1em;
 	height: 1.01em;
 	padding: 0;
-	min-width: 400px;
 
 	color: var( --mainColor );
-	border-bottom: 3px solid var( --mainColor );
+	border-bottom: 2px solid var( --mainColor );
 
-	transition: border-bottom $acquire-intent-vertical-transition-duration
-			$acquire-intent-vertical-transition-algorithm,
-		color $acquire-intent-vertical-transition-duration $acquire-intent-vertical-transition-algorithm;
+	transition: border-bottom $acquire-intent-transition-duration
+			$acquire-intent-transition-algorithm,
+		color $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
 
 	&:focus {
 		outline: none;
@@ -67,11 +75,11 @@ $acquire-intent-vertical-transition-algorithm: ease-in-out;
 	font-weight: 500;
 	padding: 20px 32px;
 	// @TODO: work out hover-state animations
-	transition: background $acquire-intent-vertical-transition-duration
-			$acquire-intent-vertical-transition-algorithm,
-		border-color $acquire-intent-vertical-transition-duration
-			$acquire-intent-vertical-transition-algorithm,
-		color $acquire-intent-vertical-transition-duration $acquire-intent-vertical-transition-algorithm;
+	transition: background $acquire-intent-transition-duration
+			$acquire-intent-transition-algorithm,
+		border-color $acquire-intent-transition-duration
+			$acquire-intent-transition-algorithm,
+		color $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
 
 	&:active,
 	&:hover,
@@ -81,5 +89,23 @@ $acquire-intent-vertical-transition-algorithm: ease-in-out;
 		color: var( --contrastColor );
 		outline-color: transparent;
 		box-shadow: none;
+	}
+}
+
+.site-title {
+	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
+
+	&--without-value {
+		.madlib__input {
+			width: 200px;
+			display: inline-block;
+			vertical-align: middle;
+			border: none;
+		}
+	}
+
+	&--hidden {
+		visibility: hidden;
+		opacity: 0;
 	}
 }

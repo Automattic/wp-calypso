@@ -6,7 +6,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { Suggestions } from '@automattic/components';
 import { useI18n } from '@automattic/react-i18n';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
-import { ENTER } from '@wordpress/keycodes';
+import { ENTER, TAB } from '@wordpress/keycodes';
 import classnames from 'classnames';
 
 /**
@@ -27,13 +27,11 @@ type Suggestion = SiteVertical & { category?: string };
 
 const VERTICALS_STORE = Verticals.register();
 
-interface Props {
-	onSubmit: () => void;
-}
-const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
+const VerticalSelect: React.FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
-	const inputRef = React.useRef< HTMLInputElement >( null );
+	const inputRef = React.useRef< HTMLSpanElement >( document.createElement( 'span' ) );
 	const [ isFocused, setIsFocused ] = React.useState< boolean >( false );
+	const [ suggestions, setSuggestions ] = React.useState< Suggestion[] >( [] );
 
 	/**
 	 * Ref to the <Suggestions />, necessary for handling input events
@@ -59,130 +57,150 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 	const { siteVertical, siteTitle } = useSelect( select => select( ONBOARD_STORE ).getState() );
 	const { setSiteVertical, resetSiteVertical } = useDispatch( ONBOARD_STORE );
 
-	const [ inputValue, setInputValue ] = React.useState( siteVertical?.label ?? '' );
+	const inputText = inputRef?.current?.innerText || '';
+	const isInputEmpty = ! inputText.length;
+	const showArrow = ! siteTitle && ! siteVertical && inputText.length > 2;
 
 	const animatedPlaceholder = useTyper(
 		[ NO__( 'football' ), NO__( 'shopping' ), NO__( 'cars' ), NO__( 'design' ), NO__( 'travel' ) ],
-		inputValue.length === 0
+		isInputEmpty
 	);
 
-	const normalizedInputValue = inputValue.trim().toLowerCase();
-	const hasValue = !! normalizedInputValue.length;
+	const updateSuggestions = ( inputValue: string ) => {
+		if ( inputValue.length < 3 ) {
+			setSuggestions( [] );
+			return;
+		}
 
-	let suggestions: Suggestion[];
+		const normalizedInputValue = inputValue.toLowerCase();
 
-	if ( ! normalizedInputValue ) {
-		suggestions = [];
-		resetSiteVertical();
-	} else {
-		suggestions = verticals.filter( vertical =>
+		let newSuggestions = verticals.filter( vertical =>
 			vertical.label.toLowerCase().includes( normalizedInputValue )
 		);
 
 		// Does the verticals list include an exact match? If it doesn't, we prepend the user-suppied
 		// vertical to the list.
 		if (
-			! suggestions.some( suggestion => suggestion.label.toLowerCase() === normalizedInputValue )
+			! newSuggestions.some( suggestion => suggestion.label.toLowerCase() === normalizedInputValue )
 		) {
 			// User-supplied verticals don't have IDs.
-			suggestions.unshift( { label: inputValue.trim() } );
+			newSuggestions.unshift( { label: inputValue.trim(), id: '', slug: '' } );
 		}
 
 		// If there is only one suggestion and that suggestion matches the user input value,
 		// do not show any suggestions.
+
+		// TODO: write a more advanced compare fn https://github.com/Automattic/wp-calypso/pull/40645#discussion_r402156751
 		if (
-			suggestions.length === 1 &&
-			suggestions[ 0 ].label.toLowerCase() === normalizedInputValue
+			newSuggestions.length === 1 &&
+			newSuggestions[ 0 ].label.toLowerCase() === normalizedInputValue
 		) {
-			suggestions = [];
+			newSuggestions = [];
 		}
-	}
+
+		setSuggestions( newSuggestions );
+	};
+	const handleInputKeyUpEvent = ( e: React.KeyboardEvent< HTMLSpanElement > ) => {
+		const input = e.currentTarget.innerText.trim();
+		if ( ! input.length ) {
+			resetSiteVertical();
+		}
+		updateSuggestions( input );
+	};
 
 	const handleSelect = ( vertical: SiteVertical ) => {
 		setSiteVertical( vertical );
-		setInputValue( vertical.label );
 		setIsFocused( false ); // prevent executing handleBlur()
-		onSubmit();
-	};
-
-	const handleSuggestionChangeEvent = ( e: React.ChangeEvent< HTMLInputElement > ) => {
-		setInputValue( e.target.value );
-	};
-
-	const handleInputKeyDownEvent = ( e: React.KeyboardEvent< HTMLInputElement > ) => {
-		if ( e.keyCode === ENTER ) {
-			e.preventDefault();
-			handleSelect( { label: inputValue } );
-			return;
-		}
-		if ( suggestionRef.current ) {
-			suggestionRef.current.handleKeyEvent( e );
-		}
 	};
 
 	const handleBlur = () => {
-		if ( isFocused ) {
-			const vertical = suggestions.find( ( { label } ) =>
-				label.toLowerCase().includes( normalizedInputValue )
-			) ?? { label: inputValue.trim() };
-
+		const lastQuery = inputText.trim();
+		if ( isFocused && lastQuery.length ) {
+			const vertical = suggestions[ 0 ] ?? { label: lastQuery, id: '', slug: '' };
 			handleSelect( vertical );
 		}
 	};
 
+	const handleInputKeyDownEvent = ( e: React.KeyboardEvent< HTMLSpanElement > ) => {
+		const input = e.currentTarget.innerText.trim();
+
+		if ( suggestionRef.current ) {
+			suggestionRef.current.handleKeyEvent( e );
+		}
+		if ( e.keyCode === ENTER ) {
+			e.preventDefault();
+			input.length && ! suggestions.length && handleSelect( { label: input } );
+			return;
+		}
+		if ( e.keyCode === TAB ) {
+			e.preventDefault();
+			handleBlur();
+		}
+	};
+
 	React.useEffect( () => {
-		if ( ! hasValue ) {
-			inputRef?.current?.focus();
+		if ( isInputEmpty ) {
+			inputRef.current.focus();
 		}
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
-	// TODO: Write a better translators comment.
+	React.useEffect( () => {
+		inputRef.current.innerText = siteVertical?.label || '';
+	}, [ siteVertical, inputRef ] );
+
 	// translators: Form input for a site's topic where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
 	const madlibTemplate = NO__( 'My site is about <Input />' );
-	const madlib = __experimentalCreateInterpolateElement( madlibTemplate, {
-		Input: (
-			<span className="vertical-select__suggestions-wrapper">
-				<input
-					ref={ inputRef }
-					/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
-					className="madlib__input"
-					autoComplete="off"
-					style={ {
-						width: `${ inputValue.length * 0.85 }ch`,
-					} }
-					onBlur={ handleBlur }
-					onFocus={ () => setIsFocused( true ) }
-					onChange={ handleSuggestionChangeEvent }
-					onKeyDown={ handleInputKeyDownEvent }
-					placeholder={ animatedPlaceholder }
-					value={ inputValue }
-				/>
-				<div className="vertical-select__suggestions">
-					{ isFocused && !! verticals.length && (
-						<Suggestions
-							ref={ suggestionRef }
-							query={ inputValue }
-							suggestions={ suggestions }
-							suggest={ handleSelect }
-							title={ NO__( 'Suggestions' ) }
+	// translators: Form input for a site's topic where "<Input />" is replaced with the topic selected by the user.
+	const madlibTemplateWithPeriod = NO__( 'My site is about <Input />.' );
+	const madlib = __experimentalCreateInterpolateElement(
+		siteVertical ? madlibTemplateWithPeriod : madlibTemplate,
+		{
+			Input: (
+				<span className="vertical-select__suggestions-wrapper">
+					<span className="vertical-select__input-wrapper">
+						{ isInputEmpty && (
+							<span className="vertical-select__placeholder">{ animatedPlaceholder }</span>
+						) }
+						<span
+							contentEditable
+							tabIndex={ 0 }
+							role="textbox"
+							aria-multiline="true"
+							spellCheck={ false }
+							ref={ inputRef }
+							/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
+							className="madlib__input"
+							onKeyDown={ handleInputKeyDownEvent }
+							onKeyUp={ handleInputKeyUpEvent }
+							onFocus={ () => setIsFocused( true ) }
+							onBlur={ handleBlur }
 						/>
-					) }
-				</div>
-			</span>
-		),
-	} );
-
-	const showArrow = isFocused && ! siteTitle && ! siteVertical && inputValue.length > 2;
+					</span>
+					{ /* us visibility to keep the layout fixed with and without the arrow */ }
+					{ showArrow && <Arrow className="vertical-select__arrow" /> }
+					<div className="vertical-select__suggestions">
+						{ isFocused && !! verticals.length && (
+							<Suggestions
+								ref={ suggestionRef }
+								query={ inputRef?.current?.innerText }
+								suggestions={ suggestions }
+								suggest={ handleSelect }
+								title={ NO__( 'Suggestions' ) }
+							/>
+						) }
+					</div>
+				</span>
+			),
+		}
+	);
 
 	return (
 		<form
 			className={ classnames( 'vertical-select', {
-				'vertical-select--without-value': ! hasValue,
+				'vertical-select--without-value': isInputEmpty,
 			} ) }
 		>
 			{ madlib }
-			{ /* us visibility to keep the layout fixed with and without the arrow */ }
-			<Arrow style={ { visibility: showArrow ? 'visible' : 'hidden' } } />
 		</form>
 	);
 };
