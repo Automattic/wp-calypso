@@ -58,13 +58,22 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } 
 
 	return (
 		<div className="continue-as-user">
-			<Gravatar user={ currentUser } imgSize={ 400 } size={ 200 } />
+			<a href={ validatedRedirectUrl || '/' } className="continue-as-user__gravatar-link">
+				<Gravatar
+					user={ currentUser }
+					className="continue-as-user__gravatar"
+					imgSize={ 400 }
+					size={ 110 }
+				/>
+				<div>{ userName }</div>
+			</a>
 			<Button primary href={ validatedRedirectUrl || '/' }>
-				{ translate( 'Continue as %(userName)s', { args: { userName } } ) }
+				{ translate( 'Continue' ) }
 			</Button>
 			<p>
-				{ translate( 'Not %(userName)s? Log in with {{link}}another account{{/link}}', {
+				{ translate( 'Not you?{{br/}}Log in with {{link}}another account{{/link}}', {
 					components: {
+						br: <br />,
 						link: (
 							<button
 								type="button"
