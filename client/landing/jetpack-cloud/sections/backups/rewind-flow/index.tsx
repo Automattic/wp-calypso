@@ -28,7 +28,7 @@ import { applySiteOffset } from 'lib/site/timezone';
 import './style.scss';
 
 interface Props {
-	rewindId?: string;
+	rewindId: string;
 	purpose: RewindFlowPurpose;
 }
 
@@ -36,12 +36,18 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 
-	const timezone = useSelector( state => getSiteTimezoneValue( state, siteId ) );
-	const gmtOffset = useSelector( state => getSiteGmtOffset( state, siteId ) );
+	const timezone = useSelector( state =>
+		siteId !== null ? getSiteTimezoneValue( state, siteId ) : null
+	);
+	const gmtOffset = useSelector( state =>
+		siteId !== null ? getSiteGmtOffset( state, siteId ) : null
+	);
 
-	const isSiteSettingLoading = useSelector( state => isRequestingSiteSettings( state, siteId ) );
+	const isSiteSettingLoading = useSelector( state =>
+		siteId !== null ? isRequestingSiteSettings( state, siteId ) : true
+	);
 
-	const backupDisplayDate = applySiteOffset( rewindId * 1000, {
+	const backupDisplayDate = applySiteOffset( parseFloat( rewindId ) * 1000, {
 		timezone,
 		gmtOffset,
 	} ).format( 'LLL' );
@@ -50,15 +56,15 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 		if ( siteId && rewindId ) {
 			return purpose === RewindFlowPurpose.RESTORE ? (
 				<BackupRestoreFlow
+					backupDisplayDate={ backupDisplayDate }
 					rewindId={ rewindId }
 					siteId={ siteId }
-					backupDisplayDate={ backupDisplayDate }
 				/>
 			) : (
 				<BackupDownloadFlow
+					backupDisplayDate={ backupDisplayDate }
 					rewindId={ rewindId }
 					siteId={ siteId }
-					backupDisplayDate={ backupDisplayDate }
 				/>
 			);
 		}

@@ -21,6 +21,7 @@ import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status'
 import RewindConfigEditor from './rewind-config-editor';
 
 interface Props {
+	backupDisplayDate: string;
 	rewindId: string;
 	siteId: number;
 }

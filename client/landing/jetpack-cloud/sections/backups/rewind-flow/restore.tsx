@@ -11,7 +11,6 @@ import React, { FunctionComponent, useCallback, useState } from 'react';
 import { Button } from '@automattic/components';
 import { defaultRewindConfig, RewindConfig } from './types';
 import { rewindRestore } from 'state/activity-log/actions';
-import { useLocalizedMoment } from 'components/localized-moment';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import getInProgressRewindPercentComplete from 'state/selectors/get-in-progress-rewind-percent-complete';
 import getInProgressRewindStatus from 'state/selectors/get-in-progress-rewind-status';
@@ -25,6 +24,7 @@ import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 import Spinner from 'components/spinner';
 
 interface Props {
+	backupDisplayDate: string;
 	rewindId: string;
 	siteId: number;
 }
@@ -37,9 +37,12 @@ interface RewindState {
 	};
 }
 
-const BackupRestoreFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) => {
+const BackupRestoreFlow: FunctionComponent< Props > = ( {
+	backupDisplayDate,
+	rewindId,
+	siteId,
+} ) => {
 	const dispatch = useDispatch();
-	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
 	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
@@ -49,8 +52,6 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) =
 	const rewindState = useSelector( state => getRewindState( state, siteId ) ) as RewindState;
 
 	const loading = rewindState.state === 'uninitialized';
-
-	const restoreTimestamp = moment.unix( rewindId ).format( 'LLL' );
 
 	const inProgressRewindStatus = useSelector( state =>
 		getInProgressRewindStatus( state, siteId, rewindId )
@@ -77,10 +78,10 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) =
 			<h3 className="rewind-flow__title">{ translate( 'Restore site' ) }</h3>
 			<p className="rewind-flow__info">
 				{ translate(
-					'{{strong}}%(restoreTimestamp)s{{/strong}} is the selected point for your restore. ',
+					'{{strong}}%(backupDisplayDate)s{{/strong}} is the selected point for your restore. ',
 					{
 						args: {
-							restoreTimestamp,
+							backupDisplayDate,
 						},
 						components: {
 							strong: <strong />,
@@ -115,10 +116,10 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) =
 			<ProgressBar percent={ inProgressRewindPercentComplete } />
 			<p className="rewind-flow__info">
 				{ translate(
-					'We are restoring your site back to {{strong}}%(restoreTimestamp)s{{/strong}}.',
+					'We are restoring your site back to {{strong}}%(backupDisplayDate)s{{/strong}}.',
 					{
 						args: {
-							restoreTimestamp,
+							backupDisplayDate,
 						},
 						components: {
 							strong: <strong />,
@@ -147,10 +148,10 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( { rewindId, siteId } ) =
 			</h3>
 			<p className="rewind-flow__info">
 				{ translate(
-					'All of your selected files are now restored back to {{strong}}%(restoreTimestamp)s{{/strong}}.',
+					'All of your selected files are now restored back to {{strong}}%(backupDisplayDate)s{{/strong}}.',
 					{
 						args: {
-							restoreTimestamp,
+							backupDisplayDate,
 						},
 						components: {
 							strong: <strong />,

@@ -6,7 +6,7 @@ import moment from 'moment-timezone';
 /**
  * @typedef OffsetParams
  * @property {?string} timezone  Timezone representation to apply.
- * @property {?string} gmtOffset Offset to apply if timezone isn't supplied.
+ * @property {?string|number} gmtOffset Offset to apply if timezone isn't supplied.
  */
 
 /**
