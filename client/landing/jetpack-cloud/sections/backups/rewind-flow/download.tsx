@@ -12,24 +12,27 @@ import { Button } from '@automattic/components';
 import { defaultRewindConfig, RewindConfig } from './types';
 import { rewindBackup } from 'state/activity-log/actions';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
-import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 import getBackupDownloadId from 'state/selectors/get-backup-download-id';
-import getBackupDownloadUrl from 'state/selectors/get-backup-download-url';
 import getBackupDownloadProgress from 'state/selectors/get-backup-download-progress';
+import getBackupDownloadUrl from 'state/selectors/get-backup-download-url';
+import Gridicon from 'components/gridicon';
 import ProgressBar from './progress-bar';
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import RewindConfigEditor from './rewind-config-editor';
+import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 
 interface Props {
 	backupDisplayDate: string;
 	rewindId: string;
 	siteId: number;
+	siteSlug: string;
 }
 
 const BackupDownloadFlow: FunctionComponent< Props > = ( {
+	backupDisplayDate,
 	rewindId,
 	siteId,
-	backupDisplayDate,
+	siteSlug,
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -165,6 +168,17 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 			<h3 className="rewind-flow__title">
 				{ translate( 'An error occurred while creating your download' ) }
 			</h3>
+			<Button
+				className="rewind-flow__primary-button"
+				href={ `https://jetpack.com/contact-support/?scan-state=error&site-slug=${ siteSlug }` }
+				primary
+				rel="noopener noreferrer"
+				target="_blank"
+			>
+				{ translate( 'Contact Support {{externalIcon/}}', {
+					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
+				} ) }
+			</Button>
 		</>
 	);
 
@@ -181,10 +195,10 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	};
 
 	return (
-		<div>
+		<>
 			<QueryRewindBackupStatus downloadId={ downloadId } siteId={ siteId } />
 			{ render() }
-		</div>
+		</>
 	);
 };
 

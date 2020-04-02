@@ -27,6 +27,7 @@ interface Props {
 	backupDisplayDate: string;
 	rewindId: string;
 	siteId: number;
+	siteSlug: string;
 }
 
 //todo: move to dedicated types file
@@ -41,6 +42,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	backupDisplayDate,
 	rewindId,
 	siteId,
+	siteSlug,
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -176,6 +178,17 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			<h3 className="rewind-flow__title">
 				{ translate( 'An error occurred while restoring your site' ) }
 			</h3>
+			<Button
+				className="rewind-flow__primary-button"
+				href={ `https://jetpack.com/contact-support/?scan-state=error&site-slug=${ siteSlug }` }
+				primary
+				rel="noopener noreferrer"
+				target="_blank"
+			>
+				{ translate( 'Contact Support {{externalIcon/}}', {
+					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
+				} ) }
+			</Button>
 		</>
 	);
 
@@ -206,10 +219,10 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	};
 
 	return (
-		<div>
+		<>
 			<QueryRewindState siteId={ siteId } />
 			{ render() }
-		</div>
+		</>
 	);
 };
 
