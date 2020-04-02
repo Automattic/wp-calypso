@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { subscribe } from '@wordpress/data';
+import { subscribe, select } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
 import { isEmpty, isEqual } from 'lodash';
 
@@ -13,10 +13,6 @@ import { isEmpty, isEqual } from 'lodash';
  */
 export default ( options, getOptionValue ) => {
 	domReady( () => {
-		// Create style node.
-		const styleElement = document.createElement( 'style' );
-		document.body.appendChild( styleElement );
-
 		// Book-keeping.
 		const currentOptions = {};
 		let previousOptions = {};
@@ -25,7 +21,22 @@ export default ( options, getOptionValue ) => {
 			cssVariables[ option ] = `--${ option.replace( '_', '-' ) }`;
 		} );
 
+		let styleElement = null;
 		subscribe( () => {
+			// Do nothing until the editor is ready.
+			const isEditorReady = select( 'core/editor' ).__unstableIsEditorReady;
+			if ( isEditorReady && isEditorReady() === false ) {
+				return;
+			}
+
+			// Create style element if it has not been created yet. Must happen
+			// after the editor is ready or the style element will be appended
+			// before the styles it needs to affect.
+			if ( ! styleElement ) {
+				styleElement = document.createElement( 'style' );
+				document.body.appendChild( styleElement );
+			}
+
 			// Maybe bail-out early.
 			options.forEach( option => {
 				currentOptions[ option ] = getOptionValue( option );
