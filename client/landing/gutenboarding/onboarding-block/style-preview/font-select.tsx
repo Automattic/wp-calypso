@@ -24,6 +24,7 @@ const FontSelect: React.FunctionComponent = () => {
 	const selectedDesignDefaultFonts = designs.featured.find(
 		design => design.slug === selectedDesign?.slug
 	)?.fonts;
+
 	const defaultFontOption = selectedDesignDefaultFonts ? (
 		<>
 			<span style={ { fontFamily: selectedDesignDefaultFonts.headings, fontWeight: 700 } }>
@@ -42,8 +43,7 @@ const FontSelect: React.FunctionComponent = () => {
 		if ( ! selectedDesignDefaultFonts ) {
 			return true;
 		}
-		const { headings: defaultHeadings, base: defaultBase } = selectedDesignDefaultFonts;
-		return pair.headings !== defaultHeadings && pair.base !== defaultBase;
+		return ! isShallowEqual( pair, selectedDesignDefaultFonts );
 	};
 
 	return (
