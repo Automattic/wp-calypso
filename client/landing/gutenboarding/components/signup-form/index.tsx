@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useState, useEffect } from 'react';
-import { ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
+import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
@@ -106,6 +106,9 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const loginRedirectUrl = `${ window.location.origin }/gutenboarding${ makePath(
 		Step.CreateSite
 	) }?new`;
+	const loginUrl = `/log-in/gutenboarding${ langFragment }?redirect_to=${ encodeURIComponent(
+		loginRedirectUrl
+	) }`;
 
 	return (
 		<Modal
@@ -118,12 +121,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 			// set to false so that 1password's autofill doesn't automatically close the modal
 			shouldCloseOnClickOutside={ false }
 		>
-			<SignupFormHeader
-				onRequestClose={ closeModal }
-				loginUrl={ `/log-in/gutenboarding${ langFragment }?redirect_to=${ encodeURIComponent(
-					loginRedirectUrl
-				) }` }
-			/>
+			<SignupFormHeader onRequestClose={ closeModal } />
 
 			<div className="signup-form__body">
 				<h1 className="signup-form__title">{ NO__( 'Save your progress' ) }</h1>
@@ -160,11 +158,18 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 						) }
 
 						<div className="signup-form__footer">
-							<p className="signup-form__link signup-form__terms-of-service-link">{ tos }</p>
+							<p className="signup-form__login-link">
+								<span>{ NO__( 'Already have an account?' ) }</span>{ ' ' }
+								<Button className="signup-form__link" isLink href={ loginUrl }>
+									{ NO__( 'Log in' ) }
+								</Button>
+							</p>
 
 							<ModalSubmitButton disabled={ isFetchingNewUser } isBusy={ isFetchingNewUser }>
 								{ NO__( 'Create account' ) }
 							</ModalSubmitButton>
+
+							<p className="signup-form__link signup-form__terms-of-service-link">{ tos }</p>
 						</div>
 					</fieldset>
 				</form>
