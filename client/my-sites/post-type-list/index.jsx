@@ -277,7 +277,7 @@ class PostTypeList extends Component {
 					range( 1, maxRequestedPage + 1 ).map( page => (
 						<QueryPosts key={ `query-${ page }` } siteId={ siteId } query={ { ...query, page } } />
 					) ) }
-				{ /* Disable search in all-sites mode because it doesn't work. */ }
+				{ /* Disable Querying recent views in all-sites mode as it doesn't work without sideId. */ }
 				{ isSingleSite && recentViewIds.length > 0 && (
 					<QueryRecentPostViews siteId={ siteId } postIds={ recentViewIds } num={ 30 } />
 				) }
