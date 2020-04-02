@@ -67,6 +67,8 @@ import {
 	SIDEBAR_SECTION_MANAGE,
 } from './constants';
 import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
+import isSiteWPforteams from 'state/selectors/is-site-wpforteams';
+
 /**
  * Style dependencies
  */
@@ -379,6 +381,10 @@ export class MySitesSidebar extends Component {
 		} = this.props;
 
 		if ( ! site ) {
+			return null;
+		}
+
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams ) {
 			return null;
 		}
 
@@ -816,6 +822,7 @@ function mapStateToProps( state ) {
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
 		canViewAtomicHosting: canSiteViewAtomicHosting( state ),
+		isSiteWPforteams: isSiteWPforteams( state, siteId ),
 	};
 }
 
