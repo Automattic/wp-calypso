@@ -19,9 +19,7 @@ export default store => next => action => {
 		return next( action );
 	}
 
-	// TBD: do stuff
-	switch ( action.type ) {
-	}
+	// TBD: switch, do stuff
 
 	return next( action );
 };

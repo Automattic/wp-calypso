@@ -23,7 +23,7 @@ export function socketConnect( store, jwt, userId ) {
 		return;
 	}
 
-	socket = new Socket( url, { params: { auth_strategy: 'wpcom_api_jwt', jwt, user_id: userId } } );
+	socket = new Socket( url, { params: { jwt, user_id: userId } } );
 
 	socket.onOpen( () => {
 		debug( 'socket opened' );

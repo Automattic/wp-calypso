@@ -51,6 +51,7 @@
 		"jetpack/connect/woocommerce": true,
 		"jetpack/happychat": true,
 		"jitms": true,
+		"lasagna": false,
 		"legal-updates-banner": false,
 		"login/magic-login": true,
 		"login/native-login-links": true,

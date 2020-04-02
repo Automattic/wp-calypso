@@ -87,7 +87,10 @@ function createPageDefinition( path, sectionDefinition ) {
 
 	page( pathRegex, async function( context, next ) {
 		try {
-			manageLasagnaSocket( sectionDefinition, context );
+			if ( config.isEnabled( 'lasagna' ) ) {
+				// do realtime in the Reader section
+				manageLasagnaSocket( sectionDefinition, context );
+			}
 
 			const loadedSection = _loadedSections[ sectionDefinition.module ];
 			if ( loadedSection ) {

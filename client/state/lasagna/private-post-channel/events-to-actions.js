@@ -6,7 +6,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { receiveComments } from 'state/comments/actions';
+import { incrementCommentCount, receiveComments } from 'state/comments/actions';
 
 const debug = debugFactory( 'lasagna:channel:private:push:wp_post' );
 
@@ -18,6 +18,15 @@ export default function( channel, store ) {
 			return;
 		}
 
-		store.dispatch( receiveComments( comment.siteId, comment.post.ID, [ comment ], true ) );
+		store.dispatch(
+			receiveComments( {
+				siteId: comment.post.site_ID,
+				postId: comment.post.ID,
+				comments: [ comment ],
+				commentById: true,
+			} )
+		);
+
+		store.dispatch( incrementCommentCount( comment.post.site_ID, comment.post.ID ) );
 	} );
 }

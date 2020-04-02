@@ -82,6 +82,7 @@
 		"jetpack/scan-product": true,
 		"jitms": true,
 		"keyboard-shortcuts": true,
+		"lasagna": true,
 		"legal-updates-banner": true,
 		"login/magic-login": true,
 		"login/native-login-links": true,
