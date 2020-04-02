@@ -53,9 +53,9 @@
 	.design-selector__option-name {
 		color: var( --studio-gray-40 );
 		display: block;
-		font-size: 14px;
 		margin-top: 16px;
 		text-align: center;
 		width: 100%;
+		@include onboarding-medium-text;
 	}
 }
