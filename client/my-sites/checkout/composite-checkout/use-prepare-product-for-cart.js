@@ -45,21 +45,8 @@ export default function usePrepareProductForCart( siteId, productAlias, isJetpac
 		productForCart: null,
 	} );
 
-	useEffect( () => {
-		if ( ! isFetchingProducts && Object.keys( products || {} ).length < 1 ) {
-			debug( 'fetching products list' );
-			reduxDispatch( requestProductsList() );
-			return;
-		}
-	}, [ isFetchingProducts, products, reduxDispatch ] );
-
-	useEffect( () => {
-		if ( ! isFetchingPlans && plans?.length < 1 ) {
-			debug( 'fetching plans list' );
-			reduxDispatch( requestPlans() );
-			return;
-		}
-	}, [ isFetchingPlans, plans, reduxDispatch ] );
+	useFetchProductsIfNotLoaded();
+	useFetchPlansIfNotLoaded();
 
 	// Add a plan if one is requested
 	useEffect( () => {
@@ -128,6 +115,32 @@ export default function usePrepareProductForCart( siteId, productAlias, isJetpac
 	] );
 
 	return { productForCart, canInitializeCart };
+}
+
+function useFetchProductsIfNotLoaded() {
+	const reduxDispatch = useDispatch();
+	const isFetchingProducts = useSelector( state => isProductsListFetching( state ) );
+	const products = useSelector( state => getProductsList( state ) );
+	useEffect( () => {
+		if ( ! isFetchingProducts && Object.keys( products || {} ).length < 1 ) {
+			debug( 'fetching products list' );
+			reduxDispatch( requestProductsList() );
+			return;
+		}
+	}, [ isFetchingProducts, products, reduxDispatch ] );
+}
+
+function useFetchPlansIfNotLoaded() {
+	const reduxDispatch = useDispatch();
+	const isFetchingPlans = useSelector( state => isRequestingPlans( state ) );
+	const plans = useSelector( state => getPlans( state ) );
+	useEffect( () => {
+		if ( ! isFetchingPlans && plans?.length < 1 ) {
+			debug( 'fetching plans list' );
+			reduxDispatch( requestPlans() );
+			return;
+		}
+	}, [ isFetchingPlans, plans, reduxDispatch ] );
 }
 
 function getProductSlugFromAlias( productAlias ) {
