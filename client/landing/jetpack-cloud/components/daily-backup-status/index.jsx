@@ -52,26 +52,22 @@ class DailyBackupStatus extends Component {
 		let displayableDate;
 
 		if ( isToday ) {
-			displayableDate =
-				translate( 'Latest' ) + ': ' + translate( 'Today' ) + ' ' + backupDate.format( 'H:mm' );
+			displayableDate = translate( 'Latest: Today ' ) + backupDate.format( 'H:mm a' );
 		} else {
-			displayableDate = backupDate.format( dateFormat + ' H:mm' );
+			displayableDate = backupDate.format( dateFormat + ', H:mm a' );
 		}
 
 		return displayableDate;
 	};
 
 	renderGoodBackup( backup ) {
-		const { allowRestore, translate } = this.props;
+		const { allowRestore } = this.props;
 
 		const displayDate = this.getDisplayDate( backup.activityTs );
 
 		return (
 			<Fragment>
 				<Gridicon className="daily-backup-status__status-icon" icon="cloud-upload" />
-				<div className="daily-backup-status__label">
-					{ translate( 'Latest backup completed:' ) }
-				</div>
 				<div className="daily-backup-status__date">{ displayDate }</div>
 				<ActionButtons
 					onDownloadClick={ this.triggerDownload }
@@ -92,9 +88,11 @@ class DailyBackupStatus extends Component {
 		const displayTime = backupDate.format( 'H:mm' );
 
 		return (
-			<Fragment>
-				<Gridicon icon="cross-circle" className="daily-backup-status__gridicon-error-state" />
-				<div className="daily-backup-status__date">{ translate( 'Backup attempt failed' ) }</div>
+			<div className="daily-backup-status__failed">
+				<Gridicon icon="cloud-upload" className="daily-backup-status__gridicon-error-state" />
+				<div className="daily-backup-status__failed-message">
+					{ translate( 'Backup attempt failed' ) }
+				</div>
 				<div className="daily-backup-status__date">{ backupTitleDate }</div>
 				<div className="daily-backup-status__label">
 					<p>
@@ -120,15 +118,16 @@ class DailyBackupStatus extends Component {
 						) }
 					</p>
 					<Button
-						className="daily-backup-status__download-button"
+						className="daily-backup-status__support-button"
 						href="https://jetpack.com/contact-support/"
 						target="_blank"
 						rel="noopener noreferrer"
+						isPrimary={ false }
 					>
 						{ translate( 'Contact support' ) }
 					</Button>
 				</div>
-			</Fragment>
+			</div>
 		);
 	}
 
@@ -184,6 +183,7 @@ const ActionButtons = ( {
 				className="daily-backup-status__download-button"
 				onClick={ onDownloadClick }
 				disabled={ disabledDownload }
+				isPrimary={ false }
 			>
 				{ translate( 'Download backup' ) }
 			</Button>

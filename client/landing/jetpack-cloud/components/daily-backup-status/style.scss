@@ -1,23 +1,49 @@
-.daily-backup-status .gridicon {
-	width: 150px !important;
-	height: 150px !important;
-	fill: green !important;
+.daily-backup-status {
+	padding: 0 1rem;
+	text-align: center;
+	margin-top: 2rem;
 }
 
-.daily-backup-status .gridicon.daily-backup-status__gridicon-error-state {
-	fill: red !important;
+.daily-backup-status__status-icon.gridicon {
+	width: 3rem;
+	height: 3rem;
+	fill: rgb( 47, 180, 31 );
+}
+
+.daily-backup-status__gridicon-error-state.gridicon {
+	width: 3rem;
+	height: 3rem;
+	fill: rgb( 214, 54, 56 );
 }
 
 .daily-backup-status__label {
 	color: grey;
+	text-align: left;
 }
 
 .daily-backup-status__date {
-	font-size: 1.5rem;
+	font-size: 1.4rem;
+	font-weight: 500;
+	margin-bottom: 1rem;
 }
 
-.daily-backup-status .form-button.daily-backup-status__restore-button,
-.daily-backup-status .form-button.daily-backup-status__download-button {
+.daily-backup-status__failed-message {
+	font-size: 1.4rem;
+	font-weight: 500;
+	color: rgb( 214, 54, 56 );
+	margin-bottom: 0.5rem;
+	margin-top: -0.5rem;
+}
+
+.form-button.daily-backup-status__restore-button,
+.form-button.daily-backup-status__download-button,
+.form-button.daily-backup-status__support-button {
 	float: none;
 	display: block;
+	width: 100%;
+	text-align: center;
+}
+
+.form-button.daily-backup-status__download-button {
+	margin: 1rem 0;
 }
