@@ -21,6 +21,8 @@ import { getSitePurchases } from 'state/purchases/selectors';
 import { planHasFeature, planHasSuperiorFeature } from 'lib/plans';
 import { managePurchase } from 'me/purchases/paths';
 
+import './style.scss';
+
 class ProductPlanOverlapNotices extends Component {
 	static propTypes = {
 		plans: PropTypes.arrayOf( PropTypes.string ).isRequired,
@@ -132,7 +134,7 @@ class ProductPlanOverlapNotices extends Component {
 								},
 								components: {
 									list: (
-										<ul>
+										<ul className="product-plan-overlap-notices__product-list">
 											{ overlappingProductSlugs.map( productSlug =>
 												this.getProductItem( productSlug )
 											) }
