@@ -503,6 +503,7 @@ export function prepareDomainContactValidationRequest(
 
 	return {
 		domain_names: domainNames,
+        qualify_properties: true,
 		contact_information: {
 			firstName: details.firstName.value,
 			lastName: details.lastName.value,
@@ -527,30 +528,26 @@ export function prepareDomainContactValidationRequest(
 export function formatDomainContactValidationResponse(
 	response: DomainContactValidationResponse
 ): ManagedContactDetailsErrors {
-	const optionalToArray: ( x: undefined | string ) => undefined | string[] = x => {
-		return x ? [ x ] : undefined;
-	};
-
 	const tldExtraFields: ManagedContactDetailsTldExtraFieldsShape< undefined | string[] > = {};
 
 	// TODO: figure out how the extra fields errors are formatted
 
 	return {
-		firstName: optionalToArray( response.messages?.firstName ),
-		lastName: optionalToArray( response.messages?.lastName ),
-		organization: optionalToArray( response.messages?.organization ),
-		email: optionalToArray( response.messages?.email ),
-		alternateEmail: optionalToArray( response.messages?.alternateEmail ),
-		phone: optionalToArray( response.messages?.phone ),
-		phoneNumberCountry: optionalToArray( response.messages?.phoneNumberCountry ),
-		address1: optionalToArray( response.messages?.address1 ),
-		address2: optionalToArray( response.messages?.address2 ),
-		city: optionalToArray( response.messages?.city ),
-		state: optionalToArray( response.messages?.state ),
-		postalCode: optionalToArray( response.messages?.postalCode ),
-		countryCode: optionalToArray( response.messages?.countryCode ),
-		fax: optionalToArray( response.messages?.fax ),
-		vatId: optionalToArray( response.messages?.vatId ),
+		firstName: response.messages?.firstName,
+		lastName: response.messages?.lastName,
+		organization: response.messages?.organization,
+		email: response.messages?.email,
+		alternateEmail: response.messages?.alternateEmail,
+		phone: response.messages?.phone,
+		phoneNumberCountry: response.messages?.phoneNumberCountry,
+		address1: response.messages?.address1,
+		address2: response.messages?.address2,
+		city: response.messages?.city,
+		state: response.messages?.state,
+		postalCode: response.messages?.postalCode,
+		countryCode: response.messages?.countryCode,
+		fax: response.messages?.fax,
+		vatId: response.messages?.vatId,
 		tldExtraFields,
 	};
 }

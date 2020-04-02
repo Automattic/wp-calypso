@@ -5,6 +5,7 @@
  */
 export type DomainContactValidationRequest = {
 	domain_names: string[];
+	qualify_properties: true;
 	contact_information: {
 		firstName: string;
 		lastName: string;
@@ -49,20 +50,20 @@ export type DomainContactValidationRequestExtraFields = {
 export type DomainContactValidationResponse = {
 	success: boolean;
 	messages: {
-		firstName?: string;
-		lastName?: string;
-		organization?: string;
-		email?: string;
-		alternateEmail?: string;
-		phone?: string;
-		phoneNumberCountry?: string;
-		address1?: string;
-		address2?: string;
-		city?: string;
-		state?: string;
-		postalCode?: string;
-		countryCode?: string;
-		fax?: string;
-		vatId?: string;
+		firstName?: string[];
+		lastName?: string[];
+		organization?: string[];
+		email?: string[];
+		alternateEmail?: string[];
+		phone?: string[];
+		phoneNumberCountry?: string[];
+		address1?: string[];
+		address2?: string[];
+		city?: string[];
+		state?: string[];
+		postalCode?: string[];
+		countryCode?: string[];
+		fax?: string[];
+		vatId?: string[];
 	};
 };
