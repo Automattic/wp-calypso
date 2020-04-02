@@ -116,9 +116,7 @@ const VerticalSelect: React.FunctionComponent = () => {
 	const handleBlur = () => {
 		const lastQuery = inputText.trim();
 		if ( isFocused && lastQuery.length ) {
-			const vertical = suggestions.find( ( { label } ) =>
-				label.toLowerCase().includes( lastQuery )
-			) ?? { label: lastQuery, id: '', slug: '' };
+			const vertical = suggestions[ 0 ] ?? { label: lastQuery, id: '', slug: '' };
 			handleSelect( vertical );
 		}
 	};
