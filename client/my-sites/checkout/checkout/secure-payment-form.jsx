@@ -508,6 +508,7 @@ export class SecurePaymentForm extends Component {
 			case 'bancontact':
 			case 'eps':
 			case 'giropay':
+			case 'id_wallet':
 			case 'ideal':
 			case 'netbanking':
 			case 'p24':

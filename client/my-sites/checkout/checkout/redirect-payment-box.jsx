@@ -266,6 +266,18 @@ export class RedirectPaymentBox extends PureComponent {
 				return this.createField( 'email', Input, {
 					label: this.props.translate( 'Email Address' ),
 				} );
+			case 'id_wallet':
+				return (
+					<CountrySpecificPaymentFields
+						countryCode="ID"
+						countriesList={ this.props.countriesList }
+						getErrorMessage={ this.getErrorMessage }
+						getFieldValue={ this.getFieldValue }
+						handleFieldChange={ this.updateFieldValues }
+						eventFormName={ this.eventFormName }
+						disableFields={ this.state.formDisabled }
+					/>
+				);
 			case 'netbanking':
 				return (
 					<CountrySpecificPaymentFields

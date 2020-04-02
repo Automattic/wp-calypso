@@ -72,7 +72,15 @@ export class PaymentBox extends PureComponent {
 			case 'wechat':
 				labelAdditionalText = paymentMethodName( method );
 				break;
-
+			case 'id_wallet':
+				labelLogo = (
+					<img
+						src="/calypso/images/upgrades/ovo.svg"
+						alt={ paymentMethodName( method ) }
+						className="checkout__ovo"
+					/>
+				);
+				break;
 			case 'netbanking':
 				labelLogo = <Gridicon icon="institution" className="checkout__institution" />;
 				labelAdditionalText = paymentMethodName( method );
@@ -90,7 +98,7 @@ export class PaymentBox extends PureComponent {
 					case WEB_PAYMENT_APPLE_PAY_METHOD:
 						labelLogo = (
 							<img
-								src={ `/calypso/images/upgrades/apple-pay.svg` }
+								src="/calypso/images/upgrades/apple-pay.svg"
 								alt={ getWebPaymentMethodName( webPaymentMethod, this.props.translate ) }
 								className="checkout__apple-pay"
 							/>
