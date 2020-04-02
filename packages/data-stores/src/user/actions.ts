@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { stringify } from 'qs';
+
+/**
  * Internal dependencies
  */
 import {
@@ -57,6 +62,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				path: '/users/new',
 				apiVersion: '1.1',
 				method: 'post',
+				query: stringify( { locale: params.locale } ),
 			} );
 
 			yield reloadProxy();
