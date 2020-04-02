@@ -218,7 +218,7 @@ export class SecurePaymentForm extends Component {
 			return;
 		}
 
-		if ( 'variant' === abtest( 'ATPrivacy' ) ) {
+		if ( 'variant' !== abtest( 'ATPrivacy' ) ) {
 			// Until Atomic sites support being private / unlaunched, set them to public on upgrade
 			debug( 'Setting site to public because it is an Atomic plan' );
 			const response = await this.props.saveSiteSettings( selectedSiteId, {
