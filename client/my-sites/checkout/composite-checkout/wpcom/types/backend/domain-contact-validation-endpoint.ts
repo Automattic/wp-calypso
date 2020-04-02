@@ -65,5 +65,14 @@ export type DomainContactValidationResponse = {
 		countryCode?: string[];
 		fax?: string[];
 		vatId?: string[];
+		'extra.ca.lang': string[];
+		'extra.ca.legalType': string[];
+		'extra.ca.ciraAgreementAccepted': string[];
+		'extra.uk.registrantType': string[];
+		'extra.uk.registrationNumber': string[];
+		'extra.uk.tradingName': string[];
+		'extra.fr.registrantType': string[];
+		'extra.fr.trademarkNumber': string[];
+		'extra.fr.sirenSirat': string[];
 	};
 };
