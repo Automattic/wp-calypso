@@ -64,7 +64,9 @@ describe( 'PluginsBrowser basic tests', () => {
 				hasBusinessPlan={ false }
 			/>
 		);
-		expect( comp.find( 'Banner[event="calypso_plugins_browser_upgrade_nudge"]' ).length ).toBe( 1 );
+		expect( comp.find( 'UpsellNudge[event="calypso_plugins_browser_upgrade_nudge"]' ).length ).toBe(
+			1
+		);
 	} );
 	test( 'should not show upsell nudge if no site is selected', () => {
 		const comp = shallow(
