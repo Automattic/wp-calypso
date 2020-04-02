@@ -38,11 +38,11 @@ function rectIsEqual( prevRect: NullableDOMRect, nextRect: NullableDOMRect ) {
  *
  * @returns The ref to be set on the consumer component.
  */
-export function useWindowResizeCallback(
+export function useWindowResizeCallback< T extends Element >(
 	callback: ( boundingClientRect: NullableDOMRect ) => void
 ) {
 	const lastRect = useRef< NullableDOMRect >( null );
-	const elementRef = useRef< NullableElement >( null );
+	const elementRef = useRef< T | null >( null );
 
 	useEffect( () => {
 		if ( ! callback ) {
@@ -89,11 +89,11 @@ export function useWindowResizeCallback(
  *
  * @returns A tuple with the ref to be set on the consumer component, and the current rect.
  */
-export function useWindowResizeRect(): [
-	React.MutableRefObject< NullableElement >,
+export function useWindowResizeRect< T extends Element >(): [
+	React.MutableRefObject< T | null >,
 	NullableDOMRect
 ] {
 	const [ rect, setRect ] = useState< NullableDOMRect >( null );
-	const callbackRef = useWindowResizeCallback( setRect );
+	const callbackRef = useWindowResizeCallback< T >( setRect );
 	return [ callbackRef, rect ];
 }
