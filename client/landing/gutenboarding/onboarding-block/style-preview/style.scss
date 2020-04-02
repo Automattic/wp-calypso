@@ -114,10 +114,12 @@
 	}
 }
 
+$gutenboarding-style-preview-bar-height: 30px;
+
 // This and the following dot class render the browser chrome
 .style-preview__preview-bar {
 	width: 100%;
-	height: 30px;
+	height: $gutenboarding-style-preview-bar-height;
 	background: var( --studio-white );
 	border-bottom: 1px solid var( --studio-gray-5 );
 	display: flex;
@@ -154,14 +156,21 @@
 		}
 	}
 }
-.block-editor__container iframe.style-preview__iframe {
-	transform: scale( 0.7 );
-	transform-origin: 0 0;
-	width: 143%;
-	height: 143%;
-	position: absolute;
 
-	&.hideScroll {
-		width: 145%;
+.style-preview__iframe {
+	$scale-factor: 0.7;
+	// Extra specificify to override editor ifram styles
+	.style-preview__preview & {
+		width: 100% / $scale-factor;
+		height: 100% / $scale-factor;
+	}
+
+	transform: scale( $scale-factor );
+	transform-origin: 0 0;
+
+	.is-viewport-desktop & {
+		height: calc(
+			#{100% / $scale-factor} - #{$gutenboarding-style-preview-bar-height / $scale-factor}
+		);
 	}
 }
