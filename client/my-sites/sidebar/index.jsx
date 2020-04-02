@@ -286,6 +286,25 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	customize() {
+		const { showCustomizerLink, translate, path } = this.props;
+
+		if ( ! showCustomizerLink ) {
+			return null;
+		}
+
+		return (
+			<SidebarItem
+				label={ translate( 'Customize' ) }
+				selected={ itemLinkMatches( '/customize', path ) }
+				link={ this.props.customizeUrl }
+				onNavigate={ this.trackCustomizeClick }
+				preloadSectionName="customize"
+				materialIcon="gesture"
+			/>
+		);
+	}
+
 	design() {
 		const {
 				path,
@@ -737,7 +756,7 @@ export class MySitesSidebar extends Component {
 					{ this.site() }
 				</ExpandableSidebarMenu>
 
-				{ this.design() ? (
+				{ ! ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams ) && this.design() ? (
 					<ExpandableSidebarMenu
 						onClick={ this.toggleSection( SIDEBAR_SECTION_DESIGN ) }
 						expanded={ this.props.isDesignSectionOpen }
@@ -747,6 +766,8 @@ export class MySitesSidebar extends Component {
 						{ this.design() }
 					</ExpandableSidebarMenu>
 				) : null }
+
+				{ isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams && this.customize() }
 
 				{ tools && (
 					<ExpandableSidebarMenu
