@@ -13,7 +13,7 @@ import wp from 'lib/wp';
 import {
 	createTransactionEndpointRequestPayloadFromLineItems,
 	createPayPalExpressEndpointRequestPayloadFromLineItems,
-} from '../types';
+} from './types';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
 
