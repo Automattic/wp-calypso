@@ -1,5 +1,5 @@
 export const backupMainPath = ( siteName?: string | null ) =>
-	siteName ? '/backups' : `/backups/${ siteName }`;
+	siteName ? `/backups/${ siteName }` : '/backups';
 
 const backupSubSectionPath = (
 	siteName: string,
