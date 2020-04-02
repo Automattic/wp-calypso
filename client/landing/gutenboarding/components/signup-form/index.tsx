@@ -2,21 +2,22 @@
  * External dependencies
  */
 import React, { useState, useEffect } from 'react';
-import { ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
+import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useDebounce } from 'use-debounce';
 
 /**
  * Internal dependencies
  */
 import { USER_STORE } from '../../stores/user';
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { useLangRouteParam, usePath, Step } from '../../path';
 import ModalSubmitButton from '../modal-submit-button';
 import './style.scss';
 import SignupFormHeader from './header';
+import { selectorDebounce } from '../../constants';
 
 // TODO: deploy this change to @types/wordpress__element
 declare module '@wordpress/element' {
@@ -35,10 +36,19 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const { __: NO__ } = useI18n();
 	const [ emailVal, setEmailVal ] = useState( '' );
 	const [ passwordVal, setPasswordVal ] = useState( '' );
-	const { createAccount, clearErrors } = useDispatch( USER_STORE );
+	const [ usernameVal, setUsernameVal ] = useState( '' );
+
+	const [ usernameSearch ] = useDebounce( usernameVal, selectorDebounce );
+
+	const [ shouldShowUsernameField, setShouldShowUsernameField ] = useState( false );
+	const { createAccount, validateUsername, clearErrors } = useDispatch( USER_STORE );
 	const isFetchingNewUser = useSelect( select => select( USER_STORE ).isFetchingNewUser() );
+	const validatedUsername = useSelect( select => select( USER_STORE ).getValidatedUsername() );
+	const validatedUsernameIsSuggested = useSelect( select =>
+		select( USER_STORE ).isValidatedUsernameSuggested()
+	);
 	const newUserError = useSelect( select => select( USER_STORE ).getNewUserError() );
-	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ) ).getState();
+	// const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ) ).getState();
 	const langParam = useLangRouteParam();
 	const makePath = usePath();
 
@@ -46,6 +56,10 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		clearErrors();
 		onRequestClose();
 	};
+
+	useEffect( () => {
+		validateUsername( { username: usernameSearch, locale: langParam } );
+	}, [ usernameSearch, validateUsername ] );
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_gutenboarding_signup_start', {
@@ -58,16 +72,17 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const handleSignUp = async ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 
-		const username_hint = siteTitle || siteVertical?.label;
+		// const username_hint = siteTitle || siteVertical?.label;
 
 		const success = await createAccount( {
 			email: emailVal,
 			password: passwordVal,
+			username: validatedUsername,
 			signup_flow_name: 'gutenboarding',
 			locale: langParam,
-			...( username_hint && {
-				extra: { username_hint },
-			} ),
+			// ...( username_hint && {
+			// 	extra: { username_hint },
+			// } ),
 			is_passwordless: false,
 		} );
 
@@ -107,6 +122,24 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		Step.CreateSite
 	) }?new`;
 
+	const generateUsernameCandidate = ( emailAddress: string ) => {
+		return emailAddress
+			.split( '@' )[ 0 ]
+			.replace( /[^a-zA-Z0-9]/g, '' )
+			.toLowerCase();
+	};
+
+	const updateEmailValue = ( newVal: string ) => {
+		setEmailVal( newVal );
+		if ( ! shouldShowUsernameField ) {
+			setUsernameVal( generateUsernameCandidate( newVal ) );
+		}
+	};
+
+	const updateUsernameValue = ( newVal: string ) => {
+		setUsernameVal( generateUsernameCandidate( newVal ) );
+	};
+
 	return (
 		<Modal
 			className={ 'signup-form' }
@@ -138,7 +171,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 							value={ emailVal }
 							disabled={ isFetchingNewUser }
 							type="email"
-							onChange={ setEmailVal }
+							onChange={ updateEmailValue }
 							placeholder={ NO__( 'Email address' ) }
 							required
 							autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
@@ -153,6 +186,32 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 							required
 						/>
 
+						{ shouldShowUsernameField && (
+							<TextControl
+								value={ usernameVal }
+								disabled={ isFetchingNewUser }
+								type="text"
+								onChange={ updateUsernameValue }
+								placeholder={ NO__( 'Username' ) }
+								required
+							/>
+						) }
+
+						{ emailVal && (
+							<p>
+								<span>{ NO__( 'Your username will be' ) } </span>
+								<span> { validatedUsername } </span>
+								{ ! shouldShowUsernameField && (
+									<Button onClick={ () => setShouldShowUsernameField( true ) }>
+										{ NO__( 'Change it?' ) }
+									</Button>
+								) }
+								{ validatedUsernameIsSuggested && (
+									<span>(your chosen username wasn't available)</span>
+								) }
+							</p>
+						) }
+
 						{ errorMessage && (
 							<Notice className="signup-form__error-notice" status="error" isDismissible={ false }>
 								{ errorMessage }
@@ -162,7 +221,10 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 						<div className="signup-form__footer">
 							<p className="signup-form__link signup-form__terms-of-service-link">{ tos }</p>
 
-							<ModalSubmitButton disabled={ isFetchingNewUser } isBusy={ isFetchingNewUser }>
+							<ModalSubmitButton
+								disabled={ isFetchingNewUser || ! validatedUsername || ! emailVal }
+								isBusy={ isFetchingNewUser }
+							>
 								{ NO__( 'Create account' ) }
 							</ModalSubmitButton>
 						</div>

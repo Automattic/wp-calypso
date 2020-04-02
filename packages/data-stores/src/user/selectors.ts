@@ -12,3 +12,6 @@ export const getNewUser = ( state: State ) => state.newUser.data;
 export const getNewUserError = ( state: State ) => state.newUser.error;
 export const isFetchingNewUser = ( state: State ) => state.newUser.isFetching;
 export const isNewUser = ( state: State ) => !! state.newUser.data;
+export const getValidatedUsername = ( state: State ) => state.validatedUsername?.username;
+export const isValidatedUsernameSuggested = ( state: State ) =>
+	state.validatedUsername?.isSuggested;

@@ -54,10 +54,18 @@
 		}
 	}
 
-	.signup-form__legend p {
+	p {
 		@include onboarding-medium-text;
-		margin: 15px 0 30px;
+		margin: 10px 0;
 		color: var( --studio-gray-40 );
+	}
+
+	.signup-form__legend p {
+		margin: 15px 0 30px;
+	}
+
+	.components-base-control + .components-base-control {
+		margin-bottom: 0;
 	}
 
 	.components-text-control__input {

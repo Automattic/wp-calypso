@@ -49,6 +49,7 @@ export type NewUserResponse = NewUserSuccessResponse | NewUserErrorResponse;
 export interface CreateAccountParams {
 	email: string;
 	password?: string;
+	username?: string;
 	is_passwordless?: boolean;
 	signup_flow_name?: string;
 	locale?: string;
@@ -61,4 +62,29 @@ export interface CreateAccountParams {
 
 export interface CreateAccountAction extends Action {
 	params?: CreateAccountParams;
+}
+
+export interface ValidateUserParams {
+	username: string;
+	locale?: string;
+}
+
+export interface ValidatedUsername {
+	username: string;
+	isSuggested: boolean;
+}
+
+export interface ValidateUserSuccessResponse {
+	success: boolean;
+	username: string;
+	suggested_username: string;
+}
+
+export interface ValidateUserErrorResponse {
+	error: string;
+	status: number;
+	statusCode: number;
+	name: string;
+	message: string;
+	suggested_username: string;
 }

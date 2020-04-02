@@ -7,7 +7,7 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { CurrentUser, NewUser, NewUserErrorResponse } from './types';
+import { CurrentUser, NewUser, NewUserErrorResponse, ValidatedUsername } from './types';
 import { Action } from './actions';
 
 export const currentUser: Reducer< CurrentUser | null | undefined, Action > = ( state, action ) => {
@@ -57,6 +57,38 @@ export const newUserError: Reducer< NewUserErrorResponse | undefined, Action > =
 	return state;
 };
 
+export const validatedUsername: Reducer< ValidatedUsername | undefined, Action > = (
+	state,
+	action
+) => {
+	if ( action.type === 'RECEIVE_VALIDATED_USERNAME' ) {
+		if ( action.response.success ) {
+			return {
+				username: action.username,
+				isSuggested: false,
+			};
+		}
+		if ( action.response.success === false && action.response.messages?.suggested_username?.data ) {
+			return {
+				username: action.response.messages.suggested_username.data,
+				isSuggested: true,
+			};
+		}
+	}
+	if ( action.type === 'RECEIVE_VALIDATED_USERNAME_ERROR' ) {
+		if ( action.response.suggested_username ) {
+			return {
+				username: action.response.suggested_username.data,
+				isSuggested: true,
+			};
+		}
+	}
+	if ( action.type === 'CLEAR_VALIDATED_USERNAME' ) {
+		return undefined;
+	}
+	return state;
+};
+
 export const isFetchingNewUser: Reducer< boolean | undefined, Action > = (
 	state = false,
 	action
@@ -78,7 +110,7 @@ const newUser = combineReducers( {
 	isFetching: isFetchingNewUser,
 } );
 
-const reducer = combineReducers( { currentUser, newUser } );
+const reducer = combineReducers( { currentUser, newUser, validatedUsername } );
 
 export type State = ReturnType< typeof reducer >;
 

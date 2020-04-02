@@ -11,6 +11,9 @@ import {
 	CreateAccountParams,
 	NewUserErrorResponse,
 	NewUserSuccessResponse,
+	ValidateUserParams,
+	ValidateUserSuccessResponse,
+	ValidateUserErrorResponse,
 } from './types';
 import { wpcomRequest, requestAllBlogsAccess, reloadProxy } from '../wpcom-request-controls';
 import { WpcomClientCredentials } from '../shared-types';
@@ -39,8 +42,30 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		error,
 	} );
 
+	const receiveValidatedUsername = (
+		username: string,
+		response: ValidateUserSuccessResponse
+	) => ( {
+		type: 'RECEIVE_VALIDATED_USERNAME' as const,
+		username,
+		response,
+	} );
+
+	const receiveValidatedUsernameFailed = (
+		username: string,
+		error: ValidateUserErrorResponse
+	) => ( {
+		type: 'RECEIVE_VALIDATED_USERNAME_FAILED' as const,
+		username,
+		error,
+	} );
+
 	const clearErrors = () => ( {
 		type: 'CLEAR_ERRORS' as const,
+	} );
+
+	const clearValidatedUsername = () => ( {
+		type: 'CLEAR_VALIDATED_USERNAME' as const,
 	} );
 
 	function* createAccount( params: CreateAccountParams ) {
@@ -57,7 +82,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 					...params,
 
 					// Set to false because account validation should be a separate action
-					validate: false,
+					validate: true,
 				},
 				path: '/users/new',
 				apiVersion: '1.1',
@@ -78,14 +103,38 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		}
 	}
 
+	function* validateUsername( params: ValidateUserParams ) {
+		const { username, locale } = params;
+		try {
+			const response = yield wpcomRequest( {
+				body: {
+					username,
+					givesuggestions: 1,
+				},
+				path: '/signups/validation/user/',
+				apiVersion: '1.1',
+				method: 'post',
+				query: stringify( { locale } ),
+			} );
+
+			return receiveValidatedUsername( username, response );
+		} catch ( err ) {
+			return receiveValidatedUsernameFailed( username, err );
+		}
+	}
+
 	return {
 		receiveCurrentUser,
 		receiveCurrentUserFailed,
 		fetchNewUser,
 		receiveNewUser,
 		receiveNewUserFailed,
+		receiveValidatedUsername,
+		receiveValidatedUsernameFailed,
 		clearErrors,
+		clearValidatedUsername,
 		createAccount,
+		validateUsername,
 	};
 }
 
@@ -99,6 +148,10 @@ export type Action =
 			| ActionCreators[ 'receiveNewUser' ]
 			| ActionCreators[ 'receiveNewUserFailed' ]
 			| ActionCreators[ 'clearErrors' ]
+			| ActionCreators[ 'clearValidatedUsername' ]
+			| ActionCreators[ 'validateUsername' ]
+			| ActionCreators[ 'receiveValidatedUsername' ]
+			| ActionCreators[ 'receiveValidatedUsernameFailed' ]
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };
