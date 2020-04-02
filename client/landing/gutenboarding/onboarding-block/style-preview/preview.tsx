@@ -5,6 +5,8 @@ import * as React from 'react';
 import { addQueryArgs } from '@wordpress/url';
 import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
+import { animated, Spring } from 'react-spring/renderprops';
+import { colors } from '@automattic/color-studio';
 
 /**
  * Internal dependencies
@@ -13,14 +15,73 @@ import { STORE_KEY } from '../../stores/onboard';
 import * as T from './types';
 import { useLangRouteParam } from '../../path';
 
-type Design = import('../../stores/onboard/types').Design;
+/**
+ * Calypso dependencies
+ */
+import { useWindowResizeRect } from '../../../../lib/track-element-size';
+
 type Font = import('../../constants').Font;
-type SiteVertical = import('../../stores/onboard/types').SiteVertical;
+
+// For height calculations.
+// The box shadow makes the page overflow so prevent the iframe from reaching the bottom by including extra space.
+const BOTTOM_EXTRA = 20;
+
+const RATIO_MOBILE = 351 / 690;
+const RATIO_TABLET = 1024 / 768;
+
+const BASE_STYLE_DESKTOP: React.CSSProperties = {
+	borderTopWidth: 30,
+	borderRightWidth: 0,
+	borderBottomWidth: 0,
+	borderLeftWidth: 0,
+	borderRadius: 4,
+};
+const BASE_STYLE_DEVICE: React.CSSProperties = {
+	borderTopWidth: 13,
+	borderRightWidth: 13,
+	borderBottomWidth: 13,
+	borderLeftWidth: 13,
+	borderRadius: 31,
+};
 
 interface Props {
 	viewport: T.Viewport;
 }
 const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
+	const [ containerStyle, setContainerStyle ] = React.useState< React.CSSProperties >( {} );
+	const [ containerRef, containerRect ] = useWindowResizeRect< HTMLDivElement >();
+
+	React.useEffect( () => {
+		console.log( 'El %o, Rect %o', containerRef.current, containerRect );
+		if ( ! containerRect ) {
+			return;
+		}
+		// Calculate the width / height of our area and apply a ratio to fit within area.
+
+		const maxWidth = containerRect.width;
+		const maxHeight =
+			window.document.documentElement.clientHeight - containerRect.top - BOTTOM_EXTRA;
+
+		const areaRatio = maxWidth / maxHeight;
+
+		console.log( 'maxW: %o // maxH: %o', maxWidth, maxHeight );
+
+		switch ( viewport ) {
+			case 'desktop':
+				console.log( 'Setting %o', { height: maxHeight, width: maxWidth } );
+				setContainerStyle( { height: maxHeight, width: '100%' } );
+				break;
+
+			case 'mobile':
+				setContainerStyle( { height: 691, width: '350px' } );
+				break;
+
+			case 'tablet':
+				setContainerStyle( { height: 768, width: '1024px' } );
+				break;
+		}
+	}, [ containerRef, containerRect, viewport ] );
+
 	const [ previewHtml, setPreviewHtml ] = React.useState< string >();
 	const [ requestedFonts, setRequestedFonts ] = React.useState< Set< Font > >( new Set() );
 
@@ -131,23 +192,24 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 		}
 	}, [ previewHtml, requestedFonts, selectedFonts ] );
 
+	const baseStyle = viewport === 'desktop' ? BASE_STYLE_DESKTOP : BASE_STYLE_DEVICE;
+
 	return (
-		<div className={ `style-preview__preview is-viewport-${ viewport }` }>
-			{ viewport === 'desktop' && (
-				<div role="presentation" className="style-preview__preview-bar">
-					<div role="presentation" className="style-preview__preview-bar-dot" />
-					<div role="presentation" className="style-preview__preview-bar-dot" />
-					<div role="presentation" className="style-preview__preview-bar-dot" />
-				</div>
-			) }
-			<iframe
-				ref={ iframe }
-				className={ classNames( {
-					'style-preview__iframe': true,
-					hideScroll: viewport !== 'desktop',
-				} ) }
-				title="preview"
-			/>
+		<div ref={ containerRef } className={ `style-preview__preview is-viewport-${ viewport }` }>
+			<Spring from={ { borderWidth: 0, height: 700 } } to={ { ...baseStyle, ...containerStyle } }>
+				{ style => (
+					<animated.div className="style-preview__preview-iframe-container" style={ style }>
+						<animated.iframe
+							ref={ iframe }
+							className={ classNames( {
+								'style-preview__iframe': true,
+								hideScroll: viewport !== 'desktop',
+							} ) }
+							title="preview"
+						/>
+					</animated.div>
+				) }
+			</Spring>
 		</div>
 	);
 };
