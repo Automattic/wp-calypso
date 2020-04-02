@@ -3,7 +3,7 @@
  */
 import wpcom from 'lib/wp';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { socketConnect, socketDisconnect } from './socket';
+import { socket, socketConnect, socketDisconnect } from './socket';
 import privatePostChannelMiddleware from './private-post-channel/actions-to-events';
 import publicPostChannelMiddleware from './public-post-channel/actions-to-events';
 import userChannelMiddleware from './user-channel/actions-to-events';
@@ -27,27 +27,29 @@ const combineMiddleware = ( ...m ) => {
  * @param store middleware store
  */
 const connectMiddleware = store => next => action => {
-	next( action );
-
-	switch ( action.type ) {
-		case 'LASAGNA_SOCKET_CONNECT': {
-			const user = getCurrentUser( store.getState() );
-			wpcom
-				.request( {
-					method: 'POST',
-					path: '/jwt/sign',
-					body: { payload: JSON.stringify( { user } ) },
-				} )
-				.then( ( { jwt } ) => socketConnect( store, jwt, user.ID ) );
-			break;
-		}
-
-		case 'LASAGNA_SOCKET_DISCONNECT':
-			socketDisconnect( store );
-			break;
+	// bail unless this is a section set with the section definition
+	if ( action.type !== 'SECTION_SET' || ! action.section ) {
+		return next( action );
 	}
 
-	return;
+	// connect if we are going to the reader without a socket
+	if ( ! socket && action.section.name === 'reader' ) {
+		const user = getCurrentUser( store.getState() );
+		wpcom
+			.request( {
+				method: 'POST',
+				path: '/jwt/sign',
+				body: { payload: JSON.stringify( { user } ) },
+			} )
+			.then( ( { jwt } ) => socketConnect( store, jwt, user.ID ) );
+	}
+
+	// disconnect if we are leaving the reader with a socket
+	else if ( socket && action.section.name !== 'reader' ) {
+		socketDisconnect( store );
+	}
+
+	return next( action );
 };
 
 export default combineMiddleware(
