@@ -3,11 +3,11 @@
  */
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import classnames from 'classnames';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { ENTER } from '@wordpress/keycodes';
-import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -15,7 +15,11 @@ import classnames from 'classnames';
 import { STORE_KEY } from '../../stores/onboard';
 import { Step, usePath } from '../../path';
 
-const SiteTitle: React.FunctionComponent = () => {
+interface Props {
+	isVisible: boolean;
+}
+
+const SiteTitle: React.FunctionComponent< Props > = ( { isVisible } ) => {
 	const { __: NO__ } = useI18n();
 	const { siteTitle, siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
 	const { setSiteTitle } = useDispatch( STORE_KEY );
@@ -66,7 +70,12 @@ const SiteTitle: React.FunctionComponent = () => {
 	} );
 
 	return (
-		<form className={ classnames( { 'site-title--without-value': ! siteTitle.length } ) }>
+		<form
+			className={ classnames( 'site-title', {
+				'site-title--without-value': ! siteTitle.length,
+				'site-title--hidden': ! isVisible,
+			} ) }
+		>
 			{ madlib }
 		</form>
 	);

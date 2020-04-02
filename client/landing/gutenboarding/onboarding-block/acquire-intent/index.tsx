@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import { useSelect } from '@wordpress/data';
 import React, { FunctionComponent } from 'react';
+import classnames from 'classnames';
+import { useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
-import VerticalSelect from './vertical-select';
-import SiteTitle from './site-title';
 import { Step, usePath } from '../../path';
 import Link from '../../components/link';
-
+import VerticalSelect from './vertical-select';
+import SiteTitle from './site-title';
 import './style.scss';
 
 const AcquireIntent: FunctionComponent = () => {
@@ -25,19 +25,22 @@ const AcquireIntent: FunctionComponent = () => {
 		<div className="acquire-intent">
 			<div className="acquire-intent__questions">
 				<VerticalSelect />
-				{ ( siteVertical || siteTitle ) && <SiteTitle /> }
-				{ siteVertical && (
-					<div className="acquire-intent__footer">
-						<Link
-							className="acquire-intent__question-skip"
-							isPrimary
-							to={ makePath( Step.DesignSelection ) }
-						>
-							{ /* @TODO: add transitions and correct action */ }
-							{ siteTitle ? NO__( 'Choose a design' ) : NO__( 'Donʼt know yet' ) }
-						</Link>
-					</div>
-				) }
+				{ /* We are rendering everything to keep the content vertically centered on desktop while preventing jumping */ }
+				<SiteTitle isVisible={ !! ( siteVertical || siteTitle ) } />
+				<div
+					className={ classnames( 'acquire-intent__footer', {
+						'acquire-intent__footer--hidden': ! siteVertical,
+					} ) }
+				>
+					<Link
+						className="acquire-intent__question-skip"
+						isPrimary
+						to={ siteVertical && makePath( Step.DesignSelection ) }
+					>
+						{ /* @TODO: add transitions and correct action */ }
+						{ siteTitle ? NO__( 'Choose a design' ) : NO__( 'Donʼt know yet' ) }
+					</Link>
+				</div>
 			</div>
 		</div>
 	);
