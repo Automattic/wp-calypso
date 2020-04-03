@@ -205,7 +205,7 @@ const Header: FunctionComponent = () => {
 					</div>
 				</div>
 				<div className="gutenboarding__header-section-item">
-					{ siteTitle && (
+					{ currentDomain && (
 						<DomainPickerButton
 							className="gutenboarding__header-domain-picker-button"
 							disabled={ ! currentDomain }
