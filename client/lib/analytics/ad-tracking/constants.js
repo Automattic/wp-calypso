@@ -89,3 +89,6 @@ export const TRACKING_IDS = {
 // This name is something we created to store a session id for DCM Floodlight session tracking
 export const DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid';
 export const DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS = 1800;
+
+export const GA_PRODUCT_BRAND_WPCOM = 'WordPress.com';
+export const GA_PRODUCT_BRAND_JETPACK = 'Jetpack';

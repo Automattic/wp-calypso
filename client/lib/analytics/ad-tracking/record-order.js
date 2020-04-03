@@ -26,6 +26,8 @@ import {
 	YAHOO_GEMINI_CONVERSION_PIXEL_URL,
 	PANDORA_CONVERSION_PIXEL_URL,
 	ICON_MEDIA_ORDER_PIXEL_URL,
+	GA_PRODUCT_BRAND_WPCOM,
+	GA_PRODUCT_BRAND_JETPACK,
 } from './constants';
 import { loadTrackingScripts } from './load-tracking-scripts';
 import { recordParamsInFloodlightGtag } from './floodlight';
@@ -450,11 +452,11 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 
 	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
 		products = wpcomJetpackCartInfo.wpcomProducts;
-		brand = 'WordPress.com';
+		brand = GA_PRODUCT_BRAND_WPCOM;
 		totalCost = wpcomJetpackCartInfo.wpcomCost;
 	} else if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
 		products = wpcomJetpackCartInfo.jetpackProducts;
-		brand = 'Jetpack';
+		brand = GA_PRODUCT_BRAND_JETPACK;
 		totalCost = wpcomJetpackCartInfo.jetpackCost;
 	} else {
 		debug( 'recordOrderInGAEnhancedEcommerce: [Skipping] No products' );
@@ -467,7 +469,7 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 			id: product.product_id,
 			name: product.product_name_en,
 			quantity: product.volume,
-			price: product.item_total,
+			price: product.cost,
 			brand,
 		} );
 	} );
@@ -480,6 +482,7 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 			value: totalCost,
 			currency: cart.currency ?? 'USD',
 			tax: cart.total_tax ?? undefined,
+			coupon: cart.coupon_code ?? '',
 			items,
 		},
 	];
