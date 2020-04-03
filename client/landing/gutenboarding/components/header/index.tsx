@@ -25,6 +25,7 @@ import {
 	getRecommendedDomainSuggestion,
 } from '../../utils/domain-suggestions';
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
+import { useCurrentStep } from '../../path';
 
 import wp from '../../../../lib/wp';
 
@@ -63,6 +64,8 @@ interface Cart {
 
 const Header: FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
+
+	const currentStep = useCurrentStep();
 
 	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
 	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
@@ -205,7 +208,10 @@ const Header: FunctionComponent = () => {
 					</div>
 				</div>
 				<div className="gutenboarding__header-section-item">
-					{ currentDomain && (
+					{ // We display the DomainPickerButton as soon as we have a domain suggestion,
+					//   unless we're still at the IntentGathering step. In that case, we only
+					//   show it comes from a site title (but hide it if it comes from a vertical).
+					currentDomain && ( siteTitle || currentStep !== 'IntentGathering' ) && (
 						<DomainPickerButton
 							className="gutenboarding__header-domain-picker-button"
 							disabled={ ! currentDomain }
