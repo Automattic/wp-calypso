@@ -27,6 +27,10 @@ $acquire-intent-transition-algorithm: ease-in-out;
 		align-items: center;
 		padding: 0 120px;
 	}
+
+	@include break-large {
+		padding: 12px 170px 0;
+	}
 }
 
 .acquire-intent__footer {
@@ -73,6 +77,7 @@ $acquire-intent-transition-algorithm: ease-in-out;
 	color: var( --contrastColor );
 	font-size: 14px;
 	font-weight: 500;
+	letter-spacing: 0;
 	padding: 20px 32px;
 	// @TODO: work out hover-state animations
 	transition: background $acquire-intent-transition-duration

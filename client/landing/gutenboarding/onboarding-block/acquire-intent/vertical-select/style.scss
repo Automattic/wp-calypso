@@ -27,7 +27,7 @@
 		.madlib__input {
 			position: absolute;
 			width: 100%;
-			border-bottom: 2px solid var( --studio-gray-5 );
+			border: none; //not transparent to prevent a flicker of 100% bottom border when this class is removed
 		}
 	}
 }
