@@ -25,6 +25,31 @@ export type DomainContactDetails = {
 	extra?: DomainContactDetailsExtra;
 };
 
+type DomainContactDetailsExtra = {
+	ca?: CaDomainContactExtraDetails | null;
+	uk?: UkDomainContactExtraDetails | null;
+	fr?: FrDomainContactExtraDetails | null;
+};
+
+export type CaDomainContactExtraDetails = {
+	lang?: string;
+	legalType?: string;
+	ciraAgreementAccepted?: boolean;
+};
+
+export type UkDomainContactExtraDetails = {
+	registrantType?: string;
+	registrationNumber?: string;
+	tradingName?: string;
+};
+
+export type FrDomainContactExtraDetails = {
+	registrantType?: string;
+	registrantVatId?: string;
+	trademarkNumber?: string;
+	sirenSirat?: string;
+};
+
 // This is the data returned by the redux state, where the fields could have a
 // null value.
 export type PossiblyCompleteDomainContactDetails = {
@@ -58,45 +83,25 @@ export type DomainContactDetailsErrors = {
 	countryCode?: string;
 	fax?: string;
 	vatId?: string;
+	extra?: DomainContactDetailsErrorsExtra;
 };
 
-type DomainContactDetailsExtra = {
-	ca?: CaDomainContactExtraDetails;
-	uk?: UkDomainContactExtraDetails;
-	fr?: FrDomainContactExtraDetails;
-};
-
-export type CaDomainContactExtraDetails = {
-	lang?: string;
-	organization?: string;
-	legalType?: string;
-	ciraAgreementAccepted?: boolean;
+type DomainContactDetailsErrorsExtra = {
+	ca?: CaDomainContactExtraDetailsErrors | null;
+	uk?: UkDomainContactExtraDetailsErrors | null;
+	fr?: FrDomainContactExtraDetailsErrors | null;
 };
 
 export type CaDomainContactExtraDetailsErrors = {
 	lang?: string;
-	organization?: string;
 	legalType?: string;
 	ciraAgreementAccepted?: string;
-};
-
-export type UkDomainContactExtraDetails = {
-	registrantType?: string;
-	registrationNumber?: string;
-	tradingName?: string;
 };
 
 export type UkDomainContactExtraDetailsErrors = {
 	registrantType?: string;
 	registrationNumber?: string;
 	tradingName?: string;
-};
-
-export type FrDomainContactExtraDetails = {
-	registrantType?: string;
-	registrantVatId?: string;
-	trademarkNumber?: string;
-	sirenSirat?: string;
 };
 
 export type FrDomainContactExtraDetailsErrors = {
