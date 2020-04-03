@@ -2493,7 +2493,10 @@ Undocumented.prototype.getAtomicSiteMediaViaProxy = function(
 	fn
 ) {
 	const params = {
-		path: `/sites/${ siteIdOrSlug }/atomic-auth-proxy/file${ mediaPath }${ query }`,
+		path: `/sites/${ siteIdOrSlug }/atomic-auth-proxy/file?path=${ mediaPath }&${ query.replace(
+			/^\?/,
+			''
+		) }`,
 		apiNamespace: 'wpcom/v2',
 	};
 
