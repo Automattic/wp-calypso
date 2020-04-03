@@ -23,7 +23,6 @@
 	"license": "GPL-2.0-or-later",
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "npm run clean",
-		"prepare": "transpile"
+		"prepublish": "npm run clean"
 	}
 }
