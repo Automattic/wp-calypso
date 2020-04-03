@@ -76,7 +76,7 @@ export async function recordOrder( cart, orderId ) {
 	recordOrderInBing( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInCriteo( cart, orderId );
-	recordOrderInGAEnhancedEcommerce( cart, orderId );
+	recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo );
 
 	// Fire a single tracking event without any details about what was purchased
 
@@ -435,7 +435,7 @@ function recordOrderInGoogleAds( cart, orderId ) {
 	}
 }
 
-function recordOrderInGAEnhancedEcommerce( cart, orderId ) {
+function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( ! isAdTrackingAllowed() ) {
 		debug( 'recordOrderInGAEnhancedEcommerce: [Skipping] ad tracking is disallowed' );
 		return;
@@ -446,51 +446,51 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId ) {
 		return;
 	}
 
-	if ( 'function' !== typeof ga ) {
-		debug( 'recordOrderInGAEnhancedEcommerce: [Skipping] ga() is not defined' );
+	let products, brand, totalCost;
+
+	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
+		products = wpcomJetpackCartInfo.wpcomProducts;
+		brand = 'WordPress.com';
+		totalCost = wpcomJetpackCartInfo.wpcomCost;
+	} else if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
+		products = wpcomJetpackCartInfo.jetpackProducts;
+		brand = 'Jetpack';
+		totalCost = wpcomJetpackCartInfo.jetpackCost;
+	} else {
+		debug( 'recordOrderInGAEnhancedEcommerce: [Skipping] No products' );
 		return;
 	}
 
-	// Create tracker
-	// eslint-disable-next-line no-undef
-	ga( 'create', TRACKING_IDS.wpcomGoogleAnalyticsGtag );
-
-	// Load the enhanced ecommerce plugin
-	// eslint-disable-next-line no-undef
-	ga( 'require', 'ec' );
-
-	// eslint-disable-next-line no-undef
-	ga( 'set', 'currencyCode', cart.currency ?? 'USD' );
-
-	// Add products
-	cart.products.map( cartItem => {
-		// eslint-disable-next-line no-undef
-		ga( 'ec:addProduct', {
-			id: cartItem.product_id,
-			name: cartItem.product_name_en,
-			category: undefined,
-			brand: undefined,
-			variant: undefined,
-			price: cartItem.item_total,
-			quantity: cartItem.volume,
+	const items = [];
+	products.map( product => {
+		items.push( {
+			id: product.product_id,
+			name: product.product_name_en,
+			quantity: product.volume,
+			price: product.item_total,
+			brand,
 		} );
 	} );
 
-	// TODO: tax and coupon aren't passed through from the new composite checkout
-	const params = {
-		id: orderId,
-		affiliation: undefined,
-		revenue: cart.total_cost,
-		tax: cart.total_tax ?? undefined,
-		shipping: undefined,
-		coupon: cart.coupon ?? undefined,
-	};
+	const params = [
+		'event',
+		'purchase',
+		{
+			transaction_id: orderId,
+			value: totalCost,
+			currency: cart.currency ?? 'USD',
+			tax: cart.total_tax ?? undefined,
+			items,
+		},
+	];
 
-	// eslint-disable-next-line no-undef
-	ga( 'ec:setAction', 'purchase', params );
+	window.gtag( ...params );
 
-	// eslint-disable-next-line no-undef
-	ga( 'send', 'transaction' ); // TODO event = 'transaction' ??
+	// TODO:
+	// - should we only send value in usd?
+	// - product.cost instead of product.item_total?
+	// - are there constnats for brand?
+	// - do we differentiate by brand in GA in that way?
 
 	debug( 'recordOrderInGAEnhancedEcommerce: Record WPCom Purchase', params );
 }
