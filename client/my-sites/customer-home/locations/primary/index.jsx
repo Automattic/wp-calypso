@@ -17,14 +17,20 @@ const cardComponents = {
 };
 
 const Primary = ( { checklistMode, cards } ) => {
+	// Always ensure we have primary content.
+	if ( cards && cards.length < 1 ) {
+		cards = [ 'home-primary-quick-links' ];
+	}
 	return (
 		<div className="primary">
 			{ cards &&
-				cards.map( ( card, index ) =>
-					React.createElement( cardComponents[ card ], {
-						key: index,
-						checklistMode: card === 'primary.checklist-site-setup' ? checklistMode : null,
-					} )
+				cards.map(
+					( card, index ) =>
+						cardComponents[ card ] &&
+						React.createElement( cardComponents[ card ], {
+							key: index,
+							checklistMode: card === 'home-primary-checklist-site-setup' ? checklistMode : null,
+						} )
 				) }
 		</div>
 	);

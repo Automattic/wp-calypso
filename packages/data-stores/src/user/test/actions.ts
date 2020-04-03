@@ -27,6 +27,15 @@ describe( 'createAccount', () => {
 		},
 	};
 
+	const paramsWithPasswordAndLocale = {
+		email: 'test@example.com',
+		password: 'abctesting!',
+		extra: {
+			username_hint: 'Test Site Title',
+		},
+		locale: 'fr',
+	};
+
 	const defaults = {
 		client_id,
 		client_secret,
@@ -102,6 +111,42 @@ describe( 'createAccount', () => {
 		const finalResult = generator.next();
 
 		expect( finalResult.value ).toBe( false );
+		expect( finalResult.done ).toBe( true );
+	} );
+
+	it( 'requests a passwordful account to be created with French locale set in query', () => {
+		const generator = createAccount( paramsWithPasswordAndLocale );
+
+		expect( generator.next().value ).toEqual( { type: 'FETCH_NEW_USER' } );
+
+		const apiResponse = {
+			success: true,
+			bearer_token: 'bearer-token',
+			username: 'testusernamer12345',
+			user_id: 12345,
+		};
+
+		expect( generator.next().value ).toEqual( {
+			type: 'WPCOM_REQUEST',
+			request: expect.objectContaining( {
+				body: {
+					...defaults,
+					...paramsWithPasswordAndLocale,
+					validate: false,
+				},
+				query: 'locale=fr',
+			} ),
+		} );
+
+		expect( generator.next( apiResponse ).value ).toEqual( { type: 'RELOAD_PROXY' } );
+		expect( generator.next().value ).toEqual( { type: 'REQUEST_ALL_BLOGS_ACCESS' } );
+
+		const finalResult = generator.next();
+
+		expect( finalResult.value ).toEqual( {
+			type: 'RECEIVE_NEW_USER',
+			response: apiResponse,
+		} );
 		expect( finalResult.done ).toBe( true );
 	} );
 } );

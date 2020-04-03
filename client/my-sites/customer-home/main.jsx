@@ -66,7 +66,12 @@ const Home = ( {
 			<PageViewTracker path={ `/home/:site` } title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-			{ siteId && <QueryHomeLayout siteId={ siteId } /> }
+			{ siteId && (
+				<QueryHomeLayout
+					siteId={ siteId }
+					isNowLaunched={ checklistMode === 'launched' ? true : false }
+				/>
+			) }
 			<SidebarNavigation />
 			<div className="customer-home__heading">
 				<FormattedHeader
@@ -85,14 +90,14 @@ const Home = ( {
 				) }
 			</div>
 			<Notices checklistMode={ checklistMode } />
-			<Upsells />
+			{ layout && <Upsells cards={ layout.upsells } /> }
 			{ hasChecklistData && layout ? (
 				<div className="customer-home__layout">
 					<div className="customer-home__layout-col customer-home__layout-col-left">
 						<Primary cards={ layout.primary } checklistMode={ checklistMode } />
 					</div>
 					<div className="customer-home__layout-col customer-home__layout-col-right">
-						<Secondary />
+						<Secondary cards={ layout.secondary } />
 					</div>
 				</div>
 			) : (

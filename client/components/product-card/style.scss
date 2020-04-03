@@ -190,6 +190,7 @@
 }
 
 .product-card__options-label {
+	margin-top: 16px;
 	font-size: 14px;
 	text-align: center;
 	color: var( --color-text-subtle );
@@ -287,6 +288,10 @@
 	justify-content: center;
 	align-items: center;
 	margin: 24px auto 8px;
+
+	& + .product-card__options-label {
+		margin-top: 8px;
+	}
 }
 
 .product-card__promo-nudge-badge {

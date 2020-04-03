@@ -24,6 +24,19 @@ const domain: Reducer<
 	return state;
 };
 
+const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_DOMAIN_SEARCH_TERM' ) {
+		return action.domainSearch;
+	}
+	if ( action.type === 'SET_SITE_TITLE' ) {
+		return action.siteTitle;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
 const selectedDesign: Reducer< Design | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_SELECTED_DESIGN' ) {
 		return action.selectedDesign;
@@ -91,7 +104,7 @@ const selectedFonts: Reducer< FontPair | undefined, OnboardAction > = (
 	if ( action.type === 'SET_FONTS' ) {
 		return action.fonts;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( action.type === 'RESET_FONTS' || action.type === 'RESET_ONBOARD_STORE' ) {
 		return undefined;
 	}
 	return state;
@@ -99,6 +112,7 @@ const selectedFonts: Reducer< FontPair | undefined, OnboardAction > = (
 
 const reducer = combineReducers( {
 	domain,
+	domainSearch,
 	selectedFonts,
 	selectedDesign,
 	siteTitle,

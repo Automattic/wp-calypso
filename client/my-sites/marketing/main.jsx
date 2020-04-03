@@ -23,7 +23,7 @@ import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import FormattedHeader from 'components/formatted-header';
-import UpgradeNudge from 'blocks/upgrade-nudge';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { FEATURE_NO_ADS } from 'lib/plans/constants';
 
 /**
@@ -106,11 +106,14 @@ export const Sharing = ( {
 				</SectionNav>
 			) }
 			{ ! isVip && (
-				<UpgradeNudge
+				<UpsellNudge
 					event="sharing_no_ads"
 					feature={ FEATURE_NO_ADS }
-					message={ translate( 'Prevent ads from showing on your site.' ) }
+					description={ translate( 'Prevent ads from showing on your site.' ) }
 					title={ translate( 'No Ads with WordPress.com Premium' ) }
+					tracksImpressionName="calypso_upgrade_nudge_impression"
+					tracksClickName="calypso_upgrade_nudge_cta_click"
+					showIcon={ true }
 				/>
 			) }
 			{ contentComponent }

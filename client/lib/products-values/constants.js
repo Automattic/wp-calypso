@@ -53,6 +53,8 @@ export const JETPACK_SEARCH_TIER_UP_TO_1M_RECORDS = 'up_to_1m_records';
 export const JETPACK_SEARCH_TIER_MORE_THAN_1M_RECORDS = 'more_than_1m_records';
 
 export const JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/backup/';
+export const JETPACK_SEARCH_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/search/';
+export const JETPACK_SCAN_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/scan/';
 
 export const JETPACK_PRODUCT_PRICE_MATRIX = {
 	[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
@@ -157,10 +159,11 @@ export const getJetpackProductsTaglines = () => {
 
 export const getJetpackProductsDescriptions = () => {
 	const searchDescription = translate(
-		'Enhanced Search for more relevant results using modern ranking algorithms, ' +
-			'boosting of specific results, advanced filtering and faceting, and more.'
+		'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content – right when they need it.'
 	);
-	const scanDescription = 'Scan your site.';
+	const scanDescription = translate(
+		'Automatic scanning and one-click fixes keep your site one step ahead of security threats.'
+	);
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: translate(
 			'Always-on backups ensure you never lose your site. Your changes are saved every day with a 30-day archive.'
@@ -188,7 +191,16 @@ export const getJetpackProducts = () => {
 			description: translate(
 				'Always-on backups ensure you never lose your site. Choose from real-time or daily backups.'
 			),
+			hasPromo: true,
 			id: PRODUCT_JETPACK_BACKUP,
+			link: {
+				label: translate( 'Which backup option is best for me?' ),
+				props: {
+					location: 'product_jetpack_backup_description',
+					slug: 'which-one-do-i-need',
+				},
+				url: JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL,
+			},
 			options: {
 				yearly: JETPACK_BACKUP_PRODUCTS_YEARLY,
 				monthly: JETPACK_BACKUP_PRODUCTS_MONTHLY,
@@ -200,34 +212,23 @@ export const getJetpackProducts = () => {
 			slugs: JETPACK_BACKUP_PRODUCTS,
 		},
 	];
-	isEnabled( 'jetpack/scan-product' ) &&
-		output.push( {
-			title: translate( 'Jetpack Scan' ),
-			// TODO: Add new description copy for Search
-			description: 'Always-on scan ensure you never lose your site.',
-			id: PRODUCT_JETPACK_SCAN,
-			forceRadios: true,
-			options: {
-				yearly: [ PRODUCT_JETPACK_SCAN ],
-				monthly: [ PRODUCT_JETPACK_SCAN_MONTHLY ],
-			},
-			optionShortNames: getJetpackProductsShortNames(),
-			optionDisplayNames: getJetpackProductsDisplayNames(),
-			optionDescriptions: getJetpackProductsDescriptions(),
-			optionsLabel: translate( 'Select a product option:' ),
-			slugs: JETPACK_SCAN_PRODUCTS,
-		} );
 	isEnabled( 'jetpack/search-product' ) &&
 		output.push( {
 			title: translate( 'Jetpack Search' ),
-			// TODO: Add new description copy for Search
-			description: translate(
-				'Always-on backups ensure you never lose your site. Choose from real-time or daily backups.'
-			),
-			id: PRODUCT_JETPACK_SEARCH,
+			description: getJetpackProductsDescriptions()[ PRODUCT_JETPACK_SEARCH ],
 			// There is only one option per billing interval, but this
 			// component still needs the full display with radio buttons.
 			forceRadios: true,
+			hasPromo: false,
+			id: PRODUCT_JETPACK_SEARCH,
+			link: {
+				label: translate( 'Learn more' ),
+				props: {
+					location: 'product_jetpack_search_description',
+					slug: 'learn-more-search',
+				},
+				url: JETPACK_SEARCH_PRODUCT_LANDING_PAGE_URL,
+			},
 			options: {
 				yearly: [ PRODUCT_JETPACK_SEARCH ],
 				monthly: [ PRODUCT_JETPACK_SEARCH_MONTHLY ],
@@ -282,6 +283,33 @@ export const getJetpackProducts = () => {
 				);
 			},
 			slugs: JETPACK_SEARCH_PRODUCTS,
+		} );
+	isEnabled( 'jetpack/scan-product' ) &&
+		output.push( {
+			title: translate( 'Jetpack Scan' ),
+			description: getJetpackProductsDescriptions()[ PRODUCT_JETPACK_SCAN ],
+			// There is only one option per billing interval, but this
+			// component still needs the full display with radio buttons.
+			forceRadios: true,
+			hasPromo: false,
+			id: PRODUCT_JETPACK_SCAN,
+			link: {
+				label: translate( 'Learn more' ),
+				props: {
+					location: 'product_jetpack_scan_description',
+					slug: 'learn-more-scan',
+				},
+				url: JETPACK_SCAN_PRODUCT_LANDING_PAGE_URL,
+			},
+			options: {
+				yearly: [ PRODUCT_JETPACK_SCAN ],
+				monthly: [ PRODUCT_JETPACK_SCAN_MONTHLY ],
+			},
+			optionShortNames: getJetpackProductsShortNames(),
+			optionDisplayNames: getJetpackProductsDisplayNames(),
+			optionDescriptions: getJetpackProductsDescriptions(),
+			optionsLabel: translate( 'Select a product option:' ),
+			slugs: JETPACK_SCAN_PRODUCTS,
 		} );
 
 	return output;

@@ -12,15 +12,21 @@ import { Design, SiteVertical } from './types';
 import { STORE_KEY as ONBOARD_STORE } from './constants';
 import { SITE_STORE } from '../site';
 
-type State = import('.').State;
-type FontPair = import('../../constants').FontPair;
-type DomainSuggestion = DomainSuggestions.DomainSuggestion;
-type Template = VerticalsTemplates.Template;
 type CreateSiteParams = import('@automattic/data-stores').Site.CreateSiteParams;
+type DomainSuggestion = DomainSuggestions.DomainSuggestion;
+type Font = import('../../constants').Font;
+type FontPair = import('../../constants').FontPair;
+type State = import('.').State;
+type Template = VerticalsTemplates.Template;
 
 export const setDomain = ( domain: DomainSuggestion | undefined ) => ( {
 	type: 'SET_DOMAIN' as const,
 	domain,
+} );
+
+export const setDomainSearch = ( domainSearch: string ) => ( {
+	type: 'SET_DOMAIN_SEARCH_TERM' as const,
+	domainSearch,
 } );
 
 export const setSelectedDesign = ( selectedDesign: Design | undefined ) => ( {
@@ -47,10 +53,16 @@ export const togglePageLayout = ( pageLayout: Template ) => ( {
 	pageLayout,
 } );
 
-export const setFonts = ( fonts: FontPair | undefined ) => ( {
-	type: 'SET_FONTS' as const,
-	fonts,
+export const resetFonts = () => ( {
+	type: 'RESET_FONTS' as const,
 } );
+
+export const setFonts = ( fonts: FontPair | undefined ) => {
+	return {
+		type: 'SET_FONTS' as const,
+		fonts: fonts,
+	};
+};
 
 export const resetOnboardStore = () => ( {
 	type: 'RESET_ONBOARD_STORE' as const,
@@ -93,7 +105,7 @@ export function* createSite(
 			site_creation_flow: 'gutenboarding',
 			theme: `pub/${ selectedDesign?.theme || 'twentytwenty' }`,
 			timezone_string: guessTimezone(),
-			template: selectedDesign?.slug || 'twentytwenty',
+			...( selectedDesign?.template && { template: selectedDesign.template } ),
 			...( selectedFonts && {
 				font_base: selectedFonts.base,
 				font_headings: selectedFonts.headings,
@@ -108,9 +120,11 @@ export function* createSite(
 }
 
 export type OnboardAction = ReturnType<
+	| typeof resetFonts
 	| typeof resetOnboardStore
 	| typeof resetSiteVertical
 	| typeof setDomain
+	| typeof setDomainSearch
 	| typeof setFonts
 	| typeof setSelectedDesign
 	| typeof setSiteTitle

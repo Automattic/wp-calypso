@@ -97,7 +97,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	return {
 		loaded,
 		form: loaded && shippingLabel.form,
-		showPurchaseDialog: shippingLabel.showPurchaseDialog,
+		showPurchaseDialog: shippingLabel && shippingLabel.showPurchaseDialog,
 		isCustomsFormRequired: isCustomsFormRequired( state, orderId, siteId ),
 	};
 };

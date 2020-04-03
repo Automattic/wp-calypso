@@ -7,7 +7,6 @@ import { useI18n } from '@automattic/react-i18n';
 
 interface SignupFormHeaderProps {
 	onRequestClose: () => void;
-	loginUrl: string;
 }
 
 interface CloseButtonProps {
@@ -25,14 +24,13 @@ const CustomCloseButton = ( { onClose }: CloseButtonProps ) => {
 				fill="none"
 				xmlns="http://www.w3.org/2000/svg"
 			>
-				<path d="M1.40456 1L15 15M1 15L14.5954 1" stroke="#1E1E1E" stroke-width="1.5" />
+				<path d="M1.40456 1L15 15M1 15L14.5954 1" stroke="#1E1E1E" strokeWidth="1.5" />
 			</svg>
 		</Button>
 	);
 };
 
-const SignupFormHeader = ( { onRequestClose, loginUrl }: SignupFormHeaderProps ) => {
-	const { __: NO__ } = useI18n();
+const SignupFormHeader = ( { onRequestClose }: SignupFormHeaderProps ) => {
 	return (
 		<div className="signup-form__header">
 			<div className="signup-form__header-section">
@@ -42,12 +40,6 @@ const SignupFormHeader = ( { onRequestClose, loginUrl }: SignupFormHeaderProps )
 			</div>
 
 			<div className="signup-form__header-section">
-				<div className="signup-form__header-section-item">
-					<Button className="signup-form__link" isLink href={ loginUrl }>
-						{ NO__( 'Log in' ) }
-					</Button>
-				</div>
-
 				<div className="signup-form__header-section-item signup-form__header-close-button">
 					<CustomCloseButton onClose={ onRequestClose } />
 				</div>

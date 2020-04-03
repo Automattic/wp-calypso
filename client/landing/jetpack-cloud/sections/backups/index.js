@@ -57,7 +57,7 @@ export default function() {
 				clientRender
 			);
 			page(
-				'/backups/:site/restore/:restoreId',
+				'/backups/:site/restore/:rewindId',
 				siteSelection,
 				navigation,
 				backupRestore,

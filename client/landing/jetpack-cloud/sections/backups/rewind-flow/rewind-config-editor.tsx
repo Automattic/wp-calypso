@@ -59,6 +59,17 @@ const BackupRewindConfigEditor: FunctionComponent< Props > = ( {
 			} ),
 		},
 		{
+			name: 'roots',
+			label: translate(
+				'{{strong}}WordPress root{{/strong}} (includes wp-config php and any non WordPress files)',
+				{
+					components: {
+						strong: <strong />,
+					},
+				}
+			),
+		},
+		{
 			name: 'contents',
 			label: translate(
 				'{{strong}}WP-content directory{{/strong}} (excludes themes, plugins, and uploads)',
@@ -94,7 +105,7 @@ const BackupRewindConfigEditor: FunctionComponent< Props > = ( {
 						name={ name }
 						onChange={ onChange }
 					/>
-					{ label }
+					<span className="rewind-flow__rewind-config-editor-label-text">{ label }</span>
 				</FormLabel>
 			) ) }
 		</div>
