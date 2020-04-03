@@ -73,12 +73,19 @@ export class LoginLinks extends React.Component {
 		const loginParameters = {
 			isNative: true,
 			locale: this.props.locale,
-			twoFactorAuthType: this.props.currentRoute === '/log-in/jetpack' ? 'jetpack/link' : 'link',
+			twoFactorAuthType: 'link',
 		};
 		const emailAddress = get( this.props, [ 'query', 'email_address' ] );
 		if ( emailAddress ) {
 			loginParameters.emailAddress = emailAddress;
 		}
+
+		if ( this.props.currentRoute === '/log-in/jetpack' ) {
+			loginParameters.twoFactorAuthType = 'jetpack/link';
+		} else if ( this.props.isGutenboarding ) {
+			loginParameters.twoFactorAuthType = 'gutenboarding/link';
+		}
+
 		page( login( loginParameters ) );
 	};
 
@@ -197,8 +204,14 @@ export class LoginLinks extends React.Component {
 		const loginParameters = {
 			isNative: true,
 			locale: this.props.locale,
-			twoFactorAuthType: this.props.currentRoute === '/log-in/jetpack' ? 'jetpack/link' : 'link',
+			twoFactorAuthType: 'link',
 		};
+
+		if ( this.props.currentRoute === '/log-in/jetpack' ) {
+			loginParameters.twoFactorAuthType = 'jetpack/link';
+		} else if ( this.props.isGutenboarding ) {
+			loginParameters.twoFactorAuthType = 'gutenboarding/link';
+		}
 
 		return (
 			<a

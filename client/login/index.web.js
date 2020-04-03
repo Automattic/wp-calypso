@@ -54,7 +54,11 @@ export default router => {
 		);
 
 		router(
-			[ `/log-in/link/${ lang }`, `/log-in/jetpack/link/${ lang }` ],
+			[
+				`/log-in/link/${ lang }`,
+				`/log-in/jetpack/link/${ lang }`,
+				`/log-in/gutenboarding/link/${ lang }`,
+			],
 			setUpLocale,
 			setSection( LOGIN_SECTION_DEFINITION ),
 			redirectLoggedIn,
