@@ -2492,11 +2492,9 @@ Undocumented.prototype.getAtomicSiteMediaViaProxy = function(
 	{ query = '', maxSize },
 	fn
 ) {
+	const safeQuery = query.replace( /^\?/, '' );
 	const params = {
-		path: `/sites/${ siteIdOrSlug }/atomic-auth-proxy/file?path=${ mediaPath }&${ query.replace(
-			/^\?/,
-			''
-		) }`,
+		path: `/sites/${ siteIdOrSlug }/atomic-auth-proxy/file?path=${ mediaPath }&${ safeQuery }`,
 		apiNamespace: 'wpcom/v2',
 	};
 
