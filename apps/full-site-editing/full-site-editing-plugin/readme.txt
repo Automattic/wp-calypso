@@ -22,7 +22,7 @@ to give you a head start on creating new pages for your site.
 1. Upload the plugin files to the `/wp-content/plugins/full-site-editing` directory, or install the plugin through the WordPress plugins screen directly.
 1. Activate the plugin through the 'Plugins' screen in WordPress.
 1. Create a new page and select a template that best suits your needs.
-1. Place the "Blog Posts Listing" block anywhere you want inside the block editor.
+1. Place the "Blog Posts" block anywhere you want inside the block editor.
 
 
 == Frequently Asked Questions ==
@@ -31,7 +31,7 @@ to give you a head start on creating new pages for your site.
 
 We'll be making frequent updates to the plugin as we flesh out its feature set. You're welcome to try it, just be aware that it is only designed to work on the WordPress.com environment and could break after an update.
 
-= How is the Blog Posts Listing block different from the Latest Posts block in Core? =
+= How is the Blog Posts block different from the Latest Posts block in Core? =
 
 It adds an excerpt! And meta information! It really is much more useful, especially if your looking for a block that gives readers a better idea about your latest posts than just the title.
 
