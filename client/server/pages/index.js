@@ -391,23 +391,51 @@ function setUpLoggedInRoute( req, res, next ) {
 		'X-Frame-Options': 'SAMEORIGIN',
 	} );
 
-	const LANG_REVISION_FILE_URL = 'https://widgets.wp.com/languages/calypso/lang-revisions.json';
-	const langPromise = superagent
-		.get( LANG_REVISION_FILE_URL )
-		.then( response => {
-			const languageRevisions = filterLanguageRevisions( response.body );
+	const setupRequests = [];
 
-			req.context.languageRevisions = languageRevisions;
+	if ( config.isEnabled( 'use-translation-chunks' ) ) {
+		const target = getBuildTargetFromRequest( req );
+		const rootPath = path.join( __dirname, '..', '..', '..' );
+		const langRevisionsPath = path.join(
+			rootPath,
+			'public',
+			target,
+			'languages',
+			'lang-revisions.json'
+		);
+		const langPromise = fs.promises
+			.readFile( langRevisionsPath, 'utf8' )
+			.then( languageRevisions => {
+				req.context.languageRevisions = languageRevisions;
 
-			return languageRevisions;
-		} )
-		.catch( error => {
-			console.error( 'Failed to fetch the language revision files.', error );
+				return languageRevisions;
+			} )
+			.catch( error => {
+				console.error( 'Failed to read the language revision files.', error );
 
-			throw error;
-		} );
+				throw error;
+			} );
 
-	const setupRequests = [ langPromise ];
+		setupRequests.push( langPromise );
+	} else {
+		const LANG_REVISION_FILE_URL = 'https://widgets.wp.com/languages/calypso/lang-revisions.json';
+		const langPromise = superagent
+			.get( LANG_REVISION_FILE_URL )
+			.then( response => {
+				const languageRevisions = filterLanguageRevisions( response.body );
+
+				req.context.languageRevisions = languageRevisions;
+
+				return languageRevisions;
+			} )
+			.catch( error => {
+				console.error( 'Failed to fetch the language revision files.', error );
+
+				throw error;
+			} );
+
+		setupRequests.push( langPromise );
+	}
 
 	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 		const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
