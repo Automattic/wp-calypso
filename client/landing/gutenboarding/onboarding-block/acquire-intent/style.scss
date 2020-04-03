@@ -27,6 +27,10 @@ $acquire-intent-transition-algorithm: ease-in-out;
 		align-items: center;
 		padding: 0 120px;
 	}
+
+	@include break-large {
+		padding: 12px 170px 0;
+	}
 }
 
 .acquire-intent__footer {
