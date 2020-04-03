@@ -18,7 +18,13 @@ import { SITE_STORE } from '../../stores/site';
 import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
 import SignupForm from '../../components/signup-form';
-import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
+import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
+import {
+	getFreeDomainSuggestions,
+	getPaidDomainSuggestions,
+	getRecommendedDomainSuggestion,
+} from '../../utils/domain-suggestions';
+import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 
 import wp from '../../../../lib/wp';
 const wpcom = wp.undocumented();
@@ -62,7 +68,7 @@ const Header: FunctionComponent = () => {
 
 	const newSite = useSelect( select => select( SITE_STORE ).getNewSite() );
 
-	const { domain, siteTitle, siteVertical, siteWasCreatedForDomainPurchase } = useSelect( select =>
+	const { domain, siteTitle, siteWasCreatedForDomainPurchase } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
 
@@ -73,7 +79,13 @@ const Header: FunctionComponent = () => {
 		setSiteWasCreatedForDomainPurchase,
 	} = useDispatch( ONBOARD_STORE );
 
-	const freeDomainSuggestion = useFreeDomainSuggestion();
+	const allSuggestions = useDomainSuggestions( siteTitle );
+	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice(
+		0,
+		PAID_DOMAINS_TO_SHOW
+	);
+	const freeDomainSuggestion = getFreeDomainSuggestions( allSuggestions )?.[ 0 ];
+	const recommendedDomainSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
 
 	useEffect( () => {
 		if ( ! siteTitle ) {
@@ -100,11 +112,11 @@ const Header: FunctionComponent = () => {
 	const domainElement = (
 		<span
 			className={ classnames( 'gutenboarding__header-domain-picker-button-domain', {
-				placeholder: ! currentDomain,
+				placeholder: ! recommendedDomainSuggestion,
 			} ) }
 		>
-			{ currentDomain
-				? sprintf( NO__( '%s is available' ), currentDomain.domain_name )
+			{ recommendedDomainSuggestion
+				? sprintf( NO__( '%s is available' ), recommendedDomainSuggestion.domain_name )
 				: 'example.wordpress.com' }
 		</span>
 	);
@@ -193,7 +205,6 @@ const Header: FunctionComponent = () => {
 					{ siteTitle && (
 						<DomainPickerButton
 							className="gutenboarding__header-domain-picker-button"
-							defaultQuery={ siteTitle }
 							disabled={ ! currentDomain }
 							currentDomain={ currentDomain }
 							onDomainSelect={ setDomain }
@@ -202,7 +213,6 @@ const Header: FunctionComponent = () => {
 									? handleCreateSiteForDomains( currentUser.username )
 									: handleSignupForDomains()
 							}
-							queryParameters={ { vertical: siteVertical?.id } }
 						>
 							{ domainElement }
 						</DomainPickerButton>
