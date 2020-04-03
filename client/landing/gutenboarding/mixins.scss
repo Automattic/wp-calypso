@@ -40,10 +40,10 @@
 }
 
 @mixin onboarding-heading-padding {
-	margin: $gutenboarding-heading-padding-top-mobile 0 $gutenboarding-heading-padding-bottom-mobile;
+	margin: $gutenboarding-heading-padding-mobile;
 
 	@include break-mobile {
-		margin: $gutenboarding-heading-padding-top-desktop 0 $gutenboarding-heading-padding-bottom-desktop;
+		margin: $gutenboarding-heading-padding-desktop;
 	}
 }
 
