@@ -107,8 +107,6 @@ const Header: FunctionComponent = () => {
 		setShowSignupDialog( false );
 	}, [ pathname, setShowSignupDialog ] );
 
-	const currentDomain = domain ?? freeDomainSuggestion;
-
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	const domainElement = domain ? (
 		domain.domain_name
@@ -123,6 +121,8 @@ const Header: FunctionComponent = () => {
 				: 'example.wordpress.com' }
 		</span>
 	);
+
+	const currentDomain = domain ?? freeDomainSuggestion;
 
 	const handleCreateSite = useCallback(
 		( username: string, bearerToken?: string ) => {
