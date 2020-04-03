@@ -69,15 +69,20 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 		switch ( viewport ) {
 			case 'desktop':
 				console.log( 'Setting %o', { height: maxHeight, width: maxWidth } );
-				setContainerStyle( { height: maxHeight, width: '100%' } );
+				setContainerStyle( ( { width } ) => ( {
+					height: `${ maxHeight }px`,
+					width: `${ maxWidth }px`,
+				} ) );
 				break;
 
 			case 'mobile':
-				setContainerStyle( { height: 691, width: '350px' } );
+				console.log( 'Setting %o', { height: '691px', width: '350px' } );
+				setContainerStyle( { height: '691px', width: '350px' } );
 				break;
 
 			case 'tablet':
-				setContainerStyle( { height: 768, width: '1024px' } );
+				console.log( 'Setting %o', { height: '768px', width: '1024px' } );
+				setContainerStyle( { height: '768px', width: '1024px' } );
 				break;
 		}
 	}, [ containerRef, containerRect, viewport ] );
@@ -196,7 +201,7 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 
 	return (
 		<div ref={ containerRef } className={ `style-preview__preview is-viewport-${ viewport }` }>
-			<Spring from={ { borderWidth: 0, height: 700 } } to={ { ...baseStyle, ...containerStyle } }>
+			<Spring to={ { ...baseStyle, ...containerStyle } } native>
 				{ style => (
 					<animated.div className="style-preview__preview-iframe-container" style={ style }>
 						<animated.iframe

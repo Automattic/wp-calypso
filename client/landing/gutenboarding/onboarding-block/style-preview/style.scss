@@ -90,19 +90,27 @@
 		width: 90px;
 		height: 30px;
 		opacity: 1;
-		transition: opacity 200ms ease-in-out, transform 200ms ease-in-out;
+		transition: opacity 120ms ease-in-out, transform 120ms ease-in-out;
 		transform: translate( 0, 0 );
 		background-image: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='30' viewbox='0 0 30 90' fill='%23dcdcde'%3E%3Ccircle cy='15' cx='15' r='3'/%3E%3Ccircle cy='15' cx='25' r='3'/%3E%3Ccircle cy='15' cx='35' r='3'/%3E%3C/svg%3E" );
+	}
+
+	&.is-viewport-desktop {
+		&::before {
+			transition-delay: 200ms, 200ms;
+		}
 	}
 
 	&.is-viewport-mobile,
 	&.is-viewport-tablet {
 		&::before {
 			transform: translate( 0, -5px );
+			transition-delay: 0, 0;
 			opacity: 0;
 		}
 	}
 }
+
 .style-preview__preview-iframe-container {
 	grid-area: preview;
 	margin: 0 auto;
