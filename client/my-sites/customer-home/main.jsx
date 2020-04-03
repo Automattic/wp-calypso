@@ -27,6 +27,8 @@ import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/a
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
+import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete';
 import QueryHomeLayout from 'components/data/query-home-layout';
 import { getHomeLayout } from 'state/selectors/get-home-layout';
 import Notices from 'my-sites/customer-home/locations/notices';
@@ -43,6 +45,7 @@ const Home = ( {
 	canUserUseCustomerHome,
 	checklistMode,
 	hasChecklistData,
+	displayChecklist,
 	layout,
 	site,
 	siteId,
@@ -91,7 +94,11 @@ const Home = ( {
 			</div>
 			{ layout ? (
 				<>
-					<Notices cards={ layout.notices } checklistMode={ checklistMode } />
+					<Notices
+						cards={ layout.notices }
+						checklistMode={ checklistMode }
+						displayChecklist={ displayChecklist }
+					/>
 					<Upsells cards={ layout.upsells } />
 					{ hasChecklistData && (
 						<div className="customer-home__layout">
@@ -129,6 +136,7 @@ const mapStateToProps = state => {
 	const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
 	const user = getCurrentUser( state );
 	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
+	const isChecklistComplete = isSiteChecklistComplete( state, siteId );
 
 	return {
 		site: getSelectedSite( state ),
@@ -138,6 +146,8 @@ const mapStateToProps = state => {
 		hasChecklistData,
 		isStaticHomePage:
 			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
+		displayChecklist:
+			isEligibleForDotcomChecklist( state, siteId ) && hasChecklistData && ! isChecklistComplete,
 		siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 		user,
 		layout: getHomeLayout( state, siteId ),
