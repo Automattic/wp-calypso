@@ -83,7 +83,7 @@ function getDescription( purchase ) {
 	if ( jetpackProductsDescriptions[ purchase.productSlug ] ) {
 		return jetpackProductsDescriptions[ purchase.productSlug ];
 	}
-	return getName( purchase );
+	return null;
 }
 
 function getDisplayName( purchase ) {
