@@ -66,7 +66,7 @@ export default function CheckoutSystemDecider( {
 		return null; // TODO: replace with loading page
 	}
 
-	if ( shouldShowCompositeCheckout( cart, countryCode, locale, product, isJetpack ) ) {
+	if ( shouldShowCompositeCheckout( cart, countryCode, locale, product, purchaseId, isJetpack ) ) {
 		return (
 			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
 				<CompositeCheckout
@@ -103,7 +103,14 @@ export default function CheckoutSystemDecider( {
 	);
 }
 
-function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, isJetpack ) {
+function shouldShowCompositeCheckout(
+	cart,
+	countryCode,
+	locale,
+	productSlug,
+	purchaseId,
+	isJetpack
+) {
 	if ( config.isEnabled( 'composite-checkout-force' ) ) {
 		debug( 'shouldShowCompositeCheckout true because force config is enabled' );
 		return true;
@@ -148,12 +155,14 @@ function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, is
 	}
 
 	// If the URL is adding a product, only allow things already supported
+	const isRenewal = !! purchaseId;
 	const slugsToAllow = [ 'personal', 'premium', 'blogger', 'ecommerce', 'business' ];
 	const slugPrefixesToAllow = [ 'domain-mapping:' ];
 	if (
+		( ! isRenewal,
 		productSlug &&
-		! slugsToAllow.find( slug => productSlug === slug ) &&
-		! slugPrefixesToAllow.find( slugPrefix => productSlug.startsWith( slugPrefix ) )
+			! slugsToAllow.find( slug => productSlug === slug ) &&
+			! slugPrefixesToAllow.find( slugPrefix => productSlug.startsWith( slugPrefix ) ) )
 	) {
 		debug(
 			'shouldShowCompositeCheckout false because product does not match list of allowed products',
