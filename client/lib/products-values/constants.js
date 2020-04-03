@@ -53,6 +53,8 @@ export const JETPACK_SEARCH_TIER_UP_TO_1M_RECORDS = 'up_to_1m_records';
 export const JETPACK_SEARCH_TIER_MORE_THAN_1M_RECORDS = 'more_than_1m_records';
 
 export const JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/backup/';
+export const JETPACK_SEARCH_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/search/';
+export const JETPACK_SCAN_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/scan/';
 
 export const JETPACK_PRODUCT_PRICE_MATRIX = {
 	[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
@@ -189,8 +191,16 @@ export const getJetpackProducts = () => {
 			description: translate(
 				'Always-on backups ensure you never lose your site. Choose from real-time or daily backups.'
 			),
-			id: PRODUCT_JETPACK_BACKUP,
 			hasPromo: true,
+			id: PRODUCT_JETPACK_BACKUP,
+			link: {
+				label: translate( 'Which backup option is best for me?' ),
+				props: {
+					location: 'product_jetpack_backup_description',
+					slug: 'which-one-do-i-need',
+				},
+				url: JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL,
+			},
 			options: {
 				yearly: JETPACK_BACKUP_PRODUCTS_YEARLY,
 				monthly: JETPACK_BACKUP_PRODUCTS_MONTHLY,
@@ -206,11 +216,19 @@ export const getJetpackProducts = () => {
 		output.push( {
 			title: translate( 'Jetpack Search' ),
 			description: getJetpackProductsDescriptions()[ PRODUCT_JETPACK_SEARCH ],
-			id: PRODUCT_JETPACK_SEARCH,
 			// There is only one option per billing interval, but this
 			// component still needs the full display with radio buttons.
 			forceRadios: true,
 			hasPromo: false,
+			id: PRODUCT_JETPACK_SEARCH,
+			link: {
+				label: translate( 'Learn more' ),
+				props: {
+					location: 'product_jetpack_search_description',
+					slug: 'learn-more-search',
+				},
+				url: JETPACK_SEARCH_PRODUCT_LANDING_PAGE_URL,
+			},
 			options: {
 				yearly: [ PRODUCT_JETPACK_SEARCH ],
 				monthly: [ PRODUCT_JETPACK_SEARCH_MONTHLY ],
@@ -270,16 +288,24 @@ export const getJetpackProducts = () => {
 		output.push( {
 			title: translate( 'Jetpack Scan' ),
 			description: getJetpackProductsDescriptions()[ PRODUCT_JETPACK_SCAN ],
-			id: PRODUCT_JETPACK_SCAN,
 			// There is only one option per billing interval, but this
 			// component still needs the full display with radio buttons.
 			forceRadios: true,
 			hasPromo: false,
+			id: PRODUCT_JETPACK_SCAN,
+			link: {
+				label: translate( 'Learn more' ),
+				props: {
+					location: 'product_jetpack_scan_description',
+					slug: 'learn-more-scan',
+				},
+				url: JETPACK_SCAN_PRODUCT_LANDING_PAGE_URL,
+			},
 			options: {
 				yearly: [ PRODUCT_JETPACK_SCAN ],
 				monthly: [ PRODUCT_JETPACK_SCAN_MONTHLY ],
 			},
-			optionShortNames: getJetpackProductsShortNames()[ PRODUCT_JETPACK_SCAN ],
+			optionShortNames: getJetpackProductsShortNames(),
 			optionDisplayNames: getJetpackProductsDisplayNames(),
 			optionDescriptions: getJetpackProductsDescriptions(),
 			optionsLabel: translate( 'Select a product option:' ),
