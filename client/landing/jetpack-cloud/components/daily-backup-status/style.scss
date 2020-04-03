@@ -61,7 +61,7 @@
 	padding: 0;
 }
 
-@include breakpoint( '>960px' ) {
+@include breakpoint( '>660px' ) {
 	.daily-backup-status__meta,
 	.daily-backup-status__title {
 		display: block;
