@@ -63,8 +63,20 @@ const VerticalSelect: React.FunctionComponent = () => {
 	const showArrow = ! siteTitle && ! siteVertical && inputText.length > 2;
 
 	const animatedPlaceholder = useTyper(
-		[ NO__( 'football' ), NO__( 'shopping' ), NO__( 'cars' ), NO__( 'design' ), NO__( 'travel' ) ],
-		isInputEmpty
+		[
+			NO__( 'photography' ),
+			NO__( 'blogging' ),
+			NO__( 'travel' ),
+			NO__( 'marketing' ),
+			NO__( 'fashion' ),
+			NO__( 'shopping' ),
+			NO__( 'design' ),
+			NO__( 'real estate' ),
+			NO__( 'food' ),
+			NO__( 'sports' ),
+		],
+		isInputEmpty,
+		{ delayBetweenWords: 800, delayBetweenCharacters: 110 }
 	);
 
 	const updateSuggestions = ( inputValue: string ) => {
