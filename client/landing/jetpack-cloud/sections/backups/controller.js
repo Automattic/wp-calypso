@@ -32,7 +32,7 @@ export function backupDownload( context, next ) {
 	next();
 }
 
-/* handles /backups/:site/restore/:restoreId, see `backupRestorePath` */
+/* handles /backups/:site/restore/:rewindId, see `backupRestorePath` */
 export function backupRestore( context, next ) {
 	context.primary = (
 		<BackupRewindFlow rewindId={ context.params.rewindId } purpose={ RewindFlowPurpose.RESTORE } />

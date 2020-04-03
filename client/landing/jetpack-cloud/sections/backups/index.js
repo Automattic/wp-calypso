@@ -40,7 +40,7 @@ export default function() {
 		);
 
 		if ( config.isEnabled( 'jetpack-cloud/backups-restore' ) ) {
-			/* handles /backups/:site/restore/:restoreId, see `backupRestorePath` */
+			/* handles /backups/:site/restore/:rewindId, see `backupRestorePath` */
 			page(
 				backupRestorePath( ':site', ':rewindId' ),
 				siteSelection,
