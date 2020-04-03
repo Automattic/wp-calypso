@@ -39,6 +39,17 @@
 		}
 	}
 
+	.design-selector__design-option {
+		cursor: pointer;
+
+		&:hover,
+		&:focus {
+			.design-selector__image-frame {
+				border-color: var( --highlightColor );
+			}
+		}
+	}
+
 	.design-selector__image-frame {
 		display: block;
 		width: 100%;
