@@ -162,6 +162,12 @@ describe( 'CompositeCheckout', () => {
 				ui: { selectedSiteId: 123 },
 				productsList: {
 					items: {
+						'personal-bundle': {
+							product_id: 1009,
+							product_name: 'Plan',
+							product_slug: 'personal-bundle',
+							prices: {},
+						},
 						domain_map: {
 							product_id: 5,
 							product_name: 'Product',
@@ -491,6 +497,22 @@ describe( 'CompositeCheckout', () => {
 		);
 		getAllByLabelText( 'Domain Mapping: bar.com' ).map( element =>
 			expect( element ).toHaveTextContent( 'R$0' )
+		);
+	} );
+
+	it( 'adds renewal product to the cart when the url has a renewal', async () => {
+		let renderResult;
+		const cartChanges = { products: [] };
+		const additionalProps = { product: 'personal-bundle', purchaseId: '12345' };
+		await act( async () => {
+			renderResult = render(
+				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+				container
+			);
+		} );
+		const { getAllByLabelText } = renderResult;
+		getAllByLabelText( 'WordPress.com Personal' ).map( element =>
+			expect( element ).toHaveTextContent( 'R$144' )
 		);
 	} );
 
