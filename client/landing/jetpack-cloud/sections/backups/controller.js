@@ -6,14 +6,20 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import BackupDetailPage from './detail';
-import BackupsPage from './main';
-import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 import BackupActivity from './activity';
+import BackupDetailPage from './detail';
+import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
+import BackupsPage from './main';
 
 /* handles /backups/:site, see `backupMainPath` */
 export function backups( context, next ) {
 	context.primary = <BackupsPage />;
+	next();
+}
+
+/* handles /backups/activity/:site see `backupDownloadPath` */
+export function backupActivityLog( context, next ) {
+	context.primary = <BackupActivity />;
 	next();
 }
 
@@ -38,10 +44,5 @@ export function backupRestore( context, next ) {
 	context.primary = (
 		<BackupRewindFlow rewindId={ context.params.rewindId } purpose={ RewindFlowPurpose.RESTORE } />
 	);
-	next();
-}
-
-export function backupActivityLog( context, next ) {
-	context.primary = <BackupActivity />;
 	next();
 }

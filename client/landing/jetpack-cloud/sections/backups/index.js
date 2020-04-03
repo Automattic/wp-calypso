@@ -17,20 +17,28 @@ import {
 	backupRestore,
 	backups,
 } from 'landing/jetpack-cloud/sections/backups/controller';
-import { backupMainPath, backupRestorePath, backupDownloadPath, backupDetailPath } from './paths';
+import {
+	backupMainPath,
+	backupActivityPath,
+	backupRestorePath,
+	backupDownloadPath,
+	backupDetailPath,
+} from './paths';
 
 export default function() {
 	if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
-		page( '/backups/activity', siteSelection, sites, makeLayout, clientRender );
+		/* handles /backups/activity, see `backupActivityPath` */
+		page( backupActivityPath(), siteSelection, sites, makeLayout, clientRender );
+		/* handles /backups/activity/:site, see `backupActivityPath` */
 		page(
-			'/backups/activity/:site',
+			backupActivityPath( ':site' ),
 			siteSelection,
 			navigation,
 			backupActivityLog,
 			makeLayout,
 			clientRender
 		);
-
+		/* handles /backups/:site/detail/:backupId, see `backupDetailPath` */
 		page(
 			backupDetailPath( ':site', ':backupId' ),
 			siteSelection,

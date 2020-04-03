@@ -26,7 +26,7 @@ import {
 	expandMySitesSidebarSection as expandSection,
 	toggleMySitesSidebarSection as toggleSection,
 } from 'state/my-sites/sidebar/actions';
-import { backupMainPath } from 'landing/jetpack-cloud/sections/backups/paths';
+import { backupMainPath, backupActivityPath } from 'landing/jetpack-cloud/sections/backups/paths';
 
 // Lowercase because these are used as keys for sidebar state.
 export const SIDEBAR_SECTION_SCAN = 'scan';
@@ -81,7 +81,7 @@ class JetpackCloudSidebar extends Component {
 									onNavigate={ this.onNavigate }
 									selected={
 										itemLinkMatches( backupMainPath(), this.props.path ) &&
-										! itemLinkMatches( '/backups/activity', this.props.path )
+										! itemLinkMatches( backupActivityPath(), this.props.path )
 									}
 								/>
 								<SidebarItem
@@ -89,13 +89,9 @@ class JetpackCloudSidebar extends Component {
 									label={ translate( 'Activity Log', {
 										comment: 'Jetpack Cloud / Activity Log status sidebar navigation item',
 									} ) }
-									link={
-										selectedSiteSlug
-											? `/backups/activity/${ selectedSiteSlug }`
-											: '/backups/activity'
-									}
+									link={ backupActivityPath( selectedSiteSlug ) }
 									onNavigate={ this.onNavigate }
-									selected={ itemLinkMatches( '/backups/activity', this.props.path ) }
+									selected={ itemLinkMatches( backupActivityPath(), this.props.path ) }
 								/>
 							</ul>
 						</ExpandableSidebarMenu>
