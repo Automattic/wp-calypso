@@ -8,6 +8,8 @@ import privatePostChannelMiddleware from './private-post-channel/actions-to-even
 import publicPostChannelMiddleware from './public-post-channel/actions-to-events';
 import userChannelMiddleware from './user-channel/actions-to-events';
 
+let socketConnecting = false;
+
 /**
  * Compose a list of middleware into one middleware
  * Props @rhc3
@@ -33,15 +35,20 @@ const connectMiddleware = store => next => action => {
 	}
 
 	// connect if we are going to the reader without a socket
-	if ( ! socket && action.section.name === 'reader' ) {
+	if ( ! socket && ! socketConnecting && action.section.name === 'reader' ) {
+		socketConnecting = true;
 		const user = getCurrentUser( store.getState() );
+
 		wpcom
 			.request( {
 				method: 'POST',
 				path: '/jwt/sign',
 				body: { payload: JSON.stringify( { user } ) },
 			} )
-			.then( ( { jwt } ) => socketConnect( store, jwt, user.ID ) );
+			.then( ( { jwt } ) => {
+				socketConnect( store, jwt, user.ID );
+				socketConnecting = false;
+			} );
 	}
 
 	// disconnect if we are leaving the reader with a socket

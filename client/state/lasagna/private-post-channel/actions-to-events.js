@@ -6,47 +6,70 @@ import debugFactory from 'debug';
 /**
  * Internal Dependencies
  */
-import { keyForPost, keyToString } from 'reader/post-key';
+import { LASAGNA_SOCKET_CONNECTED, ROUTE_SET } from 'state/action-types';
+import { READER_POST_SEEN } from 'state/reader/action-types';
+import { getReaderFullViewPostKey } from 'state/reader/full-view/selectors/get-reader-full-view-post-key';
+import { getPostByKey } from 'state/reader/posts/selectors';
+import { getSite } from 'state/reader/sites/selectors';
 import registerEventHandlers from './events-to-actions';
 import { socket } from '../socket';
 
 let channel = null;
-const channelTopicPrefix = 'private:push:wp_post:';
 
+const channelTopicPrefix = 'private:push:wp_post:';
 const debug = debugFactory( 'lasagna:channel:private:push:wp_post' );
+
+const joinChannel = ( store, site, post, postKey ) => {
+	if ( ! socket || ! site.is_private ) {
+		return;
+	}
+
+	channel = socket.channel( channelTopicPrefix + post.global_ID, { post_key: postKey } );
+	registerEventHandlers( channel, store );
+	channel
+		.join()
+		.receive( 'ok', () => debug( 'channel join ok' ) )
+		.receive( 'error', ( { reason } ) => {
+			debug( 'channel join error', reason );
+			channel.leave();
+			channel = null;
+		} );
+};
+
+const leaveChannel = () => {
+	channel && channel.leave();
+	channel = null;
+};
 
 export default store => next => action => {
 	switch ( action.type ) {
-		case 'READER_POST_SEEN': {
-			// READER_POST_FULL_VIEW
-			const {
-				payload: { site, post },
-			} = action;
+		case LASAGNA_SOCKET_CONNECTED: {
+			const state = store.getState();
+			const postKey = getReaderFullViewPostKey( state );
+			const post = getPostByKey( state, postKey );
 
-			if ( ! site.is_private ) {
+			if ( ! post ) {
 				break;
 			}
 
-			const postKey = keyToString( keyForPost( post ) );
-			channel = socket.channel( channelTopicPrefix + post.global_ID, { post_key: postKey } );
-			registerEventHandlers( channel, store );
-			channel
-				.join()
-				.receive( 'ok', () => debug( 'channel join ok' ) )
-				.receive( 'error', ( { reason } ) => {
-					debug( 'channel join error', reason );
-					channel.leave();
-					channel = null;
-				} );
+			const site = getSite( state, post.site_ID );
 
+			if ( ! site ) {
+				break;
+			}
+
+			joinChannel( store, site, post, postKey );
 			break;
 		}
 
-		case 'ROUTE_SET':
-			if ( channel ) {
-				channel.leave();
-				channel = null;
-			}
+		case READER_POST_SEEN: {
+			const postKey = getReaderFullViewPostKey( store.getState() );
+			joinChannel( store, action.payload.site, action.payload.post, postKey );
+			break;
+		}
+
+		case ROUTE_SET:
+			leaveChannel();
 			break;
 	}
 
