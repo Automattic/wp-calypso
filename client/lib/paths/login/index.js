@@ -31,6 +31,8 @@ export function login( {
 			url += '/' + socialService + '/callback';
 		} else if ( twoFactorAuthType && isJetpack ) {
 			url += '/jetpack/' + twoFactorAuthType;
+		} else if ( twoFactorAuthType && isGutenboarding ) {
+			url += '/gutenboarding/' + twoFactorAuthType;
 		} else if ( twoFactorAuthType ) {
 			url += '/' + twoFactorAuthType;
 		} else if ( socialConnect ) {
