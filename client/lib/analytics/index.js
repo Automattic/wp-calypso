@@ -18,8 +18,7 @@ import {
 import { updateQueryParamsTracking } from 'lib/analytics/sem';
 import { trackAffiliateReferral } from './refer';
 import { recordSignupComplete } from './signup';
-import { gaRecordEvent, gaRecordPageView, gaRecordTiming } from './ga';
-import { statsdRecordTiming } from './statsd';
+import { gaRecordEvent, gaRecordPageView } from './ga';
 import {
 	recordTracksEvent,
 	analyticsEvents,
@@ -29,7 +28,6 @@ import {
 	recordTracksPageView,
 	getCurrentUser,
 	recordTracksPageViewWithPageParams,
-	getMostRecentUrlPath,
 	pushEventToTracksQueue,
 } from '@automattic/calypso-analytics';
 
@@ -172,14 +170,6 @@ const analytics = {
 			// Marketing
 			recordOrder( cart, orderId );
 		}
-	},
-
-	timing: {
-		record: function( eventType, duration, triggerName ) {
-			const urlPath = getMostRecentUrlPath() || 'unknown';
-			gaRecordTiming( urlPath, eventType, duration, triggerName );
-			statsdRecordTiming( urlPath, eventType, duration, triggerName );
-		},
 	},
 
 	tracks: {
