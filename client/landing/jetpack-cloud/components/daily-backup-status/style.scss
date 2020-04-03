@@ -17,7 +17,7 @@
 }
 
 .daily-backup-status__label {
-	color: grey;
+	color: var( --studio-gray-80 );
 	text-align: left;
 }
 
@@ -42,6 +42,7 @@
 	display: block;
 	width: 100%;
 	text-align: center;
+	margin-left: 0;
 }
 
 .form-button.daily-backup-status__download-button {
