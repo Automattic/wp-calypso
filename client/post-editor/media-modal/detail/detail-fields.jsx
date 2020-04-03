@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -11,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import { bumpStat } from 'lib/analytics/mc';
 import { getMimePrefix, url } from 'lib/media/utils';
 import MediaActions from 'lib/media/actions';
@@ -40,22 +39,22 @@ class EditorMediaModalDetailFields extends Component {
 	}
 
 	bumpTitleStat = () => {
-		analytics.ga.recordEvent( 'Media', 'Changed Item Title' );
+		gaRecordEvent( 'Media', 'Changed Item Title' );
 		bumpStat( 'calypso_media_edit_details', 'title' );
 	};
 
 	bumpAltStat = () => {
-		analytics.ga.recordEvent( 'Media', 'Changed Image Alt' );
+		gaRecordEvent( 'Media', 'Changed Image Alt' );
 		bumpStat( 'calypso_media_edit_details', 'alt' );
 	};
 
 	bumpCaptionStat = () => {
-		analytics.ga.recordEvent( 'Media', 'Changed Item Caption' );
+		gaRecordEvent( 'Media', 'Changed Item Caption' );
 		bumpStat( 'calypso_media_edit_details', 'caption' );
 	};
 
 	bumpDescriptionStat = () => {
-		analytics.ga.recordEvent( 'Media', 'Changed Item Description' );
+		gaRecordEvent( 'Media', 'Changed Item Description' );
 		bumpStat( 'calypso_media_edit_details', 'description' );
 	};
 

@@ -1,13 +1,11 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:stats:action-follow' );
 
 /**
  * Internal dependencies
@@ -15,8 +13,10 @@ const debug = debugFactory( 'calypso:stats:action-follow' );
 /* eslint-disable no-restricted-imports */
 import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import Gridicon from 'components/gridicon';
+
+const debug = debugFactory( 'calypso:stats:action-follow' );
 
 const StatsActionFollow = createReactClass( {
 	displayName: 'StatsActionFollow',
@@ -39,10 +39,7 @@ const StatsActionFollow = createReactClass( {
 			site.unfollow();
 		}
 
-		analytics.ga.recordEvent(
-			'Stats',
-			'Clicked ' + gaEvent + ' in ' + this.props.moduleName + ' List'
-		);
+		gaRecordEvent( 'Stats', 'Clicked ' + gaEvent + ' in ' + this.props.moduleName + ' List' );
 	},
 
 	render: function() {

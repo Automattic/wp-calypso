@@ -21,6 +21,8 @@ const adTrackingMocks = [
 
 const mcMocks = [ 'bumpStat', 'bumpStatWithPageView' ];
 
+const gaMocks = [ 'gaRecordEvent', 'gaRecordPageView', 'gaRecordTiming' ];
+
 const mockIt = spy => mock => set( {}, mock, ( ...args ) => spy( mock, ...args ) );
 
 export const moduleMock = moduleMocks => spy =>
@@ -29,5 +31,6 @@ export const moduleMock = moduleMocks => spy =>
 export const analyticsMock = moduleMock( analyticsMocks );
 export const adTrackingMock = moduleMock( adTrackingMocks );
 export const mcMock = moduleMock( mcMocks );
+export const gaMock = moduleMock( gaMocks );
 
 export default analyticsMock;

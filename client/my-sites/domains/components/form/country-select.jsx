@@ -10,7 +10,7 @@ import { isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import FormLabel from 'components/forms/form-label';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormSelect from 'components/forms/form-select';
@@ -18,10 +18,7 @@ import FormSelect from 'components/forms/form-select';
 class CountrySelect extends React.Component {
 	recordCountrySelectClick = () => {
 		if ( this.props.eventFormName ) {
-			analytics.ga.recordEvent(
-				'Upgrades',
-				`Clicked ${ this.props.eventFormName } Country Select`
-			);
+			gaRecordEvent( 'Upgrades', `Clicked ${ this.props.eventFormName } Country Select` );
 		}
 	};
 
