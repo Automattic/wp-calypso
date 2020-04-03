@@ -21,6 +21,7 @@ import config from 'config';
 import {
 	cardProcessorSupportsUpdates,
 	getDomainRegistrationAgreementUrl,
+	getDescription,
 	getDisplayName,
 	getPartnerName,
 	getRenewalPrice,
@@ -54,7 +55,6 @@ import {
 	isDomainMapping,
 	isDomainTransfer,
 	isTheme,
-	isJetpackBackup,
 	isJetpackProduct,
 	isConciergeSession,
 } from 'lib/products-values';
@@ -396,6 +396,8 @@ class ManagePurchase extends Component {
 				'Transfers an existing domain from another provider to WordPress.com, ' +
 					'helping you manage your site and domain in one place.'
 			);
+		} else if ( isJetpackProduct( purchase ) ) {
+			description = getDescription( purchase );
 		}
 
 		const registrationAgreementUrl = getDomainRegistrationAgreementUrl( purchase );
