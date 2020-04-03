@@ -25,7 +25,7 @@ class ActivityCard extends Component {
 		const backupTimeDisplay = applySiteOffset( activity.activityTs, {
 			timezone,
 			gmtOffset,
-		} ).format( 'H:mm' );
+		} ).format( 'LT' );
 
 		return (
 			<div className="activity-card">
