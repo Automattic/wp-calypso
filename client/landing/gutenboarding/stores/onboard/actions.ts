@@ -14,7 +14,6 @@ import { SITE_STORE } from '../site';
 
 type CreateSiteParams = import('@automattic/data-stores').Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
-type Font = import('../../constants').Font;
 type FontPair = import('../../constants').FontPair;
 type State = import('.').State;
 type Template = VerticalsTemplates.Template;
