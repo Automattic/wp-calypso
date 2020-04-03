@@ -19,6 +19,7 @@ import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Spinner from 'components/spinner';
+import { useLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -32,12 +33,15 @@ interface Props {
 
 const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) => {
 	const applySiteOffset = useApplySiteOffset();
+	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( state => ( siteId !== null ? getSiteSlug( state, siteId ) : '' ) );
 
-	const backupDisplayDate = applySiteOffset( parseFloat( rewindId ) * 1000 )?.format( 'LLL' );
+	const backupDisplayDate = applySiteOffset( moment( parseFloat( rewindId ) * 1000 ) )?.format(
+		'LLL'
+	);
 
 	const render = () => {
 		if ( siteId && rewindId && backupDisplayDate ) {
