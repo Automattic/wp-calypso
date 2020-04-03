@@ -24,7 +24,10 @@ import {
 	isTheme,
 	isConciergeSession,
 } from 'lib/products-values';
-import { getJetpackProductsDisplayNames } from 'lib/products-values/constants';
+import {
+	getJetpackProductsDescriptions,
+	getJetpackProductsDisplayNames,
+} from 'lib/products-values/constants';
 
 const debug = debugFactory( 'calypso:purchases' );
 
@@ -73,6 +76,14 @@ function getName( purchase ) {
 	}
 
 	return purchase.productName;
+}
+
+function getDescription( purchase ) {
+	const jetpackProductsDescriptions = getJetpackProductsDescriptions();
+	if ( jetpackProductsDescriptions[ purchase.productSlug ] ) {
+		return jetpackProductsDescriptions[ purchase.productSlug ];
+	}
+	return getName( purchase );
 }
 
 function getDisplayName( purchase ) {
@@ -515,6 +526,7 @@ export {
 	getDomainRegistrationAgreementUrl,
 	getIncludedDomain,
 	getName,
+	getDescription,
 	getDisplayName,
 	getPartnerName,
 	getPurchasesBySite,
