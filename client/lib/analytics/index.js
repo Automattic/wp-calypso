@@ -17,7 +17,7 @@ import {
 	recordOrder,
 } from 'lib/analytics/ad-tracking';
 import { updateQueryParamsTracking } from 'lib/analytics/sem';
-import { statsdTimingUrl, statsdCountingUrl } from 'lib/analytics/statsd';
+import { statsdTimingUrl, statsdCountingUrl } from 'lib/analytics/statsd-utils';
 import { trackAffiliateReferral } from './refer';
 import { getFeatureSlugFromPageUrl } from './feature-slug';
 import { recordSignupComplete } from './signup';
