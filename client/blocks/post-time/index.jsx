@@ -29,13 +29,9 @@ function getDisplayedTimeFromPost( moment, post ) {
 
 	const { status, modified, date } = post;
 	const time = moment( includes( [ 'draft', 'pending' ], status ) ? modified : date );
-	if ( now.diff( time, 'days' ) >= 7 ) {
-		// Like "Mar 15, 2013 6:23 PM" in English locale
-		return time.format( 'lll' );
-	}
 
-	// Like "3 days ago" in English locale
-	return time.fromNow();
+	// Like "Friday, 21 April 2020 21:30"
+	return time.format( 'LLLL' );
 }
 
 export function PostTime( { moment, post } ) {
