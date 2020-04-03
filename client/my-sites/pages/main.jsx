@@ -92,6 +92,8 @@ class PagesMain extends React.Component {
 			trashed: translate( 'Trashed', { context: 'Filter label for pages list' } ),
 		};
 
+		const isSingleSite = !! siteId;
+
 		const query = {
 			number: 20, // all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
 			search,
@@ -117,16 +119,19 @@ class PagesMain extends React.Component {
 					<NavTabs label={ translate( 'Status', { context: 'Filter page group label for tabs' } ) }>
 						{ this.getNavItems( filterStrings, status ) }
 					</NavTabs>
-					<Search
-						pinned
-						fitsContainer
-						isOpen={ this.props.getSearchOpen() }
-						onSearch={ this.props.doSearch }
-						initialValue={ search }
-						placeholder={ `${ searchPagesPlaceholder }…` }
-						analyticsGroup="Pages"
-						delaySearch={ true }
-					/>
+					{ /* Disable search in all-sites mode because it doesn't work. */ }
+					{ isSingleSite && (
+						<Search
+							pinned
+							fitsContainer
+							isOpen={ this.props.getSearchOpen() }
+							onSearch={ this.props.doSearch }
+							initialValue={ search }
+							placeholder={ `${ searchPagesPlaceholder }…` }
+							analyticsGroup="Pages"
+							delaySearch={ true }
+						/>
+					) }
 				</SectionNav>
 				<PageList siteId={ siteId } status={ status } search={ search } query={ query } />
 			</Main>
