@@ -5,8 +5,6 @@
 import { merge, set } from 'lodash';
 
 const analyticsMocks = [
-	'ga.recordEvent',
-	'ga.recordPageView',
 	'pageView.record',
 	'tracks.recordEvent',
 	'tracks.recordPageView',

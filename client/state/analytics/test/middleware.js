@@ -101,7 +101,7 @@ describe( 'middleware', () => {
 			} );
 		} );
 
-		test( 'should call ga.recordEvent', () => {
+		test( 'should call gaRecordEvent', () => {
 			dispatch( recordGoogleEvent( 'category', 'action', 'label', 'value' ) );
 
 			expect( mockGA ).to.have.been.calledWithExactly(
