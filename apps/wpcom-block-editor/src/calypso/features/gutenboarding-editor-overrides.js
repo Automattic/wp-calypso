@@ -76,9 +76,13 @@ function updateWelcomeGuide() {
 	body.appendChild( modalContainer );
 
 	const handleClose = () => {
-		if ( wasGoingToShowWelcomeGuide ) {
-			dispatch( 'core/edit-post' ).toggleFeature( 'welcomeGuide' );
-		}
+		render( null, modalContainer, () => {
+			body.removeChild( modalContainer );
+
+			if ( wasGoingToShowWelcomeGuide ) {
+				dispatch( 'core/edit-post' ).toggleFeature( 'welcomeGuide' );
+			}
+		} );
 	};
 
 	render( <UsernameModal onClose={ handleClose } />, modalContainer );
@@ -86,7 +90,7 @@ function updateWelcomeGuide() {
 
 function UsernameModal( { onClose } ) {
 	return (
-		<Modal onRequestClose={ onClose }>
+		<Modal title="Welcome" onRequestClose={ onClose }>
 			<div>TODO: fill in dialog</div>
 		</Modal>
 	);
