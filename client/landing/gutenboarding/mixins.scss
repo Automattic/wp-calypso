@@ -40,10 +40,10 @@
 }
 
 @mixin onboarding-heading-padding {
-	margin: $gutenboarding-page-content-padding-mobile 0 $gutenboarding-page-content-padding-mobile + 4px 0;
+	margin: $gutenboarding-heading-padding-top-mobile 0 $gutenboarding-heading-padding-bottom-mobile;
 
 	@include break-mobile {
-		margin: $gutenboarding-page-content-padding-desktop 0 $gutenboarding-page-content-padding-desktop + 8px 0;
+		margin: $gutenboarding-heading-padding-top-desktop 0 $gutenboarding-heading-padding-bottom-desktop;
 	}
 }
 
