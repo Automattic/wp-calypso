@@ -111,7 +111,7 @@ const Header: FunctionComponent = () => {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	const domainElement = domain ? (
-		domain?.domain_name
+		domain.domain_name
 	) : (
 		<span
 			className={ classnames( 'gutenboarding__header-domain-picker-button-domain', {
