@@ -27,6 +27,7 @@ import {
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 
 import wp from '../../../../lib/wp';
+
 const wpcom = wp.undocumented();
 
 interface Cart {
@@ -106,10 +107,10 @@ const Header: FunctionComponent = () => {
 		setShowSignupDialog( false );
 	}, [ pathname, setShowSignupDialog ] );
 
-	const currentDomain = domain ?? freeDomainSuggestion;
-
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
-	const domainElement = (
+	const domainElement = domain ? (
+		domain.domain_name
+	) : (
 		<span
 			className={ classnames( 'gutenboarding__header-domain-picker-button-domain', {
 				placeholder: ! recommendedDomainSuggestion,
@@ -120,6 +121,8 @@ const Header: FunctionComponent = () => {
 				: 'example.wordpress.com' }
 		</span>
 	);
+
+	const currentDomain = domain ?? freeDomainSuggestion;
 
 	const handleCreateSite = useCallback(
 		( username: string, bearerToken?: string ) => {
