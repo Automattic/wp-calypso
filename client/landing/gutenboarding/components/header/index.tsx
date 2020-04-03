@@ -18,7 +18,6 @@ import { SITE_STORE } from '../../stores/site';
 import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
 import SignupForm from '../../components/signup-form';
-// import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
 import {
 	getFreeDomainSuggestions,

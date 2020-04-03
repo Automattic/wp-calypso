@@ -73,7 +73,10 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 	const allSuggestions = useDomainSuggestions();
 	const freeSuggestions = getFreeDomainSuggestions( allSuggestions );
-	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice( 0, 5 );
+	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice(
+		0,
+		PAID_DOMAINS_TO_SHOW
+	);
 	const recommendedSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
 
 	return (
