@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
 import { flowRight, isEqual, size, without } from 'lodash';
 
 /**
@@ -150,40 +149,6 @@ class Pages extends Component {
 		}
 		this.props.incrementPage();
 	};
-
-	_insertTimeMarkers( pages ) {
-		const markedPages = [];
-		const now = this.props.moment();
-		let lastMarker;
-
-		const buildMarker = pageDate => {
-			pageDate = this.props.moment( pageDate );
-			const days = now.diff( pageDate, 'days' );
-			if ( days <= 0 ) {
-				return this.props.translate( 'Today' );
-			}
-			if ( days === 1 ) {
-				return this.props.translate( 'Yesterday' );
-			}
-			return pageDate.from( now );
-		};
-
-		pages.forEach( page => {
-			const date = this.props.moment( page.date );
-			const marker = buildMarker( date );
-			if ( lastMarker !== marker ) {
-				markedPages.push(
-					<div key={ 'marker-' + date.unix() } className="pages__page-list-header">
-						<Gridicon icon="time" size={ 12 } /> { marker }
-					</div>
-				);
-			}
-			lastMarker = marker;
-			markedPages.push( page );
-		} );
-
-		return markedPages;
-	}
 
 	updateShadowStatus = ( globalID, shadowStatus ) =>
 		new Promise( resolve =>
@@ -367,10 +332,6 @@ class Pages extends Component {
 	renderChronological( { pages, site, showPublishedStatus } ) {
 		const { search, status } = this.props.query;
 
-		if ( ! search ) {
-			// we're listing in reverse chrono. use the markers.
-			pages = this._insertTimeMarkers( pages );
-		}
 		const rows = pages.map( page => {
 			if ( ! ( 'site_ID' in page ) ) {
 				return page;
