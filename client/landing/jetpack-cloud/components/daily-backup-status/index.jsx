@@ -4,6 +4,7 @@
 import React, { Component, Fragment } from 'react';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,6 +18,7 @@ import {
 	getDownloadPath,
 } from 'landing/jetpack-cloud/sections/backups/utils';
 import { applySiteOffset } from 'lib/site/timezone';
+import { Card } from '@automattic/components';
 
 /**
  * Style dependencies
@@ -61,20 +63,26 @@ class DailyBackupStatus extends Component {
 	};
 
 	renderGoodBackup( backup ) {
-		const { allowRestore } = this.props;
+		const { allowRestore, translate } = this.props;
 
 		const displayDate = this.getDisplayDate( backup.activityTs );
 
+		const meta = get( backup, 'activityDescription[2].children[0]', '' );
+
 		return (
-			<Fragment>
-				<Gridicon className="daily-backup-status__status-icon" icon="cloud-upload" />
+			<Card className="daily-backup-status__success">
+				<div className="daily-backup-status__icon-section">
+					<Gridicon className="daily-backup-status__status-icon" icon="cloud-upload" />
+					<div className="daily-backup-status__title">{ translate( 'Latest backup' ) }</div>
+				</div>
 				<div className="daily-backup-status__date">{ displayDate }</div>
+				<div className="daily-backup-status__meta">{ meta }</div>
 				<ActionButtons
 					onDownloadClick={ this.triggerDownload }
 					onRestoreClick={ this.triggerRestore }
 					disabledRestore={ ! allowRestore }
 				/>
-			</Fragment>
+			</Card>
 		);
 	}
 
@@ -88,7 +96,7 @@ class DailyBackupStatus extends Component {
 		const displayTime = backupDate.format( 'H:mm' );
 
 		return (
-			<div className="daily-backup-status__failed">
+			<Card className="daily-backup-status__failed">
 				<Gridicon icon="cloud-upload" className="daily-backup-status__gridicon-error-state" />
 				<div className="daily-backup-status__failed-message">
 					{ translate( 'Backup attempt failed' ) }
@@ -127,7 +135,7 @@ class DailyBackupStatus extends Component {
 						{ translate( 'Contact support' ) }
 					</Button>
 				</div>
-			</div>
+			</Card>
 		);
 	}
 
