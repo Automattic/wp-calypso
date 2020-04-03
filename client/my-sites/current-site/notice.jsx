@@ -39,7 +39,7 @@ import { getTopJITM } from 'state/jitm/selectors';
 import AsyncLoad from 'components/async-load';
 import UpsellNudge from 'blocks/upsell-nudge';
 import { preventWidows } from 'lib/formatting';
-import isSiteWPforteams from 'state/selectors/is-site-wpforteams';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 const DOMAIN_UPSELL_NUDGE_DISMISS_KEY = 'domain_upsell_nudge_dismiss';
 
@@ -82,7 +82,7 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams ) {
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -113,7 +113,7 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams ) {
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -206,7 +206,7 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams ) {
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -254,7 +254,7 @@ export class SiteNotice extends React.Component {
 		const domainCreditNotice = this.domainCreditNotice();
 
 		const showJitms =
-			! ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams ) &&
+			! ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) &&
 			( discountOrFreeToPaid || config.isEnabled( 'jitms' ) );
 
 		return (
@@ -298,7 +298,7 @@ export default connect(
 			isPlanOwner: isCurrentUserCurrentPlanOwner( state, siteId ),
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			domainUpsellNudgeDismissedDate: getPreference( state, DOMAIN_UPSELL_NUDGE_DISMISS_KEY ),
-			isSiteWPforteams: isSiteWPforteams( state, siteId ),
+			isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 			isMigrationInProgress,
 			hasJITM: getTopJITM( state, messagePath ),
 			messagePath,

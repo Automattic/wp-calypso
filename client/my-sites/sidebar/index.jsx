@@ -67,7 +67,7 @@ import {
 	SIDEBAR_SECTION_MANAGE,
 } from './constants';
 import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
-import isSiteWPforteams from 'state/selectors/is-site-wpforteams';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 /**
  * Style dependencies
@@ -173,7 +173,7 @@ export class MySitesSidebar extends Component {
 
 		let label = translate( 'My Home' );
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams ) {
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
 			label = translate( 'Home' );
 		}
 
@@ -233,7 +233,7 @@ export class MySitesSidebar extends Component {
 	earn() {
 		const { site, canUserUseEarn } = this.props;
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams ) {
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -371,7 +371,7 @@ export class MySitesSidebar extends Component {
 	upgrades() {
 		const { path, translate, canUserManageOptions } = this.props;
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams ) {
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -417,7 +417,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams ) {
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -531,7 +531,7 @@ export class MySitesSidebar extends Component {
 		const { path, site } = this.props;
 		const marketingLink = '/marketing' + this.props.siteSuffix;
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams ) {
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -564,7 +564,7 @@ export class MySitesSidebar extends Component {
 	hosting() {
 		const { translate, path, siteSuffix, canViewAtomicHosting } = this.props;
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams ) {
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -642,7 +642,7 @@ export class MySitesSidebar extends Component {
 	wpAdmin() {
 		const { site } = this.props;
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams ) {
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -756,7 +756,7 @@ export class MySitesSidebar extends Component {
 					{ this.site() }
 				</ExpandableSidebarMenu>
 
-				{ ! ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams ) && this.design() ? (
+				{ ! ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) && this.design() ? (
 					<ExpandableSidebarMenu
 						onClick={ this.toggleSection( SIDEBAR_SECTION_DESIGN ) }
 						expanded={ this.props.isDesignSectionOpen }
@@ -767,7 +767,7 @@ export class MySitesSidebar extends Component {
 					</ExpandableSidebarMenu>
 				) : null }
 
-				{ isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPforteams && this.customize() }
+				{ isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams && this.customize() }
 
 				{ tools && (
 					<ExpandableSidebarMenu
@@ -869,7 +869,7 @@ function mapStateToProps( state ) {
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
 		canViewAtomicHosting: canSiteViewAtomicHosting( state ),
-		isSiteWPforteams: isSiteWPforteams( state, siteId ),
+		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 	};
 }
 

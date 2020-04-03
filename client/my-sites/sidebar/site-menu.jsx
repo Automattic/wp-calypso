@@ -33,7 +33,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import isVipSite from 'state/selectors/is-vip-site';
 import { SIDEBAR_SECTION_SITE } from 'my-sites/sidebar/constants';
 import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
-import isSiteWPforteams from 'state/selectors/is-site-wpforteams';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 class SiteMenu extends PureComponent {
 	static propTypes = {
@@ -50,7 +50,7 @@ class SiteMenu extends PureComponent {
 		siteAdminUrl: PropTypes.string,
 		site: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		siteSlug: PropTypes.string,
-		isSiteWPforteams: PropTypes.bool,
+		isSiteWPForTeams: PropTypes.bool,
 	};
 
 	// We default to `/my` posts when appropriate
@@ -204,7 +204,7 @@ class SiteMenu extends PureComponent {
 				// Hide "Feedback" for WP for Teams sites.
 				if (
 					config.isEnabled( 'signup/wpforteams' ) &&
-					this.props.isSiteWPforteams &&
+					this.props.isSiteWPForTeams &&
 					postTypeSlug === 'feedback'
 				) {
 					return memo;
@@ -281,7 +281,7 @@ export default connect(
 		site: getSite( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 		isVip: isVipSite( state, siteId ),
-		isSiteWPforteams: isSiteWPforteams( state, siteId ),
+		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 	} ),
 	{ expandSection, recordTracksEvent },
 	null,
