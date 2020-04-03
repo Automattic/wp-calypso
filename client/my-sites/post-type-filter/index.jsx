@@ -204,6 +204,7 @@ export class PostTypeFilter extends Component {
 							pinned
 							fitsContainer
 							initialValue={ query.search }
+							isOpen={ this.props.getSearchOpen() }
 							onSearch={ this.props.doSearch }
 							placeholder={ this.props.translate( 'Search %(postTypes)s…', {
 								args: {
