@@ -113,7 +113,7 @@ const Home = ( {
 
 Home.propTypes = {
 	checklistMode: PropTypes.string,
-	layout: PropTypes.object.isRequired,
+	layout: PropTypes.object,
 	site: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
 	siteSlug: PropTypes.string.isRequired,
