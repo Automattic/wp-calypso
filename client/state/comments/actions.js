@@ -6,7 +6,6 @@ import {
 	COMMENT_COUNTS_REQUEST,
 	COMMENT_REQUEST,
 	COMMENTS_CHANGE_STATUS,
-	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_DELETE,
 	COMMENTS_EDIT,
 	COMMENTS_LIKE,
@@ -153,19 +152,6 @@ export const requestCommentsTreeForSite = query => ( {
  */
 export const requestCommentCounts = ( siteId, postId ) => ( {
 	type: COMMENT_COUNTS_REQUEST,
-	siteId,
-	postId,
-} );
-
-/**
- * Creates an action that increments the comment count for a given post.
- *
- * @param {number} siteId Site identifier
- * @param {number} [postId] Post identifier
- * @returns {object} Action that increments comment count for a post.
- */
-export const incrementCommentCount = ( siteId, postId ) => ( {
-	type: COMMENTS_COUNT_INCREMENT,
 	siteId,
 	postId,
 } );
