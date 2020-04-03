@@ -65,7 +65,7 @@ const domainTransferProduct = {
 
 const planWithBundledDomain = {
 	product_name: 'WordPress.com Personal',
-	product_slug: 'personal_bundle',
+	product_slug: 'personal-bundle',
 	currency: 'BRL',
 	extra: {
 		context: 'signup',
@@ -81,7 +81,7 @@ const planWithBundledDomain = {
 
 const planWithoutDomain = {
 	product_name: 'WordPress.com Personal',
-	product_slug: 'personal_bundle',
+	product_slug: 'personal-bundle',
 	currency: 'BRL',
 	extra: {
 		context: 'signup',
