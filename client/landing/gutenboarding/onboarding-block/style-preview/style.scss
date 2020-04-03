@@ -2,6 +2,7 @@
 @import '../../variables.scss';
 
 .style-preview {
+	// Full height comes from viewport heigh - header - some space for the preview's box-shadow (20px)
 	height: calc( 100vh - #{$gutenboarding-header-height + 20px} );
 	display: flex;
 	flex-direction: column;
@@ -91,10 +92,6 @@
 	width: 100%;
 	margin: 0 auto;
 
-	// &.is-viewport-desktop {
-	// 	max-width: 1024px;
-	// }
-
 	&.is-viewport-tablet {
 		max-width: 1024px;
 	}
@@ -183,7 +180,7 @@ $gutenboarding-style-preview-bar-height: 30px;
 
 .style-preview__iframe {
 	$scale-factor: 0.7;
-	// Extra specificify to override editor ifram styles
+	// Extra specificify to override editor iframe styles
 	.style-preview__preview & {
 		width: 100% / $scale-factor;
 		height: 100% / $scale-factor;
