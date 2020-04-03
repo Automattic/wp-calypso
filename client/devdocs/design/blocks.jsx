@@ -48,7 +48,6 @@ import PlanCompareCard from 'my-sites/plan-compare-card/docs/example';
 import DomainTip from 'blocks/domain-tip/docs/example';
 import PostItem from 'blocks/post-item/docs/example';
 import PostStatus from 'blocks/post-status/docs/example';
-import PostTime from 'blocks/post-time/docs/example';
 import ReaderAuthorLink from 'blocks/reader-author-link/docs/example';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link/docs/example';
 import AuthorCompactProfile from 'blocks/author-compact-profile/docs/example';
@@ -171,7 +170,6 @@ export default class AppComponents extends React.Component {
 					<RelatedPostCard />
 					<PostItem readmeFilePath="post-item" />
 					<PostStatus readmeFilePath="post-status" />
-					<PostTime readmeFilePath="post-time" />
 					<ReaderAuthorLink readmeFilePath="reader-author-link" />
 					<ReaderSubscriptionListItem />
 					<ReaderSiteStreamLink readmeFilePath="reader-site-stream-link" />
