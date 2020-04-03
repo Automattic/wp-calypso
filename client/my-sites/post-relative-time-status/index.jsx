@@ -4,6 +4,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,8 +15,6 @@ import { withLocalizedMoment } from 'components/localized-moment';
  * Style dependencies
  */
 import './style.scss';
-
-const ICON_SIZE = 12;
 
 class PostRelativeTime extends React.PureComponent {
 	static propTypes = {
@@ -46,7 +45,28 @@ class PostRelativeTime extends React.PureComponent {
 		}
 	}
 
-	getRelativeTimeText() {
+	getDisplayedTimeFromPost( post ) {
+		const moment = this.props.moment;
+
+		const now = moment();
+
+		if ( ! post ) {
+			// Placeholder text: "a few seconds ago" in English locale
+			return now.fromNow();
+		}
+
+		const { status, modified, date } = post;
+		const time = moment( includes( [ 'draft', 'pending', 'future' ], status ) ? modified : date );
+		if ( now.diff( time, 'days' ) >= 7 ) {
+			// Like "Mar 15, 2013 6:23 PM" in English locale
+			return time.format( 'lll' );
+		}
+
+		// Like "3 days ago" in English locale
+		return time.fromNow();
+	}
+
+	getTimeText() {
 		const time = this.getTimestamp();
 		if ( ! time ) {
 			return null;
@@ -56,7 +76,7 @@ class PostRelativeTime extends React.PureComponent {
 			<span className="post-relative-time-status__time">
 				<Gridicon icon="time" size={ this.props.gridiconSize || 18 } />
 				<time className="post-relative-time-status__time-text" dateTime={ time }>
-					{ this.props.moment( time ).fromNow() }
+					{ this.getDisplayedTimeFromPost( this.props.post ) }
 				</time>
 			</span>
 		);
@@ -112,23 +132,7 @@ class PostRelativeTime extends React.PureComponent {
 
 	render() {
 		const { post, showPublishedStatus } = this.props;
-
-		if ( ! ( post.status === 'future' || showPublishedStatus ) ) {
-			return (
-				<span className="post-relative-time-status__item">
-					<Gridicon
-						icon="time"
-						size={ ICON_SIZE }
-						className="post-relative-time-status__item-icon"
-					/>
-					<span className="post-relative-time-status__item-text">
-						{ this.props.moment( post.modified ).fromNow() }
-					</span>
-				</span>
-			);
-		}
-
-		const timeText = this.getRelativeTimeText();
+		const timeText = this.getTimeText();
 		const statusText = this.getStatusText();
 		const relativeTimeClass = timeText ? 'post-relative-time-status' : null;
 		const time = this.getTimestamp();
@@ -136,7 +140,7 @@ class PostRelativeTime extends React.PureComponent {
 		let innerText = (
 			<span>
 				{ timeText }
-				{ statusText }
+				{ ( post.status === 'future' || showPublishedStatus ) && statusText }
 			</span>
 		);
 
