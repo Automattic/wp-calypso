@@ -546,19 +546,19 @@ export function formatDomainContactValidationResponse(
 		vatId: response.messages?.vatId,
 		tldExtraFields: {
 			ca: {
-				lang: response.messages?.[ 'extra.ca.lang' ],
-				legalType: response.messages?.[ 'extra.ca.legalType' ],
-				ciraAgreementAccepted: response.messages?.[ 'extra.ca.ciraAgreementAccepted' ],
+				lang: response.messages?.extraCaLang,
+				legalType: response.messages?.extraCaLegalType,
+				ciraAgreementAccepted: response.messages?.extraCaCiraAgreementAccepted,
 			},
 			uk: {
-				registrantType: response.messages?.[ 'extra.uk.registrantType' ],
-				registrationNumber: response.messages?.[ 'extra.uk.registrationNumber' ],
-				tradingName: response.messages?.[ 'extra.uk.tradingName' ],
+				registrantType: response.messages?.extraUkRegistrantType,
+				registrationNumber: response.messages?.extraUkRegistrationNumber,
+				tradingName: response.messages?.extraUkTradingName,
 			},
 			fr: {
-				registrantType: response.messages?.[ 'extra.fr.registrantType' ],
-				trademarkNumber: response.messages?.[ 'extra.fr.trademarkNumber' ],
-				sirenSirat: response.messages?.[ 'extra.fr.sirenSirat' ],
+				registrantType: response.messages?.extraFrRegistrantType,
+				trademarkNumber: response.messages?.extraFrTrademarkNumber,
+				sirenSirat: response.messages?.extraFrSirenSirat,
 			},
 		},
 	};
