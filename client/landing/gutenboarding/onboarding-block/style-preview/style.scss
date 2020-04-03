@@ -89,6 +89,7 @@
 }
 
 .style-preview__preview {
+	grid-area: preview;
 	width: 100%;
 	margin: 0 auto;
 
@@ -102,7 +103,6 @@
 }
 
 .style-preview__preview-wrapper {
-	grid-area: preview;
 	background: var( --studio-white );
 	box-shadow: 0 0 0 1px var( --studio-gray-5 ), 0 4px 14px rgba( 0, 0, 0, 0.25 );
 	border-radius: 4px;
