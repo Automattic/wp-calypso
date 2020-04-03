@@ -12,6 +12,8 @@ import { recordTracksEvent } from 'state/analytics/actions';
 /**
  * Internal dependencies
  */
+import { addQueryArgs } from 'lib/route';
+import ExternalLinkWithTracking from 'components/external-link/with-tracking';
 import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
 import ProductCard from 'components/product-card';
 import ProductCardAction from 'components/product-card/action';
@@ -502,6 +504,7 @@ export class ProductSelector extends Component {
 			fetchingSitePurchases,
 			intervalType,
 			products,
+			selectedSiteSlug,
 			storeProducts,
 			translate,
 		} = this.props;
@@ -526,6 +529,10 @@ export class ProductSelector extends Component {
 			const selectedSlug = this.state[ stateKey ];
 			const productObject = storeProducts[ selectedSlug ];
 
+			const linkUrl = selectedSiteSlug
+				? addQueryArgs( { site: selectedSiteSlug }, product.link.url )
+				: product.link.url;
+
 			let purchase, isCurrent;
 			if ( this.currentPlanIncludesProduct( product ) ) {
 				purchase = this.getPurchaseByCurrentPlan();
@@ -548,7 +555,25 @@ export class ProductSelector extends Component {
 				<ProductCard
 					key={ product.id }
 					title={ this.getProductDisplayName( product ) }
-					description={ this.getDescriptionByProduct( product ) }
+					description={
+						<Fragment>
+							{ this.getDescriptionByProduct( product ) }
+							{ product.link && ' ' }
+							{ product.link && (
+								<ExternalLinkWithTracking
+									href={ linkUrl }
+									tracksEventName="calypso_plan_link_click"
+									tracksEventProps={ {
+										link_location: product.link.props.location,
+										link_slug: product.link.props.slug,
+									} }
+									icon
+								>
+									{ product.link.label }
+								</ExternalLinkWithTracking>
+							) }
+						</Fragment>
+					}
 					purchase={ purchase }
 					subtitle={ this.getSubtitleByProduct( product ) }
 				>

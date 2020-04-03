@@ -1,6 +1,5 @@
 /**
  *  External dependencies
- *
  */
 import { has, invoke } from 'lodash';
 
@@ -8,6 +7,7 @@ import { has, invoke } from 'lodash';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { gaRecordEvent, gaRecordPageView } from 'lib/analytics/ga';
 import { bumpStat } from 'lib/analytics/mc';
 import { addHotJarScript } from 'lib/analytics/hotjar';
 import {
@@ -23,15 +23,14 @@ import {
 } from 'state/action-types';
 
 const eventServices = {
-	ga: ( { category, action, label, value } ) =>
-		analytics.ga.recordEvent( category, action, label, value ),
+	ga: ( { category, action, label, value } ) => gaRecordEvent( category, action, label, value ),
 	tracks: ( { name, properties } ) => analytics.tracks.recordEvent( name, properties ),
 	fb: ( { name, properties } ) => trackCustomFacebookConversionEvent( name, properties ),
 	adwords: ( { properties } ) => trackCustomAdWordsRemarketingEvent( properties ),
 };
 
 const pageViewServices = {
-	ga: ( { url, title } ) => analytics.ga.recordPageView( url, title ),
+	ga: ( { url, title } ) => gaRecordPageView( url, title ),
 	default: ( { url, title, ...params } ) => analytics.pageView.record( url, title, params ),
 };
 

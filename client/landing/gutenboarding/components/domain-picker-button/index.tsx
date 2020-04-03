@@ -28,8 +28,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 	className,
 	onDomainSelect,
 	onDomainPurchase,
-	defaultQuery,
-	queryParameters,
 	currentDomain,
 	...buttonProps
 } ) => {
@@ -93,11 +91,9 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 			{ isDomainPopoverVisible && (
 				<Popover onClose={ handleClose } onFocusOutside={ handleClose } focusOnMount={ false }>
 					<DomainPicker
-						defaultQuery={ defaultQuery }
 						onDomainSelect={ handleDomainSelect }
 						onDomainPurchase={ handlePaidDomainSelect }
 						onClose={ handleClose }
-						queryParameters={ queryParameters }
 						currentDomain={ currentDomain }
 					/>
 				</Popover>

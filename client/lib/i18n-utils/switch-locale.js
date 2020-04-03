@@ -8,6 +8,7 @@ import { forEach, includes } from 'lodash';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { isDefaultLocale, getLanguage } from './utils';
 import { getUrlFromParts } from 'lib/url/url-parts';
 
@@ -123,6 +124,13 @@ export default function switchLocale( localeSlug ) {
 	}
 
 	lastRequestedLocale = localeSlug;
+
+	if ( config.isEnabled( 'use-translation-chunks' ) ) {
+		i18n.configure( { defaultLocaleSlug: localeSlug } );
+		setLocaleInDOM();
+
+		return;
+	}
 
 	if ( isDefaultLocale( localeSlug ) ) {
 		i18n.configure( { defaultLocaleSlug: localeSlug } );

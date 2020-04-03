@@ -17,6 +17,8 @@ const fontTitles: Partial< Record< Font, string > > = {
 	'Playfair Display': 'Playfair',
 };
 
+export const PAID_DOMAINS_TO_SHOW = 5;
+
 export function getFontTitle( fontFamily: string ): string {
 	return fontTitles[ fontFamily as Font ] ?? fontFamily;
 }

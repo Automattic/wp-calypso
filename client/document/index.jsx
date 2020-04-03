@@ -5,6 +5,7 @@
 
 import React, { Fragment } from 'react';
 import classNames from 'classnames';
+import path from 'path';
 
 /**
  * Internal dependencies
@@ -60,6 +61,10 @@ class Document extends React.Component {
 			requestFrom,
 		} = this.props;
 
+		const installedChunks = entrypoint.js
+			.concat( chunkFiles.js )
+			.map( chunk => path.parse( chunk ).name );
+
 		const inlineScript =
 			`var COMMIT_SHA = ${ jsonStringifyForHtml( commitSha ) };\n` +
 			`var BUILD_TIMESTAMP = ${ jsonStringifyForHtml( buildTimestamp ) };\n` +
@@ -72,7 +77,8 @@ class Document extends React.Component {
 			( clientData ? `var configData = ${ jsonStringifyForHtml( clientData ) };\n` : '' ) +
 			( languageRevisions
 				? `var languageRevisions = ${ jsonStringifyForHtml( languageRevisions ) };\n`
-				: '' );
+				: '' ) +
+			`var installedChunks = ${ jsonStringifyForHtml( installedChunks ) };\n`;
 
 		const isJetpackWooCommerceFlow =
 			config.isEnabled( 'jetpack/connect/woocommerce' ) &&

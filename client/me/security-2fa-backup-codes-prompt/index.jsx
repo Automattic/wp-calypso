@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -12,7 +11,7 @@ const debug = debugFactory( 'calypso:me:security:2fa-backup-codes-prompt' );
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -84,7 +83,7 @@ class Security2faBackupCodesPrompt extends React.Component {
 	};
 
 	onClickPrintButton = event => {
-		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Print Backup Codes Again Button' );
+		gaRecordEvent( 'Me', 'Clicked On 2fa Print Backup Codes Again Button' );
 		this.onPrintAgain( event );
 	};
 
@@ -133,7 +132,7 @@ class Security2faBackupCodesPrompt extends React.Component {
 						name="backupCodeEntry"
 						method="backup"
 						onFocus={ function() {
-							analytics.ga.recordEvent(
+							gaRecordEvent(
 								'Me',
 								'Focused On 2fa Backup Codes Confirm Printed Backup Codes Input'
 							);
@@ -151,7 +150,7 @@ class Security2faBackupCodesPrompt extends React.Component {
 					className="security-2fa-backup-codes-prompt__verify"
 					disabled={ this.state.submittingCode }
 					onClick={ function() {
-						analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Backup Codes Verify Button' );
+						gaRecordEvent( 'Me', 'Clicked On 2fa Backup Codes Verify Button' );
 					} }
 				>
 					{ this.state.submittingCode

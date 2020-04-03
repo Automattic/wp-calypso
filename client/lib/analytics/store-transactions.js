@@ -8,6 +8,7 @@ import { omit } from 'lodash';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import { hasFreeTrial, getDomainRegistrations } from 'lib/cart-values/cart-items';
 import { getTld } from 'lib/domains';
 import {
@@ -46,7 +47,7 @@ function formatError( error ) {
 
 function recordDomainRegistrationAnalytics( { cart, success } ) {
 	for ( const cartItem of getDomainRegistrations( cart ) ) {
-		analytics.ga.recordEvent( 'Checkout', 'calypso_domain_registration', cartItem.meta );
+		gaRecordEvent( 'Checkout', 'calypso_domain_registration', cartItem.meta );
 
 		analytics.tracks.recordEvent( 'calypso_domain_registration', {
 			domain_name: cartItem.meta,

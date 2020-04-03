@@ -8,19 +8,20 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { applySiteOffset } from 'lib/site/timezone';
 import { Card } from '@automattic/components';
-import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
-import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
-import { isRequestingSiteSettings } from 'state/site-settings/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import { isRequestingSiteSettings } from 'state/site-settings/selectors';
 import { RewindFlowPurpose } from './types';
 import BackupDownloadFlow from './download';
 import BackupRestoreFlow from './restore';
 import DocumentHead from 'components/data/document-head';
+import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
 import QuerySiteSettings from 'components/data/query-site-settings'; // Required to get site time offset
-import { applySiteOffset } from 'lib/site/timezone';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 /**
  * Style dependencies
@@ -28,7 +29,7 @@ import { applySiteOffset } from 'lib/site/timezone';
 import './style.scss';
 
 interface Props {
-	rewindId?: string;
+	rewindId: string;
 	purpose: RewindFlowPurpose;
 }
 
@@ -36,12 +37,18 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 
-	const timezone = useSelector( state => getSiteTimezoneValue( state, siteId ) );
-	const gmtOffset = useSelector( state => getSiteGmtOffset( state, siteId ) );
+	const timezone = useSelector( state =>
+		siteId !== null ? getSiteTimezoneValue( state, siteId ) : null
+	);
+	const gmtOffset = useSelector( state =>
+		siteId !== null ? getSiteGmtOffset( state, siteId ) : null
+	);
+	const isSiteSettingLoading = useSelector( state =>
+		siteId !== null ? isRequestingSiteSettings( state, siteId ) : true
+	);
+	const siteSlug = useSelector( state => ( siteId !== null ? getSiteSlug( state, siteId ) : '' ) );
 
-	const isSiteSettingLoading = useSelector( state => isRequestingSiteSettings( state, siteId ) );
-
-	const backupDisplayDate = applySiteOffset( rewindId * 1000, {
+	const backupDisplayDate = applySiteOffset( parseFloat( rewindId ) * 1000, {
 		timezone,
 		gmtOffset,
 	} ).format( 'LLL' );
@@ -50,15 +57,17 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 		if ( siteId && rewindId ) {
 			return purpose === RewindFlowPurpose.RESTORE ? (
 				<BackupRestoreFlow
+					backupDisplayDate={ backupDisplayDate }
 					rewindId={ rewindId }
 					siteId={ siteId }
-					backupDisplayDate={ backupDisplayDate }
+					siteSlug={ siteSlug }
 				/>
 			) : (
 				<BackupDownloadFlow
+					backupDisplayDate={ backupDisplayDate }
 					rewindId={ rewindId }
 					siteId={ siteId }
-					backupDisplayDate={ backupDisplayDate }
+					siteSlug={ siteSlug }
 				/>
 			);
 		}

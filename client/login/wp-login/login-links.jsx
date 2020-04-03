@@ -55,7 +55,13 @@ export class LoginLinks extends React.Component {
 
 		this.props.recordTracksEvent( 'calypso_login_lost_phone_link_click' );
 
-		page( login( { isNative: true, twoFactorAuthType: 'backup' } ) );
+		page(
+			login( {
+				isNative: true,
+				twoFactorAuthType: 'backup',
+				isGutenboarding: this.props.isGutenboarding,
+			} )
+		);
 	};
 
 	handleMagicLoginLinkClick = event => {
@@ -67,12 +73,19 @@ export class LoginLinks extends React.Component {
 		const loginParameters = {
 			isNative: true,
 			locale: this.props.locale,
-			twoFactorAuthType: this.props.currentRoute === '/log-in/jetpack' ? 'jetpack/link' : 'link',
+			twoFactorAuthType: 'link',
 		};
 		const emailAddress = get( this.props, [ 'query', 'email_address' ] );
 		if ( emailAddress ) {
 			loginParameters.emailAddress = emailAddress;
 		}
+
+		if ( this.props.currentRoute === '/log-in/jetpack' ) {
+			loginParameters.twoFactorAuthType = 'jetpack/link';
+		} else if ( this.props.isGutenboarding ) {
+			loginParameters.twoFactorAuthType = 'gutenboarding/link';
+		}
+
 		page( login( loginParameters ) );
 	};
 
@@ -191,8 +204,14 @@ export class LoginLinks extends React.Component {
 		const loginParameters = {
 			isNative: true,
 			locale: this.props.locale,
-			twoFactorAuthType: this.props.currentRoute === '/log-in/jetpack' ? 'jetpack/link' : 'link',
+			twoFactorAuthType: 'link',
 		};
+
+		if ( this.props.currentRoute === '/log-in/jetpack' ) {
+			loginParameters.twoFactorAuthType = 'jetpack/link';
+		} else if ( this.props.isGutenboarding ) {
+			loginParameters.twoFactorAuthType = 'gutenboarding/link';
+		}
 
 		return (
 			<a

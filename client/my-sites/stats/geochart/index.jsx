@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import config from 'config';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import QuerySiteStats from 'components/data/query-site-stats';
@@ -72,7 +72,7 @@ class StatsGeochart extends Component {
 	}
 
 	recordEvent = () => {
-		analytics.ga.recordEvent( 'Stats', 'Clicked Country on Map' );
+		gaRecordEvent( 'Stats', 'Clicked Country on Map' );
 	};
 
 	drawRegionsMap = () => {

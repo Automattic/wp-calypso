@@ -21,7 +21,7 @@
 
 @mixin onboarding-large-text {
 	font-size: 16px;
-	line-height: 20px;
+	line-height: 24px;
 }
 
 @mixin onboarding-medium-text {
@@ -35,15 +35,15 @@
 }
 
 @mixin onboarding-x-small-text {
-	font-size: 10px;
-	line-height: 12px;
+	font-size: 11px;
+	line-height: 13px;
 }
 
 @mixin onboarding-heading-padding {
-	margin: $gutenboarding-page-content-padding-mobile 0 $gutenboarding-page-content-padding-mobile + 4px 0;
+	margin: $gutenboarding-heading-padding-mobile;
 
 	@include break-mobile {
-		margin: $gutenboarding-page-content-padding-desktop 0 $gutenboarding-page-content-padding-desktop + 8px 0;
+		margin: $gutenboarding-heading-padding-desktop;
 	}
 }
 

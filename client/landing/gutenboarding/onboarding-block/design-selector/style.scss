@@ -26,20 +26,27 @@
 	.design-selector__grid {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		column-gap: 4em;
-		row-gap: 5em;
+		column-gap: 64px;
+		row-gap: 64px;
 		margin-top: 30px;
 
 		@include break-large {
 			grid-template-columns: 1fr 1fr 1fr;
-			column-gap: 3em;
-			row-gap: 4em;
 		}
 
 		@include onboarding-break-gigantic {
 			grid-template-columns: 1fr 1fr 1fr 1fr;
-			column-gap: 2em;
-			row-gap: 3em;
+		}
+	}
+
+	.design-selector__design-option {
+		cursor: pointer;
+
+		&:hover,
+		&:focus {
+			.design-selector__image-frame {
+				border-color: var( --highlightColor );
+			}
 		}
 	}
 

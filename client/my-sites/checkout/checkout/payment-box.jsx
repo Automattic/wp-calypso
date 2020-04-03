@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
@@ -17,6 +16,7 @@ import NavTabs from 'components/section-nav/tabs';
 import SectionNav from 'components/section-nav';
 import SectionHeader from 'components/section-header';
 import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import { paymentMethodName, isPaymentMethodEnabled } from 'lib/cart-values';
 import {
 	detectWebPaymentMethod,
@@ -44,7 +44,7 @@ export class PaymentBox extends PureComponent {
 	handlePaymentMethodChange = paymentMethod => {
 		const onSelectPaymentMethod = this.props.onSelectPaymentMethod;
 		return function() {
-			analytics.ga.recordEvent( 'Upgrades', 'Switch Payment Method' );
+			gaRecordEvent( 'Upgrades', 'Switch Payment Method' );
 			analytics.tracks.recordEvent( 'calypso_checkout_switch_to_' + snakeCase( paymentMethod ) );
 			onSelectPaymentMethod( paymentMethod );
 		};

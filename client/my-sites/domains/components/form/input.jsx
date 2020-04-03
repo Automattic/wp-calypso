@@ -10,7 +10,7 @@ import classNames from 'classnames';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
 
 export default class Input extends React.Component {
@@ -80,11 +80,7 @@ export default class Input extends React.Component {
 
 	recordFieldClick = () => {
 		if ( this.props.eventFormName ) {
-			analytics.ga.recordEvent(
-				'Upgrades',
-				`Clicked ${ this.props.eventFormName } Field`,
-				this.props.name
-			);
+			gaRecordEvent( 'Upgrades', `Clicked ${ this.props.eventFormName } Field`, this.props.name );
 		}
 	};
 

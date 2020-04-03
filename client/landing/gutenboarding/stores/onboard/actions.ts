@@ -14,7 +14,6 @@ import { SITE_STORE } from '../site';
 
 type CreateSiteParams = import('@automattic/data-stores').Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
-type Font = import('../../constants').Font;
 type FontPair = import('../../constants').FontPair;
 type State = import('.').State;
 type Template = VerticalsTemplates.Template;
@@ -22,6 +21,11 @@ type Template = VerticalsTemplates.Template;
 export const setDomain = ( domain: DomainSuggestion | undefined ) => ( {
 	type: 'SET_DOMAIN' as const,
 	domain,
+} );
+
+export const setDomainSearch = ( domainSearch: string ) => ( {
+	type: 'SET_DOMAIN_SEARCH_TERM' as const,
+	domainSearch,
 } );
 
 export const setSelectedDesign = ( selectedDesign: Design | undefined ) => ( {
@@ -119,6 +123,7 @@ export type OnboardAction = ReturnType<
 	| typeof resetOnboardStore
 	| typeof resetSiteVertical
 	| typeof setDomain
+	| typeof setDomainSearch
 	| typeof setFonts
 	| typeof setSelectedDesign
 	| typeof setSiteTitle
