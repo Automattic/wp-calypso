@@ -72,9 +72,7 @@ const CelebrateNotice = ( {
 			case 'migrated':
 				return translate( 'Next, make sure everything looks the way you expected.' );
 			default:
-				return translate(
-					'Next, use this quick list of setup tasks to get your site ready to share.'
-				);
+				return translate( 'Next, finish the following setup tasks before you share your site.' );
 		}
 	};
 
