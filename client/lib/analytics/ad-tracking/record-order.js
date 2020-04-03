@@ -482,18 +482,12 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 			value: totalCost,
 			currency: cart.currency ?? 'USD',
 			tax: cart.total_tax ?? undefined,
-			coupon: cart.coupon_code ?? '',
+			coupon: cart.coupon_code ?? undefined,
 			items,
 		},
 	];
 
 	window.gtag( ...params );
-
-	// TODO:
-	// - should we only send value in usd?
-	// - product.cost instead of product.item_total?
-	// - are there constnats for brand?
-	// - do we differentiate by brand in GA in that way?
 
 	debug( 'recordOrderInGAEnhancedEcommerce: Record WPCom Purchase', params );
 }
