@@ -340,6 +340,7 @@ export function prepareDomainContactDetails(
 		postalCode: details.postalCode.value,
 		countryCode: details.countryCode.value,
 		fax: details.fax.value,
+		extra: prepareTldExtraContactDetails( details ),
 	};
 }
 
@@ -360,6 +361,7 @@ export function prepareDomainContactDetailsErrors(
 		postalCode: details.postalCode.errors[ 0 ],
 		countryCode: details.countryCode.errors[ 0 ],
 		fax: details.fax.errors[ 0 ],
+		extra: prepareTldExtraContactDetailsErrors( details ),
 	};
 }
 
@@ -397,7 +399,6 @@ function prepareCaDomainContactExtraDetails(
 	if ( details.tldExtraFields?.ca ) {
 		return {
 			lang: details.tldExtraFields.ca.lang.value,
-			organization: details.organization.value,
 			legalType: details.tldExtraFields.ca.legalType.value,
 			ciraAgreementAccepted: details.tldExtraFields.ca.ciraAgreementAccepted.value === 'true',
 		};
@@ -411,7 +412,6 @@ function prepareCaDomainContactExtraDetailsErrors(
 	if ( details.tldExtraFields?.ca ) {
 		return {
 			lang: details.tldExtraFields.ca.lang.errors[ 0 ],
-			organization: details.organization.errors[ 0 ],
 			legalType: details.tldExtraFields.ca.legalType.errors[ 0 ],
 			ciraAgreementAccepted: details.tldExtraFields.ca.ciraAgreementAccepted.errors[ 0 ],
 		};
@@ -623,9 +623,6 @@ function applyDomainContactDetailsUpdate(
  * assume input came from the user.
  */
 export type ManagedContactDetailsUpdaters = {
-	updateCaFields: ( ManagedContactDetails, CaDomainContactExtraDetails ) => ManagedContactDetails;
-	updateUkFields: ( ManagedContactDetails, UkDomainContactExtraDetails ) => ManagedContactDetails;
-	updateFrFields: ( ManagedContactDetails, FrDomainContactExtraDetails ) => ManagedContactDetails;
 	updatePhone: ( ManagedContactDetails, string ) => ManagedContactDetails;
 	updatePhoneNumberCountry: ( ManagedContactDetails, string ) => ManagedContactDetails;
 	updatePostalCode: ( ManagedContactDetails, string ) => ManagedContactDetails;
@@ -644,116 +641,6 @@ export type ManagedContactDetailsUpdaters = {
 };
 
 export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
-	updateCaFields: (
-		oldDetails: ManagedContactDetails,
-		newDetails: CaDomainContactExtraDetails
-	): ManagedContactDetails => {
-		return {
-			...oldDetails,
-			organization: touchIfDifferent( newDetails.organization, oldDetails.organization ),
-			tldExtraFields: {
-				...oldDetails.tldExtraFields,
-				ca: oldDetails.tldExtraFields?.ca
-					? {
-							lang: touchIfDifferent( newDetails.lang, oldDetails.tldExtraFields.ca.lang ),
-							legalType: touchIfDifferent(
-								newDetails.legalType,
-								oldDetails.tldExtraFields.ca.legalType
-							),
-							ciraAgreementAccepted: touchIfDifferent(
-								newDetails.ciraAgreementAccepted?.toString(),
-								oldDetails.tldExtraFields.ca.ciraAgreementAccepted
-							),
-					  }
-					: {
-							lang: touchIfDifferent( newDetails.lang, getInitialManagedValue() ),
-							legalType: touchIfDifferent( newDetails.legalType, getInitialManagedValue() ),
-							ciraAgreementAccepted: touchIfDifferent(
-								newDetails.ciraAgreementAccepted?.toString(),
-								getInitialManagedValue()
-							),
-					  },
-			},
-		};
-	},
-
-	updateUkFields: (
-		oldDetails: ManagedContactDetails,
-		newDetails: UkDomainContactExtraDetails
-	): ManagedContactDetails => {
-		return {
-			...oldDetails,
-			tldExtraFields: {
-				...oldDetails.tldExtraFields,
-				uk: oldDetails.tldExtraFields?.uk
-					? {
-							registrantType: touchIfDifferent(
-								newDetails.registrantType,
-								oldDetails.tldExtraFields.uk.registrantType
-							),
-							registrationNumber: touchIfDifferent(
-								newDetails.registrationNumber,
-								oldDetails.tldExtraFields.uk.registrationNumber
-							),
-							tradingName: touchIfDifferent(
-								newDetails.tradingName,
-								oldDetails.tldExtraFields.uk.tradingName
-							),
-					  }
-					: {
-							registrantType: touchIfDifferent(
-								newDetails.registrantType,
-								getInitialManagedValue()
-							),
-							registrationNumber: touchIfDifferent(
-								newDetails.registrationNumber,
-								getInitialManagedValue()
-							),
-							tradingName: touchIfDifferent( newDetails.tradingName, getInitialManagedValue() ),
-					  },
-			},
-		};
-	},
-
-	updateFrFields: (
-		oldDetails: ManagedContactDetails,
-		newDetails: FrDomainContactExtraDetails
-	): ManagedContactDetails => {
-		return {
-			...oldDetails,
-			vatId: touchIfDifferent( newDetails.registrantVatId, oldDetails.vatId ),
-			tldExtraFields: {
-				...oldDetails.tldExtraFields,
-				fr: oldDetails.tldExtraFields?.fr
-					? {
-							registrantType: touchIfDifferent(
-								newDetails.registrantType,
-								oldDetails.tldExtraFields.fr.registrantType
-							),
-							trademarkNumber: touchIfDifferent(
-								newDetails.trademarkNumber,
-								oldDetails.tldExtraFields.fr.trademarkNumber
-							),
-							sirenSirat: touchIfDifferent(
-								newDetails.sirenSirat,
-								oldDetails.tldExtraFields.fr.sirenSirat
-							),
-					  }
-					: {
-							registrantType: touchIfDifferent(
-								newDetails.registrantType,
-								getInitialManagedValue()
-							),
-							trademarkNumber: touchIfDifferent(
-								newDetails.trademarkNumber,
-								getInitialManagedValue()
-							),
-							sirenSirat: touchIfDifferent( newDetails.sirenSirat, getInitialManagedValue() ),
-					  },
-			},
-		};
-	},
-
 	updatePhone: ( oldDetails: ManagedContactDetails, newPhone: string ): ManagedContactDetails => {
 		return {
 			...oldDetails,
