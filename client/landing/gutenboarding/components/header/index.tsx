@@ -27,6 +27,8 @@ import {
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 
 import wp from '../../../../lib/wp';
+import { DomainSuggestion } from '@automattic/data-stores/dist/types/domain-suggestions';
+
 const wpcom = wp.undocumented();
 
 interface Cart {
@@ -68,6 +70,8 @@ const Header: FunctionComponent = () => {
 
 	const newSite = useSelect( select => select( SITE_STORE ).getNewSite() );
 
+	const [ hasUserPickedDomain, setHasUserPickedDomain ] = useState( false );
+
 	const { domain, siteTitle, siteWasCreatedForDomainPurchase } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
@@ -78,6 +82,11 @@ const Header: FunctionComponent = () => {
 		resetOnboardStore,
 		setSiteWasCreatedForDomainPurchase,
 	} = useDispatch( ONBOARD_STORE );
+
+	function handleDomainSelect( item: DomainSuggestion ) {
+		setHasUserPickedDomain( true );
+		setDomain( item );
+	}
 
 	const allSuggestions = useDomainSuggestions( siteTitle );
 	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice(
@@ -109,7 +118,11 @@ const Header: FunctionComponent = () => {
 	const currentDomain = domain ?? freeDomainSuggestion;
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
-	const domainElement = (
+	const domainElement = hasUserPickedDomain ? (
+		<span className="gutenboarding__header-domain-picker-button-domain">
+			{ currentDomain?.domain_name }
+		</span>
+	) : (
 		<span
 			className={ classnames( 'gutenboarding__header-domain-picker-button-domain', {
 				placeholder: ! recommendedDomainSuggestion,
@@ -207,7 +220,7 @@ const Header: FunctionComponent = () => {
 							className="gutenboarding__header-domain-picker-button"
 							disabled={ ! currentDomain }
 							currentDomain={ currentDomain }
-							onDomainSelect={ setDomain }
+							onDomainSelect={ handleDomainSelect }
 							onDomainPurchase={ () =>
 								currentUser
 									? handleCreateSiteForDomains( currentUser.username )
