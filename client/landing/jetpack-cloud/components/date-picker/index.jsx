@@ -87,6 +87,14 @@ class DatePicker extends Component {
 		page.redirect( `/activity/${ this.props.siteSlug }` );
 	};
 
+	onSpace = ( evt, fn ) => {
+		if ( evt.key === ' ' ) {
+			return fn;
+		}
+
+		return () => {};
+	};
+
 	render() {
 		const { selectedDate, siteId, moment } = this.props;
 
@@ -99,20 +107,27 @@ class DatePicker extends Component {
 		return (
 			<div className="date-picker">
 				<div className="date-picker__select-date">
-					<div>
-						<Button
-							compact
-							borderless
-							className="date-picker__button--previous"
-							onClick={ this.goToPreviousDay }
-						>
+					<div
+						className="date-picker__select-date--previous"
+						role="button"
+						tabIndex={ 0 }
+						onClick={ this.goToPreviousDay }
+						onKeyDown={ this.onSpace( this.goToPreviousDay ) }
+					>
+						<Button compact borderless className="date-picker__button--previous">
 							<Gridicon
 								icon="chevron-left"
 								className={ ! this.canGoToPreviousDay() && 'disabled' }
 							/>
 						</Button>
 
-						<div className="date-picker__display-date">{ previousDisplayDate }</div>
+						<span
+							className={ classNames( 'date-picker__display-date', {
+								disabled: ! this.canGoToPreviousDay(),
+							} ) }
+						>
+							{ previousDisplayDate }
+						</span>
 					</div>
 
 					<DateRangeSelector
@@ -121,21 +136,22 @@ class DatePicker extends Component {
 						customLabel={ <Gridicon icon="calendar" /> }
 					/>
 
-					<div>
-						<div
+					<div
+						className="date-picker__select-date--next"
+						role="button"
+						tabIndex={ 0 }
+						onClick={ this.goToNextDay }
+						onKeyDown={ this.onSpace( this.goToNextDay ) }
+					>
+						<span
 							className={ classNames( 'date-picker__display-date', {
 								disabled: ! this.canGoToNextDay(),
 							} ) }
 						>
 							{ nextDisplayDate }
-						</div>
+						</span>
 
-						<Button
-							compact
-							borderless
-							className="date-picker__button--next"
-							onClick={ this.goToNextDay }
-						>
+						<Button compact borderless className="date-picker__button--next">
 							<Gridicon icon="chevron-right" className={ ! this.canGoToNextDay() && 'disabled' } />
 						</Button>
 					</div>
