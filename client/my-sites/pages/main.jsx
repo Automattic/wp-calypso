@@ -76,7 +76,14 @@ class PagesMain extends React.Component {
 	}
 
 	render() {
-		const { siteId, search, status = 'published', translate, state } = this.props;
+		const {
+			siteId,
+			search,
+			status = 'published',
+			translate,
+			searchPagesPlaceholder,
+			queryType,
+		} = this.props;
 
 		const filterStrings = {
 			published: translate( 'Published', { context: 'Filter label for pages list' } ),
@@ -93,17 +100,8 @@ class PagesMain extends React.Component {
 			// the search was initiated from. Use POST_STATUSES rather than
 			// "any" to do this, since the latter excludes trashed posts.
 			status: search ? POST_STATUSES.join( ',' ) : mapStatus( status ),
-			type: 'page',
+			type: queryType,
 		};
-
-		const localeSlug = getLocaleSlug( state );
-		const searchPagesPlaceholder = getPostTypeLabel(
-			state,
-			siteId,
-			query.type,
-			'search_items',
-			localeSlug
-		);
 
 		return (
 			<Main wideLayout classname="pages">
@@ -125,7 +123,7 @@ class PagesMain extends React.Component {
 						isOpen={ this.props.getSearchOpen() }
 						onSearch={ this.props.doSearch }
 						initialValue={ search }
-						placeholder={ `${ searchPagesPlaceholder }...` }
+						placeholder={ `${ searchPagesPlaceholder }…` }
 						analyticsGroup="Pages"
 						delaySearch={ true }
 					/>
@@ -158,9 +156,24 @@ class PagesMain extends React.Component {
 	}
 }
 
-const mapState = state => ( {
-	state,
-	siteId: getSelectedSiteId( state ),
-} );
+const mapState = state => {
+	const queryType = 'page';
+
+	const siteId = getSelectedSiteId( state );
+
+	const searchPagesPlaceholder = getPostTypeLabel(
+		state,
+		siteId,
+		queryType,
+		'search_items',
+		getLocaleSlug( state )
+	);
+
+	return {
+		searchPagesPlaceholder,
+		queryType,
+		siteId,
+	};
+};
 
 export default connect( mapState )( localize( urlSearch( PagesMain ) ) );
