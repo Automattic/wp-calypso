@@ -26,6 +26,7 @@ const joinChannel = ( store, site, post, postKey ) => {
 
 	channel = socket.channel( channelTopicPrefix + post.global_ID, { post_key: postKey } );
 	registerEventHandlers( channel, store );
+
 	channel
 		.join()
 		.receive( 'ok', () => debug( 'channel join ok' ) )

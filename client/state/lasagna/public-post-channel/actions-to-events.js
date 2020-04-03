@@ -15,8 +15,8 @@ import registerEventHandlers from './events-to-actions';
 import { socket } from '../socket';
 
 let channel = null;
-const channelTopicPrefix = 'public:push:wp_post:';
 
+const channelTopicPrefix = 'public:push:wp_post:';
 const debug = debugFactory( 'lasagna:channel:public:push:wp_post' );
 
 const joinChannel = ( store, site, post ) => {
@@ -26,6 +26,7 @@ const joinChannel = ( store, site, post ) => {
 
 	channel = socket.channel( channelTopicPrefix + post.global_ID );
 	registerEventHandlers( channel, store );
+
 	channel
 		.join()
 		.receive( 'ok', () => debug( 'channel join ok' ) )
