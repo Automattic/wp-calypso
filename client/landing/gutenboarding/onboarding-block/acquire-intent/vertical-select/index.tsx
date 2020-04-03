@@ -58,7 +58,7 @@ const VerticalSelect: React.FunctionComponent = () => {
 	const { siteVertical, siteTitle } = useSelect( select => select( ONBOARD_STORE ).getState() );
 	const { setSiteVertical, resetSiteVertical } = useDispatch( ONBOARD_STORE );
 
-	const inputText = inputRef?.current?.innerText || '';
+	const inputText = inputRef.current.innerText || '';
 	const isInputEmpty = ! inputText.length;
 	const showArrow = ! siteTitle && ! siteVertical && inputText.length > 2;
 
@@ -189,7 +189,7 @@ const VerticalSelect: React.FunctionComponent = () => {
 						{ isFocused && !! verticals.length && (
 							<Suggestions
 								ref={ suggestionRef }
-								query={ inputRef?.current?.innerText }
+								query={ inputText }
 								suggestions={ suggestions }
 								suggest={ handleSelect }
 								title={ NO__( 'Suggestions' ) }
