@@ -10,6 +10,14 @@ import BackupActivity from './activity';
 import BackupDetailPage from './detail';
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 import BackupsPage from './main';
+import { SiteOffsetProvider } from 'landing/jetpack-cloud/components/site-offset/context';
+
+export function wrapInSiteOffsetProvider( context, next ) {
+	context.primary = (
+		<SiteOffsetProvider site={ context.params.site }>{ context.primary }</SiteOffsetProvider>
+	);
+	next();
+}
 
 /* handles /backups/:site, see `backupMainPath` */
 export function backups( context, next ) {

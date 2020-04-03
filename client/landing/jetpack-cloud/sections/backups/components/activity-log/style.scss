@@ -1,7 +1,13 @@
 .activity-log {
 	// todo: there is some strangeness with the jetpack cloud css, these are temporary fixes
-	.filterbar__wrap.card {
+	.activity-log__filter-bar {
 		display: flex;
+		flex-direction: row;
+		margin-bottom: 15px;
+
+		.filterbar__selection {
+			margin-left: 15px;
+		}
 	}
 
 	// todo: default button styles are overriding these rules, so just restate for a temp. fix

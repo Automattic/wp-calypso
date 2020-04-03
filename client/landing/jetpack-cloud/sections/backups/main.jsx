@@ -30,10 +30,7 @@ import QuerySitePurchases from 'components/data/query-site-purchases';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
-import Filterbar from 'my-sites/activity/filterbar';
-import ActivityCard from '../../components/activity-card';
 import siteSupportsRealtimeBackup from 'state/selectors/site-supports-realtime-backup';
-import Pagination from 'components/pagination';
 import MissingCredentialsWarning from '../../components/missing-credentials';
 import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials.js';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
@@ -46,7 +43,6 @@ import QuerySiteSettings from 'components/data/query-site-settings'; // Required
  */
 import './style.scss';
 
-const PAGE_SIZE = 10;
 const INDEX_FORMAT = 'YYYYMMDD';
 
 const backupStatusNames = [
@@ -122,26 +118,15 @@ class BackupsPage extends Component {
 		return backupsOnSelectedDate;
 	};
 
-	isEmptyFilter = filter => {
-		if ( ! filter ) {
-			return true;
-		}
-		if ( filter.group || filter.on || filter.before || filter.after ) {
-			return false;
-		}
-		if ( filter.page !== 1 ) {
-			return false;
-		}
-		return true;
-	};
-
 	TO_REMOVE_getSelectedDateString = () => {
 		const { moment } = this.props;
 		const { selectedDate } = this.state;
 		return moment.parseZone( selectedDate ).toISOString( true );
 	};
 
-	renderMain() {
+	renderMain() {}
+
+	render() {
 		const {
 			allowRestore,
 			doesRewindNeedCredentials,
@@ -210,84 +195,6 @@ class BackupsPage extends Component {
 					</>
 				) }
 			</Main>
-		);
-	}
-
-	changePage = pageNumber => {
-		this.props.selectPage( this.props.siteId, pageNumber );
-		window.scrollTo( 0, 0 );
-	};
-
-	renderActivityLog() {
-		const { allowRestore, filter, logs, moment, siteId } = this.props;
-		const { page: requestedPage } = filter;
-
-		const actualPage = Math.max(
-			1,
-			Math.min( requestedPage, Math.ceil( logs.length / PAGE_SIZE ) )
-		);
-		const theseLogs = logs.slice( ( actualPage - 1 ) * PAGE_SIZE, actualPage * PAGE_SIZE );
-
-		const cards = theseLogs.map( activity => (
-			<ActivityCard
-				{ ...{
-					key: activity.activityId,
-					moment,
-					activity,
-					allowRestore,
-				} }
-			/>
-		) );
-
-		return (
-			<div>
-				<div>Find a backup or restore point</div>
-				<div>
-					This is the complete event history for your site. Filter by date range and/ or activity
-					type.
-				</div>
-				<Filterbar
-					{ ...{
-						siteId,
-						filter,
-						isLoading: false,
-						isVisible: true,
-					} }
-				/>
-				<Pagination
-					compact={ isMobile() }
-					className="backups__pagination"
-					key="backups__pagination-top"
-					nextLabel={ 'Older' }
-					page={ actualPage }
-					pageClick={ this.changePage }
-					perPage={ PAGE_SIZE }
-					prevLabel={ 'Newer' }
-					total={ logs.length }
-				/>
-				{ cards }
-				<Pagination
-					compact={ isMobile() }
-					className="backups__pagination"
-					key="backups__pagination-bottom"
-					nextLabel={ 'Older' }
-					page={ actualPage }
-					pageClick={ this.changePage }
-					perPage={ PAGE_SIZE }
-					prevLabel={ 'Newer' }
-					total={ logs.length }
-				/>
-			</div>
-		);
-	}
-
-	render() {
-		const { filter } = this.props;
-
-		return (
-			<div className="backups__page">
-				{ ! this.isEmptyFilter( filter ) ? this.renderActivityLog() : this.renderMain() }
-			</div>
 		);
 	}
 }

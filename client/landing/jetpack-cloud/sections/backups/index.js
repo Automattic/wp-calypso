@@ -16,6 +16,7 @@ import {
 	backupDownload,
 	backupRestore,
 	backups,
+	wrapInSiteOffsetProvider,
 } from 'landing/jetpack-cloud/sections/backups/controller';
 import {
 	backupMainPath,
@@ -35,6 +36,7 @@ export default function() {
 			siteSelection,
 			navigation,
 			backupActivityLog,
+			wrapInSiteOffsetProvider,
 			makeLayout,
 			clientRender
 		);
@@ -44,6 +46,7 @@ export default function() {
 			siteSelection,
 			navigation,
 			backupDetail,
+			wrapInSiteOffsetProvider,
 			makeLayout,
 			clientRender
 		);
@@ -53,6 +56,7 @@ export default function() {
 			siteSelection,
 			navigation,
 			backupDownload,
+			wrapInSiteOffsetProvider,
 			makeLayout,
 			clientRender
 		);
@@ -64,12 +68,21 @@ export default function() {
 				siteSelection,
 				navigation,
 				backupRestore,
+				wrapInSiteOffsetProvider,
 				makeLayout,
 				clientRender
 			);
 		}
 		/* handles /backups/:site, see `backupMainPath` */
-		page( backupMainPath( ':site' ), siteSelection, navigation, backups, makeLayout, clientRender );
+		page(
+			backupMainPath( ':site' ),
+			siteSelection,
+			navigation,
+			backups,
+			wrapInSiteOffsetProvider,
+			makeLayout,
+			clientRender
+		);
 		/* handles /backups, see `backupMainPath` */
 		page( backupMainPath(), siteSelection, sites, makeLayout, clientRender );
 	}

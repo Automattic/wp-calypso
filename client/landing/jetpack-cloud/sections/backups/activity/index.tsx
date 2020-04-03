@@ -14,7 +14,7 @@ import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 
-const BackupActivityPage: FunctionComponent = () => {
+const BackupActivityLogPage: FunctionComponent = () => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 
@@ -28,7 +28,12 @@ const BackupActivityPage: FunctionComponent = () => {
 					) }
 				</p>
 				{ siteId && (
-					<BackupActivityLog allowRestore={ false } siteId={ siteId } showDateRange={ true } />
+					<BackupActivityLog
+						allowRestore={ false }
+						showActivityTypeSelector
+						showDateRangeSelector
+						siteId={ siteId }
+					/>
 				) }
 			</div>
 		);
@@ -43,4 +48,4 @@ const BackupActivityPage: FunctionComponent = () => {
 	);
 };
 
-export default BackupActivityPage;
+export default BackupActivityLogPage;
