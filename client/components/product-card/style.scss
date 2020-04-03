@@ -178,17 +178,6 @@
 }
 
 // Product options
-.product-card__options {
-	display: flex;
-	flex-flow: column nowrap;
-	justify-content: space-around; // IE11 fallback.
-	justify-content: space-evenly;
-
-	@include breakpoint( '>480px' ) {
-		flex-flow: row wrap;
-	}
-}
-
 .product-card__options-label {
 	margin-top: 16px;
 	font-size: 14px;
@@ -224,11 +213,6 @@
 
 	& + .product-card__option.form-label {
 		margin-top: 0;
-
-		@include breakpoint( '>480px' ) {
-			margin-top: 16px;
-			margin-left: 8px;
-		}
 	}
 }
 

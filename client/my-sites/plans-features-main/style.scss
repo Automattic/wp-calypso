@@ -13,11 +13,20 @@
 			display: flex;
 			flex-flow: row wrap;
 
+			@include breakpoint( '>660px' ) {
+				flex-flow: row;
+			}
+
 			.product-card {
-				
-				@include breakpoint( '>480px' ) {
-					flex-basis: calc( 50% - 1em );
+				@include breakpoint( '>660px' ) {
+					min-width: 0;
 				}
+
+				@include breakpoint( '>1040px' ) {
+					margin-right: 12px;
+					margin-left: 12px;
+				}
+
 				&:first-child:last-child {
 					@include breakpoint( '>960px' ) {
 						margin-left: auto;
