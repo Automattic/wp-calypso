@@ -12,11 +12,11 @@ import { get } from 'lodash';
 import { withLocalizedMoment } from 'components/localized-moment';
 import Gridicon from 'components/gridicon';
 import Button from 'components/forms/form-button';
+import { isSuccessfulBackup } from 'landing/jetpack-cloud/sections/backups/utils';
 import {
-	isSuccessfulBackup,
-	getRestorePath,
-	getDownloadPath,
-} from 'landing/jetpack-cloud/sections/backups/utils';
+	/*backupDetailPath,*/ backupDownloadPath,
+	backupRestorePath,
+} from 'landing/jetpack-cloud/sections/backups/paths';
 import { applySiteOffset } from 'lib/site/timezone';
 import { Card } from '@automattic/components';
 
@@ -27,15 +27,15 @@ import './style.scss';
 
 class DailyBackupStatus extends Component {
 	triggerRestore = () => {
-		page.redirect( getRestorePath( this.props.siteSlug, this.props.backup.rewindId ) );
+		page.redirect( backupRestorePath( this.props.siteSlug, this.props.backup.rewindId ) );
 	};
 
 	triggerDownload = () => {
-		page.redirect( getDownloadPath( this.props.siteSlug, this.props.backup.rewindId ) );
+		page.redirect( backupDownloadPath( this.props.siteSlug, this.props.backup.rewindId ) );
 	};
 
 	goToDetailsPage() {
-		//page.redirect( '/backups/' + this.props.siteSlug + '/detail/' + this.props.backup.rewindId );
+		//page.redirect( backupDetailPath( this.props.siteSlug, this.props.backup.rewindId ) );
 	}
 
 	getDisplayDate = date => {

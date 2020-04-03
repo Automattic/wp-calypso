@@ -16,29 +16,22 @@ import {
 	backupDownload,
 	backupRestore,
 } from 'landing/jetpack-cloud/sections/backups/controller';
+import { backupMainPath, backupRestorePath, backupDownloadPath, backupDetailPath } from './paths';
 
 export default function() {
 	if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
-		page( '/backups', siteSelection, sites, navigation, makeLayout, clientRender );
-		page( '/backups/:site', siteSelection, navigation, backups, makeLayout, clientRender );
+		/* handles /backups/:site/detail/:backupId, see `backupDetailPath` */
 		page(
-			'/backups/:site/detail',
+			backupDetailPath( ':site', ':backupId' ),
 			siteSelection,
 			navigation,
 			backupDetail,
 			makeLayout,
 			clientRender
 		);
+		/* handles /backups/:site/download/:rewindId, see `backupDownloadPath` */
 		page(
-			'/backups/:site/detail/:backupId',
-			siteSelection,
-			navigation,
-			backupDetail,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/backups/:site/download/:rewindId',
+			backupDownloadPath( ':site', ':rewindId' ),
 			siteSelection,
 			navigation,
 			backupDownload,
@@ -47,17 +40,9 @@ export default function() {
 		);
 
 		if ( config.isEnabled( 'jetpack-cloud/backups-restore' ) ) {
-			page( '/backups/restore', siteSelection, sites, navigation, makeLayout, clientRender );
+			/* handles /backups/:site/restore/:rewindId, see `backupRestorePath` */
 			page(
-				'/backups/:site/restore',
-				siteSelection,
-				navigation,
-				backupRestore,
-				makeLayout,
-				clientRender
-			);
-			page(
-				'/backups/:site/restore/:rewindId',
+				backupRestorePath( ':site', ':rewindId' ),
 				siteSelection,
 				navigation,
 				backupRestore,
@@ -65,5 +50,9 @@ export default function() {
 				clientRender
 			);
 		}
+		/* handles /backups/:site, see `backupMainPath` */
+		page( backupMainPath( ':site' ), siteSelection, navigation, backups, makeLayout, clientRender );
+		/* handles /backups, see `backupMainPath` */
+		page( backupMainPath(), siteSelection, sites, makeLayout, clientRender );
 	}
 }
