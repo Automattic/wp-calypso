@@ -39,7 +39,18 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 					'is-paid': ! suggestion.is_free,
 				} ) }
 			>
-				{ suggestion.is_free ? NO__( 'Free' ) : sprintf( NO__( '%s/year' ), suggestion.cost ) }
+				{ suggestion.is_free ? (
+					NO__( 'Free' )
+				) : (
+					<>
+						{ ' ' }
+						<span className="domain-picker__free-text"> { NO__( 'Free' ) } </span>
+						<span className="domain-picker__price-is-paid">
+							{ ' ' }
+							{ sprintf( NO__( '%s/year' ), suggestion.cost ) }{ ' ' }
+						</span>
+					</>
+				) }
 			</div>
 		</Button>
 	);

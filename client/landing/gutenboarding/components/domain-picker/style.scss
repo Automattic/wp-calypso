@@ -3,11 +3,15 @@
 @import 'assets/stylesheets/shared/animation'; // Needed for the placeholder
 @import '../../mixins';
 
-.domain-picker {
-	min-width: 530px;
+.domain-picker.components-panel {
+	border: none;
 
 	.components-panel__body.is-opened {
 		padding: 36px;
+	}
+
+	@include break-small {
+		min-width: 520px;
 	}
 }
 
@@ -21,6 +25,38 @@
 .domain-picker__header-title {
 	@include onboarding-font-recoleta;
 	font-size: 26px;
+	line-height: 35px;
+}
+
+.domain-picker__paragraph {
+	text-align: center;
+}
+
+.domain-picker__free-text {
+	line-height: 20px;
+	color: var( --studio-green-50 );
+}
+
+.domain-picker__free-text svg {
+	margin: 8px;
+	vertical-align: middle;
+}
+
+.domain-picker__footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 14px;
+}
+
+.domain-picker__footer-options.components-button {
+	@include onboarding-medium-text;
+	color: var( --color-neutral-100 );
+}
+
+.domain-picker__footer-button.components-button {
+	@include onboarding-medium-text;
+	padding: 0 24px;
 }
 
 .domain-picker__close-button {
@@ -53,37 +89,6 @@
 		flex-direction: column;
 		align-items: stretch;
 	}
-
-	+ .domain-picker__panel-row {
-		margin-top: 36px;
-	}
-}
-
-.domain-picker__suggestion-header {
-	display: flex;
-	justify-content: space-between;
-	padding-bottom: 12px;
-}
-
-.domain-picker__suggestion-header-title {
-	font-size: 12px;
-	font-weight: 600;
-	letter-spacing: 2px;
-	text-transform: uppercase;
-	color: var( --color-neutral-40 );
-}
-
-.domain-picker__suggestion-header-description {
-	font-size: 12px;
-	color: var( --color-neutral-40 );
-
-	em {
-		font-weight: 600;
-	}
-}
-
-.domain-picker__suggestion-item-group {
-	border: 1px solid var( --color-neutral-5 );
 }
 
 .domain-picker__suggestion-none {
@@ -111,10 +116,6 @@
 				color: var( --color-text );
 			}
 		}
-	}
-
-	+ .domain-picker__suggestion-item {
-		border-top: 1px solid var( --color-neutral-5 );
 	}
 }
 
@@ -153,12 +154,12 @@
 	color: var( --studio-gray-20 );
 	white-space: nowrap;
 
-	&.is-paid {
-		text-decoration: line-through;
-	}
-
 	&.placeholder {
 		@include placeholder();
 		min-width: 64px;
 	}
+}
+
+.domain-picker__price-is-paid {
+	text-decoration: line-through;
 }
