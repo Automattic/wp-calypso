@@ -9,7 +9,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -21,6 +20,8 @@ class AutoRenewPaymentMethodDialog extends Component {
 		isVisible: PropTypes.bool,
 		translate: PropTypes.func.isRequired,
 		purchase: PropTypes.object.isRequired,
+		onClose: PropTypes.func.isRequired,
+		onAddClick: PropTypes.func.isRequired,
 	};
 
 	render() {
@@ -51,7 +52,7 @@ class AutoRenewPaymentMethodDialog extends Component {
 				</h2>
 				<p>
 					{ translate(
-						"We currently don't have any payment details on file for this domain to automatically renew it " +
+						"We currently don't have any payment details on file for this purchase to automatically renew it " +
 							'for you. Please add a payment method so we can continue your service without interruptions.'
 					) }
 				</p>
@@ -60,4 +61,4 @@ class AutoRenewPaymentMethodDialog extends Component {
 	}
 }
 
-export default localize( withLocalizedMoment( AutoRenewPaymentMethodDialog ) );
+export default localize( AutoRenewPaymentMethodDialog );
