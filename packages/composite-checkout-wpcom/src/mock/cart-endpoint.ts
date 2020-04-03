@@ -85,11 +85,25 @@ function convertRequestProductToResponseProduct( currency ) {
 					volume: 1,
 					extra: {},
 				};
+			case 6:
+				return {
+					product_id: 6,
+					product_name: 'Domain Registration',
+					product_slug: 'domain_reg',
+					currency: currency,
+					is_domain_registration: true,
+					item_subtotal_integer: 70,
+					item_subtotal_display: 'R$70',
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: {},
+				};
 		}
 
 		return {
 			product_id: product_id,
-			product_name: 'UNKNOWN',
+			product_name: `Unknown mocked product: ${ product_id }`,
 			product_slug: 'unknown',
 			currency: currency,
 			is_domain_registration: false,
