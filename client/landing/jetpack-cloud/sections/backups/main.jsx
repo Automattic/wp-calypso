@@ -2,21 +2,16 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { isMobile } from '@automattic/viewport';
 import React, { Component } from 'react';
 import momentDate from 'moment';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
 import { updateFilter } from 'state/activity-log/actions';
-import {
-	getBackupAttemptsForDate,
-	getDailyBackupDeltas,
-	getEventsInDailyBackup,
-	getMetaDiffForDailyBackup,
-} from './utils';
+import { getMetaDiffForDailyBackup } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestActivityLogs } from 'state/data-getters';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -31,9 +26,8 @@ import QueryRewindCapabilities from 'components/data/query-rewind-capabilities';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
-import Filterbar from 'my-sites/activity/filterbar';
 import ActivityCard from '../../components/activity-card';
-import Pagination from 'components/pagination';
+import siteSupportsRealtimeBackup from 'state/selectors/site-supports-realtime-backup';
 import MissingCredentialsWarning from '../../components/missing-credentials';
 import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials.js';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
@@ -47,7 +41,6 @@ import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
  */
 import './style.scss';
 
-const PAGE_SIZE = 10;
 const INDEX_FORMAT = 'YYYYMMDD';
 
 const backupStatusNames = [
@@ -104,6 +97,7 @@ class BackupsPage extends Component {
 		const backupsOnSelectedDate = {
 			lastBackup: null,
 			activities: [],
+			rewindableActivities: [],
 		};
 
 		if ( index in this.props.indexedLog && this.props.indexedLog[ index ].length > 0 ) {
@@ -115,25 +109,15 @@ class BackupsPage extends Component {
 				) {
 					backupsOnSelectedDate.lastBackup = log;
 				} else {
+					if ( log.activityIsRewindable ) {
+						backupsOnSelectedDate.rewindableActivities.push( log );
+					}
 					backupsOnSelectedDate.activities.push( log );
 				}
 			} );
 		}
 
 		return backupsOnSelectedDate;
-	};
-
-	isEmptyFilter = filter => {
-		if ( ! filter ) {
-			return true;
-		}
-		if ( filter.group || filter.on || filter.before || filter.after ) {
-			return false;
-		}
-		if ( filter.page !== 1 ) {
-			return false;
-		}
-		return true;
 	};
 
 	TO_REMOVE_getSelectedDateString = () => {
@@ -163,9 +147,6 @@ class BackupsPage extends Component {
 
 		const today = applySiteOffset( moment(), { timezone, gmtOffset } );
 
-		const backupAttempts = getBackupAttemptsForDate( logs, selectedDateString );
-		const deltas = getDailyBackupDeltas( logs, selectedDateString );
-		const realtimeEvents = getEventsInDailyBackup( logs, selectedDateString );
 		const metaDiff = getMetaDiffForDailyBackup( logs, selectedDateString );
 
 		return (
@@ -202,98 +183,60 @@ class BackupsPage extends Component {
 						) }
 						<BackupDelta
 							{ ...{
-								deltas,
-								backupAttempts,
+								backupsOnSelectedDate,
 								hasRealtimeBackups,
-								realtimeEvents,
 								allowRestore,
 								moment,
 								siteSlug,
 								metaDiff,
 							} }
 						/>
+						{ this.renderActivityLog( backupsOnSelectedDate.rewindableActivities ) }
 					</>
 				) }
 			</Main>
 		);
 	}
 
-	changePage = pageNumber => {
-		this.props.selectPage( this.props.siteId, pageNumber );
-		window.scrollTo( 0, 0 );
-	};
+	//todo: substitute this render by the BackupActivityLog component (when it's ready)
+	renderActivityLog( rewindableActivities ) {
+		const { allowRestore, hasRealtimeBackups, timezone, gmtOffset, translate } = this.props;
 
-	renderActivityLog() {
-		const { allowRestore, filter, logs, moment, siteId } = this.props;
-		const { page: requestedPage } = filter;
+		if ( ! rewindableActivities || rewindableActivities.length === 0 ) {
+			return;
+		}
 
-		const actualPage = Math.max(
-			1,
-			Math.min( requestedPage, Math.ceil( logs.length / PAGE_SIZE ) )
-		);
-		const theseLogs = logs.slice( ( actualPage - 1 ) * PAGE_SIZE, actualPage * PAGE_SIZE );
-
-		const cards = theseLogs.map( activity => (
+		const activityCards = rewindableActivities.map( activity => (
 			<ActivityCard
 				{ ...{
 					key: activity.activityId,
-					moment,
 					activity,
 					allowRestore,
+					timezone,
+					gmtOffset,
 				} }
+				moment={ momentDate }
 			/>
 		) );
 
 		return (
 			<div>
-				<div>Find a backup or restore point</div>
-				<div>
-					This is the complete event history for your site. Filter by date range and/ or activity
-					type.
-				</div>
-				<Filterbar
-					{ ...{
-						siteId,
-						filter,
-						isLoading: false,
-						isVisible: true,
-					} }
-				/>
-				<Pagination
-					compact={ isMobile() }
-					className="backups__pagination"
-					key="backups__pagination-top"
-					nextLabel={ 'Older' }
-					page={ actualPage }
-					pageClick={ this.changePage }
-					perPage={ PAGE_SIZE }
-					prevLabel={ 'Newer' }
-					total={ logs.length }
-				/>
-				{ cards }
-				<Pagination
-					compact={ isMobile() }
-					className="backups__pagination"
-					key="backups__pagination-bottom"
-					nextLabel={ 'Older' }
-					page={ actualPage }
-					pageClick={ this.changePage }
-					perPage={ PAGE_SIZE }
-					prevLabel={ 'Newer' }
-					total={ logs.length }
-				/>
+				<div>{ translate( 'More backups from this day' ) }</div>
+				{ hasRealtimeBackups && (
+					<div>
+						{ translate(
+							'Your site is backed up real time (as you make changes) as well as in one daily backup.'
+						) }
+					</div>
+				) }
+
+				{ activityCards }
 			</div>
 		);
 	}
 
 	render() {
-		const { filter } = this.props;
-
-		return (
-			<div className="backups__page">
-				{ ! this.isEmptyFilter( filter ) ? this.renderActivityLog() : this.renderMain() }
-			</div>
-		);
+		return <div className="backups__page">{ this.renderMain() }</div>;
 	}
 }
 
@@ -344,6 +287,7 @@ const createIndexedLog = ( logs, timezone, gmtOffset ) => {
 
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSelectedSiteSlug( state );
 	const filter = getActivityLogFilter( state, siteId );
 	const logs = requestActivityLogs( siteId, filter );
 	const gmtOffset = getSiteGmtOffset( state, siteId );
@@ -368,7 +312,7 @@ const mapStateToProps = state => {
 		logs: logs?.data ?? [],
 		rewind,
 		siteId,
-		siteSlug: getSelectedSiteSlug( state ),
+		siteSlug,
 		timezone,
 		gmtOffset,
 		indexedLog,
@@ -381,4 +325,6 @@ const mapDispatchToProps = dispatch => ( {
 	selectPage: ( siteId, pageNumber ) => dispatch( updateFilter( siteId, { page: pageNumber } ) ),
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( withLocalizedMoment( BackupsPage ) );
+export default localize(
+	connect( mapStateToProps, mapDispatchToProps )( withLocalizedMoment( BackupsPage ) )
+);

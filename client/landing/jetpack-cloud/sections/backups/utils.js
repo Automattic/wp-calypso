@@ -103,25 +103,36 @@ export const getMetaDiffForDailyBackup = ( logs, date ) => {
 	];
 };
 
-export const getDailyBackupDeltas = ( logs, date ) => {
-	const changes = getEventsInDailyBackup( logs, date );
-
-	return {
-		mediaCreated: changes.filter( event => 'attachment__uploaded' === event.activityName ),
-		mediaDeleted: changes.filter( event => 'attachment__deleted' === event.activityName ),
-		posts: changes.filter(
-			event => 'post__published' === event.activityName || 'post__trashed' === event.activityName
+export const getCategorizedActivities = activities => {
+	const deltas = {
+		mediaCreated: activities.filter( activity => 'attachment__uploaded' === activity.activityName ),
+		mediaDeleted: activities.filter( activity => 'attachment__deleted' === activity.activityName ),
+		posts: activities.filter(
+			activity =>
+				'post__published' === activity.activityName || 'post__trashed' === activity.activityName
 		),
-		postsCreated: changes.filter( event => 'post__published' === event.activityName ),
-		postsDeleted: changes.filter( event => 'post__trashed' === event.activityName ),
-		plugins: changes.filter(
-			event =>
-				'plugin__installed' === event.activityName || 'plugin__deleted' === event.activityName
+		postsCreated: activities.filter( activity => 'post__published' === activity.activityName ),
+		postsDeleted: activities.filter( activity => 'post__trashed' === activity.activityName ),
+		plugins: activities.filter(
+			activity =>
+				'plugin__installed' === activity.activityName || 'plugin__deleted' === activity.activityName
 		),
-		themes: changes.filter(
-			event => 'theme__installed' === event.activityName || 'theme__deleted' === event.activityName
+		themes: activities.filter(
+			activity =>
+				'theme__installed' === activity.activityName || 'theme__deleted' === activity.activityName
 		),
 	};
+
+	deltas.totalChanges =
+		deltas.mediaCreated.length +
+		deltas.mediaDeleted.length +
+		deltas.posts.length +
+		deltas.postsCreated.length +
+		deltas.postsDeleted.length +
+		deltas.plugins.length +
+		deltas.themes.length;
+
+	return deltas;
 };
 
 /**

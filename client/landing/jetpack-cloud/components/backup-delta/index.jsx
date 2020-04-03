@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 import { backupDetailPath } from 'landing/jetpack-cloud/sections/backups/paths';
 import Gridicon from 'components/gridicon';
 import Button from 'components/forms/form-button';
-import ActivityCard from '../../components/activity-card';
+import { getCategorizedActivities } from 'landing/jetpack-cloud/sections/backups/utils';
 
 /**
  * Style dependencies
@@ -23,36 +23,7 @@ import './style.scss';
 import mediaImage from 'assets/images/illustrations/media.svg';
 
 class BackupDelta extends Component {
-	renderRealtime() {
-		const { allowRestore, timezone, gmtOffset, moment, translate } = this.props;
-
-		const realtimeEvents = this.props.realtimeEvents.filter( event => event.activityIsRewindable );
-
-		const cards = realtimeEvents.map( activity => (
-			<ActivityCard
-				key={ activity.activityId }
-				{ ...{
-					moment,
-					activity,
-					allowRestore,
-					timezone,
-					gmtOffset,
-				} }
-			/>
-		) );
-
-		return (
-			<div className="backup-delta__realtime">
-				<div>{ translate( 'More backups from today' ) }</div>
-				{ cards.length ? (
-					cards
-				) : (
-					<div>{ translate( 'you have no more backups for this day' ) }</div>
-				) }
-			</div>
-		);
-	}
-
+	//todo: the metadiff approach is very fragile, we got an error in an edge case
 	renderMetaDiff() {
 		const { metaDiff } = this.props;
 		const metas = [];
@@ -69,9 +40,12 @@ class BackupDelta extends Component {
 		return <div className="backup-delta__metas">{ metas.join( ', ' ) }</div>;
 	}
 
-	renderDaily() {
-		const { backupAttempts, deltas, metaDiff, siteSlug, translate } = this.props;
-		const mainBackup = backupAttempts.complete && backupAttempts.complete[ 0 ];
+	renderMediaChanges( deltas ) {
+		const { translate } = this.props;
+
+		const mediaCount = deltas.mediaCreated.length - deltas.mediaDeleted.length;
+		const mediaOperator = mediaCount >= 0 ? '+' : '';
+		const mediaCountDisplay = `${ mediaOperator }${ mediaCount }`;
 
 		const mediaCreated = deltas.mediaCreated.map( item => (
 			<div key={ item.activityId } className="backup-delta__media-image">
@@ -85,10 +59,6 @@ class BackupDelta extends Component {
 				</div>
 			</div>
 		) );
-
-		const mediaCount = deltas.mediaCreated.length - deltas.mediaDeleted.length;
-		const mediaOperator = mediaCount >= 0 ? '+' : '';
-		const mediaCountDisplay = `${ mediaOperator }${ mediaCount }`;
 
 		const deletedElement = [
 			<div className="backup-delta__media-image">
@@ -105,6 +75,22 @@ class BackupDelta extends Component {
 			deltas.mediaDeleted.length > 0
 				? mediaCreated.slice( 0, 2 ).concat( deletedElement )
 				: mediaCreated.slice( 0, 3 );
+
+		return (
+			<Fragment>
+				<div className="backup-delta__section-header">{ translate( 'Media' ) }</div>
+				<div className="backup-delta__section-media">
+					{ mediaItems }
+					<div>
+						<div className="backup-delta__count-bubble">{ mediaCountDisplay }</div>
+					</div>
+				</div>
+			</Fragment>
+		);
+	}
+
+	renderPostsChanges( deltas ) {
+		const { translate } = this.props;
 
 		const postsCount = deltas.postsCreated.length - deltas.postsDeleted.length;
 		const postsOperator = postsCount >= 0 ? '+' : '';
@@ -133,6 +119,18 @@ class BackupDelta extends Component {
 			}
 		} );
 
+		return (
+			<Fragment>
+				<div className="backup-delta__section-header">{ translate( 'Posts' ) }</div>
+				<div className="backup-delta__section-posts">{ posts }</div>
+				<div className="backup-delta__count-bubble">{ postCountDisplay }</div>
+			</Fragment>
+		);
+	}
+
+	renderPluginsChanges( deltas ) {
+		const { translate } = this.props;
+
 		const plugins = deltas.plugins.map( item => {
 			const className =
 				'plugin__installed' === item.activityName
@@ -145,6 +143,17 @@ class BackupDelta extends Component {
 				</div>
 			);
 		} );
+
+		return (
+			<Fragment>
+				<div className="backup-delta__section-header">{ translate( 'Plugins' ) }</div>
+				<div className="backup-delta__section-plugins">{ plugins }</div>
+			</Fragment>
+		);
+	}
+
+	renderThemesChanges( deltas ) {
+		const { translate } = this.props;
 
 		const themes = deltas.themes.map( item => {
 			const className =
@@ -169,72 +178,78 @@ class BackupDelta extends Component {
 			);
 		} );
 
-		const hasChanges = !! (
-			deltas.mediaCreated.length ||
-			deltas.posts.length ||
-			deltas.plugins.length ||
-			deltas.themes.length ||
-			!! metaDiff.filter( diff => 0 !== diff.num ).length
+		return (
+			<Fragment>
+				<div className="backup-delta__section-header">{ translate( 'Themes' ) }</div>
+				<div className="backup-delta__section-plugins">{ themes }</div>
+			</Fragment>
 		);
+	}
+
+	renderChanges( deltas ) {
+		return (
+			<>
+				{ !! deltas.mediaCreated.length && this.renderMediaChanges( deltas ) }
+				{ !! deltas.posts.length && this.renderPostsChanges( deltas ) }
+				{ !! deltas.plugins.length && this.renderPluginsChanges( deltas ) }
+				{ !! deltas.themes.length && this.renderThemesChanges( deltas ) }
+
+				{ /*todo: metaDiff is very fragile, we got errors in some cases.*/ }
+				{ /*{ this.renderMetaDiff() }*/ }
+			</>
+		);
+	}
+
+	renderViewDetailsButton( backup ) {
+		const { siteSlug, translate } = this.props;
+
+		if ( ! backup || 'success' !== backup.activityStatus ) {
+			return;
+		}
+
+		return (
+			<Button
+				isPrimary={ false }
+				className="backup-delta__view-all-button"
+				href={ backupDetailPath( siteSlug, backup.rewindId ) }
+			>
+				{ translate( 'View all backup details' ) }
+			</Button>
+		);
+	}
+
+	renderBackupDetails( backupsOnSelectedDate ) {
+		const { translate } = this.props;
+
+		const backup = backupsOnSelectedDate.lastBackup;
+
+		if ( ! backup || 'success' !== backup.activityStatus ) {
+			return;
+		}
+		const deltas = getCategorizedActivities( backupsOnSelectedDate.activities );
 
 		return (
 			<div className="backup-delta__daily">
-				{ hasChanges && (
-					<div className="backup-delta__changes-header">
-						{ translate( 'Changes in this backup' ) }
-					</div>
-				) }
-				{ !! deltas.mediaCreated.length && (
-					<Fragment>
-						<div className="backup-delta__section-header">{ translate( 'Media' ) }</div>
-						<div className="backup-delta__section-media">
-							{ mediaItems }
-							<div>
-								<div className="backup-delta__count-bubble">{ mediaCountDisplay }</div>
-							</div>
-						</div>
-					</Fragment>
-				) }
-				{ !! deltas.posts.length && (
-					<Fragment>
-						<div className="backup-delta__section-header">{ translate( 'Posts' ) }</div>
-						<div className="backup-delta__section-posts">{ posts }</div>
-						<div className="backup-delta__count-bubble">{ postCountDisplay }</div>
-					</Fragment>
-				) }
-				{ !! deltas.plugins.length && (
-					<Fragment>
-						<div className="backup-delta__section-header">{ translate( 'Plugins' ) }</div>
-						<div className="backup-delta__section-plugins">{ plugins }</div>
-					</Fragment>
-				) }
-				{ !! deltas.themes.length && (
-					<Fragment>
-						<div className="backup-delta__section-header">{ translate( 'Themes' ) }</div>
-						<div className="backup-delta__section-plugins">{ themes }</div>
-					</Fragment>
-				) }
-				{ this.renderMetaDiff() }
-				{ mainBackup && (
-					<Button
-						isPrimary={ false }
-						className="backup-delta__view-all-button"
-						href={ backupDetailPath( siteSlug, mainBackup.rewindId ) }
-					>
-						{ translate( 'View all backup details' ) }
-					</Button>
-				) }
+				<div className="backup-delta__changes-header">
+					{ translate( 'Changes in this backup' ) }
+				</div>
+				<div>
+					{ deltas.totalChanges > 0
+						? this.renderChanges( deltas )
+						: translate(
+								'Looks like there have been no new site changes since your last backup.'
+						  ) }
+				</div>
+				<div>{ this.renderViewDetailsButton( backup ) }</div>
 			</div>
 		);
 	}
 
 	render() {
-		const { hasRealtimeBackups } = this.props;
+		const { backupsOnSelectedDate } = this.props;
 
 		return (
-			<div className="backup-delta">
-				{ hasRealtimeBackups ? this.renderRealtime() : this.renderDaily() }
-			</div>
+			<div className="backup-delta">{ this.renderBackupDetails( backupsOnSelectedDate ) }</div>
 		);
 	}
 }
