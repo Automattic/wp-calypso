@@ -38,8 +38,8 @@ const viewportWidth = 1280; // Browser width for capturing the screenshot
 
 const getDesignUrl = design => {
 	return wpUrl.addQueryArgs( design.src, {
-		font_base: design.fonts[ 1 ],
-		font_headings: design.fonts[ 0 ],
+		font_base: design.fonts.base,
+		font_headings: design.fonts.headings,
 		site_title: design.title,
 	} );
 };
