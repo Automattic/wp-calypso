@@ -1,0 +1,18 @@
+{
+	"personal-bundle": {
+		"price": 5,
+		"currency": "$"
+	},
+	"value_bundle": {
+		"price": 8,
+		"currency": "$"
+	},
+	"business-bundle": {
+		"price": 25,
+		"currency": "$"
+	},
+	"ecommerce-bundle": {
+		"price": 45,
+		"currency": "$"
+	}
+}

@@ -9,7 +9,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import DomainPicker, { Props as DomainPickerProps } from '../domain-picker';
-import ConfirmPurchaseModal from '../confirm-purchase-modal';
+import PlansGrid from '../plans-grid';
 
 /**
  * Style dependencies
@@ -80,11 +80,16 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				<Dashicon icon="arrow-down-alt2" />
 			</Button>
 			{ userSelectedDomainSuggestion && (
-				<ConfirmPurchaseModal
+				<PlansGrid
 					onCancel={ handlePurchaseCancel }
 					onAccept={ () => {
 						onDomainSelect( userSelectedDomainSuggestion );
 						onDomainPurchase( userSelectedDomainSuggestion );
+						setUserSelectedDomainSuggestion( null );
+					} }
+					selectPlan={ plan => {
+						onDomainSelect( userSelectedDomainSuggestion );
+						onDomainPurchase( userSelectedDomainSuggestion, plan );
 						setUserSelectedDomainSuggestion( null );
 					} }
 					selectedDomain={ userSelectedDomainSuggestion }

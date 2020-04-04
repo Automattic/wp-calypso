@@ -46,7 +46,7 @@ export interface Props {
 	 *
 	 * @param domainSuggestion The selected domain.
 	 */
-	onDomainPurchase: ( domainSuggestion: DomainSuggestion ) => void;
+	onDomainPurchase: ( domainSuggestion: DomainSuggestion, plan ) => void;
 
 	/**
 	 * Callback that will be invoked when a close button is clicked
