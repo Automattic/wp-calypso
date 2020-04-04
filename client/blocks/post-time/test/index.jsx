@@ -47,9 +47,9 @@ describe( 'PostTime', () => {
 		expect( text ).to.equal( moment( post.modified ).format( 'lll' ) );
 	} );
 
-	test( 'should use the actual date if the post status is not pending/draft', () => {
+	test( 'should use the actual date with the day if the post status is scheduled', () => {
 		const post = {
-			status: 'publish',
+			status: 'future',
 			modified: '2016-09-14T15:47:33-04:00',
 			date: '2016-09-13T15:47:33-04:00',
 		};
@@ -57,10 +57,10 @@ describe( 'PostTime', () => {
 		const wrapper = shallow( <PostTime post={ post } moment={ moment } /> );
 
 		const text = wrapper.text();
-		expect( text ).to.equal( moment( post.date ).format( 'lll' ) );
+		expect( text ).to.equal( moment( post.date ).format( 'llll' ) );
 	} );
 
-	test( 'should use a human-readable approximation for recent dates', () => {
+	test( 'should use a human-readable approximation for recent dates on published posts', () => {
 		const post = {
 			status: 'publish',
 			date: moment()
@@ -72,6 +72,19 @@ describe( 'PostTime', () => {
 
 		const text = wrapper.text();
 		expect( text ).to.equal( '2 days ago' );
+	} );
+
+	test( 'should use the actual date for any other status', () => {
+		const post = {
+			status: 'trash',
+			modified: '2016-09-14T15:47:33-04:00',
+			date: '2016-09-13T15:47:33-04:00',
+		};
+
+		const wrapper = shallow( <PostTime post={ post } moment={ moment } /> );
+
+		const text = wrapper.text();
+		expect( text ).to.equal( moment( post.date ).format( 'lll' ) );
 	} );
 
 	test( 'should render placeholder when post is null', () => {
