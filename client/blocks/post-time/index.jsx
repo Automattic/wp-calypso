@@ -30,8 +30,19 @@ function getDisplayedTimeFromPost( moment, post ) {
 	const { status, modified, date } = post;
 	const time = moment( includes( [ 'draft', 'pending' ], status ) ? modified : date );
 
-	// Like "Friday, 21 April 2020 21:30"
-	return time.format( 'LLLL' );
+	switch ( status ) {
+		// Display relative time for published posts: 9 hours ago
+		case 'publish':
+			return time.fromNow();
+
+		// Display the time, day and date for scheduled posts: Wed, 21 Apr 2020 14:00
+		case 'future':
+			return time.format( 'llll' );
+
+		// Display the date and time for other posts: 21 Apr 2020 14:00
+		default:
+			return time.format( 'lll' );
+	}
 }
 
 export function PostTime( { moment, post } ) {
