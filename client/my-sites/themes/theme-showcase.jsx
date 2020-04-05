@@ -22,6 +22,7 @@ import DocumentHead from 'components/data/document-head';
 import { buildRelativeSearchUrl } from 'lib/build-url';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import { getPreference } from 'state/preferences/selectors';
 import ThemePreview from './theme-preview';
 import config from 'config';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -110,6 +111,7 @@ class ThemeShowcase extends React.Component {
 		search: '',
 		emptyContent: null,
 		upsellBanner: false,
+		showPreviousThemeButton: true,
 		showUploadButton: true,
 	};
 
@@ -217,6 +219,12 @@ class ThemeShowcase extends React.Component {
 		}
 	};
 
+	showPreviousThemeButton = () => {
+		const { isLoggedIn, previousTheme } = this.props;
+
+		return isLoggedIn && previousTheme;
+	};
+
 	showUploadButton = () => {
 		const { isMultisite, isLoggedIn } = this.props;
 
@@ -226,6 +234,7 @@ class ThemeShowcase extends React.Component {
 	render() {
 		const {
 			currentThemeId,
+			previousTheme,
 			siteId,
 			options,
 			getScreenshotOption,
@@ -303,6 +312,16 @@ class ThemeShowcase extends React.Component {
 						>
 							<Gridicon icon="cloud-upload" />
 							{ translate( 'Install theme' ) }
+						</Button>
+					) }
+					{ this.showPreviousThemeButton() && (
+						<Button
+							className="themes__previous-theme-button"
+							compact
+							href={ `/theme/${ previousTheme }/${ siteSlug }` }
+						>
+							<Gridicon icon="history" />
+							{ translate( 'Previous theme' ) }
 						</Button>
 					) }
 					{ ! this.props.loggedOutComponent && ! isQueried && (
@@ -449,6 +468,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	filterToTermTable: getThemeFilterToTermTable( state ),
 	hasShowcaseOpened: hasShowcaseOpenedSelector( state ),
 	themesBookmark: getThemesBookmark( state ),
+	previousTheme: getPreference( state, 'previousTheme-' + siteId ),
 } );
 
 const mapDispatchToProps = {
