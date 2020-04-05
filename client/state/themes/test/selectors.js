@@ -32,6 +32,7 @@ import {
 	isWporgTheme,
 	isWpcomTheme,
 	isThemeActive,
+	isUsingRetiredTheme,
 	isActivatingTheme,
 	hasActivatedTheme,
 	isInstallingTheme,
@@ -67,6 +68,7 @@ const twentysixteen = {
 	stylesheet: 'pub/twentysixteen',
 	demo_uri: 'https://twentysixteendemo.wordpress.com/',
 	author_uri: 'https://wordpress.org/',
+	retired: false,
 };
 
 const mood = {
@@ -1897,6 +1899,68 @@ describe( 'themes selectors', () => {
 			);
 
 			expect( isActive ).to.be.true;
+		} );
+	} );
+
+	describe( '#isUsingRetiredTheme()', () => {
+		test( 'should return true if theme is retired', () => {
+			const isRetired = isUsingRetiredTheme(
+				{
+					themes: {
+						activeThemes: {
+							77203074: 'harmonic-wpcom',
+						},
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { harmonic: { id: 'harmonic', retired: true } },
+							} ),
+						},
+					},
+				},
+				77203074
+			);
+
+			expect( isRetired ).to.be.true;
+		} );
+
+		test( 'should return false if theme is not retired', () => {
+			const isRetired = isUsingRetiredTheme(
+				{
+					themes: {
+						activeThemes: {
+							77203074: 'zelda-wpcom',
+						},
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { zelda: { id: 'zelda', retired: false } },
+							} ),
+						},
+					},
+				},
+				77203074
+			);
+
+			expect( isRetired ).to.be.false;
+		} );
+
+		test( 'should return false if retirement details are not provided', () => {
+			const isRetired = isUsingRetiredTheme(
+				{
+					themes: {
+						activeThemes: {
+							77203074: 'dara',
+						},
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { dara: { id: 'dara' } },
+							} ),
+						},
+					},
+				},
+				77203074
+			);
+
+			expect( isRetired ).to.be.false;
 		} );
 	} );
 

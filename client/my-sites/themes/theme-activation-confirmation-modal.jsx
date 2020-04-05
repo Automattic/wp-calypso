@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,12 +13,13 @@ import { translate } from 'i18n-calypso';
 import { Dialog } from '@automattic/components';
 import {
 	getCanonicalTheme,
+	getActiveTheme,
 	hasActivatedTheme,
 	themeHasAutoLoadingHomepage,
 	isActivatingTheme,
 	isThemeActive,
-	shouldShowHomepageWarning,
 	getPreActivateThemeId,
+	isUsingRetiredTheme,
 } from 'state/themes/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
@@ -29,9 +31,9 @@ import {
 /**
  * Style dependencies
  */
-import './auto-loading-homepage-modal.scss';
+import './theme-activation-confirmation-modal.scss';
 
-class AutoLoadingHomepageModal extends Component {
+class ThemeActivationConfirmationModal extends Component {
 	static propTypes = {
 		source: PropTypes.oneOf( [ 'details', 'list', 'upload' ] ).isRequired,
 		theme: PropTypes.shape( {
@@ -44,9 +46,9 @@ class AutoLoadingHomepageModal extends Component {
 		isActivating: PropTypes.bool.isRequired,
 		hasAutoLoadingHomepage: PropTypes.bool,
 		siteId: PropTypes.number,
-		isVisible: PropTypes.bool,
+		isUsingRetiredTheme: PropTypes.bool,
 		onClose: PropTypes.func,
-		installingThemeId: PropTypes.string.isRequired,
+		installingThemeId: PropTypes.string,
 	};
 
 	closeModalHandler = ( activate = false ) => () => {
@@ -65,16 +67,11 @@ class AutoLoadingHomepageModal extends Component {
 			isActivating,
 			hasAutoLoadingHomepage,
 			isCurrentTheme,
-			isVisible = false,
+			isUsingRetiredTheme,
 		} = this.props;
 
 		// Nothing to do when it's the current theme.
 		if ( isCurrentTheme ) {
-			return null;
-		}
-
-		// Nothing to show if the theme doesn't have auto loading homepage.
-		if ( ! hasAutoLoadingHomepage ) {
 			return null;
 		}
 
@@ -87,12 +84,36 @@ class AutoLoadingHomepageModal extends Component {
 			return null;
 		}
 
-		const { name: themeName } = this.props.theme;
+		const themeName = isUsingRetiredTheme
+			? this.props.activeThemeName
+			: this.props.installingThemeName;
+
+		let dialogMessage;
+
+		if ( isUsingRetiredTheme ) {
+			dialogMessage = translate(
+				'Your active theme {{strong}}%(themeName)s{{/strong}} is retired. ' +
+					'If you activate a new theme, you might not be able to switch back to %(themeName)s.',
+				{
+					args: { themeName },
+					components: { strong: <strong /> },
+				}
+			);
+		} else if ( hasAutoLoadingHomepage ) {
+			dialogMessage = translate(
+				'{{strong}}%(themeName)s{{/strong}} will automatically change your homepage layout. ' +
+					'Your current homepage will become a draft. Would you like to continue?',
+				{
+					args: { themeName },
+					components: { strong: <strong /> },
+				}
+			);
+		}
 
 		return (
 			<Dialog
-				className="themes__auto-loading-homepage-modal"
-				isVisible={ isVisible }
+				className="theme-activation-confirmation-modal"
+				isVisible
 				buttons={ [
 					{
 						action: 'keepCurrentTheme',
@@ -102,7 +123,7 @@ class AutoLoadingHomepageModal extends Component {
 					},
 					{
 						action: 'activeTheme',
-						label: translate( 'Yes, Activate %(themeName)s', {
+						label: translate( 'Yes, activate %(themeName)s', {
 							args: { themeName },
 						} ),
 						isPrimary: true,
@@ -112,16 +133,7 @@ class AutoLoadingHomepageModal extends Component {
 				onClose={ this.closeModalHandler( false ) }
 			>
 				<div>
-					<h1 className="themes__auto-loading-homepage-modal-title">
-						{ translate(
-							'{{strong}}%(themeName)s{{/strong}} will automatically change your homepage layout. ' +
-								'Your current homepage will become a draft. Would you like to continue?',
-							{
-								args: { themeName },
-								components: { strong: <strong /> },
-							}
-						) }
-					</h1>
+					<h1 className="theme-activation-confirmation-modal__title">{ dialogMessage }</h1>
 				</div>
 			</Dialog>
 		);
@@ -132,16 +144,23 @@ export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const installingThemeId = getPreActivateThemeId( state );
+		const activeThemeId = getActiveTheme( state, siteId );
 
 		return {
 			siteId,
 			installingThemeId,
+			activeThemeId,
+			activeThemeName: get( state, 'themes.queries.wpcom.data.items.' + activeThemeId + '.name' ),
+			installingThemeName: get(
+				state,
+				'themes.queries.wpcom.data.items.' + installingThemeId + '.name'
+			),
 			theme: installingThemeId && getCanonicalTheme( state, siteId, installingThemeId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
 			hasAutoLoadingHomepage: themeHasAutoLoadingHomepage( state, installingThemeId ),
+			isUsingRetiredTheme: isUsingRetiredTheme( state, siteId ),
 			isCurrentTheme: isThemeActive( state, installingThemeId, siteId ),
-			isVisible: shouldShowHomepageWarning( state, installingThemeId ),
 		};
 	},
 	{
@@ -149,4 +168,4 @@ export default connect(
 		hideAutoLoadingHomepageWarning,
 		activateTheme,
 	}
-)( AutoLoadingHomepageModal );
+)( ThemeActivationConfirmationModal );

@@ -3,6 +3,7 @@
  */
 import { get } from 'lodash';
 import { getActiveTheme } from 'state/themes/selectors/get-active-theme';
+import 'state/themes/init';
 
 /**
  * Returns true if the site is currently using a retired theme.
@@ -11,6 +12,9 @@ import { getActiveTheme } from 'state/themes/selectors/get-active-theme';
  * @param  {number}   siteId   The ID of the site we're querying
  * @returns {?boolean}          Whether the current theme is retired.
  */
-export default function isSiteUsingRetiredTheme( state, siteId ) {
-	return get( state, 'themes.queries.wpcom.data.items.' + getActiveTheme( state, siteId ) + '.retired', false );
+export function isUsingRetiredTheme( state, siteId ) {
+	return get(
+		state,
+		'themes.queries.wpcom.data.items.' + getActiveTheme( state, siteId ) + '.retired'
+	);
 }

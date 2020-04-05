@@ -8,8 +8,9 @@ import { showAutoLoadingHomepageWarning } from 'state/themes/actions/show-auto-l
 import { suffixThemeIdForInstall } from 'state/themes/actions/suffix-theme-id-for-install';
 import {
 	getTheme,
-	hasAutoLoadingHomepageModalAccepted,
+	hasActivateConfirmationModalAccepted,
 	themeHasAutoLoadingHomepage,
+	isUsingRetiredTheme,
 } from 'state/themes/selectors';
 
 import 'state/themes/init';
@@ -27,13 +28,14 @@ import 'state/themes/init';
 export function activate( themeId, siteId, source = 'unknown', purchased = false ) {
 	return ( dispatch, getState ) => {
 		/**
-		 * Let's check if the theme will change the homepage of the site,
-		 * before to definitely start the theme-activating process,
+		 * Let's check if we should be displaying a warning
+		 * before we definitely start the theme-activating process,
 		 * allowing cancel it if it's desired.
 		 */
 		if (
-			themeHasAutoLoadingHomepage( getState(), themeId ) &&
-			! hasAutoLoadingHomepageModalAccepted( getState(), themeId )
+			( isUsingRetiredTheme( getState(), siteId ) ||
+				themeHasAutoLoadingHomepage( getState(), themeId ) ) &&
+			! hasActivateConfirmationModalAccepted( getState(), themeId )
 		) {
 			return dispatch( showAutoLoadingHomepageWarning( themeId ) );
 		}
