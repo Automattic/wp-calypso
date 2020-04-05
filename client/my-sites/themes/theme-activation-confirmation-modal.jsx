@@ -46,7 +46,7 @@ class ThemeActivationConfirmationModal extends Component {
 		isActivating: PropTypes.bool.isRequired,
 		hasAutoLoadingHomepage: PropTypes.bool,
 		siteId: PropTypes.number,
-		isUsingRetiredTheme: PropTypes.bool,
+		isCurrentThemeRetired: PropTypes.bool,
 		onClose: PropTypes.func,
 		installingThemeId: PropTypes.string,
 	};
@@ -67,7 +67,7 @@ class ThemeActivationConfirmationModal extends Component {
 			isActivating,
 			hasAutoLoadingHomepage,
 			isCurrentTheme,
-			isUsingRetiredTheme,
+			isCurrentThemeRetired,
 		} = this.props;
 
 		// Nothing to do when it's the current theme.
@@ -84,13 +84,13 @@ class ThemeActivationConfirmationModal extends Component {
 			return null;
 		}
 
-		const themeName = isUsingRetiredTheme
+		const themeName = isCurrentThemeRetired
 			? this.props.activeThemeName
 			: this.props.installingThemeName;
 
 		let dialogMessage;
 
-		if ( isUsingRetiredTheme ) {
+		if ( isCurrentThemeRetired ) {
 			dialogMessage = translate(
 				'Your active theme {{strong}}%(themeName)s{{/strong}} is retired. ' +
 					'If you activate a new theme, you might not be able to switch back to %(themeName)s.',
@@ -159,7 +159,7 @@ export default connect(
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
 			hasAutoLoadingHomepage: themeHasAutoLoadingHomepage( state, installingThemeId ),
-			isUsingRetiredTheme: isUsingRetiredTheme( state, siteId ),
+			isCurrentThemeRetired: isUsingRetiredTheme( state, siteId ),
 			isCurrentTheme: isThemeActive( state, installingThemeId, siteId ),
 		};
 	},
