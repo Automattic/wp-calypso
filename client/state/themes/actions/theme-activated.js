@@ -6,6 +6,7 @@ import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { requestSitePosts } from 'state/posts/actions';
 import { getActiveTheme, getLastThemeQuery, prependThemeFilterKeys } from 'state/themes/selectors';
 import { getThemeIdFromStylesheet } from 'state/themes/utils';
+import { savePreference } from 'state/preferences/actions';
 
 import 'state/themes/init';
 
@@ -40,6 +41,8 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 			search_taxonomies,
 		} );
 		dispatch( withAnalytics( trackThemeActivation, action ) );
+
+		dispatch( savePreference( 'previousTheme-' + siteId, previousThemeId ) );
 
 		// Update pages in case the front page was updated on theme switch.
 		dispatch( requestSitePosts( siteId, { type: 'page' } ) );
