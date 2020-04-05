@@ -1,8 +1,10 @@
-.themes__upload-button {
+.themes__upload-button,
+.themes__previous-theme-button {
 	float: right;
 
 	&.is-compact {
 		margin-top: 23px;
+		margin-left: 8px;
 		color: var( --color-neutral-70 );
 		.gridicon {
 			padding-right: 4px;
