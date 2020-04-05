@@ -129,8 +129,12 @@ class Plans extends Component {
 		return addQueryArgs( args, redirectTo );
 	}
 
-	redirect( path, args ) {
+	redirect( path, product, args ) {
 		let redirectTo = path + this.props.selectedSiteSlug;
+
+		if ( product ) {
+			redirectTo += '/' + product;
+		}
 
 		if ( args ) {
 			redirectTo = addQueryArgs( args, redirectTo );
@@ -172,7 +176,7 @@ class Plans extends Component {
 		this.props.completeFlow();
 		persistSignupDestination( this.getMyPlansDestination() );
 
-		this.redirect( '/checkout/' );
+		this.redirect( '/checkout/', cartItem.product_slug );
 	};
 
 	shouldShowPlaceholder() {
