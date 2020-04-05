@@ -321,7 +321,7 @@ class ThemeShowcase extends React.Component {
 							href={ `/theme/${ previousTheme }/${ siteSlug }` }
 						>
 							<Gridicon icon="history" />
-							{ translate( 'Previous theme' ) }
+							{ translate( 'Show previous theme' ) }
 						</Button>
 					) }
 					{ ! this.props.loggedOutComponent && ! isQueried && (
