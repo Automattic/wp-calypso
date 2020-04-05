@@ -1943,7 +1943,7 @@ describe( 'themes selectors', () => {
 			expect( isRetired ).to.be.false;
 		} );
 
-		test( 'should return false if retirement details are not provided', () => {
+		test( 'should be undefined if retirement details are not provided', () => {
 			const isRetired = isUsingRetiredTheme(
 				{
 					themes: {
@@ -1960,7 +1960,7 @@ describe( 'themes selectors', () => {
 				77203074
 			);
 
-			expect( isRetired ).to.be.false;
+			expect( isRetired ).to.be.undefined;
 		} );
 	} );
 
