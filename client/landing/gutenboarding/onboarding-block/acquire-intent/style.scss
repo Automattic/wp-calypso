@@ -65,9 +65,11 @@ $acquire-intent-transition-algorithm: ease-in-out;
 }
 
 .madlib__input:empty {
-	width: 200px;
+	width: 400px;
 	display: inline-block;
 	border-bottom: 2px solid transparent;
+	position: relative;
+	z-index: 2;
 }
 
 /* hide the placeholder when input is not empty */
