@@ -9,7 +9,6 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import DomainPicker, { Props as DomainPickerProps } from '../domain-picker';
-import ConfirmPurchaseModal from '../confirm-purchase-modal';
 
 /**
  * Style dependencies
@@ -34,10 +33,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 	const buttonRef = createRef< HTMLButtonElement >();
 
 	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState( false );
-	const [
-		userSelectedDomainSuggestion,
-		setUserSelectedDomainSuggestion,
-	] = useState< DomainSuggestion | null >( null );
 
 	const handleClose = ( e?: React.FocusEvent ) => {
 		// Don't collide with button toggling
@@ -54,11 +49,8 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 
 	const handlePaidDomainSelect = ( selectedDomain: DomainSuggestion ) => {
 		setDomainPopoverVisibility( false );
-		setUserSelectedDomainSuggestion( selectedDomain );
-	};
-
-	const handlePurchaseCancel = () => {
-		setUserSelectedDomainSuggestion( null );
+		onDomainSelect( selectedDomain );
+		onDomainPurchase( selectedDomain );
 	};
 
 	return (
@@ -77,17 +69,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				<span>{ children }</span>
 				<Dashicon icon="arrow-down-alt2" />
 			</Button>
-			{ userSelectedDomainSuggestion && (
-				<ConfirmPurchaseModal
-					onCancel={ handlePurchaseCancel }
-					onAccept={ () => {
-						onDomainSelect( userSelectedDomainSuggestion );
-						onDomainPurchase( userSelectedDomainSuggestion );
-						setUserSelectedDomainSuggestion( null );
-					} }
-					selectedDomain={ userSelectedDomainSuggestion }
-				/>
-			) }
 			{ isDomainPopoverVisible && (
 				<Popover onClose={ handleClose } onFocusOutside={ handleClose } focusOnMount={ false }>
 					<DomainPicker
