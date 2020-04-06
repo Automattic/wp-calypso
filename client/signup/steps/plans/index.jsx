@@ -71,7 +71,11 @@ export class PlansStep extends Component {
 			...additionalStepData,
 		};
 
-		this.props.submitSignupStep( step, { cartItem } );
+		this.props.submitSignupStep( step, {
+			cartItem,
+			// dependencies used only for 'plans-with-domain' step in Gutenboarding pre-launch flow
+			...( flowName === 'prelaunch' && { isPreLaunch: true, isGutenboardingCreate: true } ),
+		} );
 		this.props.goToNextStep();
 	};
 

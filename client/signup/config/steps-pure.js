@@ -257,6 +257,21 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 		},
 
+		'plans-with-domain': {
+			stepName: 'plans-with-domain',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem', 'isPreLaunch', 'isGutenboardingCreate' ],
+			props: {
+				headerText: i18n.translate( 'Getting ready to launch your website' ),
+				subHeaderText: i18n.translate( "Pick a plan that's right for you. Upgrade as you grow." ),
+				fallbackHeaderText: i18n.translate(
+					"Almost there, pick a plan that's right for you. Upgrade as you grow."
+				),
+			},
+		},
+
 		domains: {
 			stepName: 'domains',
 			apiRequestFunction: createSiteWithCart,

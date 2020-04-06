@@ -49,7 +49,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 
 	const handlePaidDomainSelect = ( selectedDomain: DomainSuggestion ) => {
 		setDomainPopoverVisibility( false );
-		onDomainSelect( selectedDomain );
 		onDomainPurchase( selectedDomain );
 	};
 
