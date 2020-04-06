@@ -52,6 +52,7 @@ import SocialLoginForm from './social';
 import { localizeUrl } from 'lib/i18n-utils';
 import TextControl from 'extensions/woocommerce/components/text-control';
 import { sendEmailLogin } from 'state/auth/actions';
+import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
 
 export class LoginForm extends Component {
 	static propTypes = {
@@ -473,7 +474,7 @@ export class LoginForm extends Component {
 		}
 
 		if ( isGutenboarding ) {
-			signupUrl = '/gutenboarding' + langFragment;
+			signupUrl = `/${ GUTENBOARDING_BASE_NAME }` + langFragment;
 		}
 
 		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {

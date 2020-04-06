@@ -16,6 +16,7 @@ import { initializeAnalytics } from '@automattic/calypso-analytics';
 /**
  * Internal dependencies
  */
+import GUTENBOARDING_BASE_NAME from './basename.json';
 import { Gutenboard } from './gutenboard';
 import { setupWpDataDebug } from './devtools';
 import accessibleFocus from 'lib/accessible-focus';
@@ -74,7 +75,7 @@ window.AppBoot = async () => {
 
 	ReactDom.render(
 		<I18nProvider locale={ locale }>
-			<BrowserRouter basename="gutenboarding">
+			<BrowserRouter basename={ GUTENBOARDING_BASE_NAME }>
 				<Switch>
 					<Route exact path={ path }>
 						<Gutenboard />
