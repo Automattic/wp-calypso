@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { stringify } from 'qs';
+
+/**
  * Internal dependencies
  */
 import config from 'config';
@@ -47,11 +52,11 @@ export const hideMagicLoginRequestNotice = () => {
 };
 
 async function postMagicLoginRequest( url, bodyObj ) {
-	const response = await globalThis.fetch( url, {
+	const response = await fetch( url, {
 		method: 'POST',
 		credentials: 'include',
 		headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
-		body: new globalThis.URLSearchParams( bodyObj ).toString(),
+		body: stringify( bodyObj ),
 	} );
 
 	if ( response.ok ) {

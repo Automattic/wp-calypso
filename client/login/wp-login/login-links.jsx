@@ -7,6 +7,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { get, includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { parse as parseUrl } from 'url';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -16,7 +18,7 @@ import ExternalLink from 'components/external-link';
 import Gridicon from 'components/gridicon';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
-import { addQueryArgs, getUrlParts } from 'lib/url';
+import { addQueryArgs } from 'lib/url';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'state/selectors/get-current-route';
@@ -96,9 +98,9 @@ export class LoginLinks extends React.Component {
 	};
 
 	renderBackLink() {
-		const redirectTo = this.props.query?.redirect_to;
+		const redirectTo = get( this.props, [ 'query', 'redirect_to' ] );
 		if ( redirectTo ) {
-			const { pathname, searchParams: redirectToQuery } = getUrlParts( redirectTo );
+			const { pathname, query: redirectToQuery } = parseUrl( redirectTo, true );
 
 			// If we are in a Domain Connect authorization flow, don't show the back link
 			// since this page was loaded by a redirect from a third party service provider.
@@ -108,13 +110,13 @@ export class LoginLinks extends React.Component {
 
 			// If we seem to be in a Jetpack connection flow, provide some special handling
 			// so users can go back to their site rather than WordPress.com
-			if ( pathname === '/jetpack/connect/authorize' && redirectToQuery.get( 'client_id' ) ) {
+			if ( pathname === '/jetpack/connect/authorize' && redirectToQuery.client_id ) {
 				const returnToSiteUrl = addQueryArgs(
-					{ client_id: redirectToQuery.get( 'client_id' ) },
+					{ client_id: redirectToQuery.client_id },
 					'https://jetpack.wordpress.com/jetpack.returntosite/1/'
 				);
 
-				const { hostname } = getUrlParts( redirectToQuery.get( 'site_url' ) );
+				const { hostname } = parseUrl( redirectToQuery.site_url );
 				const linkText = hostname
 					? this.props.translate( 'Back to %(hostname)s', { args: { hostname } } )
 					: this.props.translate( 'Back' );
@@ -284,12 +286,12 @@ export class LoginLinks extends React.Component {
 		if ( config.isEnabled( 'signup/wpcc' ) && isCrowdsignalOAuth2Client( oauth2Client ) ) {
 			const oauth2Flow = 'crowdsignal';
 			const redirectTo = get( currentQuery, 'redirect_to', '' );
-			const oauth2Params = new URLSearchParams( {
+			const oauth2Params = {
 				oauth2_client_id: oauth2Client.id,
 				oauth2_redirect: redirectTo,
-			} );
+			};
 
-			signupUrl = `${ signupUrl }/${ oauth2Flow }?${ oauth2Params.toString() }`;
+			signupUrl = `${ signupUrl }/${ oauth2Flow }?${ stringify( oauth2Params ) }`;
 		}
 
 		if (
@@ -299,13 +301,13 @@ export class LoginLinks extends React.Component {
 			wccomFrom
 		) {
 			const redirectTo = get( currentQuery, 'redirect_to', '' );
-			const oauth2Params = new URLSearchParams( {
+			const oauth2Params = {
 				oauth2_client_id: oauth2Client.id,
 				'wccom-from': wccomFrom,
 				oauth2_redirect: redirectTo,
-			} );
+			};
 
-			signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
+			signupUrl = `${ signupUrl }/wpcc?${ stringify( oauth2Params ) }`;
 		}
 
 		if ( isGutenboarding ) {
