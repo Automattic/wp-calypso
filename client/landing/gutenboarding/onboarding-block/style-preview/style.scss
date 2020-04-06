@@ -183,10 +183,9 @@ $gutenboarding-style-preview-bar-height: 30px;
 }
 
 // Remove focus styling from clicking a button
-// Keep keyboard-focused focus styl
+// Keep keyboard-focused focus style
 html:not( .accessible-focus )
 	.style-preview__viewport-select-button.is-selected:focus:not( :hover ) {
-	// outline: 1px dotted red !important;
 	box-shadow: none;
 }
 
