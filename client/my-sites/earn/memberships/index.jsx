@@ -22,7 +22,7 @@ import { requestSubscribers, requestSubscriptionStop } from 'state/memberships/s
 import { decodeEntities } from 'lib/formatting';
 import Gravatar from 'components/gravatar';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
-import UpgradeNudge from 'blocks/upgrade-nudge';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { FEATURE_MEMBERSHIPS, PLAN_PERSONAL, PLAN_JETPACK_PERSONAL } from 'lib/plans/constants';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -533,12 +533,16 @@ class MembershipsSection extends Component {
 	render() {
 		if ( ! this.props.paidPlan ) {
 			return this.renderOnboarding(
-				<UpgradeNudge
+				<UpsellNudge
 					plan={ this.props.isJetpack ? PLAN_JETPACK_PERSONAL : PLAN_PERSONAL }
 					shouldDisplay={ () => true }
 					feature={ FEATURE_MEMBERSHIPS }
 					title={ this.props.translate( 'Upgrade to the Personal plan' ) }
-					message={ this.props.translate( 'Upgrade to start earning recurring revenue.' ) }
+					description={ this.props.translate( 'Upgrade to start earning recurring revenue.' ) }
+					showIcon={ true }
+					event="calypso_memberships_upsell_nudge"
+					tracksImpressionName="calypso_upgrade_nudge_impression"
+					tracksClickName="calypso_upgrade_nudge_cta_click"
 				/>
 			);
 		}

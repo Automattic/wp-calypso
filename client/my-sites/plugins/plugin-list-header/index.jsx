@@ -18,7 +18,7 @@ import ButtonGroup from 'components/button-group';
 import { Button } from '@automattic/components';
 import SelectDropdown from 'components/select-dropdown';
 import BulkSelect from 'components/bulk-select';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 
 /**
  * Style dependencies
@@ -98,7 +98,7 @@ export class PluginsListHeader extends PureComponent {
 		const { plugins, selected } = this.props;
 		const someSelected = selected.length > 0;
 		this.props.setSelectionState( plugins, ! someSelected );
-		analytics.ga.recordEvent(
+		gaRecordEvent(
 			'Plugins',
 			someSelected ? 'Clicked to Uncheck All Plugins' : 'Clicked to Check All Plugins'
 		);

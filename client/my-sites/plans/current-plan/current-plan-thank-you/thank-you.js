@@ -16,7 +16,7 @@ import getCurrentQueryArguments from 'state/selectors/get-current-query-argument
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { addQueryArgs } from 'lib/url';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteAdminUrl } from 'state/sites/selectors';
+import { getSiteAdminUrl, getSiteSlug } from 'state/sites/selectors';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import { getCurrentUser } from 'state/current-user/selectors';
 
@@ -38,7 +38,9 @@ export class ThankYouCard extends Component {
 			showContinueButton,
 			showHideMessage,
 			showSearchRedirects,
+			showScanCTAs,
 			siteAdminUrl,
+			selectedSiteSlug,
 			title,
 			translate,
 		} = this.props;
@@ -106,6 +108,16 @@ export class ThankYouCard extends Component {
 							</Button>
 						</p>
 					) }
+					{ showScanCTAs && (
+						<p className="current-plan-thank-you__followup">
+							<Button href={ `/settings/security/${ selectedSiteSlug }#credentials` } primary>
+								{ translate( 'Add server credentials now' ) }
+							</Button>
+							<Button href={ dismissUrl } onClick={ this.startChecklistTour }>
+								{ translate( 'See checklist' ) }
+							</Button>
+						</p>
+					) }
 				</div>
 			</div>
 		);
@@ -116,11 +128,13 @@ export default connect(
 	state => {
 		const currentUser = getCurrentUser( state );
 		const selectedSiteId = getSelectedSiteId( state );
+		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
 		const isSingleSite = !! selectedSiteId || currentUser.site_count === 1;
 		const siteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
 		const siteAdminUrl = getSiteAdminUrl( state, siteId );
 		return {
 			siteAdminUrl,
+			selectedSiteSlug,
 			currentRoute: getCurrentRoute( state ),
 			queryArgs: getCurrentQueryArguments( state ),
 		};

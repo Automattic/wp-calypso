@@ -323,7 +323,7 @@ function getDomainTypeText( domain = {} ) {
 			return 'Site Redirect';
 
 		case domainTypes.WPCOM:
-			return 'Wpcom Domain';
+			return 'Default Site Domain';
 
 		case domainTypes.TRANSFER:
 			return 'Transfer';

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -9,7 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import EmptyContent from 'components/empty-content';
 import FeatureExample from 'components/feature-example';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -20,7 +19,7 @@ class JetpackManageErrorPage extends PureComponent {
 	};
 
 	actionCallbackUpdate = () => {
-		analytics.ga.recordEvent( 'Jetpack', 'Update jetpack', 'Site', this.props.siteId );
+		gaRecordEvent( 'Jetpack', 'Update jetpack', 'Site', this.props.siteId );
 	};
 
 	getSettings() {

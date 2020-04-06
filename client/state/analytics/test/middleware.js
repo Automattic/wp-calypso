@@ -23,6 +23,7 @@ import { analyticsMiddleware } from '../middleware.js';
 import { spy as mockAnalytics } from 'lib/analytics';
 import { spy as mockAdTracking } from 'lib/analytics/ad-tracking';
 import { spy as mockMC } from 'lib/analytics/mc';
+import { spy as mockGA } from 'lib/analytics/ga';
 import { addHotJarScript } from 'lib/analytics/hotjar';
 
 jest.mock( 'lib/analytics', () => {
@@ -51,6 +52,16 @@ jest.mock( 'lib/analytics/mc', () => {
 
 	const mock = mcMock( mcSpy );
 	mock.spy = mcSpy;
+
+	return mock;
+} );
+
+jest.mock( 'lib/analytics/ga', () => {
+	const gaSpy = require( 'sinon' ).spy();
+	const { gaMock } = require( './helpers/analytics-mock' );
+
+	const mock = gaMock( gaSpy );
+	mock.spy = gaSpy;
 
 	return mock;
 } );
@@ -90,11 +101,11 @@ describe( 'middleware', () => {
 			} );
 		} );
 
-		test( 'should call ga.recordEvent', () => {
+		test( 'should call gaRecordEvent', () => {
 			dispatch( recordGoogleEvent( 'category', 'action', 'label', 'value' ) );
 
-			expect( mockAnalytics ).to.have.been.calledWithExactly(
-				'ga.recordEvent',
+			expect( mockGA ).to.have.been.calledWithExactly(
+				'gaRecordEvent',
 				'category',
 				'action',
 				'label',
@@ -105,11 +116,7 @@ describe( 'middleware', () => {
 		test( 'should call ga.recordPageView', () => {
 			dispatch( recordGooglePageView( 'path', 'title' ) );
 
-			expect( mockAnalytics ).to.have.been.calledWithExactly(
-				'ga.recordPageView',
-				'path',
-				'title'
-			);
+			expect( mockGA ).to.have.been.calledWithExactly( 'gaRecordPageView', 'path', 'title' );
 		} );
 
 		test( 'should call trackCustomFacebookConversionEvent', () => {

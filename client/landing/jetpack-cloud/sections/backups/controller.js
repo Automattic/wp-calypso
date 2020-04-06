@@ -8,9 +8,15 @@ import React from 'react';
  */
 import BackupDetailPage from './detail';
 import BackupsPage from './main';
-import BackupRestorePage from './restore';
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 
+/* handles /backups/:site, see `backupMainPath` */
+export function backups( context, next ) {
+	context.primary = <BackupsPage />;
+	next();
+}
+
+/* handles /backups/:site/detail/:backupId, see `backupDetailPath` */
 export function backupDetail( context, next ) {
 	const backupId = context.params.backupId;
 
@@ -18,20 +24,18 @@ export function backupDetail( context, next ) {
 	next();
 }
 
-export function backups( context, next ) {
-	context.primary = <BackupsPage />;
-	next();
-}
-
-export function backupRestore( context, next ) {
-	const restoreId = context.params.restoreId;
-	context.primary = <BackupRestorePage restoreId={ context.params.restoreId ? restoreId : null } />;
-	next();
-}
-
+/* handles /backups/:site/download/:rewindId, see `backupDownloadPath` */
 export function backupDownload( context, next ) {
 	context.primary = (
 		<BackupRewindFlow rewindId={ context.params.rewindId } purpose={ RewindFlowPurpose.DOWNLOAD } />
+	);
+	next();
+}
+
+/* handles /backups/:site/restore/:rewindId, see `backupRestorePath` */
+export function backupRestore( context, next ) {
+	context.primary = (
+		<BackupRewindFlow rewindId={ context.params.rewindId } purpose={ RewindFlowPurpose.RESTORE } />
 	);
 	next();
 }

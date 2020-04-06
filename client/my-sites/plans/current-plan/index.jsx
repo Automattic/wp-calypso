@@ -36,6 +36,7 @@ import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
 import BackupProductThankYou from './current-plan-thank-you/backup-thank-you';
+import ScanProductThankYou from './current-plan-thank-you/scan-thank-you';
 import SearchProductThankYou from './current-plan-thank-you/search-thank-you';
 import { isFreeJetpackPlan, isFreePlan } from 'lib/products-values';
 
@@ -83,9 +84,14 @@ class CurrentPlan extends Component {
 			return <BackupProductThankYou />;
 		}
 
+		if ( requestProduct && startsWith( product, 'jetpack_scan' ) ) {
+			return <ScanProductThankYou />;
+		}
+
 		if ( requestProduct && startsWith( product, 'jetpack_search' ) ) {
 			return <SearchProductThankYou />;
 		}
+
 		if ( ! currentPlan || isFreePlan( currentPlan ) || isFreeJetpackPlan( currentPlan ) ) {
 			return <FreePlanThankYou />;
 		}

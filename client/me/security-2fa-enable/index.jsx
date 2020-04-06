@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -14,7 +13,7 @@ const debug = debugFactory( 'calypso:me:security:2fa-enable' );
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormLabel from 'components/forms/form-label';
@@ -181,7 +180,7 @@ class Security2faEnable extends React.Component {
 				className="security-2fa-enable__toggle"
 				onClick={ function( event ) {
 					this.toggleMethod( event );
-					analytics.ga.recordEvent(
+					gaRecordEvent(
 						'Me',
 						'Clicked On Barcode Toggle Link',
 						'current-method',
@@ -284,7 +283,7 @@ class Security2faEnable extends React.Component {
 										target="_blank"
 										rel="noopener noreferrer"
 										onClick={ function() {
-											analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Download Authy App Link' );
+											gaRecordEvent( 'Me', 'Clicked On 2fa Download Authy App Link' );
 										} }
 									/>
 								),
@@ -294,10 +293,7 @@ class Security2faEnable extends React.Component {
 										target="_blank"
 										rel="noopener noreferrer"
 										onClick={ function() {
-											analytics.ga.recordEvent(
-												'Me',
-												'Clicked On 2fa Download Google Authenticator Link'
-											);
+											gaRecordEvent( 'Me', 'Clicked On 2fa Download Google Authenticator Link' );
 										} }
 									/>
 								),
@@ -338,7 +334,7 @@ class Security2faEnable extends React.Component {
 					name="verificationCode"
 					method={ this.state.method }
 					onFocus={ function() {
-						analytics.ga.recordEvent( 'Me', 'Focused On 2fa Enable Verification Code Input' );
+						gaRecordEvent( 'Me', 'Focused On 2fa Enable Verification Code Input' );
 					} }
 					value={ this.state.verificationCode }
 					onChange={ this.handleChange }
@@ -367,12 +363,7 @@ class Security2faEnable extends React.Component {
 					className="security-2fa-enable__verify"
 					disabled={ this.getFormDisabled() }
 					onClick={ function() {
-						analytics.ga.recordEvent(
-							'Me',
-							'Clicked On Enable 2fa Button',
-							'method',
-							this.state.method
-						);
+						gaRecordEvent( 'Me', 'Clicked On Enable 2fa Button', 'method', this.state.method );
 					}.bind( this ) }
 				>
 					{ this.state.submittingCode
@@ -388,7 +379,7 @@ class Security2faEnable extends React.Component {
 					className="security-2fa-enable__cancel"
 					isPrimary={ false }
 					onClick={ function( event ) {
-						analytics.ga.recordEvent(
+						gaRecordEvent(
 							'Me',
 							'Clicked On Step 2 Cancel 2fa Button',
 							'method',
@@ -405,7 +396,7 @@ class Security2faEnable extends React.Component {
 						disabled={ ! this.state.smsRequestsAllowed }
 						isPrimary={ false }
 						onClick={ function( event ) {
-							analytics.ga.recordEvent( 'Me', 'Clicked On Resend SMS Button' );
+							gaRecordEvent( 'Me', 'Clicked On Resend SMS Button' );
 							this.onResendCode( event );
 						}.bind( this ) }
 					>
@@ -417,7 +408,7 @@ class Security2faEnable extends React.Component {
 					<FormButton
 						isPrimary={ false }
 						onClick={ function( event ) {
-							analytics.ga.recordEvent( 'Me', 'Clicked On Enable SMS Use SMS Button' );
+							gaRecordEvent( 'Me', 'Clicked On Enable SMS Use SMS Button' );
 							this.onVerifyBySMS( event );
 						}.bind( this ) }
 					>

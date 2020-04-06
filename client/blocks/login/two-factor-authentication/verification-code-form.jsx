@@ -35,6 +35,7 @@ class VerificationCodeForm extends Component {
 	static propTypes = {
 		formUpdate: PropTypes.func.isRequired,
 		isJetpack: PropTypes.bool,
+		isGutenboarding: PropTypes.bool,
 		loginUserWithTwoFactorVerificationCode: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
@@ -116,6 +117,7 @@ class VerificationCodeForm extends Component {
 	render() {
 		const {
 			isJetpack,
+			isGutenboarding,
 			translate,
 			twoFactorAuthRequestError: requestError,
 			twoFactorAuthType,
@@ -175,7 +177,11 @@ class VerificationCodeForm extends Component {
 					{ smallPrint }
 				</Card>
 
-				<TwoFactorActions twoFactorAuthType={ twoFactorAuthType } isJetpack={ isJetpack } />
+				<TwoFactorActions
+					twoFactorAuthType={ twoFactorAuthType }
+					isJetpack={ isJetpack }
+					isGutenboarding={ isGutenboarding }
+				/>
 			</form>
 		);
 	}

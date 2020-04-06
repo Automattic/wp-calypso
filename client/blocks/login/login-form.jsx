@@ -113,7 +113,7 @@ export class LoginForm extends Component {
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { disableAutoFocus, isJetpack } = this.props;
+		const { disableAutoFocus, isJetpack, isGutenboarding } = this.props;
 
 		if (
 			this.props.socialAccountIsLinking !== nextProps.socialAccountIsLinking &&
@@ -139,7 +139,7 @@ export class LoginForm extends Component {
 				loginFormFlow: true,
 			} );
 
-			page( login( { isNative: true, twoFactorAuthType: 'link', isJetpack } ) );
+			page( login( { isNative: true, twoFactorAuthType: 'link', isJetpack, isGutenboarding } ) );
 		}
 	}
 

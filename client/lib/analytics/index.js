@@ -11,22 +11,17 @@ import emitter from 'lib/mixins/emitter';
 import { costToUSD, urlParseAmpCompatible, saveCouponQueryArgument } from 'lib/analytics/utils';
 
 import {
-	getGoogleAnalyticsDefaultConfig,
 	retarget as retargetAdTrackers,
 	recordAliasInFloodlight,
 	recordAddToCart,
 	recordOrder,
-	setupGoogleAnalyticsGtag,
-	isGoogleAnalyticsAllowed,
-	fireGoogleAnalyticsPageView,
-	fireGoogleAnalyticsEvent,
-	fireGoogleAnalyticsTiming,
 } from 'lib/analytics/ad-tracking';
 import { updateQueryParamsTracking } from 'lib/analytics/sem';
 import { statsdTimingUrl, statsdCountingUrl } from 'lib/analytics/statsd';
 import { trackAffiliateReferral } from './refer';
 import { getFeatureSlugFromPageUrl } from './feature-slug';
 import { recordSignupComplete } from './signup';
+import { gaRecordEvent, gaRecordPageView, gaRecordTiming } from './ga';
 import {
 	recordTracksEvent,
 	analyticsEvents,
@@ -44,7 +39,6 @@ import {
  * Module variables
  */
 const identifyUserDebug = debug( 'calypso:analytics:identifyUser' );
-const gaDebug = debug( 'calypso:analytics:ga' );
 const queueDebug = debug( 'calypso:analytics:queue' );
 const statsdDebug = debug( 'calypso:analytics:statsd' );
 
@@ -69,7 +63,7 @@ const analytics = {
 			setTimeout( () => {
 				// Tracks, Google Analytics, Refer platform.
 				recordTracksPageViewWithPageParams( urlPath, params );
-				analytics.ga.recordPageView( urlPath, pageTitle );
+				gaRecordPageView( urlPath, pageTitle );
 				analytics.refer.recordPageView();
 
 				// Retargeting.
@@ -163,12 +157,7 @@ const analytics = {
 		// TODO: move Tracks event here?
 		// Google Analytics
 		const usdValue = costToUSD( cartItem.cost, cartItem.currency );
-		analytics.ga.recordEvent(
-			'Checkout',
-			'calypso_cart_product_add',
-			'',
-			usdValue ? usdValue : undefined
-		);
+		gaRecordEvent( 'Checkout', 'calypso_cart_product_add', '', usdValue ? usdValue : undefined );
 		// Marketing
 		recordAddToCart( cartItem );
 	},
@@ -177,7 +166,7 @@ const analytics = {
 		if ( cart.total_cost >= 0.01 ) {
 			// Google Analytics
 			const usdValue = costToUSD( cart.total_cost, cart.currency );
-			analytics.ga.recordEvent(
+			gaRecordEvent(
 				'Purchase',
 				'calypso_checkout_payment_success',
 				'',
@@ -191,7 +180,7 @@ const analytics = {
 	timing: {
 		record: function( eventType, duration, triggerName ) {
 			const urlPath = getMostRecentUrlPath() || 'unknown';
-			analytics.ga.recordTiming( urlPath, eventType, duration, triggerName );
+			gaRecordTiming( urlPath, eventType, duration, triggerName );
 			analytics.statsd.recordTiming( urlPath, eventType, duration, triggerName );
 		},
 	},
@@ -242,80 +231,6 @@ const analytics = {
 		},
 	},
 
-	// Google Analytics usage and event stat tracking
-	ga: {
-		initialized: false,
-
-		initialize: function() {
-			if ( ! analytics.ga.initialized ) {
-				const parameters = {
-					send_page_view: false,
-					...getGoogleAnalyticsDefaultConfig(),
-				};
-
-				gaDebug( 'parameters:', parameters );
-
-				setupGoogleAnalyticsGtag( parameters );
-
-				analytics.ga.initialized = true;
-			}
-		},
-
-		recordPageView: makeGoogleAnalyticsTrackingFunction( function recordPageView(
-			urlPath,
-			pageTitle
-		) {
-			gaDebug( 'Recording Page View ~ [URL: ' + urlPath + '] [Title: ' + pageTitle + ']' );
-
-			fireGoogleAnalyticsPageView( urlPath, pageTitle );
-		} ),
-
-		/**
-		 * Fires a generic Google Analytics event
-		 *
-		 * {string} category Is the string that will appear as the event category.
-		 * {string} action Is the string that will appear as the event action in Google Analytics Event reports.
-		 * {string} label Is the string that will appear as the event label.
-		 * {string} value Is a non-negative integer that will appear as the event value.
-		 */
-		recordEvent: makeGoogleAnalyticsTrackingFunction( function recordEvent(
-			category,
-			action,
-			label,
-			value
-		) {
-			if ( 'undefined' !== typeof value && ! isNaN( Number( String( value ) ) ) ) {
-				value = Math.round( Number( String( value ) ) ); // GA requires an integer value.
-				// https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#eventValue
-			}
-
-			let debugText = 'Recording Event ~ [Category: ' + category + '] [Action: ' + action + ']';
-
-			if ( 'undefined' !== typeof label ) {
-				debugText += ' [Option Label: ' + label + ']';
-			}
-
-			if ( 'undefined' !== typeof value ) {
-				debugText += ' [Option Value: ' + value + ']';
-			}
-
-			gaDebug( debugText );
-
-			fireGoogleAnalyticsEvent( category, action, label, value );
-		} ),
-
-		recordTiming: makeGoogleAnalyticsTrackingFunction( function recordTiming(
-			urlPath,
-			eventType,
-			duration,
-			triggerName
-		) {
-			gaDebug( 'Recording Timing ~ [URL: ' + urlPath + '] [Duration: ' + duration + ']' );
-
-			fireGoogleAnalyticsTiming( eventType, duration, urlPath, triggerName );
-		} ),
-	},
-
 	// Refer platform tracking.
 	refer: {
 		recordPageView: function() {
@@ -360,34 +275,9 @@ const analytics = {
 	},
 };
 
-/**
- * Wrap Google Analytics with debugging, possible analytics supression, and initialization
- *
- * This method will display debug output if Google Analytics is suppresed, otherwise it will
- * initialize and call the Google Analytics function it is passed.
- *
- * @see isGoogleAnalyticsAllowed
- *
- * @param  {Function} func Google Analytics tracking function
- * @returns {Function} Wrapped function
- */
-export function makeGoogleAnalyticsTrackingFunction( func ) {
-	return function( ...args ) {
-		if ( ! isGoogleAnalyticsAllowed() ) {
-			gaDebug( '[Disallowed] analytics %s( %o )', func.name, args );
-			return;
-		}
-
-		analytics.ga.initialize();
-
-		func( ...args );
-	};
-}
-
 emitter( analytics );
 
 export default analytics;
-export const ga = analytics.ga;
 export const queue = analytics.queue;
 export const tracks = analytics.tracks;
 export const pageView = analytics.pageView;

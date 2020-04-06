@@ -1,8 +1,6 @@
 /**
  * Internal dependencies
  */
-import activityLogJetpackIntroTour from 'layout/guided-tours/tours/activity-log-jetpack-intro-tour/meta';
-import activityLogWpcomIntroTour from 'layout/guided-tours/tours/activity-log-wpcom-intro-tour/meta';
 import main from 'layout/guided-tours/tours/main-tour/meta';
 import tutorialSitePreview from 'layout/guided-tours/tours/tutorial-site-preview-tour/meta';
 import gdocsIntegrationTour from 'layout/guided-tours/tours/gdocs-integration-tour/meta';
@@ -30,8 +28,6 @@ import jetpackVideoHosting from 'layout/guided-tours/tours/jetpack-video-hosting
 import simplePaymentsEmailTour from 'layout/guided-tours/tours/simple-payments-email-tour/meta';
 
 export default {
-	activityLogJetpackIntroTour,
-	activityLogWpcomIntroTour,
 	checklistAboutPage,
 	checklistContactPage,
 	checklistDomainRegister,

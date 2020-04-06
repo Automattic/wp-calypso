@@ -73,7 +73,7 @@ class PagesMain extends React.Component {
 	}
 
 	render() {
-		const { doSearch, siteId, search, status = 'published', translate } = this.props;
+		const { siteId, search, status = 'published', translate } = this.props;
 
 		const filterStrings = {
 			published: translate( 'Published', { context: 'Filter label for pages list' } ),
@@ -98,7 +98,8 @@ class PagesMain extends React.Component {
 					<Search
 						pinned
 						fitsContainer
-						onSearch={ doSearch }
+						isOpen={ this.props.getSearchOpen() }
+						onSearch={ this.props.doSearch }
 						initialValue={ search }
 						placeholder={ this.props.translate( 'Search Pages' ) }
 						analyticsGroup="Pages"

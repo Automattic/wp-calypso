@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -10,6 +9,7 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import Gridicon from 'components/gridicon';
 import PluginsActions from 'lib/plugins/actions';
 
@@ -38,7 +38,7 @@ class PluginSiteUpdateIndicator extends React.Component {
 
 		PluginsActions.updatePlugin( this.props.site, this.props.plugin );
 		PluginsActions.removePluginsNotices( 'completed', 'error' );
-		analytics.ga.recordEvent(
+		gaRecordEvent(
 			'Plugins',
 			'Clicked Update Single Site Plugin',
 			'Plugin Name',

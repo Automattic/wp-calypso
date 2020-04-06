@@ -2,8 +2,6 @@
  * Internal dependencies
  */
 
-import { ActivityLogJetpackIntroTour } from './tours/activity-log-jetpack-intro-tour';
-import { ActivityLogWpcomIntroTour } from './tours/activity-log-wpcom-intro-tour';
 import { ChecklistAboutPageTour } from './tours/checklist-about-page-tour';
 import { ChecklistContactPageTour } from './tours/checklist-contact-page-tour';
 import { ChecklistDomainRegisterTour } from './tours/checklist-domain-register-tour';
@@ -32,8 +30,6 @@ import { TutorialSitePreviewTour } from './tours/tutorial-site-preview-tour';
 import combineTours from './config-elements/combine-tours';
 
 export default combineTours( {
-	activityLogJetpackIntroTour: ActivityLogJetpackIntroTour,
-	activityLogWpcomIntroTour: ActivityLogWpcomIntroTour,
 	checklistAboutPage: ChecklistAboutPageTour,
 	checklistContactPage: ChecklistContactPageTour,
 	checklistDomainRegister: ChecklistDomainRegisterTour,
