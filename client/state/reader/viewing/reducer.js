@@ -4,7 +4,7 @@
 import { SERIALIZE } from 'state/action-types';
 import {
 	READER_VIEW_FEED_POST_SET,
-	READER_VIEW_FEED_POST_SET_UNSET,
+	READER_VIEW_FEED_POST_UNSET,
 	READER_VIEW_FULL_POST_SET,
 	READER_VIEW_FULL_POST_UNSET,
 } from 'state/reader/action-types';
@@ -39,7 +39,7 @@ export const feed = ( state = {}, action ) => {
 			};
 		}
 
-		case READER_VIEW_FEED_POST_SET_UNSET: {
+		case READER_VIEW_FEED_POST_UNSET: {
 			if ( ! action.payload || ! action.payload.siteId || ! action.payload.postId ) {
 				return state;
 			}

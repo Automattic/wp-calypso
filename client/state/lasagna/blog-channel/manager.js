@@ -8,7 +8,7 @@ import createDebug from 'debug';
  * Internal dependencies
  */
 import { getViewingBlogIds } from 'state/reader/viewing/selectors';
-import { channelLeave, CHANNELS } from 'state/lasagna/socket';
+import { channelLeave, CHANNELS } from 'state/lasagna/channel';
 
 /**
  * Module variables
@@ -17,7 +17,7 @@ export const namespace = 'blog';
 const MAX_SECONDS_KEEP_CHANNEL_ACTIVE = 60 * 15; // 15 minutes
 const MAX_SECONDS_SINCE_LAST_UPDATE = 60 * 15; // 15 minutes
 const MAX_CHANNELS_OPEN = 3;
-const debug = createDebug( 'lasagna:manager' );
+const debug = createDebug( 'lasagna:manager:blog' );
 const channelTopicPrefix = `public:push:${ namespace }:`;
 
 /**
@@ -43,7 +43,6 @@ export function getChannelTopic( action ) {
  * @param store redux store
  */
 export function leaveStaleChannels( store ) {
-	debug( 'leave stale channels' );
 	const state = store.getState();
 	const channels = CHANNELS[ namespace ] || {};
 	const viewingBlogIds = getViewingBlogIds( state );
@@ -68,13 +67,13 @@ export function leaveStaleChannels( store ) {
 
 		const now = moment().unix();
 		if ( now - channel.updatedAt > MAX_SECONDS_SINCE_LAST_UPDATE ) {
-			debug( 'remove stale channel', topic );
+			debug( topic, 'remove stale channel' );
 			channelLeave( { store, namespace, topic } );
 		}
 	}
 
 	if ( Object.keys( channels ).length === MAX_CHANNELS_OPEN - 1 && oldestTopic ) {
-		debug( 'almost full, remove oldest topic', oldestTopic );
+		debug( oldestTopic, 'almost full, remove oldest topic' );
 		channelLeave( { store, namespace, oldestTopic } );
 	}
 }
@@ -90,16 +89,16 @@ export function canJoinChannel( store, topic ) {
 	const channels = CHANNELS[ namespace ] || {};
 
 	if ( channels[ topic ] ) {
-		debug( 'cannot join already joined', topic );
+		debug( topic, 'cannot join already joined' );
 		return false;
 	}
 
 	if ( Object.keys( channels ).length >= MAX_CHANNELS_OPEN ) {
-		debug( 'cannot join maximum open channels reached', topic );
+		debug( topic, 'cannot join maximum open channels reached' );
 		return false;
 	}
 
-	debug( 'can join', topic );
+	debug( topic, 'can join' );
 	return true;
 }
 
@@ -116,28 +115,28 @@ export function canLeaveChannel( store, topic ) {
 	const viewingBlogIds = getViewingBlogIds( state );
 
 	if ( Object.keys( channels ).length === 0 ) {
-		debug( 'cannot leave, channels still loading', topic );
+		debug( topic, 'cannot leave, channels still loading' );
 		return false;
 	}
 
 	if ( ! channels[ topic ] ) {
-		debug( 'cannot leave, channels not found', topic );
+		debug( topic, 'cannot leave, channels not found' );
 		return false;
 	}
 	const channel = channels[ topic ];
 	const blogId = channel.meta.blogId;
 
 	if ( viewingBlogIds.includes( blogId ) ) {
-		debug( 'cannot leave currently viewing', topic );
+		debug( topic, 'cannot leave currently viewing' );
 		return false;
 	}
 
 	const now = moment().unix();
 	if ( now - channel.joinedAt < MAX_SECONDS_KEEP_CHANNEL_ACTIVE ) {
-		debug( 'cannot leave, channel still active', topic );
+		debug( topic, 'cannot leave, channel still active' );
 		return false;
 	}
 
-	debug( 'can leave', topic );
+	debug( topic, 'can leave' );
 	return true;
 }

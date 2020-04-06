@@ -62,7 +62,7 @@ import { getPostByKey } from 'state/reader/posts/selectors';
 import isLikedPost from 'state/selectors/is-liked-post';
 import QueryPostLikes from 'components/data/query-post-likes';
 import getCurrentStream from 'state/selectors/get-reader-current-stream';
-import { viewFullPostUnset } from 'state/reader/viewing/actions';
+import { setViewFullPost, unsetViewFullPost } from 'state/reader/viewing/actions';
 import { getNextItem, getPreviousItem } from 'state/reader/streams/selectors';
 
 /**
@@ -125,8 +125,10 @@ export class FullPostView extends React.Component {
 	}
 
 	componentWillUnmount() {
+		// unset post as currently viewing
 		const siteId = this.props.post.site_ID;
-		this.props.viewFullPostUnset( { siteId } );
+		this.props.unsetViewFullPost( { siteId } );
+
 		KeyboardShortcuts.off( 'close-full-post', this.handleBack );
 		KeyboardShortcuts.off( 'like-selection', this.handleLike );
 		KeyboardShortcuts.off( 'move-selection-down', this.goToNextPost );
@@ -264,6 +266,10 @@ export class FullPostView extends React.Component {
 					pathnameOverride: this.props.referralStream,
 				}
 			);
+
+			// mark post as currently viewing
+			this.props.setViewFullPost( { siteId: post.site_ID, postId: post.ID } );
+
 			this.hasLoaded = true;
 		}
 	};
@@ -511,5 +517,5 @@ export default connect(
 
 		return props;
 	},
-	{ markPostSeen, viewFullPostUnset, likePost, unlikePost }
+	{ markPostSeen, setViewFullPost, unsetViewFullPost, likePost, unlikePost }
 )( FullPostView );

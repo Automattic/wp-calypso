@@ -7,14 +7,17 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { incrementCommentCount, receiveComments } from 'state/comments/actions';
-import { channelUpdated } from 'state/lasagna/socket';
+import { updateChannel } from 'state/lasagna/socket';
 import { namespace } from './manager';
 
+/**
+ * Module variables
+ */
 const debug = debugFactory( 'lasagna:channel:public:push:blog' );
 
 export default function( channel, topic, store ) {
 	channel.on( 'new_comment', ( { payload: comment } ) => {
-		debug( 'New comment', comment );
+		debug( topic, 'new comment', comment );
 
 		if ( ! comment ) {
 			return;
@@ -32,6 +35,6 @@ export default function( channel, topic, store ) {
 		store.dispatch( incrementCommentCount( comment.post.site_ID, comment.post.ID ) );
 
 		// update channel
-		channelUpdated({ namespace, topic });
+		updateChannel( { namespace, topic } );
 	} );
 }
