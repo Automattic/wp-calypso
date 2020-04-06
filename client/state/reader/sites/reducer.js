@@ -6,19 +6,15 @@ import { assign, includes, keyBy, map, omit, omitBy, reduce, trim } from 'lodash
 /**
  * Internal Dependencies
  */
-import { SERIALIZE, SECTION_SET } from 'state/action-types';
+import { SERIALIZE } from 'state/action-types';
 import {
 	READER_SITE_BLOCKS_RECEIVE,
 	READER_SITE_REQUEST,
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_REQUEST_FAILURE,
 	READER_SITE_UPDATE,
-	READER_POST_SEEN,
-	READER_STREAMS_VIEW_ITEM,
-	READER_STREAMS_UNVIEW_ITEM,
-	LASAGNA_SOCKET_DISCONNECTED,
 } from 'state/reader/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import { withSchemaValidation, withoutPersistence } from 'state/utils';
 import { readerSitesSchema } from './schema';
 import { withoutHttp } from 'lib/url';
 import { decodeEntities } from 'lib/formatting';
@@ -150,80 +146,4 @@ export const lastFetched = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
-
-export const list = ( state = {}, action ) => {
-	switch ( action.type ) {
-		case SERIALIZE:
-		case LASAGNA_SOCKET_DISCONNECTED:
-			return {};
-
-		case READER_STREAMS_VIEW_ITEM: {
-			if ( ! action.payload || ! action.payload.post ) {
-				return state;
-			}
-
-			const blogId = action.payload.post.site_ID;
-			const postId = action.payload.post.ID;
-			const postsList = state[ blogId ] ? state[ blogId ] : [];
-			postsList.push( postId );
-			return {
-				...state,
-				[ blogId ]: postsList,
-			};
-		}
-
-		case READER_STREAMS_UNVIEW_ITEM: {
-			if ( ! action.payload || ! action.payload.post ) {
-				return state;
-			}
-
-			const blogId = action.payload.post.site_ID;
-			const postId = action.payload.post.ID;
-			let postsList = state[ blogId ] ? state[ blogId ].filter( e => e !== postId ) : [];
-			postsList = postsList.filter( e => e !== postId );
-			return {
-				...state,
-				[ blogId ]: postsList,
-			};
-		}
-	}
-
-	return state;
-};
-
-export const detail = ( state = null, action ) => {
-	switch ( action.type ) {
-		case SERIALIZE:
-		case LASAGNA_SOCKET_DISCONNECTED:
-			return null;
-
-		case READER_POST_SEEN: {
-			if ( ! action.payload || ! action.payload.post ) {
-				return state;
-			}
-
-			const blogId = action.payload.post.site_ID;
-			return blogId;
-		}
-
-		case SECTION_SET: {
-			// leave reader full post, clear all viewing
-			if ( action.previousSection && action.previousSection.module === 'reader/full-post' ) {
-				return null;
-			}
-		}
-	}
-
-	return state;
-};
-
-export default combineReducers( {
-	items,
-	viewing: combineReducers( {
-		list,
-		detail,
-	} ),
-	queuedRequests,
-	lastFetched,
 } );

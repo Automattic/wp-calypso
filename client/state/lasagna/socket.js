@@ -22,11 +22,14 @@ import {
  */
 export let SOCKET = null;
 export let CHANNELS = {};
+
+const DEFAULT_NAMESPACE = 'global';
 const debug = createDebug( 'lasagna:socket' );
 const url = config( 'lasagna_url' );
 
-// Expose channels in development
+// Expose socket & channels in development
 if ( process.env.NODE_ENV === 'development' ) {
+	window.SOCKET = SOCKET;
 	window.CHANNELS = CHANNELS;
 }
 
@@ -67,7 +70,13 @@ export function socketDisconnect( { store } ) {
 	store.dispatch( socketDisconnected() );
 }
 
-export function channelJoin( { store, namespace, topic, registerEventHandlers, meta } ) {
+export function channelJoin( {
+	store,
+	topic,
+	registerEventHandlers,
+	meta,
+	namespace = DEFAULT_NAMESPACE,
+} ) {
 	if ( SOCKET === null ) {
 		debug( 'channel join, socket not opened yet', topic );
 		return false;
@@ -115,7 +124,7 @@ export function channelJoin( { store, namespace, topic, registerEventHandlers, m
 	return channel;
 }
 
-export function channelLeave( { store, namespace, topic } ) {
+export function channelLeave( { store, topic, namespace = DEFAULT_NAMESPACE } ) {
 	if ( SOCKET === null ) {
 		debug( 'channel leave, socket not opened yet', topic );
 		return false;
@@ -146,7 +155,7 @@ export function channelLeave( { store, namespace, topic } ) {
 	return true;
 }
 
-export function channelUpdated( { namespace, topic } ) {
+export function channelUpdated( { topic, namespace = DEFAULT_NAMESPACE } ) {
 	if ( ! CHANNELS[ namespace ] ) {
 		debug( 'channel update missing namespace', topic );
 		return;

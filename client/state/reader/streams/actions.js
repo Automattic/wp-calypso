@@ -9,9 +9,7 @@ import {
 	READER_STREAMS_SELECT_FIRST_ITEM,
 	READER_STREAMS_SELECT_NEXT_ITEM,
 	READER_STREAMS_SELECT_PREV_ITEM,
-	READER_STREAMS_UNVIEW_ITEM,
 	READER_STREAMS_UPDATES_RECEIVE,
-	READER_STREAMS_VIEW_ITEM,
 } from 'state/reader/action-types';
 import { getStream } from 'state/reader/streams/selectors';
 import { getStreamType } from 'reader/utils';
@@ -53,26 +51,6 @@ export function receivePage( { streamKey, pageHandle, streamItems, gap } ) {
 			streamItems,
 			pageHandle,
 			gap,
-		},
-	};
-}
-
-export function viewItem( { site, post } ) {
-	return {
-		type: READER_STREAMS_VIEW_ITEM,
-		payload: {
-			site,
-			post,
-		},
-	};
-}
-
-export function unviewItem( { site, post } ) {
-	return {
-		type: READER_STREAMS_UNVIEW_ITEM,
-		payload: {
-			site,
-			post,
 		},
 	};
 }

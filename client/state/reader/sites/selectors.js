@@ -44,31 +44,6 @@ export function getSite( state, siteId ) {
 	return state.reader.sites.items[ siteId ];
 }
 
-/**
- * Get a list of blog ids that are currently viewed
- *
- * @param state redux state
- * @returns {[]} list of blog ids that are currently viewed
- */
-export function getViewingBlogIds( state ) {
-	const viewingBlogs = state.reader.sites.viewing;
-	const blogIds = [];
-
-	if ( viewingBlogs.list ) {
-		for ( const blogId in viewingBlogs.list ) {
-			if ( viewingBlogs.list[ blogId ].length > 0 ) {
-				blogIds.push( parseInt( blogId ) );
-			}
-		}
-	}
-
-	if ( viewingBlogs.detail ) {
-		blogIds.push( parseInt( viewingBlogs.detail ) );
-	}
-
-	return blogIds;
-}
-
 export function getSiteByFeedUrl( state, feedUrl ) {
 	return find( state.reader.sites.items, { feed_URL: feedUrl } );
 }
