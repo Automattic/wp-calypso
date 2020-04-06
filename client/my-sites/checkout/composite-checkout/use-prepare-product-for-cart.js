@@ -27,7 +27,7 @@ import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-fr
 
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-product-for-cart' );
 
-export default function usePrepareProductForCart( {
+export default function usePrepareProductsForCart( {
 	siteId,
 	product: productAlias,
 	purchaseId: originalPurchaseId,
@@ -36,9 +36,9 @@ export default function usePrepareProductForCart( {
 	const planSlug = useSelector( state =>
 		getUpgradePlanSlugFromPath( state, siteId, productAlias )
 	);
-	const [ { canInitializeCart, productForCart }, setState ] = useState( {
+	const [ { canInitializeCart, productsForCart }, setState ] = useState( {
 		canInitializeCart: ! planSlug && ! productAlias,
-		productForCart: null,
+		productsForCart: [],
 	} );
 
 	useFetchProductsIfNotLoaded();
@@ -53,7 +53,7 @@ export default function usePrepareProductForCart( {
 		originalPurchaseId,
 	} );
 
-	return { productForCart, canInitializeCart };
+	return { productsForCart, canInitializeCart };
 }
 
 function useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic, originalPurchaseId } ) {
@@ -86,7 +86,7 @@ function useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic, originalP
 			{ planSlug, plan, isJetpackNotAtomic },
 			cartProduct
 		);
-		setState( { productForCart: cartProduct, canInitializeCart: true } );
+		setState( { productsForCart: [ cartProduct ], canInitializeCart: true } );
 	}, [ originalPurchaseId, isFetchingPlans, planSlug, plan, isJetpackNotAtomic, setState ] );
 }
 
@@ -134,7 +134,7 @@ function useAddProductFromSlug( {
 			{ productAlias, isJetpackNotAtomic },
 			cartProduct
 		);
-		setState( { productForCart: cartProduct, canInitializeCart: true } );
+		setState( { productsForCart: [ cartProduct ], canInitializeCart: true } );
 	}, [
 		originalPurchaseId,
 		isFetchingPlans,
