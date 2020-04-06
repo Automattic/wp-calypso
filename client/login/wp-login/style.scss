@@ -349,8 +349,13 @@ $image-height: 47px;
 .layout.is-gutenboarding-login {
 	background-color: #fff;
 
+	.layout__primary {
+		padding-top: 10%;
+	}
+
 	.login__form-header {
 		@include onboarding-heading-text-mobile;
+		margin-bottom: 0;
 
 		@include break-mobile {
 			@include onboarding-heading-text;
@@ -366,5 +371,40 @@ $image-height: 47px;
 		// change border color to remove 3D effect
 		background-color: #007cba;
 		border-color: #007cba;
+		width: auto;
+		min-width: 170px;
+		text-align: center;
+		font-size: 14px;
+		line-height: 14px;
+		height: 42px;
+		display: block;
+		margin: 0 auto;
+		float: none;
+	}
+
+	.two-factor-authentication__verification-code-form > p,
+	.login__form .login__form-userdata label,
+	.login__form-terms,
+	.login__social-tos {
+		color: var( --studio-gray-40 );
+	}
+
+	.login__form-terms a,
+	.login__social-tos a {
+		color: var( --studio-gray-80 );
+	}
+
+	.two-factor-authentication__verification-code-form input,
+	.login__form input {
+		padding: 18px 14px;
+		font-size: 14px;
+	}
+
+	.wp-login__main {
+		max-width: 540px;
+	}
+
+	.form-password-input .form-password-input__toggle-visibility {
+		top: 17px;
 	}
 }
