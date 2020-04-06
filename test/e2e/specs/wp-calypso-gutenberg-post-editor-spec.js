@@ -278,13 +278,24 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				);
 			} );
 
-			step( 'Can see the Jetpack blocks', async function() {
+			step( 'Can see the Earn blocks', async function() {
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-				await gEditorComponent.openBlockInserterAndSearch( 'Jetpack' );
+				await gEditorComponent.openBlockInserterAndSearch( 'earn' );
 				assert.strictEqual(
 					await gEditorComponent.isBlockCategoryPresent( 'Jetpack' ),
 					true,
-					'Jetpack blocks are not present'
+					'Earn (Jetpack) blocks are not present'
+				);
+				await gEditorComponent.closeBlockInserter();
+			} );
+
+			step( 'Can see the Grow blocks', async function() {
+				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+				await gEditorComponent.openBlockInserterAndSearch( 'grow' );
+				assert.strictEqual(
+					await gEditorComponent.isBlockCategoryPresent( 'Grow' ),
+					true,
+					'Grow (Jetpack) blocks are not present'
 				);
 				await gEditorComponent.closeBlockInserter();
 			} );
