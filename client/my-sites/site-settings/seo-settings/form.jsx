@@ -376,7 +376,6 @@ export class SeoForm extends React.Component {
 								...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
 							} ) }
 							title={ nudgeTitle }
-							jetpack={ true }
 						/>
 					) }
 				<form onChange={ this.props.markChanged } className="seo-settings__seo-form">

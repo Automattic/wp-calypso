@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import UpsellNudge from 'blocks/upsell-nudge';
+import Banner from 'components/banner';
 import { Card, CompactCard } from '@automattic/components';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import ExternalLink from 'components/external-link';
@@ -48,7 +48,7 @@ class JetpackAds extends Component {
 		const { translate } = this.props;
 
 		return (
-			<UpsellNudge
+			<Banner
 				description={ translate(
 					'Add advertising to your site through our WordAds program and earn money from impressions.'
 				) }
@@ -56,8 +56,6 @@ class JetpackAds extends Component {
 				feature={ FEATURE_WORDADS_INSTANT }
 				plan={ PLAN_JETPACK_PREMIUM }
 				title={ translate( 'Enable WordAds by upgrading to Jetpack Premium' ) }
-				jetpack={ true }
-				showIcon={ true }
 			/>
 		);
 	}

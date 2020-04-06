@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import UpsellNudge from 'blocks/upsell-nudge';
+import Banner from 'components/banner';
 import { Card } from '@automattic/components';
 import filesize from 'filesize';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
@@ -128,7 +128,7 @@ class MediaSettingsPerformance extends Component {
 
 		return (
 			! isVideoPressAvailable && (
-				<UpsellNudge
+				<Banner
 					description={ translate(
 						'Get high-speed, high-resolution video hosting without ads or watermarks.'
 					) }
@@ -138,8 +138,6 @@ class MediaSettingsPerformance extends Component {
 					title={ translate(
 						'Host video right on your site! Upgrade to Jetpack Premium to get started'
 					) }
-					jetpack={ true }
-					showIcon={ true }
 				/>
 			)
 		);
