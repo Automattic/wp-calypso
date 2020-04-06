@@ -4,22 +4,22 @@
 import React, { FunctionComponent } from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import classnames from 'classnames';
-import { Button } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
-interface Props extends Button.AnchorProps {
+interface Props {
 	suggestion: DomainSuggestion;
 	isRecommended?: boolean;
 	isCurrent?: boolean;
+	onSelect: ( domainSuggestion: DomainSuggestion ) => void;
 }
 
 const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	suggestion,
 	isRecommended = false,
 	isCurrent = false,
-	onClick,
+	onSelect,
 } ) => {
 	const { __: NO__ } = useI18n();
 
@@ -30,7 +30,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 					className="domain-picker__suggestion-radio-button"
 					type="radio"
 					name="domain-picker-suggestion-option"
-					onClick={ onClick }
+					onChange={ () => void onSelect( suggestion ) }
 					checked={ isCurrent }
 				/>
 				{ suggestion.domain_name }
