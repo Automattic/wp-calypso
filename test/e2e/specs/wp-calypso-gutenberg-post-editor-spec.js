@@ -278,31 +278,27 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				);
 			} );
 
-			// Temporarily disabled
-			//
-			// See #40818
-			//
-			// step( 'Can see the Earn blocks', async function() {
-			// 	const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			// 	await gEditorComponent.openBlockInserterAndSearch( 'earn' );
-			// 	assert.strictEqual(
-			// 		await gEditorComponent.isBlockCategoryPresent( 'Jetpack' ),
-			// 		true,
-			// 		'Earn (Jetpack) blocks are not present'
-			// 	);
-			// 	await gEditorComponent.closeBlockInserter();
-			// } );
+			step( 'Can see the Earn blocks', async function() {
+				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+				await gEditorComponent.openBlockInserterAndSearch( 'earn' );
+				assert.strictEqual(
+					await gEditorComponent.isBlockCategoryPresent( 'Earn' ),
+					true,
+					'Earn (Jetpack) blocks are not present'
+				);
+				await gEditorComponent.closeBlockInserter();
+			} );
 
-			// step( 'Can see the Grow blocks', async function() {
-			// 	const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			// 	await gEditorComponent.openBlockInserterAndSearch( 'grow' );
-			// 	assert.strictEqual(
-			// 		await gEditorComponent.isBlockCategoryPresent( 'Grow' ),
-			// 		true,
-			// 		'Grow (Jetpack) blocks are not present'
-			// 	);
-			// 	await gEditorComponent.closeBlockInserter();
-			// } );
+			step( 'Can see the Grow blocks', async function() {
+				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+				await gEditorComponent.openBlockInserterAndSearch( 'grow' );
+				assert.strictEqual(
+					await gEditorComponent.isBlockCategoryPresent( 'Grow' ),
+					true,
+					'Grow (Jetpack) blocks are not present'
+				);
+				await gEditorComponent.closeBlockInserter();
+			} );
 
 			step( 'Can publish and view content', async function() {
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
