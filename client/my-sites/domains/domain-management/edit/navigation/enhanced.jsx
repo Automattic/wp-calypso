@@ -28,6 +28,7 @@ import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import { isCancelable } from 'lib/purchases';
 import { cancelPurchase } from 'me/purchases/paths';
 import RemovePurchase from 'me/purchases/remove-purchase';
+import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
 
 import './style.scss';
 
@@ -78,18 +79,47 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 	getEmail() {
 		const { selectedSite, translate, domain } = this.props;
+		const { emailForwardsCount } = domain;
 
 		if ( ! this.isDomainInNormalState() ) {
 			return null;
 		}
 
-		// NOTE: remember to add translate to the description string once you start working on it
+		let navigationText;
+		let navigationDescription;
+
+		navigationText = translate( 'Manage your email accounts' );
+		if ( hasGSuiteWithUs( domain ) ) {
+			navigationDescription = translate(
+				'%(gSuiteMailboxCount)d mailbox',
+				'%(gSuiteMailboxCount)d mailboxes',
+				{
+					args: {
+						gSuiteMailboxCount: getGSuiteMailboxCount( domain ),
+					},
+				}
+			);
+		} else if ( emailForwardsCount > 0 ) {
+			navigationDescription = translate(
+				'%(emailForwardsCount)d forward',
+				'%(emailForwardsCount)d forwards',
+				{
+					args: {
+						emailForwardsCount: emailForwardsCount,
+					},
+				}
+			);
+		} else {
+			navigationText = translate( 'Set up your email' );
+			navigationDescription = translate( 'Not connected' );
+		}
+
 		return (
 			<DomainManagementNavigationItem
 				path={ emailManagement( selectedSite.slug, domain.name ) }
 				materialIcon="email"
-				text={ translate( 'Manage your email accounts' ) }
-				description={ '3 G Suite accounts' }
+				text={ navigationText }
+				description={ navigationDescription }
 			/>
 		);
 	}
