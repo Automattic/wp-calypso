@@ -24,12 +24,14 @@ import ActivityTypeSelector from './activity-type-selector';
 interface Props {
 	baseFilter?: Filter;
 	pageSize?: number;
+	showActivityTypeSelector?: boolean;
 	siteId: number;
 }
 
 const BackupActivityLog: FunctionComponent< Props > = ( {
 	baseFilter = { page: 1 },
 	pageSize = 10,
+	showActivityTypeSelector = true,
 	siteId,
 } ) => {
 	const translate = useTranslate();
@@ -73,6 +75,18 @@ const BackupActivityLog: FunctionComponent< Props > = ( {
 		/>
 	);
 
+	const renderFilterBar = ( loadedActivityTypeCounts: ActivityTypeCount[] ) => (
+		<div>
+			{ translate( 'Filter by:' ) }
+			{ showActivityTypeSelector && (
+				<ActivityTypeSelector
+					hiddenActivities={ hiddenActivities }
+					activityTypeCounts={ loadedActivityTypeCounts }
+					setHiddenActivities={ setHiddenActivities }
+				/>
+			) }
+		</div>
+	);
 	const renderData = (
 		loadedActivities: Activity[],
 		loadedActivityTypeCounts: ActivityTypeCount[]
@@ -97,11 +111,7 @@ const BackupActivityLog: FunctionComponent< Props > = ( {
 
 		return (
 			<>
-				<ActivityTypeSelector
-					hiddenActivities={ hiddenActivities }
-					activityTypeCounts={ loadedActivityTypeCounts }
-					setHiddenActivities={ setHiddenActivities }
-				/>
+				{ showActivityTypeSelector && renderFilterBar( loadedActivityTypeCounts ) }
 				{ renderPagination( 'activity-log__pagination-top', loadedActivities.length, actualPage ) }
 				{ renderedActivities }
 				{ renderPagination(
