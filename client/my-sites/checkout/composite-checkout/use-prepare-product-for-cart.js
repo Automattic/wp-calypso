@@ -27,7 +27,12 @@ import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-fr
 
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-product-for-cart' );
 
-export default function usePrepareProductForCart( siteId, productAlias, isJetpackNotAtomic ) {
+export default function usePrepareProductForCart( {
+	siteId,
+	product: productAlias,
+	purchaseId: originalPurchaseId,
+	isJetpackNotAtomic,
+} ) {
 	const planSlug = useSelector( state =>
 		getUpgradePlanSlugFromPath( state, siteId, productAlias )
 	);

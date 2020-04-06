@@ -146,11 +146,12 @@ export default function CompositeCheckout( {
 
 	const countriesList = useCountryList( overrideCountryList || [] );
 
-	const { productForCart, canInitializeCart } = usePrepareProductForCart(
+	const { productForCart, canInitializeCart } = usePrepareProductForCart( {
 		siteId,
 		product,
-		isJetpackNotAtomic
-	);
+		purchaseId,
+		isJetpackNotAtomic,
+	} );
 
 	const {
 		items,
