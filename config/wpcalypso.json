@@ -44,7 +44,7 @@
 		"gdpr-banner": true,
 		"google-my-business": true,
 		"gutenboarding": true,
-		"gutenboarding/mshot-preview": true,
+		"gutenboarding/mshot-preview": false,
 		"gutenboarding/style-preview": true,
 		"happychat": true,
 		"help": true,
