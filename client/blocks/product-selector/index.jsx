@@ -21,9 +21,11 @@ import ProductCardOptions from 'components/product-card/options';
 import ProductCardPromoNudge from 'components/product-card/promo-nudge';
 import QuerySiteProducts from 'components/data/query-site-products';
 import QuerySitePurchases from 'components/data/query-site-purchases';
+import QueryProductsList from 'components/data/query-products-list';
 import ProductExpiration from 'components/product-expiration';
 import { extractProductSlugs, filterByProductSlugs } from './utils';
 import { getAvailableProductsBySiteId } from 'state/sites/products/selectors';
+import { getAvailableProductsList, isProductsListFetching } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePlanSlug, isRequestingSitePlans } from 'state/sites/plans/selectors';
@@ -613,13 +615,16 @@ export class ProductSelector extends Component {
 	}
 
 	render() {
-		const { selectedSiteId } = this.props;
+		const { selectedSiteId, isConnectStore } = this.props;
 
 		return (
 			<div className="product-selector">
 				<QuerySiteProducts siteId={ selectedSiteId } />
-				<QuerySitePurchases siteId={ selectedSiteId } />
-
+				{ isConnectStore ? (
+					<QueryProductsList />
+				) : (
+					<QuerySitePurchases siteId={ selectedSiteId } />
+				) }
 				{ this.renderProducts() }
 			</div>
 		);
@@ -627,18 +632,27 @@ export class ProductSelector extends Component {
 }
 
 const connectComponent = connect(
-	( state, { products, siteId } ) => {
+	( state, { products, siteId, basePlansPath } ) => {
 		const selectedSiteId = siteId || getSelectedSiteId( state );
 		const productSlugs = extractProductSlugs( products );
-		const availableProducts = getAvailableProductsBySiteId( state, selectedSiteId ).data;
+
+		const isConnectStore = basePlansPath && '/jetpack/connect/store' === basePlansPath;
+		const availableProducts = isConnectStore
+			? getAvailableProductsList( state )
+			: getAvailableProductsBySiteId( state, selectedSiteId ).data;
+
+		const isFetchingPurchases = isConnectStore
+			? isProductsListFetching( state )
+			: isFetchingSitePurchases( state );
 
 		return {
+			isConnectStore,
 			availableProducts,
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
 			fetchingPlans: isRequestingPlans( state ),
 			fetchingSitePlans: isRequestingSitePlans( state ),
-			fetchingSitePurchases: isFetchingSitePurchases( state ),
+			fetchingSitePurchases: isFetchingPurchases,
 			productSlugs,
 			purchases: getSitePurchases( state, selectedSiteId ),
 			selectedSiteId,
