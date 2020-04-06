@@ -33,6 +33,7 @@ import { persistSignupDestination, retrieveSignupDestination } from 'signup/util
 import { getSelectedSite } from 'state/ui/selectors';
 import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-signup-destination';
 import getPreviousPath from 'state/selectors/get-previous-path.js';
+import { abtest } from 'lib/abtest';
 
 export function getThankYouPageUrl( {
 	siteSlug,
@@ -119,6 +120,7 @@ export function getThankYouPageUrl( {
 		cart,
 		siteSlug,
 		previousRoute,
+		didPurchaseFail,
 	} );
 	if ( redirectPathForConciergeUpsell ) {
 		return redirectPathForConciergeUpsell;
@@ -179,7 +181,28 @@ function getFallbackDestination( {
 	return '/';
 }
 
-function getRedirectUrlForConciergeNudge( { pendingOrReceiptId, cart, siteSlug, previousRoute } ) {
+function maybeShowPlanBumpOfferConcierge( {
+	pendingOrReceiptId,
+	cart,
+	siteSlug,
+	didPurchaseFail,
+} ) {
+	if ( hasPersonalPlan( cart ) && ! didPurchaseFail ) {
+		if ( 'variantShowPlanBump' === abtest( 'showPremiumPlanBump' ) ) {
+			return `/checkout/${ siteSlug }/offer-plan-upgrade/premium/${ pendingOrReceiptId }`;
+		}
+	}
+
+	return;
+}
+
+function getRedirectUrlForConciergeNudge( {
+	pendingOrReceiptId,
+	cart,
+	siteSlug,
+	previousRoute,
+	didPurchaseFail,
+} ) {
 	// If the user has upgraded a plan from seeing our upsell(we find this by checking the previous route is /offer-plan-upgrade),
 	// then skip this section so that we do not show further upsells.
 	if (
@@ -191,6 +214,17 @@ function getRedirectUrlForConciergeNudge( { pendingOrReceiptId, cart, siteSlug, 
 	) {
 		// A user just purchased one of the qualifying plans
 		// Show them the concierge session upsell page
+
+		const upgradePath = maybeShowPlanBumpOfferConcierge( {
+			pendingOrReceiptId,
+			cart,
+			siteSlug,
+			previousRoute,
+			didPurchaseFail,
+		} );
+		if ( upgradePath ) {
+			return upgradePath;
+		}
 
 		// The conciergeUpsellDial test is used when we need to quickly dial back the volume of concierge sessions
 		// being offered and so sold, to be inline with HE availability.

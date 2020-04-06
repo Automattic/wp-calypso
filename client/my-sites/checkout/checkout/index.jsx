@@ -94,6 +94,7 @@ import {
 } from 'signup/utils';
 import { isExternal } from 'lib/url';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -441,7 +442,19 @@ export class Checkout extends React.Component {
 		}
 	}
 
-	maybeRedirectToConciergeNudge( pendingOrReceiptId ) {
+	maybeShowPlanBumpOfferConcierge( receiptId, stepResult ) {
+		const { cart, selectedSiteSlug } = this.props;
+
+		if ( hasPersonalPlan( cart ) && stepResult && isEmpty( stepResult.failed_purchases ) ) {
+			if ( 'variantShowPlanBump' === abtest( 'showPremiumPlanBump' ) ) {
+				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
+			}
+		}
+
+		return;
+	}
+
+	maybeRedirectToConciergeNudge( pendingOrReceiptId, stepResult ) {
 		// Using hideNudge prop will disable any redirect to Nudge
 		if ( this.props.hideNudge ) {
 			return;
@@ -460,6 +473,11 @@ export class Checkout extends React.Component {
 		) {
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
+
+			const upgradePath = this.maybeShowPlanBumpOfferConcierge( pendingOrReceiptId, stepResult );
+			if ( upgradePath ) {
+				return upgradePath;
+			}
 
 			// The conciergeUpsellDial test is used when we need to quickly dial back the volume of concierge sessions
 			// being offered and so sold, to be inline with HE availability.
@@ -563,7 +581,10 @@ export class Checkout extends React.Component {
 			return `${ signupDestination }/${ pendingOrReceiptId }`;
 		}
 
-		const redirectPathForConciergeUpsell = this.maybeRedirectToConciergeNudge( pendingOrReceiptId );
+		const redirectPathForConciergeUpsell = this.maybeRedirectToConciergeNudge(
+			pendingOrReceiptId,
+			stepResult
+		);
 		if ( redirectPathForConciergeUpsell ) {
 			return redirectPathForConciergeUpsell;
 		}
