@@ -2,7 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
-import { SVG, Path, Rect, Button, VisuallyHidden } from '@wordpress/components';
+import { SVG, Path, Rect, Button } from '@wordpress/components';
 import classnames from 'classnames';
 
 /**
@@ -10,17 +10,6 @@ import classnames from 'classnames';
  */
 import * as T from './types';
 import { useI18n } from '@automattic/react-i18n';
-
-// TODO: deploy this change to @types/wordpress__components
-declare module '@wordpress/components' {
-	// This isn't perfect, but it's good enough for now.
-	// The props types should be determined by `as` prop.
-
-	// eslint-disable-next-line no-shadow
-	export const VisuallyHidden: React.FunctionComponent< {
-		as?: keyof JSX.IntrinsicElements;
-	} & React.ComponentProps< 'div' > >;
-}
 
 // TODO FIXME: React elements are a poor choice for static svgs.
 // Refactor, external svg with use?
@@ -33,7 +22,11 @@ const ViewportSelect: React.FunctionComponent< Props > = ( { onSelect, selected 
 	const { __: NO__ } = useI18n();
 	return (
 		<div className="style-preview__viewport-select">
-			<ViewportButton onClick={ () => onSelect( 'desktop' ) } isSelected={ selected === 'desktop' }>
+			<ViewportButton
+				aria-label={ NO__( 'Select desktop preview' ) }
+				onClick={ () => onSelect( 'desktop' ) }
+				isSelected={ selected === 'desktop' }
+			>
 				<SVG width="55" height="55" viewBox="0 0 55 55">
 					<Path
 						d="M10.4258 15.75C10.4258 15.0596 10.9854 14.5 11.6758 14.5H43.3239C44.0143 14.5 44.5739 15.0596 44.5739 15.75V38.463H10.4258V15.75Z"
@@ -45,9 +38,12 @@ const ViewportSelect: React.FunctionComponent< Props > = ( { onSelect, selected 
 						fill="currentColor"
 					/>
 				</SVG>
-				<VisuallyHidden as="span">{ NO__( 'Select desktop preview' ) }</VisuallyHidden>
 			</ViewportButton>
-			<ViewportButton onClick={ () => onSelect( 'tablet' ) } isSelected={ selected === 'tablet' }>
+			<ViewportButton
+				aria-label={ NO__( 'Select tablet preview' ) }
+				onClick={ () => onSelect( 'tablet' ) }
+				isSelected={ selected === 'tablet' }
+			>
 				<SVG width="48" height="48" viewBox="0 0 48 48">
 					<Rect
 						x="10.75"
@@ -60,9 +56,12 @@ const ViewportSelect: React.FunctionComponent< Props > = ( { onSelect, selected 
 					/>
 					<Rect x="20" y="32" width="8" height="3" fill="currentColor" />
 				</SVG>
-				<VisuallyHidden as="span">{ NO__( 'Select tablet preview' ) }</VisuallyHidden>
 			</ViewportButton>
-			<ViewportButton onClick={ () => onSelect( 'mobile' ) } isSelected={ selected === 'mobile' }>
+			<ViewportButton
+				aria-label={ NO__( 'Select mobile preview' ) }
+				onClick={ () => onSelect( 'mobile' ) }
+				isSelected={ selected === 'mobile' }
+			>
 				<SVG width="40" height="40" viewBox="0 0 40 40">
 					<Rect
 						x="12.417"
@@ -75,7 +74,6 @@ const ViewportSelect: React.FunctionComponent< Props > = ( { onSelect, selected 
 					/>
 					<Rect x="18.333" y="26.667" width="5" height="2.5" fill="currentColor" />
 				</SVG>
-				<VisuallyHidden as="span">{ NO__( 'Select mobile preview' ) }</VisuallyHidden>
 			</ViewportButton>
 		</div>
 	);
@@ -89,12 +87,14 @@ const ViewportButton: React.FunctionComponent< ButtonProps > = ( {
 	children,
 	onClick,
 	isSelected,
+	...rest
 } ) => (
 	<Button
 		className={ classnames( 'style-preview__viewport-select-button', {
 			'is-selected': isSelected,
 		} ) }
 		onClick={ onClick }
+		{ ...rest }
 	>
 		{ children }
 	</Button>
