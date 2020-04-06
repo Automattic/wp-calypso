@@ -10,6 +10,13 @@ import BackupDetailPage from './detail';
 import BackupsPage from './main';
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 
+/* handles /backups/:site, see `backupMainPath` */
+export function backups( context, next ) {
+	context.primary = <BackupsPage />;
+	next();
+}
+
+/* handles /backups/:site/detail/:backupId, see `backupDetailPath` */
 export function backupDetail( context, next ) {
 	const backupId = context.params.backupId;
 
@@ -17,21 +24,18 @@ export function backupDetail( context, next ) {
 	next();
 }
 
-export function backups( context, next ) {
-	context.primary = <BackupsPage />;
-	next();
-}
-
-export function backupRestore( context, next ) {
+/* handles /backups/:site/download/:rewindId, see `backupDownloadPath` */
+export function backupDownload( context, next ) {
 	context.primary = (
-		<BackupRewindFlow rewindId={ context.params.rewindId } purpose={ RewindFlowPurpose.RESTORE } />
+		<BackupRewindFlow rewindId={ context.params.rewindId } purpose={ RewindFlowPurpose.DOWNLOAD } />
 	);
 	next();
 }
 
-export function backupDownload( context, next ) {
+/* handles /backups/:site/restore/:rewindId, see `backupRestorePath` */
+export function backupRestore( context, next ) {
 	context.primary = (
-		<BackupRewindFlow rewindId={ context.params.rewindId } purpose={ RewindFlowPurpose.DOWNLOAD } />
+		<BackupRewindFlow rewindId={ context.params.rewindId } purpose={ RewindFlowPurpose.RESTORE } />
 	);
 	next();
 }

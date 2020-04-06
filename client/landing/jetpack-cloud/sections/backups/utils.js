@@ -148,12 +148,3 @@ export const isSuccessfulBackup = backup => {
 		'rewind__backup_complete_initial' === backup.activityName
 	);
 };
-
-// TODO: now that we are reusing URLs we should have a dedicated paths file
-export const getRestorePath = ( siteSlug, rewindId ) => {
-	return `/backups/${ siteSlug }/restore/${ rewindId }`;
-};
-
-export const getDownloadPath = ( siteSlug, rewindId ) => {
-	return `/backups/${ siteSlug }/download/${ rewindId }`;
-};

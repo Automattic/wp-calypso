@@ -3,9 +3,9 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 		{
 			title: 'Vesta',
 			slug: 'vesta',
-			template: 'mayland2',
+			template: 'vesta',
 			theme: 'mayland',
-			src: 'https://public-api.wordpress.com/rest/v1/template/demo/mayland/mayland2/',
+			src: 'https://public-api.wordpress.com/rest/v1/template/demo/mayland/vesta/',
 			fonts: {
 				headings: 'Cabin',
 				base: 'Raleway',
@@ -15,9 +15,9 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 		{
 			title: 'Reynolds',
 			slug: 'reynolds',
-			template: 'rockfield2',
+			template: 'reynolds',
 			theme: 'rockfield',
-			src: 'https://public-api.wordpress.com/rest/v1/template/demo/rockfield/rockfield2/',
+			src: 'https://public-api.wordpress.com/rest/v1/template/demo/rockfield/reynolds/',
 			fonts: {
 				headings: 'Playfair Display',
 				base: 'Fira Sans',
@@ -27,9 +27,9 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 		{
 			title: 'Easley',
 			slug: 'easley',
-			template: 'maywood',
+			template: 'easley',
 			theme: 'maywood',
-			src: 'https://public-api.wordpress.com/rest/v1/template/demo/maywood/maywood/',
+			src: 'https://public-api.wordpress.com/rest/v1/template/demo/maywood/easley/',
 			fonts: {
 				headings: 'Space Mono',
 				base: 'Roboto',
@@ -37,11 +37,11 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 			categories: [ 'featured', 'portfolio' ],
 		},
 		{
-			title: 'Camden',
-			slug: 'Camden',
-			template: 'maywood2',
+			title: 'Camdem',
+			slug: 'Camdem',
+			template: 'camdem',
 			theme: 'maywood',
-			src: 'https://public-api.wordpress.com/rest/v1/template/demo/maywood/maywood2/',
+			src: 'https://public-api.wordpress.com/rest/v1/template/demo/maywood/camdem/',
 			fonts: {
 				headings: 'Space Mono',
 				base: 'Roboto',
@@ -63,9 +63,9 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 		{
 			title: 'Edison',
 			slug: 'edison',
-			template: 'stratford2',
+			template: 'edison',
 			theme: 'stratford',
-			src: 'https://public-api.wordpress.com/rest/v1/template/demo/stratford/stratford2/',
+			src: 'https://public-api.wordpress.com/rest/v1/template/demo/stratford/edison/',
 			fonts: {
 				headings: 'Chivo',
 				base: 'Open Sans',
@@ -75,9 +75,9 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 		{
 			title: 'Cassel',
 			slug: 'cassel',
-			template: 'mayland',
+			template: 'cassel',
 			theme: 'mayland',
-			src: 'https://public-api.wordpress.com/rest/v1/template/demo/mayland/mayland/',
+			src: 'https://public-api.wordpress.com/rest/v1/template/demo/mayland/cassel/',
 			fonts: {
 				headings: 'Playfair Display',
 				base: 'Fira Sans',
@@ -87,9 +87,9 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 		{
 			title: 'Overton',
 			slug: 'overton',
-			template: 'alves',
+			template: 'overton',
 			theme: 'alves',
-			src: 'https://public-api.wordpress.com/rest/v1/template/demo/alves/alves/',
+			src: 'https://public-api.wordpress.com/rest/v1/template/demo/alves/overton/',
 			fonts: {
 				headings: 'Cabin',
 				base: 'Raleway',
@@ -99,14 +99,26 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 		{
 			title: 'Doyle',
 			slug: 'doyle',
-			template: 'alves2',
+			template: 'doyle',
 			theme: 'alves',
-			src: 'https://public-api.wordpress.com/rest/v1/template/demo/alves/alves2/',
+			src: 'https://public-api.wordpress.com/rest/v1/template/demo/alves/doyle/',
 			fonts: {
 				headings: 'Playfair Display',
 				base: 'Fira Sans',
 			},
 			categories: [ 'featured', 'business' ],
+		},
+		{
+			title: 'Brice',
+			slug: 'brice',
+			template: 'brice',
+			theme: 'mayland',
+			src: 'https://public-api.wordpress.com/rest/v1/template/demo/mayland/brice/',
+			fonts: {
+				headings: 'Playfair Display',
+				base: 'Fira Sans',
+			},
+			categories: [ 'featured', 'charity', 'non-profit' ],
 		},
 	],
 };
