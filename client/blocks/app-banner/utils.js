@@ -16,7 +16,8 @@ export const ONE_MONTH_IN_MILLISECONDS = 2419200000; // 28 days
 
 export function getAppBannerData( translate, sectionName ) {
 	switch ( sectionName ) {
-		case EDITOR: case GUTENBERG:
+		case EDITOR:
+		case GUTENBERG:
 			return {
 				title: translate( 'Rich mobile publishing.' ),
 				copy: translate(
