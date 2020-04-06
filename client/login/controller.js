@@ -2,8 +2,10 @@
  * External dependencies
  */
 import page from 'page';
+import { parse } from 'qs';
 import React from 'react';
 import { includes } from 'lodash';
+import { parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
@@ -14,7 +16,6 @@ import MagicLogin from './magic-login';
 import WPLogin from './wp-login';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
-import { getUrlParts } from 'lib/url';
 
 const enhanceContextWithLogin = context => {
 	const {
@@ -64,9 +65,10 @@ export async function login( context, next ) {
 			return next( error );
 		}
 
-		const { searchParams: redirectParams } = getUrlParts( redirect_to );
+		const parsedRedirectUrl = parseUrl( redirect_to );
+		const redirectQueryString = parse( parsedRedirectUrl.query );
 
-		if ( client_id !== redirectParams.get( 'client_id' ) ) {
+		if ( client_id !== redirectQueryString.client_id ) {
 			const error = new Error(
 				'The `redirect_to` query parameter is invalid with the given `client_id`.'
 			);
