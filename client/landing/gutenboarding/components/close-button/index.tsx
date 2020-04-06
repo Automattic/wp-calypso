@@ -5,10 +5,6 @@ import React from 'react';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
 
-interface SignupFormHeaderProps {
-	onRequestClose: () => void;
-}
-
 interface CloseButtonProps {
 	onClose: () => void;
 }
