@@ -448,16 +448,16 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 		return;
 	}
 
-	let products, brand, totalCost;
+	let products, brand, totalCostUSD;
 
 	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
 		products = wpcomJetpackCartInfo.wpcomProducts;
 		brand = GA_PRODUCT_BRAND_WPCOM;
-		totalCost = wpcomJetpackCartInfo.wpcomCost;
+		totalCostUSD = wpcomJetpackCartInfo.wpcomCostUSD;
 	} else if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
 		products = wpcomJetpackCartInfo.jetpackProducts;
 		brand = GA_PRODUCT_BRAND_JETPACK;
-		totalCost = wpcomJetpackCartInfo.jetpackCost;
+		totalCostUSD = wpcomJetpackCartInfo.jetpackCostUSD;
 	} else {
 		debug( 'recordOrderInGAEnhancedEcommerce: [Skipping] No products' );
 		return;
@@ -466,10 +466,10 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 	const items = [];
 	products.map( product => {
 		items.push( {
-			id: product.product_id,
-			name: product.product_name_en,
-			quantity: product.volume,
-			price: product.cost,
+			id: product.product_id.toString(),
+			name: product.product_name_en.toString(),
+			quantity: parseInt( product.volume ),
+			price: costToUSD( product.cost, cart.currency ).toString(),
 			brand,
 		} );
 	} );
@@ -478,11 +478,12 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 		'event',
 		'purchase',
 		{
-			transaction_id: orderId,
-			value: totalCost,
-			currency: cart.currency ?? 'USD',
-			tax: cart.total_tax ?? undefined,
-			coupon: cart.coupon_code ?? undefined,
+			transaction_id: orderId.toString(),
+			value: parseFloat( totalCostUSD ),
+			currency: 'USD',
+			tax: parseFloat( cart.total_tax ) ?? 0,
+			coupon: cart.coupon_code.toString() ?? '',
+			affiliation: brand,
 			items,
 		},
 	];
