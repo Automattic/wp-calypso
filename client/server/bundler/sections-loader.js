@@ -53,7 +53,7 @@ function printSectionsAndPaths( sections ) {
 	}
 }
 
-function filterSections( sections ) {
+function filterSectionsInDevelopment( sections ) {
 	const bundleEnv = config( 'env' );
 	if ( 'development' !== bundleEnv ) {
 		return sections;
@@ -75,7 +75,7 @@ const loader = function() {
 	const { useRequire, onlyIsomorphic } = options;
 	let { include } = options;
 
-	let sections = filterSections( require( this.resourcePath ) );
+	let sections = filterSectionsInDevelopment( require( this.resourcePath ) );
 
 	if ( include ) {
 		if ( ! Array.isArray( include ) ) {
