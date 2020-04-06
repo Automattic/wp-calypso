@@ -61,7 +61,7 @@ export const requestActivityActionTypeCounts = (
 	);
 };
 
-export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000 } = {} ) => {
+export const requestActivityLogsId = ( siteId, filter ) => {
 	const group =
 		filter && filter.group && filter.group.length ? sortBy( filter.group ).join( ',' ) : '';
 	const before = filter && filter.before ? filter.before : '';
@@ -69,9 +69,13 @@ export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000
 	const on = filter && filter.on ? filter.on : '';
 	const aggregate = filter && filter.aggregate ? filter.aggregate : '';
 
-	const id = `activity-log-${ siteId }-${ group }-${ after }-${ before }-${ on }-${ aggregate }`;
+	return `activity-log-${ siteId }-${ group }-${ after }-${ before }-${ on }-${ aggregate }`;
+};
+
+export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000 } = {} ) => {
+	const requestId = requestActivityLogsId( siteId, filter );
 	return requestHttpData(
-		id,
+		requestId,
 		http(
 			{
 				apiNamespace: 'wpcom/v2',
@@ -84,7 +88,7 @@ export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000
 		{
 			freshness,
 			fromApi: () => data => {
-				return [ [ id, fromActivityLogApi( data ) ] ];
+				return [ [ requestId, fromActivityLogApi( data ) ] ];
 			},
 		}
 	);
