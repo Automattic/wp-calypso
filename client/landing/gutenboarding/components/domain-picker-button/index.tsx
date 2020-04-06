@@ -70,6 +70,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 			{ isDomainPopoverVisible && (
 				<div className="domain-picker-button__popover-container">
 					<Popover
+						className="domain-picker-button__popover"
 						focusOnMount={ false }
 						noArrow
 						onClickOutside={ handleClose }
