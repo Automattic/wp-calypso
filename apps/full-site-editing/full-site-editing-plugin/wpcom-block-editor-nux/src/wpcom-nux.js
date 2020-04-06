@@ -4,22 +4,20 @@
  * External dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
-import { ExternalLink, Guide, GuidePage } from '@wordpress/components';
+import { Guide, GuidePage } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, __experimentalCreateInterpolateElement } from '@wordpress/element';
+import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 
 /**
  * Internal dependencies
  */
-import {
-	CanvasImage,
-	EditorImage,
-	BlockLibraryImage,
-	DocumentationImage,
-	InserterIconImage,
-} from './images';
+import './styles.scss';
+import blockImage from './images/block.svg';
+import blockPickerImage from './images/block-picker.svg';
+import editorImage from './images/editor.svg';
+import privateImage from './images/private.svg';
 
 function WpcomNux() {
 	const { isWpcomNuxEnabled, isSPTOpen } = useSelect( select => ( {
@@ -49,68 +47,80 @@ function WpcomNux() {
 
 	const dismissWpcomNux = () => setWpcomNuxStatus( { isNuxEnabled: false } );
 
+	// @TODO: Change to 'Welcome to your new website' for Gutenboarding, in other situations keep "editor"
+	const welcomeHeading = __( 'Welcome to the WordPress editor' );
+
 	/**
 	 * Currently, the Guide content is mostly copied from Gutenberg. This can be
 	 * updated if/as we have new designs for the NUX on wpcom.
 	 */
 	return (
 		<Guide
-			className="edit-post-welcome-guide"
-			contentLabel={ __( 'Welcome to the WordPress editor' ) }
+			className="wpcom-block-editor-nux"
+			contentLabel={ welcomeHeading }
 			finishButtonText={ __( 'Get started' ) }
 			onFinish={ dismissWpcomNux }
 		>
-			<GuidePage className="edit-post-welcome-guide__page">
-				<h1 className="edit-post-welcome-guide__heading">
-					{ __( 'Welcome to the WordPress editor' ) }
+			<GuidePage className="wpcom-block-editor-nux__page">
+				<h1 className="wpcom-block-editor-nux__heading">{ welcomeHeading }</h1>
+				<p className="wpcom-block-editor-nux__text">
+					{ __( 'Create and edit site pages, and customize the look and feel of each page.' ) }
+				</p>
+				<img
+					alt=""
+					aria-hidden="true"
+					className="wpcom-block-editor-nux__image"
+					src={ editorImage }
+				/>
+			</GuidePage>
+
+			<GuidePage className="wpcom-block-editor-nux__page">
+				<h1 className="wpcom-block-editor-nux__heading">
+					{ __( 'Create pages and add your content' ) }
 				</h1>
-				<CanvasImage className="edit-post-welcome-guide__image" />
-				<p className="edit-post-welcome-guide__text">
+				<img
+					alt=""
+					aria-hidden="true"
+					className="wpcom-block-editor-nux__image"
+					src={ blockImage }
+				/>
+				<p className="wpcom-block-editor-nux__text">
 					{ __(
-						'In the WordPress editor, each paragraph, image, or video is presented as a distinct “block” of content.'
+						'Create and rearrange your site pages. Customize your site navigation menus so your visitors can explore your site.'
 					) }
 				</p>
 			</GuidePage>
 
-			<GuidePage className="edit-post-welcome-guide__page">
-				<h1 className="edit-post-welcome-guide__heading">{ __( 'Make each block your own' ) }</h1>
-				<EditorImage className="edit-post-welcome-guide__image" />
-				<p className="edit-post-welcome-guide__text">
+			<GuidePage className="wpcom-block-editor-nux__page">
+				<h1 className="wpcom-block-editor-nux__heading">{ __( 'Add anything you want' ) }</h1>
+				<img
+					alt=""
+					aria-hidden="true"
+					className="wpcom-block-editor-nux__image"
+					src={ blockPickerImage }
+				/>
+				<p className="wpcom-block-editor-nux__text">
 					{ __(
-						'Each block comes with its own set of controls for changing things like color, width, and alignment. These will show and hide automatically when you have a block selected.'
+						'Insert text, photos, forms, Yelp reviews, testimonials, maps, and many more types of blocks. Rearrange blocks on your pages to meet your needs.'
 					) }
 				</p>
 			</GuidePage>
 
-			<GuidePage className="edit-post-welcome-guide__page">
-				<h1 className="edit-post-welcome-guide__heading">
-					{ __( 'Get to know the block library' ) }
+			{ /* @TODO: hide for sites that are already public */ }
+			<GuidePage className="wpcom-block-editor-nux__page">
+				<h1 className="wpcom-block-editor-nux__heading">
+					{ __( "Private until you're ready to launch" ) }
 				</h1>
-				<BlockLibraryImage className="edit-post-welcome-guide__image" />
-				<p className="edit-post-welcome-guide__text">
-					{ __experimentalCreateInterpolateElement(
-						__(
-							'All of the blocks available to you live in the block library. You’ll find it wherever you see the <InserterIconImage /> icon.'
-						),
-						{
-							InserterIconImage: (
-								<InserterIconImage className="edit-post-welcome-guide__inserter-icon" />
-							),
-						}
+				<img
+					alt=""
+					aria-hidden="true"
+					className="wpcom-block-editor-nux__image"
+					src={ privateImage }
+				/>
+				<p className="wpcom-block-editor-nux__text">
+					{ __(
+						"Your site remains private until you're ready to launch. Take your time and make as many changes as you need until it's ready to share with the world."
 					) }
-				</p>
-			</GuidePage>
-
-			<GuidePage className="edit-post-welcome-guide__page">
-				<h1 className="edit-post-welcome-guide__heading">
-					{ __( 'Learn how to use the WordPress editor' ) }
-				</h1>
-				<DocumentationImage className="edit-post-welcome-guide__image" />
-				<p className="edit-post-welcome-guide__text">
-					{ __( 'New to the WordPress editor? Want to learn more about using it? ' ) }
-					<ExternalLink href={ __( 'https://support.wordpress.com/wordpress-editor/' ) }>
-						{ __( "Here's a detailed guide." ) }
-					</ExternalLink>
 				</p>
 			</GuidePage>
 		</Guide>
@@ -120,7 +130,7 @@ function WpcomNux() {
 // Only register plugin if these features are available.
 // If registered without this check, atomic sites without gutenberg enabled will error when loading the editor.
 // These seem to be the only dependencies here that are not supported there.
-if ( __experimentalCreateInterpolateElement && Guide && GuidePage ) {
+if ( Guide && GuidePage ) {
 	registerPlugin( 'wpcom-block-editor-nux', {
 		render: () => <WpcomNux />,
 	} );
