@@ -42,6 +42,7 @@ const enhanceContextWithLogin = context => {
 			privateSite={ flow === 'private-site' }
 			domain={ ( query && query.domain ) || null }
 			fromSite={ ( query && query.site ) || null }
+			signupUrl={ ( query && query.signup_url ) || null }
 		/>
 	);
 };

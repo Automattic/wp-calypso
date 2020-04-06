@@ -25,8 +25,7 @@ import {
 	getRecommendedDomainSuggestion,
 } from '../../utils/domain-suggestions';
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
-import { useCurrentStep } from '../../path';
-
+import { usePath, getStepFromPathname, useCurrentStep } from '../../path';
 import wp from '../../../../lib/wp';
 
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
@@ -77,6 +76,8 @@ const Header: FunctionComponent = () => {
 		select( ONBOARD_STORE ).getState()
 	);
 
+	const makePath = usePath();
+
 	const {
 		createSite,
 		setDomain,
@@ -102,14 +103,25 @@ const Header: FunctionComponent = () => {
 	const [ isRedirecting, setIsRedirecting ] = useState( false );
 
 	const {
-		location: { pathname },
+		location: { pathname, search },
+		push,
 	} = useHistory();
+
 	useEffect( () => {
-		// Dialogs usually close naturally when the user clicks the browser's
-		// back/forward buttons because their parent is unmounted. However
-		// this header isn't unmounted on route changes so we need to
-		// explicitly hide the dialog.
-		setShowSignupDialog( false );
+		// This handles opening the signup modal when there is a ?signup query parameter
+		// then removes the parameter.
+		// The use case is a user clicking "Create account" from login
+		// TODO: We can remove this condition when we've converted signup into it's own page
+		if ( ! showSignupDialog && new URLSearchParams( search ).has( 'signup' ) ) {
+			setShowSignupDialog( true );
+			push( makePath( getStepFromPathname( pathname ) ) );
+		} else {
+			// Dialogs usually close naturally when the user clicks the browser's
+			// back/forward buttons because their parent is unmounted. However
+			// this header isn't unmounted on route changes so we need to
+			// explicitly hide the dialog.
+			setShowSignupDialog( false );
+		}
 	}, [ pathname, setShowSignupDialog ] );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */

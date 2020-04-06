@@ -7,13 +7,14 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useLocation } from 'react-router-dom';
 
 /**
  * Internal dependencies
  */
 import { USER_STORE } from '../../stores/user';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { useLangRouteParam, usePath, Step } from '../../path';
+import { useLangRouteParam, usePath, Step, getStepFromPathname } from '../../path';
 import ModalSubmitButton from '../modal-submit-button';
 import './style.scss';
 import SignupFormHeader from './header';
@@ -103,12 +104,12 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	}
 
 	const langFragment = lang ? `/${ lang }` : '';
-	const loginRedirectUrl = `${ window.location.origin }/gutenboarding${ makePath(
-		Step.CreateSite
-	) }?new`;
-	const loginUrl = `/log-in/gutenboarding${ langFragment }?redirect_to=${ encodeURIComponent(
-		loginRedirectUrl
-	) }`;
+	const currentStepName = getStepFromPathname( useLocation().pathname );
+	const loginRedirectUrl = encodeURIComponent(
+		`${ window.location.origin }/gutenboarding${ makePath( Step.CreateSite ) }?new`
+	);
+	const signupUrl = encodeURIComponent( `/gutenboarding${ makePath( currentStepName ) }?signup` );
+	const loginUrl = `/log-in/gutenboarding${ langFragment }?redirect_to=${ loginRedirectUrl }&signup_url=${ signupUrl }`;
 
 	return (
 		<Modal

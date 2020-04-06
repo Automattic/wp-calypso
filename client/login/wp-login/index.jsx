@@ -198,6 +198,7 @@ export class Login extends React.Component {
 			locale,
 			isLoginView,
 			path,
+			signupUrl,
 		} = this.props;
 
 		if ( privateSite && isLoggedIn ) {
@@ -212,6 +213,7 @@ export class Login extends React.Component {
 						privateSite={ privateSite }
 						twoFactorAuthType={ twoFactorAuthType }
 						isGutenboarding={ isGutenboarding }
+						signupUrl={ signupUrl }
 					/>
 				) }
 				{ isLoginView && <TranslatorInvite path={ path } /> }
