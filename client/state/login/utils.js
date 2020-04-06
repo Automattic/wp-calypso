@@ -163,6 +163,7 @@ export const isRegularAccount = authAccountType => authAccountType === 'regular'
 export const isPasswordlessAccount = authAccountType => authAccountType === 'passwordless';
 
 export function normalizeBody( bodyObj ) {
+	// Replace null or undefined values with empty strings.
 	return Object.fromEntries(
 		Object.entries( bodyObj ?? {} ).map( ( [ key, val ] ) => [ key, val ?? '' ] )
 	);
