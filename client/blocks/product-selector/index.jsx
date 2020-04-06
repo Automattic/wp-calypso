@@ -12,6 +12,8 @@ import { recordTracksEvent } from 'state/analytics/actions';
 /**
  * Internal dependencies
  */
+import { addQueryArgs } from 'lib/route';
+import ExternalLinkWithTracking from 'components/external-link/with-tracking';
 import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
 import ProductCard from 'components/product-card';
 import ProductCardAction from 'components/product-card/action';
@@ -19,9 +21,11 @@ import ProductCardOptions from 'components/product-card/options';
 import ProductCardPromoNudge from 'components/product-card/promo-nudge';
 import QuerySiteProducts from 'components/data/query-site-products';
 import QuerySitePurchases from 'components/data/query-site-purchases';
+import QueryProductsList from 'components/data/query-products-list';
 import ProductExpiration from 'components/product-expiration';
 import { extractProductSlugs, filterByProductSlugs } from './utils';
 import { getAvailableProductsBySiteId } from 'state/sites/products/selectors';
+import { getAvailableProductsList, isProductsListFetching } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePlanSlug, isRequestingSitePlans } from 'state/sites/plans/selectors';
@@ -502,6 +506,7 @@ export class ProductSelector extends Component {
 			fetchingSitePurchases,
 			intervalType,
 			products,
+			selectedSiteSlug,
 			storeProducts,
 			translate,
 		} = this.props;
@@ -526,6 +531,10 @@ export class ProductSelector extends Component {
 			const selectedSlug = this.state[ stateKey ];
 			const productObject = storeProducts[ selectedSlug ];
 
+			const linkUrl = selectedSiteSlug
+				? addQueryArgs( { site: selectedSiteSlug }, product.link.url )
+				: product.link.url;
+
 			let purchase, isCurrent;
 			if ( this.currentPlanIncludesProduct( product ) ) {
 				purchase = this.getPurchaseByCurrentPlan();
@@ -548,7 +557,25 @@ export class ProductSelector extends Component {
 				<ProductCard
 					key={ product.id }
 					title={ this.getProductDisplayName( product ) }
-					description={ this.getDescriptionByProduct( product ) }
+					description={
+						<Fragment>
+							{ this.getDescriptionByProduct( product ) }
+							{ product.link && ' ' }
+							{ product.link && (
+								<ExternalLinkWithTracking
+									href={ linkUrl }
+									tracksEventName="calypso_plan_link_click"
+									tracksEventProps={ {
+										link_location: product.link.props.location,
+										link_slug: product.link.props.slug,
+									} }
+									icon
+								>
+									{ product.link.label }
+								</ExternalLinkWithTracking>
+							) }
+						</Fragment>
+					}
 					purchase={ purchase }
 					subtitle={ this.getSubtitleByProduct( product ) }
 				>
@@ -588,13 +615,16 @@ export class ProductSelector extends Component {
 	}
 
 	render() {
-		const { selectedSiteId } = this.props;
+		const { selectedSiteId, isConnectStore } = this.props;
 
 		return (
 			<div className="product-selector">
 				<QuerySiteProducts siteId={ selectedSiteId } />
-				<QuerySitePurchases siteId={ selectedSiteId } />
-
+				{ isConnectStore ? (
+					<QueryProductsList />
+				) : (
+					<QuerySitePurchases siteId={ selectedSiteId } />
+				) }
 				{ this.renderProducts() }
 			</div>
 		);
@@ -602,18 +632,27 @@ export class ProductSelector extends Component {
 }
 
 const connectComponent = connect(
-	( state, { products, siteId } ) => {
+	( state, { products, siteId, basePlansPath } ) => {
 		const selectedSiteId = siteId || getSelectedSiteId( state );
 		const productSlugs = extractProductSlugs( products );
-		const availableProducts = getAvailableProductsBySiteId( state, selectedSiteId ).data;
+
+		const isConnectStore = basePlansPath && '/jetpack/connect/store' === basePlansPath;
+		const availableProducts = isConnectStore
+			? getAvailableProductsList( state )
+			: getAvailableProductsBySiteId( state, selectedSiteId ).data;
+
+		const isFetchingPurchases = isConnectStore
+			? isProductsListFetching( state )
+			: isFetchingSitePurchases( state );
 
 		return {
+			isConnectStore,
 			availableProducts,
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
 			fetchingPlans: isRequestingPlans( state ),
 			fetchingSitePlans: isRequestingSitePlans( state ),
-			fetchingSitePurchases: isFetchingSitePurchases( state ),
+			fetchingSitePurchases: isFetchingPurchases,
 			productSlugs,
 			purchases: getSitePurchases( state, selectedSiteId ),
 			selectedSiteId,

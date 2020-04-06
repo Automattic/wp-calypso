@@ -6,14 +6,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, includes, some } from 'lodash';
-import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'components/gridicon';
 import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import { Button, Card, CompactCard } from '@automattic/components';
 import Count from 'components/count';
 import NoticeAction from 'components/notice/notice-action';
@@ -557,7 +558,7 @@ export class PluginMeta extends Component {
 		event.preventDefault();
 		PluginsActions.updatePlugin( this.props.sites[ 0 ], this.props.sites[ 0 ].plugin );
 
-		analytics.ga.recordEvent(
+		gaRecordEvent(
 			'Plugins',
 			'Clicked Update Selected Site Plugin',
 			'Plugin Name',
@@ -590,7 +591,7 @@ export class PluginMeta extends Component {
 			}
 		} );
 
-		analytics.ga.recordEvent(
+		gaRecordEvent(
 			'Plugins',
 			'Clicked Update All Sites Plugin',
 			'Plugin Name',

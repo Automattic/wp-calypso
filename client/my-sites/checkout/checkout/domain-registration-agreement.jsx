@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { get, map, reduce } from 'lodash';
@@ -9,7 +8,7 @@ import { get, map, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import Gridicon from 'components/gridicon';
 import {
 	getDomainRegistrations,
@@ -20,7 +19,7 @@ import {
 
 class DomainRegistrationAgreement extends React.Component {
 	recordRegistrationAgreementClick = () => {
-		analytics.ga.recordEvent( 'Upgrades', 'Clicked Registration Agreement Link' );
+		gaRecordEvent( 'Upgrades', 'Clicked Registration Agreement Link' );
 	};
 
 	renderAgreementLinkForList = ( url, domains ) => {

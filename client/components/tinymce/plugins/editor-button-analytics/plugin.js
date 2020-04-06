@@ -8,7 +8,7 @@ import debugModule from 'debug';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import { bumpStat } from 'lib/analytics/mc';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 
@@ -20,7 +20,7 @@ function recordTinyMCEButtonClick( buttonName ) {
 	if ( shouldBumpStat ) {
 		bumpStat( 'editor-button', 'calypso_' + buttonName );
 	}
-	analytics.ga.recordEvent( 'Editor', 'Clicked TinyMCE Button', buttonName );
+	gaRecordEvent( 'Editor', 'Clicked TinyMCE Button', buttonName );
 	debug( 'TinyMCE button click', buttonName, 'mc=', shouldBumpStat );
 }
 

@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-
 import { localize } from 'i18n-calypso';
 import { assign, overSome, some } from 'lodash';
 import React from 'react';
-import Gridicon from 'components/gridicon';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'components/gridicon';
 import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import { getLocationOrigin, getTaxPostalCode } from 'lib/cart-values';
 import { hasRenewalItem } from 'lib/cart-values/cart-items';
 import { setTaxPostalCode } from 'lib/cart/actions';
@@ -126,7 +126,7 @@ export class PaypalPaymentBox extends React.Component {
 					info: this.props.translate( 'Redirecting you to PayPal' ),
 					disabled: true,
 				} );
-				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Paypal Button' );
+				gaRecordEvent( 'Upgrades', 'Clicked Checkout With Paypal Button' );
 				analytics.tracks.recordEvent( 'calypso_checkout_with_paypal' );
 				window.location = paypalExpressURL;
 			}.bind( this )

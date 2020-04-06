@@ -227,7 +227,7 @@ $feature-upsell-break-at: '1040px';
 
 	&-header.is-sub {
 		font-size: 21px;
-		font-weight: 300;
+		font-weight: 400;
 		color: var( --color-neutral-60 );
 		margin-bottom: 20px;
 		@include breakpoint( '<1280px' ) {

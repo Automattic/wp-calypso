@@ -18,9 +18,17 @@ import { SITE_STORE } from '../../stores/site';
 import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
 import SignupForm from '../../components/signup-form';
-import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
+import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
+import {
+	getFreeDomainSuggestions,
+	getPaidDomainSuggestions,
+	getRecommendedDomainSuggestion,
+} from '../../utils/domain-suggestions';
+import { PAID_DOMAINS_TO_SHOW } from '../../constants';
+import { useCurrentStep } from '../../path';
 
 import wp from '../../../../lib/wp';
+
 const wpcom = wp.undocumented();
 
 interface Cart {
@@ -57,12 +65,14 @@ interface Cart {
 const Header: FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 
+	const currentStep = useCurrentStep();
+
 	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
 	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
 
 	const newSite = useSelect( select => select( SITE_STORE ).getNewSite() );
 
-	const { domain, siteTitle, siteVertical, siteWasCreatedForDomainPurchase } = useSelect( select =>
+	const { domain, siteTitle, siteWasCreatedForDomainPurchase } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
 
@@ -73,7 +83,13 @@ const Header: FunctionComponent = () => {
 		setSiteWasCreatedForDomainPurchase,
 	} = useDispatch( ONBOARD_STORE );
 
-	const freeDomainSuggestion = useFreeDomainSuggestion();
+	const allSuggestions = useDomainSuggestions( siteTitle );
+	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice(
+		0,
+		PAID_DOMAINS_TO_SHOW
+	);
+	const freeDomainSuggestion = getFreeDomainSuggestions( allSuggestions )?.[ 0 ];
+	const recommendedDomainSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
 
 	useEffect( () => {
 		if ( ! siteTitle ) {
@@ -94,20 +110,22 @@ const Header: FunctionComponent = () => {
 		setShowSignupDialog( false );
 	}, [ pathname, setShowSignupDialog ] );
 
-	const currentDomain = domain ?? freeDomainSuggestion;
-
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
-	const domainElement = (
+	const domainElement = domain ? (
+		domain.domain_name
+	) : (
 		<span
 			className={ classnames( 'gutenboarding__header-domain-picker-button-domain', {
-				placeholder: ! currentDomain,
+				placeholder: ! recommendedDomainSuggestion,
 			} ) }
 		>
-			{ currentDomain
-				? sprintf( NO__( '%s is available' ), currentDomain.domain_name )
+			{ recommendedDomainSuggestion
+				? sprintf( NO__( '%s is available' ), recommendedDomainSuggestion.domain_name )
 				: 'example.wordpress.com' }
 		</span>
 	);
+
+	const currentDomain = domain ?? freeDomainSuggestion;
 
 	const handleCreateSite = useCallback(
 		( username: string, bearerToken?: string ) => {
@@ -190,10 +208,12 @@ const Header: FunctionComponent = () => {
 					</div>
 				</div>
 				<div className="gutenboarding__header-section-item">
-					{ siteTitle && (
+					{ // We display the DomainPickerButton as soon as we have a domain suggestion,
+					//   unless we're still at the IntentGathering step. In that case, we only
+					//   show it comes from a site title (but hide it if it comes from a vertical).
+					currentDomain && ( siteTitle || currentStep !== 'IntentGathering' ) && (
 						<DomainPickerButton
 							className="gutenboarding__header-domain-picker-button"
-							defaultQuery={ siteTitle }
 							disabled={ ! currentDomain }
 							currentDomain={ currentDomain }
 							onDomainSelect={ setDomain }
@@ -202,7 +222,6 @@ const Header: FunctionComponent = () => {
 									? handleCreateSiteForDomains( currentUser.username )
 									: handleSignupForDomains()
 							}
-							queryParameters={ { vertical: siteVertical?.id } }
 						>
 							{ domainElement }
 						</DomainPickerButton>

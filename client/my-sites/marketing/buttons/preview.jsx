@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
-
 import { filter, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'components/gridicon';
 import ButtonsLabelEditor from './label-editor';
 import ButtonsPreviewButtons from './preview-buttons';
 import ButtonsPreviewAction from './preview-action';
 import ButtonsTray from './tray';
 import { decodeEntities } from 'lib/formatting';
 import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -58,10 +58,10 @@ class SharingButtonsPreview extends React.Component {
 		if ( isEditingLabel ) {
 			this.hideButtonsTray();
 			analytics.tracks.recordEvent( 'calypso_sharing_buttons_edit_text_click', { path } );
-			analytics.ga.recordEvent( 'Sharing', 'Clicked Edit Text Link' );
+			gaRecordEvent( 'Sharing', 'Clicked Edit Text Link' );
 		} else {
 			analytics.tracks.recordEvent( 'calypso_sharing_buttons_edit_text_close_click', { path } );
-			analytics.ga.recordEvent( 'Sharing', 'Clicked Edit Text Done Button' );
+			gaRecordEvent( 'Sharing', 'Clicked Edit Text Done Button' );
 		}
 	};
 
@@ -75,10 +75,10 @@ class SharingButtonsPreview extends React.Component {
 
 		if ( 'hidden' === visibility ) {
 			analytics.tracks.recordEvent( 'calypso_sharing_buttons_more_button_click', { path } );
-			analytics.ga.recordEvent( 'Sharing', 'Clicked More Button Link', visibility );
+			gaRecordEvent( 'Sharing', 'Clicked More Button Link', visibility );
 		} else {
 			analytics.tracks.recordEvent( 'calypso_sharing_buttons_edit_button_click', { path } );
-			analytics.ga.recordEvent( 'Sharing', 'Clicked Edit Button Link', visibility );
+			gaRecordEvent( 'Sharing', 'Clicked Edit Button Link', visibility );
 		}
 	};
 
@@ -93,7 +93,7 @@ class SharingButtonsPreview extends React.Component {
 		this.setState( { buttonsTrayVisibility: null } );
 
 		analytics.tracks.recordEvent( 'calypso_sharing_buttons_edit_buttons_close_click', { path } );
-		analytics.ga.recordEvent( 'Sharing', 'Clicked Edit Buttons Done Button' );
+		gaRecordEvent( 'Sharing', 'Clicked Edit Buttons Done Button' );
 	};
 
 	getButtonsTrayToggleButtonLabel = ( visibility, enabledButtonsExist ) => {

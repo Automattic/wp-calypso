@@ -129,6 +129,7 @@ export function getThankYouPageUrl( {
 		cart,
 		siteSlug,
 		previousRoute,
+		didPurchaseFail,
 	} );
 	if ( redirectPathForConciergeUpsell ) {
 		return redirectPathForConciergeUpsell;
@@ -193,7 +194,28 @@ function getFallbackDestination( {
 	return '/';
 }
 
-function getRedirectUrlForConciergeNudge( { pendingOrReceiptId, cart, siteSlug, previousRoute } ) {
+function maybeShowPlanBumpOfferConcierge( {
+	pendingOrReceiptId,
+	cart,
+	siteSlug,
+	didPurchaseFail,
+} ) {
+	if ( hasPersonalPlan( cart ) && ! didPurchaseFail ) {
+		if ( 'variantShowPlanBump' === abtest( 'showPremiumPlanBump' ) ) {
+			return `/checkout/${ siteSlug }/offer-plan-upgrade/premium/${ pendingOrReceiptId }`;
+		}
+	}
+
+	return;
+}
+
+function getRedirectUrlForConciergeNudge( {
+	pendingOrReceiptId,
+	cart,
+	siteSlug,
+	previousRoute,
+	didPurchaseFail,
+} ) {
 	// For a user purchasing a qualifying plan, show either a plan upgrade upsell or concierge upsell.
 	// If the user has upgraded a plan from seeing our upsell(we find this by checking the previous route is /offer-plan-upgrade),
 	// then skip this section so that we do not show further upsells.
@@ -204,10 +226,14 @@ function getRedirectUrlForConciergeNudge( { pendingOrReceiptId, cart, siteSlug, 
 		( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) ) &&
 		! previousRoute?.includes( `/checkout/${ siteSlug }/offer-plan-upgrade` )
 	) {
-		if ( hasPersonalPlan( cart ) ) {
-			if ( 'variantShowPlanBump' === abtest( 'showPremiumPlanBump' ) ) {
-				return `/checkout/${ siteSlug }/offer-plan-upgrade/premium/${ pendingOrReceiptId }`;
-			}
+		const upgradePath = maybeShowPlanBumpOfferConcierge( {
+			pendingOrReceiptId,
+			cart,
+			siteSlug,
+			didPurchaseFail,
+		} );
+		if ( upgradePath ) {
+			return upgradePath;
 		}
 
 		// A user just purchased one of the qualifying plans

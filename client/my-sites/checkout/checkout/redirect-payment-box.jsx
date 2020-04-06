@@ -4,11 +4,11 @@
 import React, { PureComponent, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { snakeCase, map, zipObject, isEmpty, mapValues, overSome, some } from 'lodash';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
@@ -19,6 +19,7 @@ import { paymentMethodName, paymentMethodClassName, getLocationOrigin } from 'li
 import { hasRenewalItem, hasRenewableSubscription } from 'lib/cart-values/cart-items';
 import SubscriptionText from './subscription-text';
 import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import wpcom from 'lib/wp';
 import notices from 'notices';
 import CountrySpecificPaymentFields from './country-specific-payment-fields';
@@ -185,7 +186,7 @@ export class RedirectPaymentBox extends PureComponent {
 						),
 						disabled: true,
 					} );
-					analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Redirect Payment Button' );
+					gaRecordEvent( 'Upgrades', 'Clicked Checkout With Redirect Payment Button' );
 					analytics.tracks.recordEvent(
 						'calypso_checkout_with_redirect_' + snakeCase( this.props.paymentType )
 					);
@@ -266,6 +267,18 @@ export class RedirectPaymentBox extends PureComponent {
 				return this.createField( 'email', Input, {
 					label: this.props.translate( 'Email Address' ),
 				} );
+			case 'id_wallet':
+				return (
+					<CountrySpecificPaymentFields
+						countryCode="ID"
+						countriesList={ this.props.countriesList }
+						getErrorMessage={ this.getErrorMessage }
+						getFieldValue={ this.getFieldValue }
+						handleFieldChange={ this.updateFieldValues }
+						eventFormName={ this.eventFormName }
+						disableFields={ this.state.formDisabled }
+					/>
+				);
 			case 'netbanking':
 				return (
 					<CountrySpecificPaymentFields

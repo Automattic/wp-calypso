@@ -6,6 +6,7 @@
 	@include breakpoint( '>800px' ) {
 		font-size: 16px;
 		padding: 20px 0;
+		width: 720px;
 	}
 
 	&__title {
@@ -47,6 +48,7 @@
 }
 
 .current-plan-thank-you__illustration {
+	max-width: 220px;
 	margin-right: 32px;
 
 	@include breakpoint( '<660px' ) {

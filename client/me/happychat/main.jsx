@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { isExternal } from 'lib/url';
+import { isOutsideCalypso } from 'lib/url';
 // actions
 import { sendMessage, sendNotTyping, sendTyping } from 'state/happychat/connection/actions';
 import { blur, focus, setCurrentMessage } from 'state/happychat/ui/actions';
@@ -127,7 +127,7 @@ const mapState = state => {
 		currentUserEmail: currentUser.email,
 		disabled: ! canUserSendMessages( state ),
 		isCurrentUser: isMessageFromCurrentUser( currentUser ), // see redux-no-bound-selectors eslint-rule
-		isExternalUrl: isExternal,
+		isExternalUrl: isOutsideCalypso,
 		isServerReachable: isHappychatServerReachable( state ),
 		message: getCurrentMessage( state ),
 		timeline: getHappychatTimeline( state ),

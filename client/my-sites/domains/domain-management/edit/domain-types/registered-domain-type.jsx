@@ -33,10 +33,11 @@ import NonPrimaryDomainPlanUpsell from '../../components/domain/non-primary-doma
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
 import AutoRenewToggle from 'me/purchases/manage-purchase/auto-renew-toggle';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import { isExpired, shouldRenderExpiringCreditCard, isRechargeable } from 'lib/purchases';
+import { shouldRenderExpiringCreditCard } from 'lib/purchases';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainManagementNavigation from '../navigation';
+import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 import { WrapDomainStatusButtons } from './helpers';
 
 class RegisteredDomainType extends React.Component {
@@ -255,10 +256,6 @@ class RegisteredDomainType extends React.Component {
 			return null;
 		}
 
-		if ( ! isRechargeable( purchase ) || isExpired( purchase ) ) {
-			return null;
-		}
-
 		const content = (
 			<AutoRenewToggle
 				planName={ selectedSite.plan.product_name_short }
@@ -326,6 +323,9 @@ class RegisteredDomainType extends React.Component {
 		const { statusText, statusClass, icon } = this.resolveStatus();
 
 		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
+		const newDomainManagementNavigation = config.isEnabled(
+			'domains/new-status-design/new-options'
+		);
 
 		return (
 			<div className="domain-types__container">
@@ -383,12 +383,21 @@ class RegisteredDomainType extends React.Component {
 					) }
 					{ newStatusDesignAutoRenew && domain.currentUserCanManage && this.renderAutoRenew() }
 				</Card>
-				<DomainManagementNavigation
-					domain={ domain }
-					selectedSite={ this.props.selectedSite }
-					purchase={ purchase }
-					isLoadingPurchase={ isLoadingPurchase }
-				/>
+				{ newDomainManagementNavigation ? (
+					<DomainManagementNavigationEnhanced
+						domain={ domain }
+						selectedSite={ this.props.selectedSite }
+						purchase={ purchase }
+						isLoadingPurchase={ isLoadingPurchase }
+					/>
+				) : (
+					<DomainManagementNavigation
+						domain={ domain }
+						selectedSite={ this.props.selectedSite }
+						purchase={ purchase }
+						isLoadingPurchase={ isLoadingPurchase }
+					/>
+				) }
 			</div>
 		);
 	}

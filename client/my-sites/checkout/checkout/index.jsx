@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { flatten, find, get, includes, isEmpty, isEqual, reduce, startsWith } from 'lodash';
+import { flatten, find, get, isEmpty, isEqual, reduce, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -38,7 +38,7 @@ import {
 	hasTransferProduct,
 	jetpackProductItem,
 } from 'lib/cart-values/cart-items';
-import { JETPACK_BACKUP_PRODUCTS, JETPACK_SEARCH_PRODUCTS } from 'lib/products-values/constants';
+import { isJetpackProductSlug } from 'lib/products-values';
 import PendingPaymentBlocker from './pending-payment-blocker';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';
@@ -393,10 +393,7 @@ export class Checkout extends React.Component {
 		// - has a receipt number
 		// - does not have a receipt number but has an item in cart(as in the case of paying with a redirect payment type)
 		if ( selectedSiteSlug && ( ! isReceiptEmpty || ! isCartEmpty ) ) {
-			const isJetpackProduct =
-				product &&
-				( includes( JETPACK_BACKUP_PRODUCTS, product ) ||
-					includes( JETPACK_SEARCH_PRODUCTS, product ) );
+			const isJetpackProduct = product && isJetpackProductSlug( product );
 			// If we just purchased a Jetpack product, redirect to the my plans page.
 			if ( isJetpackNotAtomic && isJetpackProduct ) {
 				return `/plans/my-plan/${ selectedSiteSlug }?thank-you&product=${ product }`;
@@ -446,7 +443,19 @@ export class Checkout extends React.Component {
 		}
 	}
 
-	maybeRedirectToConciergeNudge( pendingOrReceiptId ) {
+	maybeShowPlanBumpOfferConcierge( receiptId, stepResult ) {
+		const { cart, selectedSiteSlug } = this.props;
+
+		if ( hasPersonalPlan( cart ) && stepResult && isEmpty( stepResult.failed_purchases ) ) {
+			if ( 'variantShowPlanBump' === abtest( 'showPremiumPlanBump' ) ) {
+				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ receiptId }`;
+			}
+		}
+
+		return;
+	}
+
+	maybeRedirectToConciergeNudge( pendingOrReceiptId, stepResult ) {
 		// Using hideNudge prop will disable any redirect to Nudge
 		if ( this.props.hideNudge ) {
 			return;
@@ -464,10 +473,9 @@ export class Checkout extends React.Component {
 			( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) ) &&
 			! previousRoute.includes( `/checkout/${ selectedSiteSlug }/offer-plan-upgrade` )
 		) {
-			if ( hasPersonalPlan( cart ) ) {
-				if ( 'variantShowPlanBump' === abtest( 'showPremiumPlanBump' ) ) {
-					return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/premium/${ pendingOrReceiptId }`;
-				}
+			const upgradePath = this.maybeShowPlanBumpOfferConcierge( pendingOrReceiptId, stepResult );
+			if ( upgradePath ) {
+				return upgradePath;
 			}
 
 			// A user just purchased one of the qualifying plans
@@ -568,7 +576,10 @@ export class Checkout extends React.Component {
 			return `${ signupDestination }/${ pendingOrReceiptId }`;
 		}
 
-		const redirectPathForConciergeUpsell = this.maybeRedirectToConciergeNudge( pendingOrReceiptId );
+		const redirectPathForConciergeUpsell = this.maybeRedirectToConciergeNudge(
+			pendingOrReceiptId,
+			stepResult
+		);
 		if ( redirectPathForConciergeUpsell ) {
 			return redirectPathForConciergeUpsell;
 		}

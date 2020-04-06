@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { backupDetailPath } from 'landing/jetpack-cloud/sections/backups/paths';
 import Gridicon from 'components/gridicon';
 import Button from 'components/forms/form-button';
 import ActivityCard from '../../components/activity-card';
@@ -23,16 +24,19 @@ import mediaImage from 'assets/images/illustrations/media.svg';
 
 class BackupDelta extends Component {
 	renderRealtime() {
-		const { allowRestore, moment, translate } = this.props;
+		const { allowRestore, timezone, gmtOffset, moment, translate } = this.props;
 
 		const realtimeEvents = this.props.realtimeEvents.filter( event => event.activityIsRewindable );
 
 		const cards = realtimeEvents.map( activity => (
 			<ActivityCard
+				key={ activity.activityId }
 				{ ...{
 					moment,
 					activity,
 					allowRestore,
+					timezone,
+					gmtOffset,
 				} }
 			/>
 		) );
@@ -215,7 +219,7 @@ class BackupDelta extends Component {
 					<Button
 						isPrimary={ false }
 						className="backup-delta__view-all-button"
-						href={ `/backups/${ siteSlug }/detail/${ mainBackup.rewindId }` }
+						href={ backupDetailPath( siteSlug, mainBackup.rewindId ) }
 					>
 						{ translate( 'View all backup details' ) }
 					</Button>

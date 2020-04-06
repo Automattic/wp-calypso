@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -12,7 +11,7 @@ const debug = debugFactory( 'calypso:me:security:2fa-initial-setup' );
  * Internal dependencies
  */
 import FormButton from 'components/forms/form-button';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 
 class Security2faInitialSetup extends React.Component {
 	static displayName = 'Security2faInitialSetup';
@@ -44,7 +43,7 @@ class Security2faInitialSetup extends React.Component {
 
 				<FormButton
 					onClick={ function( event ) {
-						analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Get Started Button' );
+						gaRecordEvent( 'Me', 'Clicked On 2fa Get Started Button' );
 						this.props.onSuccess( event );
 					}.bind( this ) }
 				>

@@ -1,3 +1,5 @@
+type FontPair = import('../../constants').FontPair;
+
 export interface SiteVertical {
 	/**
 	 * Vertical Label. Either obtained from WP.com, or specified by the user.
@@ -30,6 +32,6 @@ export interface Design {
 	src: string;
 	theme: string;
 	template: string;
-	fonts: Array< string >;
+	fonts: FontPair;
 	categories: Array< string >;
 }
