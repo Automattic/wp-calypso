@@ -4,10 +4,11 @@
 import registerEventHandlers from './events-to-actions';
 import { channelJoin, channelLeave } from 'state/lasagna/socket';
 import {
-	READER_STREAMS_VIEW_ITEM,
-	READER_STREAMS_UNVIEW_ITEM,
+	READER_VIEW_FULL_POST_SET,
+	READER_VIEW_FULL_POST_UNSET,
+	READER_VIEW_FEED_POST_SET,
+	READER_VIEW_FEED_POST_UNSET,
 	READER_STREAMS_UPDATES_RECEIVE,
-	READER_POST_SEEN,
 } from 'state/reader/action-types';
 import {
 	canJoinChannel,
@@ -24,13 +25,16 @@ export default store => next => action => {
 			leaveStaleChannels( store, namespace );
 			break;
 
-		case READER_POST_SEEN:
-		case READER_STREAMS_VIEW_ITEM: {
+		case READER_VIEW_FEED_POST_SET:
+		case READER_VIEW_FULL_POST_SET: {
 			const topic = getChannelTopic( action );
 			if ( ! topic ) {
 				return next( action );
 			}
-			const meta = { blogId: action.payload.post.site_ID, postId: action.payload.post.ID };
+
+			const { siteId, postId } = action.payload;
+			const meta = { siteId, postId };
+
 			leaveStaleChannels( store, namespace );
 
 			if ( canJoinChannel( store, topic ) ) {
@@ -39,7 +43,8 @@ export default store => next => action => {
 			break;
 		}
 
-		case READER_STREAMS_UNVIEW_ITEM: {
+		case READER_VIEW_FULL_POST_UNSET:
+		case READER_VIEW_FEED_POST_UNSET: {
 			const topic = getChannelTopic( action );
 			if ( ! topic ) {
 				return next( action );

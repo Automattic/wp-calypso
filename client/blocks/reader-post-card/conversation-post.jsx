@@ -11,7 +11,7 @@ import { InView } from 'react-intersection-observer';
  */
 import ConversationPostList from 'blocks/conversations/list';
 import CompactPostCard from 'blocks/reader-post-card/compact';
-import { unviewItem, viewItem } from 'state/reader/streams/actions';
+import { viewFeedPostSet, viewFeedPostUnset } from 'state/reader/viewing/actions';
 import { getSite } from 'state/sites/selectors';
 
 class ConversationPost extends React.Component {
@@ -21,12 +21,12 @@ class ConversationPost extends React.Component {
 	};
 
 	toggleItemView = inView => {
-		const { post, site } = this.props;
+		const { post } = this.props;
 		if ( inView ) {
-			this.props.viewItem( { site, post } );
+			this.props.viewFeedPostSet( { siteId: post.site_ID, postId: post.ID } );
 			return;
 		}
-		this.props.unviewItem( { site, post } );
+		this.props.viewFeedPostUnset( { siteId: post.site_ID } );
 	};
 
 	render() {
@@ -46,6 +46,6 @@ export default connect(
 			site: getSite( state, ownProps.post.site_ID ),
 		};
 	},
-	{ viewItem, unviewItem },
+	{ viewFeedPostSet, viewFeedPostUnset },
 	null
 )( ConversationPost );

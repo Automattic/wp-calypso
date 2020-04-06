@@ -7,7 +7,7 @@ import createDebug from 'debug';
 /**
  * Internal dependencies
  */
-import { getViewingBlogIds } from 'state/reader/sites/selectors';
+import { getViewingBlogIds } from 'state/reader/viewing/selectors';
 import { channelLeave, CHANNELS } from 'state/lasagna/socket';
 
 /**
@@ -17,7 +17,7 @@ export const namespace = 'blog';
 const MAX_SECONDS_KEEP_CHANNEL_ACTIVE = 60 * 15; // 15 minutes
 const MAX_SECONDS_SINCE_LAST_UPDATE = 60 * 15; // 15 minutes
 const MAX_CHANNELS_OPEN = 3;
-const debug = createDebug( 'lasagna:socket' );
+const debug = createDebug( 'lasagna:manager' );
 const channelTopicPrefix = `public:push:${ namespace }:`;
 
 /**
@@ -31,10 +31,10 @@ export function getChannelTopic( action ) {
 		return false;
 	}
 
-	if ( ! action.payload.post ) {
+	if ( ! action.payload.siteId ) {
 		return false;
 	}
-	return channelTopicPrefix + action.payload.post.site_ID;
+	return channelTopicPrefix + action.payload.siteId;
 }
 
 /**

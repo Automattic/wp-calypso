@@ -8,6 +8,7 @@ import privatePostChannelMiddleware from './private-post-channel/actions-to-even
 import publicPostChannelMiddleware from './public-post-channel/actions-to-events';
 import userChannelMiddleware from './user-channel/actions-to-events';
 
+// connecting flag used to detect prevent double connections
 let socketConnecting = false;
 
 /**
