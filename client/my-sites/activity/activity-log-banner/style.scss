@@ -42,9 +42,9 @@
 	margin-left: -5px;
 	margin-right: 16px;
 	border-radius: 50%;
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 
-	background-color: var( --color-neutral-300 );
+	background-color: var( --color-neutral-30 );
 }
 
 .activity-log-banner__content {
@@ -61,7 +61,7 @@
 }
 
 .activity-log-banner__dismiss {
-	color: var( --color-neutral-300 );
+	color: var( --color-neutral-30 );
 	cursor: pointer;
 	margin-top: -8px;
 	margin-right: -8px;
@@ -69,7 +69,7 @@
 
 // HappyChat button in success/error banner
 .activity-log-banner__happychat-button {
-	color: var( --color-neutral-300 );
+	color: var( --color-neutral-30 );
 	padding: 8px 8px 0 0;
 	margin-left: 16px;
 	display: inline-block;

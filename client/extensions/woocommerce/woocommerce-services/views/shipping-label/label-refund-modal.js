@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,8 +11,9 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import FormSectionHeading from 'components/forms/form-section-heading';
+import { withLocalizedMoment } from 'components/localized-moment';
 import {
 	closeRefundDialog,
 	confirmRefund,
@@ -108,4 +107,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( localize( RefundDialog ) );
+)( localize( withLocalizedMoment( RefundDialog ) ) );

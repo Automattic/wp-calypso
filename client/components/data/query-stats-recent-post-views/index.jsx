@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -55,7 +53,4 @@ class QueryRecentPostViews extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestRecentPostViews }
-)( QueryRecentPostViews );
+export default connect( null, { requestRecentPostViews } )( QueryRecentPostViews );

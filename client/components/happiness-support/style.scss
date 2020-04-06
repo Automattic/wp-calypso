@@ -9,7 +9,7 @@
 .happiness-support.is-placeholder {
 	.happiness-support__heading,
 	.happiness-support__text {
-		@include placeholder( 23% );
+		@include placeholder( --color-text-subtle );
 	}
 
 	.happiness-support__heading {
@@ -26,13 +26,13 @@
 
 	.happiness-support__buttons {
 		.button {
-			@include placeholder( 23% );
+			@include placeholder( --color-neutral-10 );
 		}
 	}
 }
 
 .happiness-support__heading {
-	color: var( --color-neutral-400 );
+	color: var( --color-text-subtle );
 	clear: none;
 	font-size: 21px;
 }
@@ -66,11 +66,11 @@
 	width: 100%;
 
 	.button {
-		@include breakpoint( '<660px' ) {
-			width: 80%;
+		@include breakpoint( '<480px' ) {
+			display: block;
 		}
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint( '>480px' ) {
 
 			&:first-of-type {
 				margin-right: 16px;
@@ -83,7 +83,7 @@
 		padding-bottom: 11px;
 		padding-top: 2px;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint( '<480px' ) {
 			margin-top: 16px;
 		}
 	}

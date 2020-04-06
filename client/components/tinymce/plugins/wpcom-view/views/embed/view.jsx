@@ -1,4 +1,3 @@
-/** @format */
 /* eslint-disable react/no-string-refs */
 
 /**
@@ -8,24 +7,21 @@
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { Container } from 'flux/utils';
 import { pick } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import ResizableIframe from 'components/resizable-iframe';
-import EmbedsStore from 'lib/embeds/store';
 import generateEmbedFrameMarkup from 'lib/embed-frame-markup';
+import getEmbed from 'state/selectors/get-embed';
+import QueryEmbed from 'components/data/query-embed';
+import ResizableIframe from 'components/resizable-iframe';
 
 class EmbedView extends Component {
-	static getStores() {
-		return [ EmbedsStore ];
-	}
-
-	static calculateState( state, props ) {
-		return EmbedsStore.get( props.content );
-	}
+	state = {
+		wrapper: null,
+	};
 
 	componentDidMount() {
 		// Rendering the frame follows a specific set of steps, whereby an
@@ -44,8 +40,8 @@ class EmbedView extends Component {
 		);
 	}
 
-	componentDidUpdate( prevProps, prevState ) {
-		if ( this.state.body !== prevState.body ) {
+	componentDidUpdate( prevProps ) {
+		if ( this.props.embed?.body !== prevProps.embed?.body ) {
 			this.setHtml();
 		}
 
@@ -82,7 +78,7 @@ class EmbedView extends Component {
 	}
 
 	setHtml() {
-		if ( ! this.state.body || ! this.refs.iframe ) {
+		if ( ! this.props.embed?.body || ! this.refs.iframe ) {
 			return;
 		}
 
@@ -91,7 +87,9 @@ class EmbedView extends Component {
 			return;
 		}
 
-		const markup = generateEmbedFrameMarkup( pick( this.state, 'body', 'scripts', 'styles' ) );
+		const markup = generateEmbedFrameMarkup(
+			pick( this.props.embed, 'body', 'scripts', 'styles' )
+		);
 		iframe.contentDocument.open();
 		iframe.contentDocument.write( markup );
 		iframe.contentDocument.body.style.width = '100%';
@@ -100,7 +98,7 @@ class EmbedView extends Component {
 	}
 
 	renderFrame() {
-		if ( ! this.state.wrapper ) {
+		if ( ! this.state.wrapper || ! this.props.embed ) {
 			return;
 		}
 
@@ -116,9 +114,13 @@ class EmbedView extends Component {
 	}
 
 	render() {
+		const { content, siteId } = this.props;
+
 		return (
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<div ref="view" className="wpview-content wpview-type-embed">
+				<QueryEmbed siteId={ siteId } url={ content } />
+
 				{ this.renderFrame() }
 			</div>
 		);
@@ -135,20 +137,6 @@ EmbedView.defaultProps = {
 	onResize: () => {},
 };
 
-// Flux does not handle untranspiled ES6 properly (see https://github.com/facebook/flux/issues/351).
-// As such, we need to work around the issue by uglily wrapping the component, to ensure that it
-// works both in the evergreen and fallback builds.
-// The long-term fix is to move this component away from using Flux.
-function wrapComponent( containerClass ) {
-	const Tmp = containerClass;
-	containerClass = function( ...args ) {
-		return new Tmp( ...args );
-	};
-	containerClass.prototype = Tmp.prototype;
-	containerClass.getStores = Tmp.getStores;
-	containerClass.calculateState = Tmp.calculateState;
-	return containerClass;
-}
-
-const EmbedViewContainer = Container.create( wrapComponent( EmbedView ), { withProps: true } );
-export default EmbedViewContainer;
+export default connect( ( state, { content, siteId } ) => ( {
+	embed: getEmbed( state, siteId, content ),
+} ) )( EmbedView );

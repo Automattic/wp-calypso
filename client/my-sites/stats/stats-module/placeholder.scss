@@ -36,7 +36,6 @@
 }
 
 .stats-module.is-loading {
-
 	// Hide elements
 	.module-header .site-icon,
 	.module-header .toggle-info,
@@ -63,7 +62,7 @@
 	.module-header-title,
 	ul.module-content-tabs li:hover .label,
 	ul.module-content-tabs li.module-tab.is-selected:hover .label {
-		color: $transparent;
+		color: rgba( var( --color-surface-rgb ), 0 );
 	}
 }
 

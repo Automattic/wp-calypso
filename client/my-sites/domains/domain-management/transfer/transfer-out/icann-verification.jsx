@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,10 +8,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import { resendIcannVerification } from 'lib/upgrades/actions/domain-management';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
+import { resendIcannVerification } from 'lib/domains';
 import notices from 'notices';
 import { TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
 
@@ -46,28 +42,32 @@ class IcannVerification extends React.Component {
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Transfer Domain' ) }>
-					<Button onClick={ this.handleClick } disabled={ this.state.submitting } compact primary>
+				<Card className="transfer-out__card">
+					<p>
+						{ translate(
+							'You must verify your email address before you can transfer this domain. ' +
+								'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
+							{
+								components: {
+									learnMoreLink: (
+										<a
+											href={ TRANSFER_DOMAIN_REGISTRATION }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
+					</p>
+					<Button
+						className="transfer-out__action-button"
+						onClick={ this.handleClick }
+						disabled={ this.state.submitting }
+						primary
+					>
 						{ translate( 'Resend Verification Email' ) }
 					</Button>
-				</SectionHeader>
-
-				<Card className="transfer-out__card">
-					{ translate(
-						'You must verify your email address before you can transfer this domain. ' +
-							'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
-						{
-							components: {
-								learnMoreLink: (
-									<a
-										href={ TRANSFER_DOMAIN_REGISTRATION }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						}
-					) }
 				</Card>
 			</div>
 		);

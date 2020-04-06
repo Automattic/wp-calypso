@@ -1,8 +1,8 @@
-/** @format */
 /**
  * External dependencies
  */
 import { expect } from 'chai';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,9 +19,12 @@ import {
 	setTracksOptOut,
 	loadTrackingTool,
 } from '../actions';
-import { dispatcher as dispatch } from '../middleware.js';
+import { analyticsMiddleware } from '../middleware.js';
 import { spy as mockAnalytics } from 'lib/analytics';
 import { spy as mockAdTracking } from 'lib/analytics/ad-tracking';
+import { spy as mockMC } from 'lib/analytics/mc';
+import { spy as mockGA } from 'lib/analytics/ga';
+import { addHotJarScript } from 'lib/analytics/hotjar';
 
 jest.mock( 'lib/analytics', () => {
 	const analyticsSpy = require( 'sinon' ).spy();
@@ -32,6 +35,7 @@ jest.mock( 'lib/analytics', () => {
 
 	return mock;
 } );
+
 jest.mock( 'lib/analytics/ad-tracking', () => {
 	const adTrackingSpy = require( 'sinon' ).spy();
 	const { adTrackingMock } = require( './helpers/analytics-mock' );
@@ -41,6 +45,32 @@ jest.mock( 'lib/analytics/ad-tracking', () => {
 
 	return mock;
 } );
+
+jest.mock( 'lib/analytics/mc', () => {
+	const mcSpy = require( 'sinon' ).spy();
+	const { mcMock } = require( './helpers/analytics-mock' );
+
+	const mock = mcMock( mcSpy );
+	mock.spy = mcSpy;
+
+	return mock;
+} );
+
+jest.mock( 'lib/analytics/ga', () => {
+	const gaSpy = require( 'sinon' ).spy();
+	const { gaMock } = require( './helpers/analytics-mock' );
+
+	const mock = gaMock( gaSpy );
+	mock.spy = gaSpy;
+
+	return mock;
+} );
+
+jest.mock( 'lib/analytics/hotjar', () => ( {
+	addHotJarScript: require( 'sinon' ).spy(),
+} ) );
+
+const dispatch = analyticsMiddleware()( noop );
 
 describe( 'middleware', () => {
 	describe( 'analytics dispatching', () => {
@@ -52,7 +82,7 @@ describe( 'middleware', () => {
 		test( 'should call mc.bumpStat', () => {
 			dispatch( bumpStat( 'test', 'value' ) );
 
-			expect( mockAnalytics ).to.have.been.calledWithExactly( 'mc.bumpStat', 'test', 'value' );
+			expect( mockMC ).to.have.been.calledWithExactly( 'bumpStat', 'test', 'value' );
 		} );
 
 		test( 'should call tracks.recordEvent', () => {
@@ -71,11 +101,11 @@ describe( 'middleware', () => {
 			} );
 		} );
 
-		test( 'should call ga.recordEvent', () => {
+		test( 'should call gaRecordEvent', () => {
 			dispatch( recordGoogleEvent( 'category', 'action', 'label', 'value' ) );
 
-			expect( mockAnalytics ).to.have.been.calledWithExactly(
-				'ga.recordEvent',
+			expect( mockGA ).to.have.been.calledWithExactly(
+				'gaRecordEvent',
 				'category',
 				'action',
 				'label',
@@ -86,11 +116,7 @@ describe( 'middleware', () => {
 		test( 'should call ga.recordPageView', () => {
 			dispatch( recordGooglePageView( 'path', 'title' ) );
 
-			expect( mockAnalytics ).to.have.been.calledWithExactly(
-				'ga.recordPageView',
-				'path',
-				'title'
-			);
+			expect( mockGA ).to.have.been.calledWithExactly( 'gaRecordPageView', 'path', 'title' );
 		} );
 
 		test( 'should call trackCustomFacebookConversionEvent', () => {
@@ -115,7 +141,7 @@ describe( 'middleware', () => {
 		test( 'should call analytics events with wrapped actions', () => {
 			dispatch( withAnalytics( bumpStat( 'name', 'value' ), { type: 'TEST_ACTION' } ) );
 
-			expect( mockAnalytics ).to.have.been.calledWithExactly( 'mc.bumpStat', 'name', 'value' );
+			expect( mockMC ).to.have.been.calledWithExactly( 'bumpStat', 'name', 'value' );
 		} );
 
 		test( 'should call `setOptOut`', () => {
@@ -125,9 +151,8 @@ describe( 'middleware', () => {
 		} );
 
 		test( 'should call hotjar.addHotJarScript', () => {
-			dispatch( loadTrackingTool( 'HotJar' ), { analyticsTracking: [] } );
-
-			expect( mockAnalytics ).to.have.been.calledWith( 'hotjar.addHotJarScript' );
+			dispatch( loadTrackingTool( 'HotJar' ) );
+			expect( addHotJarScript ).to.have.been.calledOnce;
 		} );
 	} );
 } );

@@ -1,22 +1,20 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import page from 'page';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
-const debug = debugFactory( 'calypso:stats:list-item' );
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import Emojify from 'components/emojify';
+import { withLocalizedMoment } from 'components/localized-moment';
 import Follow from './action-follow';
 import Page from './action-page';
 import Spam from './action-spam';
@@ -25,6 +23,8 @@ import titlecase from 'to-title-case';
 import { flagUrl } from 'lib/flags';
 import { recordTrack } from 'reader/stats';
 import { decodeEntities } from 'lib/formatting';
+
+const debug = debugFactory( 'calypso:stats:list-item' );
 
 class StatsListItem extends React.Component {
 	static displayName = 'StatsListItem';
@@ -120,7 +120,7 @@ class StatsListItem extends React.Component {
 			}
 
 			if ( gaEvent ) {
-				analytics.ga.recordEvent( 'Stats', gaEvent + ' in List' );
+				gaRecordEvent( 'Stats', gaEvent + ' in List' );
 			}
 		}
 	};
@@ -230,6 +230,12 @@ class StatsListItem extends React.Component {
 				icon = <span className="stats-list__flag-icon" style={ style } />;
 			}
 
+			let labelText = labelItem.label;
+
+			if ( this.props.useShortLabel && labelItem.shortLabel ) {
+				labelText = labelItem.shortLabel;
+			}
+
 			if ( data.link ) {
 				const href = data.link;
 				let onClickHandler = this.preventDefaultOnClick;
@@ -256,20 +262,21 @@ class StatsListItem extends React.Component {
 						page( `/read/blogs/${ siteId }` );
 					};
 				}
+
 				itemLabel = (
-					<a onClick={ onClickHandler } href={ href }>
-						{ decodeEntities( labelItem.label ) }
+					<a onClick={ onClickHandler } href={ href } title={ labelItem.linkTitle }>
+						<Emojify>{ decodeEntities( labelText ) }</Emojify>
 					</a>
 				);
 			} else {
-				itemLabel = <Emojify>{ decodeEntities( labelItem.label ) }</Emojify>;
+				itemLabel = <Emojify>{ decodeEntities( labelText ) }</Emojify>;
 			}
 
 			return (
 				<span className={ wrapperClassSet } key={ i }>
 					{ gridiconSpan }
 					{ icon }
-					{ itemLabel }{' '}
+					{ itemLabel }{ ' ' }
 				</span>
 			);
 		}, this );
@@ -373,4 +380,4 @@ class StatsListItem extends React.Component {
 	}
 }
 
-export default localize( StatsListItem );
+export default localize( withLocalizedMoment( StatsListItem ) );

@@ -1,17 +1,18 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
 	MY_SITES_SIDEBAR_SECTION_TOGGLE,
 	MY_SITES_SIDEBAR_SECTION_EXPAND,
 	MY_SITES_SIDEBAR_SECTION_COLLAPSE,
 } from 'state/action-types';
-import { combineReducers, keyedReducer } from 'state/utils';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
 
-function expansionReducer( state = false, action ) {
+const schema = {
+	type: 'boolean',
+};
+
+const expansionReducer = withSchemaValidation( schema, ( state = false, action ) => {
 	switch ( action.type ) {
 		case MY_SITES_SIDEBAR_SECTION_TOGGLE:
 			return ! state;
@@ -22,11 +23,7 @@ function expansionReducer( state = false, action ) {
 		default:
 			return state;
 	}
-}
-
-expansionReducer.schema = {
-	type: 'boolean',
-};
+} );
 
 const sectionReducer = combineReducers( { isOpen: expansionReducer } );
 

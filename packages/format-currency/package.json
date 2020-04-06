@@ -17,13 +17,14 @@
 		"currency",
 		"internationalization"
 	],
-	"author": "Automattic, Inc.",
+	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"dependencies": {
+		"@babel/runtime": "^7.8.4",
 		"i18n-calypso": "file:../i18n-calypso"
 	},
 	"scripts": {

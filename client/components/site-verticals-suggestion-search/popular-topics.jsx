@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,6 +5,7 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
+import { shuffle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,25 +26,25 @@ const POPULAR_TOPICS = {
 		translate( 'Website Designer' ),
 		translate( 'Real Estate Agent' ),
 		translate( 'Cameras & Photography' ),
-		translate( 'Restaurants' ),
+		translate( 'Restaurant' ),
 	],
 	blog: [
-		translate( 'Food' ),
-		translate( 'Travel' ),
-		translate( 'Film' ),
-		translate( 'Photography' ),
-		translate( 'Local' ),
 		translate( 'People' ),
-		translate( 'Sport' ),
+		translate( 'Dating' ),
+		translate( 'Travel' ),
+		translate( 'Food' ),
+		translate( 'Local' ),
+		translate( 'Blogging' ),
+		translate( 'Photography' ),
 	],
 	professional: [
 		translate( 'Photographer' ),
-		translate( 'Web Designer' ),
 		translate( 'Writer' ),
-		translate( 'Programmer' ),
-		translate( 'Tutor' ),
-		translate( 'Architect' ),
+		translate( 'Web Designer' ),
 		translate( 'Engineer' ),
+		translate( 'Tutor' ),
+		translate( 'Graphic Designer' ),
+		translate( 'Architect' ),
 	],
 };
 
@@ -55,14 +54,16 @@ class PopularTopics extends PureComponent {
 		onSelect: PropTypes.func.isRequired,
 	};
 
-	onClick = event => {
+	onClick = index => event => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.onSelect( event.currentTarget.value );
 		this.props.recordTracksEvent( 'calypso_signup_common_site_vertical_clicked', {
 			value: event.currentTarget.value,
+			position_in_list: index,
 		} );
 	};
+
 	render() {
 		const { popularTopics } = this.props;
 
@@ -70,16 +71,18 @@ class PopularTopics extends PureComponent {
 			return null;
 		}
 
+		const shuffledTopics = shuffle( popularTopics );
+
 		return (
 			<div className="site-verticals-suggestion-search__common-topics">
 				<div className="site-verticals-suggestion-search__heading">{ translate( 'Popular' ) }</div>
-				{ popularTopics.map( ( topic, index ) => (
+				{ shuffledTopics.map( ( topic, index ) => (
 					<button
 						type="button"
 						key={ index }
 						value={ topic }
 						className="site-verticals-suggestion-search__topic-list-item"
-						onClick={ this.onClick }
+						onClick={ this.onClick( index ) }
 						tabIndex="0"
 					>
 						{ topic }

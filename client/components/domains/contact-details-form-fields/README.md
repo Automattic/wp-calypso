@@ -13,6 +13,7 @@ Its primary purpose for existing is to ensure consistency between the domain che
     <ContactDetailsFormFields
         eventFormName="Edit Contact Info"
         contactDetails={ contactDetailsObject }
+        contactDetailsErrors={ contactDetailsErrorsObject }
         disableSubmitButton={ false }
         getIsFieldDisabled={ customFieldDisabledCheck }
         labelTexts={ labelTextOverridesObjects }
@@ -28,7 +29,7 @@ Its primary purpose for existing is to ensure consistency between the domain che
 
 ## Props
 
-### contactDetails {Object} (required)
+### contactDetails {object} (required)
 
 The form model, consisting of key/value pairs. Keys must be **camelCase**.
 
@@ -50,7 +51,29 @@ The form model, consisting of key/value pairs. Keys must be **camelCase**.
 
 ```
 
-### eventFormName {String} (optional)
+### contactDetailsErrors {object} (optional)
+
+Error messages for each field consisting of key/value pairs. Keys must be **camelCase**.
+
+```js
+{
+    firstName: 'This field is required.',
+    lastName: null,
+    organization: null,
+    email: null,
+    phone: 'This phone number is too short; please include an area code.',
+    address1: null,
+    address2: null,
+    city: null,
+    state: null,
+    postalCode: null,
+    countryCode: 'This country code is invalid.',
+    fax: null,
+},
+
+```
+
+### eventFormName {string} (optional)
 
 Passed to child field components for tracking purposes.
 
@@ -69,7 +92,7 @@ Executed at render time providing the parent component with an opportunity to di
 
 #### Arguments
 
-{String} name of form field to be disabled
+{string} name of form field to be disabled
 
 Usage:
 
@@ -83,7 +106,7 @@ Usage:
 	};
 ```
 
-### labelTexts {Object} (optional)
+### labelTexts {object} (optional)
 
 An object of strings that override certain label texts. This is mainly used for conditional labels and translated texts.
 
@@ -120,7 +143,7 @@ Triggered whenever a form value changes.
 
 #### Arguments
 
-1. {Object} The full form object model containing the new values
+1. {object} The full form object model containing the new values
 
 Usage:
 
@@ -131,13 +154,13 @@ Usage:
 	};
 ```
 
-### onSubmit {Func} (required)
+### onSubmit {Func} (optional)
 
-Triggered onSubmit and when all fields are valid
+Triggered onSubmit and when all fields are valid. If this prop is not present, do not render the Submit button.
 
 #### Arguments
 
-1. {Object} The full form object model containing the new values
+1. {object} The full form object model containing the new values
 
 Usage:
 
@@ -154,7 +177,7 @@ Runs a custom validation check after a field update
 
 #### Arguments
 
-1. {Object} The full form object model containing the new values
+1. {object} The full form object model containing the new values
 2. {Function} A callback to be triggered when validation is complete. See `form-state` ([this._validatorFunction](https://github.com/Automattic/wp-calypso/blob/master/client/lib/form-state/index.js)) for details.
 
 Usage:
@@ -175,7 +198,7 @@ Runs a custom sanitize method after a field update
 
 #### Arguments
 
-1. {Object} The full form object model containing the new values
+1. {object} The full form object model containing the new values
 2. {Function} A callback to be triggered when sanitization is complete. See `form-state` ([this._sanitizerFunction](https://github.com/Automattic/wp-calypso/blob/master/client/lib/form-state/index.js)) for details.
 
 Usage:

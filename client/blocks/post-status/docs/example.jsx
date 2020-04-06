@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { map, mapValues, get } from 'lodash';
  * Internal dependencies
  */
 import QueryPosts from 'components/data/query-posts';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import PostStatus from '../';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getPostsForQuery } from 'state/posts/selectors';

@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import config from 'config';
 import assert from 'assert';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -39,10 +39,8 @@ import * as dataHelper from '../lib/data-helper';
 import JetpackComPricingPage from '../lib/pages/external/jetpackcom-pricing-page';
 import SecurePaymentComponent from '../lib/components/secure-payment-component';
 import WPHomePage from '../lib/pages/wp-home-page';
-import CheckOutThankyouPage from '../lib/pages/signup/checkout-thankyou-page';
-import JetpackConnectSiteTypePage from '../lib/pages/jetpack/jetpack-connect-site-type-page';
-import JetpackConnectSiteTopicPage from '../lib/pages/jetpack/jetpack-connect-site-topic-page';
-import JetpackConnectUserTypePage from '../lib/pages/jetpack/jetpack-connect-user-type-page';
+import ThankYouModalComponent from '../lib/components/thank-you-modal-component';
+import MyPlanPage from '../lib/pages/my-plan-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -108,21 +106,6 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 			return await jetpackAuthorizePage.waitToDisappear();
 		} );
 
-		step( 'Can select a site type', async function() {
-			const siteTypePage = await JetpackConnectSiteTypePage.Expect( driver );
-			return await siteTypePage.selectSiteType( 'blog' );
-		} );
-
-		step( 'Can select a site topic', async function() {
-			const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( driver );
-			return await siteTopicPage.selectSiteTopic( 'test site' );
-		} );
-
-		step( 'Can select a user type', async function() {
-			const userTypePage = await JetpackConnectUserTypePage.Expect( driver );
-			return await userTypePage.selectUserType( 'creator' );
-		} );
-
 		step( 'Can click the free plan button', async function() {
 			const pickAPlanPage = await PickAPlanPage.Expect( driver );
 			return await pickAPlanPage.selectFreePlanJetpack();
@@ -170,21 +153,6 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 		step( 'Can approve connection on the authorization page', async function() {
 			const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( driver );
 			return await jetpackAuthorizePage.approveConnection();
-		} );
-
-		step( 'Can select a site type', async function() {
-			const siteTypePage = await JetpackConnectSiteTypePage.Expect( driver );
-			return await siteTypePage.selectSiteType( 'blog' );
-		} );
-
-		step( 'Can select a site topic', async function() {
-			const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( driver );
-			return await siteTopicPage.selectSiteTopic( 'test site' );
-		} );
-
-		step( 'Can select a user type', async function() {
-			const userTypePage = await JetpackConnectUserTypePage.Expect( driver );
-			return await userTypePage.selectUserType( 'creator' );
 		} );
 
 		step( 'Can click the free plan button', async function() {
@@ -333,21 +301,6 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 			return await jetpackAuthorizePage.waitToDisappear();
 		} );
 
-		step( 'Can select a site type', async function() {
-			const siteTypePage = await JetpackConnectSiteTypePage.Expect( driver );
-			return await siteTypePage.selectSiteType( 'blog' );
-		} );
-
-		step( 'Can select a site topic', async function() {
-			const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( driver );
-			return await siteTopicPage.selectSiteTopic( 'test site' );
-		} );
-
-		step( 'Can select a user type', async function() {
-			const userTypePage = await JetpackConnectUserTypePage.Expect( driver );
-			return await userTypePage.selectUserType( 'creator' );
-		} );
-
 		step(
 			'Can see the secure payment page and enter/submit test payment details',
 			async function() {
@@ -358,10 +311,13 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 			}
 		);
 
-		step( 'Can see Premium Thank You page', async function() {
-			const checkOutThankyouPage = await CheckOutThankyouPage.Expect( driver );
-			const isPremium = await checkOutThankyouPage.isPremiumPlan();
-			return assert( isPremium, 'The Thank You Notice is not for the Premium Plan' );
+		step( 'Can see Premium plan', async function() {
+			const thankYouModal = await ThankYouModalComponent.Expect( driver );
+			await thankYouModal.continue();
+
+			const myPlanPage = await MyPlanPage.Expect( driver );
+			const isPremium = await myPlanPage.isPremium();
+			assert( isPremium, 'Can not verify Premium plan' );
 		} );
 	} );
 
@@ -445,21 +401,6 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 			return await jetpackAuthorizePage.approveConnection();
 		} );
 
-		step( 'Can select a site type', async function() {
-			const siteTypePage = await JetpackConnectSiteTypePage.Expect( driver );
-			return await siteTypePage.selectSiteType( 'blog' );
-		} );
-
-		step( 'Can select a site topic', async function() {
-			const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( driver );
-			return await siteTopicPage.selectSiteTopic( 'test site' );
-		} );
-
-		step( 'Can select a user type', async function() {
-			const userTypePage = await JetpackConnectUserTypePage.Expect( driver );
-			return await userTypePage.selectUserType( 'creator' );
-		} );
-
 		step( 'Can click the free plan button', async function() {
 			const pickAPlanPage = await PickAPlanPage.Expect( driver );
 			return await pickAPlanPage.selectFreePlanJetpack();
@@ -516,21 +457,6 @@ describe( `Jetpack Connect: (${ screenSize })`, function() {
 		step( 'Can wait for Jetpack get connected', async function() {
 			const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( driver );
 			return await jetpackAuthorizePage.waitToDisappear();
-		} );
-
-		step( 'Can select a site type', async function() {
-			const siteTypePage = await JetpackConnectSiteTypePage.Expect( driver );
-			return await siteTypePage.selectSiteType( 'blog' );
-		} );
-
-		step( 'Can select a site topic', async function() {
-			const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( driver );
-			return await siteTopicPage.selectSiteTopic( 'test site' );
-		} );
-
-		step( 'Can select a user type', async function() {
-			const userTypePage = await JetpackConnectUserTypePage.Expect( driver );
-			return await userTypePage.selectUserType( 'creator' );
 		} );
 
 		step( 'Can click the free plan button', async function() {

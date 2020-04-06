@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,9 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FileImporter from './file-importer';
-import InlineSupportLink from 'components/inline-support-link';
-
-const importerName = 'Blogger';
+import importerConfig from 'lib/importer/importer-config';
 
 class ImporterBlogger extends React.PureComponent {
 	static displayName = 'ImporterBlogger';
@@ -35,44 +31,10 @@ class ImporterBlogger extends React.PureComponent {
 	};
 
 	render() {
-		const importerData = {
-			title: importerName,
-			icon: 'blogger-alt',
-			description: this.props.translate(
-				'Import posts, pages, comments, tags, and images from a %(importerName)s export file.',
-				{
-					args: {
-						importerName,
-					},
-				}
-			),
-			uploadDescription: this.props.translate(
-				'Upload a {{b}}%(importerName)s export file{{/b}} ' +
-					'to start importing into {{b}}%(siteTitle)s{{/b}}. ' +
-					'A %(importerName)s export file is an XML file ' +
-					'containing your page and post content. ' +
-					'Need help {{inlineSupportLink/}}?',
-				{
-					args: {
-						importerName,
-						siteTitle: this.props.site.title,
-					},
-					components: {
-						b: <strong />,
-						inlineSupportLink: (
-							<InlineSupportLink
-								supportPostId={ 66764 }
-								supportLink={
-									'https://en.support.wordpress.com/import/coming-from-blogger/#import'
-								}
-								text={ this.props.translate( 'exporting your content' ) }
-								showIcon={ false }
-							/>
-						),
-					},
-				}
-			),
-		};
+		const importerData = importerConfig( {
+			siteTitle: this.props.siteTitle,
+		} ).blogger;
+
 		return <FileImporter importerData={ importerData } { ...this.props } />;
 	}
 }

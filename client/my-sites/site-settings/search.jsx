@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { overSome } from 'lodash';
@@ -13,7 +11,9 @@ import { overSome } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
+import Banner from 'components/banner';
+import QuerySitePurchases from 'components/data/query-site-purchases';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
@@ -24,7 +24,7 @@ import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
 import isDeactivatingJetpackModule from 'state/selectors/is-deactivating-jetpack-module';
-import Banner from 'components/banner';
+import { getSitePurchases, isFetchingSitePurchases } from 'state/purchases/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { isJetpackSite, getCustomizerUrl } from 'state/sites/selectors';
 import {
@@ -34,8 +34,8 @@ import {
 	isJetpackBusiness,
 	isEcommerce,
 } from 'lib/products-values';
-import { FEATURE_SEARCH, PLAN_BUSINESS, PLAN_JETPACK_BUSINESS } from 'lib/plans/constants';
-const hasBusinessPlan = overSome( isJetpackBusiness, isBusiness, isEnterprise, isEcommerce );
+import { FEATURE_SEARCH, PLAN_BUSINESS } from 'lib/plans/constants';
+import { PRODUCT_JETPACK_SEARCH, isJetpackSearch } from 'lib/products-values/constants';
 
 class Search extends Component {
 	static defaultProps = {
@@ -147,83 +147,92 @@ class Search extends Component {
 		);
 	}
 
+	renderUpgradeNotice() {
+		return (
+			<Fragment>
+				<Banner
+					description={
+						this.props.siteIsJetpack
+							? this.props.translate(
+									'Jetpack Search replaces the built-in search with a fast, scalable, and customizable search powered by WordPress.com. The result: Your users find the content they want, faster.'
+							  )
+							: this.props.translate(
+									'The built-in WordPress search is great for sites without much content. But as your site grows, searches slow down and return less relevant results.'
+							  )
+					}
+					event={ 'calypso_jetpack_search_settings_upgrade_nudge' }
+					feature={ FEATURE_SEARCH }
+					plan={ this.props.siteIsJetpack ? PRODUCT_JETPACK_SEARCH : PLAN_BUSINESS }
+					title={
+						this.props.siteIsJetpack
+							? this.props.translate(
+									'Add faster, more advanced searching to your site with Jetpack Search'
+							  )
+							: this.props.translate(
+									'Add faster, more advanced searching to your site with WordPress.com Business'
+							  )
+					}
+				/>
+			</Fragment>
+		);
+	}
+
+	renderSettingsCard() {
+		return (
+			<Fragment>
+				<CompactCard className="search__card site-settings__traffic-settings">
+					{ this.props.siteIsJetpack ? this.renderJetpackSettings() : this.renderWPComSettings() }
+				</CompactCard>
+				{ ( this.props.searchModuleActive || this.props.fields.jetpack_search_enabled ) && (
+					<CompactCard
+						href={ this.props.customizerUrl }
+						target={ this.props.siteIsJetpack ? 'external' : null }
+					>
+						{ this.props.translate( 'Add Search Widget' ) }
+					</CompactCard>
+				) }
+			</Fragment>
+		);
+	}
+
 	render() {
-		const {
-			siteId,
-			siteIsJetpack,
-			isSearchEligible,
-			searchModuleActive,
-			fields,
-			translate,
-			customizerUrl,
-		} = this.props;
-
-		// for now, don't even show upgrade nudge
-		if ( ! fields.jetpack_search_supported && ! isSearchEligible ) {
-			const upgradeTitle = siteIsJetpack
-				? translate( 'Add faster, more advanced searching to your site with Jetpack Professional' )
-				: translate(
-						'Add faster, more advanced searching to your site with WordPress.com Business'
-				  );
-			return (
-				<div>
-					<SettingsSectionHeader title={ translate( 'Jetpack Search' ) } />
-
-					<Banner
-						description={
-							<div>
-								<p>
-									{ translate(
-										'The built-in WordPress search is great for sites without much content. But as your site grows, searches slow down and return less relevant results.'
-									) }
-								</p>
-								<p>
-									{ translate(
-										'Jetpack Search replaces the built-in search with a fast, scalable, customizable, and highly-relevant search hosted in the WordPress.com cloud. The result: Your users find the content they want, faster.'
-									) }
-								</p>
-							</div>
-						}
-						event={ 'calypso_jetpack_search_settings_upgrade_nudge' }
-						feature={ FEATURE_SEARCH }
-						plan={ siteIsJetpack ? PLAN_JETPACK_BUSINESS : PLAN_BUSINESS }
-						title={ upgradeTitle }
-					/>
-				</div>
-			);
-		}
-
 		return (
 			<div className="site-settings__search-block">
-				{ siteId && <QueryJetpackConnection siteId={ siteId } /> }
-
-				<SettingsSectionHeader title={ translate( 'Jetpack Search' ) } />
-
-				<CompactCard className="search__card site-settings__traffic-settings">
-					{ siteIsJetpack ? this.renderJetpackSettings() : this.renderWPComSettings() }
-				</CompactCard>
-				{ ( searchModuleActive || fields.jetpack_search_enabled ) && (
-					<CompactCard href={ customizerUrl } target={ siteIsJetpack ? 'external' : null }>
-						{ translate( 'Add Search Widget' ) }
-					</CompactCard>
+				{ this.props.siteId && <QueryJetpackConnection siteId={ this.props.siteId } /> }
+				{ this.props.siteId && <QuerySitePurchases siteId={ this.props.siteId } /> }
+				<SettingsSectionHeader title={ this.props.translate( 'Jetpack Search' ) } />
+				{ this.props.isLoading ? (
+					<Banner title="Loading..." plan={ PRODUCT_JETPACK_SEARCH } />
+				) : (
+					<Fragment>
+						{ ! this.props.fields.jetpack_search_supported && ! this.props.isSearchEligible
+							? this.renderUpgradeNotice()
+							: this.renderSettingsCard() }
+					</Fragment>
 				) }
 			</div>
 		);
 	}
 }
 
+const hasBusinessPlan = overSome( isJetpackBusiness, isBusiness, isEnterprise, isEcommerce );
+const checkForSearchProduct = purchase =>
+	purchase.active && isJetpackSearch( purchase.productSlug );
 export default connect( state => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
+	const hasSearchProduct = getSitePurchases( state, siteId ).find( checkForSearchProduct );
 	const isSearchEligible =
-		site && site.plan && ( hasBusinessPlan( site.plan ) || isVipPlan( site.plan ) );
+		( site && site.plan && ( hasBusinessPlan( site.plan ) || isVipPlan( site.plan ) ) ) ||
+		!! hasSearchProduct;
 
 	return {
 		siteId,
 		activatingSearchModule:
 			!! isActivatingJetpackModule( state, siteId, 'search' ) ||
 			!! isDeactivatingJetpackModule( state, siteId, 'search' ),
-		isSearchEligible: isSearchEligible,
+		isSearchEligible,
+		isLoading: isFetchingSitePurchases( state ),
 		site: getSelectedSite( state ),
 		siteSlug: getSelectedSiteSlug( state ),
 		siteIsJetpack: isJetpackSite( state, siteId ),

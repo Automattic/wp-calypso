@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -906,6 +905,67 @@ const contextLinksForSection = {
 			),
 		},
 	],
+	hosting: [
+		{
+			link: localizeUrl( 'https://en.support.wordpress.com/sftp/' ),
+			post_id: 159771,
+			title: translate( 'SFTP on WordPress.com' ),
+			description: translate(
+				"Access and edit your website's files directly by using an SFTP client."
+			),
+		},
+		{
+			link: localizeUrl( 'https://en.support.wordpress.com/phpmyadmin-and-mysql/' ),
+			post_id: 159822,
+			title: translate( 'phpMyAdmin and MySQL' ),
+			description: translate(
+				'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
+			),
+		},
+		{
+			link: localizeUrl( 'https://en.support.wordpress.com/php-version-switching/' ),
+			post_id: 160597,
+			title: translate( 'PHP Version Switching' ),
+			description: translate(
+				'Sites on the Business Plan using custom plugins and/or custom themes and any site on the eCommerce Plan, now have the option to switch PHP versions.'
+			),
+		},
+	],
+	checkout: [
+		{
+			link: localizeUrl( 'https://en.support.wordpress.com/plan-features/' ),
+			post_id: 134698,
+			title: translate( 'WordPress.com Plans' ),
+			description: translate(
+				'Learn about the capabilities and features that the different plans unlock for your site.'
+			),
+		},
+		{
+			link: localizeUrl( 'https://en.support.wordpress.com/jetpack-add-ons/' ),
+			post_id: 115025,
+			title: translate( 'Jetpack Plans' ),
+			description: translate(
+				'Learn about the free Jetpack plugin, its benefits, and the useful capabilities and features that a Jetpack plan unlocks.'
+			),
+		},
+		{
+			link: localizeUrl( 'https://en.support.wordpress.com/manage-purchases/' ),
+			post_id: 111349,
+			title: translate( 'Manage Purchases and Refund Policy' ),
+			description: translate(
+				'Have a question or need to change something about a purchase you have made? Learn how.'
+			),
+		},
+		{
+			link: localizeUrl( 'https://en.support.wordpress.com/auto-renewal/' ),
+			post_id: 110924,
+			title: translate( 'Subscriptions for Plans and Domains' ),
+			description: translate(
+				'Your WordPress.com plans and any domains you add to your sites are based on a yearly ' +
+					'subscription that renews automatically.'
+			),
+		},
+	],
 };
 
 /*
@@ -1321,6 +1381,11 @@ const toursForSection = {
 };
 
 export function getContextResults( section ) {
+	// Posts and Pages have a common help section
+	if ( section === 'posts' || section === 'pages' ) {
+		section = 'posts-pages';
+	}
+
 	// make sure editorially to show at most one tour and one video at once
 	// `first` is a safe-guard in case that fails
 	const video = first( get( videosForSection, section ) );

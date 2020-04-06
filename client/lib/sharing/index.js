@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -17,11 +15,13 @@ const requestExternalAccess = ( url, cb ) => {
 	);
 
 	popupMonitor.once( 'close', () => {
-		let keyringId = null;
+		const result = {};
 		if ( lastMessage && lastMessage.keyring_id ) {
-			keyringId = Number( lastMessage.keyring_id );
+			result.keyring_id = Number( lastMessage.keyring_id );
+			result.id_token = lastMessage.id_token;
+			result.user = lastMessage.user;
 		}
-		cb( keyringId );
+		cb( result );
 	} );
 
 	popupMonitor.on( 'message', message => ( lastMessage = message ) );

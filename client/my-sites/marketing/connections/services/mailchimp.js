@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,6 +13,8 @@ import { SharingService, connectFor } from 'my-sites/marketing/connections/servi
 
 export class Mailchimp extends SharingService {
 	static propTypes = {
+		// This foreign propTypes access should be safe because we expect all of them to be removed
+		// eslint-disable-next-line react/forbid-foreign-prop-types
 		...SharingService.propTypes,
 		deleteStoredKeyringConnection: PropTypes.func,
 	};
@@ -37,7 +37,7 @@ export class Mailchimp extends SharingService {
 		this.props.deleteStoredKeyringConnection( last( this.props.keyringConnections ) );
 	};
 
-	componentWillReceiveProps( { availableExternalAccounts } ) {
+	UNSAFE_componentWillReceiveProps( { availableExternalAccounts } ) {
 		if ( ! isEqual( this.props.availableExternalAccounts, availableExternalAccounts ) ) {
 			this.setState( {
 				isConnecting: false,

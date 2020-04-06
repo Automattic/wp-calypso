@@ -1,7 +1,6 @@
 /**
  * /* eslint-disable wpcalypso/jsx-classname-namespace
  *
- * @format
  */
 
 /**
@@ -13,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 
 const ProductListItemPlaceholder = ( { translate } ) => (
 	<CompactCard className="editor-simple-payments-modal__list-item is-placeholder">

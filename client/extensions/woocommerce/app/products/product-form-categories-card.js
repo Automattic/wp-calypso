@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { find, pick, compact, escape, unescape } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';

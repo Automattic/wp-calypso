@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,11 +20,11 @@ class QueryShortcode extends Component {
 		fetchShortcode: PropTypes.func,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId !== nextProps.siteId || this.props.shortcode !== nextProps.shortcode ) {
 			this.request( nextProps );
 		}

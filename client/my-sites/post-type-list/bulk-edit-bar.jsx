@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,13 +8,12 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Count from 'components/count';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
 import { isMultiSelectEnabled, getSelectedPostsCount } from 'state/ui/post-type-list/selectors';
 import { toggleMultiSelect } from 'state/ui/post-type-list/actions';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Style dependencies

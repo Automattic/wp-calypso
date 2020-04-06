@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -18,7 +17,7 @@ const keys = { tab: 9, enter: 13, esc: 27, spaceBar: 32, upArrow: 38, downArrow:
  *
  * Suggestions can be provided via the suggestions prop, or by the connectUserMentions higher-order component.
  *
- * @example: addUserMentions( Component )
+ * @example addUserMentions( Component )
  *
  * @param {object} WrappedComponent - React component to wrap
  * @returns {object} the enhanced component
@@ -50,7 +49,7 @@ export default WrappedComponent =>
 			}
 		}
 
-		componentWillUpdate( nextProps, nextState ) {
+		UNSAFE_componentWillUpdate( nextProps, nextState ) {
 			// Update position of popover if going from invisible to visible state.
 			if ( ! this.state.showPopover && nextState.showPopover ) {
 				this.updatePosition( nextState );

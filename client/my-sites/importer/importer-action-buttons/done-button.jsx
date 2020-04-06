@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -75,7 +74,7 @@ export class DoneButton extends React.PureComponent {
 
 		return (
 			<ImporterActionButton primary onClick={ this.handleClick }>
-				{ translate( 'View Site' ) }
+				{ translate( 'View site' ) }
 			</ImporterActionButton>
 		);
 	}

@@ -8,7 +8,6 @@
  *  - service worker
  *
  *
- * @format
  * @module notifications
  */
 

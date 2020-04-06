@@ -14,8 +14,8 @@ import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/map
  *
  * @see client/components/seo/meta-title-editor
  *
- * @param  {Object} site Selected site
- * @return {Object} Formats by type e.g. { frontPage: { type: 'siteName' } }
+ * @param  {object} site Selected site
+ * @returns {object} Formats by type e.g. { frontPage: { type: 'siteName' } }
  */
 export default compose(
 	seoTitleFromApi,

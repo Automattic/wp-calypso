@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -52,10 +51,13 @@ const enLabel = 'Thursday November';
 const csLabel = 'čtvrtek listopad';
 
 // helper that looks at the `MomentProvider` instance wrapped inside `Connect(MomentProvider)`
-// and gets the `promise` instance property. The provider exposes the property for testing
-// purposes so that the test can wait for the locale dynamic import to finish.
-const getMomentProviderLoadingPromise = wrapper =>
-	wrapper.childAt( 0 ).instance().loadingLocalePromise;
+// and gets the `loadingLocalePromise` instance property. The provider exposes the property
+// for testing purposes so that the test can wait for the locale dynamic import to finish.
+// After the promise is resolved, the wrapper is updated in order to get the latest rendered tree.
+const getMomentProviderLoadingPromise = async wrapper => {
+	await wrapper.childAt( 0 ).instance().loadingLocalePromise;
+	wrapper.update();
+};
 
 // Set a new locale by dispatching an action to the Redux store and then wait for locale load
 // to finish inside all specified providers.

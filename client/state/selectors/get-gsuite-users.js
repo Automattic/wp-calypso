@@ -1,17 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { get } from 'lodash';
 
 /**
- * Retrieve a list of G Suite users for a site
+ * Retrieves the list of G Suite users for the specified site.
  *
- * @param  {Object} state    Global state tree
- * @param  {String} siteId siteId to request G Suite users for
- * @return {Object}        G Suite Users
+ * @param {object} state - global state tree
+ * @param {number} siteId - identifier of the site
+ * @returns {?Array} the list of G Suite users, null otherwise
  */
 export default function getGSuiteUsers( state, siteId ) {
-	return get( state.gsuiteUsers, [ siteId, 'users' ], null );
+	return get( state, [ 'gsuiteUsers', siteId, 'users' ], null );
 }

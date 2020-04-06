@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -11,10 +12,13 @@ import { connect } from 'react-redux';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PostTypeFilter from 'my-sites/post-type-filter';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import DocumentHead from 'components/data/document-head';
+import FormattedHeader from 'components/formatted-header';
 import PostTypeList from 'my-sites/post-type-list';
 import PostTypeBulkEditBar from 'my-sites/post-type-list/bulk-edit-bar';
 import titlecase from 'to-title-case';
 import Main from 'components/main';
+import { POST_STATUSES } from 'state/posts/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { mapPostStatus } from 'lib/route';
 
@@ -54,7 +58,7 @@ class PostsMain extends React.Component {
 	}
 
 	render() {
-		const { author, category, search, siteId, statusSlug, tag } = this.props;
+		const { author, category, search, siteId, statusSlug, tag, translate } = this.props;
 		const status = mapPostStatus( statusSlug );
 		const query = {
 			author,
@@ -63,18 +67,35 @@ class PostsMain extends React.Component {
 			order: status === 'future' ? 'ASC' : 'DESC',
 			search,
 			site_visibility: ! siteId ? 'visible' : undefined,
-			status,
+			// When searching, search across all statuses so the user can
+			// always find what they are looking for, regardless of what tab
+			// the search was initiated from. Use POST_STATUSES rather than
+			// "any" to do this, since the latter excludes trashed posts.
+			status: search ? POST_STATUSES.join( ',' ) : status,
 			tag,
 			type: 'post',
 		};
+		// Since searches are across all statuses, the status needs to be shown
+		// next to each post.
+		const showPublishedStatus = Boolean( query.search );
 
 		return (
-			<Main className="posts">
+			<Main wideLayout className="posts">
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
+				<DocumentHead title={ translate( 'Posts' ) } />
 				<SidebarNavigation />
+				<FormattedHeader
+					className="posts__page-heading"
+					headerText={ translate( 'Posts' ) }
+					align="left"
+				/>
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
 				{ siteId && <PostTypeBulkEditBar /> }
-				<PostTypeList query={ query } scrollContainer={ document.body } />
+				<PostTypeList
+					query={ query }
+					showPublishedStatus={ showPublishedStatus }
+					scrollContainer={ document.body }
+				/>
 			</Main>
 		);
 	}
@@ -82,4 +103,4 @@ class PostsMain extends React.Component {
 
 export default connect( state => ( {
 	siteId: getSelectedSiteId( state ),
-} ) )( PostsMain );
+} ) )( localize( PostsMain ) );

@@ -33,6 +33,11 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import './style.scss';
 
 /**
+ * Image dependencies
+ */
+import whoopsImage from 'assets/images/illustrations/whoops.svg';
+
+/**
  * Module variables
  */
 const debug = new Debug( 'calypso:invite-accept' );
@@ -44,7 +49,7 @@ class InviteAccept extends React.Component {
 		matchEmailError: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		// The site ID and invite key are required, so only fetch if set
 		if ( this.props.siteId && this.props.inviteKey ) {
 			fetchInvite( this.props.siteId, this.props.inviteKey );
@@ -149,7 +154,7 @@ class InviteAccept extends React.Component {
 			line: this.props.translate( "We weren't able to verify that invitation.", {
 				context: 'Message that is displayed to users when an invitation is invalid.',
 			} ),
-			illustration: '/calypso/images/illustrations/whoops.svg',
+			illustration: whoopsImage,
 		};
 
 		if ( error.error && error.message ) {

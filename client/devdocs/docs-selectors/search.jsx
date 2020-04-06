@@ -1,14 +1,11 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import request from 'superagent';
 import page from 'page';
 import { map } from 'lodash';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -25,23 +22,28 @@ export default class DocsSelectorsSearch extends Component {
 
 	state = {};
 
-	componentWillMount() {
+	componentDidMount() {
 		this.request( this.props.search );
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.search !== this.props.search ) {
-			this.request( nextProps.search );
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.search !== this.props.search ) {
+			this.request( this.props.search );
 		}
 	}
 
-	request = search => {
-		request
-			.get( '/devdocs/service/selectors' )
-			.query( { search } )
-			.then( ( { body: results } ) => {
+	request = async search => {
+		const query = stringify( { search } );
+
+		try {
+			const res = await fetch( `/devdocs/service/selectors?${ query }` );
+			if ( res.ok ) {
+				const results = await res.json();
 				this.setState( { results } );
-			} );
+			}
+		} catch ( error ) {
+			// Do nothing.
+		}
 	};
 
 	onSearch( search ) {
@@ -55,6 +57,7 @@ export default class DocsSelectorsSearch extends Component {
 		return (
 			<div>
 				<SearchCard
+					// eslint-disable-next-line jsx-a11y/no-autofocus
 					autoFocus
 					placeholder="Search selectors…"
 					analyticsGroup="Docs"

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +9,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import PeopleListItem from 'my-sites/people/people-list-item';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
 import ViewersActions from 'lib/viewers/actions';
 import ViewersStore from 'lib/viewers/store';
@@ -158,7 +157,4 @@ class Viewers extends React.PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{ recordGoogleEvent }
-)( localize( Viewers ) );
+export default connect( null, { recordGoogleEvent } )( localize( Viewers ) );

@@ -9,12 +9,12 @@
 
 	& > strong {
 		float: left;
-		width: 50%;
+		margin-right: 5px;
 	}
 
 	& > span {
-		float: right;
-		text-align: right;
+		float: left;
+		text-align: left;
 		width: 50%;
 	}
 }

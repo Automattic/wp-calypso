@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Internal dependencies
  */
@@ -17,7 +16,7 @@ function editorPathFromSite( site ) {
  * Returns a URL to the post editor for a new post on a given site.
  *
  * @param  {object|string} site Site object or site slug
- * @return {string}      URL to post editor
+ * @returns {string}      URL to post editor
  */
 export function newPost( site ) {
 	const sitePath = editorPathFromSite( site );
@@ -28,7 +27,7 @@ export function newPost( site ) {
  * Returns a URL to the editor for a new page on a given site.
  *
  * @param  {object|string} site Site object or site slug
- * @return {string}      URL to page editor
+ * @returns {string}      URL to page editor
  */
 export function newPage( site ) {
 	const sitePath = editorPathFromSite( site );
@@ -39,7 +38,7 @@ export function newPage( site ) {
  * Returns a URL to manage Publicize connections for a given site.
  *
  * @param  {object} site Site object
- * @return {string}      URL to manage Publicize connections
+ * @returns {string}      URL to manage Publicize connections
  */
 export function publicizeConnections( site ) {
 	let url = '/marketing/connections';

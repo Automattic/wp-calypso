@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 
 class Skeleton extends Component {
@@ -16,7 +14,7 @@ class Skeleton extends Component {
 		const { translate } = this.props;
 		return (
 			<div>
-				<CompactCard> { translate( 'Cancelling your Concierge session…' ) } </CompactCard>
+				<CompactCard> { translate( 'Cancelling your Quick Start session…' ) } </CompactCard>
 			</div>
 		);
 	}

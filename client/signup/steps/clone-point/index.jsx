@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,6 +11,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { applySiteOffset } from 'lib/site/timezone';
+import { Card } from '@automattic/components';
 import ActivityLogItem from 'my-sites/activity/activity-log-item';
 import Pagination from 'components/pagination';
 import QuerySites from 'components/data/query-sites';
@@ -36,7 +36,6 @@ class ClonePointStep extends Component {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 		signupDependencies: PropTypes.object,
 	};
@@ -104,35 +103,36 @@ class ClonePointStep extends Component {
 
 		return (
 			<div>
-				<QuerySites siteId={ siteId } />
-				<QuerySiteSettings siteId={ siteId } />
-				<section className="clone-point__wrapper">
-					{ theseLogs.map( log => (
-						<Fragment key={ log.activityId }>
-							{ timePeriod( log ) }
-							<ActivityLogItem
-								key={ log.activityId }
-								siteId={ siteId }
-								activity={ log }
-								cloneOnClick={ this.selectedPoint }
-								disableRestore
-								disableBackup
-								hideRestore
-								enableClone
-							/>
-						</Fragment>
-					) ) }
-				</section>
-				<Pagination
-					className="clone-point__pagination"
-					key="clone-point-pagination"
-					nextLabel={ translate( 'Older' ) }
-					page={ this.state.currentPage }
-					pageClick={ this.changePage }
-					perPage={ PAGE_SIZE }
-					prevLabel={ translate( 'Newer' ) }
-					total={ logs.length }
-				/>
+				<Card className="clone-point__card">
+					<QuerySites siteId={ siteId } />
+					<QuerySiteSettings siteId={ siteId } />
+					<section className="clone-point__wrapper">
+						{ theseLogs.map( log => (
+							<Fragment key={ log.activityId }>
+								{ timePeriod( log ) }
+								<ActivityLogItem
+									key={ log.activityId }
+									siteId={ siteId }
+									activity={ log }
+									cloneOnClick={ this.selectedPoint }
+									disableRestore
+									disableBackup
+									enableClone
+								/>
+							</Fragment>
+						) ) }
+					</section>
+					<Pagination
+						className="clone-point__pagination"
+						key="clone-point-pagination"
+						nextLabel={ translate( 'Older' ) }
+						page={ this.state.currentPage }
+						pageClick={ this.changePage }
+						perPage={ PAGE_SIZE }
+						prevLabel={ translate( 'Newer' ) }
+						total={ logs.length }
+					/>
+				</Card>
 			</div>
 		);
 	}
@@ -171,7 +171,7 @@ class ClonePointStep extends Component {
 	}
 
 	render() {
-		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
+		const { flowName, stepName, positionInFlow, translate } = this.props;
 
 		const headerText = translate( 'Clone point' );
 		const subHeaderText = translate(
@@ -187,7 +187,6 @@ class ClonePointStep extends Component {
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
 				positionInFlow={ positionInFlow }
-				signupProgress={ signupProgress }
 				stepContent={ this.renderStepContent() }
 			/>
 		);

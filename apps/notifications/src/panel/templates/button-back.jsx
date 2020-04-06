@@ -46,7 +46,4 @@ const mapDispatchToProps = {
 	unselectNote: actions.ui.unselectNote,
 };
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( localize( BackButton ) );
+export default connect( null, mapDispatchToProps )( localize( BackButton ) );

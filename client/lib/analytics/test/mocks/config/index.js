@@ -1,5 +1,3 @@
-/** @format */
-
 const config = key => {
 	if ( key === 'mc_analytics_enabled' ) {
 		return true;

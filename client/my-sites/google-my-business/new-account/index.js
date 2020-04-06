@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
@@ -13,8 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import KeyringConnectButton from 'blocks/keyring-connect-button';
@@ -75,6 +72,7 @@ class GoogleMyBusinessNewAccount extends Component {
 	render() {
 		const { siteSlug, translate } = this.props;
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main className="gmb-new-account" wideLayout>
 				<PageViewTracker path="/google-my-business/new/:site" title="Google My Business > New" />
@@ -123,7 +121,10 @@ class GoogleMyBusinessNewAccount extends Component {
 								{ translate( 'Use another Google Account' ) }
 							</KeyringConnectButton>
 
-							<Button href={ `/stats/${ siteSlug }` } onClick={ this.handleNoThanksClick }>
+							<Button
+								href={ `/marketing/tools/${ siteSlug }` }
+								onClick={ this.handleNoThanksClick }
+							>
 								{ translate( 'No thanks' ) }
 							</Button>
 						</div>

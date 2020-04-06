@@ -1,26 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 
-/**
- * Module variables
- */
-
-/**
- * Prevents the event from bubbling up the DOM tree
- * @param {SyntheticEvent} event - Browser's native event wrapper
- * @return {void}
- */
+// Prevents the event from bubbling up the DOM tree
 const stopPropagation = event => event.stopPropagation();
 
-export default function SelectDropdownLabel( props ) {
+export default function SelectDropdownLabel( { children } ) {
 	return (
-		<li onClick={ stopPropagation } className="select-dropdown__label">
-			<label>{ props.children }</label>
+		<li onClick={ stopPropagation } role="presentation" className="select-dropdown__label">
+			<label>{ children }</label>
 		</li>
 	);
 }

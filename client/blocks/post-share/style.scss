@@ -1,4 +1,4 @@
-$section-border: solid 1px darken( $sidebar-bg-color, 5% );
+$section-border: solid 1px var( --color-neutral-5 );
 
 .post-share .card.banner,
 .card.post-share__upgrade-nudge {
@@ -10,7 +10,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	border-top: $section-border;
 	margin: 0;
 	position: relative;
-	background-color: var( --color-white );
+	background-color: var( --color-surface );
 
 	.notice {
 		margin-bottom: 0;
@@ -49,11 +49,11 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 
 .post-share__wrapper.is-placeholder {
 	padding-bottom: 24px;
-	border-bottom: 1px solid rgba( var( --color-neutral-100-rgb ), 0.5 );
+	border-bottom: 1px solid rgba( var( --color-neutral-10-rgb ), 0.5 );
 }
 
 .post-share__placeholder {
-	@include placeholder;
+	@include placeholder();
 	margin: 0 0 0 24px;
 	width: 300px;
 	height: 80px;
@@ -131,7 +131,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	align-items: center;
 	cursor: pointer;
 	display: flex;
-	color: var( --color-neutral-100 );
+	color: var( --color-neutral-10 );
 	margin-top: 16px;
 
 	&:first-of-type {
@@ -143,7 +143,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	}
 
 	&.is-active {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 }
 
@@ -162,7 +162,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	overflow: hidden;
 
 	&::before {
-		background-color: var( --color-white );
+		background-color: var( --color-surface );
 		border-radius: 3px;
 		content: '';
 		display: block;
@@ -229,7 +229,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	}
 
 	.social-logo.google-plus {
-		color: var( --color-gplus );
+		color: var( --color-google-plus );
 	}
 
 	.social-logo.linkedin {
@@ -284,7 +284,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	margin: 0 auto 1px;
 	padding: 16px;
 
-	background: var( --color-white );
+	background: var( --color-surface );
 
 	border-top: $section-border;
 
@@ -422,14 +422,14 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 }
 
 .post-share__external-url {
-	color: var( --color-neutral-100 );
+	color: var( --color-neutral-10 );
 	transition: color 200ms;
 	height: 24px;
 	width: 24px;
 
 	&:hover,
 	&:focus {
-		color: var( --color-neutral-400 );
+		color: var( --color-neutral-40 );
 	}
 }
 

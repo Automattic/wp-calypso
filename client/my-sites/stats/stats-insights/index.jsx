@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,6 +13,7 @@ import { localize } from 'i18n-calypso';
 import DocumentHead from 'components/data/document-head';
 import StatsNavigation from 'blocks/stats-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import AllTime from 'my-sites/stats/all-time/';
 import Comments from '../stats-comments';
 import Reach from '../stats-reach';
@@ -54,9 +53,14 @@ const StatsInsights = props => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Main wideLayout>
-			<DocumentHead title={ translate( 'Stats' ) } />
+			<DocumentHead title={ translate( 'Stats and Insights' ) } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
 			<SidebarNavigation />
+			<FormattedHeader
+				className="stats__section-header"
+				headerText={ translate( 'Stats and Insights' ) }
+				align="left"
+			/>
 			<StatsNavigation selectedItem={ 'insights' } siteId={ siteId } slug={ siteSlug } />
 			<div>
 				<PostingActivity />
@@ -101,7 +105,6 @@ const StatsInsights = props => {
 
 StatsInsights.propTypes = {
 	followList: PropTypes.object.isRequired,
-	moment: PropTypes.func,
 	translate: PropTypes.func,
 };
 
@@ -114,7 +117,4 @@ const connectComponent = connect( state => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsInsights );
+export default flowRight( connectComponent, localize )( StatsInsights );

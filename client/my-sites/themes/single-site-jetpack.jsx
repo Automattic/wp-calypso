@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,11 +12,13 @@ import { connect } from 'react-redux';
 import Main from 'components/main';
 import CurrentTheme from 'my-sites/themes/current-theme';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 import ThanksModal from 'my-sites/themes/thanks-modal';
+import AutoLoadingHomepageModal from 'my-sites/themes/auto-loading-homepage-modal';
 import config from 'config';
+import { isPartnerPurchase } from 'lib/purchases';
 import JetpackReferrerMessage from './jetpack-referrer-message';
 import JetpackUpgradeMessage from './jetpack-upgrade-message';
-import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
 import { connectOptions } from './theme-options';
 import Banner from 'components/banner';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_JETPACK_BUSINESS } from 'lib/plans/constants';
@@ -27,10 +27,10 @@ import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
 import ThemesSelection from './themes-selection';
 import { addTracking } from './helpers';
-import { hasFeature, isRequestingSitePlans } from 'state/sites/plans/selectors';
+import { getCurrentPlan, hasFeature, isRequestingSitePlans } from 'state/sites/plans/selectors';
+import { getByPurchaseId } from 'state/purchases/selectors';
 import { getLastThemeQuery, getThemesFoundForQuery } from 'state/themes/selectors';
 import {
-	canJetpackSiteManage,
 	hasJetpackSiteJetpackThemes,
 	hasJetpackSiteJetpackThemesExtendedFeatures,
 	isJetpackSiteMultiSite,
@@ -54,11 +54,12 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 	const {
 		analyticsPath,
 		analyticsPageTitle,
-		canManage,
+		currentPlan,
 		emptyContent,
 		filter,
 		getScreenshotOption,
 		hasJetpackThemes,
+		purchase,
 		showWpcomThemesList,
 		search,
 		siteId,
@@ -82,20 +83,24 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 	if ( ! hasJetpackThemes ) {
 		return <JetpackUpgradeMessage siteId={ siteId } />;
 	}
-	if ( ! canManage ) {
-		return <JetpackManageDisabledMessage siteId={ siteId } />;
-	}
+
+	const isPartnerPlan = purchase && isPartnerPurchase( purchase );
 
 	return (
 		<Main className="themes">
 			<SidebarNavigation />
+			<FormattedHeader
+				className="themes__page-heading"
+				headerText={ translate( 'Themes' ) }
+				align="left"
+			/>
 			<CurrentTheme siteId={ siteId } />
-			{ ! requestingSitePlans && ! hasUnlimitedPremiumThemes && (
+			{ ! requestingSitePlans && currentPlan && ! hasUnlimitedPremiumThemes && ! isPartnerPlan && (
 				<Banner
 					plan={ PLAN_JETPACK_BUSINESS }
 					title={ translate( 'Access all our premium themes with our Professional plan!' ) }
 					description={ translate(
-						'In addition to more than 100 premium themes, ' +
+						'In addition to our collection of premium themes, ' +
 							'get Elasticsearch-powered site search, real-time offsite backups, ' +
 							'and security scanning.'
 					) }
@@ -110,6 +115,7 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 				{ siteId && <QuerySitePlans siteId={ siteId } /> }
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 				<ThanksModal source={ 'list' } />
+				<AutoLoadingHomepageModal source={ 'list' } />
 				{ showWpcomThemesList && (
 					<div>
 						<ConnectedThemesSelection
@@ -148,6 +154,7 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 } );
 
 export default connect( ( state, { siteId, tier } ) => {
+	const currentPlan = getCurrentPlan( state, siteId );
 	const isMultisite = isJetpackSiteMultiSite( state, siteId );
 	const showWpcomThemesList =
 		hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) && ! isMultisite;
@@ -160,8 +167,9 @@ export default connect( ( state, { siteId, tier } ) => {
 		emptyContent = ! siteThemesCount && ! wpcomThemesCount ? null : <div />;
 	}
 	return {
-		canManage: canJetpackSiteManage( state, siteId ),
+		currentPlan,
 		hasJetpackThemes: hasJetpackSiteJetpackThemes( state, siteId ),
+		purchase: currentPlan ? getByPurchaseId( state, currentPlan.id ) : null,
 		tier,
 		showWpcomThemesList,
 		emptyContent,

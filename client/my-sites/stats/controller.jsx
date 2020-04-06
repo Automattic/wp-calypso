@@ -1,17 +1,18 @@
-/** @format */
 /**
  * External dependencies
  */
+import { isDesktop } from '@automattic/viewport';
 import React from 'react';
 import page from 'page';
 import i18n from 'i18n-calypso';
 import { find, pick, get } from 'lodash';
+import moment from 'moment';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { getSiteFragment, getStatsDefaultSitePage } from 'lib/route';
-import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import { recordPlaceholdersTiming } from 'lib/perfmon';
 import { getSite, getSiteOption } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
@@ -25,7 +26,6 @@ import StatsSummary from './summary';
 import StatsPostDetail from './stats-post-detail';
 import StatsCommentFollows from './comment-follows';
 import WordAds from './wordads';
-import { isDesktop } from 'lib/viewport';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 function rangeOfPeriod( period, date ) {
@@ -52,7 +52,7 @@ function rangeOfPeriod( period, date ) {
 
 function getNumPeriodAgo( momentSiteZone, date, period ) {
 	const endOfCurrentPeriod = momentSiteZone.endOf( period );
-	const durationAgo = i18n.moment.duration( endOfCurrentPeriod.diff( date ) );
+	const durationAgo = moment.duration( endOfCurrentPeriod.diff( date ) );
 	let numPeriodAgo;
 
 	switch ( period ) {
@@ -130,7 +130,7 @@ function getSiteFilters( siteId ) {
 
 function getMomentSiteZone( state, siteId ) {
 	const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
-	return i18n.moment().utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 );
+	return moment().utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 );
 }
 
 export default {
@@ -203,7 +203,7 @@ export default {
 			return next();
 		}
 
-		analytics.mc.bumpStat( 'calypso_stats_overview_period', activeFilter.period );
+		bumpStat( 'calypso_stats_overview_period', activeFilter.period );
 
 		context.primary = <StatsOverview period={ activeFilter.period } path={ context.pathname } />;
 		next();
@@ -245,11 +245,10 @@ export default {
 		}
 
 		const momentSiteZone = getMomentSiteZone( state, siteId );
-		const isValidStartDate =
-			queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid();
+		const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
 
 		const date = isValidStartDate
-			? i18n.moment( queryOptions.startDate ).locale( 'en' )
+			? moment( queryOptions.startDate ).locale( 'en' )
 			: rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;
 
 		const parsedPeriod = isValidStartDate
@@ -259,7 +258,7 @@ export default {
 		// eslint-disable-next-line no-nested-ternary
 		const numPeriodAgo = parsedPeriod ? ( parsedPeriod > 9 ? '10plus' : '-' + parsedPeriod ) : '';
 
-		analytics.mc.bumpStat( 'calypso_stats_site_period', activeFilter.period + numPeriodAgo );
+		bumpStat( 'calypso_stats_site_period', activeFilter.period + numPeriodAgo );
 		recordPlaceholdersTiming();
 
 		const validTabs = [ 'views', 'visitors', 'likes', 'comments' ];
@@ -307,7 +306,7 @@ export default {
 			'searchterms',
 			'annualstats',
 		];
-		let momentSiteZone = i18n.moment();
+		let momentSiteZone = moment();
 
 		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? site.ID || 0 : 0;
@@ -330,13 +329,12 @@ export default {
 
 		const gmtOffset = getSiteOption( context.store.getState(), siteId, 'gmt_offset' );
 		if ( Number.isFinite( gmtOffset ) ) {
-			momentSiteZone = i18n.moment().utcOffset( gmtOffset );
+			momentSiteZone = moment().utcOffset( gmtOffset );
 		}
-		const isValidStartDate =
-			queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid();
+		const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
 		const date = isValidStartDate
-			? i18n.moment( queryOptions.startDate )
-			: momentSiteZone.endOf( activeFilter.period );
+			? moment( queryOptions.startDate ).locale( 'en' )
+			: momentSiteZone.endOf( activeFilter.period ).locale( 'en' );
 		const period = rangeOfPeriod( activeFilter.period, date );
 
 		const extraProps =
@@ -433,11 +431,10 @@ export default {
 		}
 
 		const momentSiteZone = getMomentSiteZone( state, siteId );
-		const isValidStartDate =
-			queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid();
+		const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
 
 		const date = isValidStartDate
-			? i18n.moment( queryOptions.startDate ).locale( 'en' )
+			? moment( queryOptions.startDate ).locale( 'en' )
 			: rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;
 
 		const parsedPeriod = isValidStartDate
@@ -447,10 +444,7 @@ export default {
 		// eslint-disable-next-line no-nested-ternary
 		const numPeriodAgo = parsedPeriod ? ( parsedPeriod > 9 ? '10plus' : '-' + parsedPeriod ) : '';
 
-		analytics.mc.bumpStat(
-			'calypso_wordads_stats_site_period',
-			activeFilter.period + numPeriodAgo
-		);
+		bumpStat( 'calypso_wordads_stats_site_period', activeFilter.period + numPeriodAgo );
 
 		context.primary = (
 			<WordAds

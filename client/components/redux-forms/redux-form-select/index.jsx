@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,7 +10,6 @@ import { Field } from 'redux-form';
  */
 import FormSelect from 'components/forms/form-select';
 
-// eslint-disable-next-line no-unused-vars
 const SelectRenderer = ( { input, meta, ...props } ) => <FormSelect { ...input } { ...props } />;
 
 const ReduxFormSelect = props => <Field component={ SelectRenderer } { ...props } />;

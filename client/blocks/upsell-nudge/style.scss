@@ -1,0 +1,100 @@
+.upsell-nudge.banner.card {
+	display: flex;
+	align-items: center;
+}
+
+.upsell-nudge.banner.card.is-compact {
+	background-color: var( --color-neutral-80 );
+	border-left-color: var( --color-accent );
+	box-shadow: none;
+	border-left-width: 4px;
+	color: var( --color-text-inverted );
+	margin-top: -1px;
+	margin-bottom: -1px;
+
+	a,
+	button {
+		border: none;
+		box-shadow: none;
+		color: var( --color-text-inverted );
+	}
+
+	.banner__icon-circle,
+	.banner__icon {
+		margin-top: -2px;
+		margin-right: 0.25em;
+	}
+	.dismissible-card__close-icon {
+		fill: var( --color-text-inverted );
+		margin-left: 0.75em;
+	}
+	.banner__content {
+		color: var( --color-text-inverted );
+		padding: 0 0 0 8px;
+	}
+	.banner__description {
+		color: var( --color-neutral-5 );
+	}
+	.banner__info .banner__title {
+		color: var( --color-text-inverted );
+		font-weight: normal;
+	}
+	.card__link-indicator {
+		fill: var( --color-text-inverted );
+	}
+	.banner__icon-circle,
+	.banner__icon {
+		width: auto;
+		height: auto;
+		color: var( --color-text-inverted );
+		border-radius: 0;
+		background: none;
+		padding: 0;
+	}
+
+	&:hover {
+		box-shadow: none;
+	}
+}
+
+.upsell-nudge.banner.card.is-compact.is-card-link {
+	padding-right: 12px;
+
+	.card__link-indicator {
+		display: none;
+	}
+
+	&:hover {
+		box-shadow: none;
+	}
+}
+
+.upsell-nudge .banner__content {
+	margin-right: auto;
+}
+
+.upsell-nudge .banner__info .banner__title {
+	margin-right: 8px;
+}
+
+.upsell-nudge .banner__action {
+	margin-top: 3px;
+	margin-left: auto;
+}
+
+.upsell-nudge .dismissible-card__close-icon {
+	margin-left: 1em;
+	order: 2;
+
+	@include breakpoint( '>480px' ) {
+		margin-top: 0;
+		position: relative;
+		top: auto;
+		right: auto;
+	}
+}
+
+.upsell-nudge .dismissible-card__close-icon.is-dismissible .banner__action {
+	margin-top: 3px;
+	margin-right: 0;
+}

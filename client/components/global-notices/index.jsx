@@ -1,62 +1,65 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
  */
+import notices from 'notices';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import GlobalNoticesContainer from './container';
-import notices from 'notices';
-import observe from 'lib/mixins/data-observe'; // eslint-disable-line no-restricted-imports
-import { connect } from 'react-redux';
 import { getNotices } from 'state/notices/selectors';
 import { removeNotice } from 'state/notices/actions';
+import GlobalNoticesContainer from './container';
 
-// eslint-disable-next-line react/prefer-es6-class
-export const GlobalNotices = createReactClass( {
-	displayName: 'GlobalNotices',
+export class GlobalNotices extends Component {
+	update = () => {
+		this.forceUpdate();
+	};
 
-	mixins: [ observe( 'notices' ) ],
+	componentDidMount() {
+		if ( this.props.notices ) {
+			this.props.notices.on( 'change', this.update );
+		}
+	}
 
-	propTypes: {
-		id: PropTypes.string,
-		notices: PropTypes.oneOfType( [ PropTypes.object, PropTypes.array ] ),
+	componentWillUnmount() {
+		if ( this.props.notices ) {
+			this.props.notices.off( 'change', this.update );
+		}
+	}
 
-		// Connected props
-		removeNotice: PropTypes.func.isRequired,
-		storeNotices: PropTypes.array.isRequired,
-	},
+	componentDidUpdate( prevProps ) {
+		if ( this.props.notices !== prevProps.notices ) {
+			// unbind the change event from the previous property instance
+			if ( prevProps.notices ) {
+				prevProps.notices.off( 'change', this.update );
+			}
 
-	getDefaultProps() {
-		return {
-			id: 'overlay-notices',
-			notices: Object.freeze( [] ),
-		};
-	},
+			// bind the change event for the next property instance
+			if ( this.props.notices ) {
+				this.props.notices.on( 'change', this.update );
+			}
+		}
+	}
 
-	removeNoticeStoreNotice: notice => () => {
+	removeNoticeStoreNotice = notice => () => {
 		if ( notice ) {
 			notices.removeNotice( notice );
 		}
-	},
+	};
 
-	// Auto-bound by createReactClass.
-	// Migrate to arrow => when using class extends React.Component
-	removeReduxNotice( noticeId, onDismissClick ) {
+	removeReduxNotice = ( noticeId, onDismissClick ) => {
 		return e => {
 			if ( onDismissClick ) {
 				onDismissClick( e );
 			}
 			this.props.removeNotice( noticeId );
 		};
-	},
+	};
 
 	render() {
 		const noticesRaw = this.props.notices[ this.props.id ] || [];
@@ -110,8 +113,22 @@ export const GlobalNotices = createReactClass( {
 		}
 
 		return <GlobalNoticesContainer id={ this.props.id }>{ noticesList }</GlobalNoticesContainer>;
-	},
-} );
+	}
+
+	static propTypes = {
+		id: PropTypes.string,
+		notices: PropTypes.oneOfType( [ PropTypes.object, PropTypes.array ] ),
+
+		// Connected props
+		removeNotice: PropTypes.func.isRequired,
+		storeNotices: PropTypes.array.isRequired,
+	};
+
+	static defaultProps = {
+		id: 'overlay-notices',
+		notices: Object.freeze( [] ),
+	};
+}
 
 export default connect(
 	state => ( {

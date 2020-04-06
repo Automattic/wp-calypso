@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,6 +8,7 @@ import { defer } from 'lodash';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import Dispatcher from 'dispatcher';
 import { userCan } from 'lib/site/utils';
 import wpcom from 'lib/wp';
@@ -72,9 +72,9 @@ const getRejectedPromise = errorToPass => {
 /**
  * Return plugin id depending if the site is a jetpack site
  *
- * @param {Object} site - site object
- * @param {Object} plugin - plugin object
- * @return {String} plugin if
+ * @param {object} site - site object
+ * @param {object} plugin - plugin object
+ * @returns {string} plugin if
  */
 const getPluginId = ( site, plugin ) => {
 	return site.jetpack ? plugin.id : plugin.slug;
@@ -83,9 +83,9 @@ const getPluginId = ( site, plugin ) => {
 /**
  * Return a SitePlugin instance used to handle the plugin
  *
- * @param {Object} site - site object
- * @param {String} pluginId - plugin identifier
- * @return {SitePlugin} SitePlugin instance
+ * @param {object} site - site object
+ * @param {string} pluginId - plugin identifier
+ * @returns {object} SitePlugin instance
  */
 const getPluginHandler = ( site, pluginId ) => {
 	const siteHandler = wpcom.site( site.ID );
@@ -99,10 +99,10 @@ const getPluginHandler = ( site, pluginId ) => {
 /**
  * Return the bound plugin method
  *
- * @param {Object} site - site object
- * @param {String} pluginId - plugin identifier
- * @param {String} method - plugin method to bind
- * @return {Function} bound function
+ * @param {object} site - site object
+ * @param {string} pluginId - plugin identifier
+ * @param {string} method - plugin method to bind
+ * @returns {Function} bound function
  */
 const getPluginBoundMethod = ( site, pluginId, method ) => {
 	const handler = getPluginHandler( site, pluginId );
@@ -116,14 +116,14 @@ const recordEvent = ( eventType, plugin, site, error ) => {
 			plugin: plugin.slug,
 			error: error.error,
 		} );
-		analytics.mc.bumpStat( eventType, 'failed' );
+		bumpStat( eventType, 'failed' );
 		return;
 	}
 	analytics.tracks.recordEvent( eventType + '_success', {
 		site: site.ID,
 		plugin: plugin.slug,
 	} );
-	analytics.mc.bumpStat( eventType, 'succeeded' );
+	bumpStat( eventType, 'succeeded' );
 };
 
 const PluginsActions = {
@@ -380,7 +380,7 @@ const PluginsActions = {
 				( error && error.error !== 'activation_error' ) ||
 				( ! ( data && data.active ) && ! error )
 			) {
-				analytics.mc.bumpStat( 'calypso_plugin_activated', 'failed' );
+				bumpStat( 'calypso_plugin_activated', 'failed' );
 				analytics.tracks.recordEvent( 'calypso_plugin_activated_error', {
 					error: error && error.error ? error.error : 'Undefined activation error',
 					site: site.ID,
@@ -390,7 +390,7 @@ const PluginsActions = {
 				return;
 			}
 
-			analytics.mc.bumpStat( 'calypso_plugin_activated', 'succeeded' );
+			bumpStat( 'calypso_plugin_activated', 'succeeded' );
 			analytics.tracks.recordEvent( 'calypso_plugin_activated_success', {
 				site: site.ID,
 				plugin: plugin.slug,
@@ -425,7 +425,7 @@ const PluginsActions = {
 			// return the active state even when the error is empty.
 			// Activation error is ok, because it means the plugin is already active
 			if ( error && error.error !== 'deactivation_error' ) {
-				analytics.mc.bumpStat( 'calypso_plugin_deactivated', 'failed' );
+				bumpStat( 'calypso_plugin_deactivated', 'failed' );
 				analytics.tracks.recordEvent( 'calypso_plugin_deactivated_error', {
 					error: error.error ? error.error : 'Undefined deactivation error',
 					site: site.ID,
@@ -434,7 +434,7 @@ const PluginsActions = {
 
 				return;
 			}
-			analytics.mc.bumpStat( 'calypso_plugin_deactivated', 'succeeded' );
+			bumpStat( 'calypso_plugin_deactivated', 'succeeded' );
 			analytics.tracks.recordEvent( 'calypso_plugin_deactivated_success', {
 				site: site.ID,
 				plugin: plugin.slug,

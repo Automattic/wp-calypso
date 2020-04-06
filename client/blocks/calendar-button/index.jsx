@@ -1,18 +1,16 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import Gridicon from 'gridicons';
+import React, { Component, Fragment } from 'react';
+import Gridicon from 'components/gridicon';
 import classNames from 'classnames';
 import { noop, pick } from 'lodash';
+
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import AsyncLoad from 'components/async-load';
 
 class CalendarButton extends Component {
@@ -28,7 +26,6 @@ class CalendarButton extends Component {
 		events: PropTypes.array,
 		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.function } ),
 		isVisible: PropTypes.bool,
-		rootClassName: PropTypes.string,
 		selectedDay: PropTypes.object,
 		showDelay: PropTypes.number,
 		siteId: PropTypes.number,
@@ -65,54 +62,48 @@ class CalendarButton extends Component {
 
 	togglePopover = () => {
 		if ( this.props.disabled ) {
-			return null;
+			return;
 		}
 
-		return this.setState( { showPopover: ! this.state.showPopover } );
+		this.setState( { showPopover: ! this.state.showPopover } );
 	};
 
-	setPopoverReference = calendarButtonRef => ( this.reference = calendarButtonRef );
+	buttonRef = React.createRef();
 
 	renderCalendarPopover() {
-		const { showPopover } = this.state;
-
-		if ( ! showPopover ) {
+		if ( ! this.state.showPopover ) {
 			return null;
 		}
 
-		const calendarProperties = Object.assign(
-			{},
-			pick( this.props, [
-				'autoPosition',
-				'closeOnEsc',
-				'disabledDays',
-				'events',
-				'showOutsideDays',
-				'ignoreContext',
-				'isVisible',
-				'modifiers',
-				'rootClassName',
-				'selectedDay',
-				'showDelay',
-				'siteId',
-				'onDateChange',
-				'onMonthChange',
-				'onDayMouseEnter',
-				'onDayMouseLeave',
-				'onShow',
-				'onClose',
-			] )
-		);
+		const calendarProperties = pick( this.props, [
+			'autoPosition',
+			'closeOnEsc',
+			'disabledDays',
+			'events',
+			'showOutsideDays',
+			'ignoreContext',
+			'isVisible',
+			'modifiers',
+			'selectedDay',
+			'showDelay',
+			'siteId',
+			'onDateChange',
+			'onMonthChange',
+			'onDayMouseEnter',
+			'onDayMouseLeave',
+			'onShow',
+			'onClose',
+		] );
 
 		return (
 			<AsyncLoad
 				{ ...calendarProperties }
 				require="blocks/calendar-popover"
-				context={ this.reference }
-				isVisible={ showPopover }
+				placeholder={ null }
+				isVisible
+				context={ this.buttonRef.current }
 				position={ this.props.popoverPosition }
 				onClose={ this.closePopover }
-				placeholder={ null }
 			/>
 		);
 	}
@@ -122,31 +113,30 @@ class CalendarButton extends Component {
 	}
 
 	render() {
-		const buttonsProperties = Object.assign(
-			{},
-			pick( this.props, [
-				'compact',
-				'disabled',
-				'primary',
-				'scary',
-				'busy',
-				'href',
-				'borderless',
-				'target',
-				'rel',
-			] )
-		);
+		const buttonsProperties = pick( this.props, [
+			'compact',
+			'disabled',
+			'primary',
+			'scary',
+			'busy',
+			'href',
+			'borderless',
+			'target',
+			'rel',
+		] );
 
 		return (
-			<Button
-				{ ...buttonsProperties }
-				className={ classNames( 'calendar-button', this.props.className ) }
-				ref={ this.setPopoverReference }
-				onClick={ this.togglePopover }
-			>
-				{ this.renderCalendarContent() }
+			<Fragment>
+				<Button
+					{ ...buttonsProperties }
+					className={ classNames( 'calendar-button', this.props.className ) }
+					ref={ this.buttonRef }
+					onClick={ this.togglePopover }
+				>
+					{ this.renderCalendarContent() }
+				</Button>
 				{ this.renderCalendarPopover() }
-			</Button>
+			</Fragment>
 		);
 	}
 }

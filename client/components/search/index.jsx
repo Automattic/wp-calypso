@@ -1,21 +1,20 @@
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { debounce, noop, uniqueId } from 'lodash';
 import i18n from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import Gridicon from 'components/gridicon';
 import Spinner from 'components/spinner';
-import { isMobile } from 'lib/viewport';
 import TranslatableString from 'components/translatable/proptype';
+import { gaRecordEvent } from 'lib/analytics/ga';
 
 /**
  * Style dependencies
@@ -116,7 +115,7 @@ class Search extends Component {
 
 	setOverlayRef = overlay => ( this.overlay = overlay );
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.onSearch !== this.props.onSearch ||
 			nextProps.delaySearch !== this.props.delaySearch
@@ -126,7 +125,7 @@ class Search extends Component {
 				: this.props.onSearch;
 		}
 
-		if ( nextProps.isOpen ) {
+		if ( this.props.isOpen !== nextProps.isOpen ) {
 			this.setState( { isOpen: nextProps.isOpen } );
 		}
 
@@ -236,7 +235,7 @@ class Search extends Component {
 			isOpen: true,
 		} );
 
-		analytics.ga.recordEvent( this.props.analyticsGroup, 'Clicked Open Search' );
+		gaRecordEvent( this.props.analyticsGroup, 'Clicked Open Search' );
 	};
 
 	closeSearch = event => {
@@ -260,7 +259,7 @@ class Search extends Component {
 
 		this.props.onSearchClose( event );
 
-		analytics.ga.recordEvent( this.props.analyticsGroup, 'Clicked Close Search' );
+		gaRecordEvent( this.props.analyticsGroup, 'Clicked Close Search' );
 	};
 
 	keyUp = event => {

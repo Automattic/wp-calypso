@@ -1,14 +1,13 @@
-/** @format */
 /**
  * External dependencies
  */
 import debugFactory from 'debug';
 import interpolateComponents from 'interpolate-components';
-import Jed from 'jed';
+import Tannin from 'tannin';
 import LRU from 'lru';
-import moment from 'moment';
 import sha1 from 'hash.js/lib/hash/sha/1';
 import { EventEmitter } from 'events';
+import sprintf from '@tannin/sprintf';
 
 /**
  * Internal dependencies
@@ -25,6 +24,7 @@ const debug = debugFactory( 'i18n-calypso' );
  */
 const decimal_point_translation_key = 'number_format_decimals';
 const thousands_sep_translation_key = 'number_format_thousands_sep';
+const domain_key = 'messages';
 
 const translationLookup = [
 	// By default don't modify the options when looking up translations.
@@ -51,9 +51,10 @@ function simpleArguments( args ) {
 }
 
 /**
- * Coerce the possible arguments and normalize to a single object
- * @param  {arguments} args - arguments passed in from `translate()`
- * @return {object}         - a single object describing translation needs
+ * Coerce the possible arguments and normalize to a single object.
+ *
+ * @param   {any} args - arguments passed in from `translate()`
+ * @returns {object}         - a single object describing translation needs
  */
 function normalizeTranslateArguments( args ) {
 	const original = args[ 0 ];
@@ -107,54 +108,28 @@ function normalizeTranslateArguments( args ) {
 }
 
 /**
- * Pull the right set of arguments for the Jed method
- * @param  {string} jedMethod Name of jed gettext-style method. [See docs](http://slexaxton.github.io/Jed/)
- * @param  {[object]} props     properties passed into `translate()` method
- * @return {[array]}           array of properties to pass into gettext-style method
+ * Takes translate options object and coerces to a Tannin request to retrieve translation.
+ *
+ * @param   {object} tannin  - tannin data object
+ * @param   {object} options - object describing translation
+ * @returns {string}         - the returned translation from Tannin
  */
-function getJedArgs( jedMethod, props ) {
-	switch ( jedMethod ) {
-		case 'gettext':
-			return [ props.original ];
-		case 'ngettext':
-			return [ props.original, props.plural, props.count ];
-		case 'npgettext':
-			return [ props.context, props.original, props.plural, props.count ];
-		case 'pgettext':
-			return [ props.context, props.original ];
-	}
-
-	return [];
-}
-
-/**
- * Takes translate options object and coerces to a Jed request to retrieve translation
- * @param  {object} jed     - jed data object
- * @param  {object} options - object describing translation
- * @return {string}         - the returned translation from Jed
- */
-function getTranslationFromJed( jed, options ) {
-	let jedMethod = 'gettext';
-
-	if ( options.context ) {
-		jedMethod = 'p' + jedMethod;
-	}
-
-	if ( typeof options.original === 'string' && typeof options.plural === 'string' ) {
-		jedMethod = 'n' + jedMethod;
-	}
-
-	const jedArgs = getJedArgs( jedMethod, options );
-
-	return jed[ jedMethod ].apply( jed, jedArgs );
+function getTranslationFromTannin( tannin, options ) {
+	return tannin.dcnpgettext(
+		domain_key,
+		options.context,
+		options.original,
+		options.plural,
+		options.count
+	);
 }
 
 function getTranslation( i18n, options ) {
 	for ( let i = translationLookup.length - 1; i >= 0; i-- ) {
 		const lookup = translationLookup[ i ]( Object.assign( {}, options ) );
-		// Only get the translation from jed if it exists.
+		// Only get the translation from tannin if it exists.
 		if ( i18n.state.locale[ lookup.original ] ) {
-			return getTranslationFromJed( i18n.state.jed, lookup );
+			return getTranslationFromTannin( i18n.state.tannin, lookup );
 		}
 	}
 
@@ -166,11 +141,14 @@ function I18N() {
 		return new I18N();
 	}
 	this.defaultLocaleSlug = 'en';
+	// Tannin always needs a plural form definition, or it fails when dealing with plurals.
+	this.defaultPluralForms = n => ( n === 1 ? 0 : 1 );
 	this.state = {
 		numberFormatSettings: {},
-		jed: undefined,
+		tannin: undefined,
 		locale: undefined,
 		localeSlug: undefined,
+		textDirection: undefined,
 		translations: LRU( { max: 100 } ),
 	};
 	this.componentUpdateHooks = [];
@@ -185,7 +163,6 @@ function I18N() {
 }
 
 I18N.throwErrors = false;
-I18N.prototype.moment = moment;
 
 I18N.prototype.on = function( ...args ) {
 	this.stateObserver.on( ...args );
@@ -200,10 +177,11 @@ I18N.prototype.emit = function( ...args ) {
 };
 
 /**
- * Formats numbers using locale settings and/or passed options
- * @param  {String|Number|Int}  number to format (required)
- * @param  {Int|object} options  Number of decimal places or options object (optional)
- * @return {string}         Formatted number as string
+ * Formats numbers using locale settings and/or passed options.
+ *
+ * @param   {string|number}  number to format (required)
+ * @param   {number|object}  options  Number of decimal places or options object (optional)
+ * @returns {string}         Formatted number as string
  */
 I18N.prototype.numberFormat = function( number, options = {} ) {
 	const decimals = typeof options === 'number' ? options : options.decimals || 0;
@@ -276,7 +254,9 @@ I18N.prototype.setLocale = function( localeData ) {
 
 	// if localeData is not given, assumes default locale and reset
 	if ( ! localeData || ! localeData[ '' ].localeSlug ) {
-		this.state.locale = { '': { localeSlug: this.defaultLocaleSlug } };
+		this.state.locale = {
+			'': { localeSlug: this.defaultLocaleSlug, plural_forms: this.defaultPluralForms },
+		};
 	} else if ( localeData[ '' ].localeSlug === this.state.localeSlug ) {
 		// Exit if same data as current (comparing references only)
 		if ( localeData === this.state.locale ) {
@@ -291,21 +271,22 @@ I18N.prototype.setLocale = function( localeData ) {
 
 	this.state.localeSlug = this.state.locale[ '' ].localeSlug;
 
-	this.state.jed = new Jed( {
-		locale_data: {
-			messages: this.state.locale,
-		},
-	} );
+	// extract the `textDirection` info (LTR or RTL) from either:
+	// - the translation for the special string "ltr" (standard in Core, not present in Calypso)
+	// - or the `momentjs_locale.textDirection` property present in Calypso translation files
+	this.state.textDirection =
+		this.state.locale[ 'text direction\u0004ltr' ]?.[ 0 ] ||
+		this.state.locale[ '' ]?.momentjs_locale?.textDirection;
 
-	moment.locale( this.state.localeSlug );
+	this.state.tannin = new Tannin( { [ domain_key ]: this.state.locale } );
 
 	// Updates numberFormat preferences with settings from translations
-	this.state.numberFormatSettings.decimal_point = getTranslationFromJed(
-		this.state.jed,
+	this.state.numberFormatSettings.decimal_point = getTranslationFromTannin(
+		this.state.tannin,
 		normalizeTranslateArguments( [ decimal_point_translation_key ] )
 	);
-	this.state.numberFormatSettings.thousands_sep = getTranslationFromJed(
-		this.state.jed,
+	this.state.numberFormatSettings.thousands_sep = getTranslationFromTannin(
+		this.state.tannin,
 		normalizeTranslateArguments( [ thousands_sep_translation_key ] )
 	);
 
@@ -318,7 +299,6 @@ I18N.prototype.setLocale = function( localeData ) {
 		this.state.numberFormatSettings.thousands_sep = ',';
 	}
 
-	this.state.translations.clear();
 	this.stateObserver.emit( 'change' );
 };
 
@@ -328,6 +308,7 @@ I18N.prototype.getLocale = function() {
 
 /**
  * Get the current locale slug.
+ *
  * @returns {string} The string representing the currently loaded locale
  **/
 I18N.prototype.getLocaleSlug = function() {
@@ -335,68 +316,52 @@ I18N.prototype.getLocaleSlug = function() {
 };
 
 /**
- * Adds new translations to the locale data, overwriting any existing translations with a matching key
- * @param {Object} localeData Locale data
+ * Get the current text direction, left-to-right (LTR) or right-to-left (RTL).
+ *
+ * @returns {boolean} `true` in case the current locale has RTL text direction
+ */
+I18N.prototype.isRtl = function() {
+	return this.state.textDirection === 'rtl';
+};
+
+/**
+ * Adds new translations to the locale data, overwriting any existing translations with a matching key.
+ *
+ * @param {object} localeData Locale data
  */
 I18N.prototype.addTranslations = function( localeData ) {
 	for ( const prop in localeData ) {
 		if ( prop !== '' ) {
-			this.state.jed.options.locale_data.messages[ prop ] = localeData[ prop ];
+			this.state.tannin.data.messages[ prop ] = localeData[ prop ];
 		}
 	}
 
-	this.state.translations.clear();
 	this.stateObserver.emit( 'change' );
 };
 
 /**
- * Checks whether the given original has a translation. Parameters are the same as for translate().
+ * Checks whether the given original has a translation.
  *
- * @param  {string} original  the string to translate
- * @param  {string} plural    the plural string to translate (if applicable), original used as singular
- * @param  {object} options   properties describing translation requirements for given text
- * @return {boolean} whether a translation exists
+ * @returns {boolean} whether a translation exists
  */
 I18N.prototype.hasTranslation = function() {
 	return !! getTranslation( this, normalizeTranslateArguments( arguments ) );
 };
 
 /**
- * Exposes single translation method, which is converted into its respective Jed method.
+ * Exposes single translation method.
  * See sibling README
- * @param  {string} original  the string to translate
- * @param  {string} plural    the plural string to translate (if applicable), original used as singular
- * @param  {object} options   properties describing translation requirements for given text
- * @return {string|React-components} translated text or an object containing React children that can be inserted into a parent component
+ *
+ * @returns {string|object} translated text or an object containing React children that can be inserted into a parent component
  */
 I18N.prototype.translate = function() {
 	const options = normalizeTranslateArguments( arguments );
 
-	let optionsString;
-	let cacheable = ! options.components;
-	if ( cacheable ) {
-		// Safe JSON stringification here to catch Circular JSON error
-		// caused by passing a React component into args where only scalars are allowed
-		try {
-			optionsString = JSON.stringify( options );
-		} catch ( e ) {
-			cacheable = false;
-		}
-
-		if ( optionsString ) {
-			const translation = this.state.translations.get( optionsString );
-			// Return the cached translation.
-			if ( translation ) {
-				return translation;
-			}
-		}
-	}
-
 	let translation = getTranslation( this, options );
 	if ( ! translation ) {
-		// This purposefully calls jed for a case where there is no translation,
-		// so that jed gives us the expected object with English text.
-		translation = getTranslationFromJed( this.state.jed, options );
+		// This purposefully calls tannin for a case where there is no translation,
+		// so that tannin gives us the expected object with English text.
+		translation = getTranslationFromTannin( this.state.tannin, options );
 	}
 
 	// handle any string substitution
@@ -404,7 +369,7 @@ I18N.prototype.translate = function() {
 		const sprintfArgs = Array.isArray( options.args ) ? options.args.slice( 0 ) : [ options.args ];
 		sprintfArgs.unshift( translation );
 		try {
-			translation = Jed.sprintf.apply( Jed, sprintfArgs );
+			translation = sprintf( ...sprintfArgs );
 		} catch ( error ) {
 			if ( ! window || ! window.console ) {
 				return;
@@ -432,10 +397,6 @@ I18N.prototype.translate = function() {
 		translation = hook( translation, options );
 	} );
 
-	if ( cacheable ) {
-		this.state.translations.set( optionsString, translation );
-	}
-
 	return translation;
 };
 
@@ -451,7 +412,6 @@ I18N.prototype.translate = function() {
  */
 I18N.prototype.reRenderTranslations = function() {
 	debug( 'Re-rendering all translations due to external request' );
-	this.state.translations.clear();
 	this.stateObserver.emit( 'change' );
 };
 

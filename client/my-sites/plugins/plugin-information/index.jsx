@@ -1,27 +1,25 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
 import { get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import Gridicon from 'components/gridicon';
+import { Button, Card } from '@automattic/components';
 import ExternalLink from 'components/external-link';
+import { withLocalizedMoment } from 'components/localized-moment';
 import Version from 'components/version';
 import PluginRatings from 'my-sites/plugins/plugin-ratings/';
 import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
 import versionCompare from 'lib/version-compare';
 import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 
 /**
  * Style dependencies
@@ -59,7 +57,7 @@ class PluginInformation extends React.Component {
 		) {
 			return;
 		}
-		const recordEvent = analytics.ga.recordEvent.bind(
+		const recordEvent = gaRecordEvent.bind(
 			analytics,
 			'Plugins',
 			'Clicked Plugin Homepage Link',
@@ -83,7 +81,7 @@ class PluginInformation extends React.Component {
 		if ( ! this.props.plugin.slug ) {
 			return;
 		}
-		const recordEvent = analytics.ga.recordEvent.bind(
+		const recordEvent = gaRecordEvent.bind(
 			analytics,
 			'Plugins',
 			'Clicked wp.org Plugin Link',
@@ -105,7 +103,7 @@ class PluginInformation extends React.Component {
 
 	renderLastUpdated = () => {
 		if ( this.props.plugin && this.props.plugin.last_updated ) {
-			const dateFromNow = i18n.moment
+			const dateFromNow = this.props.moment
 				.utc( this.props.plugin.last_updated, 'YYYY-MM-DD hh:mma' )
 				.fromNow();
 			const syncIcon = this.props.hasUpdate ? <Gridicon icon="sync" size={ 18 } /> : null;
@@ -145,6 +143,7 @@ class PluginInformation extends React.Component {
 			versionView = (
 				<div className="plugin-information__version-limit">
 					{ this.props.translate(
+						// eslint-disable-next-line wpcalypso/i18n-no-collapsible-whitespace
 						'{{wpIcon/}}  Compatible with %(minVersion)s to {{span}} %(maxVersion)s {{versionCheck/}}{{/span}}',
 						{
 							args: { minVersion: limits.minVersion, maxVersion: limits.maxVersion },
@@ -210,7 +209,7 @@ class PluginInformation extends React.Component {
 			adminUrl += 'admin.php?page=vaultpress'; // adminUrl has a trailing slash
 		}
 
-		return adminUrl ? { [ i18n.translate( 'WP Admin' ) ]: adminUrl } : null;
+		return adminUrl ? { [ this.props.translate( 'WP Admin' ) ]: adminUrl } : null;
 	};
 
 	renderPlaceholder = () => {
@@ -321,4 +320,4 @@ class PluginInformation extends React.Component {
 	}
 }
 
-export default localize( PluginInformation );
+export default localize( withLocalizedMoment( PluginInformation ) );

@@ -1,16 +1,13 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import { omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import { settingsSchema, systemSchema } from './schema';
 
 import {
@@ -29,7 +26,7 @@ const debug = debugFactory( 'calypso:push-notifications' );
 
 // If you change this, also change the corresponding test
 const UNPERSISTED_SYSTEM_NODES = [ 'apiReady', 'authorized', 'authorizationLoaded', 'blocked' ];
-function system( state = {}, action ) {
+const system = withSchemaValidation( systemSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		// System state is not persisted
 		case DESERIALIZE:
@@ -97,8 +94,7 @@ function system( state = {}, action ) {
 	}
 
 	return state;
-}
-system.schema = systemSchema;
+} );
 
 // If you change this, also change the corresponding test
 const UNPERSISTED_SETTINGS_NODES = [
@@ -106,7 +102,7 @@ const UNPERSISTED_SETTINGS_NODES = [
 	'showingUnblockInstructions',
 ];
 
-function settings( state = { enabled: false }, action ) {
+const settings = withSchemaValidation( settingsSchema, ( state = { enabled: false }, action ) => {
 	switch ( action.type ) {
 		case DESERIALIZE: {
 			return omit( state, UNPERSISTED_SETTINGS_NODES );
@@ -136,8 +132,7 @@ function settings( state = { enabled: false }, action ) {
 	}
 
 	return state;
-}
-settings.schema = settingsSchema;
+} );
 
 export default combineReducers( {
 	settings,

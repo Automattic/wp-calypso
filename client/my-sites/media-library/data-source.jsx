@@ -1,12 +1,11 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { find, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -14,22 +13,25 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import ScreenReaderText from 'components/screen-reader-text';
+import { Button, ScreenReaderText } from '@automattic/components';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import GooglePhotosIcon from './google-photos-icon';
 import config from 'config';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 
 export class MediaLibraryDataSource extends Component {
 	static propTypes = {
 		source: PropTypes.string.isRequired,
 		onSourceChange: PropTypes.func.isRequired,
 		disabledSources: PropTypes.array,
+		ignorePermissions: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		disabledSources: [],
+		ignorePermissions: false,
 	};
 
 	state = { popover: false };
@@ -47,20 +49,23 @@ export class MediaLibraryDataSource extends Component {
 	};
 
 	getSources = () => {
-		const { disabledSources, translate } = this.props;
+		const { disabledSources, translate, ignorePermissions, canUserUploadFiles } = this.props;
+		const includeExternalMedia = ignorePermissions || canUserUploadFiles;
 		const sources = [
 			{
 				value: '',
 				label: translate( 'WordPress library' ),
 				icon: <Gridicon icon="image" size={ 24 } />,
 			},
-			{
+		];
+		if ( config.isEnabled( 'external-media/google-photos' ) && includeExternalMedia ) {
+			sources.push( {
 				value: 'google_photos',
 				label: translate( 'Google Photos library' ),
 				icon: <GooglePhotosIcon />,
-			},
-		];
-		if ( config.isEnabled( 'external-media/free-photo-library' ) ) {
+			} );
+		}
+		if ( config.isEnabled( 'external-media/free-photo-library' ) && includeExternalMedia ) {
 			sources.push( {
 				value: 'pexels',
 				label: translate( 'Free photo library' ),
@@ -127,4 +132,8 @@ export class MediaLibraryDataSource extends Component {
 	}
 }
 
-export default localize( MediaLibraryDataSource );
+const mapStateToProps = state => ( {
+	canUserUploadFiles: canCurrentUser( state, getSelectedSiteId( state ), 'upload_files' ),
+} );
+
+export default connect( mapStateToProps )( localize( MediaLibraryDataSource ) );

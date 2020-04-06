@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -26,6 +24,27 @@ export default class ReaderPage extends AsyncBaseContainer {
 			.findElement( by.css( '.reader-visit-link' ) )
 			.getAttribute( 'href' );
 		return URL.parse( href ).host;
+	}
+
+	async shareLatestPost() {
+		const shareButtonSelector = by.css( '.reader-share__button' );
+		const hasSharablePost = await driverHelper.isElementPresent( this.driver, shareButtonSelector );
+
+		if ( ! hasSharablePost ) {
+			// no shareable posts on this screen. try moving into a combined card
+			const firstComboCardPostSelector = by.css( '.reader-combined-card__post-title-link' );
+			await driverHelper.clickWhenClickable( this.driver, firstComboCardPostSelector );
+		}
+
+		await driverHelper.clickWhenClickable( this.driver, shareButtonSelector );
+		await driverHelper.waitTillPresentAndDisplayed(
+			this.driver,
+			by.css( '.site-selector__sites' )
+		);
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			by.css( '.reader-popover .site__info' )
+		);
 	}
 
 	async commentOnLatestPost( comment ) {

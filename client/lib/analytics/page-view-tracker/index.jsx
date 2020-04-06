@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -114,7 +112,4 @@ const mapDispatchToProps = {
 	recorder: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( PageViewTracker );
+export default connect( mapStateToProps, mapDispatchToProps )( PageViewTracker );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,10 @@ describe( 'sortBySales', () => {
 		const data = [ { sales: 2 }, { sales: 1 }, { sales: 5 }, { sales: 4 }, { sales: 3 } ];
 		const sortedAndTrimmed = sortBySales( data, 3 );
 		assert.lengthOf( sortedAndTrimmed, 3 );
-		assert.deepEqual( sortedAndTrimmed.map( d => d.sales ), [ 5, 4, 3 ] );
+		assert.deepEqual(
+			sortedAndTrimmed.map( d => d.sales ),
+			[ 5, 4, 3 ]
+		);
 	} );
 
 	test( 'should return a sorted and untrimmed array if no limit is supplied', () => {

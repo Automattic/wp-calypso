@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -13,7 +11,7 @@ import { get, find, noop, assign } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import TermTreeSelectorTerms from 'blocks/term-tree-selector/terms';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormTextarea from 'components/forms/form-textarea';
@@ -22,7 +20,6 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import FormToggle from 'components/forms/form-toggle';
 import FormLegend from 'components/forms/form-legend';
 import FormFieldset from 'components/forms/form-fieldset';
-import { isMobile } from 'lib/viewport';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import { getTerms } from 'state/terms/selectors';
@@ -186,7 +183,7 @@ class TermFormDialog extends Component {
 		);
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		if (
 			this.props.term !== newProps.term ||
 			( this.props.showDialog !== newProps.showDialog && newProps.showDialog )

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -30,7 +29,7 @@ class FollowingManageEmptyContent extends React.Component {
 				onClick={ this.recordAction }
 				href="/discover"
 			>
-				{ this.props.translate( 'Explore Discover' ) }
+				{ this.props.translate( 'Explore' ) }
 			</a>
 		);
 

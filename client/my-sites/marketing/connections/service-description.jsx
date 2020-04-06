@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,8 +19,8 @@ class SharingServiceDescription extends Component {
 			facebook: function() {
 				if ( this.props.numberOfConnections > 0 ) {
 					return this.props.translate(
-						'Sharing posts to your news feed.',
-						'Sharing posts to your news feeds.',
+						'Sharing posts to your Facebook page.',
+						'Sharing posts to your Facebook pages.',
 						{
 							count: this.props.numberOfConnections,
 							comment: 'Description for Facebook Publicize when one or more accounts are connected',
@@ -30,7 +28,7 @@ class SharingServiceDescription extends Component {
 					);
 				}
 
-				return this.props.translate( 'Share posts to your news feed.', {
+				return this.props.translate( 'Share posts to your Facebook page.', {
 					comment: 'Description for Facebook Publicize when no accounts are connected',
 				} );
 			},
@@ -104,17 +102,6 @@ class SharingServiceDescription extends Component {
 
 				return this.props.translate( 'Share posts to your Tumblr blog.', {
 					comment: 'Description for Tumblr Publicize when no accounts are connected',
-				} );
-			},
-			eventbrite: function() {
-				if ( this.props.numberOfConnections > 0 ) {
-					return this.props.translate( 'Connected to your Eventbrite account.', {
-						comment: 'Description for Eventbrite when one or more accounts are connected',
-					} );
-				}
-
-				return this.props.translate( 'Connect to your Eventbrite account.', {
-					comment: 'Description for Eventbrite when no accounts are connected',
 				} );
 			},
 			instagram: function() {

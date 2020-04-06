@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,11 +13,12 @@ import { areAllRequiredPluginsActive } from 'woocommerce/state/selectors/plugins
 import canCurrentUser from 'state/selectors/can-current-user';
 import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteHomeUrl } from 'state/sites/selectors';
 import { isLoaded as arePluginsLoaded } from 'state/plugins/installed/selectors';
 import { isStoreSetupComplete } from 'woocommerce/state/sites/setup-choices/selectors';
 import Main from 'components/main';
@@ -41,6 +41,7 @@ class App extends Component {
 		isAtomicSite: PropTypes.bool.isRequired,
 		isDashboard: PropTypes.bool.isRequired,
 		pluginsLoaded: PropTypes.bool.isRequired,
+		siteHomeUrl: PropTypes.string.isRequired,
 		siteId: PropTypes.number,
 		translate: PropTypes.func.isRequired,
 	};
@@ -49,7 +50,7 @@ class App extends Component {
 		this.fetchData( this.props );
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		if ( this.props.children !== newProps.children ) {
 			window.scrollTo( 0, 0 );
 		}
@@ -78,7 +79,7 @@ class App extends Component {
 	}
 
 	redirect() {
-		window.location.href = '/stats/day';
+		window.location.href = this.props.siteHomeUrl;
 	}
 
 	renderPlaceholder() {
@@ -184,11 +185,9 @@ function mapStateToProps( state ) {
 		isSetupComplete,
 		hasPendingAutomatedTransfer: siteId ? hasPendingAutomatedTransfer : false,
 		pluginsLoaded,
+		siteHomeUrl: getSiteHomeUrl( state, siteId ),
 		siteId,
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	{ fetchSetupChoices }
-)( localize( App ) );
+export default connect( mapStateToProps, { fetchSetupChoices } )( localize( App ) );

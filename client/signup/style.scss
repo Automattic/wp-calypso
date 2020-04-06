@@ -1,8 +1,6 @@
 body.is-section-signup {
-	// Use the primary color for our background. I wonder how we
-	// should deal with different color schemes?
-	background: var( --color-primary );
-
+	// Use WordPress.com’s brand color for the signup background
+	background: var( --color-wordpress-com );
 
 	// Adjust the padding as we no longer
 	// show the masterbar.
@@ -48,7 +46,7 @@ body.is-section-signup .layout.gravatar {
 	// on the primary colored background.
 	.empty-content {
 		.empty-content__illustration {
-			background: var( --color-white );
+			background: var( --color-surface );
 			padding-bottom: 16px;
 			margin-bottom: 24px;
 			border-radius: 6px;
@@ -56,7 +54,7 @@ body.is-section-signup .layout.gravatar {
 		}
 
 		.empty-content__title {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 		}
 	}
 
@@ -74,12 +72,12 @@ body.is-section-signup .layout.gravatar {
 		position: relative;
 	}
 
-	.suggestions__wrapper {
+	.suggestions {
 		position: absolute;
 		top: 42px;
 		left: 0;
 		right: 0;
-		max-height: 300px;
+		max-height: 350px;
 		overflow: auto;
 		@include elevation ( 2dp );
 	}
@@ -128,20 +126,20 @@ body.is-section-signup .layout:not( .dops ) .step-wrapper {
 }
 
 // Signup headings
-body.is-section-signup .layout:not( .dops ) .formatted-header,
+body.is-section-signup .layout:not( .dops ):not( .is-wccom-oauth-flow ) .formatted-header,
 body.is-section-signup .layout.gravatar .formatted-header {
 	margin: 0 0 16px;
 
 	.formatted-header__title {
 		margin: 0;
 		font-weight: 400;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 
 	.formatted-header__subtitle {
 		margin: 0;
 		font-size: 15px;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 
 	a {
@@ -149,7 +147,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		text-decoration: underline;
 
 		&:hover {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 		}
 	}
 }
@@ -157,9 +155,196 @@ body.is-section-signup .layout.gravatar .formatted-header {
 // Skip button
 .step-wrapper__buttons {
 	text-align: center;
+	margin-bottom: 20px;
 }
 
 .is-section-signup .layout__content,
 .is-section-signup .layout__primary {
 	overflow: visible;
+}
+
+.layout.is-wccom-oauth-flow {
+	@import 'jetpack-connect/colors.scss';
+	@include woocommerce-colors();
+	background-color: var( --color-woocommerce-onboarding-background );
+	height: 100%;
+
+	.woocommerce-muriel-text-control,
+	.muriel-input-text {
+		border-color: var( --color-neutral-20 );
+
+		.text-control__label,
+		.components-base-control__label {
+			color: var( --color-neutral-50 );
+			font-size: 12px;
+			font-weight: normal;
+		}
+
+		&.active {
+			box-shadow: 0 0 0 2px var( --studio-woocommerce-purple-60 );
+			border-color: transparent;
+		}
+	}
+
+	.layout__content {
+		padding-top: 48px;
+	}
+
+	.masterbar {
+		display: none;
+	}
+
+	.signup-form__woocommerce-wrapper {
+		text-align: center;
+		border-bottom: 1px solid var( --color-neutral-50 );
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 56px;
+
+		svg > g {
+			transform: translateX( 50% );
+		}
+	}
+
+	.signup-form__woocommerce-logo {
+		margin: 0;
+		text-align: center;
+		margin-right: auto;
+		margin-left: auto;
+		padding-left: 0;
+		display: block;
+		height: 56px;
+		border-bottom: 1px solid var( --color-woocommerce-header-border );
+		background: var( --color-text-inverted );
+
+		svg {
+			margin-top: 15px;
+		}
+	}
+
+	.signup-form__woocommerce-heading {
+		margin-top: 32px;
+	}
+
+	.formatted-header {
+		max-width: 476px;
+		margin-right: auto;
+		margin-left: auto;
+
+		.formatted-header__subtitle {
+			color: var( --color-primary-10 );
+			margin-top: 1em;
+			font-size: 16px;
+			line-height: 24px;
+			font-weight: 400;
+		}
+	}
+
+	.logged-out-form {
+		max-width: 476px;
+	}
+
+	.logged-out-form__link-item {
+		text-align: center;
+		text-decoration: underline;
+		color: var( --studio-gray-60 );
+		font-size: 14px;
+	}
+
+	.signup-form__terms-of-service-link {
+		text-align: left;
+		color: var( --studio-gray-60 );
+	}
+
+	.signup-form__terms-of-service-link a,
+	.signup-form__social-buttons-tos a {
+		color: var( --studio-gray-60 );
+		text-decoration: underline;
+	}
+
+	.signup-form__social {
+		padding-bottom: 0;
+		margin-top: 16px;
+		p {
+			font-size: 12px;
+			color: var( --studio-gray-60 );
+		}
+
+		.social-buttons__button {
+			border: 1px solid var( --studio-pink-50 );
+			color: var( --studio-pink-50 );
+			box-shadow: none;
+			max-width: 250px;
+			height: 48px;
+		}
+	}
+
+
+	.logged-out-form__footer {
+		text-align: center;
+		.button.is-primary {
+			border: 0;
+			box-shadow: none;
+			max-width: 310px;
+			margin-right: auto;
+			margin-left: auto;
+			height: 48px;
+		}
+	}
+}
+
+// Background color override for new flow
+body.is-section-signup.is-frankenflow {
+	background: var( --color-surface-backdrop );
+
+	.signup-header .wordpress-logo {
+		fill: var( --color-wordpress-com );
+	}
+
+	.signup-processing-screen__content {
+		color: var( --color-text );
+	}
+
+	.signup-processing-screen__floaties .gridicon {
+		fill: var( --color-text );
+	}
+
+	.button.is-borderless.navigation-link {
+		color: var( --color-text );
+
+		svg {
+			fill: var( --color-text );
+		}
+	}
+
+	.flow-progress-indicator.flow-progress-indicator__frankenflow {
+		color: var( --color-text );
+	}
+}
+
+// Text and heading color override for new flow
+body.is-section-signup.is-frankenflow .layout:not( .dops ):not( .is-wccom-oauth-flow ) {
+	&.gravatar .formatted-header, .formatted-header {
+		.formatted-header__title {
+			color: var( --color-text );
+		}
+	
+		.formatted-header__subtitle {
+			color: var( --color-text );
+		}
+	
+		a {
+			color: var( --color-link );
+	
+			&:hover {
+				color: var( --color-link-dark );
+			}
+		}
+	}
+
+	.empty-content .empty-content__title {
+		color: var( --color-text );
+	}
 }

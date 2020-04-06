@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { flowRight, isEqual, size, without } from 'lodash';
 
 /**
@@ -23,6 +21,7 @@ import EmptyContent from 'components/empty-content';
 import NoResults from 'my-sites/no-results';
 import Placeholder from './placeholder';
 import { mapPostStatus as mapStatus } from 'lib/route';
+import { POST_STATUSES } from 'state/posts/constants';
 import { sortPagesHierarchically } from './helpers';
 import BlogPostsPage from './blog-posts-page';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
@@ -34,8 +33,9 @@ import {
 import { getSite } from 'state/sites/selectors';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { withLocalizedMoment } from 'components/localized-moment';
+import config from 'config';
 
 function preloadEditor() {
 	preload( 'post-editor' );
@@ -77,14 +77,32 @@ export default class PageList extends Component {
 			page: this.state.page,
 			number: 20, // all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
 			search,
-			status: mapStatus( status ),
+			// When searching, search across all statuses so the user can
+			// always find what they are looking for, regardless of what tab
+			// the search was initiated from. Use POST_STATUSES rather than
+			// "any" to do this, since the latter excludes trashed posts.
+			status: search ? POST_STATUSES.join( ',' ) : mapStatus( status ),
 			type: 'page',
 		};
+
+		if ( config.isEnabled( 'page/export' ) ) {
+			// we need the raw content of the pages to be able to export them
+			query.context = 'edit';
+		}
+
+		// Since searches are across all statuses, the status needs to be shown
+		// next to each post.
+		const showPublishedStatus = Boolean( search );
 
 		return (
 			<div>
 				<QueryPosts siteId={ siteId } query={ query } />
-				<ConnectedPages incrementPage={ this.incrementPage } query={ query } siteId={ siteId } />
+				<ConnectedPages
+					incrementPage={ this.incrementPage }
+					query={ query }
+					siteId={ siteId }
+					showPublishedStatus={ showPublishedStatus }
+				/>
 			</div>
 		);
 	}
@@ -103,6 +121,7 @@ class Pages extends Component {
 		hasSites: PropTypes.bool.isRequired,
 		trackScrollPage: PropTypes.func.isRequired,
 		query: PropTypes.object,
+		showPublishedStatus: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -113,6 +132,7 @@ class Pages extends Component {
 		pages: [],
 		trackScrollPage: function() {},
 		query: {},
+		showPublishedStatus: false,
 	};
 
 	state = {
@@ -226,7 +246,7 @@ class Pages extends Component {
 				attributes = {
 					title: translate( "You don't have any drafts." ),
 					line: translate( 'Would you like to create one?' ),
-					action: translate( 'Start a Page' ),
+					action: translate( 'Start a page' ),
 					actionURL: newPageLink,
 				};
 				break;
@@ -234,7 +254,7 @@ class Pages extends Component {
 				attributes = {
 					title: translate( "You don't have any scheduled pages yet." ),
 					line: translate( 'Would you like to create one?' ),
-					action: translate( 'Start a Page' ),
+					action: translate( 'Start a page' ),
 					actionURL: newPageLink,
 				};
 				break;
@@ -248,7 +268,7 @@ class Pages extends Component {
 				attributes = {
 					title: translate( "You haven't published any pages yet." ),
 					line: translate( 'Would you like to publish your first page?' ),
-					action: translate( 'Start a Page' ),
+					action: translate( 'Start a page' ),
 					actionURL: newPageLink,
 				};
 		}
@@ -301,14 +321,14 @@ class Pages extends Component {
 		return (
 			<SectionHeader label={ translate( 'Pages' ) }>
 				<Button primary compact className="pages__add-page" href={ newPageLink }>
-					{ translate( 'Add New Page' ) }
+					{ translate( 'Add new page' ) }
 				</Button>
 			</SectionHeader>
 		);
 	}
 
 	renderPagesList( { pages } ) {
-		const { site, lastPage, query } = this.props;
+		const { site, lastPage, query, showPublishedStatus } = this.props;
 
 		// Pages only display hierarchically for published pages on single-sites when
 		// there are 100 or fewer pages and no more pages to load (last page).
@@ -321,11 +341,11 @@ class Pages extends Component {
 			! query.search;
 
 		return showHierarchical
-			? this.renderHierarchical( { pages, site } )
-			: this.renderChronological( { pages, site } );
+			? this.renderHierarchical( { pages, site, showPublishedStatus } )
+			: this.renderChronological( { pages, site, showPublishedStatus } );
 	}
 
-	renderHierarchical( { pages, site } ) {
+	renderHierarchical( { pages, site, showPublishedStatus } ) {
 		pages = sortPagesHierarchically( pages );
 		const rows = pages.map( function( page ) {
 			return (
@@ -337,6 +357,7 @@ class Pages extends Component {
 					multisite={ false }
 					hierarchical={ true }
 					hierarchyLevel={ page.indentLevel || 0 }
+					showPublishedStatus={ showPublishedStatus }
 				/>
 			);
 		}, this );
@@ -351,7 +372,7 @@ class Pages extends Component {
 		);
 	}
 
-	renderChronological( { pages, site } ) {
+	renderChronological( { pages, site, showPublishedStatus } ) {
 		const { search, status } = this.props.query;
 
 		if ( ! search ) {
@@ -371,6 +392,7 @@ class Pages extends Component {
 					onShadowStatusChange={ this.updateShadowStatus }
 					page={ page }
 					multisite={ this.props.siteId === null }
+					showPublishedStatus={ showPublishedStatus }
 				/>
 			);
 		} );
@@ -427,8 +449,4 @@ const mapState = ( state, { query, siteId } ) => ( {
 	newPageLink: getEditorUrl( state, siteId, null, 'page' ),
 } );
 
-const ConnectedPages = flowRight(
-	connect( mapState ),
-	localize,
-	withLocalizedMoment
-)( Pages );
+const ConnectedPages = flowRight( connect( mapState ), localize, withLocalizedMoment )( Pages );

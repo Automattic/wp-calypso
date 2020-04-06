@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 /**

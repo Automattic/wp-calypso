@@ -3,7 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { compact, find, flowRight, isArray, without } from 'lodash';
+import { find, flowRight, isArray } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -19,14 +19,13 @@ import NavigationLink from 'components/wizard/navigation-link';
 import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { submitSurvey } from 'lib/upgrades/actions';
+import { submitSurvey } from 'lib/purchases/actions';
 
 class ConfirmDisconnection extends PureComponent {
 	static propTypes = {
 		reason: PropTypes.string,
 		text: PropTypes.oneOfType( [ PropTypes.string, PropTypes.arrayOf( PropTypes.string ) ] ),
 		// Provided by HOCs
-		moment: PropTypes.func,
 		purchase: PropTypes.object,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
@@ -34,36 +33,37 @@ class ConfirmDisconnection extends PureComponent {
 	};
 
 	static reasonWhitelist = [
-		'missing-feature',
-		'too-difficult',
-		'too-expensive',
 		'troubleshooting',
+		'cannot-work',
+		'slow',
+		'buggy',
+		'no-clarity',
+		'delete',
 		'other',
 	];
 
 	submitSurvey = () => {
-		const { moment, purchase, reason, site, siteId, text } = this.props;
+		const { purchase, reason, siteId, text } = this.props;
 
 		const surveyData = {
 			'why-cancel': {
 				response: find( this.constructor.reasonWhitelist, r => r === reason ),
 				text: isArray( text ) ? text.join() : text,
 			},
+			source: {
+				from: 'Calypso',
+			},
 		};
 
 		submitSurvey(
-			'calypso-disconnect-jetpack',
+			'calypso-disconnect-jetpack-july2019',
 			siteId,
-			enrichedSurveyData( surveyData, moment(), site, purchase )
+			enrichedSurveyData( surveyData, purchase )
 		);
 	};
 
 	render() {
-		const { reason, siteId, siteSlug, translate } = this.props;
-		const previousStep = find(
-			without( this.constructor.reasonWhitelist, 'troubleshooting', 'other' ), // Redirect those back to initial survey
-			r => r === reason
-		);
+		const { siteId, siteSlug, translate } = this.props;
 
 		return (
 			<Main className="disconnect-site__confirm">
@@ -83,12 +83,7 @@ class ConfirmDisconnection extends PureComponent {
 					stayConnectedHref={ '/settings/manage-connection/' + siteSlug }
 				/>
 				<div className="disconnect-site__navigation-links">
-					<NavigationLink
-						href={
-							'/settings/disconnect-site/' + compact( [ previousStep, siteSlug ] ).join( '/' )
-						}
-						direction="back"
-					/>
+					<NavigationLink href={ '/settings/disconnect-site/' + siteSlug } direction="back" />
 				</div>
 			</Main>
 		);

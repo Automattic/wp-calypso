@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,9 +17,9 @@ import { getKeyringServiceByName } from './services/selectors';
  * Given a service, returns a flattened array of all possible accounts for the
  * service for which a connection can be created.
  *
- * @param  {Object} state       Global state tree
- * @param  {String} serviceName The name of the service to check
- * @return {Array}              Flattened array of all possible accounts for the service
+ * @param  {object} state       Global state tree
+ * @param  {string} serviceName The name of the service to check
+ * @returns {Array}              Flattened array of all possible accounts for the service
  */
 export function getAvailableExternalAccounts( state, serviceName ) {
 	const isConnected = ( keyring_connection_ID, external_ID ) => {

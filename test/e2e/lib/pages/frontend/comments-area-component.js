@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,14 +18,15 @@ export default class CommentsAreaComponent extends AsyncBaseContainer {
 
 	async _postComment( { comment } ) {
 		const commentForm = By.css( '#commentform' );
-		const commentFormWordPress = By.css( '#comment-form-wordpress' );
 		const commentField = By.css( '#comment' );
 		const submitButton = By.css( ".form-submit[style='display: block;'] #comment-submit" );
 		const commentContent = By.xpath( `//div[@class='comment-content']/p[.='${ comment }']` );
 
-		await this.switchToFrameIfJetpack();
 		await driverHelper.clickWhenClickable( this.driver, commentForm );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, commentFormWordPress );
+		await driverHelper.scrollIntoView( this.driver, commentForm, 'end' );
+		await this.switchToFrameIfJetpack();
+
+		await driverHelper.clickWhenClickable( this.driver, commentForm );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, submitButton );
 		await driverHelper.scrollIntoView( this.driver, submitButton );
 		await driverHelper.setWhenSettable( this.driver, commentField, comment );
@@ -39,9 +38,7 @@ export default class CommentsAreaComponent extends AsyncBaseContainer {
 	async reply( commentObj, depth = 2 ) {
 		const replyButton = By.css( '.comment-reply-link' );
 		const replyContent = By.xpath(
-			`//li[contains(@class,'depth-${ depth }')]//div[@class='comment-content']/p[.='${
-				commentObj.comment
-			}']`
+			`//li[contains(@class,'depth-${ depth }')]//div[@class='comment-content']/p[.='${ commentObj.comment }']`
 		);
 		await driverHelper.clickWhenClickable( this.driver, replyButton );
 		await this._postComment( commentObj );
@@ -52,6 +49,8 @@ export default class CommentsAreaComponent extends AsyncBaseContainer {
 		if ( dataHelper.getJetpackHost() === 'WPCOM' ) {
 			return false;
 		}
+		await this.driver.sleep( 1000 );
+
 		const iFrameSelector = By.css( 'iframe.jetpack_remote_comment' );
 
 		await this.driver.switchTo().defaultContent();

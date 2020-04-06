@@ -1,7 +1,4 @@
-/** @format */
-
-/** @format */
-
+/* eslint-disable no-case-declarations */
 /**
  * External dependencies
  */
@@ -22,7 +19,7 @@ import {
 	HAPPYCHAT_CHAT_STATUS_DEFAULT,
 	HAPPYCHAT_MAX_STORED_MESSAGES,
 } from 'state/happychat/constants';
-import { combineReducers } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import { timelineSchema } from './schema';
 
 // We compare incoming timestamps against a known future Unix time in seconds date
@@ -34,15 +31,18 @@ const UNIX_TIMESTAMP_2023_IN_SECONDS = 1700000000;
 export const maybeUpscaleTimePrecision = time =>
 	time < UNIX_TIMESTAMP_2023_IN_SECONDS ? time * 1000 : time;
 
-export const lastActivityTimestamp = ( state = null, action ) => {
-	switch ( action.type ) {
-		case HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE:
-		case HAPPYCHAT_IO_RECEIVE_MESSAGE:
-			return Date.now();
+const lastActivityTimestampSchema = { type: 'number' };
+export const lastActivityTimestamp = withSchemaValidation(
+	lastActivityTimestampSchema,
+	( state = null, action ) => {
+		switch ( action.type ) {
+			case HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE:
+			case HAPPYCHAT_IO_RECEIVE_MESSAGE:
+				return Date.now();
+		}
+		return state;
 	}
-	return state;
-};
-lastActivityTimestamp.schema = { type: 'number' };
+);
 
 /**
  * Tracks the state of the happychat chat. Valid states are:
@@ -55,9 +55,9 @@ lastActivityTimestamp.schema = { type: 'number' };
  *  - HAPPYCHAT_CHAT_STATUS_ABANDONED : operator was disconnected
  *  - HAPPYCHAT_CHAT_STATUS_CLOSED : chat was closed
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  *
  */
 export const status = ( state = HAPPYCHAT_CHAT_STATUS_DEFAULT, action ) => {
@@ -71,9 +71,9 @@ export const status = ( state = HAPPYCHAT_CHAT_STATUS_DEFAULT, action ) => {
 /**
  * Returns a timeline event from the redux action
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  *
  */
 const timelineEvent = ( state = {}, action ) => {
@@ -100,12 +100,12 @@ const sortTimeline = timeline => sortBy( timeline, event => parseInt( event.time
 /**
  * Adds timeline events for happychat
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  *
  */
-export const timeline = ( state = [], action ) => {
+export const timeline = withSchemaValidation( timelineSchema, ( state = [], action ) => {
 	switch ( action.type ) {
 		case SERIALIZE:
 			return takeRight( state, HAPPYCHAT_MAX_STORED_MESSAGES );
@@ -149,8 +149,7 @@ export const timeline = ( state = [], action ) => {
 			);
 	}
 	return state;
-};
-timeline.schema = timelineSchema;
+} );
 
 export default combineReducers( {
 	status,

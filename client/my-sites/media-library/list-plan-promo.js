@@ -1,10 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import page from 'page';
@@ -15,7 +14,9 @@ import { preventWidows } from 'lib/formatting';
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
+import canCurrentUser from 'state/selectors/can-current-user';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class MediaLibraryListPlanPromo extends React.Component {
 	static displayName = 'MediaLibraryListPlanPromo';
@@ -51,19 +52,31 @@ class MediaLibraryListPlanPromo extends React.Component {
 		switch ( this.props.filter ) {
 			case 'videos':
 				return preventWidows(
-					this.props.translate( 'To upload video files to your site, upgrade your plan.', {
-						textOnly: true,
-						context: 'Media upgrade promo',
-					} ),
+					this.props.canUpgrade
+						? this.props.translate( 'To upload video files to your site, upgrade your plan.', {
+								textOnly: true,
+								context: 'Media upgrade promo',
+						  } )
+						: this.props.translate( 'Uploading video requires a paid plan.' ) +
+								' ' +
+								this.props.translate(
+									'Contact your site administrator and ask them to upgrade this site to WordPress.com Premium, Business, or eCommerce.'
+								),
 					2
 				);
 
 			case 'audio':
 				return preventWidows(
-					this.props.translate( 'To upload audio files to your site, upgrade your plan.', {
-						textOnly: true,
-						context: 'Media upgrade promo',
-					} ),
+					this.props.canUpgrade
+						? this.props.translate( 'To upload audio files to your site, upgrade your plan.', {
+								textOnly: true,
+								context: 'Media upgrade promo',
+						  } )
+						: this.props.translate( 'Uploading audio requires a paid plan.' ) +
+								' ' +
+								this.props.translate(
+									'Contact your site administrator and ask them to upgrade this site to WordPress.com Premium, Business, or eCommerce.'
+								),
 					2
 				);
 
@@ -107,4 +120,8 @@ class MediaLibraryListPlanPromo extends React.Component {
 	}
 }
 
-export default localize( MediaLibraryListPlanPromo );
+export default connect( state => {
+	return {
+		canUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
+	};
+} )( localize( MediaLibraryListPlanPromo ) );

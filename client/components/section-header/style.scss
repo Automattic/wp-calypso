@@ -28,8 +28,14 @@
 		margin: 4px 0;
 	}
 
-	.count {
+	.count,
+	.support-info {
 		margin-left: 8px;
+	}
+	
+	.support-info {
+		position: relative;
+		top: 3px;
 	}
 }
 
@@ -41,7 +47,7 @@
 }
 
 .section-header__label {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 14px;
 }
 
@@ -58,6 +64,6 @@
 
 .is-placeholder {
 	.section-header__label {
-		@include placeholder;
+		@include placeholder();
 	}
 }

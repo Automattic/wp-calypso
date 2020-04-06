@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -17,7 +16,7 @@ import {
 	recordTracksEventWithClientId,
 	recordPageView,
 	recordPageViewWithClientId,
-} from '../actions.js';
+} from '../actions';
 
 import { ANALYTICS_MULTI_TRACK, ANALYTICS_STAT_BUMP } from 'state/action-types';
 

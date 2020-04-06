@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,9 +19,9 @@ import {
  * dispatched. The state reflects a mapping of search term to a
  * boolean reflecting whether a request for that term is in progress.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function isSearching( state = {}, action ) {
 	switch ( action.type ) {
@@ -41,9 +39,9 @@ export function isSearching( state = {}, action ) {
 /**
  * Tracks all known customer objects, indexed by post ID.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function items( state = {}, action ) {
 	switch ( action.type ) {
@@ -59,9 +57,9 @@ export function items( state = {}, action ) {
  * Tracks the customers which belong to a query, as a list of IDs
  * referencing items in `customers.items`.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function queries( state = {}, action ) {
 	switch ( action.type ) {

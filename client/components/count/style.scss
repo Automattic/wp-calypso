@@ -10,7 +10,7 @@
 	text-align: center;
 
 	&.is-primary {
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 		border-color: var( --color-accent );
 		background-color: var( --color-accent );
 	}

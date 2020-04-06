@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,8 +15,8 @@ import getUpcomingBillingTransactions from 'state/selectors/get-upcoming-billing
  * Returns the slugs of all sites that are included in upcoming transactions, indexed by the site IDs.
  * Sites that are not loaded yet are intentionally skipped.
  *
- * @param  {Object}   state   Global state tree
- * @return {Object}           Site slugs, indexed by site ID
+ * @param  {object}   state   Global state tree
+ * @returns {object}           Site slugs, indexed by site ID
  */
 const getSiteSlugsForUpcomingTransactions = createSelector(
 	state => {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,43 +10,38 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import CartStore from 'lib/cart/store';
-import DnsStore from 'lib/domains/dns/store';
 import { fetchUsers } from 'lib/users/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import { getProductsList } from 'state/products-list/selectors';
 import NameserversStore from 'lib/domains/nameservers/store';
-import { fetchDns, fetchNameservers, fetchWapiDomainInfo, fetchWhois } from 'lib/upgrades/actions';
+import { fetchNameservers } from 'lib/domains/nameservers/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySiteDomains from 'components/data/query-site-domains';
-import SiteRedirectStore from 'lib/domains/site-redirect/store';
 import StoreConnection from 'components/data/store-connection';
 import UsersStore from 'lib/users/store';
 import WapiDomainInfoStore from 'lib/domains/wapi-domain-info/store';
-import WhoisStore from 'lib/domains/whois/store';
+import { fetchWapiDomainInfo } from 'lib/domains/wapi-domain-info/actions';
 
 function getStateFromStores( props ) {
 	return {
 		cart: CartStore.get(),
 		context: props.context,
 		domains: props.selectedSite ? props.domains : null,
-		dns: DnsStore.getByDomainName( props.selectedDomainName ),
 		isRequestingSiteDomains: props.isRequestingSiteDomains,
-		location: SiteRedirectStore.getBySite( props.selectedSite.domain ),
 		nameservers: NameserversStore.getByDomainName( props.selectedDomainName ),
 		products: props.products,
 		selectedDomainName: props.selectedDomainName,
 		selectedSite: props.selectedSite,
 		sitePlans: props.sitePlans,
 		user: props.currentUser,
-		users: UsersStore.getUsers( { siteId: props.selectedSite.ID } ),
+		users: UsersStore.getUsers( { siteId: get( props.selectedSite, 'ID' ) } ),
 		wapiDomainInfo: WapiDomainInfoStore.getByDomainName( props.selectedDomainName ),
-		whois: WhoisStore.getByDomainName( props.selectedDomainName ),
 	};
 }
 
@@ -67,18 +60,14 @@ class DomainManagementData extends React.Component {
 		needsNameservers: PropTypes.bool,
 		needsPlans: PropTypes.bool,
 		needsProductsList: PropTypes.bool,
-		needsSiteRedirect: PropTypes.bool,
 		needsUsers: PropTypes.bool,
-		needsWhois: PropTypes.bool,
 		productsList: PropTypes.object,
 		selectedDomainName: PropTypes.string,
 		selectedSite: PropTypes.object,
 		sitePlans: PropTypes.object,
 	};
 
-	constructor( props ) {
-		super( props );
-
+	componentDidMount() {
 		this.loadData( {} );
 	}
 
@@ -86,12 +75,8 @@ class DomainManagementData extends React.Component {
 		this.loadData( prevProps );
 	}
 
-	loadData = prevProps => {
+	loadData( prevProps ) {
 		const { needsUsers, selectedDomainName, selectedSite } = this.props;
-
-		if ( this.props.needsDns ) {
-			fetchDns( selectedDomainName );
-		}
 
 		if ( this.props.needsDomainInfo ) {
 			fetchWapiDomainInfo( selectedDomainName );
@@ -101,31 +86,24 @@ class DomainManagementData extends React.Component {
 			fetchNameservers( selectedDomainName );
 		}
 
-		if ( this.props.needsWhois ) {
-			fetchWhois( this.props.selectedDomainName );
-		}
-
 		if (
 			needsUsers &&
 			( prevProps.needsUsers !== needsUsers || prevProps.selectedSite !== selectedSite )
 		) {
 			fetchUsers( { siteId: selectedSite.ID, number: 1000 } );
 		}
-	};
+	}
 
 	render() {
 		const {
 			needsCart,
 			needsContactDetails,
-			needsDns,
 			needsDomains,
 			needsDomainInfo,
 			needsNameservers,
 			needsPlans,
 			needsProductsList,
-			needsSiteRedirect,
 			needsUsers,
-			needsWhois,
 			selectedSite,
 		} = this.props;
 
@@ -133,23 +111,14 @@ class DomainManagementData extends React.Component {
 		if ( needsCart ) {
 			stores.push( CartStore );
 		}
-		if ( needsDns ) {
-			stores.push( DnsStore );
-		}
 		if ( needsDomainInfo ) {
 			stores.push( WapiDomainInfoStore );
 		}
 		if ( needsNameservers ) {
 			stores.push( NameserversStore );
 		}
-		if ( needsSiteRedirect ) {
-			stores.push( SiteRedirectStore );
-		}
 		if ( needsUsers ) {
 			stores.push( UsersStore );
-		}
-		if ( needsWhois ) {
-			stores.push( WhoisStore );
 		}
 
 		return (
@@ -184,7 +153,7 @@ export default connect( state => {
 
 	return {
 		currentUser: getCurrentUser( state ),
-		domains: getDecoratedSiteDomains( state, siteId ),
+		domains: getDomainsBySiteId( state, siteId ),
 		isRequestingSiteDomains: isRequestingSiteDomains( state, siteId ),
 		productsList: getProductsList( state ),
 		sitePlans: getPlansBySite( state, selectedSite ),

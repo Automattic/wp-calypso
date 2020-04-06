@@ -1,12 +1,11 @@
 # I18n Calypso
 
-This lib enables translations, exposing three public methods:
+This lib enables translations, exposing two public methods:
 
 * [.translate()](#translate-method)
-* [.moment()](#moment-method)
 * [.numberFormat()](#numberformat-method)
 
-It also provides a Higher-Order Component named [localize()](#localize). Wrapping your component in `localize()` will give it the aforementioned functions as props. This is the suggested way of using them with React components.
+It also provides a React higher-order component named [localize()](#localize) and a React hook name [useTranslate()](#react-hook). Wrapping your component in `localize()` will give it the aforementioned functions as props, and calling the `useTranslate()` hook will return the `translate()` function. This is the suggested way of using `i18n-calypso` methods with React components.
 
 Finally, this lib exposes a utility method for your React application:
 
@@ -212,21 +211,6 @@ var content = i18n.translate( 'post', {
 
 See the [test cases](test/test.jsx) for more example usage.
 
-## Moment Method
-
-This module includes an instantiation of `moment.js` to allow for internationalization of dates and times. We generate a momentjs locale file as part of loading a locale and automatically update the moment instance to use the correct locale and translations. You can use `moment()` from within any component like this:
-
-```js
-var thisMagicMoment = i18n.moment( "2014-07-18T14:59:09-07:00" ).format( 'LLLL' );
-```
-
-And you can use it from outside of React like this.
-
-```js
-var i18n = require( 'i18n-calypso' );
-var thisMagicMoment = i18n.moment( "2014-07-18T14:59:09-07:00" ).format( 'LLLL' );
-```
-
 ## numberFormat Method
 
 The numberFormat method is also available to format numbers using the loaded locale settings (i.e., locale-specific thousands and decimal separators). You pass in the number (integer or float) and (optionally) the number of decimal places you want (or an options object), and a string is returned with the proper formatting for the currently-loaded locale. You can also override the locale settings for a particular number if necessary by expanding the second argument into an object with the attributes you want to override.
@@ -261,7 +245,7 @@ The mixin has been removed from this distribution. Please use version 1 of `i18n
 
 `localize` is a higher-order component which, when invoked as a function with a component,
 returns a new component class. The new component wraps the original component, passing all
-original props plus props to assist in localization (`translate`, `moment`, and `numberFormat`).
+original props plus props to assist in localization (`translate` and `numberFormat`).
 The advantage of using a higher-order component instead of calling translate directly from
 the `i18n-calypso` module is that the latter does not properly account for change events
 which may be emitted by the state emitter object.
@@ -336,13 +320,66 @@ export default Greeting;
 Unlike the `localize` HOC, the component doesn't need to be wrapped and receives the `translate`
 function from the hook call rather than a prop.
 
+## React Localization Helpers for RTL
+
+This module provides React helpers to figure out the LTR/RTL flag of the current `i18n-calypso`
+locale, make it available to React components and update automatically on locale change.
+
+### `useRtl` React Hook
+
+Hook function that returns the `isRtl` boolean flag and automatically rerenders the component
+(i.e., updates its internal state) when app locale changes from LTR to RTL language and back.
+
+Example:
+
+```jsx
+import React from 'react';
+import Gridicon from 'components/gridicon';
+import { useRtl } from 'i18n-calypso';
+
+export default function Header() {
+	const isRtl = useRtl();
+	const icon = isRtl ? 'arrow-left' : 'arrow-right';
+	return (
+		<div>
+			<Gridicon icon={ icon } />
+			Header With Back Arrow
+		</div>
+	);
+}
+```
+
+# `withRtl` Higher-Order Component
+
+The same functionality is also exposed as a HOC that passes an `isRtl` prop to the wrapped component.
+
+Example:
+
+```jsx
+import React from 'react';
+import Gridicon from 'components/gridicon';
+import { withRtl } from 'i18n-calypso';
+
+function Header( { isRtl } ) {
+	const icon = isRtl ? 'arrow-left' : 'arrow-right';
+	return (
+		<div>
+			<Gridicon icon={ icon } />
+			Header With Back Arrow
+		</div>
+	);
+}
+
+export default withRtl( Header );
+```
+
 ## Some Background
 
-I18n accepts a language-specific locale json file that contains the whitelisted translation strings for your JS project, uses that data to instantiate a [Jed](https://messageformat.github.io/Jed/) instance, and exposes a single `translate` method with sugared syntax for interacting with Jed.
+I18n accepts a language-specific locale json file that contains the whitelisted translation strings for your JS project, uses that data to instantiate a [Tannin](https://github.com/aduth/tannin) instance, and exposes a single `translate` method with sugared syntax for interacting with Tannin.
 
 ### Key Hashing
 
-In order to reduce file-size, i18n-calypso allows the usage of hashed keys for lookup. This is a non-standard extension of the Jed standard which is enabled by supplying a header key `key-hash` to specify a hash method (currently only `sha1` is supported), as well as a hash length. For example `sha1-4` uses the first 4 hexadecimal chars of the sha1 hash of the standard Jed lookup string. As a further optimization, variable hash lengths are available, potentially requiring multiple lookups per string: `sha1-3-7` specifies that hash lengths of 3 to 7 are used in the file.
+In order to reduce file-size, i18n-calypso allows the usage of hashed keys for lookup. This is a non-standard extension of the Jed standard (used by Tannin) which is enabled by supplying a header key `key-hash` to specify a hash method (currently only `sha1` is supported), as well as a hash length. For example `sha1-4` uses the first 4 hexadecimal chars of the sha1 hash of the standard Jed lookup string. As a further optimization, variable hash lengths are available, potentially requiring multiple lookups per string: `sha1-3-7` specifies that hash lengths of 3 to 7 are used in the file.
 
 #### Example
 
@@ -357,3 +394,7 @@ just the hash is used for lookup, resulting in a shorter file.
 The generator of the jed file would usually try to choose the smallest hash length at which no hash collisions occur. In the above example a hash length of 1 (`d` short for `d2306dd8970ff616631a3501791297f31475e416`) is enough because there is only one string.
 
 Note that when generating the jed file, all possible strings need to be taken into consideration for the collision calculation, as otherwise an untranslated source string would be provided with the wrong translation.
+
+## Extracting Translatable Strings From JavaScript Sources
+
+There is a companion [i18n-calypso-cli](https://npmjs.com/package/i18n-calypso-cli) package that provides a tool to extract `translate()`-d strings from your JavaScript code and generate a POT or PHP translation file.

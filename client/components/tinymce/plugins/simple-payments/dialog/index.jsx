@@ -1,4 +1,3 @@
-/** @format */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 /**
@@ -15,12 +14,10 @@ import { find, isNumber, pick, noop, get, isEmpty } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import getSimplePayments from 'state/selectors/get-simple-payments';
 import QuerySimplePayments from 'components/data/query-simple-payments';
 import QuerySitePlans from 'components/data/query-site-plans';
-import Dialog from 'components/dialog';
-import Button from 'components/button';
+import { Dialog, Button } from '@automattic/components';
 import Notice from 'components/notice';
 import Navigation from './navigation';
 import ProductForm, {
@@ -41,9 +38,9 @@ import {
 	receiveUpdateProduct,
 	receiveDeleteProduct,
 } from 'state/simple-payments/product-list/actions';
-import { PLAN_PREMIUM, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
+import { FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
-import UpgradeNudge from 'blocks/upgrade-nudge';
+import UpsellNudge from 'blocks/upsell-nudge';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import {
 	bumpStat,
@@ -52,7 +49,6 @@ import {
 	withAnalytics,
 } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
-import Banner from 'components/banner';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { DEFAULT_CURRENCY } from 'lib/simple-payments/constants';
 
@@ -145,7 +141,6 @@ class SimplePaymentsDialog extends Component {
 		editPaymentId: PropTypes.number,
 		onClose: PropTypes.func.isRequired,
 		onInsert: PropTypes.func.isRequired,
-		isJetpackNotSupported: PropTypes.bool,
 		canCurrentUserAddButtons: PropTypes.bool,
 	};
 
@@ -444,22 +439,17 @@ class SimplePaymentsDialog extends Component {
 		);
 	}
 
-	returnTrue() {
-		return true;
-	}
-
 	render() {
 		const {
 			showDialog,
 			siteId,
-			siteSlug,
 			paymentButtons,
 			currencyCode,
-			isJetpackNotSupported,
 			translate,
 			planHasSimplePaymentsFeature,
 			shouldQuerySitePlans,
 			canCurrentUserAddButtons,
+			canCurrentUserUpgrade,
 		} = this.props;
 		const { activeTab, initialFormValues, errorMessage } = this.state;
 
@@ -469,44 +459,31 @@ class SimplePaymentsDialog extends Component {
 			activeTab === 'list' ||
 			( activeTab === 'form' && ! this.isDirectEdit() && ! isEmptyArray( paymentButtons ) );
 
-		if ( ! shouldQuerySitePlans && isJetpackNotSupported ) {
-			return this.renderEmptyDialog(
-				<EmptyContent
-					className="upgrade-jetpack"
-					illustration="/calypso/images/illustrations/illustration-jetpack.svg"
-					title={ translate( 'Upgrade Jetpack to use Simple Payments' ) }
-					illustrationWidth={ 600 }
-					action={
-						<Banner
-							icon="star"
-							title={ translate( 'Upgrade your Jetpack!' ) }
-							description={ translate( 'Simple Payments requires Jetpack version 5.2 or later.' ) }
-							feature={ FEATURE_SIMPLE_PAYMENTS }
-							plan={ PLAN_PREMIUM }
-							href={ '../../plugins/jetpack/' + siteSlug }
-						/>
-					}
-				/>,
-				true
-			);
-		}
-
 		if ( ! shouldQuerySitePlans && ! planHasSimplePaymentsFeature ) {
 			return this.renderEmptyDialog(
 				<EmptyContent
 					illustration="/calypso/images/illustrations/type-e-commerce.svg"
 					illustrationWidth={ 300 }
 					title={ translate( 'Want to add a payment button to your site?' ) }
+					line={
+						! canCurrentUserUpgrade
+							? translate(
+									"Contact your site's administrator to upgrade to the Premium, Business, or eCommerce Plan."
+							  )
+							: false
+					}
 					action={
-						<UpgradeNudge
+						<UpsellNudge
 							className="editor-simple-payments-modal__nudge-nudge"
 							title={ translate( 'Upgrade your plan to our Premium or Business plan!' ) }
-							message={ translate(
+							description={ translate(
 								'Get simple payments, advanced social media tools, your own domain, and more.'
 							) }
 							feature={ FEATURE_SIMPLE_PAYMENTS }
 							event="editor_simple_payments_modal_nudge"
-							shouldDisplay={ this.returnTrue }
+							tracksImpressionName="calypso_upgrade_nudge_impression"
+							tracksClickName="calypso_upgrade_nudge_cta_click"
+							showIcon={ true }
 						/>
 					}
 					secondaryAction={
@@ -605,17 +582,15 @@ export default connect( ( state, { siteId } ) => {
 
 	return {
 		siteId,
-		siteSlug: getSiteSlug( state, siteId ),
 		paymentButtons: getSimplePayments( state, siteId ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		shouldQuerySitePlans: getSitePlanSlug( state, siteId ) === null,
-		isJetpackNotSupported:
-			isJetpackSite( state, siteId ) && ! isJetpackMinimumVersion( state, siteId, '5.2' ),
 		planHasSimplePaymentsFeature: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 		formIsValid: isProductFormValid( state ),
 		formIsDirty: isProductFormDirty( state ),
 		currentUserEmail: getCurrentUserEmail( state ),
 		featuredImageId: get( getFormValues( REDUX_FORM_NAME )( state ), 'featuredImageId' ),
 		canCurrentUserAddButtons: canCurrentUser( state, siteId, 'publish_posts' ),
+		canCurrentUserUpgrade: canCurrentUser( state, siteId, 'manage_options' ),
 	};
 } )( localize( SimplePaymentsDialog ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,13 +11,14 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import Notice from 'components/notice';
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
+import FormPhoneInput from 'components/forms/form-phone-input';
 import IsRebrandCitiesSite from './is-rebrand-cities-site';
 import Timezone from 'components/timezone';
 import Site from 'blocks/site';
@@ -31,6 +30,9 @@ import { getCurrentUserLocale } from 'state/current-user/selectors';
 import PrimaryHeader from '../shared/primary-header';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getLanguage } from 'lib/i18n-utils';
+import getCountries from 'state/selectors/get-countries';
+import QuerySmsCountries from 'components/data/query-countries/sms';
+import FormInputValidation from 'components/forms/form-input-validation';
 
 class InfoStep extends Component {
 	static propTypes = {
@@ -39,6 +41,10 @@ class InfoStep extends Component {
 		userSettings: PropTypes.object,
 		onComplete: PropTypes.func.isRequired,
 		site: PropTypes.object.isRequired,
+	};
+
+	state = {
+		validation: '',
 	};
 
 	setTimezone = timezone => {
@@ -56,6 +62,23 @@ class InfoStep extends Component {
 		this.updateSignupForm( 'isRebrandCitiesSite', value );
 	};
 
+	onChange = phoneNumber => {
+		if ( phoneNumber.phoneNumber && ! phoneNumber.isValid ) {
+			this.setState( {
+				validation: this.props.translate( 'Please enter a valid phone number.' ),
+			} );
+		} else {
+			this.setState( { validation: '' } );
+		}
+
+		this.props.updateConciergeSignupForm( {
+			...this.props.signupForm,
+			countryCode: phoneNumber.countryData.code,
+			phoneNumberWithoutCountryCode: phoneNumber.phoneNumber,
+			phoneNumber: phoneNumber.phoneNumber ? phoneNumber.phoneNumberFull : '',
+		} );
+	};
+
 	setFieldValue = ( { target: { name, value } } ) => {
 		this.updateSignupForm( name, value );
 	};
@@ -64,6 +87,10 @@ class InfoStep extends Component {
 		const {
 			signupForm: { firstname, message },
 		} = this.props;
+
+		if ( this.state.validation ) {
+			return false;
+		}
 
 		return !! firstname.trim() && !! message.trim();
 	};
@@ -90,7 +117,14 @@ class InfoStep extends Component {
 		const {
 			currentUserLocale,
 			onComplete,
-			signupForm: { firstname, lastname, message, timezone, phoneNumber },
+			signupForm: {
+				firstname,
+				lastname,
+				message,
+				timezone,
+				countryCode,
+				phoneNumberWithoutCountryCode,
+			},
 			site,
 			translate,
 		} = this.props;
@@ -142,18 +176,22 @@ class InfoStep extends Component {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel>{ translate( "What's your phone number?" ) }</FormLabel>
-						<FormTextInput
+						<QuerySmsCountries />
+						<FormPhoneInput
 							name="phoneNumber"
-							placeholder={ translate( 'Enter your phone number including the country code' ) }
-							onChange={ this.setFieldValue }
-							value={ phoneNumber }
+							countriesList={ this.props.countriesList }
+							onChange={ this.onChange }
+							initialCountryCode={ countryCode }
+							initialPhoneNumber={ phoneNumberWithoutCountryCode }
+							className="book__info-step-phone-input"
 						/>
 						<FormSettingExplanation>
-							{ translate(
-								'We will not call you — this is so that we can send you a reminder. Check your email for the link to join our screenshare.'
-							) }
+							{ translate( 'We will not call you — this is so that we can send you a reminder.' ) }
 						</FormSettingExplanation>
+
+						{ this.state.validation && (
+							<FormInputValidation isError text={ this.state.validation } />
+						) }
 					</FormFieldset>
 
 					<FormFieldset>
@@ -196,6 +234,7 @@ export default connect(
 		currentUserLocale: getCurrentUserLocale( state ),
 		signupForm: getConciergeSignupForm( state ),
 		userSettings: getUserSettings( state ),
+		countriesList: getCountries( state, 'sms' ),
 	} ),
 	{
 		updateConciergeSignupForm,

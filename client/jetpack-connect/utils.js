@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -17,7 +16,9 @@ export function authQueryTransformer( queryObject ) {
 	return {
 		// Required
 		clientId: parseInt( queryObject.client_id, 10 ),
+		closeWindowAfterLogin: '1' === queryObject.close_window_after_login,
 		homeUrl: queryObject.home_url,
+		isPopup: '1' === queryObject.is_popup,
 		nonce: queryObject._wp_nonce,
 		redirectUri: queryObject.redirect_uri,
 		scope: queryObject.scope,
@@ -71,7 +72,7 @@ export function addCalypsoEnvQueryArg( url ) {
  * Sanitize a user-supplied URL so we can use it for network requests.
  *
  * @param {string} inputUrl User-supplied URL
- * @return {string} Sanitized URL
+ * @returns {string} Sanitized URL
  */
 export function cleanUrl( inputUrl ) {
 	let url = inputUrl.trim().toLowerCase();
@@ -89,7 +90,7 @@ export function cleanUrl( inputUrl ) {
  * when provided with a scope.
  *
  * @param  {string}  scope From authorization query
- * @return {?string}       Role parsed from scope if found
+ * @returns {?string}       Role parsed from scope if found
  */
 export function getRoleFromScope( scope ) {
 	if ( ! includes( scope, ':' ) ) {
@@ -106,8 +107,8 @@ export function getRoleFromScope( scope ) {
  * Parse an authorization query
  *
  * @property {Function} parser Lazy-instatiated parser
- * @param  {Object}     query  Authorization query
- * @return {?Object}           Query after transformation. Null if invalid or errored during transform.
+ * @param  {object}     query  Authorization query
+ * @returns {?object}           Query after transformation. Null if invalid or errored during transform.
  */
 export function parseAuthorizationQuery( query ) {
 	if ( ! parseAuthorizationQuery.parser ) {

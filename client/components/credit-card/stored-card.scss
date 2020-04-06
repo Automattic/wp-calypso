@@ -1,9 +1,9 @@
+/* 1. `background-image` is set inline by the component logic */
 
 .credit-card__stored-card {
-	background-image: url( '/calypso/images/upgrades/cc-visa-disabled.svg' );
-	background-position: 18px center;
-	background-repeat: no-repeat;
-	background-size: 60px auto;
+	background-position: 18px center; /* 1 */
+	background-repeat: no-repeat; /* 1 */
+	background-size: 60px 38px; /* 1 */
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
@@ -11,35 +11,29 @@
 }
 
 .credit-card__stored-card-name {
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-50 );
 	margin-right: 10px;
 }
 
 .credit-card__stored-card-number {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	flex-basis: 100%;
 	font-weight: 600;
 }
 
 .credit-card__stored-card-expiration-date {
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-50 );
 	font-style: italic;
-	opacity: 0.7;
 	white-space: nowrap;
 }
 
-$cc-brands: 'amex', 'diners', 'discover', 'jcb', 'mastercard', 'unionpay', 'visa';
-
-@each $brand in $cc-brands {
-	.credit-card__stored-card.is-#{$brand} {
-		background-image: url( '/calypso/images/upgrades/cc-#{$brand}-disabled.svg' );
-	}
-}
-
 .credit-card.is-selected {
-	@each $brand in $cc-brands {
-		.credit-card__stored-card.is-#{$brand} {
-			background-image: url( '/calypso/images/upgrades/cc-#{$brand}.svg' );
-		}
+	.credit-card__stored-card-name,
+	.credit-card__stored-card-expiration-date {
+		color: var( --color-primary-50 );
+	}
+
+	.credit-card__stored-card-number {
+		color: var( --color-primary-70 );
 	}
 }

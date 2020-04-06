@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,13 +15,11 @@ import './style.scss';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
+import { Button, CompactCard, Dialog } from '@automattic/components';
 import QueryMembershipProducts from 'components/data/query-memberships';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'components/gridicon';
-import Dialog from 'components/dialog';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormSectionHeading from 'components/forms/form-section-heading';
@@ -38,26 +34,40 @@ import {
 	requestDeleteProduct,
 } from 'state/memberships/product-list/actions';
 
-// These are Stripe settlement currencies.
-const CURRENCIES = [
-	'USD',
-	'AUD',
-	'BRL',
-	'CAD',
-	'CHF',
-	'DKK',
-	'EUR',
-	'GBP',
-	'HKD',
-	'JPY',
-	'MXN',
-	'NOK',
-	'NZD',
-	'SEK',
-	'SGD',
-];
+/**
+ * @typedef {[string, number] CurrencyMinimum
+ *
+ *
+ * Stripe Currencies also supported by WordPress.com with minimum transaction amounts.
+ *
+ * https://stripe.com/docs/currencies#minimum-and-maximum-charge-amounts
+ *
+ * @type { [currency: string]: number }
+ */
+const MINIMUM_CURRENCY_AMOUNT = {
+	USD: 0.5,
+	AUD: 0.5,
+	BRL: 0.5,
+	CAD: 0.5,
+	CHF: 0.5,
+	DKK: 2.5,
+	EUR: 0.5,
+	GBP: 0.3,
+	HKD: 4.0,
+	INR: 0.5,
+	JPY: 50,
+	MXN: 10,
+	NOK: 3.0,
+	NZD: 0.5,
+	PLN: 2.0,
+	SEK: 3.0,
+	SGD: 0.5,
+};
 
-const currencyList = CURRENCIES.map( code => ( { code } ) );
+/**
+ * @type Array<{ code: string }>
+ */
+const currencyList = Object.keys( MINIMUM_CURRENCY_AMOUNT ).map( code => ( { code } ) );
 
 class MembershipsProductsSection extends Component {
 	constructor() {
@@ -145,7 +155,7 @@ class MembershipsProductsSection extends Component {
 				editedProductName: '',
 				editedPrice: {
 					currency: 'USD',
-					value: 5.0,
+					value: minimumCurrencyTransactionAmount( 'USD' ),
 				},
 				editedSchedule: '1 month',
 				editedPayWhatYouWant: false,
@@ -185,7 +195,10 @@ class MembershipsProductsSection extends Component {
 	onNameChange = event => this.setState( { editedProductName: event.target.value } );
 	onSelectSchedule = event => this.setState( { editedSchedule: event.target.value } );
 	isFormValid = field => {
-		if ( ( field === 'price' || ! field ) && this.state.editedPrice.value < 5.0 ) {
+		if (
+			( field === 'price' || ! field ) &&
+			! isValidCurrencyAmount( this.state.editedPrice.currency, this.state.editedPrice.value )
+		) {
 			return false;
 		}
 		if ( ( field === 'name' || ! field ) && this.state.editedProductName.length === 0 ) {
@@ -239,8 +252,7 @@ class MembershipsProductsSection extends Component {
 					<FormCurrencyInput
 						name="currency"
 						id="currency"
-						min="5.00"
-						value={ this.state.editedPrice.value }
+						value={ isNaN( this.state.editedPrice.value ) ? '' : this.state.editedPrice.value }
 						onChange={ this.handlePriceChange }
 						currencySymbolPrefix={ this.state.editedPrice.currency }
 						onCurrencyChange={ this.handleCurrencyChange }
@@ -250,7 +262,14 @@ class MembershipsProductsSection extends Component {
 					{ ! this.isFormValid( 'price' ) && (
 						<FormInputValidation
 							isError
-							text={ this.props.translate( 'Please enter a price higher than 5.00' ) }
+							text={ this.props.translate( 'Please enter a price higher than %s', {
+								args: [
+									formatCurrency(
+										minimumCurrencyTransactionAmount( this.state.editedPrice.currency ),
+										this.state.editedPrice.currency
+									),
+								],
+							} ) }
 						/>
 					) }
 				</FormFieldset>
@@ -367,6 +386,28 @@ class MembershipsProductsSection extends Component {
 			</div>
 		);
 	}
+}
+
+/**
+ * Return the minimum transaction amount for a currency.
+ *
+ *
+ * @param {string} currency - Currency.
+ * @returns {number} Minimum transaction amount for given currency.
+ */
+function minimumCurrencyTransactionAmount( currency ) {
+	return MINIMUM_CURRENCY_AMOUNT[ currency ];
+}
+
+/**
+ * Validates that the given price is at least the minimum transaction amount for the given currency.
+ *
+ * @param {string} currency Currency of price.
+ * @param {number} price Amount in currency.
+ * @returns {boolean} True if the price is valid for the currency.
+ */
+function isValidCurrencyAmount( currency, price ) {
+	return price >= minimumCurrencyTransactionAmount( currency );
 }
 
 export default connect(

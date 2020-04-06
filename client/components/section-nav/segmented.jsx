@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,17 +9,13 @@ import classNames from 'classnames';
 /**
  * Internal Dependencies
  */
-import ControlItem from 'components/segmented-control/item';
 import SegmentedControl from 'components/segmented-control';
 
 /**
- * Internal variables
+ * Style dependencies
  */
-let _instance = 1;
+import './segmented.scss';
 
-/**
- * Main
- */
 class NavSegmented extends Component {
 	static propTypes = {
 		label: PropTypes.string,
@@ -32,40 +26,27 @@ class NavSegmented extends Component {
 		hasSiblingControls: false,
 	};
 
-	componentWillMount() {
-		this.id = _instance;
-		_instance++;
-	}
-
 	render() {
-		const segmentedClassName = classNames( {
-			'section-nav-group': true,
-			'section-nav__segmented': true,
+		const segmentedClassName = classNames( 'section-nav-group', 'section-nav__segmented', {
 			'has-siblings': this.props.hasSiblingControls,
 		} );
 
 		return (
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<div className={ segmentedClassName }>
 				{ this.props.label && <h6 className="section-nav-group__label">{ this.props.label }</h6> }
 
 				<SegmentedControl>{ this.getControlItems() }</SegmentedControl>
 			</div>
+			/* eslint-enable wpcalyspo/jsx-classname-namespace */
 		);
 	}
 
-	getControlItems = () => {
-		return React.Children.map(
-			this.props.children,
-			function( child, index ) {
-				return (
-					<ControlItem { ...child.props } key={ 'navSegmented-' + this.id + '-' + index }>
-						{ child.props.children }
-					</ControlItem>
-				);
-			},
-			this
-		);
-	};
+	getControlItems() {
+		return React.Children.map( this.props.children, ( child, index ) => (
+			<SegmentedControl.Item { ...child.props } key={ index } />
+		) );
+	}
 }
 
 export default NavSegmented;

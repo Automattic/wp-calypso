@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,9 +10,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import EmptyContent from 'components/empty-content';
-import { hasGSuite } from 'lib/gsuite';
+import { hasGSuiteWithUs } from 'lib/gsuite';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { domainManagementEdit } from 'my-sites/domains/paths';
 import { emailManagement } from 'my-sites/email/paths';
@@ -42,10 +40,10 @@ const DomainOnly = ( { primaryDomain, hasNotice, recordTracks, siteId, slug, tra
 	}
 
 	const domainName = primaryDomain.name;
-	const domainHasGSuite = hasGSuite( primaryDomain );
+	const domainHasGSuiteWithUs = hasGSuiteWithUs( primaryDomain );
 
 	const recordEmailClick = () => {
-		const tracksName = domainHasGSuite
+		const tracksName = domainHasGSuiteWithUs
 			? 'calypso_domain_only_gsuite_manage'
 			: 'calypso_domain_only_gsuite_cta';
 		recordTracks( tracksName, {
@@ -58,28 +56,28 @@ const DomainOnly = ( { primaryDomain, hasNotice, recordTracks, siteId, slug, tra
 			<EmptyContent
 				title={ translate( '%(domainName)s is ready when you are.', { args: { domainName } } ) }
 				line={ translate( 'Start a site now to unlock everything WordPress.com can offer.' ) }
-				action={ translate( 'Create Site' ) }
+				action={ translate( 'Create site' ) }
 				actionURL={ `/start/site-selected/?siteSlug=${ encodeURIComponent(
 					slug
 				) }&siteId=${ encodeURIComponent( siteId ) }` }
-				secondaryAction={ translate( 'Manage Domain' ) }
+				secondaryAction={ translate( 'Manage domain' ) }
 				secondaryActionURL={ domainManagementEdit( slug, domainName ) }
 				illustration={ '/calypso/images/drake/drake-browser.svg' }
 			>
 				<Button
 					className="empty-content__action button"
 					href={ emailManagement( slug, domainName ) }
-					primary={ ! domainHasGSuite }
+					primary={ ! domainHasGSuiteWithUs }
 					onClick={ recordEmailClick }
 				>
-					{ domainHasGSuite ? translate( 'Manage Email' ) : translate( 'Add Email' ) }
+					{ domainHasGSuiteWithUs ? translate( 'Manage email' ) : translate( 'Add email' ) }
 				</Button>
 			</EmptyContent>
 
 			{ hasNotice && (
 				<div className="domain-only-site__settings-notice">
 					{ translate(
-						'Your domain should start working immediately, but may be unreliable during the first 72 hours.'
+						'Your domain should start working immediately, but may be unreliable during the first 30 minutes.'
 					) }
 				</div>
 			) }

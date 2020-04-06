@@ -1,0 +1,51 @@
+.concierge-banner__placeholders.is-placeholder {
+    display: flex;
+    flex-direction: column;
+
+    @include breakpoint( '>960px' ) {
+        flex-direction: row;
+    }
+}
+
+.concierge-banner__placeholder-row {
+    flex: 0 0 100%;
+    height: 20px;
+    margin-bottom: 10px;
+}
+
+.concierge-banner__placeholder-row-container {
+    flex: 0.8;
+
+    .is-placeholder {
+        animation: pulse-light 800ms ease-in-out infinite;
+        background: var( --color-neutral-10 );
+    }
+}
+
+.concierge-banner__placeholder-button-container {
+    flex: 0.2;
+
+    .is-placeholder {
+        animation: pulse-light 800ms ease-in-out infinite;
+        background: var( --color-neutral-10 );
+    }
+
+    @include breakpoint( '>960px' ) {
+        margin: auto;
+    }
+}
+
+.concierge-banner__placeholder-button {
+    height: 30px;
+    width: 80px;
+
+    @include breakpoint( '>960px' ) {
+        height: 30px;
+        margin: auto;
+        width: 80px;
+    }
+
+    @include breakpoint( '<480px' ) {
+        width: 100%;
+    }
+}

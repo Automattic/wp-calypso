@@ -1,18 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import Gridicon from 'components/gridicon';
+import { gaRecordEvent } from 'lib/analytics/ga';
 
 class StatsActionLink extends PureComponent {
 	static propTypes = {
@@ -23,7 +20,7 @@ class StatsActionLink extends PureComponent {
 
 	onClick = event => {
 		event.stopPropagation();
-		analytics.ga.recordEvent(
+		gaRecordEvent(
 			'Stats',
 			'Clicked on External Link in ' + this.props.moduleName + ' List Action Menu'
 		);

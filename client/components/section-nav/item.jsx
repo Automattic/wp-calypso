@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,7 +5,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal Dependencies
@@ -16,8 +14,10 @@ import Count from 'components/count';
 import { preload } from 'sections-helper';
 
 /**
- * Main
+ * Style dependencies
  */
+import './item.scss';
+
 class NavItem extends PureComponent {
 	static propTypes = {
 		itemType: PropTypes.string,
@@ -25,6 +25,7 @@ class NavItem extends PureComponent {
 		selected: PropTypes.bool,
 		tabIndex: PropTypes.number,
 		onClick: PropTypes.func,
+		onKeyPress: PropTypes.func,
 		isExternalLink: PropTypes.bool,
 		disabled: PropTypes.bool,
 		count: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
@@ -70,10 +71,11 @@ class NavItem extends PureComponent {
 					onClick={ onClick }
 					onMouseEnter={ this.preload }
 					tabIndex={ this.props.tabIndex || 0 }
-					aria-selected={ this.props.selected }
+					aria-current={ this.props.selected }
 					disabled={ this.props.disabled }
 					role="menuitem"
 					rel={ this.props.isExternalLink ? 'external' : null }
+					onKeyPress={ this.props.onKeyPress }
 				>
 					<span className={ 'section-nav-' + itemClassPrefix + '__text' }>
 						{ this.props.children }

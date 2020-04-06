@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import reducer, { items as unwrappedItems, requesting, errors } from '../reducer';
+import reducer, { items, requesting, errors } from '../reducer';
 import {
 	DOMAINS_SUGGESTIONS_RECEIVE,
 	DOMAINS_SUGGESTIONS_REQUEST,
@@ -18,10 +16,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
-import { withSchemaValidation } from 'state/utils';
 import { useSandbox } from 'test/helpers/use-sinon';
-
-const items = withSchemaValidation( unwrappedItems.schema, unwrappedItems );
 
 describe( 'reducer', () => {
 	let sandbox;
@@ -402,7 +397,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		test( 'should update errors on failure', () => {
+		test( 'should update errors on error', () => {
 			const originalState = deepFreeze( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true,
 			} );

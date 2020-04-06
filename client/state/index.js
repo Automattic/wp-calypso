@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -41,7 +40,7 @@ const addReducerEnhancer = nextCreator => ( reducer, initialState ) => {
 };
 
 /**
- * @typedef {Object} ReduxStore
+ * @typedef {object} ReduxStore
  * @property {!Function} dispatch dispatches actions
  * @property {!Function} getState returns the current state tree
  * @property {Function} replaceReducers replaces the state reducers
@@ -80,7 +79,7 @@ export function createReduxStore( initialState, reducer = initialReducer ) {
 		httpDataEnhancer,
 		applyMiddleware( ...middlewares ),
 		isBrowser && window.app && window.app.isDebug && actionLogger,
-		isBrowser && window.devToolsExtension && window.devToolsExtension(),
+		isBrowser && window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
 	].filter( Boolean );
 
 	return createStore( reducer, initialState, compose( ...enhancers ) );

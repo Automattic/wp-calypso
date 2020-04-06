@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,15 +7,21 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import {
 	WOOCOMMERCE_ACTION_LIST_ANNOTATE,
 	WOOCOMMERCE_ACTION_LIST_CLEAR,
 } from 'woocommerce/state/action-types';
 
-export default createReducer( null, {
-	[ WOOCOMMERCE_ACTION_LIST_CLEAR ]: handleActionListClear,
-	[ WOOCOMMERCE_ACTION_LIST_ANNOTATE ]: handleActionListAnnotate,
+export default withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case WOOCOMMERCE_ACTION_LIST_CLEAR:
+			return handleActionListClear( state, action );
+		case WOOCOMMERCE_ACTION_LIST_ANNOTATE:
+			return handleActionListAnnotate( state, action );
+	}
+
+	return state;
 } );
 
 function handleActionListClear() {

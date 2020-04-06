@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import { isEmpty, isEqual, compact } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import {
 	WOOCOMMERCE_PAYMENT_METHOD_CANCEL,
 	WOOCOMMERCE_PAYMENT_METHOD_CLOSE,
@@ -136,11 +134,21 @@ function paymentMethodUpdatedAction( state, { data } ) {
 	return state;
 }
 
-export default createReducer( initialState, {
-	[ WOOCOMMERCE_PAYMENT_METHOD_CANCEL ]: cancelAction,
-	[ WOOCOMMERCE_PAYMENT_METHOD_CLOSE ]: closeAction,
-	[ WOOCOMMERCE_PAYMENT_METHOD_EDIT_FIELD ]: editFieldAction,
-	[ WOOCOMMERCE_PAYMENT_METHOD_EDIT_ENABLED ]: changeEnabledAction,
-	[ WOOCOMMERCE_PAYMENT_METHOD_OPEN ]: openAction,
-	[ WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS ]: paymentMethodUpdatedAction,
+export default withoutPersistence( ( state = initialState, action ) => {
+	switch ( action.type ) {
+		case WOOCOMMERCE_PAYMENT_METHOD_CANCEL:
+			return cancelAction( state, action );
+		case WOOCOMMERCE_PAYMENT_METHOD_CLOSE:
+			return closeAction( state, action );
+		case WOOCOMMERCE_PAYMENT_METHOD_EDIT_FIELD:
+			return editFieldAction( state, action );
+		case WOOCOMMERCE_PAYMENT_METHOD_EDIT_ENABLED:
+			return changeEnabledAction( state, action );
+		case WOOCOMMERCE_PAYMENT_METHOD_OPEN:
+			return openAction( state, action );
+		case WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS:
+			return paymentMethodUpdatedAction( state, action );
+	}
+
+	return state;
 } );

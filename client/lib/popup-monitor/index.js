@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -57,7 +55,7 @@ PopupMonitor.prototype.open = function( url, name, specs ) {
  *
  * @param  {number} width The desired width of the popup
  * @param  {number} height The desired height of the popup
- * @return {string} Popup window specificatino string fragment
+ * @returns {string} Popup window specificatino string fragment
  * @public
  */
 PopupMonitor.prototype.getScreenCenterSpecs = function( width, height ) {

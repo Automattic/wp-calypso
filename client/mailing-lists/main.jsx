@@ -1,18 +1,16 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import page from 'page';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import notices from 'notices';
 import utils from './utils';
 import { preventWidows } from 'lib/formatting';

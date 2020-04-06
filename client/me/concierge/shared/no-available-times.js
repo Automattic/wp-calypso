@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import PrimaryHeader from './primary-header';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -29,7 +27,7 @@ class NoAvailableTimes extends Component {
 						{ translate( 'Sorry, there are no sessions available' ) }
 					</h2>
 					{ translate(
-						'We schedule Concierge Sessions up to 24 hours in advance and all upcoming sessions are full. Please check back later or {{link}}contact us in Live Chat{{/link}}.',
+						'We schedule Quick Start Sessions up to 24 hours in advance and all upcoming sessions are full. Please check back later or {{link}}contact us in Live Chat{{/link}}.',
 						{
 							components: {
 								link: <a href="https://wordpress.com/help/contact" />,
@@ -42,7 +40,4 @@ class NoAvailableTimes extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( localize( NoAvailableTimes ) );
+export default connect( null, { recordTracksEvent } )( localize( NoAvailableTimes ) );

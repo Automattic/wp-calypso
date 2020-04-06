@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -15,19 +14,11 @@ import { identity, noop } from 'lodash';
  */
 import { CreditCardFormFields } from '../';
 import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
+import CountrySpecificPaymentFields from 'my-sites/checkout/checkout/country-specific-payment-fields';
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: x => x,
+jest.mock( 'lib/checkout/processor-specific', () => ( {
+	shouldRenderAdditionalCountryFields: jest.fn( false ),
 } ) );
-
-jest.mock( 'lib/checkout/processor-specific', () => {
-	return {
-		shouldRenderAdditionalCountryFields: jest.fn( false ),
-	};
-} );
-
-// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
 
 const defaultProps = {
 	card: {},
@@ -47,7 +38,7 @@ describe( 'CreditCardFormFields', () => {
 
 	test( 'should not render ebanx fields', () => {
 		const wrapper = shallow( <CreditCardFormFields { ...defaultProps } /> );
-		expect( wrapper.find( 'CountrySpecificPaymentFields' ) ).toHaveLength( 0 );
+		expect( wrapper.find( CountrySpecificPaymentFields ) ).toHaveLength( 0 );
 	} );
 
 	describe( 'with ebanx activated', () => {
@@ -61,13 +52,13 @@ describe( 'CreditCardFormFields', () => {
 		test( 'should display Ebanx fields when an Ebanx payment country is selected and there is a transaction in process', () => {
 			const wrapper = shallow( <CreditCardFormFields { ...defaultProps } /> );
 			wrapper.setProps( { card: { country: 'BR' } } );
-			expect( wrapper.find( 'CountrySpecificPaymentFields' ) ).toHaveLength( 1 );
+			expect( wrapper.find( CountrySpecificPaymentFields ) ).toHaveLength( 1 );
 		} );
 
 		test( 'should not display Ebanx fields when there is a transaction in process', () => {
 			const wrapper = shallow( <CreditCardFormFields { ...defaultProps } /> );
 			wrapper.setProps( { card: { country: 'BR' }, isNewTransaction: false } );
-			expect( wrapper.find( 'CountrySpecificPaymentFields' ) ).toHaveLength( 0 );
+			expect( wrapper.find( CountrySpecificPaymentFields ) ).toHaveLength( 0 );
 		} );
 	} );
 } );

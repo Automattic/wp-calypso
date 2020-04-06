@@ -211,7 +211,4 @@ const mapDispatchToProps = ( dispatch, { orderId, siteId, packageId } ) => ( {
 	setITN: value => dispatch( setITN( orderId, siteId, packageId, value ) ),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( PackageRow ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PackageRow ) );

@@ -9,9 +9,9 @@ import isJetpackSite from './is-jetpack-site';
  * Determines if the Jetpack plugin of a Jetpack Site has extend themes management features.
  * Returns null if the site is not known or is not a Jetpack site.
  *
- * @param {Object} state Global state tree
- * @param {Number} siteId Site ID
- * @return {?Boolean} true if the site has Jetpack extended themes management features
+ * @param {object} state Global state tree
+ * @param {number} siteId Site ID
+ * @returns {?boolean} true if the site has Jetpack extended themes management features
  */
 export default function hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) {
 	if ( ! isJetpackSite( state, siteId ) ) {

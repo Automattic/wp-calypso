@@ -1,18 +1,21 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 import * as actions from '../actions';
 import { tracks } from 'lib/analytics';
-import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'state/action-types';
+import { bumpStat } from 'lib/analytics/mc';
+
+import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'state/reader/action-types';
 import wp from 'lib/wp';
 
 jest.mock( 'reader/stats', () => ( { pageViewForPost: jest.fn() } ) );
 
 jest.mock( 'lib/analytics', () => ( {
 	tracks: { recordEvent: jest.fn() },
-	mc: { bumpStat: jest.fn() },
+} ) );
+
+jest.mock( 'lib/analytics/mc', () => ( {
+	bumpStat: jest.fn(),
 } ) );
 
 jest.mock( 'lib/wp', () => {
@@ -29,7 +32,6 @@ jest.mock( 'lib/wp', () => {
 
 const undocumented = wp.undocumented;
 const { pageViewForPost } = require( 'reader/stats' );
-const { mc } = require( 'lib/analytics' );
 
 describe( 'actions', () => {
 	const dispatchSpy = jest.fn();
@@ -180,7 +182,7 @@ describe( 'actions', () => {
 			dispatch.mockReset();
 			getState.mockReset();
 			pageViewForPost.mockReset();
-			mc.bumpStat.mockReset();
+			bumpStat.mockReset();
 		} );
 
 		test( 'should not dispatch if post is falsey', () => {
@@ -210,7 +212,7 @@ describe( 'actions', () => {
 			} );
 
 			// expect( pageViewForPost.mock.calls.length ).toBe( 1 );
-			// expect( mc.bumpStat.mock.calls.length ).toBe( 1 );
+			expect( bumpStat.mock.calls.length ).toBe( 1 );
 		} );
 	} );
 } );

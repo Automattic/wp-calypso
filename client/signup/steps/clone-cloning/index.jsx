@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,8 +12,7 @@ import page from 'page';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
 
 /**
  * Style dependencies
@@ -26,7 +24,6 @@ class CloneCloningStep extends Component {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 		signupDependencies: PropTypes.object,
 	};
@@ -138,14 +135,7 @@ class CloneCloningStep extends Component {
 	};
 
 	render() {
-		const {
-			flowName,
-			stepName,
-			positionInFlow,
-			signupProgress,
-			originSiteName,
-			translate,
-		} = this.props;
+		const { flowName, stepName, positionInFlow, originSiteName, translate } = this.props;
 
 		const headerText = translate( "We're cloning %(originSiteName)s — sit tight!", {
 			args: { originSiteName },
@@ -161,7 +151,6 @@ class CloneCloningStep extends Component {
 				subHeaderText={ '' }
 				fallbackSubHeaderText={ '' }
 				positionInFlow={ positionInFlow }
-				signupProgress={ signupProgress }
 				stepContent={ this.renderStepContent() }
 			/>
 		);

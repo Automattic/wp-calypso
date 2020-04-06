@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -8,7 +7,7 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { noop, filter, get, flatMap } from 'lodash';
 import classnames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -16,7 +15,7 @@ import Gridicon from 'gridicons';
 import DocumentHead from 'components/data/document-head';
 import { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors';
 import { getCommentById } from 'state/comments/selectors';
-import getStream from 'state/selectors/get-reader-stream';
+import { getStream } from 'state/reader/streams/selectors';
 
 /**
  * Style dependencies

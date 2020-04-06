@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,6 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { omit } from 'lodash';
 import { localize } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -44,7 +43,7 @@ class Transfer extends React.Component {
 		const {
 			currentUserCanManage,
 			isPendingIcannVerification,
-			transferAwayEligibleAtMoment,
+			transferAwayEligibleAt,
 		} = getSelectedDomain( this.props );
 		let section = null;
 
@@ -52,7 +51,7 @@ class Transfer extends React.Component {
 			section = NonOwnerCard;
 		} else if ( transferProhibited ) {
 			section = TransferProhibited;
-		} else if ( transferAwayEligibleAtMoment && transferAwayEligibleAtMoment.isAfter() ) {
+		} else if ( transferAwayEligibleAt && moment( transferAwayEligibleAt ).isAfter() ) {
 			section = TransferLock;
 		} else if ( 'uk' === topLevelOfTld ) {
 			section = SelectIpsTag;

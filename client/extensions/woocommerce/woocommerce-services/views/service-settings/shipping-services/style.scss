@@ -99,7 +99,7 @@
 		box-shadow: none;
 
 		&:disabled {
-			color: var( --color-neutral-200 );
+			color: var( --color-neutral-20 );
 			background-color: var( --color-neutral-0 );
 			border-color: var( --color-neutral-0 );
 		}
@@ -114,6 +114,6 @@
 }
 
 .shipping-services__delivery-estimate {
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 	margin-left: 3px;
 }

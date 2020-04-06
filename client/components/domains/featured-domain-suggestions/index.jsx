@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -123,6 +121,7 @@ export class FeaturedDomainSuggestions extends Component {
 						fetchAlgo={ this.getFetchAlgorithm( primarySuggestion ) }
 						buttonStyles={ { primary: true } }
 						{ ...childProps }
+						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 					/>
 				) }
 				{ secondarySuggestion && (
@@ -134,6 +133,7 @@ export class FeaturedDomainSuggestions extends Component {
 						uiPosition={ 1 }
 						fetchAlgo={ this.getFetchAlgorithm( secondarySuggestion ) }
 						{ ...childProps }
+						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 					/>
 				) }
 			</div>

@@ -1,0 +1,23 @@
+.gutenboarding-editor-overrides {
+    .editor-post-switch-to-draft,
+    .editor-post-preview {
+        display: none;
+    }
+    
+    .gutenboarding-editor-overrides__launch-button {
+        padding: 0 12px;
+        margin: 0 12px 0 3px;
+    }
+
+    // Override 'Save' button to have tertiary styles.
+    .editor-post-publish-button {
+        color: #007cba !important;
+        background: none !important;
+        border: none !important;
+        box-shadow: none !important;
+
+        &[aria-disabled=true] {
+            opacity: 0.3 !important;
+        }
+    }
+}

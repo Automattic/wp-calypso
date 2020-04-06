@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -42,7 +40,4 @@ class ManageConnection extends Component {
 	}
 }
 
-export default flowRight(
-	localize,
-	redirectNonJetpack()
-)( ManageConnection );
+export default flowRight( localize, redirectNonJetpack() )( ManageConnection );

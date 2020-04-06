@@ -1,6 +1,5 @@
-/** @format */
 /**
- * @fileoverview Enforce recommended Gridicon size attributes
+ * @file Enforce recommended Gridicon size attributes
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.

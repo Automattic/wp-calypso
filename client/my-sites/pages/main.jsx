@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -24,6 +22,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import FormattedHeader from 'components/formatted-header';
 
 /**
  * Style dependencies
@@ -74,7 +73,7 @@ class PagesMain extends React.Component {
 	}
 
 	render() {
-		const { doSearch, siteId, search, status = 'published', translate } = this.props;
+		const { siteId, search, status = 'published', translate } = this.props;
 
 		const filterStrings = {
 			published: translate( 'Published', { context: 'Filter label for pages list' } ),
@@ -82,29 +81,16 @@ class PagesMain extends React.Component {
 			scheduled: translate( 'Scheduled', { context: 'Filter label for pages list' } ),
 			trashed: translate( 'Trashed', { context: 'Filter label for pages list' } ),
 		};
-		const searchStrings = {
-			published: translate( 'Search Published…', {
-				context: 'Search placeholder for pages list',
-				textOnly: true,
-			} ),
-			drafts: translate( 'Search Drafts…', {
-				context: 'Search placeholder for pages list',
-				textOnly: true,
-			} ),
-			scheduled: translate( 'Search Scheduled…', {
-				context: 'Search placeholder for pages list',
-				textOnly: true,
-			} ),
-			trashed: translate( 'Search Trashed…', {
-				context: 'Search placeholder for pages list',
-				textOnly: true,
-			} ),
-		};
 		return (
-			<Main classname="pages">
+			<Main wideLayout classname="pages">
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
-				<DocumentHead title={ translate( 'Site Pages' ) } />
+				<DocumentHead title={ translate( 'Pages' ) } />
 				<SidebarNavigation />
+				<FormattedHeader
+					className="pages__page-heading"
+					headerText={ translate( 'Pages' ) }
+					align="left"
+				/>
 				<SectionNav selectedText={ filterStrings[ status ] }>
 					<NavTabs label={ translate( 'Status', { context: 'Filter page group label for tabs' } ) }>
 						{ this.getNavItems( filterStrings, status ) }
@@ -112,9 +98,10 @@ class PagesMain extends React.Component {
 					<Search
 						pinned
 						fitsContainer
-						onSearch={ doSearch }
+						isOpen={ this.props.getSearchOpen() }
+						onSearch={ this.props.doSearch }
 						initialValue={ search }
-						placeholder={ searchStrings[ status ] }
+						placeholder={ this.props.translate( 'Search Pages' ) }
 						analyticsGroup="Pages"
 						delaySearch={ true }
 					/>

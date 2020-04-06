@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -26,12 +25,12 @@ describe( 'UpgradeNudge', () => {
 		return merge( {}, defaultProps, overrideProps );
 	};
 
-	describe( '#shouldDisplay()', () => {
+	describe( 'wrapper', () => {
 		test( 'should display with default props', () => {
 			const props = createProps();
 			const wrapper = shallow( <UpgradeNudge { ...props } /> );
 
-			expect( wrapper.instance().shouldDisplay() ).toBe( true );
+			expect( wrapper.find( '.upgrade-nudge' ) ).toHaveLength( 1 );
 		} );
 
 		test( 'should not display without a site', () => {
@@ -39,7 +38,7 @@ describe( 'UpgradeNudge', () => {
 			delete props.site;
 			const wrapper = shallow( <UpgradeNudge { ...props } /> );
 
-			expect( wrapper.instance().shouldDisplay() ).toBe( false );
+			expect( wrapper.find( '.upgrade-nudge' ) ).toHaveLength( 0 );
 		} );
 
 		test( 'should not display for paid plans without feature prop (personal)', () => {
@@ -53,7 +52,7 @@ describe( 'UpgradeNudge', () => {
 			delete props.feature;
 			const wrapper = shallow( <UpgradeNudge { ...props } /> );
 
-			expect( wrapper.instance().shouldDisplay() ).toBe( false );
+			expect( wrapper.find( '.upgrade-nudge' ) ).toHaveLength( 0 );
 		} );
 
 		test( 'should not display for paid plans without feature prop (blogger)', () => {
@@ -67,30 +66,14 @@ describe( 'UpgradeNudge', () => {
 			delete props.feature;
 			const wrapper = shallow( <UpgradeNudge { ...props } /> );
 
-			expect( wrapper.instance().shouldDisplay() ).toBe( false );
+			expect( wrapper.find( '.upgrade-nudge' ) ).toHaveLength( 0 );
 		} );
 
 		test( "should not display when user can't manage site", () => {
 			const props = createProps( { canManageSite: false } );
 			const wrapper = shallow( <UpgradeNudge { ...props } /> );
 
-			expect( wrapper.instance().shouldDisplay() ).toBe( false );
-		} );
-
-		describe( 'with shouldDisplay prop', () => {
-			test( 'should display when shouldDisplay returns true', () => {
-				const props = createProps( { shouldDisplay: () => true } );
-				const wrapper = shallow( <UpgradeNudge { ...props } /> );
-
-				expect( wrapper.instance().shouldDisplay() ).toBe( true );
-			} );
-
-			test( 'should not display when shouldDisplay returns false', () => {
-				const props = createProps( { shouldDisplay: () => false } );
-				const wrapper = shallow( <UpgradeNudge { ...props } /> );
-
-				expect( wrapper.instance().shouldDisplay() ).toBe( false );
-			} );
+			expect( wrapper.find( '.upgrade-nudge' ) ).toHaveLength( 0 );
 		} );
 
 		describe( 'with feature prop', () => {
@@ -101,7 +84,7 @@ describe( 'UpgradeNudge', () => {
 				} );
 				const wrapper = shallow( <UpgradeNudge { ...props } /> );
 
-				expect( wrapper.instance().shouldDisplay() ).toBe( false );
+				expect( wrapper.find( '.upgrade-nudge' ) ).toHaveLength( 0 );
 			} );
 
 			test( "should display when plan doesn't have feature", () => {
@@ -111,7 +94,7 @@ describe( 'UpgradeNudge', () => {
 				} );
 				const wrapper = shallow( <UpgradeNudge { ...props } /> );
 
-				expect( wrapper.instance().shouldDisplay() ).toBe( true );
+				expect( wrapper.find( '.upgrade-nudge' ) ).toHaveLength( 1 );
 			} );
 		} );
 
@@ -125,7 +108,7 @@ describe( 'UpgradeNudge', () => {
 				} );
 				const wrapper = shallow( <UpgradeNudge { ...props } /> );
 
-				expect( wrapper.instance().shouldDisplay() ).toBe( false );
+				expect( wrapper.find( '.upgrade-nudge' ) ).toHaveLength( 0 );
 			} );
 
 			test( 'should not display when non-jetpack feature for jetpack sites', () => {
@@ -137,7 +120,7 @@ describe( 'UpgradeNudge', () => {
 				} );
 				const wrapper = shallow( <UpgradeNudge { ...props } /> );
 
-				expect( wrapper.instance().shouldDisplay() ).toBe( false );
+				expect( wrapper.find( '.upgrade-nudge' ) ).toHaveLength( 0 );
 			} );
 		} );
 	} );

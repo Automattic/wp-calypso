@@ -11,9 +11,9 @@ const supportedBrowsers = browserslist( null, { env: process.env.BROWSERSLIST_EN
  * Auxiliary method to help in picking an ECMAScript version based on a list
  * of supported browser versions.
  *
- * @param {Array<String>} browsers The list of supported browsers.
+ * @param {Array<string>} browsers The list of supported browsers.
  *
- * @returns {Number} The maximum supported ECMAScript version.
+ * @returns {number} The maximum supported ECMAScript version.
  */
 function chooseTerserEcmaVersion( browsers ) {
 	if ( ! caniuse.isSupported( 'arrow-functions', browsers ) ) {
@@ -31,8 +31,8 @@ function chooseTerserEcmaVersion( browsers ) {
  *
  * @see https://github.com/webpack-contrib/terser-webpack-plugin for complete descriptions of options.
  *
- * @param {Object} options Options passed to the terser plugin
- * @returns {Object[]}     Terser plugin object to be used in Webpack minification.
+ * @param {object} options Options passed to the terser plugin
+ * @returns {object[]}     Terser plugin object to be used in Webpack minification.
  */
 module.exports = options => {
 	let terserOptions = options.terserOptions || {};

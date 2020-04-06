@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -13,7 +10,7 @@ import filesize from 'filesize';
 /**
  * Internal dependencies
  */
-import ProgressBar from 'components/progress-bar';
+import { ProgressBar } from '@automattic/components';
 import { planHasFeature } from 'lib/plans';
 import { FEATURE_UNLIMITED_STORAGE } from 'lib/plans/constants';
 
@@ -24,6 +21,7 @@ export class PlanStorageBar extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		mediaStorage: PropTypes.object,
+		displayUpgradeLink: PropTypes.bool,
 		siteSlug: PropTypes.string.isRequired,
 		sitePlanSlug: PropTypes.string.isRequired,
 	};
@@ -33,7 +31,14 @@ export class PlanStorageBar extends Component {
 	};
 
 	render() {
-		const { className, mediaStorage, sitePlanSlug, siteSlug, translate } = this.props;
+		const {
+			className,
+			displayUpgradeLink,
+			mediaStorage,
+			sitePlanSlug,
+			siteSlug,
+			translate,
+		} = this.props;
 
 		if ( planHasFeature( sitePlanSlug, FEATURE_UNLIMITED_STORAGE ) ) {
 			return null;
@@ -69,9 +74,11 @@ export class PlanStorageBar extends Component {
 					} ) }
 				</span>
 
-				<a className="plan-storage__storage-link" href={ `/plans/${ siteSlug }` }>
-					{ translate( 'Upgrade' ) }
-				</a>
+				{ displayUpgradeLink && (
+					<a className="plan-storage__storage-link" href={ `/plans/${ siteSlug }` }>
+						{ translate( 'Upgrade' ) }
+					</a>
+				) }
 
 				{ this.props.children }
 			</div>

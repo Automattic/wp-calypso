@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -20,6 +19,9 @@ export default function JetpackLogoExample() {
 			<hr />
 			<pre>{ '<JetpackLogo full size={ 64 } />' }</pre>
 			<JetpackLogo full size={ 64 } />
+			<hr />
+			<pre>{ '<JetpackLogo full monochrome />' }</pre>
+			<JetpackLogo full monochrome />
 		</div>
 	);
 }

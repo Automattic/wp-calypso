@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,15 +7,17 @@ import { compact, isEqual, isNumber } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import { WOOCOMMERCE_PRODUCT_VARIATION_UPDATED } from 'woocommerce/state/action-types';
 
-export default createReducer(
-	{},
-	{
-		[ WOOCOMMERCE_PRODUCT_VARIATION_UPDATED ]: variationUpdated,
+export default withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case WOOCOMMERCE_PRODUCT_VARIATION_UPDATED:
+			return variationUpdated( state, action );
 	}
-);
+
+	return state;
+} );
 
 export function variationUpdated( state, action ) {
 	const { productId, data } = action;

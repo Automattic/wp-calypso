@@ -1,11 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import request from 'superagent';
 import { find, isEmpty, startsWith, toUpper } from 'lodash';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
@@ -13,11 +10,8 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Dialog from 'components/dialog';
+import { Card, Dialog, Suggestions } from '@automattic/components';
 import SearchCard from 'components/search-card';
-import SectionHeader from 'components/section-header';
-import Suggestions from 'components/suggestions';
 import FormButton from 'components/forms/form-button';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -39,10 +33,10 @@ class SelectIpsTag extends Component {
 	};
 
 	componentDidMount() {
-		request
-			.get( SelectIpsTag.ipsTagListUrl )
-			.then( response => {
-				this.receiveIpsTagList( response.body );
+		// eslint-disable-next-line no-undef
+		fetch( SelectIpsTag.ipsTagListUrl )
+			.then( async response => {
+				this.receiveIpsTagList( await response.json() );
 			} )
 			.catch( error => {
 				debug( 'Failed to load IPS tag list! ' + error );
@@ -225,7 +219,6 @@ class SelectIpsTag extends Component {
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Transfer Domain To Another Registrar' ) } />
 				<Card>
 					<p>
 						{ translate(

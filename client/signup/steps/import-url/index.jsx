@@ -1,36 +1,29 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, get, invoke, isEqual } from 'lodash';
+import { flow, get, includes, invoke } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button, ScreenReaderText } from '@automattic/components';
 import ExampleDomainBrowser from 'components/domains/example-domain-browser';
 import ExternalLink from 'components/external-link';
 import StepWrapper from 'signup/step-wrapper';
 import FormButton from 'components/forms/form-button';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
-import ScreenReaderText from 'components/screen-reader-text';
-import { setNuxUrlInputValue, submitImportUrlStep } from 'state/importer-nux/actions';
-import {
-	getNuxUrlError,
-	getNuxUrlInputValue,
-	isUrlInputDisabled,
-} from 'state/importer-nux/temp-selectors';
-import { validateImportUrl } from 'lib/importers/url-validation';
+import { setImportOriginSiteDetails, setNuxUrlInputValue } from 'state/importer-nux/actions';
+import { getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
+import { validateImportUrl } from 'lib/importer/url-validation';
 import { recordTracksEvent } from 'state/analytics/actions';
-import {
-	SITE_IMPORTER_ERR_BAD_REMOTE,
-	SITE_IMPORTER_ERR_INVALID_URL,
-} from 'lib/importers/constants';
 import Notice from 'components/notice';
+import wpcom from 'lib/wp';
+import { saveSignupStep } from 'state/signup/progress/actions';
+import { suggestDomainFromImportUrl } from 'lib/importer/utils';
 
 /**
  * Style dependencies
@@ -44,26 +37,15 @@ const EXAMPLE_GOCENTRAL_URL = 'https://example.godaddysites.com';
 
 class ImportURLStepComponent extends Component {
 	state = {
+		isLoading: false,
 		// Url message could be client-side validation or server-side error.
-		showUrlMessage: false,
 		urlValidationMessage: '',
 	};
 
 	componentDidMount() {
+		this.props.saveSignupStep( { stepName: this.props.stepName } );
 		this.setInputValueFromProps();
 		this.focusInput();
-	}
-
-	componentDidUpdate( prevProps ) {
-		const { isSiteImportableError } = this.props;
-
-		// isSiteImportable error, focus input to revise url.
-		if (
-			! isEqual( prevProps.isSiteImportableError, isSiteImportableError ) &&
-			isSiteImportableError
-		) {
-			this.focusInput();
-		}
 	}
 
 	handleInputChange = event => {
@@ -80,23 +62,94 @@ class ImportURLStepComponent extends Component {
 
 	focusInput = () => invoke( this.inputRef, 'focus' );
 
+	setUrlError = urlValidationMessage => this.setState( { urlValidationMessage }, this.focusInput );
+
 	handleSubmit = event => {
 		event.preventDefault();
 		const isValid = this.validateUrl();
 
 		if ( ! isValid ) {
-			this.focusInput();
 			return;
 		}
 
-		const { urlInputValue, stepName } = this.props;
+		const { stepName, translate, urlInputValue } = this.props;
 
-		this.props
-			.submitImportUrlStep( {
-				siteUrl: urlInputValue,
-				stepName,
-			} )
-			.then( this.props.goToNextStep );
+		this.setState( {
+			isLoading: true,
+			urlValidationMessage: '',
+		} );
+
+		wpcom
+			.undocumented()
+			.isSiteImportable( urlInputValue )
+			.then(
+				( {
+					site_engine: siteEngine,
+					site_favicon: siteFavicon,
+					site_status: siteStatus,
+					site_title: siteTitle,
+					site_url: siteUrl,
+					importer_types: importerTypes,
+				} ) => {
+					if ( ! includes( importerTypes, 'url' ) ) {
+						return this.setUrlError(
+							translate(
+								"That doesn't seem to be a Wix or GoDaddy site. Please check the URL and try again."
+							)
+						);
+					}
+
+					if ( 404 === siteStatus ) {
+						return this.setUrlError(
+							translate( 'That site was not found. Please check the URL and try again.' )
+						);
+					}
+
+					// We need a successful response for url importers to work.
+					if ( includes( importerTypes, 'url' ) && 200 !== siteStatus ) {
+						return this.setUrlError(
+							translate( 'That site responded with an error. Please check the URL and try again.' )
+						);
+					}
+
+					this.props.setImportOriginSiteDetails( {
+						importerTypes,
+						siteUrl,
+						siteEngine,
+						siteFavicon,
+						siteTitle,
+					} );
+
+					this.props.submitSignupStep(
+						{ stepName },
+						{
+							importSiteEngine: siteEngine,
+							importSiteFavicon: siteFavicon,
+							importSiteUrl: siteUrl,
+							siteTitle,
+							suggestedDomain: suggestDomainFromImportUrl( siteUrl ),
+							themeSlugWithRepo: 'pub/modern-business',
+						}
+					);
+					this.props.goToNextStep();
+				},
+				error => {
+					switch ( error.code ) {
+						case 'rest_invalid_param':
+							return this.setUrlError(
+								translate( "We couldn't reach that site. Please check the URL and try again." )
+							);
+					}
+					return this.setUrlError(
+						translate( 'Something went wrong. Please check the URL and try again.' )
+					);
+				}
+			)
+			.finally( () =>
+				this.setState( {
+					isLoading: false,
+				} )
+			);
 	};
 
 	setInputValueFromProps = () => {
@@ -109,44 +162,11 @@ class ImportURLStepComponent extends Component {
 		const validationMessage = validateImportUrl( this.props.urlInputValue );
 		const isValid = ! validationMessage;
 
-		this.setState( {
-			urlValidationMessage: isValid ? '' : validationMessage,
-			showUrlMessage: true,
-		} );
+		if ( ! isValid ) {
+			this.setUrlError( validationMessage );
+		}
 
 		return isValid;
-	};
-
-	getUrlMessage = () => {
-		if ( this.state.urlValidationMessage ) {
-			return this.state.urlValidationMessage;
-		}
-
-		if ( this.props.isSiteImportableError ) {
-			return this.getIsSiteImportableError();
-		}
-
-		return '';
-	};
-
-	getIsSiteImportableError = () => {
-		if ( ! this.props.isSiteImportableError ) {
-			return null;
-		}
-
-		const { isSiteImportableError, translate } = this.props;
-
-		switch ( isSiteImportableError.code ) {
-			case SITE_IMPORTER_ERR_INVALID_URL:
-				return translate( 'This does not appear to be a valid URL or website address.' );
-			// @TODO differentiate an unreachable site from one that's not compatible.
-			case SITE_IMPORTER_ERR_BAD_REMOTE:
-				return translate(
-					"We're not able to reach that site at this time, or it's not compatible with our URL importer."
-				);
-		}
-
-		return translate( 'There was an error with the importer, please try again.' );
 	};
 
 	exitFlow = () => {
@@ -170,13 +190,12 @@ class ImportURLStepComponent extends Component {
 	};
 
 	renderNotice = () => {
-		const { showUrlMessage } = this.state;
-		const urlMessage = this.getUrlMessage();
+		const { urlValidationMessage } = this.state;
 
-		if ( showUrlMessage && urlMessage ) {
+		if ( urlValidationMessage ) {
 			return (
 				<Notice className="import-url__url-input-message" status="is-error" showDismiss={ false }>
-					{ urlMessage }
+					{ urlValidationMessage }
 				</Notice>
 			);
 		}
@@ -185,8 +204,8 @@ class ImportURLStepComponent extends Component {
 	};
 
 	renderContent = () => {
-		const { isLoading, urlInputValue, translate } = this.props;
-		const urlMessage = this.getUrlMessage();
+		const { urlInputValue, translate } = this.props;
+		const { isLoading, urlValidationMessage } = this.state;
 
 		return (
 			<Fragment>
@@ -205,7 +224,7 @@ class ImportURLStepComponent extends Component {
 							onChange={ this.handleInputChange }
 							onBlur={ this.handleInputBlur }
 							inputRef={ this.handleInputRef }
-							isError={ !! urlMessage }
+							isError={ !! urlValidationMessage }
 						/>
 
 						<FormButton
@@ -262,7 +281,12 @@ class ImportURLStepComponent extends Component {
 	};
 
 	render() {
-		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
+		const { flowName, positionInFlow, stepName, translate } = this.props;
+
+		const headerText = translate( 'Where can we find your old site?' );
+		const subHeaderText = translate(
+			'Enter your Wix or GoDaddy GoCentral site URL, sometimes called a domain name or site address.'
+		);
 
 		return (
 			<StepWrapper
@@ -270,11 +294,10 @@ class ImportURLStepComponent extends Component {
 				flowName={ flowName }
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
-				headerText={ translate( 'Where can we find your old site?' ) }
-				subHeaderText={ translate(
-					'Enter your Wix or GoDaddy GoCentral site URL, sometimes called a domain name or site address.'
-				) }
-				signupProgress={ signupProgress }
+				headerText={ headerText }
+				fallbackHeaderText={ headerText }
+				subHeaderText={ subHeaderText }
+				fallbackSubHeaderText={ subHeaderText }
 				stepContent={ this.renderContent() }
 			/>
 		);
@@ -284,14 +307,13 @@ class ImportURLStepComponent extends Component {
 export default flow(
 	connect(
 		state => ( {
-			isSiteImportableError: getNuxUrlError( state ),
 			urlInputValue: getNuxUrlInputValue( state ),
-			isLoading: isUrlInputDisabled( state ),
 		} ),
 		{
-			setNuxUrlInputValue,
 			recordTracksEvent,
-			submitImportUrlStep,
+			saveSignupStep,
+			setImportOriginSiteDetails,
+			setNuxUrlInputValue,
 		}
 	),
 	localize

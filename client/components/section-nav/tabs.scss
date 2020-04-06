@@ -1,0 +1,29 @@
+.section-nav-tabs {
+	@include breakpoint( '>480px' ) {
+		width: 0;
+		flex: 1 0 auto;
+
+		&.is-dropdown {
+			position: relative;
+			width: auto;
+			flex: 0 1 auto;
+			margin: 8px;
+		}
+	}
+}
+
+.section-nav-tabs__list {
+	margin: 0;
+	list-style: none;
+
+	@include breakpoint( '>480px' ) {
+		display: flex;
+		width: 100%;
+		overflow: hidden;
+
+		.is-dropdown & {
+			display: none;
+		}
+	}
+}
+

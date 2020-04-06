@@ -341,9 +341,6 @@ const mapDispatchToProps = {
 	unselectNote: actions.ui.unselectNote,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps,
-	null,
-	{ pure: false }
-)( localize( CommentReplyInput ) );
+export default connect( mapStateToProps, mapDispatchToProps, null, { pure: false } )(
+	localize( CommentReplyInput )
+);

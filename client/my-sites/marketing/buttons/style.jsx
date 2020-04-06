@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -13,6 +10,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -38,7 +36,7 @@ class SharingButtonsStyle extends React.Component {
 			value,
 			path,
 		} );
-		analytics.ga.recordEvent( 'Sharing', 'Clicked Button Style Radio Button', value );
+		gaRecordEvent( 'Sharing', 'Clicked Button Style Radio Button', value );
 	};
 
 	getOptions = () => {

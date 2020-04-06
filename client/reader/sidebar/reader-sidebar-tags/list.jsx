@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +14,6 @@ import ReaderSidebarTagsListItem from './list-item';
 export class ReaderSidebarTagsList extends Component {
 	static propTypes = {
 		tags: PropTypes.array,
-		onUnfollow: PropTypes.func.isRequired,
 		path: PropTypes.string.isRequired,
 		currentTag: PropTypes.string,
 		translate: PropTypes.func,
@@ -25,34 +23,20 @@ export class ReaderSidebarTagsList extends Component {
 		translate: identity,
 	};
 
-	renderItems = () => {
-		const { path, onUnfollow, currentTag, tags } = this.props;
-		return map( tags, function( tag ) {
-			return (
-				<ReaderSidebarTagsListItem
-					key={ tag.id }
-					tag={ tag }
-					path={ path }
-					onUnfollow={ onUnfollow }
-					currentTag={ currentTag }
-				/>
-			);
-		} );
-	};
+	renderItems() {
+		const { path, currentTag, tags } = this.props;
+		return map( tags, tag => (
+			<ReaderSidebarTagsListItem
+				key={ tag.id }
+				tag={ tag }
+				path={ path }
+				currentTag={ currentTag }
+			/>
+		) );
+	}
 
 	render() {
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		const { tags, translate } = this.props;
-		if ( ! tags || tags.length === 0 ) {
-			return (
-				<li key="empty" className="sidebar__menu-empty">
-					{ translate( 'Find relevant posts by adding a tag.' ) }
-				</li>
-			);
-		}
-
-		return <div>{ this.renderItems() }</div>;
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
+		return <ul className="reader-sidebar-tags__list">{ this.renderItems() }</ul>;
 	}
 }
 

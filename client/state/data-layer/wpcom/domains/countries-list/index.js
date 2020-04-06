@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -17,8 +16,8 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 /**
  * Dispatches a request to fetch all available WordPress.com countries
  *
- * @param 	{String} action The action to dispatch next
- * @returns {Object} dispatched http action
+ * @param 	{string} action The action to dispatch next
+ * @returns {object} dispatched http action
  */
 export const fetchCountriesDomains = action =>
 	http(
@@ -33,9 +32,9 @@ export const fetchCountriesDomains = action =>
 /**
  * Dispatches a countries updated action then the request for countries succeeded.
  *
- * @param   {Object}   action   Redux action
+ * @param   {object}   action   Redux action
  * @param   {Array}    countries  array of raw device data returned from the endpoint
- * @returns {Object}            disparched user devices add action
+ * @returns {object}            disparched user devices add action
  */
 export const updateCountriesDomains = ( action, countries ) => ( {
 	type: COUNTRIES_DOMAINS_UPDATED,
@@ -46,7 +45,7 @@ export const updateCountriesDomains = ( action, countries ) => ( {
  * Dispatches a error notice action when the request for the supported countries list fails.
  *
  * @param   {Function} dispatch Redux dispatcher
- * @returns {Object}            dispatched error notice action
+ * @returns {object}            dispatched error notice action
  */
 export const showCountriesDomainsLoadingError = () =>
 	errorNotice( translate( "We couldn't load the countries list." ) );

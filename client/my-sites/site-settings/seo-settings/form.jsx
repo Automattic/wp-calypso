@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,8 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import MetaTitleEditor from 'components/seo/meta-title-editor';
 import Notice from 'components/notice';
@@ -33,6 +31,7 @@ import getCurrentRouteParameterized from 'state/selectors/get-current-route-para
 import isHiddenSite from 'state/selectors/is-hidden-site';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'state/selectors/is-private-site';
+import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestSite } from 'state/sites/actions';
@@ -64,6 +63,11 @@ import { getFirstConflictingPlugin } from 'lib/seo';
  * Style dependencies
  */
 import './style.scss';
+
+/**
+ * Image dependencies
+ */
+import pageTitleImage from 'assets/images/illustrations/seo-page-title.svg';
 
 // Basic matching for HTML tags
 // Not perfect but meets the needs of this component well
@@ -106,7 +110,7 @@ export class SeoForm extends React.Component {
 		this.refreshCustomTitles();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { selectedSite: prevSite, isFetchingSite, translate } = this.props;
 		const { selectedSite: nextSite } = nextProps;
 		const { dirtyFields } = this.state;
@@ -313,6 +317,7 @@ export class SeoForm extends React.Component {
 			: translate(
 					'Boost your search engine ranking with the powerful SEO tools in the Business plan'
 			  );
+
 		return (
 			<div>
 				<QuerySiteSettings siteId={ siteId } />
@@ -322,15 +327,22 @@ export class SeoForm extends React.Component {
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
-						text={
-							isSitePrivate
-								? translate(
-										"SEO settings aren't recognized by search engines while your site is Private."
-								  )
-								: translate(
-										"SEO settings aren't recognized by search engines while your site is Hidden."
-								  )
-						}
+						text={ ( function() {
+							if ( isSitePrivate ) {
+								if ( isSiteComingSoon ) {
+									return translate(
+										"SEO settings aren't recognized by search engines while your site is Coming Soon."
+									);
+								}
+
+								return translate(
+									"SEO settings aren't recognized by search engines while your site is Private."
+								);
+							}
+							return translate(
+								"SEO settings aren't recognized by search engines while your site is Hidden."
+							);
+						} )() }
 					>
 						<NoticeAction href={ generalTabUrl }>{ translate( 'Privacy Settings' ) }</NoticeAction>
 					</Notice>
@@ -379,7 +391,7 @@ export class SeoForm extends React.Component {
 							<Card compact className="seo-settings__page-title-header">
 								<img
 									className="seo-settings__page-title-header-image"
-									src="/calypso/images/seo/page-title.svg"
+									src={ pageTitleImage }
 									alt=""
 								/>
 								<p className="seo-settings__page-title-header-text">
@@ -489,6 +501,7 @@ const mapStateToProps = state => {
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isSiteHidden: isHiddenSite( state, siteId ),
 		isSitePrivate: isPrivateSite( state, siteId ),
+		isSiteComingSoon: isSiteComingSoon( state, siteId ),
 		hasAdvancedSEOFeature: hasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
 		hasSeoPreviewFeature: hasFeature( state, siteId, FEATURE_SEO_PREVIEW_TOOLS ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),

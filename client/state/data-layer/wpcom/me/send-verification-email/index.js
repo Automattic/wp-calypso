@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -17,8 +15,8 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 /**
  * Creates an action for request for email verification
  *
- * @param 	{Object} action The action to dispatch next
- * @returns {Object} Redux action
+ * @param 	{object} action The action to dispatch next
+ * @returns {object} Redux action
  */
 export const requestEmailVerification = action =>
 	http(
@@ -33,9 +31,9 @@ export const requestEmailVerification = action =>
 /**
  * Creates an action for handling email verification error
  *
- * @param 	{Object} action The action to dispatch next
- * @param   {Object} rawError The error object
- * @returns {Object} Redux action
+ * @param 	{object} action The action to dispatch next
+ * @param   {object} rawError The error object
+ * @returns {object} Redux action
  */
 export const handleError = ( action, rawError ) => ( {
 	type: EMAIL_VERIFY_REQUEST_FAILURE,
@@ -45,8 +43,8 @@ export const handleError = ( action, rawError ) => ( {
 /**
  * Creates an action for email verification success
  *
- * @param 	{Object} action The action to dispatch next
- * @returns {Object} Redux action
+ * @param 	{object} action The action to dispatch next
+ * @returns {object} Redux action
  */
 export const handleSuccess = () => ( { type: EMAIL_VERIFY_REQUEST_SUCCESS } );
 

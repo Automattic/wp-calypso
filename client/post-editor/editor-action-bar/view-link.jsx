@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import React from 'react';
-import Gridicon from 'gridicons';
+import React, { Fragment } from 'react';
+import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
@@ -15,7 +13,7 @@ import { includes } from 'lodash';
 import { decodeEntities } from 'lib/formatting';
 import { isPublished } from 'state/posts/utils';
 import Tooltip from 'components/tooltip';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import QueryPostTypes from 'components/data/query-post-types';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -61,16 +59,18 @@ class EditorViewLink extends React.Component {
 		const isCustomPostType = currentPost && ! includes( [ 'page', 'post' ], currentPost.type );
 
 		return (
-			<Button
-				href={ currentPost.URL }
-				target="_blank"
-				rel="noopener noreferrer"
-				ref={ this.viewLinkTooltipContext }
-				onMouseEnter={ this.showViewLinkTooltip }
-				onMouseLeave={ this.hideViewLinkTooltip }
-				borderless
-			>
-				<Gridicon icon="external" />
+			<Fragment>
+				<Button
+					href={ currentPost.URL }
+					target="_blank"
+					rel="noopener noreferrer"
+					ref={ this.viewLinkTooltipContext }
+					onMouseEnter={ this.showViewLinkTooltip }
+					onMouseLeave={ this.hideViewLinkTooltip }
+					borderless
+				>
+					<Gridicon icon="external" />
+				</Button>
 				<Tooltip
 					className="editor-action-bar__view-post-tooltip"
 					context={ this.viewLinkTooltipContext.current }
@@ -82,7 +82,7 @@ class EditorViewLink extends React.Component {
 						{ this.getTooltipLabel() }
 					</span>
 				</Tooltip>
-			</Button>
+			</Fragment>
 		);
 	}
 }

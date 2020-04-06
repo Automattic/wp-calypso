@@ -1,12 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
+import { useRtl } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,7 +12,6 @@ import { get } from 'lodash';
 import { stripHTML } from 'lib/formatting';
 import { isRTLCharacter, isLTRCharacter } from './direction';
 import Emojify from 'components/emojify';
-import isRtlSelector from 'state/selectors/is-rtl';
 
 const MAX_LENGTH_OF_TEXT_TO_EXAMINE = 100;
 
@@ -25,16 +22,16 @@ const SPACE_CHARACTERS = {
 	' ': true,
 };
 
-/***
+/**
  * Checks whether a character is a space character
- * @param {String} character character to examine
+ * @param {string} character character to examine
  * @returns {bool} true if character is a space character, false otherwise
  */
 const isSpaceCharacter = character => !! SPACE_CHARACTERS[ character ];
 
-/***
+/**
  * Get index of the first character that is not within a tag
- * @param {String} text text to examine
+ * @param {string} text text to examine
  * @returns {number} index not within a tag
  */
 const getTaglessIndex = text => {
@@ -58,7 +55,7 @@ const getTaglessIndex = text => {
 	return 0;
 };
 
-/***
+/**
  * Gets text content from react element in case that's a leaf element
  * @param {React.Element} reactElement react element
  * @returns {string|null} returns a text content of the react element or null if it's not a leaf element
@@ -104,7 +101,7 @@ const getContent = reactElement => {
 	return null;
 };
 
-/***
+/**
  * Gets the main directionality in a text
  * It returns what kind of characters we had the most, RTL or LTR according to some ratio
  *
@@ -156,13 +153,13 @@ const getChildDirection = ( child, isRtl ) => {
 };
 
 const inlineComponents = [ Emojify ];
-/***
+/**
  * Sets a react component child directionality according to it's text content
  * That function intended to be used recursively with React.Children.map
  * It will set directionality only to the leaf components - because it does so according
  * to text content and only leaf components have those.
  *
- * @param {React.Element} child
+ * @param {React.Element} child element to transform
  * @param {boolean}       isRtl whether current language is RTL
  * @returns {React.Element} transformed child
  */
@@ -205,16 +202,12 @@ const setChildDirection = ( child, isRtl ) => {
 	return child;
 };
 
-/***
+/**
  * Auto direction component that will set direction to child components according to their text content
- * @param {Object.children} props react element props that must contain some children
+ * @param {object.children} props react element props that must contain some children
  * @returns {React.Element} returns a react element with adjusted children
  */
-export const AutoDirection = props => {
-	const { children, isRtl } = props;
-	const directionedChild = setChildDirection( children, isRtl );
-
-	return directionedChild;
-};
-
-export default connect( state => ( { isRtl: isRtlSelector( state ) } ) )( AutoDirection );
+export default function AutoDirection( { children } ) {
+	const isRtl = useRtl();
+	return setChildDirection( children, isRtl );
+}

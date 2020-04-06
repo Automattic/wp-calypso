@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
-import { flowRight, isEqual, keys, omit, pick, isNaN } from 'lodash';
+import { flowRight, isEqual, isObjectLike, keys, omit, pick, isNaN } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
@@ -33,6 +31,7 @@ import { saveJetpackSettings } from 'state/jetpack/settings/actions';
 import { removeNotice, successNotice, errorNotice } from 'state/notices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 
@@ -44,7 +43,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			uniqueEvents: {},
 		};
 
-		componentWillMount() {
+		UNSAFE_componentWillMount() {
 			this.props.replaceFields( getFormSettings( this.props.settings ) );
 		}
 
@@ -61,13 +60,18 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			}
 
 			if ( ! this.props.isSavingSettings && prevProps.isSavingSettings ) {
+				const noticeSettings = {
+					id: 'site-settings-save',
+					duration: 10000,
+				};
 				if (
 					this.props.isSaveRequestSuccessful &&
 					( this.props.isJetpackSaveRequestSuccessful || ! this.props.siteIsJetpack )
 				) {
-					this.props.successNotice( this.props.translate( 'Settings saved!' ), {
-						id: 'site-settings-save',
-					} );
+					this.props.successNotice(
+						this.props.translate( 'Settings saved successfully!' ),
+						noticeSettings
+					);
 					// Upon failure to save Jetpack Settings, don't show an error message,
 					// since the JP settings data layer already does that for us.
 				} else if ( ! this.props.isSaveRequestSuccessful ) {
@@ -81,7 +85,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 							);
 							break;
 					}
-					this.props.errorNotice( text, { id: 'site-settings-save' } );
+					this.props.errorNotice( text, noticeSettings );
 				}
 			}
 		}
@@ -93,8 +97,10 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			// Compute the dirty fields by comparing the persisted and the current fields
 			const previousDirtyFields = this.props.dirtyFields;
 			/*eslint-disable eqeqeq*/
-			const nextDirtyFields = previousDirtyFields.filter(
-				field => ! ( currentFields[ field ] == persistedFields[ field ] )
+			const nextDirtyFields = previousDirtyFields.filter( field =>
+				isObjectLike( currentFields[ field ] )
+					? ! isEqual( currentFields[ field ], persistedFields[ field ] )
+					: ! ( currentFields[ field ] == persistedFields[ field ] )
 			);
 			/*eslint-enable eqeqeq*/
 
@@ -302,6 +308,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				jetpackFieldsToUpdate,
 				path,
 				siteIsJetpack: isJetpack,
+				siteIsAtomic: isSiteAutomatedTransfer( state, siteId ),
 				siteSettingsSaveError,
 				settings,
 				settingsFields,
@@ -331,12 +338,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		}
 	);
 
-	return flowRight(
-		trackForm,
-		protectForm,
-		connectComponent,
-		localize
-	)( WrappedSettingsForm );
+	return flowRight( trackForm, protectForm, connectComponent, localize )( WrappedSettingsForm );
 };
 
 export default wrapSettingsForm;

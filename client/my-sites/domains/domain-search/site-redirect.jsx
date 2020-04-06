@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,10 +11,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import EmptyContent from 'components/empty-content';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SiteRedirectStep from './site-redirect-step';
 import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
+import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
+import { getSiteAdminUrl } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryProductsList from 'components/data/query-products-list';
 import { getProductsList } from 'state/products-list/selectors';
@@ -26,6 +27,7 @@ class SiteRedirect extends Component {
 		cart: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
+		isSiteAtomic: PropTypes.bool.isRequired,
 		isSiteUpgradeable: PropTypes.bool.isRequired,
 		productsList: PropTypes.object.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -39,7 +41,7 @@ class SiteRedirect extends Component {
 		this.checkSiteIsUpgradeable( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.selectedSiteId !== this.props.selectedSiteId ) {
 			this.checkSiteIsUpgradeable( nextProps );
 		}
@@ -52,7 +54,26 @@ class SiteRedirect extends Component {
 	}
 
 	render() {
-		const { cart, selectedSite, productsList, translate } = this.props;
+		const {
+			cart,
+			selectedSite,
+			selectedSiteAdminUrl,
+			isSiteAtomic,
+			productsList,
+			translate,
+		} = this.props;
+
+		if ( isSiteAtomic ) {
+			return (
+				<EmptyContent
+					illustration="/calypso/images/illustrations/illustration-empty-results.svg"
+					title={ translate( 'Site Redirects are not available for this site.' ) }
+					line={ translate( "Try searching plugins for 'redirect'." ) }
+					action={ translate( 'Explore the Plugin Directory' ) }
+					actionURL={ selectedSiteAdminUrl }
+				/>
+			);
+		}
 
 		return (
 			<Main>
@@ -72,6 +93,12 @@ export default connect( state => ( {
 	selectedSite: getSelectedSite( state ),
 	selectedSiteId: getSelectedSiteId( state ),
 	selectedSiteSlug: getSelectedSiteSlug( state ),
+	selectedSiteAdminUrl: getSiteAdminUrl(
+		state,
+		getSelectedSiteId( state ),
+		'/plugin-install.php?s=redirect&tab=search'
+	),
+	isSiteAtomic: isSiteWpcomAtomic( state, getSelectedSiteId( state ) ),
 	isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
 	productsList: getProductsList( state ),
 } ) )( localize( SiteRedirect ) );

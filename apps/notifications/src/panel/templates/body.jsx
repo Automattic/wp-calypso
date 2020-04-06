@@ -46,7 +46,7 @@ export const NoteBody = createReactClass( {
 		this.setState( { reply: data } );
 	},
 
-	componentWillMount: function() {
+	UNSAFE_componentWillMount: function() {
 		var note = this.props.note,
 			hasReplyBlock;
 
@@ -141,13 +141,13 @@ export const NoteBody = createReactClass( {
 			if ( this.props.note.meta.ids.comment ) {
 				replyMessage = this.props.translate( 'You {{a}}replied{{/a}} to this comment.', {
 					components: {
-						a: <a href={ this.state.reply.URL } target="_blank" />,
+						a: <a href={ this.state.reply.URL } target="_blank" rel="noopener noreferrer" />,
 					},
 				} );
 			} else {
 				replyMessage = this.props.translate( 'You {{a}}replied{{/a}} to this post.', {
 					components: {
-						a: <a href={ this.state.reply.URL } target="_blank" />,
+						a: <a href={ this.state.reply.URL } target="_blank" rel="noopener noreferrer" />,
 					},
 				} );
 			}

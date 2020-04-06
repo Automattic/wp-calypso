@@ -19,14 +19,7 @@
 
 .site-importer__site-preview-overlay-container {
 	position: relative;
-	display: flex;
-	flex-direction: column;
 	margin-bottom: 24px;
-
-	.site-importer__site-preview-column-container {
-		display: flex;
-		flex-direction: row;
-	}
 }
 
 .site-importer__site-importer-confirm-site-label {
@@ -34,6 +27,7 @@
 	display: flex;
 	flex-direction: column;
 	margin-right: 10px;
+	font-size: 14px;
 }
 
 .site-importer__source-url {
@@ -42,7 +36,9 @@
 }
 
 .site-importer__site-preview {
-	max-width: 60%;
+	border: 1px solid var( --color-border-subtle );
+	display: block;
+	margin: 0 auto 1.5em;
 }
 
 .site-importer__site-preview-overlay-container.isLoading {

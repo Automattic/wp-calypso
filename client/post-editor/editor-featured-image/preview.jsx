@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, some } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -35,7 +34,7 @@ class EditorFeaturedImagePreview extends Component {
 
 	state = this.constructor.initialState;
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const currentSrc = this.src();
 		if ( ! currentSrc || currentSrc === this.src( nextProps ) ) {
 			return;

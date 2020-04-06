@@ -70,7 +70,7 @@
 .label-settings__placeholder {
 	@include placeholder();
 	pointer-events: none;
-	background: var( --color-white );
+	background: var( --color-surface );
 
 	&::after {
 		content: none;
@@ -82,7 +82,7 @@
 	a,
 	button {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		background-color: var( --color-neutral-50 );
+		background-color: var( --color-neutral-5 );
 		color: transparent;
 		cursor: default;
 	}

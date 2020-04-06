@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import {
 	WOOCOMMERCE_CURRENCY_UPDATE_SUCCESS,
 	WOOCOMMERCE_CURRENCY_CHANGE,
@@ -20,7 +18,13 @@ function currencyUpdatedAction() {
 	return null;
 }
 
-export default createReducer( initialState, {
-	[ WOOCOMMERCE_CURRENCY_CHANGE ]: changeAction,
-	[ WOOCOMMERCE_CURRENCY_UPDATE_SUCCESS ]: currencyUpdatedAction,
+export default withoutPersistence( ( state = initialState, action ) => {
+	switch ( action.type ) {
+		case WOOCOMMERCE_CURRENCY_CHANGE:
+			return changeAction( state, action );
+		case WOOCOMMERCE_CURRENCY_UPDATE_SUCCESS:
+			return currencyUpdatedAction( state, action );
+	}
+
+	return state;
 } );

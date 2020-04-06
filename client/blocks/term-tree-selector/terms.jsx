@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,8 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import AutoSizer from 'react-virtualized/AutoSizer';
-import List from 'react-virtualized/List';
+import { AutoSizer, List } from '@automattic/react-virtualized';
 import {
 	debounce,
 	difference,
@@ -25,7 +22,7 @@ import {
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import NoResults from './no-results';
 import Search from './search';
 import { decodeEntities } from 'lib/formatting';
@@ -90,7 +87,7 @@ class TermTreeSelectorList extends Component {
 
 	state = this.constructor.initialState;
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.itemHeights = {};
 		this.hasPerformedSearch = false;
 		this.list = null;
@@ -103,7 +100,7 @@ class TermTreeSelectorList extends Component {
 		}, SEARCH_DEBOUNCE_TIME_MS );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.taxonomy !== this.props.taxonomy ) {
 			this.setState( this.constructor.initialState );
 		}
@@ -192,13 +189,14 @@ class TermTreeSelectorList extends Component {
 	hasNoSearchResults = () => {
 		return (
 			! this.props.loading &&
-			( this.props.terms && ! this.props.terms.length ) &&
+			this.props.terms &&
+			! this.props.terms.length &&
 			!! this.state.searchTerm.length
 		);
 	};
 
 	hasNoTerms = () => {
-		return ! this.props.loading && ( this.props.terms && ! this.props.terms.length );
+		return ! this.props.loading && this.props.terms && ! this.props.terms.length;
 	};
 
 	getItem = index => {
@@ -288,7 +286,7 @@ class TermTreeSelectorList extends Component {
 
 		if ( ! this.hasPerformedSearch ) {
 			this.hasPerformedSearch = true;
-			analytics.ga.recordEvent( this.props.analyticsPrefix, 'Performed Term Search' );
+			gaRecordEvent( this.props.analyticsPrefix, 'Performed Term Search' );
 		}
 
 		this.setState( { searchTerm } );

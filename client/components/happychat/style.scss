@@ -48,7 +48,7 @@
 
 	::-webkit-scrollbar-thumb {
 		border-radius: 10px;
-		background-color: var( --color-neutral-200 );
+		background-color: var( --color-neutral-20 );
 		border: 3px solid transparent;
 		background-clip: padding-box;
 
@@ -203,7 +203,7 @@
 		.happychat__composer,
 		.happychat__welcome,
 		.happychat__active-toolbar {
-			border-left: 1px solid var( --color-neutral-100 );
+			border-left: 1px solid var( --color-neutral-10 );
 		}
 
 		.happychat__title {

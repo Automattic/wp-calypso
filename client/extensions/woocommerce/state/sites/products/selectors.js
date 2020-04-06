@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -25,18 +23,18 @@ export const getProduct = ( state, productId, siteId = getSelectedSiteId( state 
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array}  The entire list of products for this site
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {Array}  The entire list of products for this site
  */
 export const getAllProducts = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'products' ], [] );
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array}  The entire list of products for this site with variations inline as "products"
+ * @param {object} state Whole Redux state tree
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {Array}  The entire list of products for this site with variations inline as "products"
  */
 export const getAllProductsWithVariations = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const products = get( state, `extensions.woocommerce.sites[${ siteId }].products.products`, [] );
@@ -56,10 +54,10 @@ export const getAllProductsWithVariations = ( state, siteId = getSelectedSiteId(
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [params] Params given to API request. Defaults to { page: 1, per_page: 10 }
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the products list for a requested page has been successfully loaded from the server
+ * @param {object} state Whole Redux state tree
+ * @param {number} [params] Params given to API request. Defaults to { page: 1, per_page: 10 }
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {boolean} Whether the products list for a requested page has been successfully loaded from the server
  */
 export const areProductsLoaded = ( state, params = {}, siteId = getSelectedSiteId( state ) ) => {
 	const key = getSerializedProductsQuery( params );
@@ -73,10 +71,10 @@ export const areProductsLoaded = ( state, params = {}, siteId = getSelectedSiteI
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [params] Params given to API request. Defaults to { page: 1, per_page: 10 }
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the products list for a request page is currently being retrieved from the server
+ * @param {object} state Whole Redux state tree
+ * @param {number} [params] Params given to API request. Defaults to { page: 1, per_page: 10 }
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {boolean} Whether the products list for a request page is currently being retrieved from the server
  */
 export const areProductsLoading = ( state, params = {}, siteId = getSelectedSiteId( state ) ) => {
 	const key = getSerializedProductsQuery( params );
@@ -90,11 +88,11 @@ export const areProductsLoading = ( state, params = {}, siteId = getSelectedSite
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Object} [params] Query used to fetch products. Can contain page, search, etc. If not provided,
+ * @param {object} state Whole Redux state tree
+ * @param {object} [params] Query used to fetch products. Can contain page, search, etc. If not provided,
  *                          defaults to first page, all products
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {array|false} List of products, or false if there was an error
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {Array|false} List of products, or false if there was an error
  */
 export const getProducts = ( state, params = {}, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areProductsLoaded( state, params, siteId ) ) {
@@ -115,10 +113,10 @@ export const getProducts = ( state, params = {}, siteId = getSelectedSiteId( sta
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [params] Params given to API request. Defaults to { page: 1, per_page: 10 }
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Number} Total number of pages of products available on a site, or 0 if not loaded yet.
+ * @param {object} state Whole Redux state tree
+ * @param {number} [params] Params given to API request. Defaults to { page: 1, per_page: 10 }
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {number} Total number of pages of products available on a site, or 0 if not loaded yet.
  */
 export const getTotalProductsPages = (
 	state,
@@ -134,10 +132,10 @@ export const getTotalProductsPages = (
 };
 
 /**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [params] Params given to API request. Defaults to { page: 1, per_page: 10 }
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Number} Total number of products available on a site, or 0 if not loaded yet.
+ * @param {object} state Whole Redux state tree
+ * @param {number} [params] Params given to API request. Defaults to { page: 1, per_page: 10 }
+ * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {number} Total number of products available on a site, or 0 if not loaded yet.
  */
 export const getTotalProducts = ( state, params = {}, siteId = getSelectedSiteId( state ) ) => {
 	const key = getSerializedProductsQuery( params );

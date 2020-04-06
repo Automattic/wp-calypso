@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +7,7 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
 import { find, get } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -16,11 +15,12 @@ import Gridicon from 'gridicons';
 import StepWrapper from 'signup/step-wrapper';
 import analytics from 'lib/analytics';
 import verticals from './verticals';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getStepUrl } from 'signup/utils';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { submitSignupStep } from 'state/signup/progress/actions';
+import { getSignupProgress } from 'state/signup/progress/selectors';
 
 /**
  * Style dependencies
@@ -129,7 +129,6 @@ class SurveyStep extends React.Component {
 				subHeaderText={
 					this.props.surveySiteType === 'blog' ? blogSubHeaderText : siteSubHeaderText
 				}
-				signupProgress={ this.props.signupProgress }
 				stepContent={
 					this.props.stepSectionName === 'other' ? this.renderOther() : this.renderOptionList()
 				}
@@ -188,6 +187,8 @@ class SurveyStep extends React.Component {
 }
 
 export default connect(
-	null,
+	state => ( {
+		signupProgress: getSignupProgress( state ),
+	} ),
 	{ setSurvey, submitSignupStep }
 )( localize( SurveyStep ) );

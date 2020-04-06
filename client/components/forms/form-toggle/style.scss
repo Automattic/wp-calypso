@@ -31,7 +31,7 @@
 	&::after {
 		left: 0;
 		border-radius: 50%;
-		background: var( --color-white );
+		background: var( --color-surface );
 		transition: all 0.2s ease;
 	}
 	&::before {
@@ -66,12 +66,12 @@
 	}
 
 	& + .form-toggle__label .form-toggle__switch {
-		background: var( --color-neutral-200 );
+		background: var( --color-neutral-20 );
 	}
 
 	&:not( :disabled ) {
 		+ .form-toggle__label:hover .form-toggle__switch {
-			background: var( --color-neutral-100 );
+			background: var( --color-neutral-10 );
 		}
 	}
 
@@ -97,16 +97,27 @@
 			cursor: default;
 		}
 	}
-}
 
-// Classes for toggle state before action is complete (updating plugin or something)
-.form-toggle.is-toggling {
-	+ .form-toggle__label .form-toggle__switch {
-		background: var( --color-primary );
-	}
-	&:checked {
+	&.is-toggling {
+		+ .form-toggle__label {
+			color: var( --color-neutral );
+			animation: loading-fade 1.6s ease-in-out infinite;
+		}
 		+ .form-toggle__label .form-toggle__switch {
-			background: var( --color-neutral-100 );
+			background: var( --color-primary );
+			animation: loading-fade 1.6s ease-in-out infinite;
+			&::after {
+				left: 16px;
+			}
+		}
+		&:checked {
+			+ .form-toggle__label .form-toggle__switch {
+				background: var( --color-neutral-10 );
+				animation: loading-fade 1.6s ease-in-out infinite;
+				&::after {
+					left: 0;
+				}
+			}
 		}
 	}
 }

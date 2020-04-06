@@ -37,7 +37,7 @@ export default class FormToggle extends PureComponent {
 
 	static idNum = 0;
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.id = this.constructor.idNum++;
 	}
 

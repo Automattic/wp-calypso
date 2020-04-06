@@ -1,151 +1,63 @@
-/** @format */
-
-/**
- * External dependencies
- */
-import noop from 'lodash';
-
 /**
  * Internal dependencies
  */
-import { fetchJITM, handleSiteSelection, handleRouteChange } from '..';
+import { doFetchJITM, doDismissJITM } from '..';
+import { fetchJITM, dismissJITM } from 'state/jitm/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
-// Dispatch action that's optionally a thunk. Mock that simulates the thunk middleware
-const createDispatcher = ( dispatch, getState ) => action => {
-	if ( ! action ) {
-		return;
-	}
-	if ( typeof action === 'function' ) {
-		return action( dispatch, getState );
-	}
-	return dispatch( action );
-};
-
 describe( 'jitms', () => {
-	describe( 'fetchJITM', () => {
-		test( 'should not dispatch', () => {
-			const dispatch = jest.fn();
-			const getState = () => ( {} );
-			const action = noop;
+	describe( '#doFetchJITM', () => {
+		test( 'should dispatch a get action with the site id and the message path', () => {
+			const siteId = 123;
+			const messagePath = 'test:foo:bar';
+			const action = fetchJITM( siteId, messagePath );
 
-			fetchJITM( action )( dispatch, getState );
-			expect( dispatch ).not.toHaveBeenCalled();
-		} );
-
-		test( 'should dispatch', () => {
-			const dispatch = jest.fn();
-			const state = {
-				sites: {
-					items: {
-						100: {
-							jetpack: true,
-						},
-					},
-				},
-				currentUser: {
-					id: 1000,
-				},
-				ui: {
-					section: {
-						name: 'test',
-					},
-				},
-			};
-			const getState = () => state;
-			const action_site_selected = { siteId: 100 };
-			const action_loading = { isLoading: true };
-			const action_loaded = { isLoading: false };
-			const action_transition = { section: { name: 'test' } };
-
-			// dispatch action that's optionally a thunk. Mock that simulates the thunk middleware
-			const dispatcher = createDispatcher( dispatch, getState );
-
-			// walk through the happy case of the process
-			dispatcher( handleSiteSelection( action_site_selected ) );
-			expect( dispatch ).not.toHaveBeenCalled();
-
-			dispatcher( handleRouteChange( action_loading ) );
-			expect( dispatch ).not.toHaveBeenCalled();
-
-			dispatcher( handleRouteChange( action_loaded ) );
-			expect( dispatch ).not.toHaveBeenCalled();
-
-			dispatcher( handleRouteChange( action_transition ) );
-			expect( dispatch ).toHaveBeenCalledWith(
+			expect( doFetchJITM( action ) ).toEqual(
 				http(
 					{
 						apiNamespace: 'rest',
 						method: 'GET',
-						path: '/v1.1/jetpack-blogs/100/rest-api/',
+						path: `/v1.1/jetpack-blogs/${ siteId }/rest-api/`,
 						query: {
 							path: '/jetpack/v4/jitm',
-							query: JSON.stringify( { message_path: 'calypso:test:admin_notices' } ),
+							query: JSON.stringify( {
+								message_path: messagePath,
+							} ),
 							http_envelope: 1,
 						},
 					},
-					{ ...action_transition, messagePath: 'test' }
+					action
 				)
 			);
 		} );
+	} );
 
-		test( 'should be not set a jitm if not a jetpack site', () => {
-			const dispatch = jest.fn();
-			const state = {
-				sites: {
-					items: {
-						100: {
-							jetpack: false,
+	describe( '#doDismissJITM', () => {
+		test( 'should dispatch a post action with the message id and the feature class', () => {
+			const siteId = 123;
+			const messageId = 'upsell-nudge-testing';
+			const featureClass = 'retention-marketing';
+			const action = dismissJITM( siteId, messageId, featureClass );
+
+			expect( doDismissJITM( action ) ).toEqual(
+				http(
+					{
+						apiNamespace: 'rest',
+						method: 'POST',
+						path: `/jetpack-blogs/${ siteId }/rest-api/`,
+						query: {
+							path: '/jetpack/v4/jitm',
+							body: JSON.stringify( {
+								feature_class: featureClass,
+								id: messageId,
+							} ),
+							http_envelope: 1,
+							json: false,
 						},
 					},
-				},
-				currentUser: {
-					id: 1000,
-				},
-			};
-			const getState = () => state;
-			const action_transition = {
-				section: {
-					name: 'test',
-				},
-			};
-
-			const dispatcher = createDispatcher( dispatch, getState );
-			dispatcher( handleRouteChange( action_transition ) );
-			expect( dispatch ).not.toHaveBeenCalled();
-		} );
-
-		test( 'should not dispatch for ignored routes', () => {
-			const dispatch = jest.fn();
-			const state = {
-				ui: {
-					route: {
-						path: {
-							current: '/jetpack/connect/site-type/yourjetpack.blog',
-						},
-					},
-				},
-				sites: {
-					items: {
-						100: {
-							jetpack: true,
-						},
-					},
-				},
-				currentUser: {
-					id: 1000,
-				},
-			};
-			const getState = () => state;
-			const action_transition = {
-				section: {
-					name: 'example',
-				},
-			};
-
-			const dispatcher = createDispatcher( dispatch, getState );
-			dispatcher( handleRouteChange( action_transition ) );
-			expect( dispatch ).not.toHaveBeenCalled();
+					action
+				)
+			);
 		} );
 	} );
 } );

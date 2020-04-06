@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -27,7 +25,4 @@ class QueryUserDevices extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestUserDevices }
-)( QueryUserDevices );
+export default connect( null, { requestUserDevices } )( QueryUserDevices );

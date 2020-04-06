@@ -1,9 +1,7 @@
-/** @format */
-
+/* eslint-disable no-case-declarations */
 /**
  * Internal dependencies
  */
-
 import {
 	SITE_VOUCHERS_ASSIGN_RECEIVE,
 	SITE_VOUCHERS_ASSIGN_REQUEST,
@@ -14,17 +12,17 @@ import {
 	SITE_VOUCHERS_REQUEST_SUCCESS,
 	SITE_VOUCHERS_REQUEST_FAILURE,
 } from 'state/action-types';
-import { combineReducers } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
  * vouchers `Reducer` function
  *
- * @param {Object} state - current state
- * @param {Object} action - vouchers action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - vouchers action
+ * @returns {object} updated state
  */
-export const items = ( state = {}, action ) => {
+export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	const { siteId, type, voucher, vouchers, serviceType } = action;
 
 	switch ( type ) {
@@ -44,16 +42,15 @@ export const items = ( state = {}, action ) => {
 	}
 
 	return state;
-};
-items.schema = itemsSchema;
+} );
 
 /**
  * `Reducer` function which handles request/response actions
  * to/from WP REST-API
  *
- * @param {Object} state - current state
- * @param {Object} action - vouchers action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - vouchers action
+ * @returns {object} updated state
  */
 export const requesting = ( state = {}, { type, siteId } ) => {
 	switch ( type ) {
@@ -77,9 +74,9 @@ export const requesting = ( state = {}, { type, siteId } ) => {
 /**
  * `Reducer` function which handles ERRORs REST-API response actions
  *
- * @param {Object} state - current state
- * @param {Object} action - vouchers action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - vouchers action
+ * @returns {object} updated state
  */
 export const errors = ( state = {}, { type, siteId, error } ) => {
 	switch ( type ) {

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,9 +10,10 @@ import { parseWithAttributeSchema } from '@wordpress/blocks';
 
 /**
  * Convert the Calypso Media Modal output to the format expected by Gutenberg
- * @param {Object} media Calypso media modal output
  *
- * @returns {Array|Object} Gutenberg media blocks input
+ * @param {object} media Calypso media modal output
+ *
+ * @returns {Array|object} Gutenberg media blocks input
  */
 export const mediaCalypsoToGutenberg = media => {
 	return {

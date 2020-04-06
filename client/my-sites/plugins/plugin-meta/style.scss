@@ -6,7 +6,7 @@
 	overflow: hidden;
 	margin-top: -16px;
 	margin-bottom: 16px;
-	box-shadow: inset 0 0 2px 2px rgba( var( --color-neutral-200-rgb ), 0.1 );
+	box-shadow: inset 0 0 2px 2px rgba( var( --color-neutral-20-rgb ), 0.1 );
 	background: rgba( var( --color-neutral-0-rgb ), 0.3 );
 
 	@include breakpoint( '>480px' ) {
@@ -38,7 +38,7 @@
 }
 
 .plugin-meta__name {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 18px;
 	font-weight: 600;
 	line-height: 32px;

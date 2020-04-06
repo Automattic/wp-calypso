@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { trim } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import classNames from 'classnames';
 
 const PackagesListItem = ( {

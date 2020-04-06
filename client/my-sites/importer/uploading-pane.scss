@@ -1,10 +1,10 @@
 .importer__uploading-pane {
 	position: relative;
 	height: 150px;
-	margin-bottom: 24px;
+	margin-bottom: 1.5em;
 
 	border: 5px solid var( --color-neutral-0 );
-	fill: var( --color-neutral-200 );
+	fill: var( --color-neutral-20 );
 	font-size: 14px;
 	font-weight: 600;
 	color: var( --color-neutral-light );
@@ -15,8 +15,12 @@
 	}
 
 	.accessible-focus &:focus {
-		border-color: var( --color-neutral-200 );
+		border-color: var( --color-neutral-20 );
 	}
+}
+
+.importer__uploading-pane-description {
+	font-size: 14px;
 }
 
 .importer__upload-content {
@@ -26,6 +30,14 @@
 	right: 0;
 	text-align: center;
 	transform: translateY( -50% );
+
+	&.importer-upload-success {
+		color: var( --color-success );
+	}
+
+	&.importer-upload-failure {
+		color: var( --color-error );
+	}
 }
 
 .importer__upload-progress {

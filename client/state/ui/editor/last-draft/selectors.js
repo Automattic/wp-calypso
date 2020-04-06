@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -10,8 +8,8 @@ import { getEditedPost } from 'state/posts/selectors';
  * Returns the edited post object for the last draft post, or null if there is
  * no last draft.
  *
- * @param  {Object} state Global state tree
- * @return {Object}       Last edited draft
+ * @param  {object} state Global state tree
+ * @returns {object}       Last edited draft
  */
 export function getEditorLastDraftPost( state ) {
 	const siteId = getEditorLastDraftSiteId( state );
@@ -25,8 +23,8 @@ export function getEditorLastDraftPost( state ) {
 /**
  * Returns the last edited draft site ID, or null if there is no last draft.
  *
- * @param  {Object}  state Global state tree
- * @return {?Number}       Last edited draft site ID
+ * @param  {object}  state Global state tree
+ * @returns {?number}       Last edited draft site ID
  */
 export function getEditorLastDraftSiteId( state ) {
 	return state.ui.editor.lastDraft.siteId;
@@ -35,8 +33,8 @@ export function getEditorLastDraftSiteId( state ) {
 /**
  * Returns the last edited draft post ID, or null if there is no last draft.
  *
- * @param  {Object}  state Global state tree
- * @return {?Number}       Last edited draft post ID
+ * @param  {object}  state Global state tree
+ * @returns {?number}       Last edited draft post ID
  */
 export function getEditorLastDraftPostId( state ) {
 	return state.ui.editor.lastDraft.postId;

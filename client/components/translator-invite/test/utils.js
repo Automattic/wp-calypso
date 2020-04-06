@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -12,37 +11,38 @@ jest.mock( 'config', () => key => {
 	if ( 'i18n_default_locale_slug' === key ) {
 		return 'it';
 	}
-	if ( 'languages' === key ) {
-		return [
-			{
-				value: 1,
-				langSlug: 'it',
-				name: 'Italian English',
-				wpLocale: 'it_US',
-				popular: 1,
-				territories: [ '019' ],
-			},
-			{
-				value: 465,
-				langSlug: 'mt',
-				name: 'Malti',
-				territories: [ '039' ],
-			},
-			{
-				value: 455,
-				langSlug: 'tl',
-				name: 'Tagalog',
-				territories: [ '035' ],
-			},
-			{
-				value: 73,
-				langSlug: 'uk',
-				name: 'Українська',
-				territories: [ '151' ],
-			},
-		];
-	}
 } );
+
+jest.mock( 'languages', () => ( {
+	languages: [
+		{
+			value: 1,
+			langSlug: 'it',
+			name: 'Italian English',
+			wpLocale: 'it_US',
+			popular: 1,
+			territories: [ '019' ],
+		},
+		{
+			value: 465,
+			langSlug: 'mt',
+			name: 'Malti',
+			territories: [ '039' ],
+		},
+		{
+			value: 455,
+			langSlug: 'tl',
+			name: 'Tagalog',
+			territories: [ '035' ],
+		},
+		{
+			value: 73,
+			langSlug: 'uk',
+			name: 'Українська',
+			territories: [ '151' ],
+		},
+	],
+} ) );
 
 describe( 'TranslatorInvite utils', () => {
 	describe( 'getCurrentNonDefaultLocale()', () => {

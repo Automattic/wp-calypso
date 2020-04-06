@@ -20,6 +20,7 @@ Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Au
     - [To run with different modes](docs/running-tests.md#to-run-with-different-modes)
     - [To run a specific suite of specs](docs/running-tests.md#to-run-a-specific-suite-of-specs)
     - [To run headlessly](docs/running-tests.md#to-run-headlessly)
+  - [How to disable tests](docs/disabling-tests.md)
 - [Writing tests](#)
   - [Gutenberg blocks](docs/gutenberg.md)
 - [Style Guide](docs/style-guide.md)

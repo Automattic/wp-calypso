@@ -19,12 +19,23 @@
 	p {
 		margin-bottom: 0;
 	}
+
+	@include breakpoint( '<960px' ) {
+		p {
+			display: none;
+		}
+	}
 }
 .social-login__header-icon {
 	height: 30px;
 	width: 30px;
 	margin-left: 0;
 	margin-right: 12px;
+
+	svg {
+		width: 100%;
+		height: 100%;
+	}
 }
 .social-login__header-action {
 	display: flex;

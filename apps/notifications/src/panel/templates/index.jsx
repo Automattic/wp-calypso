@@ -1,12 +1,14 @@
 /**
- * @module templates/index
+ * External dependencies
  */
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { find, findIndex, matchesProperty } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import BackButton from './button-back';
 import NavButton from './nav-button';
 import NoteList from './note-list';
@@ -37,17 +39,17 @@ const KEY_N = 78;
 const KEY_U = 85;
 
 /**
- * @typedef {Object} Notification
- * @property {!Number} id notification id
+ * @typedef {object} Notification
+ * @property {!number} id notification id
  */
 
 /**
  * Returns the next index into a list of notes following
  * the index for the given sought-after notification id
  *
- * @param {!Number} noteId id of note to search for
+ * @param {!number} noteId id of note to search for
  * @param {!Array<Notification>} notes list of notes to search through
- * @returns {?Number} index into note list of note following that given by noteId
+ * @returns {?number} index into note list of note following that given by noteId
  */
 export const findNextNoteId = ( noteId, notes ) => {
 	if ( notes.length === 0 ) {
@@ -76,12 +78,12 @@ class Layout extends React.Component {
 		selectedNote: null,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.filterController = FilterBarController( this.refreshNotesToDisplay );
 		this.props.global.client = this.props.client;
 		this.props.global.toggleNavigation = this.toggleNavigation;
 
-		if ( 'undefined' == typeof this.props.global.navigation ) {
+		if ( 'undefined' === typeof this.props.global.navigation ) {
 			this.props.global.navigation = {};
 
 			/* Keyboard shortcutes */
@@ -102,7 +104,7 @@ class Layout extends React.Component {
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.selectedNoteId ) {
 			this.setState( {
 				previousDetailScrollTop: this.detailView ? this.detailView.scrollTop : 0,
@@ -127,7 +129,7 @@ class Layout extends React.Component {
 		} );
 	}
 
-	componentWillUpdate( nextProps ) {
+	UNSAFE_componentWillUpdate( nextProps ) {
 		const { selectedNoteId: nextNote } = nextProps;
 		const { selectedNoteId: prevNote } = this.props;
 		const noteList = ReactDOM.findDOMNode( this.noteList );
@@ -434,12 +436,12 @@ class Layout extends React.Component {
 		this.noteList = ref;
 	};
 
-	storeNoteListVisibilityUpdater = updater => {
-		this.noteListVisibilityUpdater = updater;
-	};
-
 	storeDetailViewRef = ref => {
 		this.detailView = ref;
+	};
+
+	storeNoteListVisibilityUpdater = updater => {
+		this.noteListVisibilityUpdater = updater;
 	};
 
 	render() {
@@ -482,7 +484,7 @@ class Layout extends React.Component {
 										className="wpnc__prev"
 										isEnabled={
 											( filteredNotes[ 0 ] &&
-												filteredNotes[ 0 ].id != this.props.selectedNoteId ) ||
+												filteredNotes[ 0 ].id !== this.props.selectedNoteId ) ||
 											false
 										}
 										navigate={ this.navigateToPrevNote }
@@ -492,7 +494,7 @@ class Layout extends React.Component {
 										className="wpnc__next"
 										isEnabled={
 											( filteredNotes[ 0 ] &&
-												filteredNotes[ filteredNotes.length - 1 ].id !=
+												filteredNotes[ filteredNotes.length - 1 ].id !==
 													this.props.selectedNoteId ) ||
 											false
 										}
@@ -535,7 +537,4 @@ const mapDispatchToProps = {
 	unselectNote: actions.ui.unselectNote,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( Layout );
+export default connect( mapStateToProps, mapDispatchToProps )( Layout );

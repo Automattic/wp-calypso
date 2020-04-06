@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import CompactCard from 'components/card';
+import { CompactCard } from '@automattic/components';
 import EmptyContent from 'components/empty-content';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
@@ -84,7 +82,7 @@ export class PendingPayments extends Component {
 						line={ translate(
 							'Our plans give your site the power to thrive. Find the plan that works for you.'
 						) }
-						action={ translate( 'Upgrade Now' ) }
+						action={ translate( 'Upgrade now' ) }
 						actionURL={ '/plans' }
 						illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
 					/>

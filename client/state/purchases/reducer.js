@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +6,7 @@ import { find, matches } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import {
 	PURCHASES_REMOVE,
 	PURCHASES_SITE_FETCH,
@@ -36,9 +35,9 @@ const initialState = {
  * Overwrites the purchases in the store with the purchases from the new purchases array
  * that share the same `id` value.
  *
- * @param {array} existingPurchases - an array of purchases in the store
- * @param {array} newPurchases - an array of purchases fetched from the API
- * @return {array} An array of purchases
+ * @param {Array} existingPurchases - an array of purchases in the store
+ * @param {Array} newPurchases - an array of purchases fetched from the API
+ * @returns {Array} An array of purchases
  */
 function overwriteExistingPurchases( existingPurchases, newPurchases ) {
 	let purchases = newPurchases;
@@ -55,26 +54,15 @@ function overwriteExistingPurchases( existingPurchases, newPurchases ) {
 /**
  * Removes purchases that are missing from the new purchases array and match the given predicate.
  *
- * @param {array} existingPurchases - an array of purchases in the store
- * @param {array} newPurchases - an array of purchases fetched from the API
+ * @param {Array} existingPurchases - an array of purchases in the store
+ * @param {Array} newPurchases - an array of purchases fetched from the API
  * @param {object} predicate - the predicate to check before removing the item from the array.
- * @return {array} An array of purchases
+ * @returns {Array} An array of purchases
  */
 function removeMissingPurchasesByPredicate( existingPurchases, newPurchases, predicate ) {
-	return existingPurchases.filter( purchase => {
-		if ( matches( predicate )( purchase ) && find( newPurchases, { ID: purchase.ID } ) ) {
-			// this purchase is present in the new array
-			return true;
-		}
-
-		if ( ! matches( predicate )( purchase ) ) {
-			// only overwrite remove purchases that match the predicate
-			return true;
-		}
-
-		// the purchase doesn't match the predicate or is missing from the array of new purchases
-		return false;
-	} );
+	return existingPurchases.filter(
+		purchase => ! matches( predicate )( purchase ) || find( newPurchases, { ID: purchase.ID } )
+	);
 }
 
 function updatePurchases( existingPurchases, action ) {
@@ -99,45 +87,52 @@ function updatePurchases( existingPurchases, action ) {
 
 const assignError = ( state, action ) => ( { ...state, error: action.error } );
 
-export default createReducer( initialState, {
-	[ PURCHASES_REMOVE ]: state => ( {
-		...state,
-		data: [],
-		hasLoadedSitePurchasesFromServer: false,
-		hasLoadedUserPurchasesFromServer: false,
-	} ),
+export default withoutPersistence( ( state = initialState, action ) => {
+	switch ( action.type ) {
+		case PURCHASES_REMOVE:
+			return {
+				...state,
+				data: [],
+				hasLoadedSitePurchasesFromServer: false,
+				hasLoadedUserPurchasesFromServer: false,
+			};
+		case PURCHASES_SITE_FETCH:
+			return { ...state, isFetchingSitePurchases: true };
+		case PURCHASES_USER_FETCH:
+			return { ...state, isFetchingUserPurchases: true };
+		case PURCHASE_REMOVE_COMPLETED:
+			return {
+				...state,
+				data: updatePurchases( state.data, action ),
+				error: null,
+				isFetchingSitePurchases: false,
+				isFetchingUserPurchases: false,
+				hasLoadedSitePurchasesFromServer: true,
+				hasLoadedUserPurchasesFromServer: true,
+			};
+		case PURCHASES_SITE_FETCH_COMPLETED:
+			return {
+				...state,
+				data: updatePurchases( state.data, action ),
+				error: null,
+				isFetchingSitePurchases: false,
+				hasLoadedSitePurchasesFromServer: true,
+			};
+		case PURCHASES_USER_FETCH_COMPLETED:
+			return {
+				...state,
+				data: updatePurchases( state.data, action ),
+				error: null,
+				isFetchingUserPurchases: false,
+				hasLoadedUserPurchasesFromServer: true,
+			};
+		case PURCHASE_REMOVE_FAILED:
+			return assignError( state, action );
+		case PURCHASES_SITE_FETCH_FAILED:
+			return assignError( state, action );
+		case PURCHASES_USER_FETCH_FAILED:
+			return assignError( state, action );
+	}
 
-	[ PURCHASES_SITE_FETCH ]: state => ( { ...state, isFetchingSitePurchases: true } ),
-
-	[ PURCHASES_USER_FETCH ]: state => ( { ...state, isFetchingUserPurchases: true } ),
-
-	[ PURCHASE_REMOVE_COMPLETED ]: ( state, action ) => ( {
-		...state,
-		data: updatePurchases( state.data, action ),
-		error: null,
-		isFetchingSitePurchases: false,
-		isFetchingUserPurchases: false,
-		hasLoadedSitePurchasesFromServer: true,
-		hasLoadedUserPurchasesFromServer: true,
-	} ),
-
-	[ PURCHASES_SITE_FETCH_COMPLETED ]: ( state, action ) => ( {
-		...state,
-		data: updatePurchases( state.data, action ),
-		error: null,
-		isFetchingSitePurchases: false,
-		hasLoadedSitePurchasesFromServer: true,
-	} ),
-
-	[ PURCHASES_USER_FETCH_COMPLETED ]: ( state, action ) => ( {
-		...state,
-		data: updatePurchases( state.data, action ),
-		error: null,
-		isFetchingUserPurchases: false,
-		hasLoadedUserPurchasesFromServer: true,
-	} ),
-
-	[ PURCHASE_REMOVE_FAILED ]: assignError,
-	[ PURCHASES_SITE_FETCH_FAILED ]: assignError,
-	[ PURCHASES_USER_FETCH_FAILED ]: assignError,
+	return state;
 } );

@@ -1,10 +1,10 @@
 // Adds a top border to first card in the Site Stream
 .is-reader-page .is-site-stream .reader-post-card.card:nth-child( 2 ) {
-	border-top: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-10 );
 }
 
 .reader-post-card.card {
-	border-bottom: 1px solid var( --color-neutral-100 );
+	border-bottom: 1px solid var( --color-neutral-10 );
 	box-shadow: none;
 	margin: 0 15px;
 	padding: 18px 0 20px;
@@ -66,7 +66,7 @@
 			}
 
 			.reader-post-card__title {
-				color: var( --color-white );
+				color: var( --color-text-inverted );
 				font-family: $sans;
 				position: relative;
 				bottom: 30px;
@@ -82,7 +82,7 @@
 			}
 
 			.reader-post-card__title .reader-post-card__title-link {
-				color: var( --color-white );
+				color: var( --color-text-inverted );
 				display: inline;
 				font-size: 12px;
 				letter-spacing: 0.01em;
@@ -202,7 +202,7 @@
 }
 
 .reader-post-card__photo {
-	border: 1px solid var( --color-neutral-100 );
+	border: 1px solid var( --color-neutral-10 );
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -417,6 +417,8 @@
 
 .reader-post-card__title {
 	line-height: 1.4;
+	margin-top: -4px;
+	overflow-wrap: break-word;
 }
 
 // Needs to overwrite .reader__content a
@@ -424,14 +426,14 @@
 .reader__content .reader-post-card__title-link:visited,
 .reader-post-card__title-link,
 .reader-post-card__title-link:visited {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	cursor: pointer;
 	font-size: 19px;
 	font-weight: 700;
 	display: block;
 
 	&:hover {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	@include breakpoint( '>480px' ) {
@@ -441,7 +443,7 @@
 
 .reader-post-card .reader-excerpt {
 	font-size: 16px;
-	line-height: 1.6;
+	line-height: 1.55;
 	font-weight: 100;
 	margin-top: 9px;
 	word-break: break-word;
@@ -641,7 +643,7 @@
 
 .reader-post-card__blocked-description {
 	margin-bottom: 0;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }
 
 .reader-post-card__blocked-undo {

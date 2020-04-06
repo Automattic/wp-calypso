@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { Component } from 'react';
-import shallowEqual from 'react-pure-render/shallowEqual';
+import isShallowEqual from '@wordpress/is-shallow-equal';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import debug from 'debug';
@@ -21,15 +19,15 @@ import { requestSitePosts, requestSitePost, requestAllSitesPosts } from 'state/p
 const log = debug( 'calypso:query-posts' );
 
 class QueryPosts extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			this.props.siteId === nextProps.siteId &&
 			this.props.postId === nextProps.postId &&
-			shallowEqual( this.props.query, nextProps.query )
+			isShallowEqual( this.props.query, nextProps.query )
 		) {
 			return;
 		}

@@ -26,13 +26,13 @@
 }
 
 .about__checkboxes {
-	border: 1px solid var( --color-neutral-100 );
+	border: 1px solid var( --color-neutral-10 );
 	border-radius: 3px;
 }
 
 .about__checkbox-option {
-	border-top: 1px solid var( --color-neutral-100 );
-	color: var( --color-neutral-500 );
+	border-top: 1px solid var( --color-neutral-10 );
+	color: var( --color-neutral-50 );
 	display: block;
 	font-weight: normal;
 	margin: 0;
@@ -68,7 +68,7 @@
 }
 
 .about__segment-label {
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 
 	&:hover {
 		cursor: pointer;

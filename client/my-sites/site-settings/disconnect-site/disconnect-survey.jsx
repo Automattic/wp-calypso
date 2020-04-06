@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import QuerySitePlans from 'components/data/query-site-plans';
 import FormTextInput from 'components/forms/form-text-input';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
@@ -39,38 +38,38 @@ class DisconnectSurvey extends PureComponent {
 	};
 
 	render() {
-		const { confirmHref, isPaidPlan, siteId, siteSlug, translate } = this.props;
+		const { confirmHref, siteId, translate } = this.props;
 		return (
 			<div className="disconnect-site__survey main">
 				<QuerySitePlans siteId={ siteId } />
 				<SettingsSectionHeader
-					title={ translate(
-						'Would you mind sharing why you want to disconnect %(siteName)s from WordPress.com?',
-						{
-							args: { siteName: siteSlug },
-						}
-					) }
+					title={ translate( 'Your feedback will help us improve the product.' ) }
 				/>
-				<CompactCard href={ `/settings/disconnect-site/too-difficult/${ siteSlug }` }>
-					{ translate( 'It was too hard to configure Jetpack.' ) }
-				</CompactCard>
-				<CompactCard href={ `/settings/disconnect-site/missing-feature/${ siteSlug }` }>
-					{ translate( 'A feature I need was missing.' ) }
-				</CompactCard>
-				{ isPaidPlan && (
-					<CompactCard href={ `/settings/disconnect-site/too-expensive/${ siteSlug }` }>
-						{ translate( 'This plan is too expensive.' ) }
-					</CompactCard>
-				) }
 				<CompactCard href={ confirmHref + '?reason=troubleshooting' }>
 					{ translate( "Troubleshooting — I'll be reconnecting afterwards." ) }
+				</CompactCard>
+				<CompactCard href={ confirmHref + '?reason=cannot-work' }>
+					{ translate( "I can't get it to work." ) }
+				</CompactCard>
+				<CompactCard href={ confirmHref + '?reason=slow' }>
+					{ translate( 'It slowed down my site.' ) }
+				</CompactCard>
+
+				<CompactCard href={ confirmHref + '?reason=buggy' }>
+					{ translate( "It's buggy." ) }
+				</CompactCard>
+				<CompactCard href={ confirmHref + '?reason=no-clarity' }>
+					{ translate( "I don't know what it does." ) }
+				</CompactCard>
+				<CompactCard href={ confirmHref + '?reason=delete' }>
+					{ translate( "I'm deleting/migrating my site." ) }
 				</CompactCard>
 				<CompactCard
 					className="disconnect-site__survey-other-option"
 					href={ addQueryArgs( { reason: 'other', text: this.state.otherReason }, confirmHref ) }
 					onClick={ this.interceptOtherReasonClick }
 				>
-					{ translate( 'Another reason:' ) }
+					{ translate( 'Other:' ) }
 					<FormTextInput
 						onBlur={ this.setOtherReasonFocus( false ) }
 						onChange={ this.setOtherReason }

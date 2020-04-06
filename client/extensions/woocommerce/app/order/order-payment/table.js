@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -23,7 +22,7 @@ import { getOrderFeeCost, getOrderRefundTotal } from 'woocommerce/lib/order-valu
 import OrderLineItem from '../order-details/line-item';
 import OrderTotalRow from '../order-details/row-total';
 import PriceInput from 'woocommerce/components/price-input';
-import ScreenReaderText from 'components/screen-reader-text';
+import { ScreenReaderText } from '@automattic/components';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
@@ -46,7 +45,7 @@ class OrderRefundTable extends Component {
 		this.initializeState( props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.order.id !== this.props.order.id ) {
 			this.initializeState( nextProps );
 		}

@@ -1,10 +1,3 @@
-/** @format */
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
 /**
  * Internal dependencies
  */
@@ -31,23 +24,23 @@ describe( 'reducer', () => {
 				initialState,
 				addMethodToShippingZone( siteId, 'flat_rate', 'Flat rate' )
 			);
-			expect( newState.currentlyEditingId ).to.deep.equal( { index: 0 } );
-			expect( newState.currentlyEditingNew ).to.equal( true );
-			expect( newState.creates.length ).to.equal( 0 );
-			expect( newState.currentlyEditingChanges.id ).to.deep.equal( { index: 0 } );
-			expect( newState.currentlyEditingChanges.methodType ).to.equal( 'flat_rate' );
-			expect( newState.currentlyEditingChanges.title ).to.equal( 'Flat rate' );
+			expect( newState.currentlyEditingId ).toEqual( { index: 0 } );
+			expect( newState.currentlyEditingNew ).toBe( true );
+			expect( newState.creates ).toHaveLength( 0 );
+			expect( newState.currentlyEditingChanges.id ).toEqual( { index: 0 } );
+			expect( newState.currentlyEditingChanges.methodType ).toBe( 'flat_rate' );
+			expect( newState.currentlyEditingChanges.title ).toBe( 'Flat rate' );
 			// Check that the method was initialized:
-			expect( newState.currentlyEditingChanges.cost ).to.be.a( 'number' );
+			expect( typeof newState.currentlyEditingChanges.cost ).toBe( 'number' );
 		} );
 	} );
 
 	describe( 'removeMethodFromShippingZone', () => {
 		test( 'should add the method ID to the "deletes" list if it is a server-side ID', () => {
 			const newState = reducer( initialState, removeMethodFromShippingZone( siteId, 1 ) );
-			expect( newState.creates ).to.be.empty;
-			expect( newState.updates ).to.be.empty;
-			expect( newState.deletes ).to.deep.equal( [ { id: 1 } ] );
+			expect( newState.creates ).toHaveLength( 0 );
+			expect( newState.updates ).toHaveLength( 0 );
+			expect( newState.deletes ).toEqual( [ { id: 1 } ] );
 		} );
 
 		test( 'should delete any previous "updates" the method had', () => {
@@ -57,9 +50,9 @@ describe( 'reducer', () => {
 				deletes: [],
 			};
 			const newState = reducer( state, removeMethodFromShippingZone( siteId, 1 ) );
-			expect( newState.creates ).to.be.empty;
-			expect( newState.updates ).to.be.empty;
-			expect( newState.deletes ).to.deep.equal( [ { id: 1 } ] );
+			expect( newState.creates ).toHaveLength( 0 );
+			expect( newState.updates ).toHaveLength( 0 );
+			expect( newState.deletes ).toEqual( [ { id: 1 } ] );
 		} );
 
 		test( 'should remove the method from the "creates" list if it had a provisional ID', () => {
@@ -69,9 +62,9 @@ describe( 'reducer', () => {
 				deletes: [],
 			};
 			const newState = reducer( state, removeMethodFromShippingZone( siteId, { index: 0 } ) );
-			expect( newState.creates ).to.be.empty;
-			expect( newState.updates ).to.be.empty;
-			expect( newState.deletes ).to.be.empty;
+			expect( newState.creates ).toHaveLength( 0 );
+			expect( newState.updates ).toHaveLength( 0 );
+			expect( newState.deletes ).toHaveLength( 0 );
 		} );
 	} );
 
@@ -91,10 +84,10 @@ describe( 'reducer', () => {
 				state,
 				changeShippingZoneMethodType( siteId, 'flat_rate', 'Flat rate' )
 			);
-			expect( newState.currentlyEditingChanges.methodType ).to.equal( 'flat_rate' );
-			expect( newState.currentlyEditingChanges.title ).to.equal( 'Flat rate' );
-			expect( newState.currentlyEditingChangedType ).to.equal( true );
-			expect( newState.currentlyEditingNew ).to.equal( false );
+			expect( newState.currentlyEditingChanges.methodType ).toBe( 'flat_rate' );
+			expect( newState.currentlyEditingChanges.title ).toBe( 'Flat rate' );
+			expect( newState.currentlyEditingChangedType ).toBe( true );
+			expect( newState.currentlyEditingNew ).toBe( false );
 		} );
 
 		test( 'should change the type of a newly added method and keep it marked as new', () => {
@@ -112,10 +105,10 @@ describe( 'reducer', () => {
 				state,
 				changeShippingZoneMethodType( siteId, 'flat_rate', 'Flat rate' )
 			);
-			expect( newState.currentlyEditingChanges.methodType ).to.equal( 'flat_rate' );
-			expect( newState.currentlyEditingChanges.title ).to.equal( 'Flat rate' );
-			expect( newState.currentlyEditingChangedType ).to.equal( true );
-			expect( newState.currentlyEditingNew ).to.equal( true );
+			expect( newState.currentlyEditingChanges.methodType ).toBe( 'flat_rate' );
+			expect( newState.currentlyEditingChanges.title ).toBe( 'Flat rate' );
+			expect( newState.currentlyEditingChangedType ).toBe( true );
+			expect( newState.currentlyEditingNew ).toBe( true );
 		} );
 	} );
 
@@ -130,7 +123,7 @@ describe( 'reducer', () => {
 			};
 
 			const newState = reducer( state, changeShippingZoneMethodTitle( siteId, 'New Title' ) );
-			expect( newState.currentlyEditingChanges ).to.deep.equal( { title: 'New Title' } );
+			expect( newState.currentlyEditingChanges ).toEqual( { title: 'New Title' } );
 		} );
 	} );
 
@@ -145,7 +138,7 @@ describe( 'reducer', () => {
 			};
 
 			const newState = reducer( state, setShippingCost( siteId, 1, 42 ) );
-			expect( newState.currentlyEditingChanges.cost ).to.equal( 42 );
+			expect( newState.currentlyEditingChanges.cost ).toBe( 42 );
 		} );
 	} );
 
@@ -160,10 +153,10 @@ describe( 'reducer', () => {
 			};
 
 			const newState = reducer( state, openShippingZoneMethod( siteId, 1 ) );
-			expect( newState.currentlyEditingId ).to.equal( 1 );
-			expect( newState.currentlyEditingNew ).to.equal( false );
-			expect( newState.currentlyEditingChangedType ).to.equal( false );
-			expect( newState.currentlyEditingChanges ).to.deep.equal( {} );
+			expect( newState.currentlyEditingId ).toBe( 1 );
+			expect( newState.currentlyEditingNew ).toBe( false );
+			expect( newState.currentlyEditingChangedType ).toBe( false );
+			expect( newState.currentlyEditingChanges ).toEqual( {} );
 		} );
 	} );
 
@@ -177,7 +170,7 @@ describe( 'reducer', () => {
 			};
 
 			const newState = reducer( state, cancelShippingZoneMethod( siteId ) );
-			expect( newState.currentlyEditingId ).to.equal( null );
+			expect( newState.currentlyEditingId ).toBeNull();
 		} );
 
 		test( 'should discard the changes', () => {
@@ -190,8 +183,8 @@ describe( 'reducer', () => {
 			};
 
 			const newState = reducer( state, cancelShippingZoneMethod( siteId ) );
-			expect( newState.currentlyEditingId ).to.equal( null );
-			expect( newState.updates[ 0 ].title ).to.equal( 'Old Title' );
+			expect( newState.currentlyEditingId ).toBeNull();
+			expect( newState.updates[ 0 ].title ).toBe( 'Old Title' );
 		} );
 	} );
 
@@ -211,7 +204,7 @@ describe( 'reducer', () => {
 			};
 
 			const newState = reducer( state, closeShippingZoneMethod( siteId ) );
-			expect( newState.currentlyEditingId ).to.equal( null );
+			expect( newState.currentlyEditingId ).toBeNull();
 		} );
 
 		test( 'method creation - should add the new method to creates and remove the isNew flag', () => {
@@ -225,64 +218,56 @@ describe( 'reducer', () => {
 			};
 
 			const newState = reducer( state, closeShippingZoneMethod( siteId ) );
-			expect( newState.currentlyEditingId ).to.equal( null );
-			expect( newState.currentlyEditingNew ).to.equal( false );
-			expect( newState.creates.length ).to.equal( 1 );
-			expect( newState.creates[ 0 ].id ).to.deep.equal( { index: 0 } );
-			expect( newState.creates[ 0 ].title ).to.equal( 'abc' );
+			expect( newState.currentlyEditingId ).toBeNull();
+			expect( newState.currentlyEditingNew ).toBe( false );
+			expect( newState.creates.length ).toBe( 1 );
+			expect( newState.creates[ 0 ].id ).toEqual( { index: 0 } );
+			expect( newState.creates[ 0 ].title ).toBe( 'abc' );
 		} );
 
-		test(
-			'method type changed - should add the old method to "deletes" and add the new one to "creates" ' +
-				'if it had a server-side ID',
-			() => {
-				const state = {
-					creates: [],
-					updates: [ { id: 7, methodType: 'free_shipping', title: 'MyMethod' } ],
-					deletes: [],
-					currentlyEditingId: 7,
-					currentlyEditingChanges: { id: 7, methodType: 'flat_rate', cost: 12 },
-					currentlyEditingChangedType: true,
-				};
+		test( 'method type changed - should add the old method to "deletes" and add the new one to "creates" if it had a server-side ID', () => {
+			const state = {
+				creates: [],
+				updates: [ { id: 7, methodType: 'free_shipping', title: 'MyMethod' } ],
+				deletes: [],
+				currentlyEditingId: 7,
+				currentlyEditingChanges: { id: 7, methodType: 'flat_rate', cost: 12 },
+				currentlyEditingChangedType: true,
+			};
 
-				const newState = reducer( state, closeShippingZoneMethod( siteId ) );
-				expect( newState.currentlyEditingId ).to.equal( null );
-				expect( newState.updates ).to.be.empty;
-				expect( newState.deletes ).to.deep.equal( [ { id: 7 } ] );
-				expect( newState.creates.length ).to.equal( 1 );
-				expect( newState.creates[ 0 ].id ).to.deep.equal( { index: 0 } );
-				expect( newState.creates[ 0 ].methodType ).to.equal( 'flat_rate' );
-				expect( newState.creates[ 0 ]._originalId ).to.equal( 7 );
-				// Check that the method was initialized:
-				expect( newState.creates[ 0 ].cost ).to.be.a( 'number' );
-			}
-		);
+			const newState = reducer( state, closeShippingZoneMethod( siteId ) );
+			expect( newState.currentlyEditingId ).toBeNull();
+			expect( newState.updates ).toHaveLength( 0 );
+			expect( newState.deletes ).toEqual( [ { id: 7 } ] );
+			expect( newState.creates.length ).toBe( 1 );
+			expect( newState.creates[ 0 ].id ).toEqual( { index: 0 } );
+			expect( newState.creates[ 0 ].methodType ).toBe( 'flat_rate' );
+			expect( newState.creates[ 0 ]._originalId ).toBe( 7 );
+			// Check that the method was initialized:
+			expect( typeof newState.creates[ 0 ].cost ).toBe( 'number' );
+		} );
 
-		test(
-			'method type changed - should remove the old method from "creates" and replace it with the new one ' +
-				'if it had a provisional ID',
-			() => {
-				const state = {
-					creates: [ { id: { index: 0 }, methodType: 'free_shipping', title: 'MyMethod' } ],
-					updates: [],
-					deletes: [],
-					currentlyEditingId: { index: 0 },
-					currentlyEditingChanges: { id: { index: 0 }, methodType: 'flat_rate', cost: 12 },
-					currentlyEditingChangedType: true,
-				};
+		test( 'method type changed - should remove the old method from "creates" and replace it with the new one if it had a provisional ID', () => {
+			const state = {
+				creates: [ { id: { index: 0 }, methodType: 'free_shipping', title: 'MyMethod' } ],
+				updates: [],
+				deletes: [],
+				currentlyEditingId: { index: 0 },
+				currentlyEditingChanges: { id: { index: 0 }, methodType: 'flat_rate', cost: 12 },
+				currentlyEditingChangedType: true,
+			};
 
-				const newState = reducer( state, closeShippingZoneMethod( siteId ) );
-				expect( newState.currentlyEditingId ).to.equal( null );
-				expect( newState.updates ).to.be.empty;
-				expect( newState.deletes ).to.be.empty;
-				expect( newState.creates.length ).to.equal( 1 );
-				expect( newState.creates[ 0 ].id ).to.deep.equal( { index: 0 } );
-				expect( newState.creates[ 0 ].methodType ).to.equal( 'flat_rate' );
-				expect( newState.creates[ 0 ]._originalId ).to.deep.equal( { index: 0 } );
-				// Check that the method was initialized:
-				expect( newState.creates[ 0 ].cost ).to.be.a( 'number' );
-			}
-		);
+			const newState = reducer( state, closeShippingZoneMethod( siteId ) );
+			expect( newState.currentlyEditingId ).toBeNull();
+			expect( newState.updates ).toHaveLength( 0 );
+			expect( newState.deletes ).toHaveLength( 0 );
+			expect( newState.creates.length ).toBe( 1 );
+			expect( newState.creates[ 0 ].id ).toEqual( { index: 0 } );
+			expect( newState.creates[ 0 ].methodType ).toBe( 'flat_rate' );
+			expect( newState.creates[ 0 ]._originalId ).toEqual( { index: 0 } );
+			// Check that the method was initialized:
+			expect( typeof newState.creates[ 0 ].cost ).toBe( 'number' );
+		} );
 
 		test( 'method type changed - should preserve the _originalId field if the method had already changed type before', () => {
 			const state = {
@@ -294,13 +279,13 @@ describe( 'reducer', () => {
 			};
 
 			const newState = reducer( state, closeShippingZoneMethod( siteId ) );
-			expect( newState.currentlyEditingId ).to.equal( null );
-			expect( newState.updates ).to.be.empty;
-			expect( newState.deletes ).to.be.empty;
-			expect( newState.creates.length ).to.equal( 1 );
-			expect( newState.creates[ 0 ].id ).to.deep.equal( { index: 0 } );
-			expect( newState.creates[ 0 ].methodType ).to.equal( 'flat_rate' );
-			expect( newState.creates[ 0 ]._originalId ).to.deep.equal( 7 );
+			expect( newState.currentlyEditingId ).toBeNull();
+			expect( newState.updates ).toHaveLength( 0 );
+			expect( newState.deletes ).toHaveLength( 0 );
+			expect( newState.creates.length ).toBe( 1 );
+			expect( newState.creates[ 0 ].id ).toEqual( { index: 0 } );
+			expect( newState.creates[ 0 ].methodType ).toBe( 'flat_rate' );
+			expect( newState.creates[ 0 ]._originalId ).toBe( 7 );
 		} );
 
 		test( 'title change - should change the entry on "updates" if the method has a server-side ID', () => {
@@ -313,10 +298,10 @@ describe( 'reducer', () => {
 			};
 
 			const newState = reducer( state, closeShippingZoneMethod( siteId ) );
-			expect( newState.currentlyEditingId ).to.equal( null );
-			expect( newState.creates ).to.be.empty;
-			expect( newState.deletes ).to.be.empty;
-			expect( newState.updates ).to.deep.equal( [ { id: 1, title: 'New Title' } ] );
+			expect( newState.currentlyEditingId ).toBeNull();
+			expect( newState.creates ).toHaveLength( 0 );
+			expect( newState.deletes ).toHaveLength( 0 );
+			expect( newState.updates ).toEqual( [ { id: 1, title: 'New Title' } ] );
 		} );
 
 		test(
@@ -332,10 +317,10 @@ describe( 'reducer', () => {
 				};
 
 				const newState = reducer( state, closeShippingZoneMethod( siteId ) );
-				expect( newState.currentlyEditingId ).to.equal( null );
-				expect( newState.creates ).to.be.empty;
-				expect( newState.deletes ).to.be.empty;
-				expect( newState.updates ).to.deep.equal( [ { id: 1, title: 'New Title' } ] );
+				expect( newState.currentlyEditingId ).toBeNull();
+				expect( newState.creates ).toHaveLength( 0 );
+				expect( newState.deletes ).toHaveLength( 0 );
+				expect( newState.updates ).toEqual( [ { id: 1, title: 'New Title' } ] );
 			}
 		);
 
@@ -349,10 +334,10 @@ describe( 'reducer', () => {
 			};
 
 			const newState = reducer( state, closeShippingZoneMethod( siteId ) );
-			expect( newState.currentlyEditingId ).to.equal( null );
-			expect( newState.updates ).to.be.empty;
-			expect( newState.deletes ).to.be.empty;
-			expect( newState.creates ).to.deep.equal( [ { id: { index: 0 }, title: 'New Title' } ] );
+			expect( newState.currentlyEditingId ).toBeNull();
+			expect( newState.updates ).toHaveLength( 0 );
+			expect( newState.deletes ).toHaveLength( 0 );
+			expect( newState.creates ).toEqual( [ { id: { index: 0 }, title: 'New Title' } ] );
 		} );
 
 		test( 'property change - should change the entry on "updates" if the method has a server-side ID', () => {
@@ -365,10 +350,10 @@ describe( 'reducer', () => {
 			};
 
 			const newState = reducer( state, closeShippingZoneMethod( siteId ) );
-			expect( newState.currentlyEditingId ).to.equal( null );
-			expect( newState.creates ).to.be.empty;
-			expect( newState.deletes ).to.be.empty;
-			expect( newState.updates ).to.deep.equal( [ { id: 1, cost: 42 } ] );
+			expect( newState.currentlyEditingId ).toBeNull();
+			expect( newState.creates ).toHaveLength( 0 );
+			expect( newState.deletes ).toHaveLength( 0 );
+			expect( newState.updates ).toEqual( [ { id: 1, cost: 42 } ] );
 		} );
 
 		test( 'property change - should add an entry on "updates" if the method has a server-side ID and it has not been edited', () => {
@@ -381,11 +366,11 @@ describe( 'reducer', () => {
 			};
 
 			const newState = reducer( state, closeShippingZoneMethod( siteId ) );
-			expect( newState.currentlyEditingId ).to.equal( null );
-			expect( newState.creates ).to.be.empty;
-			expect( newState.deletes ).to.be.empty;
-			expect( newState.updates.length ).to.equal( 1 );
-			expect( newState.updates[ 0 ] ).to.deep.include( { id: 1, cost: 42 } );
+			expect( newState.currentlyEditingId ).toBeNull();
+			expect( newState.creates ).toHaveLength( 0 );
+			expect( newState.deletes ).toHaveLength( 0 );
+			expect( newState.updates.length ).toBe( 1 );
+			expect( newState.updates[ 0 ] ).toMatchObject( { id: 1, cost: 42 } );
 		} );
 
 		test( 'property change - should change the entry in "creates" if the method has a provisional ID', () => {
@@ -398,10 +383,10 @@ describe( 'reducer', () => {
 			};
 
 			const newState = reducer( state, closeShippingZoneMethod( siteId ) );
-			expect( newState.currentlyEditingId ).to.equal( null );
-			expect( newState.updates ).to.be.empty;
-			expect( newState.deletes ).to.be.empty;
-			expect( newState.creates ).to.deep.equal( [ { id: { index: 0 }, cost: 42 } ] );
+			expect( newState.currentlyEditingId ).toBeNull();
+			expect( newState.updates ).toHaveLength( 0 );
+			expect( newState.deletes ).toHaveLength( 0 );
+			expect( newState.creates ).toEqual( [ { id: { index: 0 }, cost: 42 } ] );
 		} );
 	} );
 
@@ -416,7 +401,7 @@ describe( 'reducer', () => {
 			};
 
 			const newState = reducer( state, toggleOpenedShippingZoneMethodEnabled( siteId, true ) );
-			expect( newState.currentlyEditingChanges.enabled ).to.equal( true );
+			expect( newState.currentlyEditingChanges.enabled ).toBe( true );
 		} );
 	} );
 
@@ -428,9 +413,9 @@ describe( 'reducer', () => {
 				deletes: [],
 			};
 			const newState = reducer( state, toggleShippingZoneMethodEnabled( siteId, 1, false ) );
-			expect( newState.creates ).to.be.empty;
-			expect( newState.deletes ).to.be.empty;
-			expect( newState.updates ).to.deep.equal( [ { id: 1, enabled: false } ] );
+			expect( newState.creates ).toHaveLength( 0 );
+			expect( newState.deletes ).toHaveLength( 0 );
+			expect( newState.updates ).toEqual( [ { id: 1, enabled: false } ] );
 		} );
 
 		test( 'should add an entry on "updates" if the method has a server-side ID and it has not been edited', () => {
@@ -440,9 +425,9 @@ describe( 'reducer', () => {
 				deletes: [],
 			};
 			const newState = reducer( state, toggleShippingZoneMethodEnabled( siteId, 1, true ) );
-			expect( newState.creates ).to.be.empty;
-			expect( newState.deletes ).to.be.empty;
-			expect( newState.updates ).to.deep.equal( [ { id: 1, enabled: true } ] );
+			expect( newState.creates ).toHaveLength( 0 );
+			expect( newState.deletes ).toHaveLength( 0 );
+			expect( newState.updates ).toEqual( [ { id: 1, enabled: true } ] );
 		} );
 
 		test( 'should change the entry in "creates" if the method has a provisional ID', () => {
@@ -455,9 +440,9 @@ describe( 'reducer', () => {
 				state,
 				toggleShippingZoneMethodEnabled( siteId, { index: 0 }, true )
 			);
-			expect( newState.updates ).to.be.empty;
-			expect( newState.deletes ).to.be.empty;
-			expect( newState.creates ).to.deep.equal( [ { id: { index: 0 }, enabled: true } ] );
+			expect( newState.updates ).toHaveLength( 0 );
+			expect( newState.deletes ).toHaveLength( 0 );
+			expect( newState.creates ).toEqual( [ { id: { index: 0 }, enabled: true } ] );
 		} );
 	} );
 } );

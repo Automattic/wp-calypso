@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -13,7 +11,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 
 class PaginationPage extends Component {
 	static propTypes = {

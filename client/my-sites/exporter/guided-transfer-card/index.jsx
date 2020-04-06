@@ -5,12 +5,12 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
 import Button from 'components/forms/form-button';
 import {

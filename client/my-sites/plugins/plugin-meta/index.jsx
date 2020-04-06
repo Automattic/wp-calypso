@@ -6,17 +6,16 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, includes, some } from 'lodash';
-import Gridicon from 'gridicons';
-import { localize, moment } from 'i18n-calypso';
-import page from 'page';
+import { localize } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'components/gridicon';
 import analytics from 'lib/analytics';
-import Button from 'components/button';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import { gaRecordEvent } from 'lib/analytics/ga';
+import { Button, Card, CompactCard } from '@automattic/components';
 import Count from 'components/count';
 import NoticeAction from 'components/notice/notice-action';
 import ExternalLink from 'components/external-link';
@@ -35,13 +34,14 @@ import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer'
 import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
 import { userCan } from 'lib/site/utils';
 import Banner from 'components/banner';
-import { TYPE_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
+import { TYPE_BUSINESS } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import { isBusiness, isEcommerce, isEnterprise } from 'lib/products-values';
 import { addSiteFragment } from 'lib/route';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
+import isVipSite from 'state/selectors/is-vip-site';
+import { isAutomatedTransferActive } from 'state/automated-transfer/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { isATEnabled } from 'lib/automated-transfer';
@@ -247,12 +247,12 @@ export class PluginMeta extends Component {
 			'database-browser',
 			'duplicator',
 			'extended-wp-reset',
-			'google-captcha',
 			'file-manager-advanced',
 			'file-manager',
 			'plugins-garbage-collector',
 			'post-type-switcher',
 			'reset-wp',
+			'secure-file-manager',
 			'ultimate-wp-reset',
 			'username-changer',
 			'username-updater',
@@ -275,13 +275,14 @@ export class PluginMeta extends Component {
 			'backup-wd',
 			'backupwordpress',
 			'backwpup',
-			'updraftplus',
 			'wp-db-backup',
 
 			// caching
 			'cache-enabler',
 			'comet-cache',
 			'hyper-cache',
+			'powered-cache',
+			'jch-optimize',
 			'quick-cache',
 			'sg-cachepress',
 			'w3-total-cache',
@@ -293,6 +294,7 @@ export class PluginMeta extends Component {
 
 			// sql heavy
 			'another-wordpress-classifieds-plugin',
+			'broken-link-checker',
 			'leads',
 			'native-ads-adnow',
 			'ol_scrapes',
@@ -300,6 +302,7 @@ export class PluginMeta extends Component {
 			'post-views-counter',
 			'tokenad',
 			'top-10',
+			'userpro',
 			'wordpress-popular-posts',
 			'wp-cerber',
 			'wp-inject',
@@ -326,26 +329,33 @@ export class PluginMeta extends Component {
 			'wp-staging',
 
 			// misc
-			'anywhere-elementor',
-			'anywhere-elementor-pro',
+			'adult-mass-photos-downloader',
+			'adult-mass-videos-embedder',
 			'ari-adminer',
 			'automatic-video-posts',
 			'bwp-minify',
+			'clearfy',
+			'cornerstone',
 			'cryptocurrency-pricing-list',
 			'event-espresso-decaf',
+			'facetwp-manipulator',
 			'fast-velocity-minify',
 			'nginx-helper',
 			'p3',
 			'porn-embed',
 			'propellerads-official',
 			'speed-contact-bar',
+			'unplug-jetpack',
+			'really-simple-ssl',
 			'robo-gallery',
+			'under-construction-page',
 			'video-importer',
 			'woozone',
 			'wp-cleanfix',
 			'wp-file-upload',
 			'wp-monero-miner-pro',
 			'wp-monero-miner-using-coin-hive',
+			'wp-optimize-by-xtraffic',
 			'wpematico',
 			'yuzo-related-post',
 			'zapp-proxy-server',
@@ -548,7 +558,7 @@ export class PluginMeta extends Component {
 		event.preventDefault();
 		PluginsActions.updatePlugin( this.props.sites[ 0 ], this.props.sites[ 0 ].plugin );
 
-		analytics.ga.recordEvent(
+		gaRecordEvent(
 			'Plugins',
 			'Clicked Update Selected Site Plugin',
 			'Plugin Name',
@@ -581,7 +591,7 @@ export class PluginMeta extends Component {
 			}
 		} );
 
-		analytics.ga.recordEvent(
+		gaRecordEvent(
 			'Plugins',
 			'Clicked Update All Sites Plugin',
 			'Plugin Name',
@@ -589,14 +599,13 @@ export class PluginMeta extends Component {
 		);
 	};
 
-	handleUpgradeNudgeClick = () => {
-		const { slug } = this.props;
-		const href = `/plans/${ slug }?feature=${ FEATURE_UPLOAD_PLUGINS }`;
-		page.redirect( href );
-	};
-
 	renderUpsell() {
-		const { translate } = this.props;
+		const { translate, slug } = this.props;
+
+		if ( this.props.isVipSite ) {
+			return null;
+		}
+		const bannerURL = `/checkout/${ slug }/business`;
 		const plan = findFirstSimilarPlanKey( this.props.selectedSite.plan.product_slug, {
 			type: TYPE_BUSINESS,
 		} );
@@ -607,8 +616,7 @@ export class PluginMeta extends Component {
 			<div className="plugin-meta__upgrade_nudge">
 				<Banner
 					event="calypso_plugin_detail_page_upgrade_nudge"
-					disableHref={ true }
-					onClick={ this.handleUpgradeNudgeClick }
+					href={ bannerURL }
 					plan={ plan }
 					title={ title }
 				/>
@@ -708,6 +716,7 @@ const mapStateToProps = state => {
 		atEnabled: isATEnabled( selectedSite ),
 		isTransferring: isAutomatedTransferActive( state, siteId ),
 		automatedTransferSite: isSiteAutomatedTransfer( state, siteId ),
+		isVipSite: isVipSite( state, siteId ),
 		slug: getSiteSlug( state, siteId ),
 	};
 };

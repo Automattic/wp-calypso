@@ -1,5 +1,4 @@
 /**
- * @format
  */
 
 /**
@@ -147,7 +146,10 @@ describe( 'loadScript/callback-handler', () => {
 			addScriptCallback( url2, callback );
 
 			expect( callbacks ).toEqual(
-				new Map( [ [ url1, new Set( [ callback ] ) ], [ url2, new Set( [ callback ] ) ] ] )
+				new Map( [
+					[ url1, new Set( [ callback ] ) ],
+					[ url2, new Set( [ callback ] ) ],
+				] )
 			);
 
 			removeScriptCallbacks( url1 );

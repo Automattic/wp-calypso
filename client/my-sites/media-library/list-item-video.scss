@@ -15,7 +15,7 @@
 	left: 0;
 	right: 0;
 	content: '';
-	background: rgba( 135, 166, 188, 0.25 ); // $gray at 25% opacity
+	background: rgba( var( --color-netural-30-rgb ), 0.25 );
 }
 
 .media-library__list-item-video .media-library__list-item-icon {

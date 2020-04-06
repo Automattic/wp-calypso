@@ -1,4 +1,4 @@
-/** @format */
+/** @jest-environment jsdom */
 
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
@@ -6,7 +6,6 @@ jest.mock( 'lib/abtest', () => ( {
 
 jest.mock( 'lib/analytics/index', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'lib/user', () => ( {} ) );
 jest.mock( 'lib/plugins/wporg-data/list-store', () => ( {
 	getShortList: () => {},
 	getFullList: () => {},
@@ -15,21 +14,9 @@ jest.mock( 'lib/plugins/wporg-data/list-store', () => ( {
 } ) );
 jest.mock( 'lib/plugins/wporg-data/actions', () => ( {} ) );
 jest.mock( 'components/main', () => 'MainComponent' );
-jest.mock( 'components/banner', () => 'Banner' );
+jest.mock( 'blocks/upsell-nudge', () => 'UpsellNudge' );
 jest.mock( 'components/notice', () => 'Notice' );
 jest.mock( 'components/notice/notice-action', () => 'NoticeAction' );
-
-jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
-		<Comp
-			{ ...props }
-			translate={ function( x ) {
-				return x;
-			} }
-		/>
-	),
-	numberFormat: x => x,
-} ) );
 
 /**
  * External dependencies
@@ -67,7 +54,7 @@ describe( 'PluginsBrowser basic tests', () => {
 		const comp = shallow( <PluginsBrowser { ...props } /> );
 		expect( comp.find( 'MainComponent' ).length ).toBe( 1 );
 	} );
-	test( 'should show upgrade nudge when appropriate', () => {
+	test( 'should show upsell nudge when appropriate', () => {
 		const comp = shallow(
 			<PluginsBrowser
 				{ ...props }
@@ -77,9 +64,11 @@ describe( 'PluginsBrowser basic tests', () => {
 				hasBusinessPlan={ false }
 			/>
 		);
-		expect( comp.find( 'Banner[event="calypso_plugins_browser_upgrade_nudge"]' ).length ).toBe( 1 );
+		expect( comp.find( 'UpsellNudge[event="calypso_plugins_browser_upgrade_nudge"]' ).length ).toBe(
+			1
+		);
 	} );
-	test( 'should not show upgrade nudge if no site is selected', () => {
+	test( 'should not show upsell nudge if no site is selected', () => {
 		const comp = shallow(
 			<PluginsBrowser
 				{ ...props }
@@ -89,9 +78,11 @@ describe( 'PluginsBrowser basic tests', () => {
 				hasBusinessPlan={ false }
 			/>
 		);
-		expect( comp.find( 'Banner[event="calypso_plugins_browser_upgrade_nudge"]' ).length ).toBe( 0 );
+		expect( comp.find( 'UpsellNudge[event="calypso_plugins_browser_upgrade_nudge"]' ).length ).toBe(
+			0
+		);
 	} );
-	test( 'should not show upgrade nudge if no sitePlan', () => {
+	test( 'should not show upsell nudge if no sitePlan', () => {
 		const comp = shallow(
 			<PluginsBrowser
 				{ ...props }
@@ -101,9 +92,11 @@ describe( 'PluginsBrowser basic tests', () => {
 				hasBusinessPlan={ false }
 			/>
 		);
-		expect( comp.find( 'Banner[event="calypso_plugins_browser_upgrade_nudge"]' ).length ).toBe( 0 );
+		expect( comp.find( 'UpsellNudge[event="calypso_plugins_browser_upgrade_nudge"]' ).length ).toBe(
+			0
+		);
 	} );
-	test( 'should not show upgrade nudge if jetpack site', () => {
+	test( 'should not show upsell nudge if jetpack site', () => {
 		const comp = shallow(
 			<PluginsBrowser
 				{ ...props }
@@ -113,9 +106,11 @@ describe( 'PluginsBrowser basic tests', () => {
 				hasBusinessPlan={ false }
 			/>
 		);
-		expect( comp.find( 'Banner[event="calypso_plugins_browser_upgrade_nudge"]' ).length ).toBe( 0 );
+		expect( comp.find( 'UpsellNudge[event="calypso_plugins_browser_upgrade_nudge"]' ).length ).toBe(
+			0
+		);
 	} );
-	test( 'should not show upgrade nudge has business plan', () => {
+	test( 'should not show upsell nudge has business plan', () => {
 		const comp = shallow(
 			<PluginsBrowser
 				{ ...props }
@@ -125,11 +120,13 @@ describe( 'PluginsBrowser basic tests', () => {
 				hasBusinessPlan={ true }
 			/>
 		);
-		expect( comp.find( 'Banner[event="calypso_plugins_browser_upgrade_nudge"]' ).length ).toBe( 0 );
+		expect( comp.find( 'UpsellNudge[event="calypso_plugins_browser_upgrade_nudge"]' ).length ).toBe(
+			0
+		);
 	} );
 } );
 
-describe( 'Upsell Banner should get appropriate plan constant', () => {
+describe( 'Upsell Nudge should get appropriate plan constant', () => {
 	const myProps = {
 		...props,
 		showUpgradeNudge: true,
@@ -140,11 +137,11 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 	[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( product_slug => {
 		test( `Business 1 year for (${ product_slug })`, () => {
 			const comp = shallow( <PluginsBrowser { ...myProps } sitePlan={ { product_slug } } /> );
-			expect( comp.find( 'Banner[event="calypso_plugins_browser_upgrade_nudge"]' ).length ).toBe(
-				1
-			);
 			expect(
-				comp.find( 'Banner[event="calypso_plugins_browser_upgrade_nudge"]' ).props().plan
+				comp.find( 'UpsellNudge[event="calypso_plugins_browser_upgrade_nudge"]' ).length
+			).toBe( 1 );
+			expect(
+				comp.find( 'UpsellNudge[event="calypso_plugins_browser_upgrade_nudge"]' ).props().plan
 			).toBe( PLAN_BUSINESS );
 		} );
 	} );
@@ -152,11 +149,11 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 	[ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ].forEach( product_slug => {
 		test( `Business 2 year for (${ product_slug })`, () => {
 			const comp = shallow( <PluginsBrowser { ...myProps } sitePlan={ { product_slug } } /> );
-			expect( comp.find( 'Banner[event="calypso_plugins_browser_upgrade_nudge"]' ).length ).toBe(
-				1
-			);
 			expect(
-				comp.find( 'Banner[event="calypso_plugins_browser_upgrade_nudge"]' ).props().plan
+				comp.find( 'UpsellNudge[event="calypso_plugins_browser_upgrade_nudge"]' ).length
+			).toBe( 1 );
+			expect(
+				comp.find( 'UpsellNudge[event="calypso_plugins_browser_upgrade_nudge"]' ).props().plan
 			).toBe( PLAN_BUSINESS_2_YEARS );
 		} );
 	} );

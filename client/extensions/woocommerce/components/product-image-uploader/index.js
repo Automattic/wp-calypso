@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { head, find, noop, trim, uniqueId } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -19,10 +17,10 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { errorNotice as errorNoticeAction } from 'state/notices/actions';
 import DropZone from 'components/drop-zone';
 import FilePicker from 'components/file-picker';
+import getMediaErrors from 'state/selectors/get-media-errors';
 import MediaActions from 'lib/media/actions';
 import { filterItemsByMimePrefix, isItemBeingUploaded } from 'lib/media/utils';
 import MediaStore from 'lib/media/store';
-import MediaValidationStore from 'lib/media/validation-store';
 
 class ProductImageUploader extends Component {
 	static propTypes = {
@@ -47,11 +45,7 @@ class ProductImageUploader extends Component {
 		onFinish: noop,
 	};
 
-	state = {
-		errors: [],
-	};
-
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this._isMounted = true;
 	}
 	componentWillUnmount() {
@@ -59,8 +53,7 @@ class ProductImageUploader extends Component {
 	}
 
 	showError = ( media, transientId ) => {
-		const { onError, errorNotice, translate } = this.props;
-		const { errors } = this.state;
+		const { mediaValidationErrors, onError, errorNotice, translate } = this.props;
 
 		onError( {
 			file: media,
@@ -68,7 +61,7 @@ class ProductImageUploader extends Component {
 		} );
 
 		let extraDetails;
-		const validationError = errors[ transientId ] || [];
+		const validationError = mediaValidationErrors[ transientId ] || [];
 		switch ( head( validationError ) ) {
 			case 'EXCEEDS_PLAN_STORAGE_LIMIT':
 			case 'NOT_ENOUGH_SPACE':
@@ -86,12 +79,6 @@ class ProductImageUploader extends Component {
 		}
 
 		errorNotice( ( extraDetails && message + ' ' + extraDetails ) || message );
-	};
-
-	storeValidationErrors = () => {
-		this.setState( {
-			errors: MediaValidationStore.getAllErrors( this.props.site.ID ),
-		} );
 	};
 
 	// https://stackoverflow.com/a/20732091
@@ -195,7 +182,6 @@ class ProductImageUploader extends Component {
 			}
 		};
 
-		MediaValidationStore.on( 'change', this.storeValidationErrors );
 		MediaStore.on( 'change', handleUpload );
 		MediaActions.add( site, filesToUpload );
 	};
@@ -277,12 +263,13 @@ class ProductImageUploader extends Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
+
 	return {
 		site,
+		mediaValidationErrors: getMediaErrors( state, site.ID ),
 	};
 }
 
-export default connect(
-	mapStateToProps,
-	{ errorNotice: errorNoticeAction }
-)( localize( ProductImageUploader ) );
+export default connect( mapStateToProps, { errorNotice: errorNoticeAction } )(
+	localize( ProductImageUploader )
+);

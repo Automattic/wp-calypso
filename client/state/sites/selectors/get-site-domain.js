@@ -10,9 +10,9 @@ import isSiteConflicting from './is-site-conflicting';
 /**
  * Returns the domain for a site, or null if the site is unknown.
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @return {?String}        Site domain
+ * @param  {object}  state  Global state tree
+ * @param  {number}  siteId Site ID
+ * @returns {?string}        Site domain
  */
 export default function getSiteDomain( state, siteId ) {
 	if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {

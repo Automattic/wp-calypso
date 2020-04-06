@@ -1,0 +1,12 @@
+@import '../../sass/mixins';
+
+.block-editor {
+	.wp-block-a8c-site-description:focus {
+		box-shadow: none;
+		background-color: transparent;
+	}
+
+	.wp-block.is-selected .wp-block-a8c-site-description {
+		@include hide-input-placeholder;
+	}
+}

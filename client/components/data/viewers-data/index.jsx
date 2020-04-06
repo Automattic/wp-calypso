@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -31,7 +30,7 @@ export default class ViewersData extends Component {
 		this.fetchIfEmpty( this.props.siteId );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.siteId ) {
 			return;
 		}

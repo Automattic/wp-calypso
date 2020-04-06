@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,13 +5,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import isUpworkStatsNudgeDismissed from 'state/selectors/is-upwork-stats-nudge-dismissed';
 import QueryPreferences from 'components/data/query-preferences';
 import SectionHeader from 'components/section-header';
@@ -115,7 +112,7 @@ class UpworkStatsNudge extends Component {
 						<div className="upwork-stats-nudge__button-row">
 							<Button
 								href={ '/experts/upwork?source=stat-banner' }
-								primary
+								primary={ this.props.primaryButton }
 								onClick={ this.onStartNowClick }
 								target="_blank"
 								rel="noopener noreferrer"

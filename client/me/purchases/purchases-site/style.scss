@@ -21,8 +21,32 @@
 	}
 }
 
-.purchases-list .action-card__illustration {
-	@include breakpoint( '>960px' ) {
-		margin: -40px 20px 0 -20px;
+.concierge-banner {
+	& .action-card__button-container {
+		text-align: left;
+
+		@include breakpoint( '>960px' ) {
+			text-align: center;
+		}
 	}
+
+	& .action-card__illustration {
+		@include breakpoint( '>960px' ) {
+			margin: -10px -20px 0;
+		}
+	}
+
+	&.purchase-concierge .action-card__illustration {
+		@include breakpoint( '>960px' ) {
+			margin-right: 20px;
+		}
+	}
+
+	&.card {
+		@include breakpoint( '>480px' ) {
+			padding: 10px;
+			align-items: flex-start;
+		}
+	}
+
 }

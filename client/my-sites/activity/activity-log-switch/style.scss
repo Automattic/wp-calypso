@@ -36,7 +36,6 @@
 
 .activity-log-switch__header-text {
 	font-size: 18px;
-	font-weight: 300;
 	margin: 24px 64px 32px;
 }
 
@@ -47,9 +46,8 @@
 }
 
 .activity-log-switch__features-header {
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	font-size: 24px;
-	font-weight: 300;
 	line-height: 32px;
 	margin: 48px 48px 24px;
 }
@@ -79,7 +77,7 @@
 }
 
 .activity-log-switch__feature-heading {
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 	font-size: 21px;
 	margin-bottom: 8px;
 	width: 100%;

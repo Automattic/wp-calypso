@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withoutPersistence } from 'state/utils';
 import {
 	CHECK_YOUR_EMAIL_PAGE,
 	INTERSTITIAL_PAGE,
@@ -27,55 +25,117 @@ import {
 	MAGIC_LOGIN_RESET_REQUEST_FORM,
 } from 'state/action-types';
 
-export const currentView = createReducer( null, {
-	[ MAGIC_LOGIN_HIDE_REQUEST_FORM ]: () => null,
-	[ MAGIC_LOGIN_RESET_REQUEST_FORM ]: () => REQUEST_FORM,
-	[ MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE ]: () => CHECK_YOUR_EMAIL_PAGE,
-	[ MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE ]: () => INTERSTITIAL_PAGE,
-	[ MAGIC_LOGIN_SHOW_LINK_EXPIRED ]: () => LINK_EXPIRED_PAGE,
+export const currentView = withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case MAGIC_LOGIN_HIDE_REQUEST_FORM:
+			return null;
+		case MAGIC_LOGIN_RESET_REQUEST_FORM:
+			return REQUEST_FORM;
+		case MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE:
+			return CHECK_YOUR_EMAIL_PAGE;
+		case MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE:
+			return INTERSTITIAL_PAGE;
+		case MAGIC_LOGIN_SHOW_LINK_EXPIRED:
+			return LINK_EXPIRED_PAGE;
+	}
+
+	return state;
 } );
 
-export const isFetchingEmail = createReducer( false, {
-	[ MAGIC_LOGIN_HIDE_REQUEST_FORM ]: () => false,
-	[ MAGIC_LOGIN_HIDE_REQUEST_NOTICE ]: () => false,
-	[ MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR ]: () => false,
-	[ MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH ]: () => true,
-	[ MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS ]: () => false,
+export const isFetchingEmail = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case MAGIC_LOGIN_HIDE_REQUEST_FORM:
+			return false;
+		case MAGIC_LOGIN_HIDE_REQUEST_NOTICE:
+			return false;
+		case MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR:
+			return false;
+		case MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH:
+			return true;
+		case MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS:
+			return false;
+	}
+
+	return state;
 } );
 
-export const isFetchingAuth = createReducer( false, {
-	[ MAGIC_LOGIN_REQUEST_AUTH_ERROR ]: () => false,
-	[ MAGIC_LOGIN_REQUEST_AUTH_FETCH ]: () => true,
-	[ MAGIC_LOGIN_REQUEST_AUTH_SUCCESS ]: () => false,
-	[ MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE ]: () => false,
+export const isFetchingAuth = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case MAGIC_LOGIN_REQUEST_AUTH_ERROR:
+			return false;
+		case MAGIC_LOGIN_REQUEST_AUTH_FETCH:
+			return true;
+		case MAGIC_LOGIN_REQUEST_AUTH_SUCCESS:
+			return false;
+		case MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE:
+			return false;
+	}
+
+	return state;
 } );
 
-export const requestAuthSuccess = createReducer( false, {
-	[ MAGIC_LOGIN_REQUEST_AUTH_ERROR ]: () => false,
-	[ MAGIC_LOGIN_REQUEST_AUTH_FETCH ]: () => false,
-	[ MAGIC_LOGIN_REQUEST_AUTH_SUCCESS ]: () => true,
+export const requestAuthSuccess = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case MAGIC_LOGIN_REQUEST_AUTH_ERROR:
+			return false;
+		case MAGIC_LOGIN_REQUEST_AUTH_FETCH:
+			return false;
+		case MAGIC_LOGIN_REQUEST_AUTH_SUCCESS:
+			return true;
+	}
+
+	return state;
 } );
 
-export const requestAuthError = createReducer( null, {
-	[ MAGIC_LOGIN_REQUEST_AUTH_ERROR ]: ( state, { error } ) => error,
-	[ MAGIC_LOGIN_REQUEST_AUTH_FETCH ]: () => null,
-	[ MAGIC_LOGIN_REQUEST_AUTH_SUCCESS ]: () => null,
+export const requestAuthError = withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case MAGIC_LOGIN_REQUEST_AUTH_ERROR: {
+			const { error } = action;
+			return error;
+		}
+		case MAGIC_LOGIN_REQUEST_AUTH_FETCH:
+			return null;
+		case MAGIC_LOGIN_REQUEST_AUTH_SUCCESS:
+			return null;
+	}
+
+	return state;
 } );
 
-export const requestEmailError = createReducer( null, {
-	[ MAGIC_LOGIN_HIDE_REQUEST_NOTICE ]: () => null,
-	[ MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR ]: ( state, { error } ) => error,
-	[ MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH ]: () => null,
-	[ MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS ]: () => null,
-	[ MAGIC_LOGIN_RESET_REQUEST_FORM ]: () => null,
+export const requestEmailError = withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case MAGIC_LOGIN_HIDE_REQUEST_NOTICE:
+			return null;
+		case MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR: {
+			const { error } = action;
+			return error;
+		}
+		case MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH:
+			return null;
+		case MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS:
+			return null;
+		case MAGIC_LOGIN_RESET_REQUEST_FORM:
+			return null;
+	}
+
+	return state;
 } );
 
-export const requestEmailSuccess = createReducer( false, {
-	[ MAGIC_LOGIN_HIDE_REQUEST_NOTICE ]: () => false,
-	[ MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR ]: () => false,
-	[ MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH ]: () => false,
-	[ MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS ]: () => true,
-	[ MAGIC_LOGIN_RESET_REQUEST_FORM ]: () => false,
+export const requestEmailSuccess = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case MAGIC_LOGIN_HIDE_REQUEST_NOTICE:
+			return false;
+		case MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR:
+			return false;
+		case MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH:
+			return false;
+		case MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS:
+			return true;
+		case MAGIC_LOGIN_RESET_REQUEST_FORM:
+			return false;
+	}
+
+	return state;
 } );
 
 export default combineReducers( {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,6 @@ import * as dataHelper from '../lib/data-helper';
 import LoginFlow from '../lib/flows/login-flow';
 
 import PlansPage from '../lib/pages/plans-page';
-import StatsPage from '../lib/pages/stats-page';
 import WPAdminJetpackPage from '../lib/pages/wp-admin/wp-admin-jetpack-page';
 
 import ReaderPage from '../lib/pages/reader-page.js';
@@ -30,6 +27,7 @@ import ProfilePage from '../lib/pages/profile-page.js';
 import PurchasesPage from '../lib/pages/purchases-page.js';
 import ManagePurchasePage from '../lib/pages/manage-purchase-page.js';
 import WPAdminLogonPage from '../lib/pages/wp-admin/wp-admin-logon-page';
+import JetpackComSearchLandingPage from '../lib/pages/external/jetpackcom-search-landing-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -73,6 +71,11 @@ describe( `[${ host }] Jetpack Plans: (${ screenSize }) @jetpack`, function() {
 			return await jetpackDashboard.clickUpgradeNudge();
 		} );
 
+		step( 'Can click upgrade on Jetpack landing page', async function() {
+			const searchLandingPage = await JetpackComSearchLandingPage.Expect( driver );
+			return await searchLandingPage.upgrade();
+		} );
+
 		step( 'Can then see secure payment component', async function() {
 			return await SecurePaymentComponent.Expect( driver );
 		} );
@@ -84,8 +87,6 @@ describe( `[${ host }] Jetpack Plans: (${ screenSize }) @jetpack`, function() {
 			const navbarComponent = await NavBarComponent.Expect( driver );
 			await navbarComponent.clickMySites();
 
-			await StatsPage.Expect( driver );
-
 			const sidebarComponent = await SidebarComponent.Expect( driver );
 			await sidebarComponent.selectPlan();
 
@@ -95,7 +96,8 @@ describe( `[${ host }] Jetpack Plans: (${ screenSize }) @jetpack`, function() {
 		} );
 	} );
 
-	describe( 'Renew Premium Plan:', function() {
+	// NOTE: Disabled, since now Pressable plans are not managed through Calypso.
+	xdescribe( 'Renew Premium Plan:', function() {
 		before( async function() {
 			return await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 		} );

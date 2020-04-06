@@ -7,6 +7,8 @@ exports[`AppsBadge should render 1`] = `
   <a
     href="https://wordpress.com"
     onClick={[Function]}
+    rel="noopener noreferrer"
+    target="_blank"
   >
     <img
       alt="titleText"

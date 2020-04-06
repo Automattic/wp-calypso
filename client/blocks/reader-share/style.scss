@@ -83,7 +83,7 @@
 	&:focus {
 		.gridicon,
 		.social-logo {
-			fill: var( --color-white );
+			fill: var( --color-text-inverted );
 		}
 	}
 }
@@ -93,7 +93,7 @@
 }
 
 .reader-share__site-selector.site-selector {
-	border-top: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-10 );
 }
 
 .reader-share__site-selector .site-selector__sites {
@@ -109,7 +109,7 @@
 .reader-share__site-selector .site__title,
 .reader-share__site-selector .site__domain {
 	&::after {
-		@include long-content-fade( $color: var( --color-white-rgb ) );
+		@include long-content-fade( $color: var( --color-surface-rgb ) );
 		border-radius: 50%;
 	}
 }

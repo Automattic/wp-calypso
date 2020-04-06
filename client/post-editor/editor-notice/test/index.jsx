@@ -1,11 +1,11 @@
-/** @format */
 /**
  * External dependencies
  */
 import { expect as chaiExpect } from 'chai';
 import { shallow } from 'enzyme';
-import { translate, moment } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import React from 'react';
+import moment from 'moment';
 
 /**
  * Internal dependencies

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,7 +5,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -32,7 +30,4 @@ export class PaymentChatButton extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( localize( PaymentChatButton ) );
+export default connect( null, { recordTracksEvent } )( localize( PaymentChatButton ) );

@@ -1,14 +1,14 @@
-$base-background-color: var( --color-white );
-$list-background: var( --color-white );
-$border-color: var( --color-neutral-100 );
+$base-background-color: var( --color-surface );
+$list-background: var( --color-surface );
+$border-color: var( --color-neutral-10 );
 $light-border-color: var( --color-neutral-0 );
-$text-color: var( --color-neutral-700 );
+$text-color: var( --color-neutral-70 );
 $name-color: var( --color-neutral-light );
 $selected-color: var( --color-primary );
 $img-size: 24px;
 $img-border-radius: 50%;
 $border-radius: 3px;
-$box-shadow: 0 5px 6px rgba( var( --color-neutral-100-rgb ), 0.5 );
+$box-shadow: 0 5px 6px rgba( var( --color-neutral-10-rgb ), 0.5 );
 
 .wpnc__suggestions {
 	position: relative;
@@ -76,16 +76,16 @@ $box-shadow: 0 5px 6px rgba( var( --color-neutral-100-rgb ), 0.5 );
 	// Currently-selected item (arrows or via search)
 	.cur {
 		background: $selected-color;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 
 		strong,
 		.username strong {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 			background: rgba( var( --color-primary-light-rgb ), 0.45 );
 		}
 
 		small {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 		}
 	}
 }

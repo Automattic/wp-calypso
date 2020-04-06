@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,12 @@ import { orderBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+import {
+	combineReducers,
+	keyedReducer,
+	withSchemaValidation,
+	withoutPersistence,
+} from 'state/utils';
 import {
 	EMAIL_FORWARDING_REQUEST,
 	EMAIL_FORWARDING_REQUEST_SUCCESS,
@@ -25,10 +28,17 @@ import {
 } from 'state/action-types';
 import { forwardsSchema, mxSchema, typeSchema } from './schema';
 
-export const requestingReducer = createReducer( false, {
-	[ EMAIL_FORWARDING_REQUEST ]: () => true,
-	[ EMAIL_FORWARDING_REQUEST_SUCCESS ]: () => false,
-	[ EMAIL_FORWARDING_REQUEST_FAILURE ]: () => false,
+export const requestingReducer = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case EMAIL_FORWARDING_REQUEST:
+			return true;
+		case EMAIL_FORWARDING_REQUEST_SUCCESS:
+			return false;
+		case EMAIL_FORWARDING_REQUEST_FAILURE:
+			return false;
+	}
+
+	return state;
 } );
 
 const handleCreateRequest = ( forwards, { domainName, mailbox, destination } ) => {
@@ -84,50 +94,90 @@ const changeMailBoxTemporary = temporary => ( forwards, { mailbox } ) => {
 	} );
 };
 
-export const typeReducer = createReducer(
-	null,
-	{
-		[ EMAIL_FORWARDING_REQUEST ]: () => null,
-		[ EMAIL_FORWARDING_REQUEST_FAILURE ]: () => null,
-		[ EMAIL_FORWARDING_REQUEST_SUCCESS ]: ( state, { response: { type } } ) => type || null,
-	},
-	typeSchema
-);
+export const typeReducer = withSchemaValidation( typeSchema, ( state = null, action ) => {
+	switch ( action.type ) {
+		case EMAIL_FORWARDING_REQUEST:
+			return null;
+		case EMAIL_FORWARDING_REQUEST_FAILURE:
+			return null;
+		case EMAIL_FORWARDING_REQUEST_SUCCESS: {
+			const {
+				response: { type },
+			} = action;
+			return type || null;
+		}
+	}
 
-export const mxServersReducer = createReducer(
-	null,
-	{
-		[ EMAIL_FORWARDING_REQUEST ]: () => null,
-		[ EMAIL_FORWARDING_REQUEST_FAILURE ]: () => null,
-		[ EMAIL_FORWARDING_REQUEST_SUCCESS ]: ( state, { response: { mx_servers } } ) =>
-			mx_servers || [],
-	},
-	mxSchema
-);
+	return state;
+} );
 
-export const forwardsReducer = createReducer(
-	null,
-	{
-		[ EMAIL_FORWARDING_REQUEST ]: () => null,
-		[ EMAIL_FORWARDING_REQUEST_FAILURE ]: () => null,
-		[ EMAIL_FORWARDING_REQUEST_SUCCESS ]: ( state, { response: { forwards } } ) => forwards || [],
-		[ EMAIL_FORWARDING_ADD_REQUEST ]: handleCreateRequest,
-		[ EMAIL_FORWARDING_ADD_REQUEST_SUCCESS ]: handleCreateRequestSuccess,
-		[ EMAIL_FORWARDING_ADD_REQUEST_FAILURE ]: handleCreateRequestFailure,
-		[ EMAIL_FORWARDING_REMOVE_REQUEST ]: changeMailBoxTemporary( true ),
-		[ EMAIL_FORWARDING_REMOVE_REQUEST_SUCCESS ]: handleRemoveRequestSuccess,
-		[ EMAIL_FORWARDING_REMOVE_REQUEST_FAILURE ]: changeMailBoxTemporary( false ),
-		[ EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST ]: changeMailBoxTemporary( true ),
-		[ EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_SUCCESS ]: changeMailBoxTemporary( false ),
-		[ EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_FAILURE ]: changeMailBoxTemporary( false ),
-	},
-	forwardsSchema
-);
+export const mxServersReducer = withSchemaValidation( mxSchema, ( state = null, action ) => {
+	switch ( action.type ) {
+		case EMAIL_FORWARDING_REQUEST:
+			return null;
+		case EMAIL_FORWARDING_REQUEST_FAILURE:
+			return null;
+		case EMAIL_FORWARDING_REQUEST_SUCCESS: {
+			const {
+				response: { mx_servers },
+			} = action;
+			return mx_servers || [];
+		}
+	}
 
-export const requestErrorReducer = createReducer( false, {
-	[ EMAIL_FORWARDING_REQUEST ]: () => false,
-	[ EMAIL_FORWARDING_REQUEST_SUCCESS ]: () => false,
-	[ EMAIL_FORWARDING_REQUEST_FAILURE ]: ( state, { error: { message } } ) => message || true,
+	return state;
+} );
+
+export const forwardsReducer = withSchemaValidation( forwardsSchema, ( state = null, action ) => {
+	switch ( action.type ) {
+		case EMAIL_FORWARDING_REQUEST:
+			return null;
+		case EMAIL_FORWARDING_REQUEST_FAILURE:
+			return null;
+		case EMAIL_FORWARDING_REQUEST_SUCCESS: {
+			const {
+				response: { forwards },
+			} = action;
+			return forwards || [];
+		}
+		case EMAIL_FORWARDING_ADD_REQUEST:
+			return handleCreateRequest( state, action );
+		case EMAIL_FORWARDING_ADD_REQUEST_SUCCESS:
+			return handleCreateRequestSuccess( state, action );
+		case EMAIL_FORWARDING_ADD_REQUEST_FAILURE:
+			return handleCreateRequestFailure( state, action );
+		case EMAIL_FORWARDING_REMOVE_REQUEST:
+			return changeMailBoxTemporary( true )( state, action );
+		case EMAIL_FORWARDING_REMOVE_REQUEST_SUCCESS:
+			return handleRemoveRequestSuccess( state, action );
+		case EMAIL_FORWARDING_REMOVE_REQUEST_FAILURE:
+			return changeMailBoxTemporary( false )( state, action );
+		case EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST:
+			return changeMailBoxTemporary( true )( state, action );
+		case EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_SUCCESS:
+			return changeMailBoxTemporary( false )( state, action );
+		case EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_FAILURE:
+			return changeMailBoxTemporary( false )( state, action );
+	}
+
+	return state;
+} );
+
+export const requestErrorReducer = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case EMAIL_FORWARDING_REQUEST:
+			return false;
+		case EMAIL_FORWARDING_REQUEST_SUCCESS:
+			return false;
+		case EMAIL_FORWARDING_REQUEST_FAILURE: {
+			const {
+				error: { message },
+			} = action;
+			return message || true;
+		}
+	}
+
+	return state;
 } );
 
 export default keyedReducer(

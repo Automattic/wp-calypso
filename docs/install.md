@@ -40,12 +40,20 @@ See [Development Workflow](../docs/development-workflow.md) for more.
 
 ### Limited builds
 
-Calypso is [broken up into sections](https://github.com/Automattic/wp-calypso/blob/master/client/wordpress-com.js) and by default, every section is built when the development server starts.
+Calypso is [broken up into sections](https://github.com/Automattic/wp-calypso/blob/master/client/sections.js) and by default, every section is built when the development server starts.
 This can take a long time and slow down incremental builds as your work. To speed things up,
-you can choose to build and run specific sections of Calypso using the `SECTION_LIMIT` enviroment variable.
+you can choose to build and run specific sections of Calypso using the `SECTION_LIMIT` environment variable.
 
 For instance, `SECTION_LIMIT=reader,login npm start` would start Calypso and only build the `reader` and `login` sections.
 
+To find all available sections in the main entry point, you can refer to the [sections.js file](https://github.com/Automattic/wp-calypso/blob/master/client/sections.js). Note that the other entry points are likely to register and handle additional sections.
+
+Additionally, in Calypso, we use multiple [Webpack entry points](https://webpack.js.org/concepts/entry-points/) for separating concerns and serving smaller bundles to the user at any given time.
+Building a limited number of entry points speeds up the build process, and to allow that, the `ENTRY_LIMIT` environment variable is available to allow building and running only a specific entry point.
+
+For example: `ENTRY_LIMIT=entry-login,entry-main npm start` would start Calypso and only build the login and the main entry points.
+
+To find all available entry points, you can refer to the `entry` option in Calypso's primary `webpack.config.js` file.
 
 ### Starting the node debugger
 

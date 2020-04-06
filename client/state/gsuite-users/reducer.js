@@ -1,9 +1,12 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+import {
+	combineReducers,
+	keyedReducer,
+	withSchemaValidation,
+	withoutPersistence,
+} from 'state/utils';
 import {
 	GSUITE_USERS_REQUEST,
 	GSUITE_USERS_REQUEST_FAILURE,
@@ -11,26 +14,51 @@ import {
 } from 'state/action-types';
 import { usersSchema } from './schema';
 
-export const usersReducer = createReducer(
-	null,
-	{
-		[ GSUITE_USERS_REQUEST ]: () => null,
-		[ GSUITE_USERS_REQUEST_FAILURE ]: () => null,
-		[ GSUITE_USERS_REQUEST_SUCCESS ]: ( state, { response: { accounts } } ) => accounts,
-	},
-	usersSchema
-);
+export const usersReducer = withSchemaValidation( usersSchema, ( state = null, action ) => {
+	switch ( action.type ) {
+		case GSUITE_USERS_REQUEST_FAILURE:
+			return null;
 
-export const requestErrorReducer = createReducer( false, {
-	[ GSUITE_USERS_REQUEST ]: () => false,
-	[ GSUITE_USERS_REQUEST_FAILURE ]: () => true,
-	[ GSUITE_USERS_REQUEST_SUCCESS ]: () => false,
+		case GSUITE_USERS_REQUEST_SUCCESS: {
+			const {
+				response: { accounts },
+			} = action;
+
+			return accounts;
+		}
+	}
+
+	return state;
 } );
 
-export const requestingReducer = createReducer( false, {
-	[ GSUITE_USERS_REQUEST ]: () => true,
-	[ GSUITE_USERS_REQUEST_FAILURE ]: () => false,
-	[ GSUITE_USERS_REQUEST_SUCCESS ]: () => false,
+export const requestErrorReducer = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case GSUITE_USERS_REQUEST:
+			return false;
+
+		case GSUITE_USERS_REQUEST_FAILURE:
+			return true;
+
+		case GSUITE_USERS_REQUEST_SUCCESS:
+			return false;
+	}
+
+	return state;
+} );
+
+export const requestingReducer = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case GSUITE_USERS_REQUEST:
+			return true;
+
+		case GSUITE_USERS_REQUEST_FAILURE:
+			return false;
+
+		case GSUITE_USERS_REQUEST_SUCCESS:
+			return false;
+	}
+
+	return state;
 } );
 
 export default keyedReducer(

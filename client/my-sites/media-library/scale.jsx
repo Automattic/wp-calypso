@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,14 +7,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { debounce, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
 import FormRange from 'components/forms/range';
 import SegmentedControl from 'components/segmented-control';
-import SegmentedControlItem from 'components/segmented-control/item';
 import { setPreference, savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import { SCALE_CHOICES } from 'lib/media/constants';
@@ -28,14 +25,14 @@ import { SCALE_CHOICES } from 'lib/media/constants';
 /**
  * Number of steps on the rendered input range
  *
- * @type {Number}
+ * @type {number}
  */
 const SLIDER_STEPS = 100;
 
 /**
  * Scale size for small viewports grid option (3 items per row).
  *
- * @type {Number}
+ * @type {number}
  */
 const SCALE_TOUCH_GRID = 0.32;
 
@@ -116,20 +113,20 @@ class MediaLibraryScale extends Component {
 		return (
 			<div className="media-library__scale">
 				<SegmentedControl className="media-library__scale-toggle" compact>
-					<SegmentedControlItem
+					<SegmentedControl.Item
 						selected={ 1 !== scale }
 						onClick={ this.setScaleToMobileGrid }
 						title={ translate( 'Grid' ) }
 					>
 						<Gridicon icon="grid" size={ 18 } />
-					</SegmentedControlItem>
-					<SegmentedControlItem
+					</SegmentedControl.Item>
+					<SegmentedControl.Item
 						selected={ 1 === scale }
 						onClick={ this.setScaleToMobileFull }
 						title={ translate( 'List' ) }
 					>
 						<Gridicon icon="menu" size={ 18 } />
-					</SegmentedControlItem>
+					</SegmentedControl.Item>
 				</SegmentedControl>
 				<FormRange
 					step="1"

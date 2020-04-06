@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
+import { isMobile } from '@automattic/viewport';
 import { find, startsWith } from 'lodash';
+import { CSSProperties } from 'react';
 
 /**
  * Internal dependencies
  */
-import { isMobile } from 'lib/viewport';
 import scrollTo from 'lib/scroll-to';
 import { Coordinate, DialogPosition, ArrowPosition } from './types';
-import { CSSProperties } from 'react';
 
 const DIALOG_WIDTH = 410;
 const DIALOG_HEIGHT = 150;
@@ -188,7 +188,7 @@ function validatePlacement( placement: DialogPosition, target: Element | null ):
 }
 
 function scrollIntoView( target: Element, scrollContainer: Element | null ) {
-	// TODO(lsinger): consider replacing with http://yiminghe.me/dom-scroll-into-view/
+	// TODO(lsinger): consider replacing with lib/scroll-into-viewport
 	const container = scrollContainer || getScrollableSidebar();
 	const { top, bottom } = target.getBoundingClientRect();
 	const clientHeight = isMobile() ? document.documentElement.clientHeight : container.clientHeight;

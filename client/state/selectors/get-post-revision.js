@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,6 +7,8 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
+
+import 'state/posts/init';
 
 const getPostRevision = createSelector(
 	( state, siteId, postId, revisionId ) =>

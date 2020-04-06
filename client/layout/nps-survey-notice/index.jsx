@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
@@ -11,7 +8,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import { Dialog } from '@automattic/components';
 import QuerySites from 'components/data/query-sites';
 import NpsSurvey from 'blocks/nps-survey';
 import {
@@ -35,6 +32,7 @@ import { isSupportSession } from 'state/support/selectors';
 import getSites from 'state/selectors/get-sites';
 import { isBusinessPlan } from 'lib/plans';
 import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 
 /**
  * Style dependencies
@@ -95,7 +93,7 @@ class NpsSurveyNotice extends Component {
 			this.props.setNpsSurveyDialogShowing( true );
 			this.props.markNpsSurveyShownThisSession();
 
-			analytics.mc.bumpStat( 'calypso_nps_survey', 'notice_displayed' );
+			bumpStat( 'calypso_nps_survey', 'notice_displayed' );
 			analytics.tracks.recordEvent( 'calypso_nps_notice_displayed' );
 		}
 	}
@@ -140,13 +138,10 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	{
-		setNpsSurveyDialogShowing,
-		submitNpsSurveyWithNoScore,
-		setupNpsSurveyDevTrigger,
-		setupNpsSurveyEligibility,
-		markNpsSurveyShownThisSession,
-	}
-)( NpsSurveyNotice );
+export default connect( mapStateToProps, {
+	setNpsSurveyDialogShowing,
+	submitNpsSurveyWithNoScore,
+	setupNpsSurveyDevTrigger,
+	setupNpsSurveyEligibility,
+	markNpsSurveyShownThisSession,
+} )( NpsSurveyNotice );

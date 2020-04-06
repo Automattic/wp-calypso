@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -41,7 +39,13 @@ export default class DeletePlanFlow {
 				await cancelPurchasePage.chooseCancelPlanAndDomain();
 			}
 			await cancelPurchasePage.clickCancelPurchase();
-			await cancelPurchasePage.completeCancellationSurvey();
+
+			if ( planName === 'theme' ) {
+				await cancelPurchasePage.completeThemeCancellation();
+			} else {
+				await cancelPurchasePage.completeCancellationSurvey();
+			}
+
 			const noticesComponent = await NoticesComponent.Expect( this.driver );
 			return await noticesComponent.dismissNotice();
 		} )().catch( err => {

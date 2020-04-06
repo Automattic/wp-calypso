@@ -1,7 +1,6 @@
 /**
  *  External Dependencies
  *
- * @format
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -9,13 +8,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
+import { Card } from '@automattic/components';
 import { TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
 
 const TransferProhibited = ( { translate } ) => (
 	<div>
-		<SectionHeader label={ translate( 'Transfer Domain' ) } />
 		<Card className="transfer-out__card">
 			{ translate(
 				'It is only possible to transfer a domain after 60 days after the registration date. This 60 day lock is ' +

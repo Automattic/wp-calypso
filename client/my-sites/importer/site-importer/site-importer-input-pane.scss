@@ -1,8 +1,3 @@
-.site-importer__site-importer-example-domain {
-	font-family: monospace;
-	color: var( --color-accent );
-}
-
 .site-importer__site-importer-url-input {
 	display: flex;
 	margin-bottom: 1.5em;
@@ -10,6 +5,7 @@
 	.form-text-input {
 		flex-grow: 1;
 		flex-shrink: 1;
+		margin-top: 0.5em;
 	}
 
 	button {

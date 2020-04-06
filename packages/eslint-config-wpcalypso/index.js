@@ -1,5 +1,3 @@
-/** @format */
-
 module.exports = {
 	env: {
 		es6: true,
@@ -12,8 +10,8 @@ module.exports = {
 			jsx: true,
 		},
 	},
-	extends: 'eslint:recommended',
-	plugins: [ 'wpcalypso' ],
+	extends: [ 'eslint:recommended', 'plugin:jsdoc/recommended' ],
+	plugins: [ 'jsdoc', 'wpcalypso' ],
 	rules: {
 		'array-bracket-spacing': [ 2, 'always' ],
 		'brace-style': [ 2, '1tbs' ],
@@ -57,6 +55,7 @@ module.exports = {
 		'no-nested-ternary': 2,
 		'no-new': 2,
 		'no-process-exit': 2,
+		'no-prototype-builtins': 0, // we've been using this for years without real issue
 		'no-redeclare': 2,
 		'no-shadow': 2,
 		'no-spaced-func': 2,
@@ -109,7 +108,30 @@ module.exports = {
 		// Assumed by default with Babel
 		strict: [ 2, 'never' ],
 		'template-curly-spacing': [ 2, 'always' ],
-		'valid-jsdoc': [ 2, { requireReturn: false } ],
+
+		// jsdoc plugin
+		'jsdoc/check-access': 2,
+		'jsdoc/check-alignment': 2,
+		'jsdoc/check-param-names': 2,
+		'jsdoc/check-tag-names': 0,
+		'jsdoc/check-types': 2,
+		'jsdoc/check-values': 2,
+		'jsdoc/empty-tags': 2,
+		'jsdoc/implements-on-classes': 2,
+		'jsdoc/newline-after-description': 2,
+		'jsdoc/no-undefined-types': 2,
+		'jsdoc/require-jsdoc': 0,
+		'jsdoc/require-param': 2,
+		'jsdoc/require-param-description': 2,
+		'jsdoc/require-param-name': 2,
+		'jsdoc/require-param-type': 0,
+		'jsdoc/require-returns': 0,
+		'jsdoc/require-returns-check': 2,
+		'jsdoc/require-returns-description': 2,
+		'jsdoc/require-returns-type': 0,
+		'jsdoc/valid-types': 0,
+
+		// wpcalypso plugin
 		'wpcalypso/i18n-ellipsis': 2,
 		'wpcalypso/i18n-no-collapsible-whitespace': 2,
 		'wpcalypso/i18n-no-variables': 2,

@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { omit } from 'lodash';
 
 /**
@@ -17,7 +14,7 @@ import {
 	PREFERENCES_FETCH_FAILURE,
 	PREFERENCES_SAVE_SUCCESS,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
 import { remoteValuesSchema } from './schema';
 
 /**
@@ -26,51 +23,69 @@ import { remoteValuesSchema } from './schema';
  * remote endpoint. If a local value is set and then later saved to the remote,
  * it will be removed from state.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
-export const localValues = createReducer(
-	{},
-	{
-		[ PREFERENCES_SET ]: ( state, { key, value } ) => {
+export const localValues = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case PREFERENCES_SET: {
+			const { key, value } = action;
 			if ( state[ key ] === value ) {
 				return state;
 			}
 
 			return { ...state, [ key ]: value };
-		},
-		[ PREFERENCES_SAVE_SUCCESS ]: ( state, { key } ) => {
+		}
+		case PREFERENCES_SAVE_SUCCESS: {
+			const { key } = action;
 			return omit( state, key );
-		},
+		}
 	}
-);
+
+	return state;
+} );
 
 /**
  * Returns the updated remote values state after an action has been dispatched.
  * The remote values state reflects preferences which are persisted to the REST
  * API current user settings endpoint.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
-export const remoteValues = createReducer(
-	null,
-	{
-		[ PREFERENCES_RECEIVE ]: ( state, { values } ) => values,
-	},
-	remoteValuesSchema
-);
+export const remoteValues = withSchemaValidation( remoteValuesSchema, ( state = null, action ) => {
+	switch ( action.type ) {
+		case PREFERENCES_RECEIVE: {
+			const { values } = action;
+			return values;
+		}
+	}
 
-export const fetching = createReducer( false, {
-	[ PREFERENCES_FETCH_SUCCESS ]: () => false,
-	[ PREFERENCES_FETCH_FAILURE ]: () => false,
-	[ PREFERENCES_FETCH ]: () => true,
+	return state;
 } );
 
-const lastFetchedTimestamp = createReducer( false, {
-	[ PREFERENCES_FETCH_SUCCESS ]: () => Date.now(),
+export const fetching = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case PREFERENCES_FETCH_SUCCESS:
+			return false;
+		case PREFERENCES_FETCH_FAILURE:
+			return false;
+		case PREFERENCES_FETCH:
+			return true;
+	}
+
+	return state;
+} );
+
+const lastFetchedTimestamp = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case PREFERENCES_FETCH_SUCCESS:
+			return Date.now();
+	}
+
+	return state;
 } );
 
 export default combineReducers( {

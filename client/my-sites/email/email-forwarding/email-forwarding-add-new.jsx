@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -58,7 +57,7 @@ class EmailForwardingAddNew extends React.Component {
 		};
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.formStateController = formState.Controller( {
 			initialFields: this.getInitialFields(),
 			onNewState: this.setFormState,
@@ -122,7 +121,7 @@ class EmailForwardingAddNew extends React.Component {
 				disabled={ this.state.formSubmitting || this.hasReachedLimit() }
 				onClick={ handler }
 			>
-				{ this.props.translate( 'Add New Email Address' ) }
+				{ this.props.translate( 'Add new email address' ) }
 			</FormButton>
 		);
 	}
@@ -327,12 +326,9 @@ const trackMailboxFieldFocus = domainName =>
 		} )
 	);
 
-export default connect(
-	null,
-	{
-		addNewEmailForwardWithAnalytics,
-		trackCancelClick,
-		trackDestinationFieldFocus,
-		trackMailboxFieldFocus,
-	}
-)( localize( EmailForwardingAddNew ) );
+export default connect( null, {
+	addNewEmailForwardWithAnalytics,
+	trackCancelClick,
+	trackDestinationFieldFocus,
+	trackMailboxFieldFocus,
+} )( localize( EmailForwardingAddNew ) );

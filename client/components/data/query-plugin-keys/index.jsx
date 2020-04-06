@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,13 +13,13 @@ import { fetchInstallInstructions } from 'state/plugins/premium/actions';
 import { hasRequested } from 'state/plugins/premium/selectors';
 
 class QueryPluginKeys extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( this.props.siteId && ! this.props.hasRequested ) {
 			this.props.fetchInstallInstructions( this.props.siteId );
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId === this.props.siteId ) {
 			return;
 		}

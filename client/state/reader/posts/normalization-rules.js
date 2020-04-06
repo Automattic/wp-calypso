@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -66,8 +65,9 @@ const hasShortContent = post => getCharacterCount( post ) <= PHOTO_ONLY_MAX_CHAR
 
 /**
  * Attempt to classify the post into a display type
+ *
  * @param  {object}   post     A post to classify
- * @return {object}            The classified post
+ * @returns {object}            The classified post
  */
 export function classifyPost( post ) {
 	const imagesForGallery = filter( post.content_images, imageIsBigEnoughForGallery );

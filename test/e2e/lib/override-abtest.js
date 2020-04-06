@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -25,10 +23,11 @@ async function writeABTests( driver, testList ) {
 
 /**
  * Overrides an A/B Test.
+ *
  * @param {Browser} driver Webdriver browser instance
- * @param {String} name A/B test name
- * @param {String} variation the variation you want to set
- * @return {Function} undo the changes.
+ * @param {string} name A/B test name
+ * @param {string} variation the variation you want to set
+ * @returns {Function} undo the changes.
  */
 export async function setOverriddenABTests( driver, name, variation ) {
 	const abTestList = abTests.default;
@@ -36,9 +35,7 @@ export async function setOverriddenABTests( driver, name, variation ) {
 		if ( test === name ) {
 			return `"${ test }_${ abTestList[ test ].datestamp }":"${ variation }"`;
 		}
-		return `"${ test }_${ abTestList[ test ].datestamp }":"${
-			abTestList[ test ].defaultVariation
-		}"`;
+		return `"${ test }_${ abTestList[ test ].datestamp }":"${ abTestList[ test ].defaultVariation }"`;
 	} );
 	return await writeABTests( driver, expectedABTestValue );
 }

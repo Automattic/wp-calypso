@@ -1,4 +1,4 @@
-/** @format */
+/* eslint-disable no-case-declarations */
 
 /**
  * External dependencies
@@ -20,6 +20,7 @@ import { domainAvailability } from 'lib/domains/constants';
 import {
 	domainManagementTransferToOtherSite,
 	domainManagementTransferIn,
+	domainMapping,
 	domainTransferIn,
 } from 'my-sites/domains/paths';
 
@@ -67,6 +68,29 @@ function getAvailabilityNotice( domain, error, errorData ) {
 							<a
 								rel="noopener noreferrer"
 								href={ domainManagementTransferToOtherSite( site, domain ) }
+							/>
+						),
+					},
+				}
+			);
+			break;
+		case domainAvailability.IN_REDEMPTION:
+			message = translate(
+				'{{strong}}%(domain)s{{/strong}} is not eligible to register or transfer since it is in {{redemptionLink}}redemption{{/redemptionLink}}. If you own this domain, please contact your current registrar to {{aboutRenewingLink}}redeem the domain{{/aboutRenewingLink}}.',
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+						redemptionLink: (
+							<a
+								rel="noopener noreferrer"
+								href="https://www.icann.org/resources/pages/grace-2013-05-03-en"
+							/>
+						),
+						aboutRenewingLink: (
+							<a
+								rel="noopener noreferrer"
+								href="https://www.icann.org/news/blog/do-you-have-a-domain-name-here-s-what-you-need-to-know-part-5"
 							/>
 						),
 					},
@@ -196,6 +220,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 		case domainAvailability.MAPPABLE:
 		case domainAvailability.AVAILABLE:
 		case domainAvailability.TLD_NOT_SUPPORTED:
+		case domainAvailability.TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE:
 		case domainAvailability.TLD_NOT_SUPPORTED_TEMPORARILY:
 		case domainAvailability.UNKNOWN:
 			// unavailable domains are displayed in the search results, not as a notice OR
@@ -319,6 +344,32 @@ function getAvailabilityNotice( domain, error, errorData ) {
 					'Sorry, the domain name you selected is not available. Please choose another domain.'
 				);
 			}
+			break;
+
+		case domainAvailability.AVAILABLE_PREMIUM:
+			message = translate(
+				"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support purchases of premium domains on WordPress.com, but if you purchase this domain elsewhere, you can {{a}}map it to your site{{/a}}.",
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+						a: <a rel="noopener noreferrer" href={ domainMapping( site, domain ) } />,
+					},
+				}
+			);
+			break;
+
+		case domainAvailability.TRANSFERRABLE_PREMIUM:
+			message = translate(
+				"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support transfers of premium domains on WordPress.com, but if you are the owner of this domain, you can {{a}}map it to your site{{/a}}.",
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+						a: <a rel="noopener noreferrer" href={ domainMapping( site, domain ) } />,
+					},
+				}
+			);
 			break;
 
 		default:

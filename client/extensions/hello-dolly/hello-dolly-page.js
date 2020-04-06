@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,8 +11,7 @@ import { connect } from 'react-redux';
  * Internal Dependencies
  */
 import Main from 'components/main';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
@@ -38,7 +35,7 @@ class HelloDollyPage extends Component {
 					</span>
 				</SectionHeader>
 				<Card>
-					<p style={ { fontSize: 18, fontWeight: 300 } }>
+					<p style={ { fontSize: 18 } }>
 						This is not just an extension, it symbolizes the hope and enthusiasm of an entire
 						generation summed up in two words sung most famously by Louis Armstrong.
 					</p>
@@ -118,7 +115,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( HelloDollyPage );
+export default connect( mapStateToProps, mapDispatchToProps )( HelloDollyPage );

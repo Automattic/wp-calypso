@@ -1,20 +1,17 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import { throttle, defer } from 'lodash';
 import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
 import React from 'react';
 import classNames from 'classnames';
-import afterLayoutFlush from 'lib/after-layout-flush';
 
 /**
  * Internal dependencies
  */
-import { isMobile } from 'lib/viewport';
+import afterLayoutFlush from 'lib/after-layout-flush';
 
 /**
  * Style dependencies
@@ -201,6 +198,6 @@ class StickyPanelWithScrollEvent extends React.Component {
 	}
 }
 
-export default ( hasIntersectionObserver
+export default hasIntersectionObserver
 	? StickyPanelWithIntersectionObserver
-	: StickyPanelWithScrollEvent );
+	: StickyPanelWithScrollEvent;

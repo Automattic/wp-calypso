@@ -1,7 +1,7 @@
 #!/bin/bash
 MAGELLAN=./node_modules/.bin/magellan
 MOCHA_ARGS=""
-WORKERS=8
+WORKERS=7
 GRUNT=./node_modules/.bin/grunt
 REPORTER=""
 PARALLEL=0
@@ -14,6 +14,7 @@ RETURN=0
 CLEAN=0
 GREP=""
 LOCAL_BROWSER="chrome"
+FILE_LIST=""
 
 # Warn if NODE_CONFIG_ENV variable is not set
 if [ "$NODE_CONFIG_ENV" = "" ]; then
@@ -58,6 +59,7 @@ usage () {
 -I		  - Execute tests in specs-i18n/ directory
 -x		  - Execute the tests from the context of xvfb-run
 -u [baseUrl]	  - Override the calypsoBaseURL config
+-f [testFileList] - Specify a list of test files to run
 -h		  - This help listing
 EOF
   exit 1
@@ -67,7 +69,7 @@ if [ $# -eq 0 ]; then
   usage
 fi
 
-while getopts ":a:RpS:B:s:gjWCJH:wzyl:cm:fiIUvxu:h:F" opt; do
+while getopts ":a:RpS:B:s:gjWCJH:wzyl:cm:f:iIUvxu:h:F" opt; do
   case $opt in
     a)
       WORKERS=$OPTARG
@@ -177,6 +179,9 @@ while getopts ":a:RpS:B:s:gjWCJH:wzyl:cm:fiIUvxu:h:F" opt; do
       NODE_CONFIG_ARGS+=("\"calypsoBaseURL\":\"$OPTARG\"")
       continue
       ;;
+    f)
+      FILE_LIST=$OPTARG
+      ;;
     h)
       usage
       ;;
@@ -199,6 +204,10 @@ done
 # Skip any tests in the given variable - DOES NOT WORK WITH MAGELLAN - See issue #506
 if [ "$SKIP_TEST_REGEX" != "" ]; then
   GREP="-i -g '$SKIP_TEST_REGEX'"
+fi
+
+if [ "$SUITE_TAG" != "" ]; then
+  SUITE_TAG_OVERRIDE="--suiteTag='$SUITE_TAG'"
 fi
 
 # Combine any NODE_CONFIG entries into a single object
@@ -226,6 +235,21 @@ if [ $PARALLEL == 1 ]; then
       eval $CMD
       RETURN+=$?
   fi
+elif [ $CIRCLE_NODE_TOTAL > 1 ]; then
+	IFS=, read -r -a SCREENSIZE_ARRAY <<< "$SCREENSIZES"
+    IFS=, read -r -a LOCALE_ARRAY <<< "$LOCALES"
+    for size in ${SCREENSIZE_ARRAY[@]}; do
+      for locale in ${LOCALE_ARRAY[@]}; do
+        for config in "${MAGELLAN_CONFIGS[@]}"; do
+          if [ "$config" != "" ]; then
+            CMD="env BROWSERSIZE=$size BROWSERLOCALE=$locale $MAGELLAN --mocha_args='$MOCHA_ARGS' --config='$config' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER --test=$FILE_LIST $SUITE_TAG_OVERRIDE"
+
+            eval $CMD
+            RETURN+=$?
+          fi
+        done
+      done
+    done
 else # Not using multiple CircleCI containers, just queue up the tests in sequence
   if [ "$CI" != "true" ] || [ $CIRCLE_NODE_INDEX == 0 ]; then
     IFS=, read -r -a SCREENSIZE_ARRAY <<< "$SCREENSIZES"

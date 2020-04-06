@@ -1,0 +1,44 @@
+/**
+ * Animations
+ */
+
+// Simple animations to make elements appear
+@keyframes appear {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+@keyframes appearWithScaling {
+	0% {
+		transform: scale( 0.9, 0.9 );
+		opacity: 0;
+	}
+	100% {
+		transform: scale( 1, 1 );
+		opacity: 1;
+	}
+}
+
+// Pulsing background color for loading placeholders
+@keyframes pulse-light {
+	50% {
+		background-color: var( --color-neutral-0 );
+	}
+}
+
+// Another pulsing animation for placeholders
+@keyframes loading-fade {
+	0% {
+		opacity: 0.5;
+	}
+	50% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0.5;
+	}
+}

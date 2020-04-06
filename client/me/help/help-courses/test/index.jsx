@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -32,9 +30,7 @@ import {
 } from 'lib/plans/constants';
 
 jest.mock( 'lib/analytics', () => ( {} ) );
-jest.mock( 'lib/user', () => ( {} ) );
-jest.mock( 'components/card/compact', () => 'CardCompact' );
-jest.mock( 'components/button', () => 'Button' );
+jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'components/main', () => 'Main' );
 jest.mock( 'components/section-header', () => 'SectionHeader' );
 jest.mock( 'me/sidebar-navigation', () => 'MeSidebarNavigation' );

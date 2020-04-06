@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,19 +8,19 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import {
 	MANAGE_PURCHASES_AUTOMATIC_RENEWAL,
 	MANAGE_PURCHASES_FAQ_CANCELLING,
 } from 'lib/url/support';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { localizeUrl } from 'lib/i18n-utils';
 
 class TermsOfService extends React.Component {
 	static displayName = 'TermsOfService';
 
 	recordTermsAndConditionsClick = () => {
-		analytics.ga.recordEvent( 'Upgrades', 'Clicked Terms and Conditions Link' );
+		gaRecordEvent( 'Upgrades', 'Clicked Terms and Conditions Link' );
 	};
 
 	renderTerms() {

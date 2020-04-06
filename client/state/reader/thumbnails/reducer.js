@@ -1,4 +1,3 @@
-/** @format */
 /**
  * Internal dependencies
  */
@@ -7,7 +6,7 @@ import {
 	READER_THUMBNAIL_REQUEST_SUCCESS,
 	READER_THUMBNAIL_REQUEST_FAILURE,
 	READER_THUMBNAIL_RECEIVE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 import { combineReducers } from 'state/utils';
 
 /**
@@ -28,8 +27,8 @@ import { combineReducers } from 'state/utils';
  * Tracks all known thumbnail urls, indexed by iframe.src.
  *
  * @param  {Array} state  Current state
- * @param  {Object} action Action payload
- * @return {Array}        Updated state
+ * @param  {object} action Action payload
+ * @returns {Array}        Updated state
  */
 export function items( state = {}, action ) {
 	switch ( action.type ) {
@@ -47,9 +46,9 @@ export function items( state = {}, action ) {
  * Returns the updated requesting state after an action has been dispatched.
  * Requesting state tracks whether a request is in progress.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action object
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
  */
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {

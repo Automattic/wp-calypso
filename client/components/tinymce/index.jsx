@@ -1,15 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import { assign, forEach } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import autosize from 'autosize';
 import tinymce from 'tinymce/tinymce';
+import { ReactReduxContext } from 'react-redux';
+
 import 'tinymce/themes/modern/theme.js';
 
 // TinyMCE plugins
@@ -83,12 +83,11 @@ import wpEmojiPlugin from './plugins/wpemoji/plugin';
  * Internal Dependencies
  */
 import i18n from './i18n';
-import { isMobile } from 'lib/viewport';
 import config from 'config';
 import { decodeEntities, wpautop, removep } from 'lib/formatting';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { getPreference } from 'state/preferences/selectors';
-import isRtlSelector from 'state/selectors/is-rtl';
+import { isLocaleRtl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -170,9 +169,7 @@ const CONTENT_CSS = [
 	'https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap',
 ];
 
-export default class extends React.Component {
-	static displayName = 'TinyMCE';
-
+export default class TinyMCE extends React.Component {
 	static propTypes = {
 		isNew: PropTypes.bool,
 		mode: PropTypes.string,
@@ -200,10 +197,6 @@ export default class extends React.Component {
 		isVipSite: PropTypes.bool,
 	};
 
-	static contextTypes = {
-		store: PropTypes.object,
-	};
-
 	static defaultProps = {
 		mode: 'tinymce',
 		isNew: false,
@@ -214,6 +207,8 @@ export default class extends React.Component {
 		content: '',
 		selection: null,
 	};
+
+	reduxStore = null;
 
 	_editor = null;
 
@@ -237,7 +232,7 @@ export default class extends React.Component {
 		const { isGutenbergClassicBlock, isVipSite } = this.props;
 		this.mounted = true;
 
-		const setup = function( editor ) {
+		const setup = editor => {
 			this._editor = editor;
 
 			if ( ! this.mounted ) {
@@ -251,9 +246,9 @@ export default class extends React.Component {
 				'PostRender',
 				this.toggleEditor.bind( this, { autofocus: ! this.props.isNew } )
 			);
-		}.bind( this );
+		};
 
-		const store = this.context.store;
+		const store = this.reduxStore;
 		let isRtl = false;
 		let localeSlug = 'en';
 		let colorScheme = undefined;
@@ -261,8 +256,8 @@ export default class extends React.Component {
 		if ( store ) {
 			const state = store.getState();
 
-			isRtl = isRtlSelector( state );
 			localeSlug = getCurrentLocaleSlug( state );
+			isRtl = isLocaleRtl( localeSlug );
 			colorScheme = getPreference( state, 'colorScheme' );
 		}
 
@@ -323,7 +318,7 @@ export default class extends React.Component {
 			entity_encoding: 'raw',
 			keep_styles: false,
 			wpeditimage_html5_captions: true,
-			redux_store: this.context.store,
+			redux_store: store,
 			textarea: this.textInput.current,
 
 			// Limit the preview styles in the menu/toolbar
@@ -553,7 +548,7 @@ export default class extends React.Component {
 		tinymce.ScriptLoader.markDone( DUMMY_LANG_URL );
 	};
 
-	render() {
+	renderEditor() {
 		const { mode } = this.props;
 		const className = classnames( {
 			tinymce: true,
@@ -587,6 +582,17 @@ export default class extends React.Component {
 					value={ this.state.content }
 				/>
 			</div>
+		);
+	}
+
+	render() {
+		return (
+			<ReactReduxContext.Consumer>
+				{ ( { store } ) => {
+					this.reduxStore = store;
+					return this.renderEditor();
+				} }
+			</ReactReduxContext.Consumer>
 		);
 	}
 }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,6 +18,7 @@ import PostActionsEllipsisMenuTrash from './trash';
 import PostActionsEllipsisMenuView from './view';
 import PostActionsEllipsisMenuRestore from './restore';
 import PostActionsEllipsisMenuDuplicate from './duplicate';
+import PostActionsEllipsisMenuCopyLink from './copy-link';
 
 /**
  * Style dependencies
@@ -39,6 +38,7 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 			<PostActionsEllipsisMenuShare key="share" />,
 			<PostActionsEllipsisMenuRestore key="restore" />,
 			<PostActionsEllipsisMenuDuplicate key="duplicate" />,
+			<PostActionsEllipsisMenuCopyLink key="copyLink" />,
 			<PostActionsEllipsisMenuTrash key="trash" />
 		);
 	}

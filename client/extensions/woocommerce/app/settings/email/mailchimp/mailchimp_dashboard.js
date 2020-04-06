@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -12,7 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -126,7 +125,7 @@ class MailChimpDashboard extends React.Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { translate } = nextProps;
 		if ( false === nextProps.isSaving && this.props.isSaving ) {
 			if ( nextProps.newsletterSettingsSubmitError ) {

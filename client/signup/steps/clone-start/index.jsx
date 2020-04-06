@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,8 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
 import { getSiteBySlug } from 'state/sites/selectors';
 import { submitSignupStep } from 'state/signup/progress/actions';
 
@@ -27,7 +25,6 @@ class CloneStartStep extends Component {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
 		positionInFlow: PropTypes.number,
-		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
 		signupDependencies: PropTypes.object,
 	};
@@ -163,14 +160,7 @@ class CloneStartStep extends Component {
 	}
 
 	render() {
-		const {
-			flowName,
-			stepName,
-			positionInFlow,
-			signupProgress,
-			originSiteName,
-			translate,
-		} = this.props;
+		const { flowName, stepName, positionInFlow, originSiteName, translate } = this.props;
 
 		const headerText = translate( "Let's clone %(origin)s", { args: { origin: originSiteName } } );
 		const subHeaderText = translate(
@@ -187,7 +177,6 @@ class CloneStartStep extends Component {
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
 				positionInFlow={ positionInFlow }
-				signupProgress={ signupProgress }
 				stepContent={ this.renderStepContent() }
 			/>
 		);

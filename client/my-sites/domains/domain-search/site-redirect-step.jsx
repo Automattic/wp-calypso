@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,12 +12,12 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { hasProduct, siteRedirect } from 'lib/cart-values/cart-items';
 import { errorNotice } from 'state/notices/actions';
 import { canRedirect } from 'lib/domains';
 import DomainProductPrice from 'components/domains/domain-product-price';
-import { addItem } from 'lib/upgrades/actions';
+import { addItem } from 'lib/cart/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { withoutHttp } from 'lib/url';
 
@@ -122,7 +121,7 @@ class SiteRedirectStep extends React.Component {
 	};
 
 	addSiteRedirectToCart = domain => {
-		addItem( siteRedirect( { domain: domain } ) );
+		addItem( siteRedirect( { domain } ) );
 		page( '/checkout/' + this.props.selectedSite.slug );
 	};
 
@@ -185,12 +184,9 @@ const recordFormSubmit = searchBoxValue =>
 		searchBoxValue
 	);
 
-export default connect(
-	null,
-	{
-		errorNotice,
-		recordInputFocus,
-		recordGoButtonClick,
-		recordFormSubmit,
-	}
-)( localize( SiteRedirectStep ) );
+export default connect( null, {
+	errorNotice,
+	recordInputFocus,
+	recordGoButtonClick,
+	recordFormSubmit,
+} )( localize( SiteRedirectStep ) );

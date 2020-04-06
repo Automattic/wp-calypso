@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,18 +11,18 @@ import { decodeEntities, parseHtml } from 'lib/formatting';
 import { sanitizeSectionContent } from './sanitize-section-content';
 
 /**
- * @param  {Object} site       Site Object
- * @param  {Object} log        Notice log Object
- * @return {Bool} True if notice matches criteria
+ * @param  {object} site       Site Object
+ * @param  {object} log        Notice log Object
+ * @returns {Bool} True if notice matches criteria
  */
 function isSameSiteNotice( site, log ) {
 	return site && log.site && log.site.ID === site.ID;
 }
 
 /**
- * @param  {String} pluginSlug Plugin Slug
- * @param  {Object} log        Notice log Object
- * @return {Bool} True if notice matches criteria
+ * @param  {string} pluginSlug Plugin Slug
+ * @param  {object} log        Notice log Object
+ * @returns {Bool} True if notice matches criteria
  */
 function isSamePluginNotice( pluginSlug, log ) {
 	return pluginSlug && log.plugin && log.plugin.slug === pluginSlug;
@@ -33,10 +31,10 @@ function isSamePluginNotice( pluginSlug, log ) {
 /**
  * Filter function that return notices that fit a certain criteria.
  *
- * @param  {Object} site       Site Object
- * @param  {String} pluginSlug Plugin Slug
- * @param  {Object} log        Notice log Object
- * @return {Bool} True if notice matches criteria
+ * @param  {object} site       Site Object
+ * @param  {string} pluginSlug Plugin Slug
+ * @param  {object} log        Notice log Object
+ * @returns {Bool} True if notice matches criteria
  */
 function filterNoticesBy( site, pluginSlug, log ) {
 	if ( ! site && ! pluginSlug ) {
@@ -214,10 +212,10 @@ export function normalizePluginsList( pluginsList ) {
  * Return logs that match a certain critia.
  *
  * @param  {Array} logs        List of all notices
- * @param  {Object} site       Site Object
- * @param  {String} pluginSlug Plugin Slug
+ * @param  {object} site       Site Object
+ * @param  {string} pluginSlug Plugin Slug
  *
- * @return {Array} Array of filtered logs that match the criteria
+ * @returns {Array} Array of filtered logs that match the criteria
  */
 export function filterNotices( logs, site, pluginSlug ) {
 	return filter( logs, filterNoticesBy.bind( this, site, pluginSlug ) );

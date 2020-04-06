@@ -1,19 +1,18 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { escapeRegExp, noop } from 'lodash';
-import Gridicon from 'gridicons';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import FormTextInput from 'components/forms/form-text-input';
-import Suggestions from 'components/suggestions';
+import Gridicon from 'components/gridicon';
 import Spinner from 'components/spinner';
+import { Suggestions } from '@automattic/components';
+import { tracks } from 'lib/analytics';
 
 /**
  * Style dependencies
@@ -26,7 +25,12 @@ class SuggestionSearch extends Component {
 		placeholder: PropTypes.string,
 		onChange: PropTypes.func,
 		onSelect: PropTypes.func,
-		suggestions: PropTypes.array,
+		suggestions: PropTypes.arrayOf(
+			PropTypes.shape( {
+				label: PropTypes.string.isRequired,
+				category: PropTypes.string,
+			} )
+		),
 		value: PropTypes.string,
 		autoFocus: PropTypes.bool,
 		railcar: PropTypes.object,
@@ -69,49 +73,25 @@ class SuggestionSearch extends Component {
 	};
 
 	handleSuggestionKeyDown = event => {
-		if ( this.suggestionsRef.props.suggestions.length > 0 ) {
-			let suggestionPosition = this.suggestionsRef.state.suggestionPosition;
-
-			switch ( event.key ) {
-				case 'ArrowRight':
-					this.updateFieldFromSuggestion( this.getSuggestionLabel( suggestionPosition ) );
-
-					break;
-				case 'ArrowUp':
-					if ( suggestionPosition === 0 ) {
-						suggestionPosition = this.suggestionsRef.props.suggestions.length;
-					}
-
-					this.updateFieldFromSuggestion( this.getSuggestionLabel( suggestionPosition - 1 ) );
-
-					break;
-				case 'ArrowDown':
-					suggestionPosition++;
-
-					if ( suggestionPosition === this.suggestionsRef.props.suggestions.length ) {
-						suggestionPosition = 0;
-					}
-
-					this.updateFieldFromSuggestion( this.getSuggestionLabel( suggestionPosition ) );
-
-					break;
-				case 'Tab':
-					this.updateFieldFromSuggestion( this.getSuggestionLabel( suggestionPosition ) );
-
-					break;
-				case 'Enter':
-					event.preventDefault();
-					break;
-			}
+		if ( this.suggestionsRef.props.suggestions.length > 0 && event.key === 'Enter' ) {
+			event.preventDefault();
 		}
 
 		this.suggestionsRef.handleKeyEvent( event );
 	};
 
-	handleSuggestionMouseDown = position => {
-		this.updateInputValue( position.label );
+	handleSuggestionMouseDown = ( suggestion, suggestionIndex ) => {
+		this.updateInputValue( suggestion.label );
 		this.hideSuggestions();
-		this.props.onChange( position.label, true );
+		this.props.onChange( suggestion.label, true );
+		const { railcar } = this.props;
+		if ( railcar ) {
+			const { action, id } = railcar;
+			tracks.recordEvent( 'calypso_traintracks_interact', {
+				action,
+				railcar: `${ id }-${ suggestionIndex }`,
+			} );
+		}
 	};
 
 	getSuggestions() {
@@ -119,7 +99,7 @@ class SuggestionSearch extends Component {
 			return [];
 		}
 
-		return this.props.suggestions.map( hint => ( { label: hint } ) );
+		return this.props.suggestions;
 	}
 
 	getSuggestionLabel( suggestionPosition ) {
@@ -130,6 +110,20 @@ class SuggestionSearch extends Component {
 		this.updateInputValue( newValue );
 		this.props.onChange( newValue, true );
 	}
+
+	onSuggestionItemMount = ( { index, suggestionIndex } ) => {
+		const { railcar } = this.props;
+		if ( railcar ) {
+			const { fetch_algo, id, ui_algo } = railcar;
+			tracks.recordEvent( 'calypso_traintracks_render', {
+				fetch_algo,
+				ui_algo,
+				railcar: `${ id }-${ suggestionIndex }`,
+				fetch_position: suggestionIndex,
+				ui_position: index,
+			} );
+		}
+	};
 
 	render() {
 		const { id, placeholder, autoFocus, isSearching } = this.props;
@@ -150,10 +144,11 @@ class SuggestionSearch extends Component {
 				/>
 				<Suggestions
 					ref={ this.setSuggestionsRef }
-					query={ escapeRegExp( this.state.query ) }
+					query={ this.state.query }
 					suggestions={ this.getSuggestions() }
 					suggest={ this.handleSuggestionMouseDown }
 					railcar={ this.props.railcar }
+					onSuggestionItemMount={ this.onSuggestionItemMount }
 				/>
 			</div>
 		);

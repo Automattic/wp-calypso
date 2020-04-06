@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,7 +13,13 @@ import { menuItems, GridiconButton } from './menu-items';
 import Gridicon from 'components/gridicon';
 
 function initialize( editor ) {
-	menuItems.forEach( item =>
+	// Conditional menu item support:
+	// Filters out menu item if has optional "condition" function field that returns false.
+	const filteredMenuItems = menuItems.filter(
+		item => ! item.condition || item.condition( editor )
+	);
+
+	filteredMenuItems.forEach( item =>
 		editor.addMenuItem( item.name, {
 			classes: 'wpcom-insert-menu__menu-item',
 			cmd: item.cmd,
@@ -28,7 +33,7 @@ function initialize( editor ) {
 		type: 'menubutton',
 		title: i18n.translate( 'Add content' ),
 		classes: 'btn wpcom-insert-menu insert-menu',
-		menu: menuItems.map( ( { name } ) => editor.menuItems[ name ] ),
+		menu: filteredMenuItems.map( ( { name } ) => editor.menuItems[ name ] ),
 		onPostRender() {
 			const [ insertContentElm ] = this.$el[ 0 ].children;
 

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,13 +11,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button, Dialog } from '@automattic/components';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import PurchaseButton from 'components/purchase-detail/purchase-button';
 import TipInfo from 'components/purchase-detail/tip-info';
-import Dialog from 'components/dialog';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import TermsAndConditions from './terms-and-conditions';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
 import { assignSiteVoucher as assignVoucher } from 'state/sites/vouchers/actions';
@@ -79,10 +76,7 @@ class GoogleVoucherDetails extends Component {
 	}
 
 	onGenerateCode() {
-		analytics.ga.recordEvent(
-			'calypso_plans_google_voucher_generate_click',
-			'Clicked Generate Code Button'
-		);
+		gaRecordEvent( 'calypso_plans_google_voucher_generate_click', 'Clicked Generate Code Button' );
 		this.props.recordTracksEvent( 'calypso_google_adwords_voucher_generate_click' );
 
 		this.changeStep();
@@ -94,10 +88,7 @@ class GoogleVoucherDetails extends Component {
 	}
 
 	onAcceptTermsAndConditions() {
-		analytics.ga.recordEvent(
-			'calypso_plans_google_voucher_toc_accept_click',
-			'Clicked Agree Button'
-		);
+		gaRecordEvent( 'calypso_plans_google_voucher_toc_accept_click', 'Clicked Agree Button' );
 		this.props.recordTracksEvent( 'calypso_google_adwords_voucher_tos_accept_click' );
 
 		this.props.assignVoucher( this.props.selectedSite.ID, GOOGLE_CREDITS );
@@ -105,10 +96,7 @@ class GoogleVoucherDetails extends Component {
 	}
 
 	onSetupGoogleAdWordsLink() {
-		analytics.ga.recordEvent(
-			'calypso_plans_google_voucher_setup_click',
-			'Clicked Setup Google Ads Button'
-		);
+		gaRecordEvent( 'calypso_plans_google_voucher_setup_click', 'Clicked Setup Google Ads Button' );
 		this.props.recordTracksEvent( 'calypso_google_adwords_voucher_setup_click' );
 	}
 

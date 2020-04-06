@@ -8,9 +8,9 @@
 	flex-direction: row;
 	align-items: center;
 	box-sizing: border-box;
-	color: var( --color-neutral-700 );
-	background: var( --color-white );
-	border-bottom: 1px solid var( --color-neutral-100 );
+	color: var( --color-neutral-70 );
+	background: var( --color-surface );
+	border-bottom: 1px solid var( --color-neutral-10 );
 	position: fixed;
 	z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
 	top: 47px;
@@ -54,11 +54,11 @@
 
 	.action-header__site-title {
 		font-size: 10px;
-		color: var( --color-neutral-400 );
+		color: var( --color-neutral-40 );
 		margin: 2px 0 -3px;
 
 		a, a:hover {
-			color: var( --color-neutral-400 );
+			color: var( --color-neutral-40 );
 		}
 	}
 
@@ -150,10 +150,10 @@
 		&:hover,
 		&:focus {
 			background: var( --color-error );
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 
 			.gridicon {
-				color: var( --color-white );
+				color: var( --color-text-inverted );
 			}
 		}
 	}

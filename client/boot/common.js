@@ -1,21 +1,18 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import page from 'page';
-import { parse } from 'qs';
-import url from 'url';
-import { get, startsWith } from 'lodash';
+import { startsWith } from 'lodash';
 import React from 'react';
 import ReactDom from 'react-dom';
+import Modal from 'react-modal';
 import store from 'store';
 
 /**
  * Internal dependencies
  */
+import { setupLocale } from './locale';
 import config from 'config';
 import { ReduxWrappedLayout } from 'controller';
 import notices from 'notices';
@@ -33,43 +30,45 @@ import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
 import { init as pushNotificationsInit } from 'state/push-notifications/actions';
 import { setSupportSessionReduxStore } from 'lib/user/support-user-interop';
 import analytics from 'lib/analytics';
-import superProps from 'lib/analytics/super-props';
+import { bumpStat } from 'lib/analytics/mc';
+import getSuperProps from 'lib/analytics/super-props';
 import { getSiteFragment, normalize } from 'lib/route';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
 import { setCurrentUser } from 'state/current-user/actions';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { initConnection as initHappychatConnection } from 'state/happychat/connection/actions';
 import { requestHappychatEligibility } from 'state/happychat/user/actions';
 import { getHappychatAuth } from 'state/happychat/utils';
 import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
 import { setRoute as setRouteAction } from 'state/ui/actions';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
-import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
-import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import setupGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
-import { loadUserUndeployedTranslations } from 'lib/i18n-utils/switch-locale';
+import { createReduxStore } from 'state';
+import initialReducer from 'state/reducer';
+import { getInitialState, persistOnChange, loadAllState } from 'state/initial-state';
+import detectHistoryNavigation from 'lib/detect-history-navigation';
+import userFactory from 'lib/user';
+import { getUrlParts, isOutsideCalypso } from 'lib/url';
+import { setStore } from 'state/redux-store';
 
 const debug = debugFactory( 'calypso' );
-
-const switchUserLocale = ( currentUser, reduxStore ) => {
-	const { localeSlug, localeVariant } = currentUser.get();
-
-	if ( localeSlug ) {
-		reduxStore.dispatch( setLocale( localeSlug, localeVariant ) );
-	}
-};
 
 const setupContextMiddleware = reduxStore => {
 	page( '*', ( context, next ) => {
 		// page.js url parsing is broken so we had to disable it with `decodeURLComponents: false`
-		const parsed = url.parse( context.canonicalPath, true );
-		context.prevPath = parsed.path === context.path ? false : parsed.path;
-		context.query = parsed.query;
+		const parsed = getUrlParts( context.canonicalPath );
+		const path = parsed.pathname + parsed.search || null;
+		context.prevPath = path === context.path ? false : path;
+		context.query = Object.fromEntries( parsed.searchParams.entries() );
 
 		context.hashstring = ( parsed.hash && parsed.hash.substring( 1 ) ) || '';
 		// set `context.hash` (we have to parse manually)
 		if ( context.hashstring ) {
 			try {
-				context.hash = parse( context.hashstring );
+				context.hash = Object.fromEntries(
+					new globalThis.URLSearchParams( context.hashstring ).entries()
+				);
 			} catch ( e ) {
 				debug( 'failed to query-string parse `location.hash`', e );
 				context.hash = {};
@@ -95,6 +94,13 @@ const setupContextMiddleware = reduxStore => {
 			return;
 		}
 
+		// Some paths live outside of Calypso and should be opened separately
+		// Examples: /support, /forums
+		if ( isOutsideCalypso( context.pathname ) ) {
+			window.location.href = context.pathname;
+			return;
+		}
+
 		next();
 	} );
 
@@ -104,29 +110,6 @@ const setupContextMiddleware = reduxStore => {
 		}
 		next();
 	} );
-};
-
-// We need to require sections to load React with i18n mixin
-const loadSectionsMiddleware = () => setupRoutes();
-
-const loggedOutMiddleware = currentUser => {
-	if ( currentUser.get() ) {
-		return;
-	}
-
-	if ( config.isEnabled( 'desktop' ) ) {
-		page( '/', () => {
-			if ( config.isEnabled( 'oauth' ) ) {
-				page.redirect( '/authorize' );
-			} else {
-				page.redirect( '/log-in' );
-			}
-		} );
-	} else if ( config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
-		page( '/', () => {
-			page.redirect( '/devdocs/start' );
-		} );
-	}
 };
 
 const oauthTokenMiddleware = () => {
@@ -174,35 +157,8 @@ const unsavedFormsMiddleware = () => {
 	page.exit( '*', checkFormHandler );
 };
 
-export const locales = ( currentUser, reduxStore ) => {
-	debug( 'Executing Calypso locales.' );
-
-	if ( window.i18nLocaleStrings ) {
-		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
-		reduxStore.dispatch( setLocaleRawData( i18nLocaleStringsObject ) );
-		const languageSlug = get( i18nLocaleStringsObject, [ '', 'localeSlug' ] );
-		if ( languageSlug ) {
-			debug( 'Checking for load-user-translations parameter' );
-			loadUserUndeployedTranslations( languageSlug );
-		}
-	}
-
-	// Use current user's locale if it was not bootstrapped (non-ssr pages)
-	if (
-		! window.i18nLocaleStrings &&
-		! config.isEnabled( 'wpcom-user-bootstrap' ) &&
-		currentUser.get()
-	) {
-		switchUserLocale( currentUser, reduxStore );
-	}
-};
-
-export const utils = () => {
+const utils = () => {
 	debug( 'Executing Calypso utils.' );
-
-	if ( process.env.NODE_ENV === 'development' ) {
-		require( './dev-modules' ).default();
-	}
 
 	// Infer touch screen by checking if device supports touch events
 	// See touch-detect/README.md
@@ -214,9 +170,12 @@ export const utils = () => {
 
 	// Add accessible-focus listener
 	accessibleFocus();
+
+	// Configure app element that React Modal will aria-hide when modal is open
+	Modal.setAppElement( document.getElementById( 'wpcom' ) );
 };
 
-export const configureReduxStore = ( currentUser, reduxStore ) => {
+const configureReduxStore = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso configure Redux store.' );
 
 	bindWpLocaleState( reduxStore );
@@ -246,61 +205,59 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 };
 
-export const setupMiddlewares = ( currentUser, reduxStore ) => {
+function setupErrorLogger( reduxStore ) {
+	if ( ! config.isEnabled( 'catch-js-errors' ) ) {
+		return;
+	}
+
+	const errorLogger = new Logger();
+
+	// Save errorLogger to a singleton for use in arbitrary logging.
+	require( 'lib/catch-js-errors/log' ).registerLogger( errorLogger );
+
+	// Save data to JS error logger
+	errorLogger.saveDiagnosticData( {
+		user_id: getCurrentUserId( reduxStore.getState() ),
+		calypso_env: config( 'env_id' ),
+	} );
+
+	errorLogger.saveDiagnosticReducer( function() {
+		const state = reduxStore.getState();
+		return {
+			blog_id: getSelectedSiteId( state ),
+			calypso_section: getSectionName( state ),
+		};
+	} );
+
+	errorLogger.saveDiagnosticReducer( () => ( { tests: getSavedVariations() } ) );
+
+	analytics.on( 'record-event', ( eventName, lastTracksEvent ) =>
+		errorLogger.saveExtraData( { lastTracksEvent } )
+	);
+
+	page( '*', function( context, next ) {
+		errorLogger.saveNewPath(
+			context.canonicalPath.replace( getSiteFragment( context.canonicalPath ), ':siteId' )
+		);
+		next();
+	} );
+}
+
+const setupMiddlewares = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso setup middlewares.' );
 
 	installPerfmonPageHandlers();
 	setupContextMiddleware( reduxStore );
 	oauthTokenMiddleware();
-	loadSectionsMiddleware();
-	loggedOutMiddleware( currentUser );
+	setupRoutes();
 	setRouteMiddleware();
 	clearNoticesMiddleware();
 	unsavedFormsMiddleware();
 
-	analytics.setDispatch( reduxStore.dispatch );
+	// The analytics module requires user (when logged in) and superProps objects. Inject these here.
+	analytics.initialize( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
 
-	if ( currentUser.get() ) {
-		// When logged in the analytics module requires user and superProps objects
-		// Inject these here
-		analytics.initialize( currentUser, superProps );
-	} else {
-		analytics.setSuperProps( superProps );
-	}
-
-	// Render Layout only for non-isomorphic sections.
-	// Isomorphic sections will take care of rendering their Layout last themselves.
-	if ( ! document.getElementById( 'primary' ) ) {
-		renderLayout( reduxStore );
-
-		if ( config.isEnabled( 'catch-js-errors' ) ) {
-			const errorLogger = new Logger();
-			//Save errorLogger to a singleton for use in arbitrary logging.
-			require( 'lib/catch-js-errors/log' ).registerLogger( errorLogger );
-			//Save data to JS error logger
-			errorLogger.saveDiagnosticData( {
-				user_id: currentUser.get().ID,
-				calypso_env: config( 'env_id' ),
-			} );
-			errorLogger.saveDiagnosticReducer( function() {
-				const state = reduxStore.getState();
-				return {
-					blog_id: getSelectedSiteId( state ),
-					calypso_section: getSectionName( state ),
-				};
-			} );
-			errorLogger.saveDiagnosticReducer( () => ( { tests: getSavedVariations() } ) );
-			analytics.on( 'record-event', ( eventName, eventProperties ) =>
-				errorLogger.saveExtraData( { lastTracksEvent: eventProperties } )
-			);
-			page( '*', function( context, next ) {
-				errorLogger.saveNewPath(
-					context.canonicalPath.replace( getSiteFragment( context.canonicalPath ), ':siteId' )
-				);
-				next();
-			} );
-		}
-	}
+	setupErrorLogger( reduxStore );
 
 	// If `?sb` or `?sp` are present on the path set the focus of layout
 	// This can be removed when the legacy version is retired.
@@ -333,13 +290,8 @@ export const setupMiddlewares = ( currentUser, reduxStore ) => {
 			return next();
 		}
 
-		// Focus UI on the content on page navigation
-		if ( ! config.isEnabled( 'code-splitting' ) ) {
-			context.store.dispatch( activateNextLayoutFocus() );
-		}
-
 		// Bump general stat tracking overall Newdash usage
-		analytics.mc.bumpStat( { newdash_pageviews: 'route' } );
+		bumpStat( { newdash_pageviews: 'route' } );
 
 		next();
 	} );
@@ -428,3 +380,36 @@ function renderLayout( reduxStore ) {
 
 	debug( 'Main layout rendered.' );
 }
+
+const boot = ( currentUser, registerRoutes ) => {
+	utils();
+	loadAllState().then( () => {
+		const initialState = getInitialState( initialReducer );
+		const reduxStore = createReduxStore( initialState, initialReducer );
+		setStore( reduxStore );
+		persistOnChange( reduxStore );
+		setupLocale( currentUser.get(), reduxStore );
+		configureReduxStore( currentUser, reduxStore );
+		setupMiddlewares( currentUser, reduxStore );
+		detectHistoryNavigation.start();
+		if ( registerRoutes ) {
+			registerRoutes();
+		}
+
+		// Render initial `<Layout>` for non-isomorphic sections.
+		// Isomorphic sections will take care of rendering their `<Layout>` themselves.
+		if ( ! document.getElementById( 'primary' ) ) {
+			renderLayout( reduxStore );
+		}
+
+		page.start( { decodeURLComponents: false } );
+	} );
+};
+
+export const bootApp = ( appName, registerRoutes ) => {
+	const user = userFactory();
+	user.initialize().then( () => {
+		debug( `Starting ${ appName }. Let's do this.` );
+		boot( user, registerRoutes );
+	} );
+};

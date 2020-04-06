@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { get, merge, omit, pick } from 'lodash';
 
 /**
@@ -20,7 +17,7 @@ import {
 	POST_SAVE,
 	POSTS_RECEIVE,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import { countsSchema } from './schema';
 
 /**
@@ -28,9 +25,9 @@ import { countsSchema } from './schema';
  * dispatched. The state reflects a mapping of site ID, post type pairing to a
  * boolean reflecting whether a request for the post types is in progress.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {
@@ -52,9 +49,9 @@ export function requesting( state = {}, action ) {
  * The state reflects a mapping of site ID, post type, [all/mine], post status
  * to the number of posts.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const counts = ( () => {
 	let currentUserId;
@@ -63,9 +60,9 @@ export const counts = ( () => {
 	/**
 	 * Returns a serialized key to be used in tracking post status properties
 	 *
-	 * @param  {Number} siteId Site ID
-	 * @param  {Number} postId Post ID
-	 * @return {String}        Serialized key
+	 * @param  {number} siteId Site ID
+	 * @param  {number} postId Post ID
+	 * @returns {string}        Serialized key
 	 */
 	function getPostStatusKey( siteId, postId ) {
 		return [ siteId, postId ].join();
@@ -75,11 +72,11 @@ export const counts = ( () => {
 	 * Returns the updated post count state after transitioning a post to a new
 	 * status.
 	 *
-	 * @param  {Object} state  Current state
-	 * @param  {Number} siteId Site ID
-	 * @param  {Number} postId Post ID
-	 * @param  {String} status Post status
-	 * @return {Object}        Updated state
+	 * @param  {object} state  Current state
+	 * @param  {number} siteId Site ID
+	 * @param  {number} postId Post ID
+	 * @param  {string} status Post status
+	 * @returns {object}        Updated state
 	 */
 	function transitionPostStateToStatus( state, siteId, postId, status ) {
 		const postStatusKey = getPostStatusKey( siteId, postId );
@@ -136,21 +133,20 @@ export const counts = ( () => {
 		} );
 	}
 
-	return createReducer(
-		{},
-		{
-			[ POST_COUNTS_RESET_INTERNAL_STATE ]: state => {
+	return withSchemaValidation( countsSchema, ( state = {}, action ) => {
+		switch ( action.type ) {
+			case POST_COUNTS_RESET_INTERNAL_STATE: {
 				currentUserId = undefined;
 				postStatuses = {};
 
 				return state;
-			},
-			[ CURRENT_USER_RECEIVE ]: ( state, action ) => {
+			}
+			case CURRENT_USER_RECEIVE: {
 				currentUserId = action.user.ID;
 
 				return state;
-			},
-			[ POSTS_RECEIVE ]: ( state, action ) => {
+			}
+			case POSTS_RECEIVE: {
 				action.posts.forEach( post => {
 					const postStatusKey = getPostStatusKey( post.site_ID, post.ID );
 					const postStatus = postStatuses[ postStatusKey ];
@@ -166,28 +162,29 @@ export const counts = ( () => {
 				} );
 
 				return state;
-			},
-			[ POST_SAVE ]: ( state, action ) => {
+			}
+			case POST_SAVE: {
 				const { siteId, postId, post } = action;
 				if ( ! post.status ) {
 					return state;
 				}
 
 				return transitionPostStateToStatus( state, siteId, postId, post.status );
-			},
-			[ POST_DELETE ]: ( state, action ) => {
+			}
+			case POST_DELETE: {
 				return transitionPostStateToStatus( state, action.siteId, action.postId, 'deleted' );
-			},
-			[ POST_COUNTS_RECEIVE ]: ( state, action ) => {
+			}
+			case POST_COUNTS_RECEIVE: {
 				return merge( {}, state, {
 					[ action.siteId ]: {
 						[ action.postType ]: action.counts,
 					},
 				} );
-			},
-		},
-		countsSchema
-	);
+			}
+		}
+
+		return state;
+	} );
 } )();
 
 export default combineReducers( {

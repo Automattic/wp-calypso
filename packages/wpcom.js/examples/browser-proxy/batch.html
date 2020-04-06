@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>wpcom.js browser example with iframe proxy</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <script src="../../dist/wpcom.js"></script>
+    <script src="http://wzrd.in/standalone/wpcom-proxy-request@1.0.x"></script>
+    <script>
+      var wpcom = WPCOM();
+
+      // have this `wpcom` instance use the `wpcom-proxy-request`
+      // function for API requests
+      wpcom.request = wpcomProxyRequest;
+
+      // upgrade to "access all users blogs" mode
+      wpcom.request({
+        metaAPI: { accessAllUsersBlogs: true }
+      }, function(err) {
+        if (err) throw err;
+        console.log('proxy now running in "access all user\'s blogs" mode');
+      });
+
+
+      wpcom
+      .batch()
+      .add('/sites/en.blog.wordpress.com')
+      .add('/sites/en.blog.wordpress.com/posts')
+      .add('/read/tags')
+      .add('/read/lists')
+      .add('/read/teams')
+      .run(function(err, me){
+        if (err) throw err;
+
+        console.log(err);
+        console.log(me);
+      });
+    </script>
+  </body>
+</html>

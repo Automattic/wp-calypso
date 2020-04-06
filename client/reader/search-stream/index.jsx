@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -14,9 +13,8 @@ import classnames from 'classnames';
  * Internal Dependencies
  */
 import BlankSuggestions from 'reader/components/reader-blank-suggestions';
-import ControlItem from 'components/segmented-control/item';
 import SegmentedControl from 'components/segmented-control';
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import SearchInput from 'components/search';
 import { recordAction, recordTrack } from 'reader/stats';
@@ -29,7 +27,7 @@ import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searc
 import withDimensions from 'lib/with-dimensions';
 import SuggestionProvider from './suggestion-provider';
 import Suggestion from './suggestion';
-import getReaderAliasedFollowFeedUrl from 'state/selectors/get-reader-aliased-follow-feed-url';
+import { getReaderAliasedFollowFeedUrl } from 'state/reader/follows/selectors';
 import { SEARCH_RESULTS_URL_INPUT } from 'reader/follow-sources';
 import FollowButton from 'reader/follow-button';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
@@ -176,12 +174,18 @@ class SearchStream extends React.Component {
 						/>
 						{ query && (
 							<SegmentedControl compact className="search-stream__sort-picker">
-								<ControlItem selected={ sortOrder !== 'date' } onClick={ this.useRelevanceSort }>
+								<SegmentedControl.Item
+									selected={ sortOrder !== 'date' }
+									onClick={ this.useRelevanceSort }
+								>
 									{ TEXT_RELEVANCE_SORT }
-								</ControlItem>
-								<ControlItem selected={ sortOrder === 'date' } onClick={ this.useDateSort }>
+								</SegmentedControl.Item>
+								<SegmentedControl.Item
+									selected={ sortOrder === 'date' }
+									onClick={ this.useDateSort }
+								>
 									{ TEXT_DATE_SORT }
-								</ControlItem>
+								</SegmentedControl.Item>
 							</SegmentedControl>
 						) }
 					</CompactCard>

@@ -1,10 +1,10 @@
-/** @format */
 /**
  * External dependencies
  */
+import { isWithinBreakpoint, isMobile, isDesktop } from '@automattic/viewport';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { debounce } from 'lodash';
+import { debounce, get } from 'lodash';
 import React from 'react';
 import debugFactory from 'debug';
 
@@ -15,19 +15,21 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption, isSitePreviewable } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { isWithinBreakpoint, isMobile, isDesktop } from 'lib/viewport';
-import Button from 'components/button';
+import canCurrentUser from 'state/selectors/can-current-user';
+import getEditorUrl from 'state/selectors/get-editor-url';
+import { Button } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import Main from 'components/main';
-import {
-	showInlineHelpPopover,
-	showChecklistPrompt,
-	showOnboardingWelcomePrompt,
-} from 'state/inline-help/actions';
+import { showInlineHelpPopover, showOnboardingWelcomePrompt } from 'state/inline-help/actions';
 import WebPreview from 'components/web-preview';
 import { recordTracksEvent } from 'state/analytics/actions';
+
+/**
+ * Internal dependencies
+ */
+import './style.scss';
 
 const debug = debugFactory( 'calypso:my-sites:preview' );
 
@@ -36,6 +38,7 @@ class PreviewMain extends React.Component {
 
 	state = {
 		previewUrl: null,
+		editUrl: null,
 		externalUrl: null,
 		showingClose: false,
 		// Set to one of the possible default values in client/components/web-preview/toolbar.jsx
@@ -71,10 +74,6 @@ class PreviewMain extends React.Component {
 		if ( this.props.help || this.props.welcome ) {
 			this.props.showInlineHelpPopover();
 		}
-
-		if ( this.props.checklist ) {
-			this.props.showChecklistPrompt();
-		}
 	}
 
 	componentWillUnmount() {
@@ -90,6 +89,7 @@ class PreviewMain extends React.Component {
 				this.setState( {
 					previewUrl: null,
 					externalUrl: null,
+					editUrl: null,
 				} );
 			}
 			return;
@@ -111,12 +111,33 @@ class PreviewMain extends React.Component {
 			this.setState( {
 				previewUrl: newUrl,
 				externalUrl: this.props.site.URL,
+				editUrl: this.getEditButtonURL(),
 			} );
 		}
 	}
 
 	getBasePreviewUrl() {
 		return this.props.site.options.unmapped_url;
+	}
+
+	showEditButton = () => {
+		if ( 'posts' === get( this.props.site, [ 'options', 'show_on_front' ] ) ) {
+			return false;
+		}
+
+		if ( ! this.props.canEditPages ) {
+			return false;
+		}
+
+		return true;
+	};
+
+	getEditButtonURL() {
+		if ( this.showEditButton() ) {
+			return this.props.editorURL;
+		}
+
+		return null;
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -175,6 +196,8 @@ class PreviewMain extends React.Component {
 					showUrl={ !! this.state.externalUrl }
 					showClose={ this.state.showingClose }
 					onClose={ this.focusSidebar }
+					showEdit={ this.showEditButton() }
+					editUrl={ this.state.editUrl }
 					previewUrl={ this.state.previewUrl }
 					externalUrl={ this.state.externalUrl }
 					loadingMessage={ this.props.translate(
@@ -190,21 +213,22 @@ class PreviewMain extends React.Component {
 
 const mapState = state => {
 	const selectedSiteId = getSelectedSiteId( state );
+	const site = getSelectedSite( state );
+	const homePagePostId = get( site, [ 'options', 'page_on_front' ] );
+
 	return {
 		isPreviewable: isSitePreviewable( state, selectedSiteId ),
 		selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce' ) || '',
-		site: getSelectedSite( state ),
+		site: site,
 		siteId: selectedSiteId,
+		canEditPages: canCurrentUser( state, selectedSiteId, 'edit_pages' ),
+		editorURL: getEditorUrl( state, selectedSiteId, homePagePostId, 'page' ),
 	};
 };
 
-export default connect(
-	mapState,
-	{
-		recordTracksEvent,
-		setLayoutFocus,
-		showInlineHelpPopover,
-		showChecklistPrompt,
-		showOnboardingWelcomePrompt,
-	}
-)( localize( PreviewMain ) );
+export default connect( mapState, {
+	recordTracksEvent,
+	setLayoutFocus,
+	showInlineHelpPopover,
+	showOnboardingWelcomePrompt,
+} )( localize( PreviewMain ) );

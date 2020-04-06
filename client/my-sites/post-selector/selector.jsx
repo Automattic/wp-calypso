@@ -1,17 +1,13 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import getScrollbarSize from 'dom-helpers/util/scrollbarSize';
-import List from 'react-virtualized/List';
-import AutoSizer from 'react-virtualized/AutoSizer';
+import scrollbarSize from 'dom-helpers/scrollbarSize';
+import { AutoSizer, List } from '@automattic/react-virtualized';
 import {
 	debounce,
 	memoize,
@@ -29,7 +25,7 @@ import {
  * Internal dependencies
  */
 import NoResults from './no-results';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import Search from './search';
 import { decodeEntities } from 'lib/formatting';
 import {
@@ -39,7 +35,6 @@ import {
 	getPostsLastPageForQuery,
 } from 'state/posts/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
-import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import QueryPosts from 'components/data/query-posts';
 
@@ -86,7 +81,7 @@ class PostSelectorPosts extends React.Component {
 		requestedPages: [ 1 ],
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.itemHeights = {};
 		this.hasPerformedSearch = false;
 
@@ -98,7 +93,7 @@ class PostSelectorPosts extends React.Component {
 		}, SEARCH_DEBOUNCE_TIME_MS );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			! isEqual( this.props.queryWithVersion, nextProps.queryWithVersion ) ||
 			this.props.siteId !== nextProps.siteId
@@ -168,14 +163,12 @@ class PostSelectorPosts extends React.Component {
 
 	hasNoSearchResults = () => {
 		return (
-			! this.props.loading &&
-			( this.props.posts && ! this.props.posts.length ) &&
-			this.state.searchTerm
+			! this.props.loading && this.props.posts && ! this.props.posts.length && this.state.searchTerm
 		);
 	};
 
 	hasNoPosts = () => {
-		return ! this.props.loading && ( this.props.posts && ! this.props.posts.length );
+		return ! this.props.loading && this.props.posts && ! this.props.posts.length;
 	};
 
 	getItem = index => {
@@ -296,7 +289,7 @@ class PostSelectorPosts extends React.Component {
 
 		if ( ! this.hasPerformedSearch ) {
 			this.hasPerformedSearch = true;
-			analytics.ga.recordEvent( this.props.analyticsPrefix, 'Performed Post Search' );
+			gaRecordEvent( this.props.analyticsPrefix, 'Performed Post Search' );
 		}
 
 		this.setState( { searchTerm } );
@@ -332,7 +325,7 @@ class PostSelectorPosts extends React.Component {
 							<span
 								className="post-selector__label-type"
 								style={ {
-									paddingRight: this.isCompact() ? 0 : getScrollbarSize(),
+									paddingRight: this.isCompact() ? 0 : scrollbarSize(),
 								} }
 							>
 								{ decodeEntities(
@@ -463,12 +456,7 @@ class PostSelectorPosts extends React.Component {
 
 export default connect( ( state, ownProps ) => {
 	const { siteId, query } = ownProps;
-
-	const apiVersion =
-		! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.0' )
-			? '1.2'
-			: undefined;
-	const queryWithVersion = { ...query, apiVersion };
+	const queryWithVersion = { ...query, apiVersion: '1.2' };
 
 	return {
 		posts: getPostsForQueryIgnoringPage( state, siteId, queryWithVersion ),

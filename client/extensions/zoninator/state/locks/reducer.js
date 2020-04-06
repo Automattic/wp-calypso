@@ -1,30 +1,51 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
 import {
 	ZONINATOR_REQUEST_LOCK_ERROR,
 	ZONINATOR_RESET_LOCK,
 	ZONINATOR_UPDATE_LOCK,
 } from '../action-types';
 
-export const blocked = createReducer( false, {
-	[ ZONINATOR_UPDATE_LOCK ]: () => false,
-	[ ZONINATOR_REQUEST_LOCK_ERROR ]: () => true,
+export const blocked = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case ZONINATOR_UPDATE_LOCK:
+			return false;
+		case ZONINATOR_REQUEST_LOCK_ERROR:
+			return true;
+	}
+
+	return state;
 } );
 
-export const created = createReducer( 0, {
-	[ ZONINATOR_RESET_LOCK ]: ( state, { time } ) => time,
+export const created = withoutPersistence( ( state = 0, action ) => {
+	switch ( action.type ) {
+		case ZONINATOR_RESET_LOCK: {
+			const { time } = action;
+			return time;
+		}
+	}
+
+	return state;
 } );
 
-export const expires = createReducer( 0, {
-	[ ZONINATOR_UPDATE_LOCK ]: ( state, action ) => action.expires,
+export const expires = withoutPersistence( ( state = 0, action ) => {
+	switch ( action.type ) {
+		case ZONINATOR_UPDATE_LOCK:
+			return action.expires;
+	}
+
+	return state;
 } );
 
-export const maxLockPeriod = createReducer( 0, {
-	[ ZONINATOR_UPDATE_LOCK ]: ( state, action ) => action.maxLockPeriod,
+export const maxLockPeriod = withoutPersistence( ( state = 0, action ) => {
+	switch ( action.type ) {
+		case ZONINATOR_UPDATE_LOCK:
+			return action.maxLockPeriod;
+	}
+
+	return state;
 } );
 
 export const items = combineReducers( {

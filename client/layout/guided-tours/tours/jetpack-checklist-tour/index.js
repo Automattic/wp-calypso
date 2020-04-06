@@ -18,7 +18,7 @@ export const JetpackChecklistTour = makeTour(
 			style={ {
 				marginTop: '-20px',
 			} }
-			target={ '.checklist__header-main' }
+			target={ '.jetpack-checklist__header' }
 		>
 			{ ( { translate } ) => (
 				<>

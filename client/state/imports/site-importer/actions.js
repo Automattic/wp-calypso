@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -146,15 +145,9 @@ export const importSite = ( {
 	dispatch( recordTracksEvent( 'calypso_site_importer_start_import_request', trackingParams ) );
 	dispatch( startSiteImporterImport() );
 
-	wpcom.req
-		.post( {
-			path: `/sites/${ siteId }/site-importer/import-site?${ stringify( params ) }`,
-			apiNamespace: 'wpcom/v2',
-			formData: [
-				[ 'import_status', JSON.stringify( toApi( importerStatus ) ) ],
-				[ 'site_url', targetSiteUrl ],
-			],
-		} )
+	wpcom
+		.undocumented()
+		.importWithSiteImporter( siteId, toApi( importerStatus ), params, targetSiteUrl )
 		.then( response => {
 			// At this point we're assuming that an import is going to happen
 			// so we set the user's editor to Gutenberg in order to make sure
@@ -237,3 +230,7 @@ export const resetSiteImporterImport = ( { importStage, site, targetSiteUrl } ) 
 		} ),
 		{ type: SITE_IMPORTER_IMPORT_RESET }
 	);
+
+export const clearSiteImporterImport = () => ( {
+	type: SITE_IMPORTER_IMPORT_RESET,
+} );

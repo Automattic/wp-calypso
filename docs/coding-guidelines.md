@@ -8,6 +8,7 @@ Our coding guidelines are based on the standards adopted by the WordPress core p
 - [HTML](coding-guidelines/html.md)
 - [Sass/CSS](coding-guidelines/css.md)
 - [JavaScript](coding-guidelines/javascript.md)
+- [TypeScript](coding-guidelines/typescript.md)
 
 ### General Rules
 

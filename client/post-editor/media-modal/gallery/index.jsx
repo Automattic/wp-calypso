@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -46,7 +44,7 @@ class EditorMediaModalGallery extends React.Component {
 		invalidItemDropped: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( this.props.settings ) {
 			this.maybeUpdateColumnsSetting();
 			this.reconcileSettingsItems( this.props.settings, this.props.items );
@@ -163,9 +161,6 @@ class EditorMediaModalGallery extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
-	}
-)( localize( EditorMediaModalGallery ) );
+export default connect( null, {
+	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
+} )( localize( EditorMediaModalGallery ) );

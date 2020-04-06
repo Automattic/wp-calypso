@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -163,7 +161,4 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { openRefundDialog, openReprintDialog, openDetailsDialog }, dispatch );
 };
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( localize( LabelItem ) );
+export default connect( null, mapDispatchToProps )( localize( LabelItem ) );

@@ -1,18 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React, { PureComponent } from 'react';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
+import { languages } from 'languages';
 import LanguagePicker from 'components/language-picker';
-import Card from 'components/card';
+import { Card, Button } from '@automattic/components';
 
 class LanguagePickerExample extends PureComponent {
 	static displayName = 'LanguagePickerExample';
@@ -41,25 +38,19 @@ class LanguagePickerExample extends PureComponent {
 	render() {
 		const { disabled, loading, language } = this.state;
 
-		const loadingCls = classNames( 'docs__design-toggle button', {
-			'is-busy': loading,
-		} );
-
 		return (
 			<div>
-				<a className="docs__design-toggle button" onClick={ this.toggleDisabled }>
-					{ disabled ? 'Enabled State' : 'Disabled State' }
-				</a>
-				<a
-					className={ loadingCls }
-					style={ { marginRight: '8px' } }
-					onClick={ this.triggerLoading }
-				>
-					Test Loading
-				</a>
+				<div className="docs__design-toggle">
+					<Button onClick={ this.toggleDisabled }>
+						{ disabled ? 'Enabled State' : 'Disabled State' }
+					</Button>
+					<Button busy={ loading } style={ { marginLeft: '8px' } } onClick={ this.triggerLoading }>
+						Test Loading
+					</Button>
+				</div>
 				<Card>
 					<LanguagePicker
-						languages={ config( 'languages' ) }
+						languages={ languages }
 						valueKey="langSlug"
 						value={ loading ? null : language }
 						onChange={ this.selectLanguage }

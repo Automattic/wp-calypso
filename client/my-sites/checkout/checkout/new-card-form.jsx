@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CreditCardFormFields from 'components/credit-card-form-fields';
-import { setNewCreditCardDetails } from 'lib/upgrades/actions';
+import { setNewCreditCardDetails } from 'lib/transaction/actions';
 import { INPUT_VALIDATION } from 'lib/store-transactions/step-types';
 
 class NewCardForm extends Component {
@@ -30,8 +28,21 @@ class NewCardForm extends Component {
 		return transaction.step.name === INPUT_VALIDATION && transaction.errors[ fieldName ];
 	};
 
+	getFields = () => {
+		return (
+			<CreditCardFormFields
+				card={ this.props.transaction.newCardFormFields }
+				countriesList={ this.props.countriesList }
+				isNewTransaction={ !! this.props.transaction }
+				eventFormName="Checkout Form"
+				onFieldChange={ this.handleFieldChange }
+				getErrorMessage={ this.getErrorMessage }
+			/>
+		);
+	};
+
 	render() {
-		const { countriesList, hasStoredCards, translate, transaction, selected } = this.props;
+		const { hasStoredCards, translate, selected } = this.props;
 
 		return (
 			<div className="checkout__new-card">
@@ -46,16 +57,7 @@ class NewCardForm extends Component {
 						</h6>
 					) : null }
 
-					{ ( selected || ! hasStoredCards ) && (
-						<CreditCardFormFields
-							card={ transaction.newCardFormFields }
-							countriesList={ countriesList }
-							isNewTransaction={ !! transaction }
-							eventFormName="Checkout Form"
-							onFieldChange={ this.handleFieldChange }
-							getErrorMessage={ this.getErrorMessage }
-						/>
-					) }
+					{ ( selected || ! hasStoredCards ) && this.getFields() }
 				</div>
 			</div>
 		);

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,14 +11,12 @@ import { connect } from 'react-redux';
 import AsyncLoad from 'components/async-load';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 
-function GuidedTours( props ) {
-	const { shouldShow, ...ownProps } = props;
-
+function GuidedTours( { shouldShow } ) {
 	if ( ! shouldShow ) {
 		return null;
 	}
 
-	return <AsyncLoad require="layout/guided-tours/component" { ...ownProps } />;
+	return <AsyncLoad require="layout/guided-tours/component" />;
 }
 
 export default connect( state => {

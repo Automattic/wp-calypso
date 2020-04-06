@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,10 +12,10 @@ export const isRequestingFeed = ( state, siteId, zoneId ) =>
 /**
  * Returns the posts feed for the specified site and zone ID.
  *
- * @param  {Object} state  Global state tree
- * @param  {Number} siteId Site ID
- * @param  {Number} zoneId Zone ID
- * @return {Array}         Feed
+ * @param  {object} state  Global state tree
+ * @param  {number} siteId Site ID
+ * @param  {number} zoneId Zone ID
+ * @returns {Array}         Feed
  */
 export const getFeed = ( state, siteId, zoneId ) =>
 	get( getFeedsState( state ), [ 'items', siteId, zoneId ], [] );

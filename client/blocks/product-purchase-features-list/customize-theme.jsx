@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,6 +10,11 @@ import { localize } from 'i18n-calypso';
  */
 import PurchaseDetail from 'components/purchase-detail';
 import { isEnabled } from 'config';
+
+/**
+ * Image dependencies
+ */
+import customizeImage from 'assets/images/illustrations/dashboard.svg';
 
 function isCustomizeEnabled() {
 	return isEnabled( 'manage/customize' );
@@ -29,7 +32,7 @@ export default localize( ( { selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img alt="" src="/calypso/images/illustrations/dashboard.svg" /> }
+				icon={ <img alt="" src={ customizeImage } /> }
 				title={ translate( 'Advanced customization' ) }
 				description={ translate(
 					"Change your site's appearance in a few clicks, with an expanded " +

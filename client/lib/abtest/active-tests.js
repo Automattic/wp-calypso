@@ -1,15 +1,4 @@
-/** @format */
 export default {
-	improvedOnboarding: {
-		datestamp: '20190314',
-		variations: {
-			main: 0,
-			onboarding: 100,
-		},
-		defaultVariation: 'main',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
 		variations: {
@@ -37,13 +26,13 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	ATUpgradeOnCancel: {
-		datestamp: '20170515',
+	showCompositeCheckout: {
+		datestamp: '20200326',
 		variations: {
-			hide: 20,
-			show: 80,
+			composite: 50,
+			regular: 50,
 		},
-		defaultVariation: 'hide',
+		defaultVariation: 'regular',
 		allowExistingUsers: true,
 	},
 	skipThemesSelectionModal: {
@@ -72,14 +61,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	gSuiteContinueButtonCopy: {
-		datestamp: '20190307',
-		variations: {
-			purchase: 50,
-			original: 50,
-		},
-		defaultVariation: 'original',
-	},
 	pageBuilderMVP: {
 		datestamp: '20190419',
 		variations: {
@@ -99,40 +80,47 @@ export default {
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
 	},
-	popularPlanBy: {
-		datestamp: '20190529',
-		variations: {
-			siteType: 0,
-			customerType: 100,
-		},
-		defaultVariation: 'siteType',
-	},
-	hideBloggerPlan2: {
-		datestamp: '20190627',
-		variations: {
-			hide: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		localeTargets: 'any',
-	},
-	proratedCreditsBanner: {
-		//this test is used to dial down the upsell offer
-		datestamp: '20190626',
-		variations: {
-			control: 50,
-			variant: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	skippableDomainStep: {
-		datestamp: '20190702',
+		datestamp: '20290717',
 		variations: {
-			skippable: 50,
-			notSkippable: 50,
+			skippable: 0,
+			notSkippable: 100,
 		},
 		defaultVariation: 'notSkippable',
 		allowExistingUsers: true,
+	},
+	passwordlessSignup: {
+		datestamp: '20291029',
+		variations: {
+			passwordless: 0,
+			default: 100,
+		},
+		defaultVariation: 'default',
+	},
+	domainStepCopyUpdates: {
+		datestamp: '20191121',
+		variations: {
+			variantShowUpdates: 90,
+			control: 10,
+		},
+		defaultVariation: 'variantShowUpdates',
+		allowExistingUsers: true,
+	},
+	planStepCopyUpdates: {
+		datestamp: '20200326',
+		variations: {
+			variantCopyUpdates: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	ATPrivacy: {
+		datestamp: '20200331',
+		variations: {
+			variant: 0,
+			control: 100,
+		},
+		defaultVariation: 'control',
 	},
 };

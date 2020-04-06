@@ -7,7 +7,7 @@
 	&.is-bottom-left,
 	&.is-bottom {
 		.popover__arrow {
-			border-bottom-color: var( --color-neutral-600 );
+			border-bottom-color: var( --color-neutral-60 );
 			top: 4px;
 			right: 10px;
 
@@ -39,7 +39,7 @@
 	&.is-top-left,
 	&.is-top-right {
 		.popover__arrow {
-			border-top-color: var( --color-neutral-600 );
+			border-top-color: var( --color-neutral-60 );
 			bottom: 4px;
 			right: 10px;
 
@@ -107,14 +107,14 @@
 	&.is-left {
 		.popover__arrow {
 			margin-right: 4px;
-			border-left-color: var( --color-neutral-600 );
+			border-left-color: var( --color-neutral-60 );
 		}
 	}
 
 	&.is-right {
 		.popover__arrow {
 			margin-left: 4px;
-			border-right-color: var( --color-neutral-600 );
+			border-right-color: var( --color-neutral-60 );
 		}
 	}
 
@@ -122,8 +122,8 @@
 		border: 0;
 		box-shadow: none;
 		border-radius: 2px;
-		color: var( --color-white );
-		background: var( --color-neutral-600 );
+		color: var( --color-text-inverted );
+		background: var( --color-neutral-60 );
 		font-size: 12px;
 		padding: 6px 10px;
 		text-align: left;
@@ -159,9 +159,4 @@
 			padding: 2px 0;
 		}
 	}
-}
-
-.tooltip__hr {
-	margin: 8px 0;
-	background: var( --color-neutral-light );
 }

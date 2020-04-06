@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -14,7 +11,9 @@ import { localize, translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import SignupSitePreviewIframe from 'components/signup-site-preview/iframe';
+import SignupSitePreviewScreenshot from 'components/signup-site-preview/screenshot';
 import Spinner from 'components/spinner';
+import { getSiteVerticalPreviewScreenshot } from 'state/signup/steps/site-vertical/selectors';
 
 /**
  * Style dependencies
@@ -63,6 +62,7 @@ export class SignupSitePreview extends Component {
 		onPreviewClick: PropTypes.func,
 		resize: PropTypes.bool,
 		scrolling: PropTypes.bool,
+		screenshotUrl: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -98,25 +98,38 @@ export class SignupSitePreview extends Component {
 	setWrapperHeight = wrapperHeight => this.setState( { wrapperHeight } );
 
 	render() {
-		const { isDesktop, isPhone } = this.props;
+		const { isDesktop, isPhone, screenshotUrl } = this.props;
 		const className = classNames( this.props.className, 'signup-site-preview__wrapper', {
 			'is-desktop': isDesktop,
 			'is-phone': isPhone,
 		} );
+		const usingScreenshot = !! screenshotUrl;
 		const wrapperHeightStyle = {
-			height: this.state.wrapperHeight,
+			height: usingScreenshot ? 'auto' : this.state.wrapperHeight,
 		};
+
+		const chrome = isPhone ? <MockupChromeMobile /> : <MockupChromeDesktop />;
 
 		return (
 			<div className={ className } style={ this.props.resize ? wrapperHeightStyle : null }>
 				<div className="signup-site-preview__iframe-wrapper">
-					{ isPhone ? <MockupChromeMobile /> : <MockupChromeDesktop /> }
-					{ ! this.state.isLoaded && <Spinner size={ isPhone ? 20 : 40 } /> }
-					<SignupSitePreviewIframe
-						{ ...this.props }
-						setIsLoaded={ this.setIsLoaded }
-						setWrapperHeight={ this.setWrapperHeight }
-					/>
+					{ chrome }
+
+					{ ! usingScreenshot && this.state.isLoading && <Spinner size={ isPhone ? 20 : 40 } /> }
+					{ ! usingScreenshot && (
+						<SignupSitePreviewIframe
+							{ ...this.props }
+							setIsLoaded={ this.setIsLoaded }
+							setWrapperHeight={ this.setWrapperHeight }
+						/>
+					) }
+
+					{ usingScreenshot && (
+						<SignupSitePreviewScreenshot
+							{ ...this.props }
+							setWrapperHeight={ this.setWrapperHeight }
+						/>
+					) }
 				</div>
 			</div>
 		);
@@ -127,6 +140,7 @@ export default connect(
 	( state, ownProps ) => ( {
 		isDesktop: 'desktop' === ownProps.defaultViewportDevice,
 		isPhone: 'phone' === ownProps.defaultViewportDevice,
+		screenshotUrl: getSiteVerticalPreviewScreenshot( state, ownProps.defaultViewportDevice ),
 	} ),
 	null
 )( localize( SignupSitePreview ) );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -63,7 +61,7 @@ class SiteSettingsFormWriting extends Component {
 			<form
 				id="site-settings"
 				onSubmit={ handleSubmitForm }
-				className="site-settings__general-settings"
+				className="site-settings__writing-settings"
 			>
 				{ config.isEnabled( 'manage/site-settings/categories' ) && (
 					<div className="site-settings__taxonomies">
@@ -118,7 +116,7 @@ class SiteSettingsFormWriting extends Component {
 					isSaving={ isSavingSettings }
 					onButtonClick={ handleSubmitForm }
 					showButton
-					title={ translate( 'Content types' ) }
+					title={ translate( 'Content Types' ) }
 				/>
 				<CustomContentTypes
 					handleAutosavingToggle={ handleAutosavingToggle }

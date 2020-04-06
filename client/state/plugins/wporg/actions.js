@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +8,7 @@ const debug = debugFactory( 'calypso:wporg-data:actions' );
 /**
  * Internal dependencies
  */
-import wporg from 'lib/wporg';
+import { fetchPluginInformation } from 'lib/wporg';
 import { normalizePluginData } from 'lib/plugins/utils';
 import { WPORG_PLUGIN_DATA_RECEIVE, FETCH_WPORG_PLUGIN_DATA } from 'state/action-types';
 
@@ -30,7 +29,7 @@ export function fetchPluginData( pluginSlug ) {
 		} );
 
 		try {
-			const data = await wporg.fetchPluginInformation( pluginSlug );
+			const data = await fetchPluginInformation( pluginSlug );
 
 			debug( 'plugin details fetched from .org', pluginSlug, data );
 			dispatch( {

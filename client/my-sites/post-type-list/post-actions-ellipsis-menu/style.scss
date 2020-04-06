@@ -12,3 +12,24 @@
 		margin-right: -16px;
 	}
 }
+
+.ellipsis-menu__menu .button {
+	border: inherit;
+	border-bottom: inherit;
+	border-radius: inherit;
+	font-weight: inherit;
+
+	&:hover {
+		color: white;
+	}
+
+	.gridicon {
+		top: inherit;
+		margin-top: inherit;
+	}
+}
+
+.ellipsis-menu__menu .clipboard-button {
+	line-height: normal;
+	padding: 8px 16px;
+}

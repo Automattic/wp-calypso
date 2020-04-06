@@ -1,6 +1,6 @@
 .offline-status {
-	background: var( --color-primary-dark );
-	color: var( --color-white );
+	background: var( --color-masterbar-item-active-background );
+	color: var( --color-masterbar-text );
 	border-radius: 24px;
 	font-size: 13px;
 	height: auto;
@@ -12,7 +12,7 @@
 	z-index: z-index( 'root', '.offline-status' );
 
 	.gridicon {
-		color: var( --color-white );
+		color: var( --color-masterbar-text );
 		margin: -2px 2px 0 -8px;
 		opacity: 0.8;
 		vertical-align: middle;

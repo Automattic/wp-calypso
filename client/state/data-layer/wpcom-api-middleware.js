@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -61,7 +59,7 @@ export const middleware = handlersFor => store => next => {
 	 * Middleware handler
 	 *
 	 * @function
-	 * @param {Object} action Redux action
+	 * @param {object} action Redux action
 	 * @returns {undefined} please do not use
 	 */
 	return action => {

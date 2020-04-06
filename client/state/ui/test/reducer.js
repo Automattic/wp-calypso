@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,42 +6,10 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import reducer, { isNotificationsOpen, selectedSiteId, siteSelectionInitialized } from '../reducer';
+import { isNotificationsOpen, selectedSiteId, siteSelectionInitialized } from '../reducer';
 import { SELECTED_SITE_SET, NOTIFICATIONS_PANEL_TOGGLE } from 'state/action-types';
 
 describe( 'reducer', () => {
-	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'actionLog',
-			'billingTransactions',
-			'comments',
-			'dropZone',
-			'editor',
-			'googleMyBusiness',
-			'guidedTour',
-			'gutenbergOptInDialog',
-			'hasSidebar',
-			'isLoading',
-			'isNotificationsOpen',
-			'isPreviewShowing',
-			'layoutFocus',
-			'language',
-			'masterbarVisibility',
-			'mediaModal',
-			'npsSurveyNotice',
-			'oauth2Clients',
-			'payment',
-			'postTypeList',
-			'preview',
-			'route',
-			'reader',
-			'section',
-			'selectedSiteId',
-			'siteSelectionInitialized',
-			'themeSetup',
-		] );
-	} );
-
 	describe( '#selectedSiteId()', () => {
 		test( 'should default to null', () => {
 			const state = selectedSiteId( undefined, {} );

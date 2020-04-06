@@ -1,14 +1,9 @@
-/** @format */
-
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
 jest.mock( 'lib/analytics/index', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'lib/user', () => ( {} ) );
-jest.mock( 'components/main', () => 'MainComponent' );
-jest.mock( 'components/popover', () => 'Popover' );
 
 /**
  * External dependencies

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,13 +5,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import { emailManagement } from 'my-sites/email/paths';
 import isGSuiteStatsNudgeDismissed from 'state/selectors/is-gsuite-stats-nudge-dismissed';
 import QueryPreferences from 'components/data/query-preferences';
@@ -104,24 +101,29 @@ class GSuiteStatsNudge extends Component {
 
 					<div className="gsuite-stats-nudge__info">
 						<h1 className="gsuite-stats-nudge__title">
-							{ translate(
-								'Customers can’t reach you at contact@%s – click here to add a mailbox',
-								{ args: domainSlug }
-							) }
+							{ translate( 'Get custom email addresses with %(domain)s', {
+								args: { domain: domainSlug }
+							} ) }
 						</h1>
+
 						{
 							<p>
 								{ translate(
-									"Let customers reach you at {{strong}}contact@%s{{/strong}}. We've partnered with Google to offer you email, storage, docs, calendars, and more integrated with your site.",
+									"An email address like {{strong}}contact@%(domain)s{{/strong}} looks pro and helps customers trust you. We've partnered with Google to offer you email, storage, docs, calendars, and more integrated with your site.",
 									{
-										args: domainSlug,
+										args: { domain: domainSlug },
 										components: { strong: <strong /> },
 									}
 								) }
 							</p>
 						}
+
 						<div className="gsuite-stats-nudge__button-row">
-							<Button href={ url } primary onClick={ this.onStartNowClick }>
+							<Button
+								href={ url }
+								primary={ this.props.primaryButton }
+								onClick={ this.onStartNowClick }
+							>
 								{ translate( 'Get G Suite' ) }
 							</Button>
 						</div>

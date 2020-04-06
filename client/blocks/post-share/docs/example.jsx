@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,7 +15,7 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import { getSite, getSitePlanSlug } from 'state/sites/selectors';
 import { getSitePosts } from 'state/posts/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import QuerySites from 'components/data/query-sites';
 import FormToggle from 'components/forms/form-toggle/compact';
 import Notice from 'components/notice';
@@ -58,9 +56,7 @@ class PostShareExample extends Component {
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
-						text={ `Keep in mind that you are able to share the '${
-							post.title
-						}' post now. Be careful!` }
+						text={ `Keep in mind that you are able to share the '${ post.title }' post now. Be careful!` }
 					/>
 				) }
 

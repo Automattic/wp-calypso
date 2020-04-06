@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { compact } from 'lodash';
 
 /**
@@ -12,7 +9,7 @@ import { compact } from 'lodash';
 import createSelector from 'lib/create-selector';
 import { decodeEntities } from 'lib/formatting';
 import { getSelectedSiteId, isSiteSection } from 'state/ui/selectors';
-import { getSiteTitle } from 'state/sites/selectors';
+import getSiteTitle from 'state/sites/selectors/get-site-title';
 
 const UNREAD_COUNT_CAP = 40;
 
@@ -20,8 +17,8 @@ const UNREAD_COUNT_CAP = 40;
  * Returns the document title as set by the DocumentHead component or setTitle
  * action.
  *
- * @param  {Object}  state  Global state tree
- * @return {?String}        Document title
+ * @param  {object}  state  Global state tree
+ * @returns {?string}        Document title
  */
 export function getDocumentHeadTitle( state ) {
 	return state.documentHead.title;
@@ -30,8 +27,8 @@ export function getDocumentHeadTitle( state ) {
 /**
  * Returns a count reflecting unread items.
  *
- * @param  {Object}  state  Global state tree
- * @return {?String}        Unread count (string because it can be e.g. '40+')
+ * @param  {object}  state  Global state tree
+ * @returns {?string}        Unread count (string because it can be e.g. '40+')
  */
 export function getDocumentHeadUnreadCount( state ) {
 	return state.documentHead.unreadCount;
@@ -42,8 +39,8 @@ export function getDocumentHeadUnreadCount( state ) {
  * UNREAD_COUNT_CAP. Any value greater than the cap yields 'cap+'. Examples:
  * '1', '20', '39', '40+'
  *
- * @param  {Object}  state  Global state tree
- * @return {String}         Unread count (string because it can be e.g. '40+')
+ * @param  {object}  state  Global state tree
+ * @returns {string}         Unread count (string because it can be e.g. '40+')
  */
 export function getDocumentHeadCappedUnreadCount( state ) {
 	const unreadCount = getDocumentHeadUnreadCount( state );
@@ -58,8 +55,8 @@ export function getDocumentHeadCappedUnreadCount( state ) {
  * Returns the formatted document title, based on the currently set title,
  * capped unreadCount, and selected site.
  *
- * @param  {Object}  state  Global state tree
- * @return {String}         Formatted title
+ * @param  {object}  state  Global state tree
+ * @returns {string}         Formatted title
  */
 export const getDocumentHeadFormattedTitle = createSelector(
 	state => {
@@ -88,8 +85,8 @@ export const getDocumentHeadFormattedTitle = createSelector(
  * Returns an array of document meta objects as set by the DocumentHead
  * component or setDocumentHeadMeta action.
  *
- * @param  {Object}  state  Global state tree
- * @return {Object[]}       Array of meta objects
+ * @param  {object}  state  Global state tree
+ * @returns {object[]}       Array of meta objects
  */
 export function getDocumentHeadMeta( state ) {
 	return state.documentHead.meta;
@@ -99,8 +96,8 @@ export function getDocumentHeadMeta( state ) {
  * Returns an array of document link objects as set by the DocumentHead
  * component or setDocumentHeadLink action.
  *
- * @param  {Object}  state  Global state tree
- * @return {Object[]}       Array of link objects
+ * @param  {object}  state  Global state tree
+ * @returns {object[]}       Array of link objects
  */
 export function getDocumentHeadLink( state ) {
 	return state.documentHead.link;

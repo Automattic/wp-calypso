@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -15,8 +13,8 @@ import {
  * Returns an action object used in signalling that the document head title
  * should be assigned to the specified value.
  *
- * @param  {String} title Document title
- * @return {Object}       Action object
+ * @param  {string} title Document title
+ * @returns {object}       Action object
  */
 export function setDocumentHeadTitle( title ) {
 	return {
@@ -29,8 +27,8 @@ export function setDocumentHeadTitle( title ) {
  * Returns an action object used in signalling that the unread count to be
  * shown in the document title should be assigned to the specified value.
  *
- * @param  {Number} count Unread count
- * @return {Object}       Action object
+ * @param  {number} count Unread count
+ * @returns {object}       Action object
  */
 export function setDocumentHeadUnreadCount( count ) {
 	return {
@@ -43,8 +41,8 @@ export function setDocumentHeadUnreadCount( count ) {
  * Returns an action object used in signalling that the specified link object
  * should be included in the set of document head links.
  *
- * @param  {Object} link Link object
- * @return {Object}      Action object
+ * @param  {object} link Link object
+ * @returns {object}      Action object
  */
 export function setDocumentHeadLink( link ) {
 	return {
@@ -57,8 +55,8 @@ export function setDocumentHeadLink( link ) {
  * Returns an action object used in signalling that the specified meta object
  * should be included in the set of document head metas.
  *
- * @param  {Object} meta Meta object
- * @return {Object}      Action object
+ * @param  {object} meta Meta object
+ * @returns {object}      Action object
  */
 export function setDocumentHeadMeta( meta ) {
 	return {

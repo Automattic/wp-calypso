@@ -52,7 +52,7 @@ export const AuthWrapper = Wrapped =>
 	class extends Component {
 		state = {};
 
-		componentWillMount() {
+		UNSAFE_componentWillMount() {
 			if ( 'production' !== process.env.NODE_ENV ) {
 				return this.setState( { oAuthToken: getStoredToken() }, this.maybeRedirectToOAuthLogin );
 			}
@@ -80,9 +80,7 @@ export const AuthWrapper = Wrapped =>
 
 			const baseUrl = 'https://public-api.wordpress.com/oauth2/authorize';
 			const redirectUri = `${ window.location.origin }${ this.props.redirectPath }`;
-			const uri = `${ baseUrl }?client_id=${
-				this.props.clientId
-			}&redirect_uri=${ redirectUri }&response_type=token&scope=global`;
+			const uri = `${ baseUrl }?client_id=${ this.props.clientId }&redirect_uri=${ redirectUri }&response_type=token&scope=global`;
 
 			const auth = getTokenFromUrl();
 			if ( auth ) {

@@ -1,6 +1,5 @@
-/** @format */
 /**
- * @fileoverview Ensure placeholder counts match between singular and plural strings
+ * @file Ensure placeholder counts match between singular and plural strings
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.

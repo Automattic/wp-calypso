@@ -33,11 +33,12 @@ Once you've added the flow to `flows-pure.js`, it'll be available for users at `
 
 Anyone can create steps that flow designers can use in their flows.
 
-You can add a new step to Modular Signup from `/client/signup/config/steps-pure.js`. A step is defined by three properties:
+You can add a new step to Modular Signup from `/client/signup/config/steps-pure.js`. A step is defined by a number of properties:
 
 - `stepName` is the identifier used to reference a step in `/client/signup/config/flows-pure.js`.
 - (optional) `dependencies`, which specify which properties this step needs from other steps in the flow in order to be processed.
-- (optional) `providesDependencies` is an array that lets the signup framework know what dependencies the step is expected to provide. If the step does not provide all of these, or if it provides more than it says, an error will be thrown.
+- (optional) `providesDependencies` is an array that lets the signup framework know what dependencies the step is expected to provide. If the step does not provide all of these, or if it provides more than it says, an error will be thrown (unless `optionalDependencies` is used, see below).
+- (optional) `optionalDependencies` is an array that lists which of the items in `providesDependencies` are optional. If one of these values is missing when a step is submitted there'll be no error.
 - (optional) `delayApiRequestUntilComplete` is a boolean that, when true, causes the step's `apiRequestFunction` to be called only after the user has submitted every step in the signup flow. This is useful for steps that the user should be able to go back and change at any point in signup.
 
 You will also need to define which React component implements your step in `/client/signup/config/step-components.js`. Make sure to require the component as an internal dependency in `step-components.js`.
@@ -189,3 +190,4 @@ handleSubmit = ( event ) => {
 ```
 
 9 - open https://calypso.localhost:3000/start/hello in an incognito window. On opening you should be redirected to the first step showing your updated React component, and when you click the "Get started" button you should be taken to the next step.
+

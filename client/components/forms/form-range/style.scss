@@ -5,13 +5,13 @@
 	height: 18px;
 	margin: 0;
 	padding: 0;
-	background: var( --color-neutral-100 );
+	background: var( --color-neutral-10 );
 	background: linear-gradient(
 		to bottom,
 		transparent,
 		transparent 8px,
-		var( --color-neutral-100 ) 8px,
-		var( --color-neutral-100 ) 10px,
+		var( --color-neutral-10 ) 8px,
+		var( --color-neutral-10 ) 10px,
 		transparent 10px
 	);
 }

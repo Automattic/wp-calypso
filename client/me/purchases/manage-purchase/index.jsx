@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,41 +7,42 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
+import { find } from 'lodash';
 
 /**
  * Internal Dependencies
  */
+import AsyncLoad from 'components/async-load';
 import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import { applyTestFiltersToPlansList } from 'lib/plans';
-import Button from 'components/button';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import { Button, Card, CompactCard, ProductIcon } from '@automattic/components';
 import config from 'config';
 import {
+	cardProcessorSupportsUpdates,
 	getDomainRegistrationAgreementUrl,
-	getName,
+	getDisplayName,
+	getPartnerName,
 	getRenewalPrice,
 	handleRenewNowClick,
+	hasAmountAvailableToRefund,
 	hasPaymentMethod,
 	isCancelable,
 	isExpired,
-	isExpiring,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
-	isRefundable,
+	isPartnerPurchase,
 	isRenewable,
-	isRenewal,
 	isRenewing,
 	isSubscription,
 	purchaseType,
-	cardProcessorSupportsUpdates,
+	getName,
 } from 'lib/purchases';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getCanonicalTheme } from 'state/themes/selectors';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
 import {
 	isPersonal,
@@ -55,11 +54,14 @@ import {
 	isDomainMapping,
 	isDomainTransfer,
 	isTheme,
+	isJetpackBackup,
+	isJetpackProduct,
 	isConciergeSession,
 } from 'lib/products-values';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
+import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
+import { JETPACK_PLANS } from 'lib/plans/constants';
 import Main from 'components/main';
-import PlanIcon from 'components/plans/plan-icon';
 import PlanPrice from 'my-sites/plan-price';
 import ProductLink from 'me/purchases/product-link';
 import PurchaseMeta from './purchase-meta';
@@ -67,6 +69,7 @@ import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
 import PurchaseSiteHeader from '../purchases-site/header';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
+import QuerySiteDomains from 'components/data/query-site-domains';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import RemovePurchase from '../remove-purchase';
 import VerticalNavItem from 'components/vertical-nav/item';
@@ -75,8 +78,13 @@ import { CALYPSO_CONTACT } from 'lib/url/support';
 import titles from 'me/purchases/titles';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import { currentUserHasFlag, getCurrentUser, getCurrentUserId } from 'state/current-user/selectors';
 import CartStore from 'lib/cart/store';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
+import { hasCustomDomain } from 'lib/site/utils';
+import { getDomainsBySiteId, hasLoadedSiteDomains } from 'state/sites/domains/selectors';
+import { getRegisteredDomains } from 'lib/domains';
+import NonPrimaryDomainDialog from 'me/purchases/non-primary-domain-dialog';
 
 /**
  * Style dependencies
@@ -85,14 +93,21 @@ import './style.scss';
 
 class ManagePurchase extends Component {
 	static propTypes = {
+		hasLoadedDomains: PropTypes.bool,
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		hasNonPrimaryDomainsFlag: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
 		purchase: PropTypes.object,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
 		userId: PropTypes.number,
+	};
+
+	state = {
+		showNonPrimaryDomainWarningDialog: false,
+		cancelLink: null,
 	};
 
 	UNSAFE_componentWillMount() {
@@ -133,6 +148,11 @@ class ManagePurchase extends Component {
 		handleRenewNowClick( this.props.purchase, this.props.siteSlug );
 	};
 
+	shouldShowNonPrimaryDomainWarning() {
+		const { hasNonPrimaryDomainsFlag, isPrimaryDomainRegistered, purchase } = this.props;
+		return hasNonPrimaryDomainsFlag && isPlan( purchase ) && isPrimaryDomainRegistered;
+	}
+
 	renderRenewButton() {
 		const { purchase, translate } = this.props;
 
@@ -140,20 +160,13 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
-		// This is hidden for expired and expiring subscriptions because they
-		// will get a PurchaseNotice will a renewal call-to-action instead.
-		if (
-			! isRenewable( purchase ) ||
-			isExpired( purchase ) ||
-			isExpiring( purchase ) ||
-			! this.props.site
-		) {
+		if ( isPartnerPurchase( purchase ) || ! isRenewable( purchase ) || ! this.props.site ) {
 			return null;
 		}
 
 		return (
 			<Button className="manage-purchase__renew-button" onClick={ this.handleRenew } compact>
-				{ translate( 'Renew Now' ) }
+				{ translate( 'Renew now' ) }
 			</Button>
 		);
 	}
@@ -165,10 +178,11 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
-		// Unlike renderRenewButton(), this shows the link even for expired or
-		// expiring subscriptions (as long as they are renewable), which keeps
-		// the nav items consistent.
 		if ( ! isRenewable( purchase ) || ! this.props.site ) {
+			return null;
+		}
+
+		if ( isPartnerPurchase( purchase ) ) {
 			return null;
 		}
 
@@ -186,6 +200,10 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
+		if ( isPartnerPurchase( purchase ) ) {
+			return null;
+		}
+
 		if ( canEditPaymentDetails( purchase ) ) {
 			const path = getEditCardDetailsPath( this.props.siteSlug, purchase );
 			const renewing = isRenewing( purchase );
@@ -198,53 +216,79 @@ class ManagePurchase extends Component {
 				return null;
 			}
 
-			const textEdit = translate( 'Change Payment Method' );
-			const textAdd = translate( 'Add Credit Card' );
-
-			// With the self-serving auto-renewal toggle enabled, the payment data should be always there.
-			// Thus, to show "edit" or "add" text will depend on whether or not there is a payment method already.
-			if ( config.isEnabled( 'autorenewal-toggle' ) ) {
-				return (
-					<CompactCard href={ path }>
-						{ hasPaymentMethod( purchase ) ? textEdit : textAdd }
-					</CompactCard>
-				);
-			}
-
-			// Before rolling out the auto-renewal toggle, the only way that our users can "re-enable" auto-renewal
-			// is to add a new payment method to a purchase. That's why the text presenting here relating to the renewal status.
-			return <CompactCard href={ path }>{ renewing ? textEdit : textAdd }</CompactCard>;
+			return (
+				<CompactCard href={ path }>
+					{ hasPaymentMethod( purchase )
+						? translate( 'Change Payment Method' )
+						: translate( 'Add Credit Card' ) }
+				</CompactCard>
+			);
 		}
 
 		return null;
 	}
 
 	renderRemovePurchaseNavItem() {
+		if ( isPartnerPurchase( this.props.purchase ) ) {
+			return null;
+		}
+
 		return (
 			<RemovePurchase
 				hasLoadedSites={ this.props.hasLoadedSites }
 				hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }
+				hasNonPrimaryDomainsFlag={ this.props.hasNonPrimaryDomainsFlag }
+				isPrimaryDomainRegistered={ this.props.isPrimaryDomainRegistered }
 				site={ this.props.site }
 				purchase={ this.props.purchase }
 			/>
 		);
 	}
 
+	showNonPrimaryDomainWarningDialog( cancelLink ) {
+		this.setState( {
+			showNonPrimaryDomainWarningDialog: true,
+			cancelLink,
+		} );
+	}
+
+	closeDialog = () => {
+		this.setState( {
+			showNonPrimaryDomainWarningDialog: false,
+			cancelLink: null,
+		} );
+	};
+
+	goToCancelLink = () => {
+		const cancelLink = this.state.cancelLink;
+		this.closeDialog();
+		page( cancelLink );
+	};
+
+	renderNonPrimaryDomainWarningDialog( site, purchase ) {
+		if ( this.state.showNonPrimaryDomainWarningDialog ) {
+			return (
+				<NonPrimaryDomainDialog
+					isDialogVisible={ this.state.showNonPrimaryDomainWarningDialog }
+					closeDialog={ this.closeDialog }
+					removePlan={ this.goToCancelLink }
+					planName={ getName( purchase ) }
+					oldDomainName={ site.domain }
+					newDomainName={ site.wpcom_url }
+				/>
+			);
+		}
+
+		return null;
+	}
+
 	renderCancelPurchaseNavItem() {
 		const { isAtomicSite, purchase, translate } = this.props;
 		const { id } = purchase;
 
-		if ( ! isCancelable( purchase ) || ! this.props.site ) {
+		if ( ! isCancelable( purchase ) || isPartnerPurchase( purchase ) ) {
 			return null;
 		}
-
-		const trackNavItemClick = linkText => () => {
-			analytics.tracks.recordEvent( 'calypso_purchases_manage_purchase_cancel_click', {
-				product_slug: purchase.productSlug,
-				is_atomic: isAtomicSite,
-				link_text: linkText,
-			} );
-		};
 
 		let text,
 			link = cancelPurchase( this.props.siteSlug, id );
@@ -252,14 +296,9 @@ class ManagePurchase extends Component {
 		if ( isAtomicSite && isSubscription( purchase ) ) {
 			text = translate( 'Contact Support to Cancel your Subscription' );
 			link = CALYPSO_CONTACT;
-		} else if ( isRefundable( purchase ) ) {
+		} else if ( hasAmountAvailableToRefund( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
-				if ( isRenewal( purchase ) ) {
-					text = translate( 'Contact Support to Cancel Domain and Refund' );
-					link = CALYPSO_CONTACT;
-				} else {
-					text = translate( 'Cancel Domain and Refund' );
-				}
+				text = translate( 'Cancel Domain and Refund' );
 			}
 
 			if ( isSubscription( purchase ) ) {
@@ -283,8 +322,21 @@ class ManagePurchase extends Component {
 			}
 		}
 
+		const onClick = event => {
+			analytics.tracks.recordEvent( 'calypso_purchases_manage_purchase_cancel_click', {
+				product_slug: purchase.productSlug,
+				is_atomic: isAtomicSite,
+				link_text: text,
+			} );
+
+			if ( this.shouldShowNonPrimaryDomainWarning() ) {
+				event.preventDefault();
+				this.showNonPrimaryDomainWarningDialog( link );
+			}
+		};
+
 		return (
-			<CompactCard href={ link } onClick={ trackNavItemClick( text ) }>
+			<CompactCard href={ link } onClick={ onClick }>
 				{ text }
 			</CompactCard>
 		);
@@ -292,10 +344,10 @@ class ManagePurchase extends Component {
 
 	renderPlanIcon() {
 		const { purchase } = this.props;
-		if ( isPlan( purchase ) ) {
+		if ( isPlan( purchase ) || isJetpackBackup( purchase ) ) {
 			return (
 				<div className="manage-purchase__plan-icon">
-					<PlanIcon plan={ purchase.productSlug } />
+					<ProductIcon slug={ purchase.productSlug } />
 				</div>
 			);
 		}
@@ -353,7 +405,9 @@ class ManagePurchase extends Component {
 			<div className="manage-purchase__content">
 				<span className="manage-purchase__description">{ description }</span>
 				<span className="manage-purchase__settings-link">
-					<ProductLink purchase={ purchase } selectedSite={ site } />
+					{ ! isPartnerPurchase( purchase ) && site && (
+						<ProductLink purchase={ purchase } selectedSite={ site } />
+					) }
 				</span>
 				{ registrationAgreementUrl && (
 					<a href={ registrationAgreementUrl } target="_blank" rel="noopener noreferrer">
@@ -381,24 +435,37 @@ class ManagePurchase extends Component {
 
 					<PurchaseMeta purchaseId={ false } siteSlug={ this.props.siteSlug } />
 				</Card>
-				<PurchasePlanDetails />
+				<PurchasePlanDetails isPlaceholder />
 				<VerticalNavItem isPlaceholder />
 				<VerticalNavItem isPlaceholder />
 			</Fragment>
 		);
 	}
 
+	isDomainsLoading( props ) {
+		const { purchase, hasLoadedDomains } = props;
+		if ( purchase ) {
+			if ( ! isDomainProduct( purchase ) || isDomainTransfer( purchase ) ) {
+				return false;
+			}
+		}
+
+		return ! hasLoadedDomains;
+	}
+
 	renderPurchaseDetail() {
-		if ( isDataLoading( this.props ) ) {
+		if ( isDataLoading( this.props ) || this.isDomainsLoading( this.props ) ) {
 			return this.renderPlaceholder();
 		}
 
-		const { purchase, siteId } = this.props;
+		const { purchase, siteId, translate } = this.props;
+
 		const classes = classNames( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
 			'is-personal': isPersonal( purchase ),
 			'is-premium': isPremium( purchase ),
 			'is-business': isBusiness( purchase ),
+			'is-jetpack-product': isJetpackProduct( purchase ),
 		} );
 		const siteName = purchase.siteName;
 		const siteDomain = purchase.domain;
@@ -409,21 +476,31 @@ class ManagePurchase extends Component {
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
 						{ this.renderPlanIcon() }
-						<h2 className="manage-purchase__title">{ getName( purchase ) }</h2>
+						<h2 className="manage-purchase__title">{ getDisplayName( purchase ) }</h2>
 						<div className="manage-purchase__description">{ purchaseType( purchase ) }</div>
 						<div className="manage-purchase__price">
-							<PlanPrice
-								rawPrice={ getRenewalPrice( purchase ) }
-								currencyCode={ purchase.currencyCode }
-								taxText={ purchase.taxText }
-								isOnSale={ !! purchase.saleAmount }
-							/>
+							{ isPartnerPurchase( purchase ) ? (
+								<div className="manage-purchase__contact-partner">
+									{ translate( 'Please contact your site host %(partnerName)s for details', {
+										args: {
+											partnerName: getPartnerName( purchase ),
+										},
+									} ) }
+								</div>
+							) : (
+								<PlanPrice
+									rawPrice={ getRenewalPrice( purchase ) }
+									currencyCode={ purchase.currencyCode }
+									taxText={ purchase.taxText }
+									isOnSale={ !! purchase.saleAmount }
+								/>
+							) }
 						</div>
 					</header>
 					{ this.renderPlanDescription() }
-
-					<PurchaseMeta purchaseId={ purchase.id } siteSlug={ this.props.siteSlug } />
-
+					{ ! isPartnerPurchase( purchase ) && (
+						<PurchaseMeta purchaseId={ purchase.id } siteSlug={ this.props.siteSlug } />
+					) }
 					{ this.renderRenewButton() }
 				</Card>
 				<PurchasePlanDetails purchaseId={ this.props.purchaseId } />
@@ -458,6 +535,7 @@ class ManagePurchase extends Component {
 					title="Purchases > Manage Purchase"
 				/>
 				<QueryUserPurchases userId={ this.props.userId } />
+				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
 				<Main className={ classes }>
 					<HeaderCake backHref={ purchasesRoot }>{ titles.managePurchase }</HeaderCake>
@@ -468,7 +546,16 @@ class ManagePurchase extends Component {
 						purchase={ purchase }
 						editCardDetailsPath={ editCardDetailsPath }
 					/>
+					<AsyncLoad
+						require="blocks/product-plan-overlap-notices"
+						placeholder={ null }
+						plans={ JETPACK_PLANS }
+						products={ JETPACK_PRODUCTS_LIST }
+						siteId={ siteId }
+						currentPurchase={ purchase }
+					/>
 					{ this.renderPurchaseDetail() }
+					{ site && this.renderNonPrimaryDomainWarningDialog( site, purchase ) }
 				</Main>
 			</Fragment>
 		);
@@ -482,9 +569,18 @@ export default connect( ( state, props ) => {
 	const isPurchaseTheme = purchase && isTheme( purchase );
 	const site = getSite( state, siteId );
 	const hasLoadedSites = ! isRequestingSites( state );
+	const domains = getDomainsBySiteId( state, siteId );
+	const registeredDomains = getRegisteredDomains( domains );
+	const hasLoadedDomains = hasLoadedSiteDomains( state, siteId );
 	return {
+		hasLoadedDomains,
 		hasLoadedSites,
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+		hasNonPrimaryDomainsFlag: getCurrentUser( state )
+			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+			: false,
+		isPrimaryDomainRegistered:
+			hasCustomDomain( site ) && !! find( registeredDomains, [ 'name', site.domain ] ),
 		purchase,
 		siteId,
 		site,

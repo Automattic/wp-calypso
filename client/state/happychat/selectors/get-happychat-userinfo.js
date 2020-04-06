@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -18,25 +17,21 @@ export default state => ( { site, howCanWeHelp, howYouFeel } ) => {
 		localDateTime: moment().format( 'h:mm a, MMMM Do YYYY' ),
 	};
 
-	// add screen size
-	if ( 'object' === typeof screen ) {
+	if ( typeof window !== 'undefined' ) {
+		// add screen size
 		info.screenSize = {
-			width: screen.width,
-			height: screen.height,
+			width: window.screen.width,
+			height: window.screen.height,
 		};
-	}
 
-	// add browser size
-	if ( 'object' === typeof window ) {
+		// add browser size
 		info.browserSize = {
 			width: window.innerWidth,
 			height: window.innerHeight,
 		};
-	}
 
-	// add user agent
-	if ( 'object' === typeof navigator ) {
-		info.userAgent = navigator.userAgent;
+		// add user agent
+		info.userAgent = window.navigator.userAgent;
 	}
 
 	const geoLocation = getGeoLocation( state );

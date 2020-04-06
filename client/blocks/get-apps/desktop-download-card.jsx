@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,8 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 const WINDOWS_LINK = 'https://apps.wordpress.com/d/windows?ref=getapps';
@@ -207,7 +204,4 @@ const mapDispatchToProps = {
 	trackLinuxDebClick: () => recordTracksEvent( 'calypso_app_download_linux_deb_click' ),
 };
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( localize( DesktopDownloadCard ) );
+export default connect( null, mapDispatchToProps )( localize( DesktopDownloadCard ) );

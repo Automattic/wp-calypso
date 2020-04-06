@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import { Component } from 'react';
@@ -23,7 +22,7 @@ class QuerySettingsProducts extends Component {
 		this.props.fetchSettingsProducts( this.props.siteId );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId === nextProps.siteId ) {
 			return;
 		}
@@ -35,7 +34,4 @@ class QuerySettingsProducts extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ fetchSettingsProducts }
-)( QuerySettingsProducts );
+export default connect( null, { fetchSettingsProducts } )( QuerySettingsProducts );

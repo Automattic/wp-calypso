@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -87,6 +85,7 @@ function walk( node, term, wrapperNode ) {
 
 /**
  * Wraps strings in a html to highlight
+ *
  * @param {string} term Term to search for
  * @param {string} html HTML string to search and wrap
  * @param {HTMLElement} [wrapperNode] Custom node to wrap the elements with, defaults to <mark>

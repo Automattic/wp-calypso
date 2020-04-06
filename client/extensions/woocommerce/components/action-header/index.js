@@ -1,18 +1,17 @@
-/** @format */
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import { isArray } from 'lodash';
 
 /**
  * Internal Dependencies
  */
 import ActionButtons from './actions';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import SiteIcon from 'blocks/site-icon';

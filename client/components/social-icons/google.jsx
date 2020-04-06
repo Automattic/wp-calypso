@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -24,6 +22,7 @@ export default class GoogleIcon extends PureComponent {
 
 	render() {
 		const props = omit( this.props, [ 'isDisabled' ] );
+
 		return (
 			<svg
 				className={ classNames( 'social-icons social-icons__google', {

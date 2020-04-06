@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -126,6 +125,13 @@ export class CountrySpecificPaymentFields extends Component {
 						comment:
 							'Individual taxpayer registry identification required ' +
 							'for Brazilian payment methods on credit card form',
+					} ),
+				} ) }
+
+				{ this.createField( 'nik', Input, {
+					label: translate( 'NIK - Indonesia Identity Card Number', {
+						comment:
+							'NIK - Indonesia Identity Card Number required for Indonesian payment methods.',
 					} ),
 				} ) }
 

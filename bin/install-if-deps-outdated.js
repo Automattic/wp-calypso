@@ -1,29 +1,26 @@
 #!/usr/bin/env node
 
 /**
- * Performs an `npm install`. Since that's a costly operation,
+ * Installs `node_modules` with `npm ci`. Since that's a costly operation,
  * it will only perform it if needed, that is, if the packages
  * installed at `node_modules` aren't in sync over what
- * `npm-shrinkwrap.json` has. For that, modification times of both
- * files will be compared. If the shrinkwrap is newer, it means that
+ * `package-lock.json` has. For that, modification times of both
+ * files will be compared. If the lockfile is newer, it means that
  * the packages at node_modules may be outdated. That will happen,
  * for example, when switching branches.
  *
- * @format
  */
 
 const fs = require( 'fs' );
 const path = require( 'path' );
-const spawnSync = require( 'child_process' ).spawnSync;
+const { spawnSync } = require( 'child_process' );
 //const debug = require( 'debug' )( 'calypso:install' );
 
 const needsInstall = () => {
 	try {
 		let lockfileTime = 0;
 		const packageDir = path.dirname( '.' );
-		if ( fs.existsSync( path.resolve( packageDir, 'npm-shrinkwrap.json' ) ) ) {
-			lockfileTime = fs.statSync( path.join( packageDir, 'npm-shrinkwrap.json' ) ).mtime;
-		} else if ( fs.existsSync( path.join( packageDir, 'package-lock.json' ) ) ) {
+		if ( fs.existsSync( path.join( packageDir, 'package-lock.json' ) ) ) {
 			lockfileTime = fs.statSync( path.join( packageDir, 'package-lock.json' ) ).mtime;
 		}
 
@@ -51,18 +48,20 @@ function install() {
 		stdio: 'inherit',
 	} );
 	if ( cleanResult.status ) {
-		console.error( 'failed to clean: %o', cleanResult );
+		console.error( 'failed to clean: exited with code %d', cleanResult.status );
 		process.exit( cleanResult.status );
 	}
+
 	const installResult = spawnSync( 'npm', [ 'ci' ], {
 		shell: true,
 		stdio: 'inherit',
-	} ).status;
+		env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true', ...process.env },
+	} );
 	if ( installResult.status ) {
-		console.error( 'failed to install: %o', installResult );
+		console.error( 'failed to install: exited with code %d', installResult.status );
 		process.exit( installResult.status );
 	}
-	const touchDate = new Date();
 
+	const touchDate = new Date();
 	fs.utimesSync( 'node_modules', touchDate, touchDate );
 }

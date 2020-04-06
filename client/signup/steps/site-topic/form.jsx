@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import FormFieldset from 'components/forms/form-fieldset';
 import SiteVerticalsSuggestionSearch from 'components/site-verticals-suggestion-search';
 import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
@@ -22,6 +20,7 @@ import {
 	getSiteVerticalIsUserInput,
 	getSiteVerticalId,
 	getSiteVerticalParentId,
+	getSiteVerticalSuggestedTheme,
 } from 'state/signup/steps/site-vertical/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
@@ -49,11 +48,19 @@ class SiteTopicForm extends Component {
 			slug: verticalData.verticalSlug,
 			id: verticalData.verticalId,
 			parentId: verticalData.parent,
+			suggestedTheme: verticalData.suggestedTheme,
 		} );
 	};
 
 	onSubmit = event => {
-		const { isUserInput, siteSlug, siteTopic, verticalId, verticalParentId } = this.props;
+		const {
+			isUserInput,
+			siteSlug,
+			siteTopic,
+			suggestedTheme,
+			verticalId,
+			verticalParentId,
+		} = this.props;
 
 		event.preventDefault();
 
@@ -69,6 +76,7 @@ class SiteTopicForm extends Component {
 			slug: siteSlug,
 			parentId: verticalParentId,
 			id: verticalId,
+			suggestedTheme,
 		} );
 	};
 
@@ -117,6 +125,7 @@ export default connect(
 			siteTopic,
 			siteType,
 			siteSlug: getSiteVerticalSlug( state ),
+			suggestedTheme: getSiteVerticalSuggestedTheme( state ),
 			isUserInput: getSiteVerticalIsUserInput( state ),
 			isButtonDisabled,
 			verticalId: getSiteVerticalId( state ),

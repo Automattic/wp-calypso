@@ -29,3 +29,17 @@
 .page-card-info__site-url {
 	font-style: italic;
 }
+
+.page-card-info__badge {
+	background: var( --color-neutral-0 );
+	border-radius: 12px;
+	color: var( --color-neutral );
+	display: inline-block;
+	padding: 2px 10px;
+	vertical-align: middle;
+
+	.page-card-info__badge-icon {
+		margin-right: 4px;
+		margin-bottom: -1px;
+	}
+}

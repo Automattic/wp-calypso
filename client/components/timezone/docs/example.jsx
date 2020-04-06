@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import React, { PureComponent } from 'react';
  * Internal dependencies
  */
 import Timezone from 'components/timezone';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 
 export default class TimezoneExample extends PureComponent {
 	static displayName = 'TimezoneExample';

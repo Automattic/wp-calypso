@@ -14,12 +14,14 @@
 		width: 75%;
 	}
 
-	> p {
-		color: var( --color-neutral-700 );
+	h3 {
+		word-break: break-all;
+	}
+
+	p {
+		color: var( --color-neutral-70 );
 		font-size: 12px;
-		font-weight: 600;
 		margin-bottom: 0;
-		opacity: 0.7;
 
 		@include breakpoint( '>960px' ) {
 			margin-bottom: 8px;

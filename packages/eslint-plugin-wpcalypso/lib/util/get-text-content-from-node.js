@@ -1,6 +1,5 @@
-/** @format */
 /**
- * @fileoverview Utility for retrieving the final translatable string from an AST
+ * @file Utility for retrieving the final translatable string from an AST
  * node for tests that focus on the strings themselves.
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
@@ -15,8 +14,8 @@
  * Note that TemplateLiterals with expressions are not supported, because
  * they don't work in our translation system.
  *
- * @param  {Object} node    A Literal, TemplateLiteral or BinaryExpression (+) node
- * @return {String|Boolean}   The concatenated string or the value false.
+ * @param  {object} node    A Literal, TemplateLiteral or BinaryExpression (+) node
+ * @returns {string|boolean}   The concatenated string or the value false.
  */
 function getTextContentFromNode( node ) {
 	// We need to handle two cases:

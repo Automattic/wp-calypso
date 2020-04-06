@@ -55,7 +55,7 @@
 	}
 
 	.gridicon {
-		fill: var( --color-white );
+		fill: var( --color-text-inverted );
 		position: absolute;
 		height: auto;
 		width: auto;
@@ -262,7 +262,7 @@
 	max-width: 500px;
 	margin: 0 auto;
 	padding-bottom: 30px;
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 }
 
 /* Title */

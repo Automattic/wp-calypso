@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -13,7 +11,7 @@ import { MEDIA_MODAL_VIEW_SET } from 'state/action-types';
  * @see ./constants.js (ModalViews)
  *
  * @param  {ModalViews} view Media view
- * @return {Object}          Action object
+ * @returns {object}          Action object
  */
 export function setMediaModalView( view ) {
 	return {
@@ -29,7 +27,7 @@ export function setMediaModalView( view ) {
  * @see ./constants.js (ModalViews)
  *
  * @param  {ModalViews} view Media view
- * @return {Object}          Action object
+ * @returns {object}          Action object
  */
 export function resetMediaModalView() {
 	return setMediaModalView( null );

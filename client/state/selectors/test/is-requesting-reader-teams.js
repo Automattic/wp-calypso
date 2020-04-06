@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isRequestingReaderTeams from 'state/selectors/is-requesting-reader-teams';
+import { isRequestingReaderTeams } from 'state/reader/teams/selectors';
 
 describe( 'isRequestingReaderTeams()', () => {
 	test( 'should return false if not requesting teams', () => {

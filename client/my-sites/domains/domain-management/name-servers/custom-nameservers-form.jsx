@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,13 +11,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
 import CustomNameserversRow from './custom-nameservers-row';
 import { change, remove } from 'lib/domains/nameservers';
-import Notice from 'components/notice';
-import { CHANGE_NAME_SERVERS, CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from 'lib/url/support';
+import { CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from 'lib/url/support';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 const MIN_NAMESERVER_LENGTH = 2;
@@ -34,37 +31,12 @@ class CustomNameserversForm extends React.PureComponent {
 		submitDisabled: PropTypes.bool.isRequired,
 	};
 
-	warning() {
-		const { translate } = this.props;
-
-		return (
-			<Notice status="is-warning" showDismiss={ false }>
-				{ translate(
-					'Your domain must use WordPress.com name servers for your ' +
-						'WordPress.com site to load & other features to be available.'
-				) }{' '}
-				<a
-					href={ CHANGE_NAME_SERVERS }
-					target="_blank"
-					rel="noopener noreferrer"
-					onClick={ this.handleLearnMoreClick }
-				>
-					{ translate( 'Learn more.' ) }
-				</a>
-			</Notice>
-		);
-	}
-
-	handleLearnMoreClick = () => {
-		this.props.customNameServersLearnMoreClick( this.props.selectedDomainName );
-	};
-
 	popularHostsMessage() {
 		const { translate } = this.props;
 
 		return (
 			<div className="name-servers__custom-nameservers-form-explanation">
-				{ translate( 'Not sure what name servers to use?' ) }{' '}
+				{ translate( 'Not sure what name servers to use?' ) }{ ' ' }
 				<a
 					href={ CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS }
 					target="_blank"
@@ -98,9 +70,11 @@ class CustomNameserversForm extends React.PureComponent {
 		return nameservers.map( ( nameserver, index ) => {
 			let placeholder;
 			if ( index < MIN_NAMESERVER_LENGTH ) {
-				placeholder = translate( 'Required' );
+				placeholder = translate( 'eg. ns%(index)d.example.com', { args: { index: index + 1 } } );
 			} else {
-				placeholder = translate( 'Optional' );
+				placeholder = translate( 'eg. ns%(index)d.example.com (optional)', {
+					args: { index: index + 1 },
+				} );
 			}
 
 			return (
@@ -134,9 +108,7 @@ class CustomNameserversForm extends React.PureComponent {
 
 		return (
 			<Card compact className="name-servers__custom-nameservers-form">
-				<span>{ translate( 'Use Custom Name Servers:' ) }</span>
-
-				{ this.warning() }
+				<strong>{ translate( 'Use custom name servers:' ) }</strong>
 
 				<form>
 					{ this.rows() }
@@ -148,11 +120,11 @@ class CustomNameserversForm extends React.PureComponent {
 							onClick={ this.handleSubmit }
 							disabled={ this.props.submitDisabled }
 						>
-							{ translate( 'Save Custom Name Servers' ) }
+							{ translate( 'Save custom name servers' ) }
 						</FormButton>
 
 						<FormButton type="button" isPrimary={ false } onClick={ this.handleReset }>
-							{ translate( 'Reset to Defaults' ) }
+							{ translate( 'Reset to defaults' ) }
 						</FormButton>
 					</FormFooter>
 				</form>
@@ -176,20 +148,6 @@ class CustomNameserversForm extends React.PureComponent {
 		this.props.onReset();
 	};
 }
-
-const customNameServersLearnMoreClick = domainName =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			'Clicked "Learn More" link in "Custom Name Servers" Form in Name Servers and DNS',
-			'Domain Name',
-			domainName
-		),
-		recordTracksEvent(
-			'calypso_domain_management_name_servers_custom_name_servers_learn_more_click',
-			{ domain_name: domainName }
-		)
-	);
 
 const customNameServersLookUpClick = domainName =>
 	composeAnalytics(
@@ -230,12 +188,8 @@ const resetToDefaultsClick = domainName =>
 		} )
 	);
 
-export default connect(
-	null,
-	{
-		customNameServersLearnMoreClick,
-		customNameServersLookUpClick,
-		resetToDefaultsClick,
-		saveCustomNameServersClick,
-	}
-)( localize( CustomNameserversForm ) );
+export default connect( null, {
+	customNameServersLookUpClick,
+	resetToDefaultsClick,
+	saveCustomNameServersClick,
+} )( localize( CustomNameserversForm ) );

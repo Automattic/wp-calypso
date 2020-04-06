@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ const prettier = require( 'prettier' );
 /**
  * Parses the output of a git diff command into javascript file paths.
  *
- * @param   {String} command Command to run. Expects output like `git diff --name-only […]`
+ * @param   {string} command Command to run. Expects output like `git diff --name-only […]`
  * @returns {Array}          Paths output from git command
  */
 function parseGitDiffToPathArray( command ) {
@@ -28,7 +26,7 @@ const dirtyFiles = new Set( parseGitDiffToPathArray( 'git diff --name-only --dif
 
 const files = parseGitDiffToPathArray( 'git diff --cached --name-only --diff-filter=ACM' );
 
-// run prettier for any files in the commit that have @format within their first docblock
+// run prettier for any files in the commit
 files.forEach( file => {
 	const text = fs.readFileSync( file, 'utf8' );
 	// File has unstaged changes. It's a bad idea to modify and add it before commit.
@@ -45,7 +43,7 @@ files.forEach( file => {
 	}
 
 	fs.writeFileSync( file, formattedText );
-	console.log( `Prettier formatting file: ${ file } because it contains the @format flag` );
+	console.log( `Prettier formatting file: ${ file }` );
 	execSync( `git add ${ file }` );
 } );
 

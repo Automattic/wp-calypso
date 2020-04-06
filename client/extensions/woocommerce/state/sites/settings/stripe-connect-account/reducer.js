@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,7 +5,7 @@
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { withoutPersistence } from 'state/utils';
 import {
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_COMPLETED_NOTIFICATION,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_ERROR,
@@ -26,8 +24,8 @@ import {
 /**
  * Updates state to clear any error from a previous action
  *
- * @param  {Object} state  Current state
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @returns {object}        Updated state
  */
 function connectAccountClearError( state = {} ) {
 	return Object.assign( {}, state, {
@@ -38,8 +36,8 @@ function connectAccountClearError( state = {} ) {
 /**
  * Updates state to clear the completed state from a previous connect or create action
  *
- * @param  {Object} state  Current state
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @returns {object}        Updated state
  */
 function connectAccountClearCompletedNotification( state = {} ) {
 	return Object.assign( {}, state, {
@@ -50,8 +48,8 @@ function connectAccountClearCompletedNotification( state = {} ) {
 /**
  * Updates state to indicate account creation is in progress
  *
- * @param  {Object} state  Current state
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @returns {object}        Updated state
  */
 function connectAccountCreate( state = {} ) {
 	return Object.assign( {}, state, {
@@ -64,9 +62,9 @@ function connectAccountCreate( state = {} ) {
 /**
  * Updates state to reflect account creation completed (or failed with an error)
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 function connectAccountCreateComplete( state = {}, action ) {
 	return Object.assign( {}, state, {
@@ -87,8 +85,8 @@ function connectAccountCreateComplete( state = {}, action ) {
 /**
  * Updates state to indicate account (details) fetch request is in progress
  *
- * @param  {Object} state  Current state
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @returns {object}        Updated state
  */
 function connectAccountFetch( state = {} ) {
 	return Object.assign( {}, state, {
@@ -108,9 +106,9 @@ function connectAccountFetch( state = {} ) {
 /**
  * Updates state with fetched account details
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 function connectAccountFetchComplete( state = {}, action ) {
 	return Object.assign( {}, state, {
@@ -130,8 +128,8 @@ function connectAccountFetchComplete( state = {}, action ) {
 /**
  * Updates state to indicate account deauthorization request is in progress
  *
- * @param  {Object} state  Current state
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @returns {object}        Updated state
  */
 function connectAccountDeauthorize( state = {} ) {
 	return Object.assign( {}, state, {
@@ -142,9 +140,9 @@ function connectAccountDeauthorize( state = {} ) {
 /**
  * Updates state after deauthorization completes
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 function connectAccountDeauthorizeComplete( state = {}, action ) {
 	return Object.assign( {}, state, {
@@ -164,8 +162,8 @@ function connectAccountDeauthorizeComplete( state = {}, action ) {
 /**
  * Updates state to indicate oauth initialization request is in progress
  *
- * @param  {Object} state  Current state
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @returns {object}        Updated state
  */
 function connectAccountOAuthInit( state = {} ) {
 	return Object.assign( {}, state, {
@@ -177,9 +175,9 @@ function connectAccountOAuthInit( state = {} ) {
 /**
  * Updates state after oauth initialization completes
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 function connectAccountOAuthInitComplete( state = {}, action ) {
 	return Object.assign( {}, state, {
@@ -192,8 +190,8 @@ function connectAccountOAuthInitComplete( state = {}, action ) {
 /**
  * Updates state to indicate account creation is in progress
  *
- * @param  {Object} state  Current state
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @returns {object}        Updated state
  */
 function connectAccountOAuthConnect( state = {} ) {
 	return Object.assign( {}, state, {
@@ -206,9 +204,9 @@ function connectAccountOAuthConnect( state = {} ) {
 /**
  * Updates state to reflect account creation completed (or failed with an error)
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 function connectAccountOAuthConnectComplete( state = {}, action ) {
 	return Object.assign( {}, state, {
@@ -226,17 +224,33 @@ function connectAccountOAuthConnectComplete( state = {}, action ) {
 	} );
 }
 
-export default createReducer( null, {
-	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_COMPLETED_NOTIFICATION ]: connectAccountClearCompletedNotification,
-	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_ERROR ]: connectAccountClearError,
-	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE ]: connectAccountCreate,
-	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE ]: connectAccountCreateComplete,
-	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE ]: connectAccountDeauthorize,
-	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE ]: connectAccountDeauthorizeComplete,
-	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_REQUEST ]: connectAccountFetch,
-	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_UPDATE ]: connectAccountFetchComplete,
-	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT ]: connectAccountOAuthInit,
-	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT_COMPLETE ]: connectAccountOAuthInitComplete,
-	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT ]: connectAccountOAuthConnect,
-	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT_COMPLETE ]: connectAccountOAuthConnectComplete,
+export default withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_COMPLETED_NOTIFICATION:
+			return connectAccountClearCompletedNotification( state, action );
+		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_ERROR:
+			return connectAccountClearError( state, action );
+		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE:
+			return connectAccountCreate( state, action );
+		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE:
+			return connectAccountCreateComplete( state, action );
+		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE:
+			return connectAccountDeauthorize( state, action );
+		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DEAUTHORIZE_COMPLETE:
+			return connectAccountDeauthorizeComplete( state, action );
+		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_REQUEST:
+			return connectAccountFetch( state, action );
+		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_DETAILS_UPDATE:
+			return connectAccountFetchComplete( state, action );
+		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT:
+			return connectAccountOAuthInit( state, action );
+		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT_COMPLETE:
+			return connectAccountOAuthInitComplete( state, action );
+		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT:
+			return connectAccountOAuthConnect( state, action );
+		case WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT_COMPLETE:
+			return connectAccountOAuthConnectComplete( state, action );
+	}
+
+	return state;
 } );

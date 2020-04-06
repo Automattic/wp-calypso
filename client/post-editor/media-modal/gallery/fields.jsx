@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,6 @@ import { localize } from 'i18n-calypso';
  */
 import EditorMediaModalFieldset from '../fieldset';
 import SelectDropdown from 'components/select-dropdown';
-import SelectDropdownItem from 'components/select-dropdown/item';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { GalleryColumnedTypes, GallerySizeableTypes } from 'lib/media/constants';
 import { isModuleActive } from 'lib/site/utils';
@@ -107,7 +104,7 @@ export class EditorMediaModalGalleryFields extends React.Component {
 						const label = options[ value ];
 
 						return (
-							<SelectDropdownItem
+							<SelectDropdown.Item
 								key={ 'value-' + value }
 								selected={ value === settings[ settingName ] }
 								onClick={ () =>
@@ -115,7 +112,7 @@ export class EditorMediaModalGalleryFields extends React.Component {
 								}
 							>
 								{ label }
-							</SelectDropdownItem>
+							</SelectDropdown.Item>
 						);
 					} ) }
 				</SelectDropdown>

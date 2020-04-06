@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -24,9 +22,7 @@ export const cancelConciergeAppointment = action => {
 		http(
 			{
 				method: 'POST',
-				path: `/concierge/schedules/${ action.scheduleId }/appointments/${
-					action.appointmentId
-				}/cancel`,
+				path: `/concierge/schedules/${ action.scheduleId }/appointments/${ action.appointmentId }/cancel`,
 				apiNamespace: 'wpcom/v2',
 				body: {},
 			},

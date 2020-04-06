@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -27,7 +25,4 @@ class ObjectPreference extends Component {
 	}
 }
 
-export default connect(
-	null,
-	null
-)( localize( ObjectPreference ) );
+export default connect( null, null )( localize( ObjectPreference ) );

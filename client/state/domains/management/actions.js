@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -25,8 +23,8 @@ import {
  * Returns an action object to be used in signalling that a cached domains
  * contact details object has been received.
  *
- * @param   {Object}   data   cached contact details object
- * @returns {Object}   Action object
+ * @param   {object}   data   cached contact details object
+ * @returns {object}   Action object
  */
 export function receiveContactDetailsCache( data ) {
 	return {
@@ -38,6 +36,7 @@ export function receiveContactDetailsCache( data ) {
 /**
  * Triggers a network request to query domain contact details
  * cached data (originated from last domain purchase)
+ *
  * @returns {Function}          Action thunk
  */
 export function requestContactDetailsCache() {
@@ -74,9 +73,9 @@ export function updateContactDetailsCache( data ) {
  * Returns an action object to be used in signalling that a WHOIS details
  * object has been received.
  *
- * @param	{String}   domain		domain queried
- * @param   {Object}   whoisData	contact details object
- * @returns {Object}   Action object
+ * @param	{string}   domain		domain queried
+ * @param   {object}   whoisData	contact details object
+ * @returns {object}   Action object
  */
 export function receiveWhois( domain, whoisData ) {
 	return {
@@ -89,7 +88,7 @@ export function receiveWhois( domain, whoisData ) {
 /**
  * Triggers a network request to query WHOIS details
  *
- * @param   {String}   domain	domain to query
+ * @param   {string}   domain	domain to query
  * @returns {Function}          Action thunk
  */
 export function requestWhois( domain ) {
@@ -123,11 +122,12 @@ export function requestWhois( domain ) {
  * Sends a network request to the server to save updated WHOIS details
  * at the domain's registrar.
  *
- * @param   {String}   domain		domain to query
- * @param   {Object}   whoisData	whois details object
+ * @param   {string}   domain		domain to query
+ * @param   {object}   whoisData	whois details object
+ * @param	{Bool}     transferLock set 60-day transfer lock after update
  * @returns {Function}				Action thunk
  */
-export function saveWhois( domain, whoisData ) {
+export function saveWhois( domain, whoisData, transferLock ) {
 	return dispatch => {
 		dispatch( {
 			type: DOMAIN_MANAGEMENT_WHOIS_SAVE,
@@ -136,12 +136,13 @@ export function saveWhois( domain, whoisData ) {
 
 		return wpcom
 			.undocumented()
-			.updateWhois( domain, whoisData )
-			.then( ( { updated } ) => {
-				dispatch( updateWhois( domain, updated ) );
+			.updateWhois( domain, whoisData, transferLock )
+			.then( data => {
+				dispatch( updateWhois( domain, whoisData ) );
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
 					domain,
+					data,
 				} );
 			} )
 			.catch( error => {

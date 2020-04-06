@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -49,7 +47,7 @@ class SetupTasks extends Component {
 		}
 	};
 
-	componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = newProps => {
 		const { site, productsLoaded } = this.props;
 
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
@@ -89,7 +87,10 @@ class SetupTasks extends Component {
 		return (
 			<div className="setup__checklist">
 				<QuerySettingsGeneral siteId={ this.props.site.ID } />
-				<Checklist isPlaceholder={ this.props.loading || ! this.props.productsLoaded }>
+				<Checklist
+					showChecklistHeader={ true }
+					isPlaceholder={ this.props.loading || ! this.props.productsLoaded }
+				>
 					<Task
 						onClick={ this.getClickHandler(
 							'add-product',
@@ -189,7 +190,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( SetupTasks ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SetupTasks ) );

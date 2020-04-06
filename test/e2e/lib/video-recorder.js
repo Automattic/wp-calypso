@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -52,7 +50,7 @@ export function startDisplay() {
 		':' + global.displayNum,
 		'-screen',
 		'0',
-		'1600x1200x24',
+		'1440x1000x24',
 		'+extension',
 		'RANDR',
 	] );

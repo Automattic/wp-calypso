@@ -1,22 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
+import React from 'react';
 
-import React, { Component } from 'react';
-import { omit } from 'lodash';
-import debugFactory from 'debug';
-
-const debug = debugFactory( 'calypso:guided-tours' );
-
-const combineTours = tours =>
-	class AllTours extends Component {
-		render() {
-			debug( 'AllTours#render' );
-			const MyTour = tours[ this.props.tourName ];
-			return MyTour ? <MyTour { ...omit( this.props, 'tourName' ) } /> : null;
+export default function combineTours( tours ) {
+	return function AllTours( { tourName, ...props } ) {
+		const MyTour = tours[ tourName ];
+		if ( ! MyTour ) {
+			return null;
 		}
-	};
 
-export default combineTours;
+		return <MyTour { ...props } />;
+	};
+}

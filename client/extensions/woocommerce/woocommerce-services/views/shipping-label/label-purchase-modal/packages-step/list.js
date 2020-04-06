@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,13 +6,13 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'components/gridicon';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import getPackageDescriptions from './get-package-descriptions';
 import { openPackage } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
@@ -121,7 +119,4 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { openPackage }, dispatch );
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( PackageList ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PackageList ) );
