@@ -162,6 +162,12 @@ export const isRegularAccount = authAccountType => authAccountType === 'regular'
  */
 export const isPasswordlessAccount = authAccountType => authAccountType === 'passwordless';
 
+export function normalizeBody( bodyObj ) {
+	return Object.fromEntries(
+		Object.entries( bodyObj ?? {} ).map( ( [ key, val ] ) => [ key, val ?? '' ] )
+	);
+}
+
 export async function postLoginRequest( action, bodyObj ) {
 	const response = await window.fetch(
 		localizeUrl( `https://wordpress.com/wp-login.php?action=${ action }` ),
@@ -169,7 +175,7 @@ export async function postLoginRequest( action, bodyObj ) {
 			method: 'POST',
 			credentials: 'include',
 			headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
-			body: new globalThis.URLSearchParams( bodyObj ?? {} ).toString(),
+			body: new globalThis.URLSearchParams( normalizeBody( bodyObj ) ).toString(),
 		}
 	);
 

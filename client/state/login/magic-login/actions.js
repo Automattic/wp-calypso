@@ -3,7 +3,7 @@
  */
 import config from 'config';
 import { AUTHENTICATE_URL } from './constants';
-import { HTTPError } from '../utils';
+import { HTTPError, normalizeBody } from '../utils';
 import {
 	LOGIN_REQUEST_SUCCESS,
 	MAGIC_LOGIN_HIDE_REQUEST_FORM,
@@ -51,7 +51,7 @@ async function postMagicLoginRequest( url, bodyObj ) {
 		method: 'POST',
 		credentials: 'include',
 		headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
-		body: new globalThis.URLSearchParams( bodyObj ?? {} ).toString(),
+		body: new globalThis.URLSearchParams( normalizeBody( bodyObj ) ).toString(),
 	} );
 
 	if ( response.ok ) {
