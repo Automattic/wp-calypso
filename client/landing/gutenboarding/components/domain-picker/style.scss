@@ -44,13 +44,10 @@
 	}
 }
 
-.domain-picker__paragraph {
-	text-align: center;
-}
-
 .domain-picker__free-text {
-	line-height: 20px;
 	color: var( --studio-green-50 );
+	line-height: 20px;
+	text-align: center;
 
 	svg {
 		margin: 8px;

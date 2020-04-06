@@ -135,7 +135,7 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 				</PanelRow>
 
 				<PanelRow className="domain-picker__panel-row">
-					<p className="domain-picker__free-text domain-picker__paragraph">
+					<p className="domain-picker__free-text">
 						<FreeDomainIcon />
 						{ NO__( 'Free for the first year with any paid plan' ) }
 					</p>
