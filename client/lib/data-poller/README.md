@@ -22,7 +22,7 @@ Add a new poller that fetches updates
 - @param {object} `[options]` - optional set of options passed to the Poller constructor
     - `interval` - time in ms between each call to the fetch method (default: 30000)
     - `leading` - whether or not fetch is called when starting the Poller when the instance is created (default: true)
-		- `pauseWhenHidden` - whether or not to pause this poller when the browser tab is hidden
+    - `pauseWhenHidden` - whether or not to pause this poller when the browser tab is hidden
 
 ### Pollers#remove( poller )
 

@@ -7,12 +7,12 @@ In this document we'll go through the existing API:
 - [Introduction](#introduction)
 - [Literal Data Points](#literal-data-points)
 - [Option Data Points](#option-data-points)
-	- [Fallback Values](#fallback-values)
-	- [Working with option's properties](#working-with-options-properties)
-	- [Updatable Options](#updatable-options)
-	- [Filters to prepare and sanitize data](#filters-to-prepare-and-sanitize-data)
+  - [Fallback Values](#fallback-values)
+  - [Working with option's properties](#working-with-options-properties)
+  - [Updatable Options](#updatable-options)
+  - [Filters to prepare and sanitize data](#filters-to-prepare-and-sanitize-data)
 - [Theme Data Points](#theme-data-points)
-	- [Fallback Values](#fallback-values-1)
+  - [Fallback Values](#fallback-values-1)
 - [Working with theme's properties](#working-with-themes-properties)
 
 ## Introduction

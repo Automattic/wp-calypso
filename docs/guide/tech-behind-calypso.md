@@ -74,10 +74,10 @@ Essential Git resources:
 * The [Pro Git](http://git-scm.com/book/en/v2) book is online and free. It's a great resource, both for beginners and for intermediate users (few dare to call themselves advanced).
 * [git ready](http://gitready.com) – byte-sized tips
 * Several shorter articles with tips:
-	- [A few git tips you didn't know about](http://mislav.uniqpath.com/2010/07/git-tips/)
-	- [25 Tips for Intermediate Git Users](https://www.andyjeffries.co.uk/25-tips-for-intermediate-git-users/)
-	- [Stupid Git Tricks](http://webchick.net/stupid-git-tricks)
-	- [9 Awesome Git Tricks](http://www.tychoish.com/posts/9-awesome-git-tricks/)
+    - [A few git tips you didn't know about](http://mislav.uniqpath.com/2010/07/git-tips/)
+    - [25 Tips for Intermediate Git Users](https://www.andyjeffries.co.uk/25-tips-for-intermediate-git-users/)
+    - [Stupid Git Tricks](http://webchick.net/stupid-git-tricks)
+    - [9 Awesome Git Tricks](http://www.tychoish.com/posts/9-awesome-git-tricks/)
 * Some operations are easier using a GUI. [GitX](http://rowanj.github.io/gitx/) is a simple one for OS X. [Fugitive](https://github.com/tpope/vim-fugitive) is a must for `vim`. The GitHub app doesn’t entirely fit our workflow, but you can use it for pulling and committing. One caveat is that you will have to do all rebasing manually.
 
 Key concepts checklist:
