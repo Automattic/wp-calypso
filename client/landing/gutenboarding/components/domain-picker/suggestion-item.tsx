@@ -19,19 +19,23 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	suggestion,
 	isRecommended = false,
 	isCurrent = false,
-	...props
+	onClick,
 } ) => {
 	const { __: NO__ } = useI18n();
 
 	return (
-		<Button className="domain-picker__suggestion-item" isTertiary { ...props }>
+		<label className="domain-picker__suggestion-item">
 			<div className="domain-picker__suggestion-item-name">
+				<input
+					className="domain-picker__suggestion-radio-button"
+					type="radio"
+					name="domain-picker-suggestion-option"
+					onClick={ onClick }
+					checked={ isCurrent }
+				/>
 				{ suggestion.domain_name }
 				{ isRecommended && (
 					<div className="domain-picker__badge is-recommended">{ NO__( 'Recommended' ) }</div>
-				) }
-				{ isCurrent && (
-					<div className="domain-picker__badge is-selected">{ NO__( 'Selected' ) }</div>
 				) }
 			</div>
 			<div
@@ -52,7 +56,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 					</>
 				) }
 			</div>
-		</Button>
+		</label>
 	);
 };
 

@@ -43,7 +43,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 	};
 
 	const handleDomainSelect: typeof onDomainSelect = selectedDomain => {
-		setDomainPopoverVisibility( false );
 		onDomainSelect( selectedDomain );
 	};
 
@@ -69,20 +68,24 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				<Dashicon icon="arrow-down-alt2" />
 			</Button>
 			{ isDomainPopoverVisible && (
-				<Popover
-					className="domain-picker-button__popover"
-					onClose={ handleClose }
-					onFocusOutside={ handleClose }
-					focusOnMount={ false }
-					noArrow
-				>
-					<DomainPicker
-						onDomainSelect={ handleDomainSelect }
-						onDomainPurchase={ handlePaidDomainSelect }
+				<div className="domain-picker-button__popover-container">
+					<Popover
+						className="domain-picker-button"
 						onClose={ handleClose }
-						currentDomain={ currentDomain }
-					/>
-				</Popover>
+						onFocusOutside={ handleClose }
+						onClickOutside={ handleClose }
+						focusOnMount={ false }
+						noArrow
+						position={ 'bottom center' }
+					>
+						<DomainPicker
+							onDomainSelect={ handleDomainSelect }
+							onDomainPurchase={ handlePaidDomainSelect }
+							onClose={ handleClose }
+							currentDomain={ currentDomain }
+						/>
+					</Popover>
+				</div>
 			) }
 		</>
 	);

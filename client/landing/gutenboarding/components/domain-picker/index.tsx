@@ -20,6 +20,7 @@ import {
 	getPaidDomainSuggestions,
 	getRecommendedDomainSuggestion,
 } from '../../utils/domain-suggestions';
+import CloseButton from '../close-button';
 import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 
@@ -81,12 +82,24 @@ const FreeDomainIcon = () => (
 	/>
 );
 
-const DomainPicker: FunctionComponent< Props > = ( {
-	onDomainSelect,
-	onDomainPurchase,
-	onClose,
-	currentDomain,
-} ) => {
+const SearchIcon = () => (
+	<Icon
+		icon={ () => (
+			<svg
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				<path d="M6 18L10 14.5" stroke="black" strokeWidth="1.5" />
+				<circle cx="13.5" cy="11.5" r="4.75" stroke="black" strokeWidth="1.5" />
+			</svg>
+		) }
+	/>
+);
+
+const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, currentDomain } ) => {
 	const { __: NO__ } = useI18n();
 	const label = NO__( 'Search for a domain' );
 
@@ -107,11 +120,12 @@ const DomainPicker: FunctionComponent< Props > = ( {
 				<PanelRow className="domain-picker__panel-row">
 					<div className="domain-picker__header">
 						<div className="domain-picker__header-title">{ NO__( 'Choose a domain' ) }</div>
-						<Button className="domain-picker__close-button" isTertiary onClick={ () => onClose() }>
-							{ NO__( 'Skip for now' ) }
-						</Button>
+						<CloseButton onClose={ () => onClose() } />
 					</div>
 					<div className="domain-picker__search">
+						<div className="domain-picker__search-icon">
+							<SearchIcon />
+						</div>
 						<TextControl
 							hideLabelFromVision
 							label={ label }
@@ -151,7 +165,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 										suggestion={ suggestion }
 										isRecommended={ suggestion === recommendedSuggestion }
 										isCurrent={ currentDomain?.domain_name === suggestion.domain_name }
-										onClick={ () => onDomainPurchase( suggestion ) }
+										onClick={ () => onDomainSelect( suggestion ) }
 										key={ suggestion.domain_name }
 									/>
 								) )
@@ -163,7 +177,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 				<PanelRow className="domain-picker__panel-row">
 					<div className="domain-picker__footer">
-						<Button className="domain-picker__footer-options">{ NO__( 'More options' ) }</Button>
+						<div className="domain-picker__footer-options"></div>
 						<Button className="domain-picker__footer-button" isPrimary onClick={ () => onClose() }>
 							{ NO__( 'Confirm' ) }
 						</Button>
