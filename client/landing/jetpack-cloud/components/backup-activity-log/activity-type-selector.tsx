@@ -42,12 +42,7 @@ const BackupsActivityTypeSelector: FunctionComponent< Props > = ( {
 			<Button ref={ buttonRef } onClick={ togglePopover }>
 				{ translate( 'Activity type' ) }
 			</Button>
-			<Popover
-				context={ buttonRef.current }
-				isVisible={ showSelector }
-				onClose={ () => setShowSelector( false ) }
-				position="bottom"
-			>
+			<Popover context={ buttonRef.current } isVisible={ showSelector } position="bottom">
 				{ activityTypeCounts.map( ( { key, name, count } ) => (
 					<FormLabel key={ key } optional={ false } required={ false }>
 						<FormCheckbox

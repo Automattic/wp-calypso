@@ -1,0 +1,13 @@
+{
+	"type": "object",
+	"required": [ "days" ],
+	"properties": {
+		"days": {
+			"type": "object",
+			"patternProperties": {
+				"^\\d{4}-\\d{2}-\\d{2}$": { "type": "integer" }
+			},
+			"additionalProperties": false
+		}
+	}
+}
