@@ -160,22 +160,34 @@ $gutenboarding-style-preview-bar-height: 30px;
 .style-preview__viewport-select {
 	display: flex;
 	justify-content: center;
+}
 
-	.components-button {
+.style-preview__viewport-select-button {
+	color: var( --studio-gray-10 );
+
+	// Need the extra specificity here to override core
+	&.components-button {
+		height: auto;
 		padding: 4px;
 
-		height: auto;
+		color: var( --studio-gray-10 );
 
 		svg {
 			fill: none;
 		}
-
-		color: var( --studio-gray-10 );
-
-		&.is-selected {
-			color: var( --studio-black );
-		}
 	}
+
+	&.is-selected {
+		color: var( --studio-black );
+	}
+}
+
+// Remove focus styling from clicking a button
+// Keep keyboard-focused focus styl
+html:not( .accessible-focus )
+	.style-preview__viewport-select-button.is-selected:focus:not( :hover ) {
+	// outline: 1px dotted red !important;
+	box-shadow: none;
 }
 
 .style-preview__iframe {
