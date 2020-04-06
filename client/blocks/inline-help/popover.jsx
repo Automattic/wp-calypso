@@ -333,6 +333,7 @@ function mapStateToProps( state ) {
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
 	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
 	const isEligibleForChecklist = isEligibleForDotcomChecklist( state, siteId );
+	const showSwitchEditorButton = currentRoute.match( /^\/(block-editor|post|page)\// );
 
 	return {
 		isOnboardingWelcomeVisible: isEligibleForChecklist && isOnboardingWelcomePromptVisible( state ),
@@ -342,8 +343,8 @@ function mapStateToProps( state ) {
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 		classicUrl: `/${ classicRoute }`,
 		siteId,
-		showOptOut: isGutenbergOptOutEnabled( state, siteId ),
-		showOptIn: optInEnabled && isCalypsoClassic,
+		showOptOut: showSwitchEditorButton && isGutenbergOptOutEnabled( state, siteId ),
+		showOptIn: showSwitchEditorButton && optInEnabled && isCalypsoClassic,
 		gutenbergUrl,
 		isCheckout: section.name && section.name === 'checkout',
 	};

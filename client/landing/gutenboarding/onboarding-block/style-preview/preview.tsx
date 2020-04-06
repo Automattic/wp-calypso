@@ -4,7 +4,6 @@
 import * as React from 'react';
 import { addQueryArgs } from '@wordpress/url';
 import { useSelect } from '@wordpress/data';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -133,21 +132,16 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 
 	return (
 		<div className={ `style-preview__preview is-viewport-${ viewport }` }>
-			{ viewport === 'desktop' && (
-				<div role="presentation" className="style-preview__preview-bar">
-					<div role="presentation" className="style-preview__preview-bar-dot" />
-					<div role="presentation" className="style-preview__preview-bar-dot" />
-					<div role="presentation" className="style-preview__preview-bar-dot" />
-				</div>
-			) }
-			<iframe
-				ref={ iframe }
-				className={ classNames( {
-					'style-preview__iframe': true,
-					hideScroll: viewport !== 'desktop',
-				} ) }
-				title="preview"
-			/>
+			<div className="style-preview__preview-wrapper">
+				{ viewport === 'desktop' && (
+					<div role="presentation" className="style-preview__preview-bar">
+						<div role="presentation" className="style-preview__preview-bar-dot" />
+						<div role="presentation" className="style-preview__preview-bar-dot" />
+						<div role="presentation" className="style-preview__preview-bar-dot" />
+					</div>
+				) }
+				<iframe ref={ iframe } className="style-preview__iframe" title="preview" />
+			</div>
 		</div>
 	);
 };

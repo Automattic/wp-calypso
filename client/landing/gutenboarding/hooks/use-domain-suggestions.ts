@@ -17,7 +17,7 @@ export function useDomainSuggestions( searchOverride = '' ) {
 	);
 
 	const [ searchTerm ] = useDebounce(
-		searchOverride.trim() || domainSearch.trim() || siteTitle || '',
+		searchOverride.trim() || domainSearch.trim() || siteTitle || siteVertical?.label.trim() || '',
 		selectorDebounce
 	);
 
