@@ -34,7 +34,7 @@ import PodcastingPublishNotice from './publish-notice';
 import PodcastingSupportLink from './support-link';
 import podcastingTopics from './topics';
 import TermTreeSelector from 'blocks/term-tree-selector';
-import UpgradeNudge from 'blocks/upgrade-nudge';
+import UpsellNudge from 'blocks/upsell-nudge';
 
 /**
  * Selectors, actions, and query components
@@ -234,12 +234,17 @@ class PodcastingDetails extends Component {
 						</h1>
 					</HeaderCake>
 					{ ! error && plansDataLoaded && (
-						<UpgradeNudge
+						<UpsellNudge
 							plan={ PLAN_PERSONAL }
 							title={ translate( 'Upload Audio with WordPress.com Personal' ) }
-							message={ translate( 'Embed podcast episodes directly from your media library.' ) }
+							description={ translate(
+								'Embed podcast episodes directly from your media library.'
+							) }
 							feature={ FEATURE_AUDIO_UPLOADS }
 							event="podcasting_details_upload_audio"
+							tracksImpressionName="calypso_upgrade_nudge_impression"
+							tracksClickName="calypso_upgrade_nudge_cta_click"
+							showIcon={ true }
 						/>
 					) }
 					{ ! error && (

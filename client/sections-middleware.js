@@ -17,12 +17,6 @@ import { receiveSections, load } from './sections-helper';
 import isSectionEnabled from './sections-filter';
 import { addReducerToStore } from 'state/add-reducer';
 import { getSection } from 'state/ui/selectors';
-import {
-	socketConnect as lasagnaSocketConnect,
-	socketDisconnect as lasagnaSocketDisconnect,
-} from 'state/lasagna/actions';
-import { socket } from 'state/lasagna/socket';
-
 import sections from './sections';
 receiveSections( sections );
 
@@ -31,16 +25,6 @@ function activateSection( sectionDefinition, context ) {
 
 	context.store.dispatch( setSection( sectionDefinition, { previousSection } ) );
 	context.store.dispatch( activateNextLayoutFocus() );
-}
-
-function manageLasagnaSocket( sectionDefinition, context ) {
-	if ( sectionDefinition.name === 'reader' && ! socket ) {
-		context.store.dispatch( lasagnaSocketConnect() );
-	}
-
-	if ( sectionDefinition.name !== 'reader' && socket ) {
-		context.store.dispatch( lasagnaSocketDisconnect() );
-	}
 }
 
 async function loadSection( context, sectionDefinition ) {
@@ -90,11 +74,6 @@ function createPageDefinition( path, sectionDefinition ) {
 
 	page( pathRegex, async function( context, next ) {
 		try {
-			if ( config.isEnabled( 'lasagna' ) ) {
-				// do realtime in the Reader section
-				manageLasagnaSocket( sectionDefinition, context );
-			}
-
 			const loadedSection = _loadedSections[ sectionDefinition.module ];
 			if ( loadedSection ) {
 				// wait for the promise if loading, do nothing when already loaded

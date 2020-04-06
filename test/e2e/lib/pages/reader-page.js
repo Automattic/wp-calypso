@@ -37,9 +37,13 @@ export default class ReaderPage extends AsyncBaseContainer {
 		}
 
 		await driverHelper.clickWhenClickable( this.driver, shareButtonSelector );
+		await driverHelper.waitTillPresentAndDisplayed(
+			this.driver,
+			by.css( '.site-selector__sites' )
+		);
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( '.reader-popover .site__content' )
+			by.css( '.reader-popover .site__info' )
 		);
 	}
 

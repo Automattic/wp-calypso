@@ -3,15 +3,15 @@
  */
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'components/gridicon';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'components/gridicon';
 import Popover from 'components/popover';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 
 /**
  * Style dependencies
@@ -66,7 +66,7 @@ export default class InfoPopover extends Component {
 
 		if ( gaEventCategory && popoverName ) {
 			const dialogState = this.state.showPopover ? ' Opened' : ' Closed';
-			analytics.ga.recordEvent( gaEventCategory, 'InfoPopover: ' + popoverName + dialogState );
+			gaRecordEvent( gaEventCategory, 'InfoPopover: ' + popoverName + dialogState );
 		}
 	};
 

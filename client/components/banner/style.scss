@@ -142,7 +142,7 @@
 	}
 }
 
-.is-compact .banner__content {
+.banner.is-compact .banner__content {
 	padding: 5px;
 }
 
@@ -191,7 +191,7 @@
 	}
 }
 
-.is-compact .banner__title {
+.banner.is-compact .banner__title {
 	font-size: 12px;
 }
 
@@ -250,7 +250,7 @@
 	}
 }
 
-.is-compact .dismissible-card__close-icon {
+.banner.is-compact .dismissible-card__close-icon {
 	width: 16px;
 	height: 16px;
 	top: 50%;

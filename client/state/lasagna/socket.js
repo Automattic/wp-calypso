@@ -1,7 +1,6 @@
 /**
  * External Dependencies
  */
-import { Socket } from 'phoenix';
 import createDebug from 'debug';
 import moment from 'moment-timezone';
 
@@ -36,26 +35,28 @@ export function socketConnect( { store, jwt, userId } ) {
 		return;
 	}
 
-	SOCKET = new Socket( url, { params: { jwt, user_id: userId } } );
+	import( 'phoenix' ).then( ( { Socket } ) => {
+		SOCKET = new Socket( url, { params: { jwt, user_id: userId } } );
 
-	SOCKET.onOpen( () => {
-		debug( 'socket opened' );
-		store.dispatch( socketConnected() );
+		SOCKET.onOpen( () => {
+			debug( 'socket opened' );
+			store.dispatch( socketConnected() );
+		} );
+
+		SOCKET.onClose( () => {
+			debug( 'socket closed' );
+			store.dispatch( socketClosed() );
+			// @TODO: verify this Phoenix.js state, dispatch attempting reconnect here?
+		} );
+
+		SOCKET.onError( () => {
+			debug( 'socket error' );
+			store.dispatch( socketConnectError() );
+			// @TODO: verify this Phoenix.js state, dispatch attempting reconnect here?
+		} );
+
+		SOCKET.connect();
 	} );
-
-	SOCKET.onClose( () => {
-		debug( 'socket closed' );
-		store.dispatch( socketClosed() );
-		// @TODO: verify this Phoenix.js state, dispatch attempting reconnect here?
-	} );
-
-	SOCKET.onError( () => {
-		debug( 'socket error' );
-		store.dispatch( socketConnectError() );
-		// @TODO: verify this Phoenix.js state, dispatch attempting reconnect here?
-	} );
-
-	SOCKET.connect();
 }
 
 export function socketDisconnect( { store } ) {

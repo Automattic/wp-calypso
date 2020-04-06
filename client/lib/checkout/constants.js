@@ -35,6 +35,9 @@ export const PAYMENT_PROCESSOR_COUNTRIES_FIELDS = {
 			'postal-code',
 		],
 	},
+	ID: {
+		fields: [ 'name', 'nik' ],
+	},
 };
 
 export const UPGRADE_INTENT_PLUGINS = 'plugins';

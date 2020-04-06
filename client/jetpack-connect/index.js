@@ -25,7 +25,7 @@ export default function() {
 	const locale = getLanguageRouteParam( 'locale' );
 
 	page(
-		'/jetpack/connect/:type(personal|premium|pro|backup|realtimebackup)/:interval(yearly|monthly)?',
+		'/jetpack/connect/:type(personal|premium|pro|backup|realtimebackup|jetpack_search)/:interval(yearly|monthly)?',
 		controller.persistMobileAppFlow,
 		controller.setMasterbar,
 		controller.connect,

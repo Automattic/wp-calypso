@@ -2,83 +2,53 @@
 	"description": "WordPress.com page templates",
 	"templates": [
 		{
-			"title": "rockfield",
-			"defaults": "rockfield",
+			"title": "bowen",
+			"defaults": "bowen",
 			"vertical-whitelist": []
 		},
 		{
-			"title": "rockfield2",
-			"defaults": "rockfield",
+			"title": "edison",
+			"defaults": "edison",
 			"vertical-whitelist": []
 		},
 		{
-			"title": "leven",
-			"defaults": "leven",
+			"title": "cassel",
+			"defaults": "cassel",
 			"vertical-whitelist": []
 		},
 		{
-			"title": "alves",
-			"defaults": "alves",
+			"title": "vesta",
+			"defaults": "vesta",
 			"vertical-whitelist": []
 		},
 		{
-			"title": "alves2",
-			"defaults": "alves",
+			"title": "reynolds",
+			"defaults": "reynolds",
 			"vertical-whitelist": []
 		},
 		{
-			"title": "balasana",
-			"defaults": "balasana",
+			"title": "easley",
+			"defaults": "easley",
 			"vertical-whitelist": []
 		},
 		{
-			"title": "coutoire",
-			"defaults": "coutoire",
+			"title": "camdem",
+			"defaults": "camdem",
 			"vertical-whitelist": []
 		},
 		{
-			"title": "exford",
-			"defaults": "exford",
+			"title": "overton",
+			"defaults": "overton",
 			"vertical-whitelist": []
 		},
 		{
-			"title": "rockfield",
-			"defaults": "rockfield",
+			"title": "doyle",
+			"defaults": "doyle",
 			"vertical-whitelist": []
 		},
 		{
-			"title": "stratford",
-			"defaults": "stratford",
-			"vertical-whitelist": []
-		},
-		{
-			"title": "stratford2",
-			"defaults": "stratford",
-			"vertical-whitelist": []
-		},
-		{
-			"title": "mayland",
-			"defaults": "mayland",
-			"vertical-whitelist": []
-		},
-		{
-			"title": "mayland2",
-			"defaults": "mayland",
-			"vertical-whitelist": []
-		},
-		{
-			"title": "maywood",
-			"defaults": "maywood",
-			"vertical-whitelist": []
-		},
-		{
-			"title": "maywood2",
-			"defaults": "maywood",
-			"vertical-whitelist": []
-		},
-		{
-			"title": "rivington",
-			"defaults": "rivington",
+			"title": "brice",
+			"defaults": "brice",
 			"vertical-whitelist": []
 		}
 	],
@@ -114,10 +84,6 @@
 		{
 			"title": "maywood",
 			"demo": "https://maywooddemo.wordpress.com/"
-		},
-		{
-			"title": "rivington",
-			"demo": "https://rivingtondemo.wordpress.com/"
 		}
 	]
 }

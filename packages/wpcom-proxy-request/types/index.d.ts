@@ -12,6 +12,7 @@ export interface WpcomRequestParams {
 	apiVersion?: string;
 	body?: object;
 	token?: string;
+	query?: string;
 	metaAPI?: {
 		accessAllUsersBlogs?: boolean;
 	};

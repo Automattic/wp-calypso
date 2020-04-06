@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useState, useEffect } from 'react';
-import { ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
+import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
@@ -34,6 +34,7 @@ interface Props {
 const SignupForm = ( { onRequestClose }: Props ) => {
 	const { __: NO__ } = useI18n();
 	const [ emailVal, setEmailVal ] = useState( '' );
+	const [ passwordVal, setPasswordVal ] = useState( '' );
 	const { createAccount, clearErrors } = useDispatch( USER_STORE );
 	const isFetchingNewUser = useSelect( select => select( USER_STORE ).isFetchingNewUser() );
 	const newUserError = useSelect( select => select( USER_STORE ).getNewUserError() );
@@ -61,12 +62,13 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 
 		const success = await createAccount( {
 			email: emailVal,
-			is_passwordless: true,
+			password: passwordVal,
 			signup_flow_name: 'gutenboarding',
 			locale: langParam,
 			...( username_hint && {
 				extra: { username_hint },
 			} ),
+			is_passwordless: false,
 		} );
 
 		if ( success ) {
@@ -89,7 +91,9 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 			case 'email_exists':
 				errorMessage = NO__( 'An account with this email address already exists.' );
 				break;
-
+			case 'password_invalid':
+				errorMessage = newUserError.message;
+				break;
 			default:
 				errorMessage = NO__(
 					'Sorry, something went wrong when trying to create your account. Please try again.'
@@ -102,6 +106,9 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const loginRedirectUrl = `${ window.location.origin }/gutenboarding${ makePath(
 		Step.CreateSite
 	) }?new`;
+	const loginUrl = `/log-in/gutenboarding${ langFragment }?redirect_to=${ encodeURIComponent(
+		loginRedirectUrl
+	) }`;
 
 	return (
 		<Modal
@@ -114,12 +121,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 			// set to false so that 1password's autofill doesn't automatically close the modal
 			shouldCloseOnClickOutside={ false }
 		>
-			<SignupFormHeader
-				onRequestClose={ closeModal }
-				loginUrl={ `/log-in/gutenboarding${ langFragment }?redirect_to=${ encodeURIComponent(
-					loginRedirectUrl
-				) }` }
-			/>
+			<SignupFormHeader onRequestClose={ closeModal } />
 
 			<div className="signup-form__body">
 				<h1 className="signup-form__title">{ NO__( 'Save your progress' ) }</h1>
@@ -140,6 +142,15 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 							autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 						/>
 
+						<TextControl
+							value={ passwordVal }
+							disabled={ isFetchingNewUser }
+							type="password"
+							onChange={ setPasswordVal }
+							placeholder={ NO__( 'Password' ) }
+							required
+						/>
+
 						{ errorMessage && (
 							<Notice className="signup-form__error-notice" status="error" isDismissible={ false }>
 								{ errorMessage }
@@ -147,11 +158,18 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 						) }
 
 						<div className="signup-form__footer">
-							<p className="signup-form__link signup-form__terms-of-service-link">{ tos }</p>
+							<p className="signup-form__login-link">
+								<span>{ NO__( 'Already have an account?' ) }</span>{ ' ' }
+								<Button className="signup-form__link" isLink href={ loginUrl }>
+									{ NO__( 'Log in' ) }
+								</Button>
+							</p>
 
 							<ModalSubmitButton disabled={ isFetchingNewUser } isBusy={ isFetchingNewUser }>
 								{ NO__( 'Create account' ) }
 							</ModalSubmitButton>
+
+							<p className="signup-form__link signup-form__terms-of-service-link">{ tos }</p>
 						</div>
 					</fieldset>
 				</form>

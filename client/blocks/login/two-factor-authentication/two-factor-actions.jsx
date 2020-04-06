@@ -28,6 +28,7 @@ class TwoFactorActions extends Component {
 		isAuthenticatorSupported: PropTypes.bool.isRequired,
 		isSecurityKeySupported: PropTypes.bool.isRequired,
 		isJetpack: PropTypes.bool,
+		isGutenboarding: PropTypes.bool,
 		isSmsSupported: PropTypes.bool.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		sendSmsCode: PropTypes.func.isRequired,
@@ -40,7 +41,14 @@ class TwoFactorActions extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_to_sms_link_click' );
 
-		page( login( { isNative: true, twoFactorAuthType: 'sms', isJetpack: this.props.isJetpack } ) );
+		page(
+			login( {
+				isNative: true,
+				twoFactorAuthType: 'sms',
+				isJetpack: this.props.isJetpack,
+				isGutenboarding: this.props.isGutenboarding,
+			} )
+		);
 
 		this.props.sendSmsCode();
 	};
@@ -55,6 +63,7 @@ class TwoFactorActions extends Component {
 				isNative: true,
 				twoFactorAuthType: 'authenticator',
 				isJetpack: this.props.isJetpack,
+				isGutenboarding: this.props.isGutenboarding,
 			} )
 		);
 	};

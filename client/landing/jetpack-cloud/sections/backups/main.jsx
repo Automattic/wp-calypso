@@ -178,6 +178,7 @@ class BackupsPage extends Component {
 					selectedDate={ this.getSelectedDate() }
 					siteId={ siteId }
 					oldestDateAvailable={ oldestDateAvailable }
+					siteSlug={ siteSlug }
 				/>
 
 				<div>{ isLoadingBackups && 'Loading backups...' }</div>

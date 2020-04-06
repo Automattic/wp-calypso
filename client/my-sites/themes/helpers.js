@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import titlecase from 'to-title-case';
 import { mapValues } from 'lodash';
 
 export function trackClick( componentName, eventName, verb = 'click' ) {
 	const stat = `${ componentName } ${ eventName } ${ verb }`;
-	analytics.ga.recordEvent( 'Themes', titlecase( stat ) );
+	gaRecordEvent( 'Themes', titlecase( stat ) );
 }
 
 export function addTracking( options ) {

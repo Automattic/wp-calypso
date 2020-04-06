@@ -32,8 +32,13 @@ import PostTypeListEmptyContent from './empty-content';
 import PostTypeListMaxPagesNotice from './max-pages-notice';
 import SectionHeader from 'components/section-header';
 import { Button } from '@automattic/components';
-import UpgradeNudge from 'blocks/upgrade-nudge';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { FEATURE_NO_ADS } from 'lib/plans/constants';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Constants
@@ -287,11 +292,14 @@ class PostTypeList extends Component {
 				) }
 				{ posts.slice( 0, 10 ).map( this.renderPost ) }
 				{ showUpgradeNudge && (
-					<UpgradeNudge
+					<UpsellNudge
 						title={ translate( 'No Ads with WordPress.com Premium' ) }
-						message={ translate( 'Prevent ads from showing on your site.' ) }
+						description={ translate( 'Prevent ads from showing on your site.' ) }
 						feature={ FEATURE_NO_ADS }
 						event="published_posts_no_ads"
+						tracksImpressionName="calypso_upgrade_nudge_impression"
+						tracksClickName="calypso_upgrade_nudge_cta_click"
+						showIcon={ true }
 					/>
 				) }
 				{ posts.slice( 10 ).map( this.renderPost ) }
