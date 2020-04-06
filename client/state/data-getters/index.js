@@ -251,7 +251,7 @@ export const requestSiteScan = siteId => {
 					requestId,
 					{
 						...rest,
-						startTimestapm: start_timestamp,
+						startTimestamp: start_timestamp,
 						nextTimestamp: next_timestamp,
 						endTimestamp: end_timestamp,
 					},
