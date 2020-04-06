@@ -1307,12 +1307,12 @@ describe( 'utils', () => {
 										{
 											icon:
 												'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-											name: 'en.support.wordpress.com',
+											name: 'wordpress.com/support',
 											url: null,
 											views: 45,
 											children: [
 												{
-													name: 'en.support.wordpress.com',
+													name: 'wordpress.com/support',
 													url: 'https://wordpress.com/support/',
 													views: 5,
 												},
@@ -1340,14 +1340,14 @@ describe( 'utils', () => {
 						children: [
 							{
 								children: null,
-								label: 'en.support.wordpress.com',
+								label: 'wordpress.com/support',
 								labelIcon: 'external',
 								link: 'https://wordpress.com/support/',
 								value: 5,
 							},
 						],
 						icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-						label: 'en.support.wordpress.com',
+						label: 'wordpress.com/support',
 						labelIcon: null,
 						link: null,
 						value: 45,
@@ -1373,12 +1373,12 @@ describe( 'utils', () => {
 									{
 										icon:
 											'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-										name: 'en.support.wordpress.com',
+										name: 'wordpress.com/support',
 										url: null,
 										views: 50,
 										children: [
 											{
-												name: 'en.support.wordpress.com',
+												name: 'wordpress.com/support',
 												url: 'https://wordpress.com/support/',
 												views: 50,
 											},
@@ -1406,14 +1406,14 @@ describe( 'utils', () => {
 						children: [
 							{
 								children: null,
-								label: 'en.support.wordpress.com',
+								label: 'wordpress.com/support',
 								labelIcon: 'external',
 								link: 'https://wordpress.com/support/',
 								value: 50,
 							},
 						],
 						icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-						label: 'en.support.wordpress.com',
+						label: 'wordpress.com/support',
 						labelIcon: null,
 						link: null,
 						value: 50,
@@ -1462,10 +1462,10 @@ describe( 'utils', () => {
 										total: 500,
 									},
 									{
-										group: 'en.support.wordpress.com',
+										group: 'wordpress.com/support',
 										icon:
 											'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-										name: 'en.support.wordpress.com',
+										name: 'wordpress.com/support',
 										results: [
 											{ name: 'homepage', url: 'https://wordpress.com/support/', views: 200 },
 											{ name: 'start', url: 'https://wordpress.com/support/start/', views: 100 },
@@ -1499,7 +1499,7 @@ describe( 'utils', () => {
 						actions: [
 							{
 								data: {
-									domain: 'en.support.wordpress.com',
+									domain: 'wordpress.com/support',
 									siteID: 100,
 								},
 								type: 'spam',
@@ -1522,7 +1522,7 @@ describe( 'utils', () => {
 							},
 						],
 						icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-						label: 'en.support.wordpress.com',
+						label: 'wordpress.com/support',
 						labelIcon: null,
 						link: undefined,
 						value: 300,
@@ -1550,10 +1550,10 @@ describe( 'utils', () => {
 											total: 407,
 										},
 										{
-											group: 'en.support.wordpress.com',
+											group: 'wordpress.com/support',
 											icon:
 												'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-											name: 'en.support.wordpress.com',
+											name: 'wordpress.com/support',
 											results: [
 												{ name: 'homepage', url: 'https://wordpress.com/support/', views: 42 },
 												{
@@ -1591,7 +1591,7 @@ describe( 'utils', () => {
 						actions: [
 							{
 								data: {
-									domain: 'en.support.wordpress.com',
+									domain: 'wordpress.com/support',
 									siteID: 100,
 								},
 								type: 'spam',
@@ -1614,7 +1614,7 @@ describe( 'utils', () => {
 							},
 						],
 						icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-						label: 'en.support.wordpress.com',
+						label: 'wordpress.com/support',
 						labelIcon: null,
 						link: undefined,
 						value: 207,
@@ -1676,7 +1676,7 @@ describe( 'utils', () => {
 					{
 						label: 'Unknown Search Terms',
 						labelIcon: 'external',
-						link: 'http://en.support.wordpress.com/stats/#search-engine-terms',
+						link: 'http://wordpress.com/support/stats/#search-engine-terms',
 						value: 221,
 					},
 				] );
@@ -1722,7 +1722,7 @@ describe( 'utils', () => {
 					{
 						label: 'Unknown Search Terms',
 						labelIcon: 'external',
-						link: 'http://en.support.wordpress.com/stats/#search-engine-terms',
+						link: 'http://wordpress.com/support/stats/#search-engine-terms',
 						value: 400,
 					},
 				] );
