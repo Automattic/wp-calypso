@@ -7,7 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import BackupsActivityLog from 'landing/jetpack-cloud/components/backups-activity-log';
+import BackupActivityLog from 'landing/jetpack-cloud/components/backup-activity-log';
 
 const BackupActivityLogPage: FunctionComponent = () => {
 	const translate = useTranslate();
@@ -19,7 +19,7 @@ const BackupActivityLogPage: FunctionComponent = () => {
 					'This is the complete event history for your site. Filter by date range and/or activity type.'
 				) }
 			</p>
-			<BackupsActivityLog />
+			<BackupActivityLog />
 		</div>
 	);
 };
