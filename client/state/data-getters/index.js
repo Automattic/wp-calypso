@@ -31,15 +31,19 @@ export const requestFromUrl = url =>
 		fromApi: () => data => [ [ `get-at-url-${ url }`, data ] ],
 	} );
 
+export const requestActivityActionTypeCountsId = ( siteId, filter ) => {
+	const before = filter && filter.before ? filter.before : '';
+	const after = filter && filter.after ? filter.after : '';
+	const on = filter && filter.on ? filter.on : '';
+	return `activity-log-${ siteId }-${ after }-${ before }-${ on }`;
+};
+
 export const requestActivityActionTypeCounts = (
 	siteId,
 	filter,
 	{ freshness = 10 * 1000 } = {}
 ) => {
-	const before = filter && filter.before ? filter.before : '';
-	const after = filter && filter.after ? filter.after : '';
-	const on = filter && filter.on ? filter.on : '';
-	const id = `activity-log-${ siteId }-${ after }-${ before }-${ on }`;
+	const id = requestActivityActionTypeCountsId( siteId, filter );
 
 	return requestHttpData(
 		id,

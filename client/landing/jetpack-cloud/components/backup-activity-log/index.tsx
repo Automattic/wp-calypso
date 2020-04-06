@@ -9,25 +9,17 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 /**
  * Internal dependencies
  */
+import { Activity, ActivityTypeCount, Filter } from './types';
 import { getHttpData } from 'state/data-layer/http-data';
-import { requestActivityLogs, requestActivityLogsId } from 'state/data-getters';
+import {
+	requestActivityLogs,
+	requestActivityLogsId,
+	requestActivityActionTypeCountsId,
+	requestActivityActionTypeCounts,
+} from 'state/data-getters';
 import ActivityCard from 'landing/jetpack-cloud/components/activity-card';
 import Pagination from 'components/pagination';
-
-// TODO: move these interfaces to dedicated types file
-// based on the how filters are used in client/state/data-getters/index.js
-interface Filter {
-	after?: string;
-	aggregate?: boolean;
-	before?: string;
-	group?: Array< string >;
-	on?: string;
-	page: number;
-}
-
-interface Activity {
-	activityId: string;
-}
+import ActivityTypeSelector from './activity-type-selector';
 
 interface Props {
 	baseFilter?: Filter;
@@ -41,20 +33,32 @@ const BackupActivityLog: FunctionComponent< Props > = ( {
 	siteId,
 } ) => {
 	const translate = useTranslate();
-
-	const activities = useSelector< object, Array< Activity > | undefined >(
-		() => getHttpData( requestActivityLogsId( siteId, baseFilter ) ).data
-	);
-
 	const [ page, setPage ] = useState( 1 );
+	const [ hiddenActivities, setHiddenActivities ] = useState< string[] >( [] );
 
 	const filter = {
 		...baseFilter,
 		page,
 	};
 
+	// IMPORTANT! The order is very specifically  get `activityTypeCounts` -> add groups to filter -> get `activities`
+	const activityTypeCounts = useSelector< object, ActivityTypeCount[] | undefined >(
+		() => getHttpData( requestActivityActionTypeCountsId( siteId, filter ) ).data
+	);
+
+	if ( hiddenActivities.length > 0 ) {
+		filter.group = ( activityTypeCounts || [] )
+			.filter( ( { key } ) => ! hiddenActivities.includes( key ) )
+			.map( ( { key } ) => key );
+	}
+
+	const activities = useSelector< object, Activity[] | undefined >(
+		() => getHttpData( requestActivityLogsId( siteId, filter ) ).data
+	);
+
 	useEffect( () => {
 		requestActivityLogs( siteId, filter );
+		requestActivityActionTypeCounts( siteId, filter );
 	}, [ filter, siteId ] );
 
 	const renderPagination = ( key: string, total: number, actualPage: number ) => (
@@ -69,7 +73,10 @@ const BackupActivityLog: FunctionComponent< Props > = ( {
 		/>
 	);
 
-	const renderData = ( loadedActivities: Array< Activity > ) => {
+	const renderData = (
+		loadedActivities: Activity[],
+		loadedActivityTypeCounts: ActivityTypeCount[]
+	) => {
 		const actualPage = Math.max(
 			1,
 			Math.min( page, Math.ceil( loadedActivities.length / pageSize ) )
@@ -90,6 +97,11 @@ const BackupActivityLog: FunctionComponent< Props > = ( {
 
 		return (
 			<>
+				<ActivityTypeSelector
+					hiddenActivities={ hiddenActivities }
+					activityTypeCounts={ loadedActivityTypeCounts }
+					setHiddenActivities={ setHiddenActivities }
+				/>
 				{ renderPagination( 'activity-log__pagination-top', loadedActivities.length, actualPage ) }
 				{ renderedActivities }
 				{ renderPagination(
@@ -101,7 +113,15 @@ const BackupActivityLog: FunctionComponent< Props > = ( {
 		);
 	};
 
-	return <div>{ activities ? renderData( activities ) : <p>{ 'loading...' }</p> }</div>;
+	return (
+		<div>
+			{ activities && activityTypeCounts ? (
+				renderData( activities, activityTypeCounts )
+			) : (
+				<p>{ 'loading...' }</p>
+			) }
+		</div>
+	);
 };
 
 export default BackupActivityLog;
