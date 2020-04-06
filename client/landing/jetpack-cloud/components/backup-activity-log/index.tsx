@@ -20,6 +20,7 @@ interface Filter {
 	before?: string;
 	group?: Array< string >;
 	on?: string;
+	page: number;
 }
 
 interface Activity {
@@ -36,7 +37,9 @@ const BackupActivityLog: FunctionComponent< Props > = ( { baseFilter, siteId } )
 		() => getHttpData( requestActivityLogsId( siteId, baseFilter ) ).data
 	);
 
-	useEffect( () => requestActivityLogs( siteId, baseFilter ), [ siteId, baseFilter ] );
+	useEffect( () => {
+		requestActivityLogs( siteId, baseFilter );
+	}, [ baseFilter, siteId ] );
 
 	const renderActivities = ( loadedActivities: Array< Activity > ) =>
 		loadedActivities.map( activity => (

@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { emptyFilter } from 'state/activity-log/reducer';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import BackupActivityLog from 'landing/jetpack-cloud/components/backup-activity-log';
 
@@ -23,7 +24,7 @@ const BackupActivityLogPage: FunctionComponent = () => {
 					'This is the complete event history for your site. Filter by date range and/or activity type.'
 				) }
 			</p>
-			{ siteId && <BackupActivityLog baseFilter={ {} } siteId={ siteId } /> }
+			{ siteId && <BackupActivityLog baseFilter={ emptyFilter } siteId={ siteId } /> }
 		</div>
 	);
 };
