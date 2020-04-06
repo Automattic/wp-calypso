@@ -70,7 +70,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 			{ isDomainPopoverVisible && (
 				<div className="domain-picker-button__popover-container">
 					<Popover
-						className="domain-picker-button"
 						onClose={ handleClose }
 						onFocusOutside={ handleClose }
 						onClickOutside={ handleClose }
