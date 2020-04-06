@@ -29,6 +29,8 @@ import { useCurrentStep } from '../../path';
 
 import wp from '../../../../lib/wp';
 
+type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
+
 const wpcom = wp.undocumented();
 
 interface Cart {
@@ -67,7 +69,6 @@ const Header: FunctionComponent = () => {
 
 	const currentStep = useCurrentStep();
 
-	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
 	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
 
 	const newSite = useSelect( select => select( SITE_STORE ).getNewSite() );
@@ -98,6 +99,7 @@ const Header: FunctionComponent = () => {
 	}, [ siteTitle, setDomain ] );
 
 	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
+	const [ isRedirecting, setIsRedirecting ] = useState( false );
 
 	const {
 		location: { pathname },
@@ -134,17 +136,17 @@ const Header: FunctionComponent = () => {
 		[ createSite, freeDomainSuggestion ]
 	);
 
-	const handleCreateSiteForDomains: typeof handleCreateSite = ( ...args ) => {
-		setSiteWasCreatedForDomainPurchase( true );
-		handleCreateSite( ...args );
-	};
-
 	const closeAuthDialog = () => {
 		setShowSignupDialog( false );
 	};
 
-	const handleSignupForDomains = () => {
-		setShowSignupDialog( true );
+	const setFreeDomain = ( selectedDomain: DomainSuggestion ) => {
+		setDomain( selectedDomain );
+		setSiteWasCreatedForDomainPurchase( false );
+	};
+
+	const setPaidDomain = ( selectedDomain: DomainSuggestion ) => {
+		setDomain( selectedDomain );
 		setSiteWasCreatedForDomainPurchase( true );
 	};
 
@@ -155,7 +157,8 @@ const Header: FunctionComponent = () => {
 	}, [ newUser, handleCreateSite ] );
 
 	useEffect( () => {
-		if ( newSite ) {
+		// isRedirecting check this is needed to make sure we don't overwrite the first window.location.replace() call
+		if ( newSite && ! isRedirecting ) {
 			if ( siteWasCreatedForDomainPurchase ) {
 				// I'd rather not make my own product, but this works.
 				// lib/cart-items helpers did not perform well.
@@ -175,11 +178,9 @@ const Header: FunctionComponent = () => {
 						...cart,
 						products: [ ...cart.products, domainProduct ],
 					} );
-
+					setIsRedirecting( true );
 					resetOnboardStore();
-					window.location.replace(
-						`/checkout/${ newSite.site_slug }?redirect_to=%2Fgutenboarding%2Fdesign`
-					);
+					window.location.replace( `/start/prelaunch?siteSlug=${ newSite.blogid }` );
 				};
 				go();
 				return;
@@ -187,7 +188,7 @@ const Header: FunctionComponent = () => {
 			resetOnboardStore();
 			window.location.replace( `/block-editor/page/${ newSite.site_slug }/home?is-gutenboarding` );
 		}
-	}, [ domain, siteWasCreatedForDomainPurchase, newSite, resetOnboardStore ] );
+	}, [ domain, siteWasCreatedForDomainPurchase, newSite, resetOnboardStore, isRedirecting ] );
 
 	return (
 		<div
@@ -216,12 +217,8 @@ const Header: FunctionComponent = () => {
 							className="gutenboarding__header-domain-picker-button"
 							disabled={ ! currentDomain }
 							currentDomain={ currentDomain }
-							onDomainSelect={ setDomain }
-							onDomainPurchase={ () =>
-								currentUser
-									? handleCreateSiteForDomains( currentUser.username )
-									: handleSignupForDomains()
-							}
+							onDomainSelect={ setFreeDomain }
+							onDomainPurchase={ setPaidDomain }
 						>
 							{ domainElement }
 						</DomainPickerButton>
