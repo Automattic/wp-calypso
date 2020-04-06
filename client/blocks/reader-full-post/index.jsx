@@ -365,7 +365,6 @@ export class FullPostView extends React.Component {
 								<CommentButton
 									key="comment-button"
 									commentCount={ commentCount }
-									post={ post }
 									onClick={ this.handleCommentClick }
 									tagName="div"
 								/>
