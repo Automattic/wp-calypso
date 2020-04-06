@@ -33,7 +33,7 @@ import NonPrimaryDomainPlanUpsell from '../../components/domain/non-primary-doma
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
 import AutoRenewToggle from 'me/purchases/manage-purchase/auto-renew-toggle';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import { isExpired, shouldRenderExpiringCreditCard, isRechargeable } from 'lib/purchases';
+import { shouldRenderExpiringCreditCard } from 'lib/purchases';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainManagementNavigation from '../navigation';
@@ -253,10 +253,6 @@ class RegisteredDomainType extends React.Component {
 		const { selectedSite, purchase } = this.props;
 
 		if ( ! purchase ) {
-			return null;
-		}
-
-		if ( ! isRechargeable( purchase ) || isExpired( purchase ) ) {
 			return null;
 		}
 

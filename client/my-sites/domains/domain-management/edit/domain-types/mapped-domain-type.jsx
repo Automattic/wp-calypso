@@ -28,12 +28,10 @@ import {
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 } from 'state/purchases/selectors';
-import { isRechargeable, isExpired } from 'lib/purchases';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainManagementNavigation from '../navigation';
 import { WrapDomainStatusButtons } from './helpers';
-
 
 class MappedDomainType extends React.Component {
 	resolveStatus() {
@@ -185,10 +183,6 @@ class MappedDomainType extends React.Component {
 		const { selectedSite, purchase } = this.props;
 
 		if ( ! purchase ) {
-			return null;
-		}
-
-		if ( ! isRechargeable( purchase ) || isExpired( purchase ) ) {
 			return null;
 		}
 
