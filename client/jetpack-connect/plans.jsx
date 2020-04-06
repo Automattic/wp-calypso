@@ -97,7 +97,7 @@ class Plans extends Component {
 		const { canPurchasePlans, selectedSiteSlug } = this.props;
 
 		if ( selectedSiteSlug && canPurchasePlans ) {
-			return this.redirect( CALYPSO_MY_PLAN_PAGE, { 'thank-you': '' } );
+			return this.redirect( CALYPSO_MY_PLAN_PAGE, null, { 'thank-you': '' } );
 		}
 
 		return this.redirect( CALYPSO_REDIRECTION_PAGE );
@@ -175,7 +175,6 @@ class Plans extends Component {
 		addItem( cartItem );
 		this.props.completeFlow();
 		persistSignupDestination( this.getMyPlansDestination() );
-
 		this.redirect( '/checkout/', cartItem.product_slug );
 	};
 
