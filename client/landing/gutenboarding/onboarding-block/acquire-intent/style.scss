@@ -54,10 +54,6 @@ $acquire-intent-transition-algorithm: ease-in-out;
 	color: var( --mainColor );
 	border-bottom: 2px solid var( --mainColor );
 
-	transition: border-bottom $acquire-intent-transition-duration
-			$acquire-intent-transition-algorithm,
-		color $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
-
 	&:focus {
 		outline: none;
 	}
@@ -66,6 +62,17 @@ $acquire-intent-transition-algorithm: ease-in-out;
 	// .accessible-focus &:focus {
 	// 	outline: 2px solid var( --highlightColor );
 	// }
+}
+
+.madlib__input:empty {
+	width: 200px;
+	display: inline-block;
+	border-bottom: 2px solid transparent;
+}
+
+/* hide the placeholder when input is not empty */
+.madlib__input:not( :empty ) ~ .vertical-select__placeholder {
+	visibility: hidden;
 }
 
 // Themed core button component
@@ -99,15 +106,6 @@ $acquire-intent-transition-algorithm: ease-in-out;
 
 .site-title {
 	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
-
-	&--without-value {
-		.madlib__input {
-			width: 200px;
-			display: inline-block;
-			vertical-align: middle;
-			border: none;
-		}
-	}
 
 	&--hidden {
 		visibility: hidden;

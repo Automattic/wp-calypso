@@ -7,7 +7,6 @@ import { Suggestions } from '@automattic/components';
 import { useI18n } from '@automattic/react-i18n';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { ENTER, TAB } from '@wordpress/keycodes';
-import classnames from 'classnames';
 import { remove } from 'lodash';
 
 /**
@@ -177,9 +176,6 @@ const VerticalSelect: React.FunctionComponent = () => {
 			Input: (
 				<span className="vertical-select__suggestions-wrapper">
 					<span className="vertical-select__input-wrapper">
-						{ isInputEmpty && (
-							<span className="vertical-select__placeholder">{ animatedPlaceholder }</span>
-						) }
 						<span
 							contentEditable
 							tabIndex={ 0 }
@@ -194,6 +190,7 @@ const VerticalSelect: React.FunctionComponent = () => {
 							onFocus={ () => setIsFocused( true ) }
 							onBlur={ handleBlur }
 						/>
+						<span className="vertical-select__placeholder">{ animatedPlaceholder }</span>
 					</span>
 					{ /* us visibility to keep the layout fixed with and without the arrow */ }
 					{ showArrow && <Arrow className="vertical-select__arrow" /> }
@@ -213,15 +210,7 @@ const VerticalSelect: React.FunctionComponent = () => {
 		}
 	);
 
-	return (
-		<form
-			className={ classnames( 'vertical-select', {
-				'vertical-select--without-value': isInputEmpty,
-			} ) }
-		>
-			{ madlib }
-		</form>
-	);
+	return <form className="vertical-select">{ madlib }</form>;
 };
 
 export default VerticalSelect;
