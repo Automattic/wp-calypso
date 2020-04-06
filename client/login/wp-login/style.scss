@@ -407,4 +407,8 @@ $image-height: 47px;
 	.form-password-input .form-password-input__toggle-visibility {
 		top: 17px;
 	}
+
+	.wp-login__links a:hover, .wp-login__links a:active, .wp-login__links button:hover, .wp-login__links button:active {
+		color: #00a0d2;
+	}
 }
