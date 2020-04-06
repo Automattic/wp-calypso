@@ -8,13 +8,11 @@ import { HOME_LAYOUT_REQUEST } from 'state/action-types';
 import { setHomeLayout } from 'state/home/actions';
 
 const requestLayout = action => {
-	const query = action.isNowLaunched ? { is_now_launched: true } : {};
 	return http(
 		{
 			method: 'GET',
 			path: `/sites/${ action.siteId }/home/layout`,
 			apiNamespace: 'wpcom/v2',
-			query,
 		},
 		action
 	);
