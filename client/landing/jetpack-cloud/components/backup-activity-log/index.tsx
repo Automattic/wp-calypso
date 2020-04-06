@@ -1,12 +1,56 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent } from 'react';
-// import { useTranslate } from 'i18n-calypso';
-// import { useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+import moment from 'moment';
+import React, { FunctionComponent, useEffect } from 'react';
 
-const BackupActivityLog: FunctionComponent = () => {
-	return <div>{ 'This is an Activity Log' }</div>;
+/**
+ * Internal dependencies
+ */
+import { getHttpData } from 'state/data-layer/http-data';
+import { requestActivityLogs, requestActivityLogsId } from 'state/data-getters';
+import ActivityCard from 'landing/jetpack-cloud/components/activity-card';
+
+// TODO: move these interfaces to dedicated types file
+// based on the how filters are used in client/state/data-getters/index.js
+interface Filter {
+	after?: string;
+	aggregate?: boolean;
+	before?: string;
+	group?: Array< string >;
+	on?: string;
+}
+
+interface Activity {
+	activityId: string;
+}
+
+interface Props {
+	baseFilter: Filter;
+	siteId: number;
+}
+
+const BackupActivityLog: FunctionComponent< Props > = ( { baseFilter, siteId } ) => {
+	const activities = useSelector< object, Array< Activity > | undefined >(
+		() => getHttpData( requestActivityLogsId( siteId, baseFilter ) ).data
+	);
+
+	useEffect( () => requestActivityLogs( siteId, baseFilter ), [ siteId, baseFilter ] );
+
+	const renderActivities = ( loadedActivities: Array< Activity > ) =>
+		loadedActivities.map( activity => (
+			<ActivityCard
+				{ ...{
+					key: activity.activityId,
+					moment,
+					activity,
+					allowRestore: false,
+				} }
+			/>
+		) );
+
+	return <div>{ activities ? renderActivities( activities ) : <p>{ 'loading...' }</p> }</div>;
 };
 
 export default BackupActivityLog;
