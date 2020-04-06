@@ -8,12 +8,14 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 import {
 	conciergeSessionItem,
 	domainMapping,
 	planItem,
 	themeItem,
 	jetpackProductItem,
+	getRenewalItemFromCartItem,
 } from 'lib/cart-values/cart-items';
 import { requestPlans } from 'state/plans/actions';
 import { getPlanBySlug, getPlans, isRequestingPlans } from 'state/plans/selectors';
@@ -52,8 +54,57 @@ export default function usePrepareProductsForCart( {
 		isJetpackNotAtomic,
 		originalPurchaseId,
 	} );
+	useAddRenewalItems( { originalPurchaseId, productAlias, setState } );
 
 	return { productsForCart, canInitializeCart };
+}
+
+function useAddRenewalItems( { originalPurchaseId, productAlias, setState } ) {
+	const selectedSiteSlug = useSelector( state => getSelectedSiteSlug( state ) );
+	const isFetchingProducts = useSelector( state => isProductsListFetching( state ) );
+	const products = useSelector( state => getProductsList( state ) );
+
+	useEffect( () => {
+		if ( ! originalPurchaseId ) {
+			return;
+		}
+		if ( isFetchingProducts ) {
+			debug( 'waiting on products fetch for renewal' );
+			return;
+		}
+		const productSlugs = productAlias.split( ',' );
+		const purchaseIds = originalPurchaseId.split( ',' );
+
+		const productsForCart = purchaseIds
+			.map( ( subscriptionId, currentIndex ) => {
+				const productSlug = productSlugs[ currentIndex ];
+				if ( ! productSlug ) {
+					return null;
+				}
+				const [ slug ] = productSlug.split( ':' );
+				const product = products[ slug ];
+				if ( ! product ) {
+					debug( 'no product found with slug', productSlug );
+					return null;
+				}
+				return createRenewalItemToAddToCart(
+					productSlug,
+					product.product_id,
+					subscriptionId,
+					selectedSiteSlug
+				);
+			} )
+			.filter( Boolean );
+		debug( 'preparing renewals requested in url', productsForCart );
+		setState( { productsForCart, canInitializeCart: true } );
+	}, [
+		isFetchingProducts,
+		products,
+		originalPurchaseId,
+		productAlias,
+		setState,
+		selectedSiteSlug,
+	] );
 }
 
 function useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic, originalPurchaseId } ) {
@@ -237,4 +288,28 @@ function createItemToAddToCart( {
 	cartItem.uuid = 'unknown'; // This must be filled-in later
 
 	return cartItem;
+}
+
+function createRenewalItemToAddToCart( productAlias, productId, purchaseId, selectedSiteSlug ) {
+	const [ slug, meta ] = productAlias.split( ':' );
+	// See https://github.com/Automattic/wp-calypso/pull/15043 for explanation of
+	// the no-ads alias (seems a little strange to me that the product slug is a
+	// php file).
+	const productSlug = slug === 'no-ads' ? 'no-adverts/no-adverts.php' : slug;
+
+	if ( ! purchaseId ) {
+		return null;
+	}
+
+	return getRenewalItemFromCartItem(
+		{
+			meta,
+			product_slug: productSlug,
+			product_id: productId,
+		},
+		{
+			id: purchaseId,
+			domain: selectedSiteSlug,
+		}
+	);
 }
