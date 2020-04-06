@@ -90,12 +90,14 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 		navigationText = translate( 'Manage your email accounts' );
 		if ( hasGSuiteWithUs( domain ) ) {
+			const gsuiteMailboxCount = getGSuiteMailboxCount( domain );
 			navigationDescription = translate(
 				'%(gSuiteMailboxCount)d mailbox',
 				'%(gSuiteMailboxCount)d mailboxes',
 				{
+					count: gsuiteMailboxCount,
 					args: {
-						gSuiteMailboxCount: getGSuiteMailboxCount( domain ),
+						gSuiteMailboxCount: gsuiteMailboxCount,
 					},
 				}
 			);
@@ -104,6 +106,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				'%(emailForwardsCount)d forward',
 				'%(emailForwardsCount)d forwards',
 				{
+					count: emailForwardsCount,
 					args: {
 						emailForwardsCount: emailForwardsCount,
 					},
