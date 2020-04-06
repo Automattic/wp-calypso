@@ -466,7 +466,7 @@ export class LoginForm extends Component {
 			const oauth2Flow = isCrowdsignalOAuth2Client( oauth2Client ) ? 'crowdsignal' : 'wpcc';
 			const oauth2Params = new globalThis.URLSearchParams( {
 				oauth2_client_id: oauth2Client.id,
-				oauth2_redirect: redirectTo,
+				oauth2_redirect: redirectTo || '',
 			} );
 
 			signupUrl = `/start/${ oauth2Flow }?${ oauth2Params.toString() }`;
