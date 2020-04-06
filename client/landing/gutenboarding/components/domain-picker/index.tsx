@@ -2,8 +2,9 @@
  * External dependencies
  */
 import React, { FunctionComponent, useState, useEffect } from 'react';
-import { Button, Panel, PanelBody, PanelRow, TextControl, Icon } from '@wordpress/components';
+import { Button, Panel, PanelBody, PanelRow, TextControl } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { Icon, search } from '@wordpress/icons';
 import { times } from 'lodash';
 import { useI18n } from '@automattic/react-i18n';
 
@@ -186,7 +187,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 						</div>
 					</div>
 					<div className="domain-picker__search">
-						<SearchIcon />
+						<div className="domain-picker__search-icon">
+							<Icon icon={ search } />
+						</div>
 						<TextControl
 							data-hj-whitelist
 							hideLabelFromVision
@@ -254,22 +257,5 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		</Panel>
 	);
 };
-
-const SearchIcon = () => (
-	<Icon
-		icon={ () => (
-			<svg
-				width="24"
-				height="24"
-				viewBox="0 0 24 24"
-				fill="none"
-				xmlns="http://www.w3.org/2000/svg"
-			>
-				<path d="M6 18L10 14.5" stroke="black" strokeWidth="1.5" />
-				<circle cx="13.5" cy="11.5" r="4.75" stroke="black" strokeWidth="1.5" />
-			</svg>
-		) }
-	/>
-);
 
 export default DomainPicker;
