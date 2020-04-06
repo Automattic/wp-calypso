@@ -9,7 +9,7 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import { getSelectedDomain } from 'lib/domains';
+import { getSelectedDomain, getDomainTypeText } from 'lib/domains';
 import Header from 'my-sites/domains/domain-management/components/header';
 import { localize } from 'i18n-calypso';
 import Main from 'components/main';
@@ -48,7 +48,11 @@ class Edit extends React.Component {
 					onClick={ this.goToDomainManagement }
 					selectedDomainName={ this.props.selectedDomainName }
 				>
-					{ this.props.translate( 'Domain Settings' ) }
+					{ this.props.translate( '%(domainType)s Settings', {
+						args: {
+							domainType: getDomainTypeText( domain ),
+						},
+					} ) }
 				</Header>
 				{ this.renderDetails( domain, Details ) }
 			</Main>
