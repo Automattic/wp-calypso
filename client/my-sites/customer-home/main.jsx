@@ -77,7 +77,7 @@ const Home = ( {
 				<FormattedHeader
 					headerText={ translate( 'My Home' ) }
 					subHeaderText={ translate(
-						'Your home base for all the posting, editing, and growing of your site'
+						'Your home base for posting, editing, and growing your site.'
 					) }
 					align="left"
 				/>
