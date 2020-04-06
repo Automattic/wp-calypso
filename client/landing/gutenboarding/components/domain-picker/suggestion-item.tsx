@@ -11,14 +11,14 @@ type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.Doma
 interface Props {
 	suggestion: DomainSuggestion;
 	isRecommended?: boolean;
-	isCurrent?: boolean;
+	isSelected?: boolean;
 	onSelect: ( domainSuggestion: DomainSuggestion ) => void;
 }
 
 const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	suggestion,
 	isRecommended = false,
-	isCurrent = false,
+	isSelected = false,
 	onSelect,
 } ) => {
 	const { __: NO__ } = useI18n();
@@ -31,7 +31,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 					type="radio"
 					name="domain-picker-suggestion-option"
 					onChange={ () => void onSelect( suggestion ) }
-					checked={ isCurrent }
+					checked={ isSelected }
 				/>
 				{ suggestion.domain_name }
 				{ isRecommended && (

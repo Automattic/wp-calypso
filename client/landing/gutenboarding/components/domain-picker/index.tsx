@@ -148,7 +148,7 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 							( freeSuggestions.length ? (
 								<SuggestionItem
 									suggestion={ freeSuggestions[ 0 ] }
-									isCurrent={ currentDomain?.domain_name === freeSuggestions[ 0 ].domain_name }
+									isSelected={ currentDomain?.domain_name === freeSuggestions[ 0 ].domain_name }
 									onSelect={ onDomainSelect }
 								/>
 							) : (
@@ -162,7 +162,7 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 									<SuggestionItem
 										suggestion={ suggestion }
 										isRecommended={ suggestion === recommendedSuggestion }
-										isCurrent={ currentDomain?.domain_name === suggestion.domain_name }
+										isSelected={ currentDomain?.domain_name === suggestion.domain_name }
 										onSelect={ onDomainSelect }
 										key={ suggestion.domain_name }
 									/>
