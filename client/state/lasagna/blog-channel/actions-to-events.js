@@ -2,7 +2,9 @@
  * Internal Dependencies
  */
 import registerEventHandlers from './events-to-actions';
-import { channelJoin, channelLeave } from 'state/lasagna/socket';
+import { joinChannel, leaveChannel } from 'state/lasagna/channel';
+import { LASAGNA_SOCKET_CONNECTED } from 'state/lasagna/action-types';
+import { getViewingFullPostBlogId } from 'state/reader/viewing/selectors';
 import {
 	READER_VIEW_FULL_POST_SET,
 	READER_VIEW_FULL_POST_UNSET,
@@ -25,8 +27,22 @@ export default store => next => action => {
 			leaveStaleChannels( store, namespace );
 			break;
 
+		case LASAGNA_SOCKET_CONNECTED: {
+			// whenever socket is connected check if we should join the full-post channel, this covers the edge case
+			// when a user force refreshes the full post view and it might try to join the channel before the socket is
+			// connected.
+			const state = store.getState();
+			const siteId = getViewingFullPostBlogId( state );
+			const topic = getChannelTopic( { payload: { siteId } } );
+			const meta = { siteId };
+
+			joinChannel( { store, namespace, topic, registerEventHandlers, meta } );
+			break;
+		}
+
 		case READER_VIEW_FEED_POST_SET:
 		case READER_VIEW_FULL_POST_SET: {
+			// a full post or feed post is viewed, we will join their blog channels
 			const topic = getChannelTopic( action );
 			if ( ! topic ) {
 				return next( action );
@@ -38,20 +54,21 @@ export default store => next => action => {
 			leaveStaleChannels( store, namespace );
 
 			if ( canJoinChannel( store, topic ) ) {
-				channelJoin( { store, namespace, topic, registerEventHandlers, meta } );
+				joinChannel( { store, namespace, topic, registerEventHandlers, meta } );
 			}
 			break;
 		}
 
 		case READER_VIEW_FULL_POST_UNSET:
 		case READER_VIEW_FEED_POST_UNSET: {
+			// a full post or feed post is not viewed, we will leave the channel
 			const topic = getChannelTopic( action );
 			if ( ! topic ) {
 				return next( action );
 			}
 
 			if ( canLeaveChannel( store, topic ) ) {
-				channelLeave( { store, namespace, topic } );
+				leaveChannel( { store, namespace, topic } );
 			}
 			break;
 		}

@@ -1,58 +1,35 @@
 /**
- * External dependencies
- */
-import debugFactory from 'debug';
-
-/**
  * Internal Dependencies
  */
-import { LASAGNA_SOCKET_CONNECTED, LASAGNA_SOCKET_DISCONNECTED } from 'state/action-types';
+import { LASAGNA_SOCKET_CONNECTED, LASAGNA_SOCKET_DISCONNECTED } from 'state/lasagna/action-types';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { socket } from '../socket';
-
-let channel = null;
-
-const debug = debugFactory( 'lasagna:channel:user:wpcom' );
-
-const joinChannel = store => {
-	if ( ! socket || channel ) {
-		return;
-	}
-
-	const userId = getCurrentUserId( store.getState() );
-
-	if ( ! userId ) {
-		return;
-	}
-
-	channel = socket.channel( `user:wpcom:${ userId }` );
-	// registerEventHandlers here
-
-	channel
-		.join()
-		.receive( 'ok', () => debug( 'channel join ok' ) )
-		.receive( 'error', ( { reason } ) => {
-			debug( 'channel join error', reason );
-			channel.leave();
-			channel = null;
-		} );
-};
-
-const leaveChannel = () => {
-	channel && channel.leave();
-	channel = null;
-};
+import { joinChannel, leaveChannel } from 'state/lasagna/channel';
+import { namespace, canJoinChannel, canLeaveChannel, getChannelTopic } from './manager';
 
 export default store => next => action => {
 	switch ( action.type ) {
 		case LASAGNA_SOCKET_CONNECTED: {
-			joinChannel( store );
+			const state = store.getState();
+			const userId = getCurrentUserId( state );
+			const topic = getChannelTopic( userId );
+
+			if ( canJoinChannel( store, topic ) ) {
+				joinChannel( { store, namespace, topic } );
+			}
+
 			break;
 		}
 
-		case LASAGNA_SOCKET_DISCONNECTED:
-			leaveChannel();
+		case LASAGNA_SOCKET_DISCONNECTED: {
+			const state = store.getState();
+			const userId = getCurrentUserId( state );
+			const topic = getChannelTopic( userId );
+
+			if ( canLeaveChannel( store, topic ) ) {
+				leaveChannel( { store, namespace, topic } );
+			}
 			break;
+		}
 	}
 
 	return next( action );

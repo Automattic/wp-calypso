@@ -3,10 +3,9 @@
  */
 import wpcom from 'lib/wp';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { socket, socketConnect, socketDisconnect } from './socket';
-import privatePostChannelMiddleware from './private-post-channel/actions-to-events';
-import publicPostChannelMiddleware from './public-post-channel/actions-to-events';
+import { SOCKET, connectSocket, disconnectSocket } from './socket';
 import userChannelMiddleware from './user-channel/actions-to-events';
+import blogChannelMiddleware from './blog-channel/actions-to-events';
 
 // connecting flag used to detect prevent double connections
 let socketConnecting = false;
@@ -36,7 +35,7 @@ const connectMiddleware = store => next => action => {
 	}
 
 	// connect if we are going to the reader without a socket
-	if ( ! socket && ! socketConnecting && action.section.name === 'reader' ) {
+	if ( ! SOCKET && ! socketConnecting && action.section.name === 'reader' ) {
 		socketConnecting = true;
 		const user = getCurrentUser( store.getState() );
 
@@ -47,22 +46,20 @@ const connectMiddleware = store => next => action => {
 				body: { payload: JSON.stringify( { user } ) },
 			} )
 			.then( ( { jwt } ) => {
-				socketConnect( store, jwt, user.ID );
+				connectSocket( { store, jwt, userId: user.ID } );
+				socketConnecting = false;
+			} )
+			.catch( () => {
 				socketConnecting = false;
 			} );
 	}
 
 	// disconnect if we are leaving the reader with a socket
-	else if ( socket && action.section.name !== 'reader' ) {
-		socketDisconnect( store );
+	else if ( SOCKET && action.section.name !== 'reader' ) {
+		disconnectSocket( { store } );
 	}
 
 	return next( action );
 };
 
-export default combineMiddleware(
-	connectMiddleware,
-	userChannelMiddleware,
-	privatePostChannelMiddleware,
-	publicPostChannelMiddleware
-);
+export default combineMiddleware( connectMiddleware, userChannelMiddleware, blogChannelMiddleware );
