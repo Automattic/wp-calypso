@@ -30,12 +30,16 @@ interface Activity {
 }
 
 interface Props {
-	baseFilter: Filter;
+	baseFilter?: Filter;
 	pageSize?: number;
 	siteId: number;
 }
 
-const BackupActivityLog: FunctionComponent< Props > = ( { baseFilter, pageSize = 10, siteId } ) => {
+const BackupActivityLog: FunctionComponent< Props > = ( {
+	baseFilter = { page: 1 },
+	pageSize = 10,
+	siteId,
+} ) => {
 	const translate = useTranslate();
 
 	const activities = useSelector< object, Array< Activity > | undefined >(
