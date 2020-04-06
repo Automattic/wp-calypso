@@ -136,6 +136,7 @@ export class AppBanner extends Component {
 	getBannerImage() {
 		switch ( this.props.currentSection ) {
 			case EDITOR:
+			case GUTENBERG:
 				return editorBannerImage;
 			case NOTES:
 				return notificationsBannerImage;
@@ -152,7 +153,8 @@ export class AppBanner extends Component {
 		if ( this.isAndroid() ) {
 			//TODO: update when section deep links are available.
 			switch ( currentSection ) {
-				case EDITOR: case GUTENBERG:
+				case EDITOR:
+				case GUTENBERG:
 					return 'intent://post/#Intent;scheme=wordpress;package=org.wordpress.android;end';
 				case NOTES:
 					return 'intent://notifications/#Intent;scheme=wordpress;package=org.wordpress.android;end';
