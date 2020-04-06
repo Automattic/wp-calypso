@@ -169,7 +169,7 @@ export async function postLoginRequest( action, bodyObj ) {
 			method: 'POST',
 			credentials: 'include',
 			headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
-			body: new globalThis.URLSearchParams( bodyObj ).toString(),
+			body: new globalThis.URLSearchParams( bodyObj ?? {} ).toString(),
 		}
 	);
 

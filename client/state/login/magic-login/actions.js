@@ -51,7 +51,7 @@ async function postMagicLoginRequest( url, bodyObj ) {
 		method: 'POST',
 		credentials: 'include',
 		headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
-		body: new globalThis.URLSearchParams( bodyObj ).toString(),
+		body: new globalThis.URLSearchParams( bodyObj ?? {} ).toString(),
 	} );
 
 	if ( response.ok ) {
