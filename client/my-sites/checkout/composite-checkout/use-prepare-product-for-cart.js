@@ -44,13 +44,19 @@ export default function usePrepareProductForCart( {
 	useFetchProductsIfNotLoaded();
 	useFetchPlansIfNotLoaded();
 
-	useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic } );
-	useAddProductFromSlug( { productAlias, planSlug, setState, isJetpackNotAtomic } );
+	useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic, originalPurchaseId } );
+	useAddProductFromSlug( {
+		productAlias,
+		planSlug,
+		setState,
+		isJetpackNotAtomic,
+		originalPurchaseId,
+	} );
 
 	return { productForCart, canInitializeCart };
 }
 
-function useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic } ) {
+function useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic, originalPurchaseId } ) {
 	const isFetchingPlans = useSelector( state => isRequestingPlans( state ) );
 	const plan = useSelector( state => getPlanBySlug( state, planSlug ) );
 	useEffect( () => {
@@ -59,6 +65,10 @@ function useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic } ) {
 		}
 		if ( isFetchingPlans ) {
 			debug( 'waiting on plans fetch' );
+			return;
+		}
+		if ( originalPurchaseId ) {
+			// If this is a renewal, another hook will handle this
 			return;
 		}
 		if ( ! plan ) {
@@ -77,22 +87,32 @@ function useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic } ) {
 			cartProduct
 		);
 		setState( { productForCart: cartProduct, canInitializeCart: true } );
-	}, [ isFetchingPlans, planSlug, plan, isJetpackNotAtomic, setState ] );
+	}, [ originalPurchaseId, isFetchingPlans, planSlug, plan, isJetpackNotAtomic, setState ] );
 }
 
-function useAddProductFromSlug( { productAlias, planSlug, setState, isJetpackNotAtomic } ) {
-	// Add a supported product if one is requested and if we haven't already
-	// found a matching plan.
+function useAddProductFromSlug( {
+	productAlias,
+	planSlug,
+	setState,
+	isJetpackNotAtomic,
+	originalPurchaseId,
+} ) {
 	const isFetchingPlans = useSelector( state => isRequestingPlans( state ) );
 	const isFetchingProducts = useSelector( state => isProductsListFetching( state ) );
 	const product = useSelector( state =>
 		getProductBySlug( state, getProductSlugFromAlias( productAlias ) )
 	);
+
 	useEffect( () => {
 		if ( ! productAlias ) {
 			return;
 		}
 		if ( planSlug ) {
+			// If we already found a matching plan, another hook will handle this
+			return;
+		}
+		if ( originalPurchaseId ) {
+			// If this is a renewal, another hook will handle this
 			return;
 		}
 		if ( isFetchingPlans || isFetchingProducts ) {
@@ -116,6 +136,7 @@ function useAddProductFromSlug( { productAlias, planSlug, setState, isJetpackNot
 		);
 		setState( { productForCart: cartProduct, canInitializeCart: true } );
 	}, [
+		originalPurchaseId,
 		isFetchingPlans,
 		planSlug,
 		isJetpackNotAtomic,
