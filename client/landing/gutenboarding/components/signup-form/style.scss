@@ -53,15 +53,14 @@
 			transform: translateX( -50% );
 		}
 	}
-
 	.signup-form__legend p {
 		@include onboarding-large-text;
-		margin: 15px 0 30px;
+		margin: 0 0 42px;
 		color: var( --studio-gray-40 );
 	}
 
 	.components-text-control__input {
-		padding: 21px 14px;
+		padding: 18px 14px;
 		@include onboarding-medium-text;
 		border-radius: 0;
 		border: 1px solid var( --studio-gray-10 );
@@ -91,11 +90,12 @@
 
 	.signup-form__login-link {
 		@include onboarding-medium-text;
-		margin: 24px 0;
-		color: var( --studio-gray-60 );
+		margin: 27px 0;
+		color: var( --studio-gray-40 );
 
 		.signup-form__link {
 			@include onboarding-medium-text;
+			color: var( --studio-gray-40 );
 		}
 	}
 
@@ -109,6 +109,10 @@
 		text-align: center;
 		color: var( --studio-gray-40 );
 		margin: 20px 0;
+
+		.components-external-link {
+			text-decoration: none;
+		}
 	}
 
 	.signup-form__footer {
@@ -162,5 +166,10 @@
 	.signup-form__header-wp-logo {
 		color: var( --studio-blue-90 );
 		display: flex;
+	}
+
+	// override spacing between input fields
+	.components-base-control .components-base-control__field {
+		margin-bottom: 10px;
 	}
 }
