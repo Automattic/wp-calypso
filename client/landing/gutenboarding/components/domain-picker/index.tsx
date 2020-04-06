@@ -123,9 +123,7 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 						<CloseButton onClose={ () => onClose() } />
 					</div>
 					<div className="domain-picker__search">
-						<div className="domain-picker__search-icon">
-							<SearchIcon />
-						</div>
+						<SearchIcon />
 						<TextControl
 							hideLabelFromVision
 							label={ label }

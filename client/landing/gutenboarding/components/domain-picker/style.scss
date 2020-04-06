@@ -36,12 +36,12 @@
 		height: 36px;
 	}
 	@include reset;
-}
 
-.domain-picker__search-icon {
-	position: absolute;
-	top: 6px;
-	left: 8px;
+	svg {
+		position: absolute;
+		top: 6px;
+		left: 8px;
+	}
 }
 
 .domain-picker__paragraph {
@@ -51,11 +51,11 @@
 .domain-picker__free-text {
 	line-height: 20px;
 	color: var( --studio-green-50 );
-}
 
-.domain-picker__free-text svg {
-	margin: 8px;
-	vertical-align: middle;
+	svg {
+		margin: 8px;
+		vertical-align: middle;
+	}
 }
 
 .domain-picker__footer {
