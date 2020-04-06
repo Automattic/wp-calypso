@@ -67,12 +67,7 @@ const Home = ( {
 			<PageViewTracker path={ `/home/:site` } title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-			{ siteId && (
-				<QueryHomeLayout
-					siteId={ siteId }
-					isNowLaunched={ checklistMode === 'launched' ? true : false }
-				/>
-			) }
+			{ siteId && <QueryHomeLayout siteId={ siteId } /> }
 			<SidebarNavigation />
 			<div className="customer-home__heading">
 				<FormattedHeader
