@@ -6,7 +6,6 @@ import { assign, includes, keyBy, map, omit, omitBy, reduce, trim } from 'lodash
 /**
  * Internal Dependencies
  */
-import { SERIALIZE } from 'state/action-types';
 import {
 	READER_SITE_BLOCKS_RECEIVE,
 	READER_SITE_REQUEST,
@@ -14,7 +13,8 @@ import {
 	READER_SITE_REQUEST_FAILURE,
 	READER_SITE_UPDATE,
 } from 'state/reader/action-types';
-import { withSchemaValidation, withoutPersistence } from 'state/utils';
+import { SERIALIZE } from 'state/action-types';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
 import { readerSitesSchema } from './schema';
 import { withoutHttp } from 'lib/url';
 import { decodeEntities } from 'lib/formatting';
@@ -146,4 +146,10 @@ export const lastFetched = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
+} );
+
+export default combineReducers( {
+	items,
+	queuedRequests,
+	lastFetched,
 } );

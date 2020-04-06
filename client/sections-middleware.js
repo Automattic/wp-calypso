@@ -16,6 +16,7 @@ import { pathToRegExp } from './utils';
 import { receiveSections, load } from './sections-helper';
 import isSectionEnabled from './sections-filter';
 import { addReducerToStore } from 'state/add-reducer';
+
 import sections from './sections';
 receiveSections( sections );
 
