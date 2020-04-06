@@ -11,6 +11,7 @@ import { useSelect } from '@wordpress/data';
 import { STORE_KEY } from '../../stores/onboard';
 import * as T from './types';
 import { useLangRouteParam } from '../../path';
+import { isEnabled } from 'config';
 
 type Design = import('../../stores/onboard/types').Design;
 type Font = import('../../constants').Font;
@@ -39,15 +40,19 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 				const templateUrl = `https://public-api.wordpress.com/rest/v1/template/demo/${ encodeURIComponent(
 					selectedDesign.theme
 				) }/${ encodeURIComponent( selectedDesign.template ) }/`;
-				const url = addQueryArgs( templateUrl, {
+				let url = addQueryArgs( templateUrl, {
 					language: language,
-					vertical: siteVertical?.label,
 					site_title: siteTitle,
 					...( selectedFonts && {
 						font_headings: selectedFonts.headings,
 						font_base: selectedFonts.base,
 					} ),
 				} );
+				if ( isEnabled( 'gutenboarding/style-preview-verticals' ) ) {
+					url = addQueryArgs( url, {
+						vertical: siteVertical?.label,
+					} );
+				}
 				let resp;
 
 				try {
