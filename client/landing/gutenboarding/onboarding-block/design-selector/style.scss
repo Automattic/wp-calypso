@@ -50,16 +50,6 @@
 		}
 	}
 
-	.design-selector__design-option {
-		transition: transform 0.3s ease-out;
-		cursor: pointer;
-
-		&:focus,
-		&:hover {
-			transform: scale( 1.015 );
-		}
-	}
-
 	.design-selector__image-frame {
 		display: block;
 		width: 100%;
@@ -68,13 +58,6 @@
 		border: 1px solid var( --studio-gray-5 );
 		position: relative;
 		overflow: hidden;
-		transition: box-shadow 0.3s ease-out;
-		box-shadow: rgba( 0, 0, 0, 0.12 ) 0 0 0;
-
-		&:focus,
-		&:hover {
-			box-shadow: rgba( 0, 0, 0, 0.12 ) 0 2px 12px;
-		}
 
 		img {
 			position: absolute;
