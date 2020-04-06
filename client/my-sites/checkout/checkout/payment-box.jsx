@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
@@ -17,6 +16,7 @@ import NavTabs from 'components/section-nav/tabs';
 import SectionNav from 'components/section-nav';
 import SectionHeader from 'components/section-header';
 import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import { paymentMethodName, isPaymentMethodEnabled } from 'lib/cart-values';
 import {
 	detectWebPaymentMethod,
@@ -44,7 +44,7 @@ export class PaymentBox extends PureComponent {
 	handlePaymentMethodChange = paymentMethod => {
 		const onSelectPaymentMethod = this.props.onSelectPaymentMethod;
 		return function() {
-			analytics.ga.recordEvent( 'Upgrades', 'Switch Payment Method' );
+			gaRecordEvent( 'Upgrades', 'Switch Payment Method' );
 			analytics.tracks.recordEvent( 'calypso_checkout_switch_to_' + snakeCase( paymentMethod ) );
 			onSelectPaymentMethod( paymentMethod );
 		};
@@ -72,7 +72,15 @@ export class PaymentBox extends PureComponent {
 			case 'wechat':
 				labelAdditionalText = paymentMethodName( method );
 				break;
-
+			case 'id_wallet':
+				labelLogo = (
+					<img
+						src="/calypso/images/upgrades/ovo.svg"
+						alt={ paymentMethodName( method ) }
+						className="checkout__ovo"
+					/>
+				);
+				break;
 			case 'netbanking':
 				labelLogo = <Gridicon icon="institution" className="checkout__institution" />;
 				labelAdditionalText = paymentMethodName( method );
@@ -90,7 +98,7 @@ export class PaymentBox extends PureComponent {
 					case WEB_PAYMENT_APPLE_PAY_METHOD:
 						labelLogo = (
 							<img
-								src={ `/calypso/images/upgrades/apple-pay.svg` }
+								src="/calypso/images/upgrades/apple-pay.svg"
 								alt={ getWebPaymentMethodName( webPaymentMethod, this.props.translate ) }
 								className="checkout__apple-pay"
 							/>

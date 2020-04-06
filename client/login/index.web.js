@@ -54,7 +54,11 @@ export default router => {
 		);
 
 		router(
-			[ `/log-in/link/${ lang }`, `/log-in/jetpack/link/${ lang }` ],
+			[
+				`/log-in/link/${ lang }`,
+				`/log-in/jetpack/link/${ lang }`,
+				`/log-in/gutenboarding/link/${ lang }`,
+			],
 			setUpLocale,
 			setSection( LOGIN_SECTION_DEFINITION ),
 			redirectLoggedIn,
@@ -72,6 +76,7 @@ export default router => {
 				`/log-in/:isJetpack(jetpack)/${ lang }`,
 				`/log-in/:isJetpack(jetpack)/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
 				`/log-in/:isGutenboarding(gutenboarding)/${ lang }`,
+				`/log-in/:isGutenboarding(gutenboarding)/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
 				`/log-in/${ lang }`,
 			],
 			redirectJetpack,

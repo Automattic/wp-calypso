@@ -6,6 +6,16 @@
 	flex-direction: column;
 	color: var( --color-text-subtle );
 	font-size: 14px;
+	text-align: center;
+
+	.continue-as-user__gravatar-link {
+		font-weight: 600;
+		color: var( --color-text );
+	}
+
+	.continue-as-user__gravatar {
+		border: 1px solid #a7aaad;
+	}
 
 	& > a.button {
 		margin: 20px 0;

@@ -7,7 +7,8 @@ import debugFactory from 'debug';
 /**
  * Internal Dependencies
  */
-import { ga, tracks } from 'lib/analytics';
+import { tracks } from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import { bumpStat, bumpStatWithPageView } from 'lib/analytics/mc';
 
 const debug = debugFactory( 'calypso:reader:stats' );
@@ -19,7 +20,7 @@ export function recordAction( action ) {
 
 export function recordGaEvent( action, label, value ) {
 	debug( 'reader ga event', ...arguments );
-	ga.recordEvent( 'Reader', action, label, value );
+	gaRecordEvent( 'Reader', action, label, value );
 }
 
 export function recordPermalinkClick( source, post, eventProperties = {} ) {

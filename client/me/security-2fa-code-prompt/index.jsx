@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -12,7 +11,7 @@ const debug = debugFactory( 'calypso:me:security:2fa-code-prompt' );
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -208,7 +207,7 @@ class Security2faCodePrompt extends React.Component {
 						method={ method }
 						name="verificationCode"
 						onFocus={ function() {
-							analytics.ga.recordEvent( 'Me', 'Focused On 2fa Disable Code Verification Input' );
+							gaRecordEvent( 'Me', 'Focused On 2fa Disable Code Verification Input' );
 						} }
 						value={ this.state.verificationCode }
 						onChange={ this.handleChange }
@@ -228,7 +227,7 @@ class Security2faCodePrompt extends React.Component {
 						className="security-2fa-code-prompt__verify-code"
 						disabled={ this.getFormDisabled() }
 						onClick={ function() {
-							analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Code Prompt Verify Button' );
+							gaRecordEvent( 'Me', 'Clicked On 2fa Code Prompt Verify Button' );
 						} }
 					>
 						{ this.getSubmitButtonLabel() }
@@ -240,10 +239,7 @@ class Security2faCodePrompt extends React.Component {
 							disabled={ ! this.state.codeRequestsAllowed }
 							isPrimary={ false }
 							onClick={ function( event ) {
-								analytics.ga.recordEvent(
-									'Me',
-									'Clicked On 2fa Code Prompt Send Code Via SMS Button'
-								);
+								gaRecordEvent( 'Me', 'Clicked On 2fa Code Prompt Send Code Via SMS Button' );
 								this.onRequestCode( event );
 							}.bind( this ) }
 						>
@@ -258,7 +254,7 @@ class Security2faCodePrompt extends React.Component {
 							className="security-2fa-code-prompt__cancel"
 							isPrimary={ false }
 							onClick={ function( event ) {
-								analytics.ga.recordEvent( 'Me', 'Clicked On Disable 2fa Cancel Button' );
+								gaRecordEvent( 'Me', 'Clicked On Disable 2fa Cancel Button' );
 								this.onCancel( event );
 							}.bind( this ) }
 						>

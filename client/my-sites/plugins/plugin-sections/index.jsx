@@ -1,18 +1,17 @@
 /**
  * External dependencies
  */
-
 import { filter, find } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import titleCase from 'to-title-case';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import Gridicon from 'components/gridicon';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import { Card } from '@automattic/components';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
@@ -35,7 +34,7 @@ class PluginSections extends React.Component {
 	_COLLAPSED_DESCRIPTION_HEIGHT = 140;
 
 	recordEvent = eventAction => {
-		analytics.ga.recordEvent( 'Plugins', eventAction, 'Plugin Name', this.props.plugin.slug );
+		gaRecordEvent( 'Plugins', eventAction, 'Plugin Name', this.props.plugin.slug );
 	};
 
 	componentDidMount() {

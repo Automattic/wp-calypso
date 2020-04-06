@@ -7,14 +7,14 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { debounce, noop, uniqueId } from 'lodash';
 import i18n from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import Gridicon from 'components/gridicon';
 import Spinner from 'components/spinner';
 import TranslatableString from 'components/translatable/proptype';
+import { gaRecordEvent } from 'lib/analytics/ga';
 
 /**
  * Style dependencies
@@ -235,7 +235,7 @@ class Search extends Component {
 			isOpen: true,
 		} );
 
-		analytics.ga.recordEvent( this.props.analyticsGroup, 'Clicked Open Search' );
+		gaRecordEvent( this.props.analyticsGroup, 'Clicked Open Search' );
 	};
 
 	closeSearch = event => {
@@ -259,7 +259,7 @@ class Search extends Component {
 
 		this.props.onSearchClose( event );
 
-		analytics.ga.recordEvent( this.props.analyticsGroup, 'Clicked Close Search' );
+		gaRecordEvent( this.props.analyticsGroup, 'Clicked Close Search' );
 	};
 
 	keyUp = event => {

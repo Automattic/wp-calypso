@@ -35,6 +35,8 @@ const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-iden
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
 const getAliasesForExtensions = require( './webpack/extensions' );
+const RequireChunkCallbackPlugin = require( './webpack/require-chunk-callback-plugin' );
+const GenerateChunksMapPlugin = require( './webpack/generate-chunks-map-plugin' );
 
 /**
  * Internal variables
@@ -50,6 +52,9 @@ const shouldShowProgress = process.env.PROGRESS && process.env.PROGRESS !== 'fal
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
+const shouldBuildChunksMap =
+	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
+	process.env.ENABLE_FEATURES === 'use-translation-chunks';
 const isCalypsoClient = process.env.BROWSERSLIST_ENV !== 'server';
 const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
 
@@ -287,6 +292,11 @@ const webpackConfig = {
 			flags: { desktop: config.isEnabled( 'desktop' ) },
 		} ),
 		isCalypsoClient && new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
+		shouldBuildChunksMap &&
+			new GenerateChunksMapPlugin( {
+				output: path.resolve( '.', `chunks-map.${ extraPath }.json` ),
+			} ),
+		isCalypsoClient && new RequireChunkCallbackPlugin(),
 		isDevelopment && new webpack.HotModuleReplacementPlugin(),
 	].filter( Boolean ),
 	externals: [ 'electron' ],

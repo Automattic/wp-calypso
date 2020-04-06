@@ -21,7 +21,6 @@
 		"blogger-plan": false,
 		"calypsoify/plugins": true,
 		"catch-js-errors": true,
-		"code-splitting": true,
 		"desktop-promo": true,
 		"dev/test-helper": true,
 		"dev/preferences-helper": true,

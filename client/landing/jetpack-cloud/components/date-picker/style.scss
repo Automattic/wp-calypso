@@ -1,5 +1,49 @@
+.date-picker {
+	display: flex;
+	max-width: 30rem;
+}
+
+.date-picker__select-date {
+	flex-grow: 1;
+	display: flex;
+	justify-content: center;
+}
+
+.date-picker__select-date--previous {
+	width: 45%;
+	padding-left: 0.5rem;
+	text-align: left;
+	cursor: pointer;
+}
+
+.date-picker__select-date--next {
+	width: 45%;
+	padding-right: 0.5rem;
+	text-align: right;
+	cursor: pointer;
+}
+
+.date-picker__button--previous {
+	margin-left: initial;
+	margin-right: 8px;
+}
+
+.date-picker__button--next {
+	margin-left: 8px;
+	margin-right: initial;
+}
+
+.date-picker__select-date .date-range {
+	text-align: center;
+	width: 10%;
+}
+
+.button.is-primary.date-picker__button--previous:focus,
+.button.is-primary.date-picker__button--next:focus {
+	box-shadow: none;
+}
+
 .date-picker .button,
-.date-picker__display-date,
 .date-picker .date-range {
 	display: inline-block;
 	float: none;
@@ -7,4 +51,14 @@
 
 .date-picker .button .gridicon.disabled {
 	fill: #dcdcde;
+}
+
+.date-picker__search-icon {
+	align-self: center;
+	margin-left: 0.5rem;
+	margin-right: 1rem;
+}
+
+.date-picker__search-icon.gridicon {
+	fill: green;
 }
