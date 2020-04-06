@@ -162,11 +162,12 @@ export const isRegularAccount = authAccountType => authAccountType === 'regular'
  */
 export const isPasswordlessAccount = authAccountType => authAccountType === 'passwordless';
 
-export function normalizeBody( bodyObj ) {
-	// Replace null or undefined values with empty strings.
-	return Object.fromEntries(
+export function stringifyBody( bodyObj ) {
+	// Clone bodyObj, replacing null or undefined values with empty strings.
+	const body = Object.fromEntries(
 		Object.entries( bodyObj ?? {} ).map( ( [ key, val ] ) => [ key, val ?? '' ] )
 	);
+	return new globalThis.URLSearchParams( body ).toString();
 }
 
 export async function postLoginRequest( action, bodyObj ) {
@@ -176,7 +177,7 @@ export async function postLoginRequest( action, bodyObj ) {
 			method: 'POST',
 			credentials: 'include',
 			headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
-			body: new globalThis.URLSearchParams( normalizeBody( bodyObj ) ).toString(),
+			body: stringifyBody( bodyObj ),
 		}
 	);
 
