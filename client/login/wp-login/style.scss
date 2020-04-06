@@ -371,6 +371,7 @@ $image-height: 47px;
 		// change border color to remove 3D effect
 		background-color: #007cba;
 		border-color: #007cba;
+		color: #fff;
 		width: auto;
 		min-width: 170px;
 		text-align: center;
@@ -380,6 +381,20 @@ $image-height: 47px;
 		display: block;
 		margin: 0 auto;
 		float: none;
+		font-weight: 500;
+		letter-spacing: 0;
+		transition: background 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
+		border-radius: 4px;
+		box-shadow: none;
+
+		&:hover,
+		&:active {
+			background: #72aee6;
+			border-color: #72aee6;
+			color: #fff;
+			outline-color: transparent;
+			box-shadow: none;
+		}
 	}
 
 	.two-factor-authentication__verification-code-form > p,
