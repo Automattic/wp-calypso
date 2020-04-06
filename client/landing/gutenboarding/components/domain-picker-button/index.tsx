@@ -42,12 +42,12 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 		setDomainPopoverVisibility( false );
 	};
 
-	const handleDomainSelect: typeof onDomainSelect = selectedDomain => {
+	const handleDomainSelect = ( selectedDomain: DomainSuggestion ) => {
 		onDomainSelect( selectedDomain );
 	};
 
 	const handlePaidDomainSelect = ( selectedDomain: DomainSuggestion ) => {
-		setDomainPopoverVisibility( false );
+		onDomainSelect( selectedDomain );
 		onDomainPurchase( selectedDomain );
 	};
 
