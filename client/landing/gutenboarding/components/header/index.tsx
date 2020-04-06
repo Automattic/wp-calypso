@@ -25,7 +25,7 @@ import {
 	getRecommendedDomainSuggestion,
 } from '../../utils/domain-suggestions';
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
-import { usePath, getStepFromPathname, useCurrentStep } from '../../path';
+import { usePath, useCurrentStep, Step } from '../../path';
 import wp from '../../../../lib/wp';
 
 type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
@@ -114,7 +114,7 @@ const Header: FunctionComponent = () => {
 		// TODO: We can remove this condition when we've converted signup into it's own page
 		if ( ! showSignupDialog && new URLSearchParams( search ).has( 'signup' ) ) {
 			setShowSignupDialog( true );
-			push( makePath( getStepFromPathname( pathname ) ) );
+			push( makePath( Step[ currentStep ] ) );
 		} else {
 			// Dialogs usually close naturally when the user clicks the browser's
 			// back/forward buttons because their parent is unmounted. However

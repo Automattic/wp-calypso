@@ -72,22 +72,3 @@ export function useCurrentStep() {
 export function useNewQueryParam() {
 	return new URLSearchParams( useLocation().search ).has( 'new' );
 }
-
-/**
- * Checks if locationPathname is a valid step name and returns that step name
- * locationPathname should be location.pathname or the react router equivalent
- *
- * @param {string} locationPathname The pathname
- * @returns {string|undefined} The valid Step value or an empty string
- */
-export function getStepFromPathname( locationPathname = '' ) {
-	const pathValue =
-		locationPathname[ 0 ] === '/' ? locationPathname.split( '/' )[ 1 ] : locationPathname;
-	const stepValues = Object.values( Step );
-
-	for ( const value of stepValues ) {
-		if ( value === pathValue ) {
-			return value;
-		}
-	}
-}
