@@ -115,7 +115,7 @@ export function canLeaveChannel( store, topic ) {
 	const viewingBlogIds = getViewingBlogIds( state );
 
 	if ( Object.keys( channels ).length === 0 ) {
-		debug( topic, 'cannot leave, channels still loading' );
+		debug( topic, 'cannot leave, channels still loading or already left' );
 		return false;
 	}
 

@@ -7,9 +7,6 @@ import { SOCKET, connectSocket, disconnectSocket } from './socket';
 import userChannelMiddleware from './user-channel/actions-to-events';
 import blogChannelMiddleware from './blog-channel/actions-to-events';
 
-// connecting flag used to detect prevent double connections
-let socketConnecting = false;
-
 /**
  * Compose a list of middleware into one middleware
  * Props @rhc3
@@ -35,8 +32,7 @@ const connectMiddleware = store => next => action => {
 	}
 
 	// connect if we are going to the reader without a socket
-	if ( ! SOCKET && ! socketConnecting && action.section.name === 'reader' ) {
-		socketConnecting = true;
+	if ( SOCKET.status === 'init' && action.section.name === 'reader' ) {
 		const user = getCurrentUser( store.getState() );
 
 		wpcom
@@ -47,15 +43,11 @@ const connectMiddleware = store => next => action => {
 			} )
 			.then( ( { jwt } ) => {
 				connectSocket( { store, jwt, userId: user.ID } );
-				socketConnecting = false;
-			} )
-			.catch( () => {
-				socketConnecting = false;
 			} );
 	}
 
 	// disconnect if we are leaving the reader with a socket
-	else if ( SOCKET && action.section.name !== 'reader' ) {
+	else if ( SOCKET.status !== 'init' && action.section.name !== 'reader' ) {
 		disconnectSocket( { store } );
 	}
 

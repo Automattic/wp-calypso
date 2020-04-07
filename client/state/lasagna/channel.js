@@ -29,8 +29,8 @@ export function joinChannel( {
 	meta = {},
 	namespace = DEFAULT_NAMESPACE,
 } ) {
-	if ( SOCKET === null ) {
-		debug( topic, 'join, socket not opened yet' );
+	if ( SOCKET.status !== 'opened' ) {
+		debug( topic, 'join, socket is ' + SOCKET.status );
 		return false;
 	}
 
@@ -49,7 +49,7 @@ export function joinChannel( {
 	}
 
 	// create channel
-	const channel = SOCKET.channel( topic );
+	const channel = SOCKET.ref.channel( topic );
 
 	// register event handlers if we have them
 	if ( registerEventHandlers !== null ) {
@@ -64,7 +64,7 @@ export function joinChannel( {
 	};
 
 	// join channel
-	debug( topic, 'attempt join' );
+	debug( topic, 'joining' );
 	channel
 		.join()
 		.receive( 'ok', () => {
@@ -81,8 +81,8 @@ export function joinChannel( {
 }
 
 export function leaveChannel( { store, topic, namespace = DEFAULT_NAMESPACE } ) {
-	if ( SOCKET === null ) {
-		debug( topic, 'channel leave, socket not opened yet' );
+	if ( SOCKET.status !== 'opened' ) {
+		debug( topic, 'channel leave, socket is ' + SOCKET.status );
 		return false;
 	}
 
@@ -97,7 +97,7 @@ export function leaveChannel( { store, topic, namespace = DEFAULT_NAMESPACE } ) 
 	}
 
 	if ( ! CHANNELS[ namespace ][ topic ] ) {
-		debug( topic, 'no channel found to leave' );
+		debug( topic, 'no topic found to leave' );
 		return false;
 	}
 
@@ -125,6 +125,12 @@ export function updateChannel( { topic, namespace = DEFAULT_NAMESPACE } ) {
 	CHANNELS[ namespace ][ topic ].updatedAt = moment().unix();
 }
 
-export function resetChannel() {
+export function resetChannels() {
+	debug( 'reset' );
 	CHANNELS = {};
+
+	// Expose channels in development
+	if ( process.env.NODE_ENV === 'development' ) {
+		window.CHANNELS = CHANNELS;
+	}
 }
