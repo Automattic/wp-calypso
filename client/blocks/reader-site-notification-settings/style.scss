@@ -37,7 +37,14 @@
 	}
 
 	.form-toggle__wrapper {
-		margin-right: 5px;
+		margin-right: 7px;
+	}
+
+	.form-label {
+		display: inline-block;
+		font-weight: 400;
+		position: relative;
+		top: 1px;
 	}
 
 	.reader-site-notification-settings__popout-toggle:nth-child( 2 ),
