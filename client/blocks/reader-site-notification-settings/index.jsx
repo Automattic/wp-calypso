@@ -14,6 +14,7 @@ import Gridicon from 'components/gridicon';
 import ReaderPopover from 'reader/components/reader-popover';
 import SegmentedControl from 'components/segmented-control';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
+import FormLabel from 'components/forms/form-label';
 import { getReaderFollows } from 'state/reader/follows/selectors';
 import {
 	subscribeToNewPostEmail,
@@ -158,8 +159,11 @@ class ReaderSiteNotificationSettings extends Component {
 							onChange={ this.toggleNewPostNotification }
 							checked={ sendNewPostsByNotification }
 							wrapperClassName="reader-site-notification-settings__popout-form-toggle"
+							id="reader-site-notification-settings__notifications"
 						/>
-						{ translate( 'Notify me of new posts' ) }
+						<FormLabel htmlFor="reader-site-notification-settings__notifications">
+							{ translate( 'Notify me of new posts' ) }
+						</FormLabel>
 						<p className="reader-site-notification-settings__popout-hint">
 							{ translate( 'Receive web and mobile notifications for new posts from this site.' ) }
 						</p>
@@ -175,9 +179,12 @@ class ReaderSiteNotificationSettings extends Component {
 							<CompactFormToggle
 								onChange={ this.toggleNewPostEmail }
 								checked={ sendNewPostsByEmail }
+								id={ 'reader-site-notification-settings__email-posts' }
 							/>
 						) }
-						{ translate( 'Email me new posts' ) }
+						<FormLabel htmlFor="reader-site-notification-settings__email-posts">
+							{ translate( 'Email me new posts' ) }
+						</FormLabel>
 						{ isEmailBlocked && (
 							<p className="reader-site-notification-settings__popout-instructions-hint">
 								{ translate(
@@ -219,8 +226,11 @@ class ReaderSiteNotificationSettings extends Component {
 							<CompactFormToggle
 								onChange={ this.toggleNewCommentEmail }
 								checked={ sendNewCommentsByEmail }
+								id="reader-site-notification-settings__email-comments"
 							/>
-							{ translate( 'Email me new comments' ) }
+							<FormLabel htmlFor="reader-site-notification-settings__email-comments">
+								{ translate( 'Email me new comments' ) }
+							</FormLabel>
 						</div>
 					) }
 				</ReaderPopover>
