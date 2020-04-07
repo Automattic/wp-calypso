@@ -417,6 +417,11 @@ $image-height: 47px;
 
 	.wp-login__main {
 		max-width: 540px;
+
+		form {
+			max-width: 440px;
+			margin: 0 auto;
+		}
 	}
 
 	.form-password-input .form-password-input__toggle-visibility {
