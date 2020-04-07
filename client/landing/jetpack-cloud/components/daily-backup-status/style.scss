@@ -4,16 +4,9 @@
 	margin-top: 2rem;
 }
 
-.daily-backup-status__status-icon.gridicon {
-	width: 3rem;
-	height: 3rem;
-	fill: rgb( 47, 180, 31 );
-}
-
-.daily-backup-status__gridicon-error-state.gridicon {
-	width: 3rem;
-	height: 3rem;
-	fill: rgb( 214, 54, 56 );
+.daily-backup-status__icon-section .backup-status-icon {
+	width: 2rem;
+	height: 2rem;
 }
 
 .daily-backup-status__label {

@@ -19,6 +19,7 @@ import {
 } from 'landing/jetpack-cloud/sections/backups/paths';
 import { applySiteOffset } from 'lib/site/timezone';
 import { Card } from '@automattic/components';
+import BackupStatusIcon from '../backup-status-icon';
 
 /**
  * Style dependencies
@@ -72,7 +73,7 @@ class DailyBackupStatus extends Component {
 		return (
 			<Card className="daily-backup-status__success">
 				<div className="daily-backup-status__icon-section">
-					<Gridicon className="daily-backup-status__status-icon" icon="cloud-upload" />
+					<BackupStatusIcon icon="success" />
 					<div className="daily-backup-status__title">{ translate( 'Latest backup' ) }</div>
 				</div>
 				<div className="daily-backup-status__date">{ displayDate }</div>
@@ -97,7 +98,7 @@ class DailyBackupStatus extends Component {
 
 		return (
 			<Card className="daily-backup-status__failed">
-				<Gridicon icon="cloud-upload" className="daily-backup-status__gridicon-error-state" />
+				<BackupStatusIcon icon="error" />
 				<div className="daily-backup-status__failed-message">
 					{ translate( 'Backup attempt failed' ) }
 				</div>

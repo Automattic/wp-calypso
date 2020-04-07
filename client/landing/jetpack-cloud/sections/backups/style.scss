@@ -1,3 +1,9 @@
 .backups__page .filterbar .filterbar__wrap.card {
     display: inline-block;
 }
+
+@include breakpoint( '<660px' ) {
+	.backups__page {
+		background-color: #fff;
+	}
+}
