@@ -152,13 +152,23 @@ export default function WPCheckout( {
 			/>
 			<CheckoutSteps>
 				<CheckoutStep
-					stepId="payment-method-step"
-					isCompleteCallback={ () =>
-						paymentMethodStep.isCompleteCallback( { activePaymentMethod } )
+					stepId="review-order-step"
+					isCompleteCallback={ () => true }
+					activeStepContent={
+						<WPCheckoutOrderReview
+							removeItem={ removeItem }
+							couponStatus={ couponStatus }
+							couponFieldStateProps={ couponFieldStateProps }
+							removeCoupon={ removeCouponAndResetActiveStep }
+							onChangePlanLength={ changePlanLength }
+							variantRequestStatus={ variantRequestStatus }
+							variantSelectOverride={ variantSelectOverride }
+							getItemVariants={ getItemVariants }
+							responseCart={ responseCart }
+							CheckoutTerms={ CheckoutTerms }
+						/>
 					}
-					activeStepContent={ paymentMethodStep.activeStepContent }
-					completeStepContent={ paymentMethodStep.completeStepContent }
-					titleContent={ paymentMethodStep.titleContent }
+					titleContent={ <OrderReviewTitle /> }
 					editButtonText={ translate( 'Edit' ) }
 					editButtonAriaLabel={ translate( 'Edit the payment method' ) }
 					nextStepButtonText={ translate( 'Continue' ) }
@@ -201,23 +211,10 @@ export default function WPCheckout( {
 					/>
 				) }
 				<CheckoutStep
-					stepId="review-order-step"
-					isCompleteCallback={ () => true }
-					activeStepContent={
-						<WPCheckoutOrderReview
-							removeItem={ removeItem }
-							couponStatus={ couponStatus }
-							couponFieldStateProps={ couponFieldStateProps }
-							removeCoupon={ removeCouponAndResetActiveStep }
-							onChangePlanLength={ changePlanLength }
-							variantRequestStatus={ variantRequestStatus }
-							variantSelectOverride={ variantSelectOverride }
-							getItemVariants={ getItemVariants }
-							responseCart={ responseCart }
-							CheckoutTerms={ CheckoutTerms }
-						/>
-					}
-					titleContent={ <OrderReviewTitle /> }
+					stepId="payment-method-step"
+					activeStepContent={ paymentMethodStep.activeStepContent }
+					completeStepContent={ paymentMethodStep.completeStepContent }
+					titleContent={ paymentMethodStep.titleContent }
 					editButtonText={ translate( 'Edit' ) }
 					editButtonAriaLabel={ translate( 'Edit the payment method' ) }
 					nextStepButtonText={ translate( 'Continue' ) }
