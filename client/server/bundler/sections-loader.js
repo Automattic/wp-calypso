@@ -6,7 +6,8 @@ const { getOptions } = require( 'loader-utils' ); // eslint-disable-line import/
 /**
  * Internal dependencies
  */
-const config = require( 'config' );
+const config = require( 'server/config' );
+
 /*
  * This sections-loader has one responsibility: adding import statements for the section modules.
  *
