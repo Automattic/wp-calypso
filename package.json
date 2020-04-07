@@ -269,7 +269,6 @@
 		"prettier": "npm:wp-prettier@1.19.1",
 		"qs": "6.9.1",
 		"react-docgen-typescript-loader": "3.6.0",
-		"react-intersection-observer": "8.26.1",
 		"react-test-renderer": "16.12.0",
 		"readline-sync": "1.4.10",
 		"replace": "1.1.5",
