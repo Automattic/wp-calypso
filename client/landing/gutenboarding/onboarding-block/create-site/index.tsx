@@ -40,7 +40,6 @@ const CreateSite: FunctionComponent< {} > = () => {
 
 	return (
 		<div className="create-site__background">
-			{ /* TODO: uncomment this after dev work :) */ }
 			{ shouldCreateAndRedirect ? <CreateAndRedirect /> : null }
 			<div className="create-site__layout">
 				<div className="create-site__header">
