@@ -8,7 +8,7 @@
 	right: 0;
 	bottom: 0;
 	z-index: 50;
-	background-color: var( --studio-gray-0 );
+	background-color: $white;
 
 	.create-site__header {
 		display: flex;
@@ -16,7 +16,6 @@
 		align-items: center;
 		height: 56px;
 		padding: 8px;
-		background-color: $white;
 
 		.create-site__toolbar,
 		.create-site__settings {
