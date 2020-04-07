@@ -16,54 +16,33 @@
 		align-items: center;
 		height: 56px;
 		padding: 8px;
-
-		.create-site__toolbar,
-		.create-site__settings {
-			display: inline-flex;
-			align-items: center;
-		}
 	}
 
 	.create-site__content {
-		min-height: 70vh;
-		padding-top: 40px;
+		position: absolute;
+		top: 25%;
+		left: 50%;
+		width: 100%;
+		max-width: 540px;
+		transform: translateX( -50% );
 
-		.create-site__text {
-			@include onboarding-font-recoleta;
-			margin-top: 60px;
+		.create-site__title {
+			@include onboarding-heading-text-mobile;
 			text-align: center;
-			font-size: 32px;
-			color: var( --studio-blue-40 );
-			display: flex;
-			justify-content: center;
-
-			.animated-input-placeholder span {
-				color: var( --studio-blue-40 );
-			}
+			margin-bottom: 20px;
 		}
-	}
+		.create-site__progress-text {
+			text-align: center;
+			margin: 20px 0;
+		}
+		// progress bar overrides
+		.progress-bar {
+			height: 7px;
+		}
 
-	.create-site__placeholder {
-		@include placeholder();
-		height: 16px;
-		border-radius: 8px;
-	}
-
-	.create-site__placeholder-site {
-		margin-left: 18px;
-	}
-
-	.create-site__placeholder-button {
-		width: 40px;
-		margin: 0 8px;
-	}
-
-	.create-site__placeholder-title {
-		height: 40px;
-		min-width: 250px;
-		width: 40%;
-		max-width: 600px;
-		margin: 0 58px;
-		border-radius: 20px;
+		.progress-bar,
+		.progress-bar__progress {
+			border-radius: unset;
+		}
 	}
 }
