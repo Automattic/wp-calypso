@@ -3,6 +3,10 @@
  */
 const { getOptions } = require( 'loader-utils' ); // eslint-disable-line import/no-extraneous-dependencies
 
+/**
+ * Internal dependencies
+ */
+const config = require( 'config' );
 /*
  * This sections-loader has one responsibility: adding import statements for the section modules.
  *
