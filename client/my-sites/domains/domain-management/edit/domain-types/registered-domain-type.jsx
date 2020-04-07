@@ -235,7 +235,8 @@ class RegisteredDomainType extends React.Component {
 	}
 
 	renderOutboundTransferInProgress() {
-		return <OutboundTransferConfirmation domain={ this.props.domain } />;
+		const { domain, selectedSite } = this.props;
+		return <OutboundTransferConfirmation domain={ domain } siteId={ selectedSite.ID } />;
 	}
 
 	renderDefaultRenewButton() {
