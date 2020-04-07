@@ -29,21 +29,39 @@ class OutboundTransferConfirmation extends React.PureComponent {
 			return null;
 		}
 
+		if ( domain.currentUserCanManage ) {
+			return (
+				<>
+					<p>
+						{ translate(
+							'We received a notification that you would like to transfer this domain to another registrar. ' +
+								'Accept the transfer to complete the process or cancel it to keep your domain with ' +
+								'WordPress.com.'
+						) }
+					</p>
+
+					<p>
+						<Button primary className="outbound-transfer-confirmation__accept-transfer">
+							{ translate( 'Accept transfer' ) }
+						</Button>
+						<Button>{ translate( 'Cancel transfer' ) }</Button>
+					</p>
+				</>
+			);
+		}
+
 		return (
 			<>
 				<p>
 					{ translate(
 						'We received a notification that you would like to transfer this domain to another registrar. ' +
-							'Accept the transfer to complete the process or cancel it to keep your domain with ' +
-							'WordPress.com.'
+							'Please contact the owner, %(owner)s, to complete the process or cancel it.',
+						{
+							args: {
+								owner: domain.owner,
+							},
+						}
 					) }
-				</p>
-
-				<p>
-					<Button primary className="outbound-transfer-confirmation__accept-transfer">
-						{ translate( 'Accept transfer' ) }
-					</Button>
-					<Button>{ translate( 'Cancel transfer' ) }</Button>
 				</p>
 			</>
 		);
