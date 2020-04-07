@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { Button, Dialog } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
@@ -13,6 +14,8 @@ import DismissibleCard from 'blocks/dismissible-card';
 import CardHeading from 'components/card-heading';
 import Gridicon from 'components/gridicon';
 import { localizeUrl } from 'lib/i18n-utils';
+import isClassicEditorForced from 'state/selectors/is-classic-editor-forced';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Style dependencies
@@ -36,8 +39,12 @@ class MasteringGutenberg extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { cannotUseGutenberg, translate } = this.props;
 		const { activeDialog, showDialog } = this.state;
+
+		if ( cannotUseGutenberg ) {
+			return null;
+		}
 
 		let supportLink;
 		let videoId;
@@ -108,4 +115,8 @@ class MasteringGutenberg extends Component {
 	}
 }
 
-export default localize( MasteringGutenberg );
+export default connect( state => {
+	return {
+		cannotUseGutenberg: isClassicEditorForced( state, getSelectedSiteId( state ) ),
+	};
+} )( localize( MasteringGutenberg ) );
