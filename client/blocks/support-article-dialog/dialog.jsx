@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight as compose, get } from 'lodash';
+import { flowRight as compose, get, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
 
@@ -50,7 +50,12 @@ export class SupportArticleDialog extends Component {
 				{ translate( 'Close', { textOnly: true } ) }
 			</Button>,
 			actionUrl && (
-				<Button href={ actionUrl } target="_blank" primary>
+				<Button
+					href={ actionUrl }
+					target={ actionIsExternal ? '_blank' : undefined }
+					primary
+					onClick={ () => ( actionIsExternal ? noop() : this.props.closeSupportArticleDialog() ) }
+				>
 					{ actionLabel } { actionIsExternal && <Gridicon icon="external" size={ 12 } /> }
 				</Button>
 			),
