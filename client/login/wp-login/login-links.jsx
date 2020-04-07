@@ -307,7 +307,7 @@ export class LoginLinks extends React.Component {
 		}
 
 		if ( isGutenboarding ) {
-			signupUrl = this.props.signupUrl;
+			signupUrl = this.props.signupUrl || '/gutenboarding' + langFragment;
 		}
 
 		return (
