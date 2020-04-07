@@ -98,11 +98,14 @@ class PostRelativeTime extends React.PureComponent {
 			statusClassName += ' is-pending';
 		} else if ( status === 'future' ) {
 			const moment = this.props.moment;
-			const scheduledDate = moment( this.props.post.date );
 			const now = moment();
+			const scheduledDate = moment( this.props.post.date );
+			// If the content is scheduled to be release within a year, do not display the year at the end
+			const displayDate = scheduledDate.diff( now, 'years' ) > 0 ? 'll' : 'D MMM';
 			const scheduledTime = scheduledDate.calendar( null, {
-				sameElse: this.props.translate( 'LL [at] LT', {
-					comment: 'moment.js formatting string',
+				sameElse: this.props.translate( '%(displayDate)s [at] LT', {
+					args: { displayDate },
+					comment: 'moment.js formatting string: "displayDate" refers to date (eg. 21 April) and LT refers to time (eg. 18:00) - "at" is translated',
 				} ),
 			} );
 
