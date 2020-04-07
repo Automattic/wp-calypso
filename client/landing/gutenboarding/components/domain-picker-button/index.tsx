@@ -26,7 +26,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 	children,
 	className,
 	onDomainSelect,
-	onDomainPurchase,
 	currentDomain,
 	...buttonProps
 } ) => {
@@ -40,15 +39,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 			return;
 		}
 		setDomainPopoverVisibility( false );
-	};
-
-	const handleDomainSelect = ( selectedDomain: DomainSuggestion ) => {
-		onDomainSelect( selectedDomain );
-	};
-
-	const handlePaidDomainSelect = ( selectedDomain: DomainSuggestion ) => {
-		onDomainSelect( selectedDomain );
-		onDomainPurchase( selectedDomain );
 	};
 
 	return (
@@ -82,8 +72,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 						<DomainPicker
 							currentDomain={ currentDomain }
 							onClose={ handleClose }
-							onDomainPurchase={ handlePaidDomainSelect }
-							onDomainSelect={ handleDomainSelect }
+							onDomainSelect={ onDomainSelect }
 						/>
 					</Popover>
 				</div>
