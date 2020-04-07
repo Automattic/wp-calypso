@@ -103,7 +103,13 @@ class PostRelativeTime extends React.PureComponent {
 			const scheduledTime =
 				scheduledDate.diff( now, 'days' ) <= 7
 					? scheduledDate.calendar()
-					: scheduledDate.format( 'LLLL' );
+					: scheduledDate.format( 'LL' ) +
+					  ' ' +
+					  this.props.translate( 'at', {
+							context: 'scheduled for 21 April at 02:00',
+					  } ) +
+					  ' ' +
+					  scheduledDate.format( 'LT' );
 
 			statusText = this.props.translate( 'scheduled for %(scheduledTime)s', {
 				comment: '%(scheduledTime)s is a future human time, for example "in 3 days"',
