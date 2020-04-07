@@ -2530,20 +2530,14 @@ Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function(
 	let retries = 0;
 	const request = () =>
 		this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, options ).catch( error => {
-			// On error 429 retry three times with exponential backoff times
-			if ( error?.statusCode === 429 && retries < 3 ) {
+			// Retry three times with exponential backoff times
+			if ( retries < 3 ) {
 				return new Promise( resolve => {
 					++retries;
 					setTimeout( () => {
 						resolve( request() );
 					}, ( retries * retries * 1000 ) / 2 );
 				} );
-			}
-
-			// On regular errors retry one time (right away)
-			if ( retries === 0 ) {
-				++retries;
-				return request();
 			}
 
 			return Promise.reject( error );
