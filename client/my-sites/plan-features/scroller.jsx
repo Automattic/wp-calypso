@@ -123,13 +123,12 @@ export default class PlanFeaturesScroller extends PureComponent {
 	}
 
 	handleWindowResize = () => {
-		/* global cancelAnimationFrame */
-		cancelAnimationFrame( this.updateViewportWidthRaf );
+		window.cancelAnimationFrame( this.updateViewportWidthRaf );
 		this.updateViewportWidthRaf = window.requestAnimationFrame( this.updateViewportWidth );
 	};
 
 	handleScroll = () => {
-		cancelAnimationFrame( this.updateScrollPositionRaf );
+		window.cancelAnimationFrame( this.updateScrollPositionRaf );
 		this.updateScrollPositionRaf = window.requestAnimationFrame( this.updateScrollPosition );
 	};
 
