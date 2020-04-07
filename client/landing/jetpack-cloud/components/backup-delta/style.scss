@@ -130,6 +130,20 @@
     top: -0.1rem;
 }
 
+.backup-delta__realtime-cards {
+    margin: 0 1rem;
+}
+
+.backup-delta__realtime-header {
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin: 2rem 0 0.5rem;
+}
+
+.backup-delta__realtime-emptyday {
+    margin-top: 1rem;
+}
+
 @media ( max-width: 660px ) {
     .backup-delta__view-all-button {
         display: block;
