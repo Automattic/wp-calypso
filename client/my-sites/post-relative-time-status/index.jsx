@@ -112,7 +112,7 @@ class PostRelativeTime extends React.PureComponent {
 					  scheduledDate.format( 'LT' );
 
 			statusText = this.props.translate( 'scheduled for %(scheduledTime)s', {
-				comment: '%(scheduledTime)s is a future human time, for example "in 3 days"',
+				comment: '%(scheduledTime)s is when a scheduled post is set to be published',
 				args: {
 					scheduledTime,
 				},
