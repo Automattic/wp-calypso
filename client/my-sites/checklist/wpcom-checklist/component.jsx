@@ -73,6 +73,7 @@ class WpcomChecklistComponent extends PureComponent {
 			service_list_added: this.renderServiceListAddedTask,
 			staff_info_added: this.renderStaffInfoAddedTask,
 			product_list_added: this.renderProductListAddedTask,
+			site_menu_created: this.renderSiteMenuCreatedTask,
 		};
 	}
 
@@ -983,6 +984,32 @@ class WpcomChecklistComponent extends PureComponent {
 				backToChecklist={ this.backToChecklist }
 				showSkip={ false }
 				buttonText={ translate( 'Start' ) }
+			/>
+		);
+	};
+
+	renderSiteMenuCreatedTask = ( TaskComponent, baseProps, task ) => {
+		const { translate } = this.props;
+
+		return (
+			<TaskComponent
+				{ ...baseProps }
+				bannerImageSrc="/calypso/images/stats/tasks/personalize-your-site.svg"
+				completedButtonText={ translate( 'Edit' ) }
+				completedDescription={ translate( 'You can edit your site menu whenever you like.' ) }
+				completedTitle={ translate( 'You created a site menu' ) }
+				description={ translate(
+					"Building an effective navigation menu makes it easier for someone to find what they're looking for and improve search engine rankings."
+				) }
+				duration={ translate( '%d minute', '%d minutes', { count: 10, args: [ 10 ] } ) }
+				onClick={ this.handleTaskStart( {
+					task,
+					dialog: 'site-menu-tutorial',
+				} ) }
+				onDismiss={ this.handleTaskDismiss( task.id ) }
+				title={ translate( 'Create a site menu' ) }
+				showSkip={ true }
+				buttonText={ translate( 'Start with a tutorial' ) }
 			/>
 		);
 	};
