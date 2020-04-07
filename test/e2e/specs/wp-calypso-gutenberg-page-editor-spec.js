@@ -61,7 +61,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		} );
 
 		step( 'Post editor loads in iframe', async function() {
-			if ( config.get( 'browser' ) === 'ie' ) {
+			if ( global.browserName === 'Internet Explorer' ) {
 				// We don't mind if IE opens the post editor in wp-admin, just
 				// as long as a Gutenberg editor has opened.
 				return;
