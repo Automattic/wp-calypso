@@ -37,6 +37,7 @@ $progress-widget-height: 300px;
 		.create-site__progress {
 			height: $progress-step-title-height;
 			overflow: hidden;
+			margin-bottom: 20px;
 		}
 
 		.create-site__progress-steps {
