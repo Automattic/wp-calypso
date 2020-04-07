@@ -16,16 +16,21 @@ import {
 	useShoppingCart,
 	FormFieldAnnotation,
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	areDomainsInLineItems,
+	domainManagedContactDetails,
+	taxManagedContactDetails,
+	areRequiredFieldsNotEmpty,
 } from '@automattic/composite-checkout-wpcom';
 import {
 	CheckoutProvider,
-	createRegistry,
 	createPayPalMethod,
 	createStripeMethod,
+	createStripePaymentMethodStore,
 	createFullCreditsMethod,
 	createFreePaymentMethod,
 	createApplePayMethod,
 	createExistingCardMethod,
+	defaultRegistry,
 } from '@automattic/composite-checkout';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { format as formatUrl, parse as parseUrl } from 'url';
@@ -41,7 +46,13 @@ import {
 	jetpackProductItem,
 } from 'lib/cart-values/cart-items';
 import { requestPlans } from 'state/plans/actions';
-import { getPlanBySlug, getPlans } from 'state/plans/selectors';
+import { getPlanBySlug, getPlans, isRequestingPlans } from 'state/plans/selectors';
+import {
+	computeProductsWithPrices,
+	getProductBySlug,
+	getProductsList,
+	isProductsListFetching,
+} from 'state/products-list/selectors';
 import {
 	useStoredCards,
 	getDomainDetails,
@@ -64,6 +75,11 @@ import notices from 'notices';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import { isJetpackSite, isNewSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
+import {
+	requestContactDetailsCache,
+	updateContactDetailsCache,
+} from 'state/domains/management/actions';
 import { FormCountrySelect } from 'components/forms/form-country-select';
 import getCountries from 'state/selectors/get-countries';
 import { fetchPaymentCountries } from 'state/countries/actions';
@@ -75,16 +91,15 @@ import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-sign
 import getPreviousPath from 'state/selectors/get-previous-path.js';
 import { getPlan, findPlansKeys } from 'lib/plans';
 import { GROUP_WPCOM, TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
-import { computeProductsWithPrices } from 'state/products-list/selectors';
 import { requestProductsList } from 'state/products-list/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import analytics from 'lib/analytics';
 import { useStripe } from 'lib/stripe';
+import CheckoutTerms from './checkout-terms.jsx';
 
 const debug = debugFactory( 'calypso:composite-checkout' );
 
-const registry = createRegistry();
-const { select } = registry;
+const { select, dispatch, registerStore } = defaultRegistry;
 
 const wpcom = wp.undocumented();
 
@@ -112,11 +127,9 @@ export default function CompositeCheckout( {
 	plan,
 	purchaseId,
 	cart,
-	// TODO: handle these also
-	// couponCode,
+	couponCode: couponCodeFromUrl,
 } ) {
 	const translate = useTranslate();
-	const planSlug = useSelector( state => getUpgradePlanSlugFromPath( state, siteId, product ) );
 	const isJetpackNotAtomic = useSelector(
 		state => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
 	);
@@ -128,6 +141,8 @@ export default function CompositeCheckout( {
 	);
 	const previousRoute = useSelector( state => getPreviousPath( state ) );
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
+	const isLoadingCartSynchronizer =
+		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
 
 	const getThankYouUrl = useCallback( () => {
 		const transactionResult = select( 'wpcom' ).getTransactionResult();
@@ -229,7 +244,8 @@ export default function CompositeCheckout( {
 	const countriesList = useCountryList( overrideCountryList || [] );
 
 	const { productForCart, canInitializeCart } = usePrepareProductForCart(
-		planSlug,
+		siteId,
+		product,
 		isJetpackNotAtomic
 	);
 
@@ -241,6 +257,7 @@ export default function CompositeCheckout( {
 		credits,
 		removeItem,
 		submitCoupon,
+		removeCoupon,
 		updateLocation,
 		couponStatus,
 		changeItemVariant,
@@ -253,8 +270,9 @@ export default function CompositeCheckout( {
 		responseCart,
 	} = useShoppingCart(
 		siteSlug,
-		canInitializeCart,
+		canInitializeCart && ! isLoadingCartSynchronizer,
 		productForCart,
+		couponCodeFromUrl,
 		setCart || wpcomSetCart,
 		getCart || wpcomGetCart,
 		translate,
@@ -275,12 +293,14 @@ export default function CompositeCheckout( {
 		[ recordEvent, getThankYouUrl, total, couponItem, responseCart ]
 	);
 
-	const { registerStore, dispatch } = registry;
 	useWpcomStore(
 		registerStore,
 		recordEvent,
-		validateDomainContactDetails || wpcomValidateDomainContactInformation
+		areDomainsInLineItems( items ) ? domainManagedContactDetails : taxManagedContactDetails,
+		updateContactDetailsCache
 	);
+
+	useCachedDomainContactDetails();
 
 	useDisplayErrors( errors, showErrorMessage );
 
@@ -301,7 +321,7 @@ export default function CompositeCheckout( {
 			return null;
 		}
 		return createPayPalMethod( { registerStore } );
-	}, [ registerStore, shouldLoadPayPalMethod ] );
+	}, [ shouldLoadPayPalMethod ] );
 	if ( paypalMethod ) {
 		paypalMethod.id = 'paypal';
 		// This is defined afterward so that getThankYouUrl can be dynamic without having to re-create payment method
@@ -337,52 +357,42 @@ export default function CompositeCheckout( {
 		};
 	}
 
-	const shouldLoadStripeMethod = onlyLoadPaymentMethods
+	// If this PM is allowed by props, allowed by the cart, stripe is not loading, and there is no stripe error, then create the PM.
+	const isStripeMethodAllowed = onlyLoadPaymentMethods
 		? onlyLoadPaymentMethods.includes( 'card' )
-		: true;
-	const stripeMethod = useMemo( () => {
-		if (
-			isStripeLoading ||
-			stripeLoadingError ||
-			! stripe ||
-			! stripeConfiguration ||
-			! shouldLoadStripeMethod
-		) {
-			return null;
-		}
-		return createStripeMethod( {
-			getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-			getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
-			getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-			registerStore,
-			stripe,
-			stripeConfiguration,
-			submitTransaction: submitData => {
-				const pending = sendStripeTransaction(
-					{
-						...submitData,
-						siteId: select( 'wpcom' )?.getSiteId?.(),
-						domainDetails: getDomainDetails( select ),
-					},
-					wpcomTransaction
-				);
-				// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-				pending.then( result => {
-					debug( 'saving transaction response', result );
-					dispatch( 'wpcom' ).setTransactionResponse( result );
-				} );
-				return pending;
-			},
-		} );
-	}, [
-		shouldLoadStripeMethod,
-		registerStore,
-		dispatch,
-		stripe,
-		stripeConfiguration,
-		isStripeLoading,
-		stripeLoadingError,
-	] );
+		: isPaymentMethodEnabled( 'card', allowedPaymentMethods || serverAllowedPaymentMethods );
+	const shouldLoadStripeMethod = isStripeMethodAllowed && ! isStripeLoading && ! stripeLoadingError;
+	const stripePaymentMethodStore = useMemo(
+		() =>
+			createStripePaymentMethodStore( {
+				getCountry: () => select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+				getPostalCode: () => select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value,
+				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+				getSiteId: () => select( 'wpcom' )?.getSiteId?.(),
+				getDomainDetails: () => getDomainDetails( select ),
+				submitTransaction: submitData => {
+					const pending = sendStripeTransaction( submitData, wpcomTransaction );
+					// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+					pending.then( result => {
+						debug( 'saving transaction response', result );
+						dispatch( 'wpcom' ).setTransactionResponse( result );
+					} );
+					return pending;
+				},
+			} ),
+		[]
+	);
+	const stripeMethod = useMemo(
+		() =>
+			shouldLoadStripeMethod
+				? createStripeMethod( {
+						store: stripePaymentMethodStore,
+						stripe,
+						stripeConfiguration,
+				  } )
+				: null,
+		[ shouldLoadStripeMethod, stripePaymentMethodStore, stripe, stripeConfiguration ]
+	);
 	if ( stripeMethod ) {
 		stripeMethod.id = 'card';
 	}
@@ -416,7 +426,7 @@ export default function CompositeCheckout( {
 				return pending;
 			},
 		} );
-	}, [ registerStore, dispatch, shouldLoadFullCreditsMethod ] );
+	}, [ shouldLoadFullCreditsMethod ] );
 	if ( fullCreditsPaymentMethod ) {
 		fullCreditsPaymentMethod.label = <WordPressCreditsLabel credits={ credits } />;
 		fullCreditsPaymentMethod.inactiveContent = <WordPressCreditsSummary />;
@@ -451,7 +461,7 @@ export default function CompositeCheckout( {
 				return pending;
 			},
 		} );
-	}, [ registerStore, dispatch, shouldLoadFreePaymentMethod ] );
+	}, [ shouldLoadFreePaymentMethod ] );
 	if ( freePaymentMethod ) {
 		freePaymentMethod.label = <WordPressFreePurchaseLabel />;
 		freePaymentMethod.inactiveContent = <WordPressFreePurchaseSummary />;
@@ -502,8 +512,6 @@ export default function CompositeCheckout( {
 	}, [
 		shouldLoadApplePay,
 		isApplePayLoading,
-		dispatch,
-		registerStore,
 		stripe,
 		stripeConfiguration,
 		isStripeLoading,
@@ -551,13 +559,7 @@ export default function CompositeCheckout( {
 				getSubdivisionCode: () => select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 			} )
 		);
-	}, [
-		registerStore,
-		stripeConfiguration,
-		storedCards,
-		dispatch,
-		shouldLoadExistingCardsMethods,
-	] );
+	}, [ stripeConfiguration, storedCards, shouldLoadExistingCardsMethods ] );
 
 	const isPurchaseFree = ! isLoadingCart && total.amount.value === 0;
 	debug( 'is purchase free?', isPurchaseFree );
@@ -609,39 +611,71 @@ export default function CompositeCheckout( {
 	const validateDomainContact =
 		validateDomainContactDetails || wpcomValidateDomainContactInformation;
 
-	const renderDomainContactFields = (
-		domainNames,
+	const domainContactValidationCallback = (
+		paymentMethodId,
 		contactDetails,
-		updateContactDetails,
+		domainNames,
 		applyDomainContactValidationResults,
-		paymentMethodId
+		decoratedContactDetails
 	) => {
+		return new Promise( resolve => {
+			validateDomainContact( contactDetails, domainNames, ( httpErrors, data ) => {
+				recordEvent( {
+					type: 'VALIDATE_DOMAIN_CONTACT_INFO',
+					payload: {
+						credits: null,
+						payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ),
+					},
+				} );
+				debug(
+					'Domain contact info validation for domains',
+					domainNames,
+					'and contact info',
+					contactDetails,
+					'result:',
+					data
+				);
+				if ( ! data ) {
+					showErrorMessage(
+						translate(
+							'There was an error validating your contact information. Please contact support.'
+						)
+					);
+					resolve( false );
+					return;
+				}
+				if ( data.messages ) {
+					showErrorMessage(
+						translate(
+							'We could not validate your contact information. Please review and update all the highlighted fields.'
+						)
+					);
+				}
+				applyDomainContactValidationResults( { ...data.messages } );
+				resolve( ! ( data.success && areRequiredFieldsNotEmpty( decoratedContactDetails ) ) );
+			} );
+		} );
+	};
+
+	const renderDomainContactFields = (
+		contactDetails,
+		contactDetailsErrors,
+		updateContactDetails,
+		shouldShowContactDetailsValidationErrors,
+		isDisabled
+	) => {
+		const getIsFieldDisabled = () => isDisabled;
 		return (
 			<WPCheckoutErrorBoundary>
 				<ContactDetailsFormFields
 					countriesList={ countriesList }
 					contactDetails={ contactDetails }
+					contactDetailsErrors={
+						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
+					}
 					onContactDetailsChange={ updateContactDetails }
-					onValidate={ ( values, onComplete ) => {
-						// TODO: Should probably handle HTTP errors here
-						validateDomainContact( values, domainNames, ( httpErrors, data ) => {
-							recordEvent( {
-								type: 'VALIDATE_DOMAIN_CONTACT_INFO',
-								payload: {
-									credits: null,
-									payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod(
-										paymentMethodId
-									),
-								},
-							} );
-							debug(
-								'Domain contact info validation ' + ( data.messages ? 'errors:' : 'successful' ),
-								data.messages
-							);
-							applyDomainContactValidationResults( { ...data.messages } );
-							onComplete( httpErrors, data );
-						} );
-					} }
+					shouldForceRenderOnPropChange={ true }
+					getIsFieldDisabled={ getIsFieldDisabled }
 				/>
 			</WPCheckoutErrorBoundary>
 		);
@@ -673,7 +707,7 @@ export default function CompositeCheckout( {
 				showSuccessMessage={ showSuccessMessage }
 				onEvent={ recordEvent }
 				paymentMethods={ paymentMethods }
-				registry={ registry }
+				registry={ defaultRegistry }
 				isLoading={
 					isLoadingCart || isLoadingStoredCards || paymentMethods.length < 1 || items.length < 1
 				}
@@ -682,6 +716,7 @@ export default function CompositeCheckout( {
 					removeItem={ removeItem }
 					updateLocation={ updateLocation }
 					submitCoupon={ submitCoupon }
+					removeCoupon={ removeCoupon }
 					couponStatus={ couponStatus }
 					changePlanLength={ changeItemVariant }
 					siteId={ siteId }
@@ -693,6 +728,9 @@ export default function CompositeCheckout( {
 					variantRequestStatus={ variantRequestStatus }
 					variantSelectOverride={ variantSelectOverride }
 					getItemVariants={ getItemVariants }
+					domainContactValidationCallback={ domainContactValidationCallback }
+					responseCart={ responseCart }
+					CheckoutTerms={ CheckoutTerms }
 				/>
 			</CheckoutProvider>
 		</React.Fragment>
@@ -734,31 +772,53 @@ function isNotCouponError( error ) {
 /**
  * Create and return an object to be added to the cart
  *
- * @returns ResponseCartProduct
+ * @returns ResponseCartProduct | null
  */
-function createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) {
+function createItemToAddToCart( {
+	planSlug = null,
+	productAlias = '',
+	product_id = null,
+	isJetpackNotAtomic = false,
+} ) {
 	let cartItem, cartMeta;
 
-	cartItem = planItem( planSlug );
-	cartItem.product_id = plan.product_id;
+	if ( planSlug && product_id ) {
+		debug( 'creating plan product' );
+		cartItem = planItem( planSlug );
+		cartItem.product_id = product_id;
+	}
 
-	if ( planSlug.startsWith( 'theme' ) ) {
-		cartMeta = planSlug.split( ':' )[ 1 ];
+	if ( productAlias.startsWith( 'theme:' ) ) {
+		debug( 'creating theme product' );
+		cartMeta = productAlias.split( ':' )[ 1 ];
 		cartItem = themeItem( cartMeta );
 	}
 
-	if ( planSlug.startsWith( 'domain-mapping' ) ) {
-		cartMeta = planSlug.split( ':' )[ 1 ];
+	if ( productAlias.startsWith( 'domain-mapping:' ) && product_id ) {
+		debug( 'creating domain mapping product' );
+		cartMeta = productAlias.split( ':' )[ 1 ];
 		cartItem = domainMapping( { domain: cartMeta } );
+		cartItem.product_id = product_id;
 	}
 
-	if ( planSlug.startsWith( 'concierge-session' ) ) {
+	if ( productAlias.startsWith( 'concierge-session' ) ) {
 		// TODO: prevent adding a conciergeSessionItem if one already exists
+		debug( 'creating concierge product' );
 		cartItem = conciergeSessionItem();
 	}
 
-	if ( planSlug.startsWith( 'jetpack_backup' ) && isJetpackNotAtomic ) {
-		cartItem = jetpackProductItem( planSlug );
+	if (
+		( productAlias.startsWith( 'jetpack_backup' ) ||
+			productAlias.startsWith( 'jetpack_search' ) ) &&
+		isJetpackNotAtomic
+	) {
+		debug( 'creating jetpack product' );
+		cartItem = jetpackProductItem( productAlias );
+	}
+
+	if ( ! cartItem ) {
+		debug( 'no product created' );
+		return null;
 	}
 
 	cartItem.extra = { ...cartItem.extra, context: 'calypstore' };
@@ -768,17 +828,17 @@ function createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) {
 	return cartItem;
 }
 
-function getCheckoutEventHandler( dispatch ) {
+function getCheckoutEventHandler( reduxDispatch ) {
 	return function recordEvent( action ) {
 		debug( 'heard checkout event', action );
 		switch ( action.type ) {
 			case 'CHECKOUT_LOADED':
-				return dispatch( recordTracksEvent( 'calypso_checkout_composite_loaded', {} ) );
+				return reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_loaded', {} ) );
 
 			case 'PAYMENT_COMPLETE': {
 				const total_cost = action.payload.total.amount.value / 100; // TODO: This conversion only works for USD! We have to localize this or get it from the server directly (or better yet, just force people to use the integer version).
 
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_payment_success', {
 						coupon_code: action.payload.couponItem?.wpcom_meta.couponCode ?? '',
 						currency: action.payload.total.amount.currency,
@@ -796,11 +856,13 @@ function getCheckoutEventHandler( dispatch ) {
 						currency: action.payload.total.amount.currency,
 						is_signup: action.payload.responseCart.is_signup,
 						products: action.payload.responseCart.products,
+						coupon_code: action.payload.couponItem?.wpcom_meta.couponCode ?? '',
+						total_tax: action.payload.responseCart.total_tax,
 					},
 					orderId: transactionResult.receipt_id,
 				} );
 
-				return dispatch(
+				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_payment_complete', {
 						redirect_url: action.payload.url,
 						coupon_code: action.payload.couponItem?.wpcom_meta.couponCode ?? '',
@@ -813,8 +875,15 @@ function getCheckoutEventHandler( dispatch ) {
 				);
 			}
 
+			case 'CART_INIT_COMPLETE':
+				return reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_composite_cart_loaded', {
+						products: action.payload.products.map( product => product.product_slug ).join( ',' ),
+					} )
+				);
+
 			case 'CART_ERROR':
-				return dispatch(
+				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_cart_error', {
 						error_type: action.payload.type,
 						error_message: String( action.payload.message ),
@@ -822,7 +891,7 @@ function getCheckoutEventHandler( dispatch ) {
 				);
 
 			case 'a8c_checkout_error':
-				return dispatch(
+				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_error', {
 						error_type: action.payload.type,
 						error_field: action.payload.field,
@@ -831,25 +900,46 @@ function getCheckoutEventHandler( dispatch ) {
 				);
 
 			case 'a8c_checkout_add_coupon':
-				return dispatch(
+				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_coupon_add_submit', {
 						coupon: action.payload.coupon,
 					} )
 				);
 
+			case 'a8c_checkout_cancel_delete_product':
+				return reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_composite_cancel_delete_product' )
+				);
+
+			case 'a8c_checkout_delete_product':
+				return reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_composite_delete_product', {
+						product_name: action.payload.product_name,
+					} )
+				);
+
+			case 'a8c_checkout_delete_product_press':
+				return reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_composite_delete_product_press', {
+						product_name: action.payload.product_name,
+					} )
+				);
+
 			case 'a8c_checkout_add_coupon_error':
-				return dispatch(
+				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_coupon_add_error', {
 						error_type: action.payload.type,
 					} )
 				);
 
 			case 'a8c_checkout_add_coupon_button_clicked':
-				return dispatch( recordTracksEvent( 'calypso_checkout_composite_add_coupon_clicked', {} ) );
+				return reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_composite_add_coupon_clicked', {} )
+				);
 
 			case 'STEP_NUMBER_CHANGED':
 				if ( action.payload.stepNumber === 2 && action.payload.previousStepNumber === 1 ) {
-					dispatch(
+					reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_composite_first_step_complete', {
 							payment_method:
 								translateCheckoutPaymentMethodToWpcomPaymentMethod( action.payload.paymentMethodId )
@@ -857,46 +947,45 @@ function getCheckoutEventHandler( dispatch ) {
 						} )
 					);
 				}
-				return dispatch(
+				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_step_changed', {
 						step: action.payload.stepNumber,
-						step_id: action.payload.stepId,
 					} )
 				);
 
 			case 'STRIPE_TRANSACTION_BEGIN': {
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_form_submit', {
 						credits: null,
 						payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
 					} )
 				);
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_form_submit', {
 						credits: null,
 						payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
 					} )
 				);
-				return dispatch(
+				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_stripe_submit_clicked', {} )
 				);
 			}
 
 			case 'STRIPE_TRANSACTION_ERROR': {
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_payment_error', {
 						error_code: null,
 						reason: String( action.payload ),
 					} )
 				);
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_payment_error', {
 						error_code: null,
 						payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
 						reason: String( action.payload ),
 					} )
 				);
-				return dispatch(
+				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_stripe_transaction_error', {
 						error_message: String( action.payload ),
 					} )
@@ -904,38 +993,38 @@ function getCheckoutEventHandler( dispatch ) {
 			}
 
 			case 'FREE_TRANSACTION_BEGIN': {
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_form_submit', {
 						credits: null,
 						payment_method: 'WPCOM_Billing_WPCOM',
 					} )
 				);
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_form_submit', {
 						credits: null,
 						payment_method: 'WPCOM_Billing_WPCOM',
 					} )
 				);
-				return dispatch(
+				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_free_purchase_submit_clicked', {} )
 				);
 			}
 
 			case 'FREE_PURCHASE_TRANSACTION_ERROR': {
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_payment_error', {
 						error_code: null,
 						reason: String( action.payload ),
 					} )
 				);
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_payment_error', {
 						error_code: null,
 						payment_method: 'WPCOM_Billing_WPCOM',
 						reason: String( action.payload ),
 					} )
 				);
-				return dispatch(
+				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_free_purchase_transaction_error', {
 						error_message: String( action.payload ),
 					} )
@@ -943,39 +1032,39 @@ function getCheckoutEventHandler( dispatch ) {
 			}
 
 			case 'PAYPAL_TRANSACTION_BEGIN': {
-				dispatch( recordTracksEvent( 'calypso_checkout_form_redirect', {} ) );
-				dispatch(
+				reduxDispatch( recordTracksEvent( 'calypso_checkout_form_redirect', {} ) );
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_form_submit', {
 						credits: null,
 						payment_method: 'WPCOM_Billing_PayPal_Express',
 					} )
 				);
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_form_submit', {
 						credits: null,
 						payment_method: 'WPCOM_Billing_PayPal_Express',
 					} )
 				);
-				return dispatch(
+				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_paypal_submit_clicked', {} )
 				);
 			}
 
 			case 'PAYPAL_TRANSACTION_ERROR': {
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_payment_error', {
 						error_code: null,
 						reason: String( action.payload ),
 					} )
 				);
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_payment_error', {
 						error_code: null,
 						payment_method: 'WPCOM_Billing_PayPal_Express',
 						reason: String( action.payload ),
 					} )
 				);
-				return dispatch(
+				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_paypal_transaction_error', {
 						error_message: String( action.payload ),
 					} )
@@ -983,38 +1072,38 @@ function getCheckoutEventHandler( dispatch ) {
 			}
 
 			case 'FULL_CREDITS_TRANSACTION_BEGIN': {
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_form_submit', {
 						credits: null,
 						payment_method: 'WPCOM_Billing_WPCOM',
 					} )
 				);
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_form_submit', {
 						credits: null,
 						payment_method: 'WPCOM_Billing_WPCOM',
 					} )
 				);
-				return dispatch(
+				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_full_credits_submit_clicked', {} )
 				);
 			}
 
 			case 'FULL_CREDITS_TRANSACTION_ERROR': {
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_payment_error', {
 						error_code: null,
 						reason: String( action.payload ),
 					} )
 				);
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_payment_error', {
 						error_code: null,
 						payment_method: 'WPCOM_Billing_WPCOM',
 						reason: String( action.payload ),
 					} )
 				);
-				return dispatch(
+				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_full_credits_error', {
 						error_message: String( action.payload ),
 					} )
@@ -1022,38 +1111,38 @@ function getCheckoutEventHandler( dispatch ) {
 			}
 
 			case 'EXISTING_CARD_TRANSACTION_BEGIN': {
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_form_submit', {
 						credits: null,
 						payment_method: 'WPCOM_Billing_MoneyPress_Stored',
 					} )
 				);
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_form_submit', {
 						credits: null,
 						payment_method: 'WPCOM_Billing_MoneyPress_Stored',
 					} )
 				);
-				return dispatch(
+				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_existing_card_submit_clicked', {} )
 				);
 			}
 
 			case 'EXISTING_CARD_TRANSACTION_ERROR': {
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_payment_error', {
 						error_code: null,
 						reason: String( action.payload ),
 					} )
 				);
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_payment_error', {
 						error_code: null,
 						payment_method: 'WPCOM_Billing_MoneyPress_Stored',
 						reason: String( action.payload ),
 					} )
 				);
-				return dispatch(
+				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_existing_card_error', {
 						error_message: String( action.payload ),
 					} )
@@ -1061,25 +1150,25 @@ function getCheckoutEventHandler( dispatch ) {
 			}
 
 			case 'APPLE_PAY_TRANSACTION_BEGIN': {
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_form_submit', {
 						credits: null,
 						payment_method: 'WPCOM_Billing_Web_Payment',
 					} )
 				);
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_form_submit', {
 						credits: null,
 						payment_method: 'WPCOM_Billing_Web_Payment',
 					} )
 				);
-				return dispatch(
+				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_apple_pay_submit_clicked', {} )
 				);
 			}
 
 			case 'APPLE_PAY_LOADING_ERROR':
-				return dispatch(
+				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_apple_pay_error', {
 						error_message: String( action.payload ),
 						is_loading_error: true,
@@ -1087,19 +1176,19 @@ function getCheckoutEventHandler( dispatch ) {
 				);
 
 			case 'APPLE_PAY_TRANSACTION_ERROR': {
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_payment_error', {
 						error_code: null,
 						reason: String( action.payload ),
 					} )
 				);
-				dispatch(
+				reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_payment_error', {
 						error_code: null,
 						reason: String( action.payload ),
 					} )
 				);
-				return dispatch(
+				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_apple_pay_error', {
 						error_message: String( action.payload ),
 					} )
@@ -1112,12 +1201,12 @@ function getCheckoutEventHandler( dispatch ) {
 			}
 
 			case 'SHOW_MODAL_AUTHORIZATION': {
-				return dispatch( recordTracksEvent( 'calypso_checkout_modal_authorization', {} ) );
+				return reduxDispatch( recordTracksEvent( 'calypso_checkout_modal_authorization', {} ) );
 			}
 
 			default:
 				debug( 'unknown checkout event', action );
-				return dispatch(
+				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_unknown_event', {
 						error_type: String( action.type ),
 					} )
@@ -1153,7 +1242,7 @@ function useCountryList( overrideCountryList ) {
 
 	const [ countriesList, setCountriesList ] = useState( overrideCountryList );
 
-	const dispatch = useDispatch();
+	const reduxDispatch = useDispatch();
 	const globalCountryList = useSelector( state => getCountries( state, 'payments' ) );
 
 	// Has the global list been populated?
@@ -1165,10 +1254,10 @@ function useCountryList( overrideCountryList ) {
 				setCountriesList( globalCountryList );
 			} else {
 				debug( 'countries list is empty; dispatching request for data' );
-				dispatch( fetchPaymentCountries() );
+				reduxDispatch( fetchPaymentCountries() );
 			}
 		}
-	}, [ shouldFetchList, isListFetched, globalCountryList, dispatch ] );
+	}, [ shouldFetchList, isListFetched, globalCountryList, reduxDispatch ] );
 
 	return countriesList;
 }
@@ -1235,7 +1324,7 @@ function localizeCurrency( amount ) {
 
 function useWpcomProductVariants( { siteId, productSlug, credits, couponDiscounts } ) {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
+	const reduxDispatch = useDispatch();
 
 	const availableVariants = useVariantWpcomPlanProductSlugs( productSlug );
 
@@ -1257,11 +1346,11 @@ function useWpcomProductVariants( { siteId, productSlug, credits, couponDiscount
 		debug( 'deciding whether to request product variant data' );
 		if ( shouldFetchProducts && ! haveFetchedProducts ) {
 			debug( 'dispatching request for product variant data' );
-			dispatch( requestPlans() );
-			dispatch( requestProductsList() );
+			reduxDispatch( requestPlans() );
+			reduxDispatch( requestProductsList() );
 			setHaveFetchedProducts( true );
 		}
-	}, [ shouldFetchProducts, haveFetchedProducts, dispatch ] );
+	}, [ shouldFetchProducts, haveFetchedProducts, reduxDispatch ] );
 
 	return anyProductSlug => {
 		if ( anyProductSlug !== productSlug ) {
@@ -1310,7 +1399,7 @@ function useWpcomProductVariants( { siteId, productSlug, credits, couponDiscount
 }
 
 function useVariantWpcomPlanProductSlugs( productSlug ) {
-	const dispatch = useDispatch();
+	const reduxDispatch = useDispatch();
 
 	const chosenPlan = getPlan( productSlug );
 
@@ -1322,11 +1411,11 @@ function useVariantWpcomPlanProductSlugs( productSlug ) {
 		debug( 'deciding whether to request plan variant data' );
 		if ( shouldFetchPlans && ! haveFetchedPlans ) {
 			debug( 'dispatching request for plan variant data' );
-			dispatch( requestPlans() );
-			dispatch( requestProductsList() );
+			reduxDispatch( requestPlans() );
+			reduxDispatch( requestProductsList() );
 			setHaveFetchedPlans( true );
 		}
-	}, [ haveFetchedPlans, shouldFetchPlans, dispatch ] );
+	}, [ haveFetchedPlans, shouldFetchPlans, reduxDispatch ] );
 
 	if ( ! chosenPlan ) {
 		return [];
@@ -1342,6 +1431,25 @@ function useVariantWpcomPlanProductSlugs( productSlug ) {
 		group: chosenPlan.group,
 		type: chosenPlan.type,
 	} );
+}
+
+function useCachedDomainContactDetails() {
+	const reduxDispatch = useDispatch();
+	const [ haveRequestedCachedDetails, setHaveRequestedCachedDetails ] = useState( false );
+
+	useEffect( () => {
+		// Dispatch exactly once
+		if ( ! haveRequestedCachedDetails ) {
+			debug( 'requesting cached domain contact details' );
+			reduxDispatch( requestContactDetailsCache() );
+			setHaveRequestedCachedDetails( true );
+		}
+	}, [ haveRequestedCachedDetails, reduxDispatch ] );
+
+	const cachedContactDetails = useSelector( getContactDetailsCache );
+	if ( cachedContactDetails ) {
+		dispatch( 'wpcom' ).loadDomainContactDetailsFromCache( cachedContactDetails );
+	}
 }
 
 function getPlanProductSlugs(
@@ -1364,32 +1472,112 @@ const DoNotPayThis = styled.span`
 	margin-right: 8px;
 `;
 
-function usePrepareProductForCart( planSlug, isJetpackNotAtomic ) {
+function getProductSlugFromAlias( productAlias ) {
+	if ( productAlias?.startsWith?.( 'domain-mapping:' ) ) {
+		return 'domain_map';
+	}
+	return null;
+}
+
+function usePrepareProductForCart( siteId, productAlias, isJetpackNotAtomic ) {
+	const planSlug = useSelector( state =>
+		getUpgradePlanSlugFromPath( state, siteId, productAlias )
+	);
 	const plans = useSelector( state => getPlans( state ) );
 	const plan = useSelector( state => getPlanBySlug( state, planSlug ) );
+	const products = useSelector( state => getProductsList( state ) );
+	const product = useSelector( state =>
+		getProductBySlug( state, getProductSlugFromAlias( productAlias ) )
+	);
+	const isFetchingProducts = useSelector( state => isProductsListFetching( state ) );
+	const isFetchingPlans = useSelector( state => isRequestingPlans( state ) );
 	const reduxDispatch = useDispatch();
-	const [ canInitializeCart, setCanInitializeCart ] = useState( ! planSlug );
-	const [ productForCart, setProductForCart ] = useState();
+	const [ { canInitializeCart, productForCart }, setState ] = useState( {
+		canInitializeCart: ! planSlug && ! productAlias,
+		productForCart: null,
+	} );
 
-	// Fetch plans if they are not loaded
 	useEffect( () => {
-		if ( ! planSlug ) {
+		if ( ! isFetchingProducts && Object.keys( products || {} ).length < 1 ) {
+			debug( 'fetching products list' );
+			reduxDispatch( requestProductsList() );
 			return;
 		}
-		if ( ! plans || plans.length < 1 ) {
-			debug( 'there is a request to add a plan but no plans are loaded; fetching plans' );
+	}, [ isFetchingProducts, products, reduxDispatch ] );
+
+	useEffect( () => {
+		if ( ! isFetchingPlans && plans?.length < 1 ) {
+			debug( 'fetching plans list' );
 			reduxDispatch( requestPlans() );
 			return;
 		}
-		if ( ! plan ) {
-			debug( 'there is a request to add a plan but no plan was found' );
-			setCanInitializeCart( true );
+	}, [ isFetchingPlans, plans, reduxDispatch ] );
+
+	// Add a plan if one is requested
+	useEffect( () => {
+		if ( ! planSlug || isFetchingPlans ) {
 			return;
 		}
-		debug( 'preparing item that was requested in url', { planSlug, plan, isJetpackNotAtomic } );
-		setProductForCart( createItemToAddToCart( { planSlug, plan, isJetpackNotAtomic } ) );
-		setCanInitializeCart( true );
-	}, [ reduxDispatch, planSlug, plan, plans, isJetpackNotAtomic ] );
+		if ( isFetchingPlans ) {
+			debug( 'waiting on plans fetch' );
+			return;
+		}
+		if ( ! plan ) {
+			debug( 'there is a request to add a plan but no plan was found', planSlug );
+			setState( { canInitializeCart: true } );
+			return;
+		}
+		const cartProduct = createItemToAddToCart( {
+			planSlug,
+			product_id: plan.product_id,
+			isJetpackNotAtomic,
+		} );
+		debug(
+			'preparing plan that was requested in url',
+			{ planSlug, plan, isJetpackNotAtomic },
+			cartProduct
+		);
+		setState( { productForCart: cartProduct, canInitializeCart: true } );
+	}, [ isFetchingPlans, reduxDispatch, planSlug, plan, plans, isJetpackNotAtomic ] );
+
+	// Add a supported product if one is requested
+	useEffect( () => {
+		if ( ! productAlias ) {
+			return;
+		}
+		if ( planSlug ) {
+			return;
+		}
+		if ( isFetchingPlans || isFetchingProducts ) {
+			debug( 'waiting on products/plans fetch' );
+			return;
+		}
+		if ( ! product ) {
+			debug( 'there is a request to add a product but no product was found', productAlias );
+			setState( { canInitializeCart: true } );
+			return;
+		}
+		const cartProduct = createItemToAddToCart( {
+			productAlias,
+			product_id: product.product_id,
+			isJetpackNotAtomic,
+		} );
+		debug(
+			'preparing product that was requested in url',
+			{ productAlias, isJetpackNotAtomic },
+			cartProduct
+		);
+		setState( { productForCart: cartProduct, canInitializeCart: true } );
+	}, [
+		isFetchingPlans,
+		planSlug,
+		reduxDispatch,
+		isJetpackNotAtomic,
+		productAlias,
+		product,
+		products,
+		isFetchingProducts,
+	] );
 
 	return { productForCart, canInitializeCart };
 }

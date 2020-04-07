@@ -73,31 +73,13 @@ class PagesMain extends React.Component {
 	}
 
 	render() {
-		const { doSearch, siteId, search, status = 'published', translate } = this.props;
+		const { siteId, search, status = 'published', translate } = this.props;
 
 		const filterStrings = {
 			published: translate( 'Published', { context: 'Filter label for pages list' } ),
 			drafts: translate( 'Drafts', { context: 'Filter label for pages list' } ),
 			scheduled: translate( 'Scheduled', { context: 'Filter label for pages list' } ),
 			trashed: translate( 'Trashed', { context: 'Filter label for pages list' } ),
-		};
-		const searchStrings = {
-			published: translate( 'Search Published…', {
-				context: 'Search placeholder for pages list',
-				textOnly: true,
-			} ),
-			drafts: translate( 'Search Drafts…', {
-				context: 'Search placeholder for pages list',
-				textOnly: true,
-			} ),
-			scheduled: translate( 'Search Scheduled…', {
-				context: 'Search placeholder for pages list',
-				textOnly: true,
-			} ),
-			trashed: translate( 'Search Trashed…', {
-				context: 'Search placeholder for pages list',
-				textOnly: true,
-			} ),
 		};
 		return (
 			<Main wideLayout classname="pages">
@@ -116,9 +98,10 @@ class PagesMain extends React.Component {
 					<Search
 						pinned
 						fitsContainer
-						onSearch={ doSearch }
+						isOpen={ this.props.getSearchOpen() }
+						onSearch={ this.props.doSearch }
 						initialValue={ search }
-						placeholder={ searchStrings[ status ] }
+						placeholder={ this.props.translate( 'Search Pages' ) }
 						analyticsGroup="Pages"
 						delaySearch={ true }
 					/>

@@ -1,0 +1,58 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+
+// Restyle `<Suggestion />` component
+.vertical-select {
+	.suggestions__category-heading {
+		display: none;
+	}
+	.suggestions__item {
+		border: none;
+		background-color: var( --studio-white );
+
+		&.has-highlight {
+			box-shadow: inset 0 0 0 1px var( --studio-blue-30 );
+			background-color: var( --studio-white );
+			border-radius: 2px;
+		}
+	}
+	&--without-value {
+		.vertical-select__input-wrapper {
+			position: relative;
+			width: 400px;
+			display: inline-block;
+			vertical-align: middle;
+			height: 1.05em;
+			line-height: 1em;
+		}
+		.madlib__input {
+			position: absolute;
+			width: 100%;
+			border: none; //not transparent to prevent a flicker of 100% bottom border when this class is removed
+		}
+	}
+}
+
+.vertical-select__suggestions-wrapper {
+	position: relative;
+}
+
+.vertical-select__suggestions {
+	position: absolute;
+	left: 0;
+	width: 250px;
+	max-height: 400px;
+	overflow: auto;
+}
+
+.vertical-select__placeholder {
+	color: var( --studio-gray-5 );
+	position: absolute;
+	left: 0;
+}
+
+.vertical-select__arrow {
+	//TODO: find a way to prevent overflow on mobile (only 20px horizontal padding)
+	position: absolute;
+	bottom: 25px;
+	margin-left: 15px;
+}

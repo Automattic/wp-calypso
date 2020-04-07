@@ -9,7 +9,7 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import { getSelectedDomain } from 'lib/domains';
+import { getSelectedDomain, getDomainTypeText } from 'lib/domains';
 import Header from 'my-sites/domains/domain-management/components/header';
 import { localize } from 'i18n-calypso';
 import Main from 'components/main';
@@ -23,6 +23,8 @@ import Transfer from './transfer';
 import WpcomDomain from './wpcom-domain';
 import WpcomDomainType from './domain-types/wpcom-domain-type';
 import RegisteredDomainType from './domain-types/registered-domain-type';
+import MappedDomainType from './domain-types/mapped-domain-type';
+import TransferInDomainType from './domain-types/transfer-in-domain-type';
 import config from 'config';
 
 /**
@@ -46,7 +48,11 @@ class Edit extends React.Component {
 					onClick={ this.goToDomainManagement }
 					selectedDomainName={ this.props.selectedDomainName }
 				>
-					{ this.props.translate( 'Domain Settings' ) }
+					{ this.props.translate( '%(domainType)s Settings', {
+						args: {
+							domainType: getDomainTypeText( domain ),
+						},
+					} ) }
 				</Header>
 				{ this.renderDetails( domain, Details ) }
 			</Main>
@@ -58,7 +64,7 @@ class Edit extends React.Component {
 
 		switch ( type ) {
 			case domainTypes.MAPPED:
-				return MappedDomain;
+				return newStatusDesign ? MappedDomainType : MappedDomain;
 
 			case domainTypes.REGISTERED:
 				return newStatusDesign ? RegisteredDomainType : RegisteredDomain;
@@ -67,7 +73,7 @@ class Edit extends React.Component {
 				return SiteRedirect;
 
 			case domainTypes.TRANSFER:
-				return Transfer;
+				return newStatusDesign ? TransferInDomainType : Transfer;
 
 			case domainTypes.WPCOM:
 				return newStatusDesign ? WpcomDomainType : WpcomDomain;

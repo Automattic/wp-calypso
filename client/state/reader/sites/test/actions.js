@@ -10,7 +10,7 @@ import {
 	READER_SITE_REQUEST,
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 
 describe( 'actions', () => {
 	describe( '#requestSite', () => {

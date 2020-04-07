@@ -6,7 +6,7 @@ import { map, truncate } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_FEED_SEARCH_REQUEST, READER_FEED_REQUEST } from 'state/action-types';
+import { READER_FEED_SEARCH_REQUEST, READER_FEED_REQUEST } from 'state/reader/action-types';
 import { receiveFeedSearch } from 'state/reader/feed-searches/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';

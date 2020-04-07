@@ -43,11 +43,17 @@ export class DateRangeSelector extends Component {
 			enteredToDate: null,
 		} );
 
-		const formattedFromDate = fromDate && moment( fromDate ).format( DATE_FORMAT );
+		const formattedFromDate =
+			fromDate &&
+			moment( fromDate )
+				.startOf( 'day' )
+				.utc()
+				.format( DATE_FORMAT );
 		const formattedToDate =
 			toDate &&
 			moment( toDate )
 				.endOf( 'day' )
+				.utc()
 				.format( DATE_FORMAT );
 		if ( formattedFromDate && formattedToDate && formattedFromDate !== formattedToDate ) {
 			selectDateRange( siteId, formattedFromDate, formattedToDate );
@@ -64,10 +70,16 @@ export class DateRangeSelector extends Component {
 
 	handleDateRangeCommit = ( startDate, endDate ) => {
 		const { moment, selectDateRange } = this.props;
-		const formattedStartDate = startDate ? moment( startDate ).format( DATE_FORMAT ) : null;
+		const formattedStartDate = startDate
+			? moment( startDate )
+					.startOf( 'day' )
+					.utc()
+					.format( DATE_FORMAT )
+			: null;
 		const formattedEndDate = endDate
 			? moment( endDate )
 					.endOf( 'day' )
+					.utc()
 					.format( DATE_FORMAT )
 			: null;
 
@@ -238,7 +250,7 @@ export class DateRangeSelector extends Component {
 	};
 
 	render() {
-		const { isVisible } = this.props;
+		const { customLabel, isVisible } = this.props;
 		const from = this.getFromDate();
 		const to = this.getToDate();
 		const now = new Date();
@@ -263,7 +275,7 @@ export class DateRangeSelector extends Component {
 							onClick={ props.onTriggerClick }
 							ref={ props.buttonRef }
 						>
-							{ this.getFormattedDate( from, to ) }
+							{ customLabel ? customLabel : this.getFormattedDate( from, to ) }
 						</Button>
 						{ ( from || to ) && (
 							<Button

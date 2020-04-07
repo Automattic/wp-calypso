@@ -17,7 +17,3 @@ export const SummaryLine = styled.li`
 	padding: 0;
 	list-style: none;
 `;
-
-export const SummarySpacerLine = styled( SummaryLine )`
-	margin-bottom: 8px;
-`;

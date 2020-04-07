@@ -34,4 +34,4 @@ The actionbar shows up only on the frontend of sites. It is there to provide con
 
 In development environments, when you're developing Calypso, you'll see a badge in the bottom right corner.
 
-Previous: [Information Architecture](information-architecture.md) Next: [Contributing to Calypso](../../.github/CONTRIBUTING.md)
+Previous: [Information Architecture](information-architecture.md) Next: [Contributing to Calypso](../../docs/CONTRIBUTING.md)

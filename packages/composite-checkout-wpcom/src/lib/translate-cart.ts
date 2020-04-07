@@ -150,14 +150,17 @@ function translateWpcomCartItemToCheckoutCartItem(
 			currency,
 			item_subtotal_integer,
 			is_domain_registration,
+			is_bundled,
 			meta,
 			extra,
 			volume,
 			uuid,
+			product_cost_integer,
+			product_cost_display,
 		} = serverCartItem;
 
 		// Sublabel is the domain name for registrations
-		const sublabel = is_domain_registration ? meta : undefined;
+		const sublabel = meta;
 
 		// TODO: watch out for this when localizing
 		const value = is_coupon_applied
@@ -183,6 +186,9 @@ function translateWpcomCartItemToCheckoutCartItem(
 				extra,
 				volume,
 				is_domain_registration,
+				is_bundled,
+				product_cost_integer,
+				product_cost_display,
 			},
 		};
 	};

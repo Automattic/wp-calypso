@@ -205,7 +205,7 @@ class ApplicationPasswords extends Component {
 							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 							<Gridicon icon="plus-small" size={ 16 } />
 							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-							{ translate( 'Add New Application Password' ) }
+							{ translate( 'Add new application password' ) }
 						</Button>
 					) }
 				</SectionHeader>

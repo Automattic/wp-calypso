@@ -28,7 +28,7 @@ import {
 	READER_LISTS_UNFOLLOW,
 	READER_LIST_UPDATE_TITLE,
 	READER_LIST_UPDATE_DESCRIPTION,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {

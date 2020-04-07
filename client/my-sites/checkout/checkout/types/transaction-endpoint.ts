@@ -5,6 +5,9 @@ import {
 	WPCOMCartItem,
 	getNonProductWPCOMCartItemTypes,
 } from '@automattic/composite-checkout-wpcom';
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:transaction-endpoint' );
 
 export type WPCOMTransactionEndpoint = (
 	_: WPCOMTransactionEndpointRequestPayload
@@ -68,7 +71,6 @@ export type WPCOMTransactionEndpointDomainDetails = {
 // Create cart object as required by the WPCOM transactions endpoint
 // '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
 export function createTransactionEndpointCartFromLineItems( {
-	debug,
 	siteId,
 	couponId,
 	country,
@@ -76,7 +78,6 @@ export function createTransactionEndpointCartFromLineItems( {
 	subdivisionCode,
 	items,
 }: {
-	debug: ( _0: string, _1: any ) => void;
 	siteId: string;
 	couponId?: string;
 	country: string;
@@ -123,7 +124,6 @@ export function createTransactionEndpointCartFromLineItems( {
 }
 
 export function createTransactionEndpointRequestPayloadFromLineItems( {
-	debug,
 	siteId,
 	couponId,
 	country,
@@ -137,7 +137,6 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	storedDetailsId,
 	name,
 }: {
-	debug: ( _0: string, _1: any ) => void;
 	siteId: string;
 	couponId?: string;
 	country: string;
@@ -153,9 +152,8 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 } ): WPCOMTransactionEndpointRequestPayload {
 	return {
 		cart: createTransactionEndpointCartFromLineItems( {
-			debug,
 			siteId,
-			couponId,
+			couponId: couponId || getCouponIdFromProducts( items ),
 			country,
 			postalCode,
 			subdivisionCode,
@@ -173,6 +171,11 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			zip: postalCode, // TODO: do we need this in addition to postalCode?
 		},
 	};
+}
+
+function getCouponIdFromProducts( items: WPCOMCartItem[] ): string | undefined {
+	const couponItem = items.find( item => item.type === 'coupon' );
+	return couponItem?.wpcom_meta?.couponCode;
 }
 
 export type WPCOMTransactionEndpointResponse = {

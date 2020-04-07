@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { READER_DISMISS_SITE, READER_DISMISS_POST } from 'state/action-types';
+import { READER_DISMISS_SITE, READER_DISMISS_POST } from 'state/reader/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';

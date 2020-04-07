@@ -30,7 +30,7 @@ import VerifyEmailDialog from 'components/email-verification/email-verification-
 import * as utils from 'state/posts/utils';
 import EditorPreview from './editor-preview';
 import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
-import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import {
 	saveConfirmationSidebarPreference,
@@ -66,6 +66,7 @@ import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported'
 import EditorForbidden from 'post-editor/editor-forbidden';
 import EditorNotice from 'post-editor/editor-notice';
 import EditorGutenbergOptInNotice from 'post-editor/editor-gutenberg-opt-in-notice';
+import EditorGutenbergDialogs from 'post-editor/editor-gutenberg-dialogs';
 import EditorWordCount from 'post-editor/editor-word-count';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
@@ -83,7 +84,6 @@ import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-butto
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { pauseGuidedTour } from 'state/ui/guided-tours/actions';
-import EditorGutenbergBlocksWarningDialog from './editor-gutenberg-blocks-warning-dialog';
 
 /**
  * Style dependencies
@@ -159,7 +159,7 @@ export class PostEditor extends React.Component {
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
 		this.debouncedCopySelectedText = debounce( this.copySelectedText, 200 );
 		this.useDefaultSidebarFocus();
-		analytics.mc.bumpStat( 'calypso_default_sidebar_mode', this.props.editorSidebarPreference );
+		bumpStat( 'calypso_default_sidebar_mode', this.props.editorSidebarPreference );
 
 		this.setState( {
 			isEditorInitialized: false,
@@ -182,7 +182,7 @@ export class PostEditor extends React.Component {
 
 		// record the initial value of the editor mode preference
 		if ( this.props.editorModePreference ) {
-			analytics.mc.bumpStat( 'calypso_default_editor_mode', this.props.editorModePreference );
+			bumpStat( 'calypso_default_editor_mode', this.props.editorModePreference );
 		}
 	}
 
@@ -299,7 +299,7 @@ export class PostEditor extends React.Component {
 				<EditorPostTypeUnsupported />
 				<EditorForbidden />
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
-				<EditorGutenbergBlocksWarningDialog />
+				<EditorGutenbergDialogs />
 				<div className="post-editor__inner">
 					<EditorGroundControl
 						setPostDate={ this.setPostDate }

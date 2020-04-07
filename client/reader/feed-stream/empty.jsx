@@ -31,7 +31,7 @@ class FeedEmptyContent extends React.PureComponent {
 					onClick={ this.recordAction }
 					href="/read/search"
 				>
-					{ translate( 'Find Sites to Follow' ) }
+					{ translate( 'Find sites to follow' ) }
 				</a>
 			),
 			secondaryAction = (
@@ -40,7 +40,7 @@ class FeedEmptyContent extends React.PureComponent {
 					onClick={ this.recordSecondaryAction }
 					href="/discover"
 				>
-					{ translate( 'Explore Discover' ) }
+					{ translate( 'Explore' ) }
 				</a>
 			);
 

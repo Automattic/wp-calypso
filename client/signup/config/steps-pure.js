@@ -12,6 +12,7 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -23,6 +24,7 @@ export function generateSteps( {
 	addPlanToCart = noop,
 	createAccount = noop,
 	createSite = noop,
+	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
 	currentPage = noop,
@@ -221,6 +223,17 @@ export function generateSteps( {
 			},
 		},
 
+		'plans-ecommerce-fulfilled': {
+			stepName: 'plans-ecommerce-fulfilled',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_ECOMMERCE,
+			},
+		},
+
 		'plans-launch': {
 			stepName: 'plans-launch',
 			apiRequestFunction: addPlanToCart,
@@ -242,6 +255,21 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug', 'domainItem' ],
 			providesDependencies: [ 'cartItem' ],
+		},
+
+		'plans-with-domain': {
+			stepName: 'plans-with-domain',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem', 'isPreLaunch', 'isGutenboardingCreate' ],
+			props: {
+				headerText: i18n.translate( 'Getting ready to launch your website' ),
+				subHeaderText: i18n.translate( "Pick a plan that's right for you. Upgrade as you grow." ),
+				fallbackHeaderText: i18n.translate(
+					"Almost there, pick a plan that's right for you. Upgrade as you grow."
+				),
+			},
 		},
 
 		domains: {
@@ -290,8 +318,9 @@ export function generateSteps( {
 				'domainItem',
 				'themeItem',
 				'shouldHideFreePlan',
+				'useThemeHeadstart',
 			],
-			optionalDependencies: [ 'shouldHideFreePlan' ],
+			optionalDependencies: [ 'shouldHideFreePlan', 'useThemeHeadstart' ],
 			props: {
 				isDomainOnly: false,
 			},
@@ -576,6 +605,12 @@ export function generateSteps( {
 			providesToken: true,
 			providesDependencies: [ 'bearer_token', 'email', 'username' ],
 			unstorableDependencies: [ 'bearer_token' ],
+		},
+
+		'team-site': {
+			stepName: 'team-site',
+			apiRequestFunction: createWpForTeamsSite,
+			providesDependencies: [ 'siteSlug' ],
 		},
 	};
 }

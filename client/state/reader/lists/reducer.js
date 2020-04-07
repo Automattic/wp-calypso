@@ -22,7 +22,7 @@ import {
 	READER_LISTS_REQUEST_FAILURE,
 	READER_LISTS_FOLLOW_SUCCESS,
 	READER_LISTS_UNFOLLOW_SUCCESS,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 import { combineReducers, withSchemaValidation } from 'state/utils';
 import { itemsSchema, subscriptionsSchema, updatedListsSchema, errorsSchema } from './schema';
 

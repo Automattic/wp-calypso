@@ -8,6 +8,7 @@ import {
 	renderDisplayValueMarkdown,
 	CheckoutModal,
 	useFormStatus,
+	useEvents,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
@@ -16,7 +17,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import joinClasses from './join-classes';
 import Button from './button';
-import { useHasDomainsInCart } from '../hooks/has-domains';
+import { useHasDomainsInCart, isLineItemADomain } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
 
 export function WPOrderReviewSection( { children, className } ) {
@@ -52,21 +53,30 @@ function WPLineItem( {
 	const deleteButtonId = `checkout-delete-button-${ item.id }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const modalCopy = returnModalCopy( item.type, translate, hasDomainsInCart );
+	const onEvent = useEvents();
+	const isDisabled = formStatus !== 'ready';
 
 	const shouldShowVariantSelector = item.wpcom_meta && item.wpcom_meta.extra?.context === 'signup';
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
-			<ProductTitle id={ itemSpanId }>{ item.label }</ProductTitle>
+			<LineItemTitle id={ itemSpanId } item={ item } />
 			<span aria-labelledby={ itemSpanId }>
-				{ renderDisplayValueMarkdown( item.amount.displayValue ) }
+				<LineItemPrice lineItem={ item } />
 			</span>
 			{ hasDeleteButton && formStatus === 'ready' && (
 				<React.Fragment>
 					<DeleteButton
 						buttonState="borderless"
+						disabled={ isDisabled }
 						onClick={ () => {
 							setIsModalVisible( true );
+							onEvent( {
+								type: 'a8c_checkout_delete_product_press',
+								payload: {
+									product_name: item.label,
+								},
+							} );
 						} }
 					>
 						<DeleteIcon uniqueID={ deleteButtonId } product={ item.label } />
@@ -79,6 +89,17 @@ function WPLineItem( {
 						} }
 						primaryAction={ () => {
 							removeItem( item.wpcom_meta.uuid );
+							onEvent( {
+								type: 'a8c_checkout_delete_product',
+								payload: {
+									product_name: item.label,
+								},
+							} );
+						} }
+						cancelAction={ () => {
+							onEvent( {
+								type: 'a8c_checkout_cancel_delete_product',
+							} );
 						} }
 						title={ modalCopy.title }
 						copy={ modalCopy.description }
@@ -93,6 +114,7 @@ function WPLineItem( {
 					variantSelectOverride={ variantSelectOverride }
 					getItemVariants={ getItemVariants }
 					onChangeItemVariant={ onChangePlanLength }
+					isDisabled={ isDisabled }
 				/>
 			) }
 		</div>
@@ -115,6 +137,48 @@ WPLineItem.propTypes = {
 	onChangePlanLength: PropTypes.func,
 };
 
+function LineItemTitle( { item, id } ) {
+	if ( isLineItemADomain( item ) ) {
+		return <LineItemDomainTitle item={ item } id={ id } />;
+	}
+	if ( item.type === 'domain_map' || item.type === 'offsite_redirect' ) {
+		return <LineItemDomainTitle item={ item } id={ id } />;
+	}
+	return (
+		<LineItemTitleUI>
+			<ProductTitleUI id={ id }>{ item.label }</ProductTitleUI>
+		</LineItemTitleUI>
+	);
+}
+
+function LineItemDomainTitle( { item, id } ) {
+	const translate = useTranslate();
+	return (
+		<LineItemTitleUI>
+			<ProductTitleUI id={ id }>
+				{ item.label }: { item.sublabel }
+			</ProductTitleUI>
+			{ item.wpcom_meta?.is_bundled && item.amount.value === 0 && (
+				<BundledDomainFreeUI>{ translate( 'First year free with your plan' ) }</BundledDomainFreeUI>
+			) }
+		</LineItemTitleUI>
+	);
+}
+
+function LineItemPrice( { lineItem } ) {
+	return (
+		<LineItemPriceUI>
+			{ lineItem.amount.value < lineItem.wpcom_meta?.product_cost_integer ? (
+				<>
+					<s>{ lineItem.wpcom_meta.product_cost_display }</s> { lineItem.amount.displayValue }
+				</>
+			) : (
+				renderDisplayValueMarkdown( lineItem.amount.displayValue )
+			) }
+		</LineItemPriceUI>
+	);
+}
+
 const LineItemUI = styled( WPLineItem )`
 	display: flex;
 	flex-wrap: wrap;
@@ -129,7 +193,20 @@ const LineItemUI = styled( WPLineItem )`
 	margin-right: 30px;
 `;
 
-const ProductTitle = styled.span`
+const LineItemTitleUI = styled.div`
+	flex: 1;
+	word-break: break-word;
+`;
+
+const LineItemPriceUI = styled.span`
+	margin-left: 12px;
+`;
+
+const BundledDomainFreeUI = styled.div`
+	color: ${props => props.theme.colors.success};
+`;
+
+const ProductTitleUI = styled.div`
 	flex: 1;
 `;
 
@@ -196,6 +273,7 @@ export function WPOrderReviewLineItems( {
 	className,
 	isSummaryVisible,
 	removeItem,
+	removeCoupon,
 	variantRequestStatus,
 	variantSelectOverride,
 	getItemVariants,
@@ -209,7 +287,7 @@ export function WPOrderReviewLineItems( {
 						isSummaryVisible={ isSummaryVisible }
 						item={ item }
 						hasDeleteButton={ canItemBeDeleted( item ) }
-						removeItem={ removeItem }
+						removeItem={ item.type === 'coupon' ? removeCoupon : removeItem }
 						variantRequestStatus={ variantRequestStatus }
 						variantSelectOverride={ variantSelectOverride }
 						getItemVariants={ getItemVariants }
@@ -225,6 +303,7 @@ WPOrderReviewLineItems.propTypes = {
 	className: PropTypes.string,
 	isSummaryVisible: PropTypes.bool,
 	removeItem: PropTypes.func,
+	removeCoupon: PropTypes.func,
 	items: PropTypes.arrayOf(
 		PropTypes.shape( {
 			label: PropTypes.string,
@@ -280,6 +359,12 @@ function returnModalCopy( product, translate, hasDomainsInCart ) {
 				'When you press Continue, we will remove your domain from the cart and you will have no claim for the domain name you picked.'
 			);
 			break;
+		case 'coupon':
+			modalCopy.title = translate( 'You are about to remove your coupon from the cart' );
+			modalCopy.description = translate(
+				'When you press Continue, we will need you to confirm your payment details.'
+			);
+			break;
 		default:
 			modalCopy.title = translate( 'You are about to remove your product from the cart' );
 			modalCopy.description = translate(
@@ -291,6 +376,11 @@ function returnModalCopy( product, translate, hasDomainsInCart ) {
 }
 
 function canItemBeDeleted( item ) {
-	const itemTypesThatCannotBeDeleted = [ 'tax', 'coupon', 'credits', 'wordpress-com-credits' ];
+	const itemTypesThatCannotBeDeleted = [
+		'domain_redemption',
+		'tax',
+		'credits',
+		'wordpress-com-credits',
+	];
 	return ! itemTypesThatCannotBeDeleted.includes( item.type );
 }

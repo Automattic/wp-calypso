@@ -49,6 +49,7 @@ import { isDomainStepSkippable } from 'signup/config/steps';
 import { fetchUsernameSuggestion } from 'state/signup/optional-dependencies/actions';
 import { isSitePreviewVisible } from 'state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
+import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import { abtest } from 'lib/abtest';
 
 /**
@@ -121,7 +122,6 @@ class DomainsStep extends React.Component {
 		}
 
 		this.showTestCopy = false;
-		this.showDesignUpdate = false;
 
 		// Do not assign user to the test if either in the launch flow or in /start/{PLAN_SLUG} flow
 		if (
@@ -129,11 +129,7 @@ class DomainsStep extends React.Component {
 			! props.isPlanStepFulfilled &&
 			'variantShowUpdates' === abtest( 'domainStepCopyUpdates' )
 		) {
-			if ( 'variantDesignUpdates' === abtest( 'domainStepDesignUpdates' ) ) {
-				this.showDesignUpdate = true;
-			} else {
-				this.showTestCopy = true;
-			}
+			this.showTestCopy = true;
 		}
 	}
 
@@ -157,7 +153,7 @@ class DomainsStep extends React.Component {
 	}
 
 	isEligibleVariantForDomainTest() {
-		return this.showTestCopy || this.showDesignUpdate;
+		return this.showTestCopy;
 	}
 
 	getMapDomainUrl = () => {
@@ -215,6 +211,10 @@ class DomainsStep extends React.Component {
 		return `${ repo }/${ themeSlug }`;
 	};
 
+	shouldUseThemeAnnotation() {
+		return this.getThemeSlug() ? true : false;
+	}
+
 	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
 		const hideFreePlanTracksProp = this.isEligibleVariantForDomainTest()
 			? { should_hide_free_plan: shouldHideFreePlan }
@@ -231,36 +231,26 @@ class DomainsStep extends React.Component {
 
 		this.props.recordTracksEvent( 'calypso_signup_skip_step', tracksProperties );
 
-		this.submitWithDomain( googleAppsCartItem, shouldHideFreePlan );
+		const stepData = {
+			stepName: this.props.stepName,
+			suggestion: undefined,
+		};
+
+		this.props.saveSignupStep( stepData );
+
+		defer( () => {
+			this.submitWithDomain( googleAppsCartItem, shouldHideFreePlan );
+		} );
 	};
 
 	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
 		const shouldHideFreePlanItem = this.isEligibleVariantForDomainTest()
 			? { shouldHideFreePlan }
 			: {};
-
-		if ( shouldHideFreePlan ) {
-			let domainItem, isPurchasingItem, siteUrl;
-
-			this.props.submitSignupStep(
-				Object.assign(
-					{
-						stepName: this.props.stepName,
-						domainItem,
-						googleAppsCartItem,
-						isPurchasingItem,
-						siteUrl,
-						stepSectionName: this.props.stepSectionName,
-					},
-					this.getThemeArgs()
-				),
-				Object.assign( { domainItem }, shouldHideFreePlanItem )
-			);
-
-			this.props.goToNextStep();
-
-			return;
-		}
+		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
+		const useThemeHeadstartItem = shouldUseThemeAnnotation
+			? { useThemeHeadstart: shouldUseThemeAnnotation }
+			: {};
 
 		const suggestion = this.props.step.suggestion;
 
@@ -293,7 +283,7 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			Object.assign( { domainItem }, shouldHideFreePlanItem )
+			Object.assign( { domainItem }, shouldHideFreePlanItem, useThemeHeadstartItem )
 		);
 
 		this.props.setDesignType( this.getDesignType() );
@@ -306,6 +296,10 @@ class DomainsStep extends React.Component {
 	handleAddMapping = ( sectionName, domain, state ) => {
 		const domainItem = domainMapping( { domain } );
 		const isPurchasingItem = true;
+		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
+		const useThemeHeadstartItem = shouldUseThemeAnnotation
+			? { useThemeHeadstart: shouldUseThemeAnnotation }
+			: {};
 
 		this.props.recordAddDomainButtonClickInMapDomain( domain, this.getAnalyticsSection() );
 
@@ -321,7 +315,7 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			{ domainItem }
+			Object.assign( { domainItem }, useThemeHeadstartItem )
 		);
 
 		this.props.goToNextStep();
@@ -336,6 +330,10 @@ class DomainsStep extends React.Component {
 			},
 		} );
 		const isPurchasingItem = true;
+		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
+		const useThemeHeadstartItem = shouldUseThemeAnnotation
+			? { useThemeHeadstart: shouldUseThemeAnnotation }
+			: {};
 
 		this.props.recordAddDomainButtonClickInTransferDomain( domain, this.getAnalyticsSection() );
 
@@ -351,7 +349,7 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			{ domainItem }
+			Object.assign( { domainItem }, useThemeHeadstartItem )
 		);
 
 		this.props.goToNextStep();
@@ -468,8 +466,6 @@ class DomainsStep extends React.Component {
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
 				showExampleSuggestions={ showExampleSuggestions }
-				showTestCopy={ this.showTestCopy }
-				showDesignUpdate={ this.showDesignUpdate }
 				isEligibleVariantForDomainTest={ this.isEligibleVariantForDomainTest() }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
@@ -628,7 +624,7 @@ class DomainsStep extends React.Component {
 			return null;
 		}
 
-		const { flowName, translate, selectedSite } = this.props;
+		const { flowName, translate, hasInitializedSitesBackUrl } = this.props;
 		let backUrl, backLabelText;
 
 		if ( 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName ) {
@@ -640,9 +636,9 @@ class DomainsStep extends React.Component {
 			);
 		} else if ( this.props.stepSectionName ) {
 			backUrl = getStepUrl( this.props.flowName, this.props.stepName, undefined, getLocaleSlug() );
-		} else if ( 0 === this.props.positionInFlow && selectedSite ) {
-			backUrl = `/view/${ selectedSite.slug }`;
-			backLabelText = translate( 'Back to Site' );
+		} else if ( 0 === this.props.positionInFlow && hasInitializedSitesBackUrl ) {
+			backUrl = hasInitializedSitesBackUrl;
+			backLabelText = translate( 'Back to My Sites' );
 		}
 
 		const headerText = this.getHeaderText();
@@ -666,7 +662,7 @@ class DomainsStep extends React.Component {
 					</div>
 				}
 				showSiteMockups={ this.props.showSiteMockups }
-				allowBackFirstStep={ !! selectedSite }
+				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 				backLabelText={ backLabelText }
 				hideSkip={ ! showSkip }
 				isTopButtons={ showSkip }
@@ -729,6 +725,7 @@ export default connect(
 			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
 			isSitePreviewVisible: isSitePreviewVisible( state ),
 			isPlanStepFulfilled: get( ownProps.signupDependencies, 'cartItem', false ),
+			hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 		};
 	},
 	{

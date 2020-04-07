@@ -82,11 +82,11 @@ class Full_Site_Editing {
 	/**
 	 * Inserts template data for the theme we are currently switching to.
 	 *
-	 * This insertion will only happen if theme supports FSE.
+	 * This insertion will only happen if theme supports dotcom FSE.
 	 * It is hooked into after_switch_theme action.
 	 */
 	public function insert_default_data() {
-		// Bail if current theme doesn't support FSE.
+		// Bail if current theme doesn't support dotcom FSE.
 		if ( ! is_theme_supported() ) {
 			return;
 		}

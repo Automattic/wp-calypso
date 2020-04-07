@@ -37,9 +37,9 @@ import {
 	COMMENTS_UNLIKE,
 	COMMENTS_TREE_SITE_ADD,
 	COMMENTS_WRITE_ERROR,
-	READER_EXPAND_COMMENTS,
 	COMMENTS_SET_ACTIVE_REPLY,
 } from 'state/action-types';
+import { READER_EXPAND_COMMENTS } from 'state/reader/action-types';
 import { combineReducers, keyedReducer, withoutPersistence, withStorageKey } from 'state/utils';
 import {
 	PLACEHOLDER_STATE,

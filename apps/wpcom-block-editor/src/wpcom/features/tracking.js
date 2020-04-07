@@ -1,9 +1,11 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
 import { use, select } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
-import { castArray } from 'lodash';
+import { applyFilters } from '@wordpress/hooks';
+import { castArray, noop } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -11,6 +13,7 @@ import debugFactory from 'debug';
  */
 import tracksRecordEvent from './tracking/track-record-event';
 import delegateEventTracking from './tracking/delegate-event-tracking';
+/* eslint-enable import/no-extraneous-dependencies */
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
@@ -25,6 +28,49 @@ const getTypeForBlockId = blockId => {
 	const block = select( 'core/block-editor' ).getBlock( blockId );
 	return block ? block.name : null;
 };
+
+/**
+ * This helper function tracks the given blocks recursively
+ * in order to track inner blocks.
+ *
+ * The event properties will be populated (optional)
+ * propertiesHandler function. It acts as a callback
+ * passing two arguments: the current block and
+ * the parent block (if exists). Take this as
+ * an advantage to add other custom properties to the event.
+ *
+ * Also, it adds default `inner_block`,
+ * and `parent_block_client_id` (if parent exists) properties.
+ *
+ * @param {Array}    blocks            Block instances object or an array of such objects
+ * @param {string}   eventName         Event name used to track.
+ * @param {Function} propertiesHandler Callback function to populate event properties
+ * @param {object}   parentBlock       parent block. optional.
+ * @returns {void}
+ */
+function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parentBlock ) {
+	const castBlocks = castArray( blocks );
+	if ( ! castBlocks || ! castBlocks.length ) {
+		return;
+	}
+
+	castBlocks.forEach( block => {
+		const eventProperties = {
+			...propertiesHandler( block, parentBlock ),
+			inner_block: !! parentBlock,
+		};
+
+		if ( parentBlock ) {
+			eventProperties.parent_block_name = parentBlock.name;
+		}
+
+		tracksRecordEvent( eventName, eventProperties );
+
+		if ( block.innerBlocks && block.innerBlocks.length ) {
+			trackBlocksHandler( block.innerBlocks, eventName, propertiesHandler, block );
+		}
+	} );
+}
 
 /**
  * A lot of actions accept either string (block id)
@@ -49,12 +95,10 @@ const getBlocksTracker = eventName => blockIds => {
  * @returns {void}
  */
 const trackBlockInsertion = blocks => {
-	castArray( blocks ).forEach( block => {
-		tracksRecordEvent( 'wpcom_block_inserted', {
-			block_name: block.name,
-			blocks_replaced: false,
-		} );
-	} );
+	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( { name } ) => ( {
+		block_name: name,
+		blocks_replaced: false,
+	} ) );
 };
 
 /**
@@ -65,24 +109,54 @@ const trackBlockInsertion = blocks => {
  * @returns {void}
  */
 const trackBlockReplacement = ( originalBlockIds, blocks ) => {
-	castArray( blocks ).forEach( block => {
-		tracksRecordEvent( 'wpcom_block_picker_block_inserted', {
-			block_name: block.name,
-			blocks_replaced: true,
-		} );
-	} );
+	trackBlocksHandler( blocks, 'wpcom_block_picker_block_inserted', ( { name } ) => ( {
+		block_name: name,
+		blocks_replaced: true,
+	} ) );
+};
+
+/**
+ * Track inner blocks replacement.
+ * Page Templates insert their content into the page replacing everything that was already there.
+ *
+ * @param {Array} rootClientId id of parent block
+ * @param {object|Array} blocks block instance object or an array of such objects
+ * @returns {void}
+ */
+const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
+	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( { name } ) => ( {
+		block_name: name,
+		blocks_replaced: true,
+		// isInsertingPageTemplate filter is set by Starter Page Templates
+		from_template_selector: applyFilters( 'isInsertingPageTemplate', false ),
+	} ) );
 };
 
 /**
  * Track update and publish action for Global Styles plugin.
  *
  * @param {string} eventName Name of the track event.
- * @returns {Function}
+ * @returns {Function} tracker
  */
 const trackGlobalStyles = eventName => options => {
 	tracksRecordEvent( eventName, {
 		...options,
 	} );
+};
+
+/**
+ * Logs any error notice which is shown to the user so we can determine how often
+ * folks see different errors and what types of sites they occur on.
+ *
+ * @param {string} content The error message. Like "Update failed."
+ * @param {object} options Optional. Extra data logged with the error in Gutenberg.
+ */
+const trackErrorNotices = ( content, options ) => {
+	const logInfo = {
+		errorText: content,
+		errorOptions: options,
+	};
+	tracksRecordEvent( 'wpcom_gutenberg_error_notice', logInfo );
 };
 
 /**
@@ -113,6 +187,10 @@ const REDUX_TRACKING = {
 		insertBlocks: trackBlockInsertion,
 		replaceBlock: trackBlockReplacement,
 		replaceBlocks: trackBlockReplacement,
+		replaceInnerBlocks: trackInnerBlocksReplacement,
+	},
+	'core/notices': {
+		createErrorNotice: trackErrorNotices,
 	},
 };
 

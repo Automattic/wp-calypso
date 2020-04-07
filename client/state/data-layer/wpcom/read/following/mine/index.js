@@ -11,7 +11,7 @@ import {
 	READER_FOLLOW,
 	READER_FOLLOWS_SYNC_START,
 	READER_FOLLOWS_SYNC_PAGE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 import { receiveFollows, syncComplete } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';

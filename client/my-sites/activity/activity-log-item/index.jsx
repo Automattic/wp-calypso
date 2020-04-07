@@ -236,11 +236,15 @@ class ActivityLogItem extends Component {
 
 	renderRewindAction() {
 		const {
+			activity,
+			canAutoconfigure,
 			createBackup,
 			createRewind,
 			disableRestore,
 			disableBackup,
-			activity,
+			siteId,
+			siteSlug,
+			trackAddCreds,
 			translate,
 		} = this.props;
 
@@ -254,6 +258,20 @@ class ActivityLogItem extends Component {
 					<PopoverMenuItem disabled={ disableRestore } icon="history" onClick={ createRewind }>
 						{ translate( 'Restore to this point' ) }
 					</PopoverMenuItem>
+
+					{ disableRestore && (
+						<PopoverMenuItem
+							icon="plus"
+							href={
+								canAutoconfigure
+									? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
+									: `/settings/security/${ siteSlug }#credentials`
+							}
+							onClick={ trackAddCreds }
+						>
+							{ translate( 'Add server credentials to enable restoring' ) }
+						</PopoverMenuItem>
+					) }
 
 					<PopoverMenuSeparator />
 
@@ -471,6 +489,7 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 		dispatch(
 			recordTracksEvent( 'calypso_activitylog_event_get_help', { activity_name: activityName } )
 		),
+	trackAddCreds: () => dispatch( recordTracksEvent( 'calypso_activitylog_event_add_credentials' ) ),
 	trackFixCreds: () => dispatch( recordTracksEvent( 'calypso_activitylog_event_fix_credentials' ) ),
 } );
 

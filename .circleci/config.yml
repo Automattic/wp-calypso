@@ -9,13 +9,12 @@ references:
     CIRCLE_TEST_REPORTS: /tmp/test_results
 
   docker-image: &docker-image
-    - image: circleci/node:12.15.0-browsers
+    - image: circleci/node:12.16.1-browsers
 
   setup-results-and-artifacts: &setup-results-and-artifacts
     name: Create Directories for Results and Artifacts
     command: |
       mkdir -p                                  \
-        "$CIRCLE_ARTIFACTS/icfy"                \
         "$CIRCLE_ARTIFACTS/notifications-panel" \
         "$CIRCLE_ARTIFACTS/translate"           \
         "$CIRCLE_ARTIFACTS/screenshots"         \
@@ -28,7 +27,6 @@ references:
         "$CIRCLE_TEST_REPORTS/server"           \
         "$CIRCLE_TEST_REPORTS/e2ereports"       \
         "$HOME/jest-cache"                      \
-        "$HOME/.tsc-cache"                      \
         "$HOME/terser-cache"
 
   # Jest cache caching
@@ -59,22 +57,6 @@ references:
     key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v8-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
     paths:
       - ~/jest-cache
-
-  #
-  # TypeScript compiler (tsc) cache caching
-  #
-  restore-tsc-cache: &restore-tsc-cache
-    name: Restore TypeScript cache
-    keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-tsc-{{ .Branch }}-{{ .Revision }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-tsc-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-tsc-master
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-tsc
-  save-tsc-cache: &save-tsc-cache
-    name: Save TypeScript cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-tsc-{{ .Branch }}-{{ .Revision }}
-    paths:
-      - ~/.tsc-cache
 
   #
   # Terser cache caching
@@ -214,12 +196,10 @@ jobs:
       - run: *update-git-master
       - save_cache: *save-git-cache
       # npm dependencies
-      - restore_cache: *restore-tsc-cache
       - restore_cache: *restore-npm-cache
       - run: *npm-install
       - run: *npm-e2e-install
       - save_cache: *save-npm-cache
-      - save_cache: *save-tsc-cache
       - run: npm run build-packages
       - persist_to_workspace:
           root: '~'
@@ -243,7 +223,7 @@ jobs:
       - prepare
       - run:
           name: TypeScript strict typecheck of individual subprojects
-          command: npm run typecheck -- --project client/landing/gutenboarding
+          command: npm run tsc -- --project client/landing/gutenboarding
 
   lint-and-translate:
     <<: *defaults
@@ -464,65 +444,6 @@ jobs:
       - save_cache: *save-jest-cache
       - store-artifacts-and-test-results
 
-  icfy-stats:
-    <<: *defaults
-    steps:
-      - prepare
-      - restore_cache: *restore-babel-client-cache
-      - restore_cache: *restore-terser-cache
-      - run:
-          name: Build Stats
-          environment:
-            NODE_ENV: 'production'
-            BROWSERSLIST_ENV: 'defaults'
-          command: npm run analyze-icfy
-      - save_cache: *save-terser-cache
-      - save_cache: *save-babel-client-cache
-      - store-artifacts-and-test-results
-      - run:
-          name: Notify ICFY of failed build
-          when: on_fail
-          command: |
-            #
-            # This block should not cause a test failure and block PRs.
-            # The shell should never error and exit 0 to indicate success.
-            #
-            set +o errexit
-            curl -X POST                                                                     \
-              "http://api.iscalypsofastyet.com:5000/submit-stats-failed?secret=$ICFY_SECRET" \
-              -H 'Cache-Control: no-cache'                                                   \
-              -H 'Content-Type: application/json'                                            \
-              -d '{
-                    "payload": {
-                      "branch": "'"$CIRCLE_BRANCH"'",
-                      "build_num": '"$CIRCLE_BUILD_NUM"',
-                      "sha": "'"$CIRCLE_SHA1"'"
-                    }
-                  }'
-      - run:
-          name: Notify ICFY
-          command: |
-            #
-            # This block should not cause a test failure and block PRs.
-            # The shell should never error and exit 0 to indicate success.
-            #
-            set +o errexit
-            if [ -e "$CIRCLE_ARTIFACTS/icfy/stats.json" ] && [ -e "$CIRCLE_ARTIFACTS/icfy/chart.json" ]; then
-              ANCESTOR_SHA1=$(git merge-base HEAD origin/master)
-              curl -X POST                                                              \
-                "http://api.iscalypsofastyet.com:5000/submit-stats?secret=$ICFY_SECRET" \
-                -H 'Cache-Control: no-cache'                                            \
-                -H 'Content-Type: application/json'                                     \
-                -d '{
-                      "payload": {
-                        "branch": "'"$CIRCLE_BRANCH"'",
-                        "build_num": '"$CIRCLE_BUILD_NUM"',
-                        "sha": "'"$CIRCLE_SHA1"'",
-                        "ancestor": "'"$ANCESTOR_SHA1"'"
-                      }
-                    }'
-            fi
-
   # Prime calypso.live so it has a build ready
   #
   # We can send a request to calypso.live so that it gets a build ready.
@@ -672,9 +593,6 @@ workflows:
           requires:
             - setup
       - build-wpcom-block-editor:
-          requires:
-            - setup
-      - icfy-stats:
           requires:
             - setup
       - lint-and-translate:

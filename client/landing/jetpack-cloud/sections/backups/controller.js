@@ -7,32 +7,35 @@ import React from 'react';
  * Internal dependencies
  */
 import BackupDetailPage from './detail';
-import BackupDownloadPage from './download';
 import BackupsPage from './main';
-import BackupRestorePage from './restore';
+import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 
-export function backupDetail( context, next ) {
-	const backupId = parseInt( context.params.backupId );
-
-	context.primary = <BackupDetailPage backupId={ backupId } />;
-	next();
-}
-
+/* handles /backups/:site, see `backupMainPath` */
 export function backups( context, next ) {
 	context.primary = <BackupsPage />;
 	next();
 }
 
-export function backupRestore( context, next ) {
-	const restoreId = parseInt( context.params.restoreId );
+/* handles /backups/:site/detail/:backupId, see `backupDetailPath` */
+export function backupDetail( context, next ) {
+	const backupId = context.params.backupId;
 
-	context.primary = <BackupRestorePage restoreId={ context.params.restoreId ? restoreId : null } />;
+	context.primary = <BackupDetailPage backupId={ backupId } />;
 	next();
 }
 
+/* handles /backups/:site/download/:rewindId, see `backupDownloadPath` */
 export function backupDownload( context, next ) {
-	const downloadId = parseInt( context.params.downloadId );
+	context.primary = (
+		<BackupRewindFlow rewindId={ context.params.rewindId } purpose={ RewindFlowPurpose.DOWNLOAD } />
+	);
+	next();
+}
 
-	context.primary = <BackupDownloadPage downloadId={ downloadId } />;
+/* handles /backups/:site/restore/:rewindId, see `backupRestorePath` */
+export function backupRestore( context, next ) {
+	context.primary = (
+		<BackupRewindFlow rewindId={ context.params.rewindId } purpose={ RewindFlowPurpose.RESTORE } />
+	);
 	next();
 }

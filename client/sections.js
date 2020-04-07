@@ -418,7 +418,7 @@ const sections = [
 	},
 	{
 		name: 'gutenberg-editor',
-		paths: [ '/block-editor' ],
+		paths: [ '/block-editor', '/site-editor' ],
 		module: 'gutenberg/editor',
 		group: 'gutenberg',
 		secondary: false,
@@ -471,6 +471,38 @@ const sections = [
 		module: 'my-sites/hosting',
 		secondary: true,
 		group: 'sites',
+	},
+	{
+		name: 'jetpack-cloud',
+		paths: [ '/', '/settings' ],
+		module: 'landing/jetpack-cloud',
+		secondary: true,
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'scan',
+		paths: [ '/scan' ],
+		module: 'landing/jetpack-cloud/sections/scan',
+		secondary: true,
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'backups',
+		paths: [ '/backups' ],
+		module: 'landing/jetpack-cloud/sections/backups',
+		secondary: true,
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'jetpack-cloud-settings',
+		paths: [ '/settings' ],
+		module: 'landing/jetpack-cloud/sections/settings',
+		secondary: true,
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
 	},
 ];
 

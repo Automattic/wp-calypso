@@ -6,10 +6,12 @@ import { find, includes } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import i18n from 'i18n-calypso';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
+import notices from 'notices';
 import analytics from 'lib/analytics';
 import { getRenewalItemFromProduct } from 'lib/cart-values/cart-items';
 import {
@@ -21,8 +23,9 @@ import {
 	isTheme,
 	isConciergeSession,
 } from 'lib/products-values';
-import { addItems } from 'lib/cart/actions';
 import { getJetpackProductsDisplayNames } from 'lib/products-values/constants';
+
+const debug = debugFactory( 'calypso:purchases' );
 
 function getIncludedDomain( purchase ) {
 	return purchase.includedDomain;
@@ -99,21 +102,36 @@ function getSubscriptionEndDate( purchase ) {
  *
  * @param {object} purchase - the purchase to be renewed
  * @param {string} siteSlug - the site slug to renew the purchase for
+ * @param {object} tracksProps - where was the renew button clicked from
  */
-function handleRenewNowClick( purchase, siteSlug ) {
+function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
 	const renewItem = getRenewalItemFromProduct( purchase, {
 		domain: purchase.meta,
 	} );
-	const renewItems = [ renewItem ];
 
 	// Track the renew now submit.
 	analytics.tracks.recordEvent( 'calypso_purchases_renew_now_click', {
 		product_slug: purchase.productSlug,
+		...tracksProps,
 	} );
 
-	addItems( renewItems );
+	const { product_slug, extra, meta } = renewItem;
+	const { purchaseId, purchaseDomain } = extra;
+	if ( ! purchaseId ) {
+		notices.error( 'Could not find purchase id for renewal.' );
+		throw new Error( 'Could not find purchase id for renewal.' );
+	}
+	if ( ! product_slug ) {
+		notices.error( 'Could not find product slug for renewal.' );
+		throw new Error( 'Could not find product slug for renewal.' );
+	}
+	const productList = meta ? `${ product_slug }:${ meta }` : product_slug;
+	const renewalUrl = `/checkout/${ productList }/renew/${ purchaseId }/${ siteSlug ||
+		purchaseDomain ||
+		'' }`;
+	debug( 'handling renewal click', purchase, siteSlug, renewItem, renewalUrl );
 
-	page( '/checkout/' + siteSlug );
+	page( renewalUrl );
 }
 
 function hasIncludedDomain( purchase ) {
@@ -388,6 +406,26 @@ function creditCardExpiresBeforeSubscription( purchase ) {
 	);
 }
 
+function creditCardHasAlreadyExpired( purchase ) {
+	const creditCard = purchase?.payment?.creditCard;
+
+	return (
+		isPaidWithCreditCard( purchase ) &&
+		hasCreditCardData( purchase ) &&
+		moment( creditCard.expiryDate, 'MM/YY' ).isBefore( moment.now(), 'months' )
+	);
+}
+
+function shouldRenderExpiringCreditCard( purchase ) {
+	return (
+		! isExpired( purchase ) &&
+		! isExpiring( purchase ) &&
+		! isOneTimePurchase( purchase ) &&
+		! isIncludedWithPlan( purchase ) &&
+		creditCardExpiresBeforeSubscription( purchase )
+	);
+}
+
 function monthsUntilCardExpires( purchase ) {
 	const creditCard = purchase.payment.creditCard;
 	const expiry = moment( creditCard.expiryDate, 'MM/YY' );
@@ -468,6 +506,7 @@ function getDomainRegistrationAgreementUrl( purchase ) {
 export {
 	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
+	creditCardHasAlreadyExpired,
 	getDomainRegistrationAgreementUrl,
 	getIncludedDomain,
 	getName,
@@ -504,4 +543,5 @@ export {
 	showCreditCardExpiringWarning,
 	subscribedWithinPastWeek,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
+	shouldRenderExpiringCreditCard,
 };

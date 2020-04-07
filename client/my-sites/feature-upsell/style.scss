@@ -121,7 +121,6 @@ $feature-upsell-break-at: '1040px';
 		color: var( --studio-jetpack-green-30 );
 		font-size: 15px;
 		line-height: 31px;
-		font-weight: 300;
 	}
 
 	&.is-centered {
@@ -161,7 +160,6 @@ $feature-upsell-break-at: '1040px';
 			order: 1;
 			line-height: 1.25;
 			font-size: 26px;
-			font-weight: 300;
 			padding-right: 30px;
 			@include breakpoint( '<1280px' ) {
 				font-size: 22px;
@@ -229,7 +227,7 @@ $feature-upsell-break-at: '1040px';
 
 	&-header.is-sub {
 		font-size: 21px;
-		font-weight: 300;
+		font-weight: 400;
 		color: var( --color-neutral-60 );
 		margin-bottom: 20px;
 		@include breakpoint( '<1280px' ) {

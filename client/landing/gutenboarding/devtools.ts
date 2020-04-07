@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 interface MagicWindow extends Window {
 	wp: undefined | Record< string, any >;
 }
@@ -15,11 +17,13 @@ export const setupWpDataDebug = () => {
 				window.wp.data = require( '@wordpress/data' );
 
 				const config = require( 'config' ).default;
-				const { Site } = require( '@automattic/data-stores' );
-				Site.register( {
+				const clientCreds = {
 					client_id: config( 'wpcom_signup_id' ),
 					client_secret: config( 'wpcom_signup_key' ),
-				} );
+				};
+
+				const { Site } = require( '@automattic/data-stores' );
+				Site.register( clientCreds );
 			}
 		}
 	}

@@ -15,16 +15,19 @@ import DomainPicker, { Props as DomainPickerProps } from '../domain-picker';
  */
 import './style.scss';
 
-interface Props extends DomainPickerProps, Button.BaseProps {
+type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
+
+interface Props extends Omit< DomainPickerProps, 'onClose' >, Button.BaseProps {
 	className?: string;
+	currentDomain?: DomainSuggestion;
 }
 
 const DomainPickerButton: FunctionComponent< Props > = ( {
 	children,
 	className,
 	onDomainSelect,
-	defaultQuery,
-	queryParameters,
+	onDomainPurchase,
+	currentDomain,
 	...buttonProps
 } ) => {
 	const buttonRef = createRef< HTMLButtonElement >();
@@ -44,6 +47,11 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 		onDomainSelect( selectedDomain );
 	};
 
+	const handlePaidDomainSelect = ( selectedDomain: DomainSuggestion ) => {
+		setDomainPopoverVisibility( false );
+		onDomainPurchase( selectedDomain );
+	};
+
 	return (
 		<>
 			<Button
@@ -61,11 +69,12 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				<Dashicon icon="arrow-down-alt2" />
 			</Button>
 			{ isDomainPopoverVisible && (
-				<Popover onClose={ handleClose } onFocusOutside={ handleClose }>
+				<Popover onClose={ handleClose } onFocusOutside={ handleClose } focusOnMount={ false }>
 					<DomainPicker
-						defaultQuery={ defaultQuery }
 						onDomainSelect={ handleDomainSelect }
-						queryParameters={ queryParameters }
+						onDomainPurchase={ handlePaidDomainSelect }
+						onClose={ handleClose }
+						currentDomain={ currentDomain }
 					/>
 				</Popover>
 			) }

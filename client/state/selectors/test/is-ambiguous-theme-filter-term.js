@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isAmbiguousThemeFilterTerm from 'state/selectors/is-ambiguous-theme-filter-term';
+import { isAmbiguousThemeFilterTerm } from 'state/themes/selectors';
 import { state } from './fixtures/theme-filters';
 
 describe( 'isAmbiguousThemeFilterTerm()', () => {

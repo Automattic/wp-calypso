@@ -4,7 +4,7 @@
 /**
  * Internal dependencies
  */
-import { makeGoogleAnalyticsTrackingFunction } from '../';
+import { makeGoogleAnalyticsTrackingFunction } from '../ga';
 
 jest.mock( 'config', () => {
 	const isEnabled = feature => {
@@ -39,7 +39,7 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 
 jest.mock( '@automattic/load-script', () => require( './mocks/lib/load-script' ) );
 
-describe( 'analytics.ga', () => {
+describe( 'analytics/ga', () => {
 	describe( 'makeGoogleAnalyticsTrackingFunction', () => {
 		test( 'calls the wrapped function with passed arguments when enabled', () => {
 			const wrapped = jest.fn();

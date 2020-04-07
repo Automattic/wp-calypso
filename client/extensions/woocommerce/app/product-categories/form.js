@@ -17,7 +17,8 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
-import ImagePreloader from 'components/image-preloader';
+import MediaImage from 'my-sites/media-library/media-image';
+
 import ProductImageUploader from 'woocommerce/components/product-image-uploader';
 import Spinner from 'components/spinner';
 import TermTreeSelectorTerms from 'blocks/term-tree-selector/terms';
@@ -169,7 +170,7 @@ class ProductCategoryForm extends Component {
 		if ( src && ! isUploading ) {
 			image = (
 				<figure>
-					<ImagePreloader
+					<MediaImage
 						src={ src }
 						alt={ translate( 'Category thumbnail' ) }
 						placeholder={ placeholder ? <img src={ placeholder } alt="" /> : <span /> }

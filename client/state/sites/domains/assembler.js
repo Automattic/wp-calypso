@@ -30,6 +30,7 @@ export const createSiteDomainObject = domain => {
 		adminEmail: domain.admin_email,
 		autoRenewing: Boolean( domain.auto_renewing ),
 		blogId: Number( domain.blog_id ),
+		bundledPlanSubscriptionId: domain.bundled_plan_subscription_id,
 		canSetAsPrimary: Boolean( domain.can_set_as_primary ),
 		contactInfoDisclosureAvailable: Boolean( domain.contact_info_disclosure_available ),
 		contactInfoDisclosed: Boolean( domain.contact_info_disclosed ),

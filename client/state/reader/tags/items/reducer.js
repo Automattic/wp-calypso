@@ -6,7 +6,7 @@ import { keyBy, merge, mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_TAGS_RECEIVE, READER_UNFOLLOW_TAG_RECEIVE } from 'state/action-types';
+import { READER_TAGS_RECEIVE, READER_UNFOLLOW_TAG_RECEIVE } from 'state/reader/action-types';
 import { withoutPersistence } from 'state/utils';
 
 /*

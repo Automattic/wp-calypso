@@ -33,6 +33,7 @@ const PlanFeaturesActions = ( {
 	isPopular,
 	isInSignup,
 	isLaunchPage,
+	isEligibleForPlanStepTest,
 	onUpgradeClick = noop,
 	planName,
 	planType,
@@ -58,7 +59,7 @@ const PlanFeaturesActions = ( {
 	if ( current && ! isInSignup ) {
 		upgradeButton = (
 			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
-				{ canPurchase ? translate( 'Manage Plan' ) : translate( 'View Plan' ) }
+				{ canPurchase ? translate( 'Manage plan' ) : translate( 'View plan' ) }
 			</Button>
 		);
 	} else if ( availableForPurchase || isPlaceholder ) {
@@ -85,11 +86,13 @@ const PlanFeaturesActions = ( {
 				} );
 			}
 		} else if ( isInSignup ) {
-			buttonText = translate( 'Start with %(plan)s', {
-				args: {
-					plan: planName,
-				},
-			} );
+			buttonText = isEligibleForPlanStepTest
+				? 'Get started'
+				: translate( 'Start with %(plan)s', {
+						args: {
+							plan: planName,
+						},
+				  } );
 		}
 
 		if (

@@ -21,6 +21,7 @@ import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getPlan } from 'lib/plans';
 import { getPlanRawPrice } from 'state/plans/selectors';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -35,6 +36,10 @@ class StepUpgrade extends Component {
 		targetSite: PropTypes.object.isRequired,
 	};
 
+	componentDidMount() {
+		this.props.recordTracksEvent( 'calypso_site_migration_business_viewed' );
+	}
+
 	render() {
 		const {
 			billingTimeFrame,
@@ -42,17 +47,20 @@ class StepUpgrade extends Component {
 			planPrice,
 			plugins,
 			sourceSite,
+			sourceSiteSlug,
 			targetSite,
+			targetSiteSlug,
 			themes,
 			translate,
 		} = this.props;
 		const sourceSiteDomain = get( sourceSite, 'domain' );
 		const targetSiteDomain = get( targetSite, 'domain' );
+		const backHref = `/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }`;
 
 		return (
 			<>
 				<QueryPlans />
-				<HeaderCake>{ translate( 'Import Everything' ) }</HeaderCake>
+				<HeaderCake backHref={ backHref }>{ translate( 'Import Everything' ) }</HeaderCake>
 
 				<CompactCard>
 					<CardHeading>
@@ -67,15 +75,25 @@ class StepUpgrade extends Component {
 						) }
 					</div>
 					<div className="migrate__plan-upsell">
-						<div className="migrate__plan-upsell-icon">
-							<ProductIcon slug="business-bundle" />
-						</div>
-						<div className="migrate__plan-upsell-info">
-							<div className="migrate__plan-name">{ translate( 'WordPress.com Business' ) }</div>
-							<div className="migrate__plan-price">
-								<PlanPrice rawPrice={ planPrice } currencyCode={ currency } />
-							</div>
-							<div className="migrate__plan-billing-time-frame">{ billingTimeFrame }</div>
+						{ /** The child elements here are in reverse order due to having flex-direction: row-reverse in CSS */ }
+						<div className="migrate__plan-upsell-plugins">
+							<h4 className="migrate__plan-feature-header">
+								{ translate( 'Your active plugins' ) }
+							</h4>
+							{ plugins.slice( 0, 2 ).map( ( plugin, index ) => (
+								<div className="migrate__plan-upsell-item" key={ index }>
+									<Gridicon size={ 18 } icon="checkmark" />
+									<div className="migrate__plan-upsell-item-label">{ plugin.name }</div>
+								</div>
+							) ) }
+							{ plugins.length > 2 && (
+								<div className="migrate__plan-upsell-item">
+									<Gridicon size={ 18 } icon="plus" />
+									<div className="migrate__plan-upsell-item-label">
+										{ translate( '%(number)d more', { args: { number: plugins.length - 2 } } ) }
+									</div>
+								</div>
+							) }
 						</div>
 						<div className="migrate__plan-upsell-themes">
 							<h4 className="migrate__plan-feature-header">
@@ -96,24 +114,17 @@ class StepUpgrade extends Component {
 								</div>
 							) }
 						</div>
-						<div className="migrate__plan-upsell-plugins">
-							<h4 className="migrate__plan-feature-header">
-								{ translate( 'Your active plugins' ) }
-							</h4>
-							{ plugins.slice( 0, 2 ).map( ( plugin, index ) => (
-								<div className="migrate__plan-upsell-item" key={ index }>
-									<Gridicon size={ 18 } icon="checkmark" />
-									<div className="migrate__plan-upsell-item-label">{ plugin.name }</div>
+						<div className="migrate__plan-upsell-container">
+							<div className="migrate__plan-upsell-icon">
+								<ProductIcon slug="business-bundle" />
+							</div>
+							<div className="migrate__plan-upsell-info">
+								<div className="migrate__plan-name">{ translate( 'WordPress.com Business' ) }</div>
+								<div className="migrate__plan-price">
+									<PlanPrice rawPrice={ planPrice } currencyCode={ currency } />
 								</div>
-							) ) }
-							{ plugins.length > 2 && (
-								<div className="migrate__plan-upsell-item">
-									<Gridicon size={ 18 } icon="plus" />
-									<div className="migrate__plan-upsell-item-label">
-										{ translate( '%(number)d more', { args: { number: plugins.length - 2 } } ) }
-									</div>
-								</div>
-							) }
+								<div className="migrate__plan-billing-time-frame">{ billingTimeFrame }</div>
+							</div>
 						</div>
 					</div>
 					<MigrateButton
@@ -128,13 +139,16 @@ class StepUpgrade extends Component {
 	}
 }
 
-export default connect( state => {
-	const plan = getPlan( PLAN_BUSINESS );
-	const planId = plan.getProductId();
+export default connect(
+	state => {
+		const plan = getPlan( PLAN_BUSINESS );
+		const planId = plan.getProductId();
 
-	return {
-		billingTimeFrame: plan.getBillingTimeFrame(),
-		currency: getCurrentUserCurrencyCode( state ),
-		planPrice: getPlanRawPrice( state, planId, true ),
-	};
-} )( localize( StepUpgrade ) );
+		return {
+			billingTimeFrame: plan.getBillingTimeFrame(),
+			currency: getCurrentUserCurrencyCode( state ),
+			planPrice: getPlanRawPrice( state, planId, true ),
+		};
+	},
+	{ recordTracksEvent }
+)( localize( StepUpgrade ) );

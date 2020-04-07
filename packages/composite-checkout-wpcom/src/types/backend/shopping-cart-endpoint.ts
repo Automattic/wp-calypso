@@ -109,9 +109,12 @@ export interface ResponseCartProduct {
 	product_slug: string;
 	product_id: number;
 	currency: string;
+	product_cost_integer: number;
+	product_cost_display: string;
 	item_subtotal_integer: number;
 	item_subtotal_display: string;
 	is_domain_registration: boolean;
+	is_bundled: boolean;
 	meta: string;
 	volume: number;
 	extra: object;
@@ -120,6 +123,10 @@ export interface ResponseCartProduct {
 	price: number;
 	product_type: string;
 	included_domain_purchase_amount: number;
+}
+
+interface RequestCartOptions {
+	is_update?: boolean;
 }
 
 export const prepareRequestCartProduct: ( ResponseCartProduct ) => RequestCartProduct = ( {
@@ -136,14 +143,10 @@ export const prepareRequestCartProduct: ( ResponseCartProduct ) => RequestCartPr
 	} as RequestCartProduct;
 };
 
-export const prepareRequestCart: ( ResponseCart ) => RequestCart = ( {
-	products,
-	currency,
-	locale,
-	coupon,
-	is_coupon_applied,
-	tax,
-}: ResponseCart ) => {
+export const prepareRequestCart: ( ResponseCart, RequestCartOptions ) => RequestCart = (
+	{ products, currency, locale, coupon, is_coupon_applied, tax }: ResponseCart,
+	{ is_update = false }: RequestCartOptions
+) => {
 	return {
 		products: products.map( prepareRequestCartProduct ),
 		currency,
@@ -152,6 +155,7 @@ export const prepareRequestCart: ( ResponseCart ) => RequestCart = ( {
 		is_coupon_applied,
 		temporary: false,
 		tax,
+		is_update,
 		extra: '', // TODO: fix this
 	} as RequestCart;
 };
@@ -172,6 +176,14 @@ export function addCouponToResponseCart( cart: ResponseCart, couponToAdd: string
 	return {
 		...cart,
 		coupon: couponToAdd,
+		is_coupon_applied: false,
+	};
+}
+
+export function removeCouponFromResponseCart( cart: ResponseCart ): ResponseCart {
+	return {
+		...cart,
+		coupon: '',
 		is_coupon_applied: false,
 	};
 }

@@ -9,12 +9,11 @@ import ReactDOM from 'react-dom';
 import { compact, get, findIndex, last, map, noop, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import formatCurrency from '@automattic/format-currency';
+import formatCurrency, { getCurrencyObject } from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
 import FoldableCard from 'components/foldable-card';
 import InlineSupportLink from 'components/inline-support-link';
 import Notice from 'components/notice';
@@ -130,7 +129,15 @@ export class PlanFeatures extends Component {
 	}
 
 	render() {
-		const { isInSignup, planProperties, plans, selectedPlan, withScroll, translate } = this.props;
+		const {
+			isInSignup,
+			isEligibleForPlanStepTest,
+			planProperties,
+			plans,
+			selectedPlan,
+			withScroll,
+			translate,
+		} = this.props;
 		const tableClasses = classNames(
 			'plan-features__table',
 			`has-${ planProperties.length }-cols`
@@ -176,8 +183,14 @@ export class PlanFeatures extends Component {
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
 									{ ! withScroll && planDescriptions }
-									<tr>{ this.renderTopButtons() }</tr>
-									{ withScroll && planDescriptions }
+									{ isEligibleForPlanStepTest && (
+										<>
+											{ withScroll && planDescriptions }
+											<tr>{ this.renderTopButtons() }</tr>
+										</>
+									) }
+									<tr>{ ! isEligibleForPlanStepTest && this.renderTopButtons() }</tr>
+									{ ! isEligibleForPlanStepTest && withScroll && planDescriptions }
 									{ this.renderPlanFeatureRows() }
 									{ ! withScroll && ! isInSignup && bottomButtons }
 								</tbody>
@@ -348,7 +361,7 @@ export class PlanFeatures extends Component {
 		return ReactDOM.createPortal(
 			<Notice className="plan-features__notice" showDismiss={ false } status="is-info">
 				{ translate(
-					"This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner."
+					'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
 				) }
 			</Notice>,
 			bannerContainer
@@ -462,6 +475,7 @@ export class PlanFeatures extends Component {
 			displayJetpackPlans,
 			isInSignup,
 			isJetpack,
+			isEligibleForPlanStepTest,
 			planProperties,
 			selectedPlan,
 			siteType,
@@ -483,11 +497,19 @@ export class PlanFeatures extends Component {
 				isPlaceholder,
 				hideMonthly,
 				rawPrice,
+				rawPriceAnnual,
 			} = properties;
 			let { discountPrice } = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
-			let audience = planConstantObj.getAudience();
-			let billingTimeFrame = planConstantObj.getBillingTimeFrame();
+			let audience = planConstantObj.getAudience( isEligibleForPlanStepTest );
+
+			let annualPriceText;
+			if ( rawPriceAnnual ) {
+				const annualPriceObj = getCurrencyObject( rawPriceAnnual, currencyCode );
+				annualPriceText = `${ annualPriceObj.symbol }${ annualPriceObj.integer }`;
+			}
+
+			let billingTimeFrame = planConstantObj.getBillingTimeFrame( annualPriceText );
 
 			if ( disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0 ) {
 				if ( planMatches( planName, { type: TYPE_BLOGGER } ) ) {
@@ -507,7 +529,7 @@ export class PlanFeatures extends Component {
 						audience = planConstantObj.getStoreAudience();
 						break;
 					default:
-						audience = planConstantObj.getAudience();
+						audience = planConstantObj.getAudience( isEligibleForPlanStepTest );
 				}
 			}
 
@@ -537,8 +559,9 @@ export class PlanFeatures extends Component {
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 						selectedPlan={ selectedPlan }
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
-						title={ planConstantObj.getTitle() }
+						title={ planConstantObj.getTitle( isEligibleForPlanStepTest ) }
 						plansWithScroll={ withScroll }
+						isEligibleForPlanStepTest={ isEligibleForPlanStepTest }
 					/>
 				</th>
 			);
@@ -546,7 +569,7 @@ export class PlanFeatures extends Component {
 	}
 
 	renderPlanDescriptions() {
-		const { planProperties, withScroll } = this.props;
+		const { planProperties, withScroll, isEligibleForPlanStepTest } = this.props;
 
 		return map( planProperties, properties => {
 			const { planName, planConstantObj, isPlaceholder } = properties;
@@ -558,7 +581,7 @@ export class PlanFeatures extends Component {
 
 			let description = null;
 			if ( withScroll ) {
-				description = planConstantObj.getShortDescription( abtest );
+				description = planConstantObj.getShortDescription( isEligibleForPlanStepTest );
 			} else {
 				description = planConstantObj.getDescription( abtest );
 			}
@@ -600,7 +623,7 @@ export class PlanFeatures extends Component {
 				// Let signup do its thing
 				return;
 			}
-			if ( config.isEnabled( 'coming-soon' ) ) {
+			if ( 'variant' === abtest( 'ATPrivacy' ) ) {
 				// When coming soon feature is enabled, we don't want to show any warnings
 				page( checkoutUrlWithArgs );
 				return;
@@ -623,6 +646,7 @@ export class PlanFeatures extends Component {
 			isInSignup,
 			isLandingPage,
 			isLaunchPage,
+			isEligibleForPlanStepTest,
 			planProperties,
 			selectedPlan,
 			selectedSiteSlug,
@@ -672,6 +696,7 @@ export class PlanFeatures extends Component {
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
 						isLaunchPage={ isLaunchPage }
+						isEligibleForPlanStepTest={ isEligibleForPlanStepTest }
 						manageHref={ `/plans/my-plan/${ selectedSiteSlug }` }
 						onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
 						planName={ planConstantObj.getTitle() }
@@ -978,6 +1003,11 @@ export default connect(
 				}
 				const siteIsPrivateAndGoingAtomic = siteIsPrivate && isWpComEcommercePlan( plan );
 
+				const rawPriceAnnual =
+					showMonthlyPrice &&
+					ownProps.isEligibleForPlanStepTest &&
+					getPlanRawPrice( state, planProductId, false );
+
 				return {
 					availableForPurchase,
 					cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ),
@@ -1005,6 +1035,7 @@ export default connect(
 						bestValue ||
 						plans.length === 1,
 					rawPrice: getPlanRawPrice( state, planProductId, showMonthlyPrice ),
+					rawPriceAnnual,
 					relatedMonthlyPlan,
 					siteIsPrivateAndGoingAtomic,
 				};

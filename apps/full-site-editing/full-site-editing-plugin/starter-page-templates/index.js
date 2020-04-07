@@ -13,6 +13,7 @@ import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
 import { PageTemplatesPlugin } from './page-template-modal';
 import SidebarTemplatesPlugin from './page-template-modal/components/sidebar-modal-opener';
 import { initializeWithIdentity } from './page-template-modal/utils/tracking';
+import './store';
 /* eslint-enable import/no-extraneous-dependencies */
 
 // Load config passed from backend.
@@ -25,27 +26,29 @@ const {
 	screenAction,
 	theme,
 	isFrontPage,
+	hideFrontPageTitle,
 } = window.starterPageTemplatesConfig;
 
 if ( tracksUserData ) {
 	initializeWithIdentity( tracksUserData );
 }
 
+const templatesPluginSharedProps = {
+	segment,
+	templates,
+	theme,
+	vertical,
+	isFrontPage,
+	hidePageTitle: Boolean( isFrontPage && hideFrontPageTitle ),
+};
+
 // Open plugin only if we are creating new page.
 if ( screenAction === 'add' ) {
+	dispatch( 'automattic/starter-page-layouts' ).setIsOpen( true );
 	registerPlugin( 'page-templates', {
-		render: () => {
-			return (
-				<PageTemplatesPlugin
-					isFrontPage={ isFrontPage }
-					segment={ segment }
-					shouldPrefetchAssets={ false }
-					templates={ templates }
-					theme={ theme }
-					vertical={ vertical }
-				/>
-			);
-		},
+		render: () => (
+			<PageTemplatesPlugin { ...templatesPluginSharedProps } shouldPrefetchAssets={ false } />
+		),
 	} );
 }
 
@@ -60,12 +63,8 @@ registerPlugin( 'page-templates-sidebar', {
 				icon="none"
 			>
 				<SidebarTemplatesPlugin
-					isFrontPage={ isFrontPage }
-					segment={ segment }
+					{ ...templatesPluginSharedProps }
 					siteInformation={ siteInformation }
-					templates={ templates }
-					theme={ theme }
-					vertical={ vertical }
 				/>
 			</PluginDocumentSettingPanel>
 		);

@@ -26,6 +26,7 @@ import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
 import { recordPaymentSettingsClick } from './payment-settings-analytics';
+import NonPrimaryDomainPlanUpsell from '../components/domain/non-primary-domain-plan-upsell';
 
 class RegisteredDomain extends React.Component {
 	getAutoRenewalOrExpirationDate() {
@@ -94,6 +95,18 @@ class RegisteredDomain extends React.Component {
 		);
 	}
 
+	planUpsellForNonPrimaryDomain() {
+		const { domain } = this.props;
+
+		return (
+			<NonPrimaryDomainPlanUpsell
+				tracksImpressionName="calypso_non_primary_domain_settings_plan_upsell_impression"
+				tracksClickName="calypso_non_primary_domain_settings_plan_upsell_click"
+				domain={ domain }
+			/>
+		);
+	}
+
 	getVerticalNav() {
 		const { expiry, expired, pendingTransfer } = this.props.domain;
 		const { moment } = this.props;
@@ -124,7 +137,7 @@ class RegisteredDomain extends React.Component {
 
 		return (
 			<VerticalNavItem path={ path }>
-				{ this.props.translate( 'Name Servers and DNS' ) }
+				{ this.props.translate( 'Name servers and DNS' ) }
 			</VerticalNavItem>
 		);
 	}
@@ -136,14 +149,14 @@ class RegisteredDomain extends React.Component {
 			this.props.domain.name
 		);
 
-		return <VerticalNavItem path={ path }>{ translate( 'Contacts and Privacy' ) }</VerticalNavItem>;
+		return <VerticalNavItem path={ path }>{ translate( 'Contacts and privacy' ) }</VerticalNavItem>;
 	}
 
 	transferNavItem() {
 		const path = domainManagementTransfer( this.props.selectedSite.slug, this.props.domain.name );
 
 		return (
-			<VerticalNavItem path={ path }>{ this.props.translate( 'Transfer Domain' ) }</VerticalNavItem>
+			<VerticalNavItem path={ path }>{ this.props.translate( 'Transfer domain' ) }</VerticalNavItem>
 		);
 	}
 
@@ -154,6 +167,7 @@ class RegisteredDomain extends React.Component {
 		return (
 			<div>
 				{ this.domainWarnings() }
+				{ this.planUpsellForNonPrimaryDomain() }
 				<div className="domain-details-card">
 					{ domain.isPendingIcannVerification && domain.currentUserCanManage && (
 						<IcannVerificationCard

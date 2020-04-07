@@ -137,10 +137,6 @@ export class DropdownFilters extends Component {
 	}
 
 	renderFilterIcon() {
-		if ( this.props.showDesignUpdate ) {
-			return <Gridicon icon="filter" size={ 12 } />;
-		}
-
 		return (
 			<>
 				<Gridicon icon="cog" size={ 12 } />

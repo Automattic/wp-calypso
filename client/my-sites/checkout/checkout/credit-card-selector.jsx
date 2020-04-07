@@ -8,7 +8,7 @@ import { find, defer } from 'lodash';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import CreditCard from 'components/credit-card';
 import NewCardForm from './new-card-form';
 import { newCardPayment, newStripeCardPayment, storedCardPayment } from 'lib/transaction/payments';
@@ -90,7 +90,7 @@ class CreditCardSelector extends React.Component {
 			return;
 		}
 		if ( 'new-card' === section ) {
-			analytics.ga.recordEvent( 'Upgrades', 'Clicked Use a New Credit/Debit Card Link' );
+			gaRecordEvent( 'Upgrades', 'Clicked Use a New Credit/Debit Card Link' );
 		}
 		this.savePayment( section );
 		this.setState( { section: section } );

@@ -5,7 +5,7 @@
 
 import React, { Fragment } from 'react';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import path from 'path';
 
 /**
  * Internal dependencies
@@ -59,8 +59,11 @@ class Document extends React.Component {
 			isWCComConnect,
 			addEvergreenCheck,
 			requestFrom,
-			translate,
 		} = this.props;
+
+		const installedChunks = entrypoint.js
+			.concat( chunkFiles.js )
+			.map( chunk => path.parse( chunk ).name );
 
 		const inlineScript =
 			`var COMMIT_SHA = ${ jsonStringifyForHtml( commitSha ) };\n` +
@@ -74,12 +77,17 @@ class Document extends React.Component {
 			( clientData ? `var configData = ${ jsonStringifyForHtml( clientData ) };\n` : '' ) +
 			( languageRevisions
 				? `var languageRevisions = ${ jsonStringifyForHtml( languageRevisions ) };\n`
-				: '' );
+				: '' ) +
+			`var installedChunks = ${ jsonStringifyForHtml( installedChunks ) };\n`;
 
 		const isJetpackWooCommerceFlow =
 			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
 			'jetpack-connect' === sectionName &&
 			'woocommerce-onboarding' === requestFrom;
+
+		const theme = config( 'theme' );
+
+		const LoadingLogo = config.isEnabled( 'jetpack-cloud' ) ? JetpackLogo : WordPressLogo;
 
 		return (
 			<html
@@ -107,6 +115,7 @@ class Document extends React.Component {
 					className={ classNames( {
 						rtl: isRTL,
 						'color-scheme': config.isEnabled( 'me/account/color-scheme-picker' ),
+						[ 'theme-' + theme ]: theme,
 						[ 'is-group-' + sectionGroup ]: sectionGroup,
 						[ 'is-section-' + sectionName ]: sectionName,
 					} ) }
@@ -132,14 +141,7 @@ class Document extends React.Component {
 							>
 								<div className="masterbar" />
 								<div className="layout__content">
-									{ 'jetpack-cloud' === sectionName ? (
-										<div className="wpcom-site__loader">
-											<JetpackLogo size={ 72 } className="wpcom-site__logo" />
-											{ translate( 'Loading' ) }
-										</div>
-									) : (
-										<WordPressLogo size={ 72 } className="wpcom-site__logo" />
-									) }
+									<LoadingLogo size={ 72 } className="wpcom-site__logo" />
 									{ hasSecondary && (
 										<Fragment>
 											<div className="layout__secondary" />
@@ -263,4 +265,4 @@ class Document extends React.Component {
 	}
 }
 
-export default localize( Document );
+export default Document;

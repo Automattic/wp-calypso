@@ -8,6 +8,7 @@ import config, { isEnabled } from 'config';
 
 export function login( {
 	isJetpack,
+	isGutenboarding,
 	isWoo,
 	isNative,
 	locale,
@@ -30,12 +31,16 @@ export function login( {
 			url += '/' + socialService + '/callback';
 		} else if ( twoFactorAuthType && isJetpack ) {
 			url += '/jetpack/' + twoFactorAuthType;
+		} else if ( twoFactorAuthType && isGutenboarding ) {
+			url += '/gutenboarding/' + twoFactorAuthType;
 		} else if ( twoFactorAuthType ) {
 			url += '/' + twoFactorAuthType;
 		} else if ( socialConnect ) {
 			url += '/social-connect';
 		} else if ( isJetpack ) {
 			url += '/jetpack';
+		} else if ( isGutenboarding ) {
+			url += '/gutenboarding';
 		} else if ( useMagicLink ) {
 			url += '/link';
 		}

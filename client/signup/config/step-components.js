@@ -28,6 +28,7 @@ const stepNameToModuleName = {
 	'plans-personal': 'plans',
 	'plans-premium': 'plans',
 	'plans-site-selected': 'plans',
+	'plans-with-domain': 'plans',
 	'plans-store-nux': 'plans-atomic-store',
 	site: 'site',
 	'rebrand-cities-welcome': 'rebrand-cities-welcome',
@@ -61,6 +62,7 @@ const stepNameToModuleName = {
 	'domains-with-preview': 'domains',
 	'site-title-with-preview': 'site-title',
 	passwordless: 'passwordless',
+	'team-site': 'wp-for-teams-site',
 };
 
 export async function getStepComponent( stepName ) {

@@ -138,10 +138,6 @@
 	.gridicons-themes {
 		border-radius: 8px;
 	}
-
-	.gridicons-cloud-upload {
-		background: var( --studio-jetpack-green-30 );
-	}
 }
 
 .manage-purchase__title {
@@ -169,6 +165,10 @@
 .manage-purchase__description {
 	color: var( --color-text-subtle );
 	display: block;
+
+	.plan-features__targeted-description-heading {
+		display: inline;
+	}
 }
 
 .manage-purchase__settings-link {
@@ -294,7 +294,7 @@
 	}
 }
 
-.manage-purchase__contact-support {
+.manage-purchase__footnotes {
 	color: var( --color-text-subtle );
 	border-top: solid 1px var( --color-neutral-0 );
 	margin: 0 auto;

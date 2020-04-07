@@ -18,7 +18,7 @@ import config from 'config';
 import translator, { trackTranslatorStatus } from 'lib/translator-jumpstart';
 import localStorageHelper from 'store';
 import { Button, Dialog } from '@automattic/components';
-import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import { TranslationScanner } from 'lib/i18n-utils/translation-scanner';
 import getUserSettings from 'state/selectors/get-user-settings';
 import getOriginalUserSetting from 'state/selectors/get-original-user-setting';
@@ -113,7 +113,7 @@ class TranslatorLauncher extends React.Component {
 			}
 
 			if ( this.state.firstActivation ) {
-				analytics.mc.bumpStat( 'calypso_translator_toggle', 'intial_activation' );
+				bumpStat( 'calypso_translator_toggle', 'intial_activation' );
 				this.setState( { firstActivation: false } );
 			}
 		} else if ( this.state.isActive && ! translator.isActivated() ) {
@@ -199,7 +199,7 @@ class TranslatorLauncher extends React.Component {
 	toggle = event => {
 		event.preventDefault();
 		const nextIsActive = translator.toggle();
-		analytics.mc.bumpStat( 'calypso_translator_toggle', nextIsActive ? 'on' : 'off' );
+		bumpStat( 'calypso_translator_toggle', nextIsActive ? 'on' : 'off' );
 		this.setState( { isActive: nextIsActive } );
 	};
 

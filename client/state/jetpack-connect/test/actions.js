@@ -21,8 +21,8 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
-	SITE_RECEIVE,
-} from 'state/action-types';
+} from 'state/jetpack-connect/action-types';
+import { SITE_RECEIVE } from 'state/action-types';
 
 describe( '#confirmJetpackInstallStatus()', () => {
 	test( 'should dispatch confirm status action when called', () => {

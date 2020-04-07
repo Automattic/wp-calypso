@@ -19,6 +19,7 @@ export function useFormStatus() {
 			setFormLoading: () => setFormStatus( 'loading' ),
 			setFormReady: () => setFormStatus( 'ready' ),
 			setFormSubmitting: () => setFormStatus( 'submitting' ),
+			setFormValidating: () => setFormStatus( 'validating' ),
 			setFormComplete: () => setFormStatus( 'complete' ),
 		} ),
 		[ formStatus, setFormStatus ]
@@ -54,7 +55,7 @@ function formStatusReducer( state, action ) {
 }
 
 function validateStatus( status ) {
-	const validStatuses = [ 'loading', 'ready', 'submitting', 'complete' ];
+	const validStatuses = [ 'loading', 'ready', 'validating', 'submitting', 'complete' ];
 	if ( ! validStatuses.includes( status ) ) {
 		throw new Error( `Invalid form status '${ status }'` );
 	}

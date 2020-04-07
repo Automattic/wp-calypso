@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { isEqual, range, throttle, difference, isEmpty, get } from 'lodash';
-import { localize } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -32,8 +32,13 @@ import PostTypeListEmptyContent from './empty-content';
 import PostTypeListMaxPagesNotice from './max-pages-notice';
 import SectionHeader from 'components/section-header';
 import { Button } from '@automattic/components';
-import UpgradeNudge from 'blocks/upgrade-nudge';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { FEATURE_NO_ADS } from 'lib/plans/constants';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Constants
@@ -191,16 +196,29 @@ class PostTypeList extends Component {
 	}
 
 	renderSectionHeader() {
-		const { editorUrl, postLabels } = this.props;
+		const { editorUrl, postLabels, localeSlug } = this.props;
 
 		if ( ! postLabels ) {
 			return null;
 		}
 
+		/*
+		 * Temporary workaround to Sentence case label from core API for EN langs
+		 * @TODO: Remove when https://core.trac.wordpress.org/ticket/49616 is merged
+		 */
+
+		let addNewLabel = postLabels.add_new_item;
+
+		if ( 'en' === localeSlug || 'en-gb' === localeSlug ) {
+			addNewLabel =
+				postLabels.add_new_item[ 0 ].toUpperCase() +
+				postLabels.add_new_item.slice( 1 ).toLowerCase();
+		}
+
 		return (
 			<SectionHeader label={ postLabels.name }>
 				<Button primary compact className="post-type-list__add-post" href={ editorUrl }>
-					{ postLabels.add_new_item }
+					{ addNewLabel }
 				</Button>
 			</SectionHeader>
 		);
@@ -274,11 +292,14 @@ class PostTypeList extends Component {
 				) }
 				{ posts.slice( 0, 10 ).map( this.renderPost ) }
 				{ showUpgradeNudge && (
-					<UpgradeNudge
+					<UpsellNudge
 						title={ translate( 'No Ads with WordPress.com Premium' ) }
-						message={ translate( 'Prevent ads from showing on your site.' ) }
+						description={ translate( 'Prevent ads from showing on your site.' ) }
 						feature={ FEATURE_NO_ADS }
 						event="published_posts_no_ads"
+						tracksImpressionName="calypso_upgrade_nudge_impression"
+						tracksClickName="calypso_upgrade_nudge_cta_click"
+						showIcon={ true }
 					/>
 				) }
 				{ posts.slice( 10 ).map( this.renderPost ) }
@@ -310,5 +331,6 @@ export default connect( ( state, ownProps ) => {
 		lastPageToRequest,
 		editorUrl: getEditorUrl( state, siteId, null, ownProps.query.type ),
 		postLabels: get( getPostType( state, siteId, ownProps.query.type ), 'labels' ),
+		localeSlug: getLocaleSlug( state ),
 	};
 } )( localize( PostTypeList ) );

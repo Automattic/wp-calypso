@@ -16,7 +16,7 @@ import {
 	activate as activateBypass,
 } from './bypass';
 import { StoredItems } from './types';
-import { mc } from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
 import config from 'config';
 
 const debug = debugFactory( 'calypso:browser-storage' );
@@ -84,7 +84,7 @@ const getDB = once( () => {
 					db.onerror = function( errorEvent: any ) {
 						debug( 'IDB Error', errorEvent );
 						if ( errorEvent.target?.error?.name ) {
-							mc.bumpStat( 'calypso-browser-storage', kebabCase( errorEvent.target.error.name ) );
+							bumpStat( 'calypso-browser-storage', kebabCase( errorEvent.target.error.name ) );
 
 							if ( errorEvent.target.error.name === 'QuotaExceededError' ) {
 								// we've blown through the quota. Turn off IDB for this page load

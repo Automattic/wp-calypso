@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import { assert, expect } from 'chai';
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
+import { prependThemeFilterKeys } from 'state/themes/selectors';
 import { state } from './fixtures/theme-filters';
 
 describe( 'getThemeFilterStringFromTerm', () => {
 	test( 'should handle invalid input', () => {
-		assert.equal( prependThemeFilterKeys( state, '' ), '' );
-		assert.equal( prependThemeFilterKeys( state, '     ' ), '' );
-		assert.equal( prependThemeFilterKeys( state, ' tsr tsr .' ), '' );
+		expect( prependThemeFilterKeys( state, '' ) ).to.equal( '' );
+		expect( prependThemeFilterKeys( state, '     ' ) ).to.equal( '' );
+		expect( prependThemeFilterKeys( state, ' tsr tsr .' ) ).to.equal( '' );
 	} );
 
 	test( 'should prepend keys for valid terms and leave a trailing space', () => {

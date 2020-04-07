@@ -54,10 +54,12 @@ import {
 	SITE_DELETE_RECEIVE,
 	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
 	SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
+} from 'state/action-types';
+import {
 	THEME_DELETE_FAILURE,
 	THEME_DELETE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
-} from 'state/action-types';
+} from 'state/themes/action-types';
 import { purchasesRoot, billingHistoryReceipt } from 'me/purchases/paths';
 
 import {
@@ -154,7 +156,7 @@ const onPostRestoreSuccess = () => successNotice( translate( 'Post successfully 
 
 export const onPostSaveSuccess = ( { post, savedPost } ) => dispatch => {
 	switch ( post.status ) {
-		case 'trash':
+		case 'trash': {
 			const noticeId = 'trash_' + savedPost.global_ID;
 			dispatch(
 				successNotice( translate( 'Post successfully moved to trash.' ), {
@@ -167,10 +169,12 @@ export const onPostSaveSuccess = ( { post, savedPost } ) => dispatch => {
 				} )
 			);
 			break;
+		}
 
-		case 'publish':
+		case 'publish': {
 			dispatch( successNotice( translate( 'Post successfully published' ) ) );
 			break;
+		}
 	}
 };
 

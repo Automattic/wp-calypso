@@ -85,7 +85,7 @@ function middleware( app ) {
 					</p>
 					<p>
 						In the meantime, try to follow all the emotions of the allmoji:
-						<img src="https://emoji.slack-edge.com/T024FN1V2/allmoji/fa5781cf7a8c5685.gif"
+						<img src="https://emoji.slack-edge.com/T024FN1V2/allmoji/15b93529a828705f.gif"
 							width="36" style="vertical-align: middle;">
 				</body>
 			` );

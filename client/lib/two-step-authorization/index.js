@@ -2,6 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+import { get as webauthn_auth } from '@github/webauthn-json';
 import { replace } from 'lodash';
 
 const debug = debugFactory( 'calypso:two-step-authorization' );
@@ -10,12 +11,14 @@ const debug = debugFactory( 'calypso:two-step-authorization' );
  * Internal Dependencies
  */
 import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
+import config from 'config';
 import emitter from 'lib/mixins/emitter';
 import userSettings from 'lib/user-settings';
-import wp from 'lib/wp';
 import { reduxDispatch } from 'lib/redux-bridge';
 import { requestConnectedApplications } from 'state/connected-applications/actions';
 import { requestUserProfileLinks } from 'state/profile-links/actions';
+import wp from 'lib/wp';
 
 const wpcom = wp.undocumented();
 
@@ -27,12 +30,12 @@ function TwoStepAuthorization() {
 		return new TwoStepAuthorization();
 	}
 
-	this.data = null;
+	this.data = {};
 	this.initialized = false;
 	this.smsResendThrottled = false;
 
 	this.bumpMCStat = function( eventAction ) {
-		analytics.mc.bumpStat( '2fa', eventAction );
+		bumpStat( '2fa', eventAction );
 		analytics.tracks.recordEvent( 'calypso_login_twostep_authorize', {
 			event_action: eventAction,
 		} );
@@ -65,6 +68,77 @@ TwoStepAuthorization.prototype.fetch = function( callback ) {
 	);
 };
 
+TwoStepAuthorization.prototype.postLoginRequest = function( endpoint, data ) {
+	if ( ! this.getTwoStepWebauthnNonce() ) {
+		return Promise.reject( 'Invalid nonce' );
+	}
+
+	const url = 'https://wordpress.com/wp-login.php?action=' + endpoint;
+	const formData = new window.FormData();
+	const requestData = {
+		...data,
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
+		auth_type: 'webauthn',
+		two_step_nonce: this.getTwoStepWebauthnNonce(),
+	};
+
+	for ( const key in requestData ) {
+		formData.set( key, requestData[ key ] );
+	}
+
+	return window
+		.fetch( url, {
+			method: 'POST',
+			body: formData,
+			credentials: 'include',
+		} )
+		.then( response => response.json() );
+};
+
+TwoStepAuthorization.prototype.refreshDataOnSuccessfulAuth = function() {
+	// If the validation was successful AND re-auth was required, fetch
+	// data from the following modules.
+	if ( this.isReauthRequired() ) {
+		userSettings.fetchSettings();
+		reduxDispatch( requestConnectedApplications() );
+		reduxDispatch( requestUserProfileLinks() );
+	}
+	this.data.two_step_reauthorization_required = false;
+	this.data.two_step_authorization_expires_soon = false;
+	this.invalidCode = false;
+
+	this.emit( 'change' );
+};
+
+TwoStepAuthorization.prototype.loginUserWithSecurityKey = function( args ) {
+	return this.postLoginRequest( 'webauthn-challenge-endpoint', {
+		user_id: args.user_id,
+	} )
+		.then( response => {
+			const parameters = response.data || [];
+			this.data.two_step_webauthn_nonce = parameters.two_step_nonce;
+			if ( typeof this.data.two_step_webauthn_nonce === 'undefined' ) {
+				return Promise.reject( response );
+			}
+			return webauthn_auth( { publicKey: parameters } );
+		} )
+		.then( assertion => {
+			return this.postLoginRequest( 'webauthn-authentication-endpoint', {
+				user_id: args.user_id,
+				client_data: JSON.stringify( assertion ),
+				create_2fa_cookies_only: 1,
+			} );
+		} )
+		.then( response => {
+			if ( typeof response.success === 'undefined' || ! response.success ) {
+				return Promise.reject( response );
+			}
+			this.refreshDataOnSuccessfulAuth();
+			return response;
+		} );
+};
+
 /*
  * Given a code, validate the code which will update a user's twostep_auth cookie
  */
@@ -76,18 +150,6 @@ TwoStepAuthorization.prototype.validateCode = function( args, callback ) {
 		},
 		function( error, data ) {
 			if ( ! error && data.success ) {
-				// If the validation was successful AND reauth was required, fetch
-				// data from the following modules.
-				if ( this.isReauthRequired() ) {
-					userSettings.fetchSettings();
-					reduxDispatch( requestConnectedApplications() );
-					reduxDispatch( requestUserProfileLinks() );
-				}
-
-				this.data.two_step_reauthorization_required = false;
-				this.data.two_step_authorization_expires_soon = false;
-				this.invalidCode = false;
-
 				if ( args.action ) {
 					this.bumpMCStat(
 						'enable-two-step' === args.action ? 'enable-2fa-successful' : 'disable-2fa-successful'
@@ -96,7 +158,7 @@ TwoStepAuthorization.prototype.validateCode = function( args, callback ) {
 					this.bumpMCStat( 'reauth-successful' );
 				}
 
-				this.emit( 'change' );
+				this.refreshDataOnSuccessfulAuth();
 			} else if ( ! error ) {
 				// If code was invalid but API did not error
 				this.invalidCode = true;
@@ -223,19 +285,27 @@ TwoStepAuthorization.prototype.isSMSResendThrottled = function() {
 };
 
 TwoStepAuthorization.prototype.isReauthRequired = function() {
-	return this.data ? this.data.two_step_reauthorization_required : false;
+	return this.data.two_step_reauthorization_required ?? false;
 };
 
 TwoStepAuthorization.prototype.authExpiresSoon = function() {
-	return this.data ? this.data.two_step_authorization_expires_soon : false;
+	return this.data.two_step_authorization_expires_soon ?? false;
 };
 
 TwoStepAuthorization.prototype.isTwoStepSMSEnabled = function() {
-	return this.data ? this.data.two_step_sms_enabled : false;
+	return this.data.two_step_sms_enabled ?? false;
+};
+
+TwoStepAuthorization.prototype.isSecurityKeyEnabled = function() {
+	return this.data.two_step_webauthn_enabled ?? false;
+};
+
+TwoStepAuthorization.prototype.getTwoStepWebauthnNonce = function() {
+	return this.data.two_step_webauthn_nonce ?? false;
 };
 
 TwoStepAuthorization.prototype.getSMSLastFour = function() {
-	return this.data ? this.data.two_step_sms_last_four : null;
+	return this.data.two_step_sms_last_four ?? null;
 };
 
 emitter( TwoStepAuthorization.prototype );

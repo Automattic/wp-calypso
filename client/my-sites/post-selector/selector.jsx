@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -26,7 +25,7 @@ import {
  * Internal dependencies
  */
 import NoResults from './no-results';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import Search from './search';
 import { decodeEntities } from 'lib/formatting';
 import {
@@ -290,7 +289,7 @@ class PostSelectorPosts extends React.Component {
 
 		if ( ! this.hasPerformedSearch ) {
 			this.hasPerformedSearch = true;
-			analytics.ga.recordEvent( this.props.analyticsPrefix, 'Performed Post Search' );
+			gaRecordEvent( this.props.analyticsPrefix, 'Performed Post Search' );
 		}
 
 		this.setState( { searchTerm } );

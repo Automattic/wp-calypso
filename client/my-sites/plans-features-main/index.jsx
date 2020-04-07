@@ -29,7 +29,7 @@ import {
 	GROUP_JETPACK,
 } from 'lib/plans/constants';
 import {
-	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_PRODUCTS_LIST,
 	JETPACK_PRODUCT_PRICE_MATRIX,
 	getJetpackProducts,
 } from 'lib/products-values/constants';
@@ -70,6 +70,7 @@ import {
 import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
+import PlanTestimonials from '../plan-testimonials';
 
 /**
  * Style dependencies
@@ -119,6 +120,7 @@ export class PlansFeaturesMain extends Component {
 			isJetpack,
 			isLandingPage,
 			isLaunchPage,
+			isEligibleForPlanStepTest,
 			onUpgradeClick,
 			selectedFeature,
 			selectedPlan,
@@ -164,6 +166,7 @@ export class PlansFeaturesMain extends Component {
 					isInSignup={ isInSignup }
 					isLandingPage={ isLandingPage }
 					isLaunchPage={ isLaunchPage }
+					isEligibleForPlanStepTest={ isEligibleForPlanStepTest }
 					onUpgradeClick={ onUpgradeClick }
 					plans={ plans }
 					redirectTo={ redirectTo }
@@ -179,6 +182,7 @@ export class PlansFeaturesMain extends Component {
 					} ) }
 					siteId={ siteId }
 				/>
+				{ isEligibleForPlanStepTest && <PlanTestimonials /> }
 			</div>
 		);
 	}
@@ -427,24 +431,24 @@ export class PlansFeaturesMain extends Component {
 			return null;
 		}
 
-		const { basePlansPath, intervalType, redirectTo } = this.props;
-		const jetpackProducts = getJetpackProducts();
+		const { basePlansPath, intervalType, redirectTo, onUpgradeClick } = this.props;
 
 		return (
-			<div className="plans-features-main__group is-narrow">
+			<div className="plans-features-main__group is-jetpack-products">
 				<PlansFeaturesMainProductsHeader />
 				<AsyncLoad
 					require="blocks/product-plan-overlap-notices"
 					placeholder={ null }
 					plans={ JETPACK_PLANS }
-					products={ JETPACK_BACKUP_PRODUCTS }
+					products={ JETPACK_PRODUCTS_LIST }
 				/>
 				<ProductSelector
-					products={ jetpackProducts }
+					products={ getJetpackProducts() }
 					intervalType={ intervalType }
 					basePlansPath={ basePlansPath }
 					productPriceMatrix={ JETPACK_PRODUCT_PRICE_MATRIX }
 					redirectTo={ redirectTo }
+					onUpgradeClick={ onUpgradeClick }
 				/>
 			</div>
 		);

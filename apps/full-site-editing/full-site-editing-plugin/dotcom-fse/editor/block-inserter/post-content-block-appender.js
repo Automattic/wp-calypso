@@ -19,8 +19,14 @@ const PostContentBlockAppender = compose(
 		};
 	} )
 )( ( { rootClientId, showInserter } ) => {
+	const inserterToggleProps = { isPrimary: true };
 	return (
-		<Inserter rootClientId={ rootClientId } disabled={ ! showInserter } position="bottom right" />
+		<Inserter
+			rootClientId={ rootClientId }
+			disabled={ ! showInserter }
+			position="bottom right"
+			toggleProps={ inserterToggleProps }
+		/>
 	);
 } );
 

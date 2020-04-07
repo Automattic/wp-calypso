@@ -120,11 +120,11 @@ class CustomNameserversForm extends React.PureComponent {
 							onClick={ this.handleSubmit }
 							disabled={ this.props.submitDisabled }
 						>
-							{ translate( 'Save Custom Name Servers' ) }
+							{ translate( 'Save custom name servers' ) }
 						</FormButton>
 
 						<FormButton type="button" isPrimary={ false } onClick={ this.handleReset }>
-							{ translate( 'Reset to Defaults' ) }
+							{ translate( 'Reset to defaults' ) }
 						</FormButton>
 					</FormFooter>
 				</form>

@@ -8,7 +8,8 @@ import debugModule from 'debug';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
+import { bumpStat } from 'lib/analytics/mc';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 
 const debug = debugModule( 'calypso:posts:stats' );
@@ -17,9 +18,9 @@ const shouldBumpStat = Math.random() <= 0.01 || process.env.NODE_ENV === 'develo
 
 function recordTinyMCEButtonClick( buttonName ) {
 	if ( shouldBumpStat ) {
-		analytics.mc.bumpStat( 'editor-button', 'calypso_' + buttonName );
+		bumpStat( 'editor-button', 'calypso_' + buttonName );
 	}
-	analytics.ga.recordEvent( 'Editor', 'Clicked TinyMCE Button', buttonName );
+	gaRecordEvent( 'Editor', 'Clicked TinyMCE Button', buttonName );
 	debug( 'TinyMCE button click', buttonName, 'mc=', shouldBumpStat );
 }
 

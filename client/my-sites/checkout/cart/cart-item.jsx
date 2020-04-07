@@ -3,15 +3,15 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
 import { get } from 'lodash';
 import { getCurrencyObject } from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'components/gridicon';
 import { withLocalizedMoment } from 'components/localized-moment';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import { canRemoveFromCart } from 'lib/cart-values';
 import { getIncludedDomain } from 'lib/cart-values/cart-items';
 import {
@@ -36,7 +36,7 @@ import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'lib/plans
 export class CartItem extends React.Component {
 	removeFromCart = event => {
 		event.preventDefault();
-		analytics.ga.recordEvent(
+		gaRecordEvent(
 			'Upgrades',
 			'Clicked Remove From Cart Icon',
 			'Product ID',
@@ -68,9 +68,10 @@ export class CartItem extends React.Component {
 
 		if ( isGSuiteProductSlug( cartItem.product_slug ) ) {
 			const {
-				cost_before_coupon: costBeforeCoupon,
+				cost_before_coupon: costPerProductBeforeCoupon,
 				is_sale_coupon_applied: isSaleCouponApplied,
 			} = cartItem;
+			const costBeforeCoupon = costPerProductBeforeCoupon * cartItem.volume;
 
 			if ( isSaleCouponApplied ) {
 				const { is_coupon_applied: isCouponApplied } = cart;

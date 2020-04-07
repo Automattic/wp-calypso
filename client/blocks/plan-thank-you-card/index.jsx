@@ -11,13 +11,13 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
+import { ProductIcon } from '@automattic/components';
 import getRawSite from 'state/selectors/get-raw-site';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { getPlan, getPlanClass } from 'lib/plans';
 import ThankYouCard from 'components/thank-you-card';
-import PlanIcon from 'components/plans/plan-icon';
 
 /**
  * Style dependencies
@@ -60,7 +60,7 @@ class PlanThankYouCard extends Component {
 			return null;
 		}
 
-		return <PlanIcon plan={ plan.productSlug } />;
+		return <ProductIcon slug={ plan.productSlug } />;
 	}
 
 	renderAction() {

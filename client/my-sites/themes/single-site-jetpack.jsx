@@ -19,7 +19,6 @@ import config from 'config';
 import { isPartnerPurchase } from 'lib/purchases';
 import JetpackReferrerMessage from './jetpack-referrer-message';
 import JetpackUpgradeMessage from './jetpack-upgrade-message';
-import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
 import { connectOptions } from './theme-options';
 import Banner from 'components/banner';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_JETPACK_BUSINESS } from 'lib/plans/constants';
@@ -32,7 +31,6 @@ import { getCurrentPlan, hasFeature, isRequestingSitePlans } from 'state/sites/p
 import { getByPurchaseId } from 'state/purchases/selectors';
 import { getLastThemeQuery, getThemesFoundForQuery } from 'state/themes/selectors';
 import {
-	canJetpackSiteManage,
 	hasJetpackSiteJetpackThemes,
 	hasJetpackSiteJetpackThemesExtendedFeatures,
 	isJetpackSiteMultiSite,
@@ -56,7 +54,6 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 	const {
 		analyticsPath,
 		analyticsPageTitle,
-		canManage,
 		currentPlan,
 		emptyContent,
 		filter,
@@ -86,9 +83,6 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 	if ( ! hasJetpackThemes ) {
 		return <JetpackUpgradeMessage siteId={ siteId } />;
 	}
-	if ( ! canManage ) {
-		return <JetpackManageDisabledMessage siteId={ siteId } />;
-	}
 
 	const isPartnerPlan = purchase && isPartnerPurchase( purchase );
 
@@ -106,7 +100,7 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 					plan={ PLAN_JETPACK_BUSINESS }
 					title={ translate( 'Access all our premium themes with our Professional plan!' ) }
 					description={ translate(
-						'In addition to more than 100 premium themes, ' +
+						'In addition to our collection of premium themes, ' +
 							'get Elasticsearch-powered site search, real-time offsite backups, ' +
 							'and security scanning.'
 					) }
@@ -173,7 +167,6 @@ export default connect( ( state, { siteId, tier } ) => {
 		emptyContent = ! siteThemesCount && ! wpcomThemesCount ? null : <div />;
 	}
 	return {
-		canManage: canJetpackSiteManage( state, siteId ),
 		currentPlan,
 		hasJetpackThemes: hasJetpackSiteJetpackThemes( state, siteId ),
 		purchase: currentPlan ? getByPurchaseId( state, currentPlan.id ) : null,

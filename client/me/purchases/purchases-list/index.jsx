@@ -55,7 +55,9 @@ class PurchasesList extends Component {
 		const { nextAppointment, scheduleId, hasAvailableConciergeSessions } = this.props;
 
 		if ( null === hasAvailableConciergeSessions ) {
-			return <ConciergeBanner bannerType="placeholder" />;
+			return (
+				<ConciergeBanner bannerType={ CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION } showPlaceholder />
+			);
 		}
 
 		let bannerType;
@@ -134,7 +136,7 @@ class PurchasesList extends Component {
 								'Our plans give your site the power to thrive. ' +
 									'Find the plan that works for you.'
 							) }
-							action={ this.props.translate( 'Upgrade Now' ) }
+							action={ this.props.translate( 'Upgrade now' ) }
 							actionURL={ '/plans' }
 							illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
 						/>

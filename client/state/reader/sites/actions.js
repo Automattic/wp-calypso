@@ -11,7 +11,7 @@ import {
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_REQUEST_FAILURE,
 	READER_SITE_UPDATE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 
 import 'state/data-layer/wpcom/read/sites';
 

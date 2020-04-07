@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { READER_VIEW_STREAM } from 'state/action-types';
+import { READER_VIEW_STREAM } from 'state/reader/action-types';
 
 import 'state/reader/init';
 

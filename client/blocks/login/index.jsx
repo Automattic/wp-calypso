@@ -57,6 +57,7 @@ class Login extends Component {
 		disableAutoFocus: PropTypes.bool,
 		isLinking: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
+		isGutenboarding: PropTypes.bool.isRequired,
 		isJetpackWooCommerceFlow: PropTypes.bool.isRequired,
 		isManualRenewalImmediateLoginAttempt: PropTypes.bool,
 		linkingSocialService: PropTypes.string,
@@ -76,9 +77,14 @@ class Login extends Component {
 
 	state = {
 		isBrowserSupported: isWebAuthnSupported(),
+		continueAsAnotherUser: false,
 	};
 
-	static defaultProps = { isJetpack: false, isJetpackWooCommerceFlow: false };
+	static defaultProps = {
+		isJetpack: false,
+		isGutenboarding: false,
+		isJetpackWooCommerceFlow: false,
+	};
 
 	componentDidMount() {
 		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
@@ -98,6 +104,33 @@ class Login extends Component {
 		}
 	}
 
+	showContinueAsUser = () => {
+		const {
+			isJetpack,
+			isJetpackWooCommerceFlow,
+			oauth2Client,
+			privateSite,
+			socialConnect,
+			twoStepNonce,
+			fromSite,
+			currentUser,
+			twoFactorEnabled,
+		} = this.props;
+
+		return (
+			! twoStepNonce &&
+			! socialConnect &&
+			! privateSite &&
+			! oauth2Client &&
+			! ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) &&
+			! isJetpack &&
+			! fromSite &&
+			! twoFactorEnabled &&
+			currentUser &&
+			! this.state.continueAsAnotherUser
+		);
+	};
+
 	handleValidLogin = () => {
 		if ( this.props.twoFactorEnabled ) {
 			let defaultAuthType;
@@ -114,6 +147,7 @@ class Login extends Component {
 				login( {
 					isNative: true,
 					isJetpack: this.props.isJetpack,
+					isGutenboarding: this.props.isGutenboarding,
 					// If no notification is sent, the user is using the authenticator for 2FA by default
 					twoFactorAuthType: defaultAuthType,
 				} )
@@ -143,6 +177,10 @@ class Login extends Component {
 		}
 	};
 
+	handleContinueAsAnotherUser = () => {
+		this.setState( { continueAsAnotherUser: true } );
+	};
+
 	rebootAfterLogin = async () => {
 		this.props.recordTracksEvent( 'calypso_login_success', {
 			two_factor_enabled: this.props.twoFactorEnabled,
@@ -165,6 +203,7 @@ class Login extends Component {
 	renderHeader() {
 		const {
 			isJetpack,
+			isGutenboarding,
 			isJetpackWooCommerceFlow,
 			wccomFrom,
 			isManualRenewalImmediateLoginAttempt,
@@ -175,8 +214,6 @@ class Login extends Component {
 			translate,
 			twoStepNonce,
 			fromSite,
-			currentUser,
-			twoFactorEnabled,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
@@ -306,9 +343,24 @@ class Login extends Component {
 		} else if ( fromSite ) {
 			// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
 			postHeader = <VisitSite siteSlug={ fromSite } />;
-		} else if ( currentUser && ! twoFactorEnabled ) {
-			// someone is already logged in, offer to proceed to the app without a new login
-			postHeader = <ContinueAsUser />;
+		}
+
+		if ( isGutenboarding ) {
+			preHeader = (
+				<div className="login__form-gutenboarding-wordpress-logo">
+					<svg
+						aria-hidden="true"
+						role="img"
+						focusable="false"
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 20 20"
+					>
+						<path d="M20 10c0-5.51-4.49-10-10-10C4.48 0 0 4.49 0 10c0 5.52 4.48 10 10 10 5.51 0 10-4.48 10-10zM7.78 15.37L4.37 6.22c.55-.02 1.17-.08 1.17-.08.5-.06.44-1.13-.06-1.11 0 0-1.45.11-2.37.11-.18 0-.37 0-.58-.01C4.12 2.69 6.87 1.11 10 1.11c2.33 0 4.45.87 6.05 2.34-.68-.11-1.65.39-1.65 1.58 0 .74.45 1.36.9 2.1.35.61.55 1.36.55 2.46 0 1.49-1.4 5-1.4 5l-3.03-8.37c.54-.02.82-.17.82-.17.5-.05.44-1.25-.06-1.22 0 0-1.44.12-2.38.12-.87 0-2.33-.12-2.33-.12-.5-.03-.56 1.2-.06 1.22l.92.08 1.26 3.41zM17.41 10c.24-.64.74-1.87.43-4.25.7 1.29 1.05 2.71 1.05 4.25 0 3.29-1.73 6.24-4.4 7.78.97-2.59 1.94-5.2 2.92-7.78zM6.1 18.09C3.12 16.65 1.11 13.53 1.11 10c0-1.3.23-2.48.72-3.59C3.25 10.3 4.67 14.2 6.1 18.09zm4.03-6.63l2.58 6.98c-.86.29-1.76.45-2.71.45-.79 0-1.57-.11-2.29-.33.81-2.38 1.62-4.74 2.42-7.1z"></path>
+					</svg>
+				</div>
+			);
 		}
 
 		return (
@@ -338,6 +390,7 @@ class Login extends Component {
 		const {
 			domain,
 			isJetpack,
+			isGutenboarding,
 			privateSite,
 			twoFactorAuthType,
 			twoFactorEnabled,
@@ -346,6 +399,7 @@ class Login extends Component {
 			socialService,
 			socialServiceResponse,
 			disableAutoFocus,
+			locale,
 		} = this.props;
 
 		if ( twoFactorEnabled && twoFactorAuthType === 'webauthn' && this.state.isBrowserSupported ) {
@@ -367,6 +421,7 @@ class Login extends Component {
 					{ poller }
 					<VerificationCodeForm
 						isJetpack={ isJetpack }
+						isGutenboarding={ isGutenboarding }
 						onSuccess={ this.handleValid2FACode }
 						twoFactorAuthType={ twoFactorAuthType }
 					/>
@@ -378,7 +433,10 @@ class Login extends Component {
 			return (
 				<div>
 					{ poller }
-					<WaitingTwoFactorNotificationApproval isJetpack={ isJetpack } />
+					<WaitingTwoFactorNotificationApproval
+						isJetpack={ isJetpack }
+						isGutenboarding={ isGutenboarding }
+					/>
 				</div>
 			);
 		}
@@ -392,6 +450,11 @@ class Login extends Component {
 			);
 		}
 
+		if ( this.showContinueAsUser() ) {
+			// someone is already logged in, offer to proceed to the app without a new login
+			return <ContinueAsUser onChangeAccount={ this.handleContinueAsAnotherUser } />;
+		}
+
 		return (
 			<LoginForm
 				disableAutoFocus={ disableAutoFocus }
@@ -400,8 +463,15 @@ class Login extends Component {
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
+				isJetpack={ isJetpack }
+				isGutenboarding={ isGutenboarding }
+				locale={ locale }
 			/>
 		);
+	}
+
+	renderFooter() {
+		return ! this.showContinueAsUser() && this.props.footer;
 	}
 
 	render() {
@@ -415,6 +485,7 @@ class Login extends Component {
 				{ this.renderNotice() }
 
 				{ this.renderContent() }
+				{ this.renderFooter() }
 			</div>
 		);
 	}

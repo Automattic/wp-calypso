@@ -130,6 +130,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 		step( 'Can see correct post title in preview', async function() {
 			this.postPreviewComponent = await PostPreviewComponent.Expect( driver );
+
 			const postTitle = await this.postPreviewComponent.postTitle();
 			assert.strictEqual(
 				postTitle.toLowerCase(),
@@ -277,17 +278,24 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				);
 			} );
 
-			step( 'Can see the Jetpack blocks', async function() {
-				// Jetpack blocks are broken in IE11. See https://github.com/Automattic/jetpack/issues/14273
-				if ( dataHelper.getTargetType() === 'IE11' ) {
-					return this.skip();
-				}
+			step( 'Can see the Earn blocks', async function() {
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-				await gEditorComponent.openBlockInserterAndSearch( 'Jetpack' );
+				await gEditorComponent.openBlockInserterAndSearch( 'earn' );
 				assert.strictEqual(
-					await gEditorComponent.isBlockCategoryPresent( 'Jetpack' ),
+					await gEditorComponent.isBlockCategoryPresent( 'Earn' ),
 					true,
-					'Jetpack blocks are not present'
+					'Earn (Jetpack) blocks are not present'
+				);
+				await gEditorComponent.closeBlockInserter();
+			} );
+
+			step( 'Can see the Grow blocks', async function() {
+				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+				await gEditorComponent.openBlockInserterAndSearch( 'grow' );
+				assert.strictEqual(
+					await gEditorComponent.isBlockCategoryPresent( 'Grow' ),
+					true,
+					'Grow (Jetpack) blocks are not present'
 				);
 				await gEditorComponent.closeBlockInserter();
 			} );
@@ -1015,7 +1023,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		step( 'Can insert the payment button', async function() {
 			const blogPostTitle = 'Payment Button: ' + dataHelper.randomPhrase();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			const blockId = await gEditorComponent.addBlock( 'Simple Payments button' );
+			const blockId = await gEditorComponent.addBlock( 'Simple Payments' );
 
 			const gPaymentComponent = await SimplePaymentsBlockComponent.Expect( driver, blockId );
 			await gPaymentComponent.insertPaymentButtonDetails( paymentButtonDetails );
@@ -1206,7 +1214,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		step( 'Can log in', async function() {
 			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			await this.loginFlow.login();
-			return this.loginFlow.checkForDevDocsAndRedirectToReader();
+			return await this.loginFlow.checkForDevDocsAndRedirectToReader();
 		} );
 
 		step( 'Find a post to share (press this)', async function() {
@@ -1219,20 +1227,20 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 		step( 'Block Editor loads with shared content', async function() {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			await gEditorComponent.initEditor();
+			return await gEditorComponent.initEditor();
 		} );
 
 		step( 'Can publish and view content', async function() {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			await gEditorComponent.publish( { visit: true } );
+			return await gEditorComponent.publish( { visit: true } );
 		} );
 
 		step( 'Can see a post title and post content', async function() {
 			const viewPostPage = await ViewPostPage.Expect( driver );
 			const postTitle = await viewPostPage.postTitle();
 			const postContent = await viewPostPage.postContent();
-			assert.ok( postTitle.length > 0, 'Press This did not copy a post title!' );
-			assert.ok( postContent.length > 0, 'Press This did not copy any post content!' );
+			assert( postTitle.length > 0, 'Press This did not copy a post title!' );
+			return assert( postContent.length > 0, 'Press This did not copy any post content!' );
 		} );
 	} );
 

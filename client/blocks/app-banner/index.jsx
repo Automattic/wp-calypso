@@ -28,6 +28,7 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import {
 	ALLOWED_SECTIONS,
 	EDITOR,
+	GUTENBERG,
 	NOTES,
 	READER,
 	STATS,
@@ -135,6 +136,7 @@ export class AppBanner extends Component {
 	getBannerImage() {
 		switch ( this.props.currentSection ) {
 			case EDITOR:
+			case GUTENBERG:
 				return editorBannerImage;
 			case NOTES:
 				return notificationsBannerImage;
@@ -152,6 +154,7 @@ export class AppBanner extends Component {
 			//TODO: update when section deep links are available.
 			switch ( currentSection ) {
 				case EDITOR:
+				case GUTENBERG:
 					return 'intent://post/#Intent;scheme=wordpress;package=org.wordpress.android;end';
 				case NOTES:
 					return 'intent://notifications/#Intent;scheme=wordpress;package=org.wordpress.android;end';
@@ -240,6 +243,8 @@ export function buildDeepLinkFragment( currentRoute, currentSection ) {
 		switch ( currentSection ) {
 			case EDITOR:
 				return '/post';
+			case GUTENBERG:
+				return '/block-editor/post';
 			case NOTES:
 				return '/notifications';
 			case READER:

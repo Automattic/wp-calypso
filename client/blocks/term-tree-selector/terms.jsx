@@ -22,7 +22,7 @@ import {
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import NoResults from './no-results';
 import Search from './search';
 import { decodeEntities } from 'lib/formatting';
@@ -286,7 +286,7 @@ class TermTreeSelectorList extends Component {
 
 		if ( ! this.hasPerformedSearch ) {
 			this.hasPerformedSearch = true;
-			analytics.ga.recordEvent( this.props.analyticsPrefix, 'Performed Term Search' );
+			gaRecordEvent( this.props.analyticsPrefix, 'Performed Term Search' );
 		}
 
 		this.setState( { searchTerm } );

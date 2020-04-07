@@ -7,22 +7,24 @@ import debugFactory from 'debug';
 /**
  * Internal Dependencies
  */
-import { mc, ga, tracks } from 'lib/analytics';
+import { tracks } from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
+import { bumpStat, bumpStatWithPageView } from 'lib/analytics/mc';
 
 const debug = debugFactory( 'calypso:reader:stats' );
 
 export function recordAction( action ) {
 	debug( 'reader action', action );
-	mc.bumpStat( 'reader_actions', action );
+	bumpStat( 'reader_actions', action );
 }
 
 export function recordGaEvent( action, label, value ) {
 	debug( 'reader ga event', ...arguments );
-	ga.recordEvent( 'Reader', action, label, value );
+	gaRecordEvent( 'Reader', action, label, value );
 }
 
 export function recordPermalinkClick( source, post, eventProperties = {} ) {
-	mc.bumpStat( {
+	bumpStat( {
 		reader_actions: 'visited_post_permalink',
 		reader_permalink_source: source,
 	} );
@@ -210,12 +212,12 @@ export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {
 		params.priv = 1;
 	}
 	debug( 'reader page view for post', params );
-	mc.bumpStatWithPageView( params );
+	bumpStatWithPageView( params );
 }
 
 export function recordFollow( url, railcar, additionalProps = {} ) {
 	const source = additionalProps.source || getLocation( window.location.pathname );
-	mc.bumpStat( 'reader_follows', source );
+	bumpStat( 'reader_follows', source );
 	recordAction( 'followed_blog' );
 	recordGaEvent( 'Clicked Follow Blog', source );
 	recordTrack( 'calypso_reader_site_followed', {
@@ -230,7 +232,7 @@ export function recordFollow( url, railcar, additionalProps = {} ) {
 
 export function recordUnfollow( url, railcar, additionalProps = {} ) {
 	const source = getLocation( window.location.pathname );
-	mc.bumpStat( 'reader_unfollows', source );
+	bumpStat( 'reader_unfollows', source );
 	recordAction( 'unfollowed_blog' );
 	recordGaEvent( 'Clicked Unfollow Blog', source );
 	recordTrack( 'calypso_reader_site_unfollowed', {

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { compact, includes, isEmpty, startsWith } from 'lodash';
 import debugFactory from 'debug';
 import React from 'react';
@@ -16,9 +15,8 @@ import Upload from 'my-sites/themes/theme-upload';
 import trackScrollPage from 'lib/track-scroll-page';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 import { requestThemes, requestThemeFilters, setBackPath } from 'state/themes/actions';
-import { getThemesForQuery } from 'state/themes/selectors';
+import { getThemeFilters, getThemesForQuery } from 'state/themes/selectors';
 import { getAnalyticsData } from './helpers';
-import getThemeFilters from 'state/selectors/get-theme-filters';
 
 const debug = debugFactory( 'calypso:themes' );
 

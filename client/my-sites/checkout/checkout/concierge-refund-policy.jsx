@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import { REFUNDS } from 'lib/url/support';
 import Gridicon from 'components/gridicon';
 import { hasConciergeSession } from 'lib/cart-values/cart-items';
@@ -17,7 +16,7 @@ class ConciergeRefundPolicy extends React.Component {
 	static displayName = 'RegistrationRefundPolicy';
 
 	recordRefundsSupportClick = () => {
-		analytics.ga.recordEvent( 'Upgrades', 'Clicked Refund Support Link' );
+		gaRecordEvent( 'Upgrades', 'Clicked Refund Support Link' );
 	};
 
 	renderPolicy = () => {

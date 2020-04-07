@@ -11,7 +11,7 @@
   	height: 1px;
   	box-sizing: border-box;
   	background: var( --color-border-subtle );
-  	
+
   	@include breakpoint( '>660px' ) {
   		width: calc( 100% + 60px );
   		left: -30px;
@@ -461,6 +461,23 @@
 			flex-shrink: 0;
 			margin-top: 15px;
 		}
+	}
+
+	// Redirect Payment Box
+	// -----------------------------------
+	.redirect-payment-box, .wechat-payment-box {
+		 .checkout__payment-box-section {
+			 .checkout__checkout-field {
+				 padding: 0 15px 15px;
+			 }
+
+			 .checkout__country-payment-fields {
+				 .checkout__checkout-field {
+					 padding-left: 0;
+					 flex-basis: calc( 100% - 30px );
+				 }
+			 }
+		 }
 	}
 
 	// Credits Payment Box
@@ -999,6 +1016,15 @@
 			margin: -5px 0;
 		}
 	}
+
+	.checkout__ovo {
+		height: 35px;
+
+		@include breakpoint( '>480px' ) {
+			margin: -5px 0;
+		}
+	}
+
 	.select-dropdown__container {
 		.checkout__apple-pay {
 			margin: 0;
@@ -1035,13 +1061,13 @@
 	}
 }
 
-// Ebanx checkout fields
+// country-specific checkout fields
 // -----------------------------------
 .checkout__country-payment-fields {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	margin: 15px 0 0 -15px;
+	margin-top: 15px;
 	.checkout__checkout-field,
 	.checkout__form-state-field {
 		flex-basis: calc( 100% - 15px );
@@ -1193,4 +1219,27 @@
     margin: auto;
     max-width: 556px;
   }
+}
+
+.is-section-checkout.is-frankenflow {
+	.layout__content {
+		padding-top: 48px;
+	}
+	.navigation-link.button.back {
+		position: absolute;
+		top: 6px;
+		left: 11px;
+		padding: 0;
+	}
+	.checkout__site-created--gutenboarding {
+		display: flex;
+		flex-direction: column;
+		text-align: center;
+		margin-bottom: 60px;
+
+		.checkout__site-created-image {
+			height: 50px;
+			margin-bottom: 16px;
+		}
+	}
 }

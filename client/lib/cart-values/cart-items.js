@@ -900,6 +900,10 @@ export function getRenewalItemFromProduct( product, properties ) {
 		cartItem = unlimitedThemesItem();
 	}
 
+	if ( isJetpackProduct( product ) ) {
+		cartItem = jetpackProductItem( product.product_slug );
+	}
+
 	if ( isSpaceUpgrade( product ) ) {
 		cartItem = spaceUpgradeItem( product.product_slug );
 	}

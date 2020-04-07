@@ -5,7 +5,7 @@ import {
 	READER_SITE_BLOCK,
 	READER_SITE_BLOCKS_REQUEST,
 	READER_SITE_UNBLOCK,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 
 import 'state/data-layer/wpcom/me/block/sites/delete';
 import 'state/data-layer/wpcom/me/block/sites/new';

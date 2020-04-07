@@ -7,11 +7,11 @@ import React, { Component } from 'react';
 import deterministicStringify from 'fast-json-stable-stringify';
 import { omit } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'components/gridicon';
 import PeopleListItem from 'my-sites/people/people-list-item';
 import { Card, Button } from '@automattic/components';
 import classNames from 'classnames';
@@ -26,7 +26,7 @@ import EmptyContent from 'components/empty-content';
 import FollowersStore from 'lib/followers/store';
 import EmailFollowersStore from 'lib/email-followers/store';
 import accept from 'lib/accept';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import ListEnd from 'components/list-end';
 import { preventWidows } from 'lib/formatting';
 
@@ -68,15 +68,12 @@ const Followers = localize(
 			}
 
 			actions.fetchFollowers( Object.assign( this.props.fetchOptions, { page } ) );
-			analytics.ga.recordEvent( 'People', analyticsAction, 'page', page );
+			gaRecordEvent( 'People', analyticsAction, 'page', page );
 		};
 
 		removeFollower( follower ) {
 			const listType = 'email' === this.props.type ? 'Email Follower' : 'Follower';
-			analytics.ga.recordEvent(
-				'People',
-				'Clicked Remove Follower Button On' + listType + ' list'
-			);
+			gaRecordEvent( 'People', 'Clicked Remove Follower Button On' + listType + ' list' );
 			accept(
 				<div>
 					<p>
@@ -87,7 +84,7 @@ const Followers = localize(
 				</div>,
 				accepted => {
 					if ( accepted ) {
-						analytics.ga.recordEvent(
+						gaRecordEvent(
 							'People',
 							'Clicked Remove Button In Remove ' + listType + ' Confirmation'
 						);
@@ -96,7 +93,7 @@ const Followers = localize(
 							: FollowersActions
 						).removeFollower( this.props.site.ID, follower );
 					} else {
-						analytics.ga.recordEvent(
+						gaRecordEvent(
 							'People',
 							'Clicked Cancel Button In Remove ' + listType + ' Confirmation'
 						);

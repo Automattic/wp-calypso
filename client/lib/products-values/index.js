@@ -8,11 +8,12 @@ import { assign, difference, get, includes, isEmpty, pick } from 'lodash';
  */
 import { isGSuiteOrExtraLicenseProductSlug } from 'lib/gsuite';
 import {
-	JETPACK_BACKUP_PRODUCTS,
-	JETPACK_PRODUCTS_LIST,
 	getJetpackProductsDisplayNames,
 	getJetpackProductsTaglines,
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_PRODUCTS_LIST,
 } from './constants';
+import { PRODUCTS_LIST } from './products-list';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
@@ -230,6 +231,13 @@ export function isJetpackProduct( product ) {
 	assertValidProduct( product );
 
 	return isJetpackProductSlug( product.product_slug );
+}
+
+export function getProductFromSlug( productSlug ) {
+	if ( PRODUCTS_LIST[ productSlug ] ) {
+		return formatProduct( PRODUCTS_LIST[ productSlug ] );
+	}
+	return productSlug; // Consistent behavior with `getPlan`.
 }
 
 export function isMonthly( rawProduct ) {

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import creditcards from 'creditcards';
-import { capitalize, compact, isArray, isEmpty, mergeWith, union } from 'lodash';
+import { capitalize, compact, isArray, isEmpty, mergeWith, union, isString } from 'lodash';
 import i18n from 'i18n-calypso';
 import { isValidPostalCode } from 'lib/postal-code';
 
@@ -19,7 +19,6 @@ import {
 /**
  * Returns the credit card validation rule set
  *
- * @param {object} additionalFieldRules custom validation rules depending on jurisdiction or other variable
  * @returns {object} the ruleset
  */
 export function getCreditCardFieldRules() {
@@ -153,6 +152,8 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
 			);
 		case 'brazil-tef':
 			return tefPaymentFieldRules();
+		case 'id_wallet':
+			return countrySpecificFieldRules( 'ID' );
 		case 'netbanking':
 			return countrySpecificFieldRules( 'IN' );
 		case 'token':
@@ -168,7 +169,7 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
  * Returns arguments deep-merged into one object with any array values
  * concatentated and deduped
  *
- * @param {object}* rulesets Objects describing the rulesets to be combined
+ * @param {object} rulesets Objects describing the rulesets to be combined
  * @returns {object} The aggregated ruleset
  */
 export function mergeValidationRules( ...rulesets ) {
@@ -274,6 +275,18 @@ validators.validIndiaPan = {
 	},
 };
 
+validators.validIndonesiaNik = {
+	isValid( value ) {
+		const digitsOnly = isString( value ) ? value.replace( /[^0-9]/g, '' ) : '';
+		return digitsOnly.length === 16;
+	},
+	error: function( description ) {
+		return i18n.translate( '%(description)s is invalid', {
+			args: { description: capitalize( description ) },
+		} );
+	},
+};
+
 validators.validPostalCodeUS = {
 	isValid: value => isValidPostalCode( value, 'US' ),
 	error: function( description ) {
@@ -355,7 +368,7 @@ export function getCreditCardType( number ) {
 /**
  *
  * @param {string} field the name of the field
- * @param {value} value the value of the field
+ * @param {*} value the value of the field
  * @param {object} paymentDetails object containing fieldname/value keypairs
  * @returns {Array} array of errors found, if any
  */

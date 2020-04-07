@@ -8,12 +8,11 @@ import Gridicon from 'components/gridicon';
 import page from 'page';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
-const debug = debugFactory( 'calypso:stats:list-item' );
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import Emojify from 'components/emojify';
 import { withLocalizedMoment } from 'components/localized-moment';
 import Follow from './action-follow';
@@ -24,6 +23,8 @@ import titlecase from 'to-title-case';
 import { flagUrl } from 'lib/flags';
 import { recordTrack } from 'reader/stats';
 import { decodeEntities } from 'lib/formatting';
+
+const debug = debugFactory( 'calypso:stats:list-item' );
 
 class StatsListItem extends React.Component {
 	static displayName = 'StatsListItem';
@@ -119,7 +120,7 @@ class StatsListItem extends React.Component {
 			}
 
 			if ( gaEvent ) {
-				analytics.ga.recordEvent( 'Stats', gaEvent + ' in List' );
+				gaRecordEvent( 'Stats', gaEvent + ' in List' );
 			}
 		}
 	};

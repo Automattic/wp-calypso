@@ -8,11 +8,16 @@ import { useWpcomStore } from './hooks/wpcom-store';
 import { mockSetCartEndpoint, mockGetCartEndpointWith } from './mock/cart-endpoint';
 import FormFieldAnnotation from './components/form-field-annotation';
 import { getNonProductWPCOMCartItemTypes } from './lib/translate-cart';
+import { areDomainsInLineItems } from './hooks/has-domains';
 import {
 	WPCOMCartItem,
 	CheckoutCartItem,
 	prepareDomainContactDetails,
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	domainManagedContactDetails,
+	taxManagedContactDetails,
+	isCompleteAndValid,
+	areRequiredFieldsNotEmpty,
 } from './types';
 
 // Re-export the public API
@@ -29,4 +34,9 @@ export {
 	prepareDomainContactDetails,
 	getNonProductWPCOMCartItemTypes,
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	domainManagedContactDetails,
+	taxManagedContactDetails,
+	areDomainsInLineItems,
+	isCompleteAndValid,
+	areRequiredFieldsNotEmpty,
 };

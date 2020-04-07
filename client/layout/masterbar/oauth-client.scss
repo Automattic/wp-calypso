@@ -647,9 +647,8 @@
 	.login__social,
 	.two-factor-authentication__actions {
 		border-top: 1px solid #e6e6e6;
-		margin: 0 -16px;
 		padding-top: 44px;
-		width: calc( 100% + ( #{$woo-form-whitespace} * 2 ) );
+		text-align: center;
 
 		@include breakpoint( '>480px' ) {
 			margin: 0 -24px;

@@ -24,11 +24,10 @@ import {
 	READER_RECORD_FOLLOW,
 	READER_RECORD_UNFOLLOW,
 	READER_FOLLOWS_RECEIVE,
-	SERIALIZE,
-	DESERIALIZE,
 	READER_FOLLOW_ERROR,
 	READER_SITE_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'state/reader/action-types';
+import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 
 const exampleFollow = {
 	is_following: true,

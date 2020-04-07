@@ -59,7 +59,7 @@ import {
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'state/themes/action-types';
 import useNock from 'test/helpers/use-nock';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'

@@ -8,6 +8,7 @@
 		"declaration": true,
 		"declarationDir": "dist/types",
 		"outDir": "./dist/esm",
+		"rootDir": "src",
 
 		"strict": true,
 		"noImplicitAny": false,
@@ -24,9 +25,9 @@
 		"typeRoots": [ "../../node_modules/@types" ],
 		"types": [],
 
-		"incremental": true,
-		"tsBuildInfoFile": "../../.tsc-cache/composite-checkout-wpcom"
+		"composite": true,
+		"tsBuildInfoFile": "../../.tsc-cache/packages__composite-checkout-wpcom"
 	},
-	"include": [ "src/**/*" ],
+	"include": [ "src" ],
 	"exclude": [ "**/test/**/*", "**/docs/**/*" ]
 }

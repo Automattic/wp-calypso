@@ -5,29 +5,34 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
-import { find, findKey, flowRight as compose, includes, isEmpty, map } from 'lodash';
+import { find, findKey, filter, flowRight as compose, includes, isEmpty, map } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Internal dependencies
  */
+import { addQueryArgs } from 'lib/route';
+import ExternalLinkWithTracking from 'components/external-link/with-tracking';
 import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
 import ProductCard from 'components/product-card';
 import ProductCardAction from 'components/product-card/action';
 import ProductCardOptions from 'components/product-card/options';
 import ProductCardPromoNudge from 'components/product-card/promo-nudge';
-import QueryProductsList from 'components/data/query-products-list';
+import QuerySiteProducts from 'components/data/query-site-products';
 import QuerySitePurchases from 'components/data/query-site-purchases';
+import QueryProductsList from 'components/data/query-products-list';
 import ProductExpiration from 'components/product-expiration';
 import { extractProductSlugs, filterByProductSlugs } from './utils';
-import { getAvailableProductsList } from 'state/products-list/selectors';
+import { getAvailableProductsBySiteId } from 'state/sites/products/selectors';
+import { getAvailableProductsList, isProductsListFetching } from 'state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePlanSlug, isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { getSitePurchases, isFetchingSitePurchases } from 'state/purchases/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getPlan, planHasFeature } from 'lib/plans';
+import { isExpiring } from 'lib/purchases';
 import { isRequestingPlans } from 'state/plans/selectors';
 import { TERM_ANNUALLY, TERM_MONTHLY } from 'lib/plans/constants';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -52,7 +57,12 @@ export class ProductSelector extends Component {
 				optionShortNames: PropTypes.objectOf(
 					PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
 				),
+				optionShortNamesCallback: PropTypes.func,
+				optionActionButtonNames: PropTypes.objectOf(
+					PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] )
+				),
 				optionsLabel: PropTypes.string,
+				optionsLabelCallback: PropTypes.func,
 			} )
 		).isRequired,
 		productPriceMatrix: PropTypes.shape( {
@@ -60,6 +70,7 @@ export class ProductSelector extends Component {
 			ratio: PropTypes.number,
 		} ),
 		siteId: PropTypes.number,
+		onUpgradeClick: PropTypes.func,
 
 		// Connected props
 		availableProducts: PropTypes.object,
@@ -145,22 +156,32 @@ export class ProductSelector extends Component {
 		);
 	}
 
-	getProductSlugByCurrentPlan() {
+	getProductSlugsForCurrentPlan() {
 		const { currentPlanSlug, productSlugs } = this.props;
+		return ! currentPlanSlug
+			? null
+			: filter( productSlugs, productSlug => planHasFeature( currentPlanSlug, productSlug ) );
+	}
 
-		if ( ! currentPlanSlug ) {
-			return null;
-		}
+	currentPlanIncludesProduct( product ) {
+		const { currentPlanSlug } = this.props;
+		const productSlugs = this.getProductSlugsForCurrentPlan();
+		return ! currentPlanSlug || ! productSlugs
+			? false
+			: productSlugs.some( slug => product.slugs.includes( slug ) );
+	}
 
-		return find( productSlugs, productSlug => planHasFeature( currentPlanSlug, productSlug ) );
+	getProductSlugByCurrentPlan( product ) {
+		return ! this.props.currentPlanSlug
+			? null
+			: find( product.slugs, slug => planHasFeature( this.props.currentPlanSlug, slug ) );
 	}
 
 	getSubtitleByProduct( product ) {
 		const { currentPlanSlug, moment, selectedSiteSlug, translate } = this.props;
 		const currentPlan = currentPlanSlug && getPlan( currentPlanSlug );
-		const currentPlanIncludesProduct = !! this.getProductSlugByCurrentPlan();
 
-		if ( currentPlan && currentPlanIncludesProduct ) {
+		if ( currentPlan && this.currentPlanIncludesProduct( product ) ) {
 			return translate( 'Included in your {{planLink}}%(planName)s plan{{/planLink}}', {
 				args: {
 					planName: currentPlan.getTitle(),
@@ -181,9 +202,13 @@ export class ProductSelector extends Component {
 
 		const expiryMoment = purchase.expiryDate ? moment( purchase.expiryDate ) : null;
 
+		const renewDateMoment =
+			! isExpiring( purchase ) && purchase.renewDate ? moment( purchase.renewDate ) : null;
+
 		return (
 			<ProductExpiration
 				expiryDateMoment={ expiryMoment }
+				renewDateMoment={ renewDateMoment }
 				purchaseDateMoment={ subscribedMoment }
 				isRefundable={ purchase.isRefundable }
 			/>
@@ -200,13 +225,21 @@ export class ProductSelector extends Component {
 		}
 
 		// Description, obtained from a product that's included in a purchased plan
-		const planProductSlug = this.getProductSlugByCurrentPlan();
+		const planProductSlug = this.getProductSlugByCurrentPlan( product );
 		if ( planProductSlug && optionDescriptions && optionDescriptions[ planProductSlug ] ) {
 			return optionDescriptions[ planProductSlug ];
 		}
 
 		// Default product description.
 		return description;
+	}
+
+	getActionButtonName( product, productSlug ) {
+		if ( product.optionActionButtonNames && product.optionActionButtonNames[ productSlug ] ) {
+			return product.optionActionButtonNames[ productSlug ];
+		}
+
+		return this.getProductName( product, productSlug );
 	}
 
 	getProductName( product, productSlug ) {
@@ -221,6 +254,13 @@ export class ProductSelector extends Component {
 
 		const productObject = storeProducts[ productSlug ];
 
+		if ( product.optionShortNamesCallback ) {
+			const productName = product.optionShortNamesCallback( productObject );
+			if ( productName ) {
+				return productName;
+			}
+		}
+
 		return productObject.product_name;
 	}
 
@@ -234,7 +274,7 @@ export class ProductSelector extends Component {
 		}
 
 		// Product display name, obtained from a product that's included in a purchased plan
-		const planProductSlug = this.getProductSlugByCurrentPlan();
+		const planProductSlug = this.getProductSlugByCurrentPlan( product );
 		if ( planProductSlug && optionDisplayNames && optionDisplayNames[ planProductSlug ] ) {
 			return optionDisplayNames[ planProductSlug ];
 		}
@@ -262,7 +302,7 @@ export class ProductSelector extends Component {
 	}
 
 	handleCheckoutForProduct = productObject => {
-		const { currentPlanSlug, intervalType, selectedSiteSlug } = this.props;
+		const { currentPlanSlug, intervalType, selectedSiteSlug, onUpgradeClick } = this.props;
 
 		return () => {
 			this.props.recordTracksEvent( 'calypso_plan_features_upgrade_click', {
@@ -270,6 +310,10 @@ export class ProductSelector extends Component {
 				product_name: productObject.product_slug,
 				billing_cycle: intervalType,
 			} );
+			if ( onUpgradeClick ) {
+				onUpgradeClick( productObject );
+				return;
+			}
 			page( '/checkout/' + selectedSiteSlug + '/' + productObject.product_slug );
 		};
 	};
@@ -314,23 +358,22 @@ export class ProductSelector extends Component {
 				intro={ this.getIntervalDiscount( selectedProductSlug ) }
 				label={ translate( 'Get %(productName)s', {
 					args: {
-						productName: this.getProductName( product, productObject.product_slug ),
+						productName: this.getActionButtonName( product, productObject.product_slug ),
 					},
 				} ) }
 			/>
 		);
 	}
 
-	renderManageButton( purchase ) {
-		const { translate } = this.props;
-		const currentPlanIncludesProduct = !! this.getProductSlugByCurrentPlan();
-
+	renderManageButton( product, purchase ) {
 		return (
 			<ProductCardAction
 				onClick={ this.handleManagePurchase( purchase.productSlug ) }
 				href={ managePurchase( purchase.domain, purchase.id ) }
 				label={
-					! currentPlanIncludesProduct ? translate( 'Manage Product' ) : translate( 'Manage Plan' )
+					this.currentPlanIncludesProduct( product )
+						? this.props.translate( 'Manage Plan' )
+						: this.props.translate( 'Manage Product' )
 				}
 				primary={ false }
 			/>
@@ -463,6 +506,7 @@ export class ProductSelector extends Component {
 			fetchingSitePurchases,
 			intervalType,
 			products,
+			selectedSiteSlug,
 			storeProducts,
 			translate,
 		} = this.props;
@@ -480,14 +524,19 @@ export class ProductSelector extends Component {
 			} );
 		}
 
-		const currentPlanIncludesProduct = !! this.getProductSlugByCurrentPlan();
 		const currentPlanInSelectedTimeframe = this.isCurrentPlanInSelectedTimeframe();
 
 		return map( products, product => {
 			const stateKey = this.getStateKey( product.id, intervalType );
+			const selectedSlug = this.state[ stateKey ];
+			const productObject = storeProducts[ selectedSlug ];
+
+			const linkUrl = selectedSiteSlug
+				? addQueryArgs( { site: selectedSiteSlug }, product.link.url )
+				: product.link.url;
 
 			let purchase, isCurrent;
-			if ( currentPlanIncludesProduct ) {
+			if ( this.currentPlanIncludesProduct( product ) ) {
 				purchase = this.getPurchaseByCurrentPlan();
 				isCurrent = currentPlanInSelectedTimeframe;
 			} else {
@@ -497,36 +546,64 @@ export class ProductSelector extends Component {
 
 			const hasProductPurchase = !! purchase;
 
+			let optionsLabel;
+			if ( product.optionsLabel ) {
+				optionsLabel = product.optionsLabel;
+			} else if ( product.optionsLabelCallback ) {
+				optionsLabel = product.optionsLabelCallback( productObject );
+			}
+
 			return (
 				<ProductCard
 					key={ product.id }
 					title={ this.getProductDisplayName( product ) }
-					description={ this.getDescriptionByProduct( product ) }
+					description={
+						<Fragment>
+							{ this.getDescriptionByProduct( product ) }
+							{ product.link && ' ' }
+							{ product.link && (
+								<ExternalLinkWithTracking
+									href={ linkUrl }
+									tracksEventName="calypso_plan_link_click"
+									tracksEventProps={ {
+										link_location: product.link.props.location,
+										link_slug: product.link.props.slug,
+									} }
+									icon
+								>
+									{ product.link.label }
+								</ExternalLinkWithTracking>
+							) }
+						</Fragment>
+					}
 					purchase={ purchase }
 					subtitle={ this.getSubtitleByProduct( product ) }
 				>
-					{ hasProductPurchase && isCurrent && this.renderManageButton( purchase ) }
+					{ hasProductPurchase && isCurrent && this.renderManageButton( product, purchase ) }
 					{ ! hasProductPurchase && ! isCurrent && (
 						<Fragment>
-							<ProductCardPromoNudge
-								badgeText={ translate( 'Up to %(discount)s off!', {
-									args: { discount: '70%' },
-								} ) }
-								text={ translate(
-									'Hurry, these are {{strong}}Limited time introductory prices!{{/strong}}',
-									{
-										components: { strong: <strong /> },
-									}
-								) }
-							/>
+							{ product.hasPromo && (
+								<ProductCardPromoNudge
+									badgeText={ translate( 'Up to %(discount)s off!', {
+										args: { discount: '70%' },
+									} ) }
+									text={ translate(
+										'Hurry, these are {{strong}}Limited time introductory prices!{{/strong}}',
+										{
+											components: { strong: <strong /> },
+										}
+									) }
+								/>
+							) }
 
 							<ProductCardOptions
-								optionsLabel={ product.optionsLabel }
+								optionsLabel={ optionsLabel }
 								options={ this.getProductOptions( product ) }
-								selectedSlug={ this.state[ stateKey ] }
+								selectedSlug={ selectedSlug }
 								handleSelect={ productSlug =>
 									this.handleProductOptionSelect( stateKey, productSlug, product.id )
 								}
+								forceRadiosEvenIfOnlyOneOption={ !! product.forceRadios }
 							/>
 
 							{ this.renderCheckoutButton( product ) }
@@ -538,13 +615,16 @@ export class ProductSelector extends Component {
 	}
 
 	render() {
-		const { selectedSiteId } = this.props;
+		const { selectedSiteId, isConnectStore } = this.props;
 
 		return (
 			<div className="product-selector">
-				<QueryProductsList />
-				<QuerySitePurchases siteId={ selectedSiteId } />
-
+				<QuerySiteProducts siteId={ selectedSiteId } />
+				{ isConnectStore ? (
+					<QueryProductsList />
+				) : (
+					<QuerySitePurchases siteId={ selectedSiteId } />
+				) }
 				{ this.renderProducts() }
 			</div>
 		);
@@ -552,23 +632,34 @@ export class ProductSelector extends Component {
 }
 
 const connectComponent = connect(
-	( state, { products, siteId } ) => {
+	( state, { products, siteId, basePlansPath } ) => {
 		const selectedSiteId = siteId || getSelectedSiteId( state );
 		const productSlugs = extractProductSlugs( products );
-		const availableProducts = getAvailableProductsList( state );
+
+		const isConnectStore = basePlansPath && '/jetpack/connect/store' === basePlansPath;
+		const availableProducts = isConnectStore
+			? getAvailableProductsList( state )
+			: getAvailableProductsBySiteId( state, selectedSiteId ).data;
+
+		const isFetchingPurchases = isConnectStore
+			? isProductsListFetching( state )
+			: isFetchingSitePurchases( state );
 
 		return {
+			isConnectStore,
 			availableProducts,
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
 			fetchingPlans: isRequestingPlans( state ),
 			fetchingSitePlans: isRequestingSitePlans( state ),
-			fetchingSitePurchases: isFetchingSitePurchases( state ),
+			fetchingSitePurchases: isFetchingPurchases,
 			productSlugs,
 			purchases: getSitePurchases( state, selectedSiteId ),
 			selectedSiteId,
 			selectedSiteSlug: getSiteSlug( state, selectedSiteId ),
-			storeProducts: filterByProductSlugs( availableProducts, productSlugs ),
+			storeProducts: isEmpty( availableProducts )
+				? {}
+				: filterByProductSlugs( availableProducts, productSlugs ),
 		};
 	},
 	{

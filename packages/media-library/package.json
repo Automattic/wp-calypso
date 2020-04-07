@@ -20,13 +20,12 @@
 	},
 	"files": [
 		"dist",
-		"types",
 		"src"
 	],
-	"types": "types",
+	"types": "dist/types",
 	"dependencies": {},
 	"scripts": {
-		"clean": "npx rimraf dist types",
+		"clean": "npx rimraf dist types \"../../.tsc-cache/packages__media-library*\"",
 		"prepublish": "npm run clean",
 		"prepare": "transpile && tsc && copy-assets"
 	}

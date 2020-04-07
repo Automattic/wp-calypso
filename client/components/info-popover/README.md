@@ -40,7 +40,9 @@ Also reqires the `gaEventCategory` attribute.
 Turns into this even when opened:
 
 ```js
-analytics.ga.recordEvent( gaEventCategory, 'InfoPopover: ' + popoverName + 'Opened' );
+import { gaRecordEvent } from 'lib/analytics/ga';
+
+gaRecordEvent( gaEventCategory, 'InfoPopover: ' + popoverName + 'Opened' );
 ```
 
 #### `ignoreContext`

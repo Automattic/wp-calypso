@@ -78,6 +78,7 @@
 }
 
 input[type='text'].sftp-card__copy-input {
+	font-family: $monospace;
 	flex: 1 1 0;
 	border: none;
 	min-width: 0;

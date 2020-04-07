@@ -12,7 +12,7 @@ import {
 	READER_TAG_IMAGES_REQUEST_SUCCESS,
 	READER_TAG_IMAGES_REQUEST_FAILURE,
 	READER_TAG_IMAGES_RECEIVE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 
 import 'state/reader/init';
 

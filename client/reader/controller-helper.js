@@ -8,15 +8,14 @@ import moment from 'moment';
  * Internal Dependencies
  */
 import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
+import { bumpStat } from 'lib/analytics/mc';
 import { recordTrack } from 'reader/stats';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 
 export function trackPageLoad( path, title, readerView ) {
 	analytics.pageView.record( path, title );
-	analytics.mc.bumpStat(
-		'reader_views',
-		readerView === 'full_post' ? readerView : readerView + '_load'
-	);
+	bumpStat( 'reader_views', readerView === 'full_post' ? readerView : readerView + '_load' );
 }
 
 export function getStartDate( context ) {
@@ -29,22 +28,22 @@ export function getStartDate( context ) {
 }
 
 export function trackScrollPage( path, title, category, readerView, pageNum ) {
-	analytics.ga.recordEvent( category, 'Loaded Next Page', 'page', pageNum );
+	gaRecordEvent( category, 'Loaded Next Page', 'page', pageNum );
 	recordTrack( 'calypso_reader_infinite_scroll_performed', {
 		path: path,
 		page: pageNum,
 		section: readerView,
 	} );
 	analytics.pageView.record( path, title );
-	analytics.mc.bumpStat( {
+	bumpStat( {
 		newdash_pageviews: 'scroll',
 		reader_views: readerView + '_scroll',
 	} );
 }
 
 export function trackUpdatesLoaded( key ) {
-	analytics.mc.bumpStat( 'reader_views', key + '_load_new' );
-	analytics.ga.recordEvent( 'Reader', 'Clicked Load New Posts', key );
+	bumpStat( 'reader_views', key + '_load_new' );
+	gaRecordEvent( 'Reader', 'Clicked Load New Posts', key );
 	recordTrack( 'calypso_reader_load_new_posts', {
 		section: key,
 	} );

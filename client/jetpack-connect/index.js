@@ -25,7 +25,7 @@ export default function() {
 	const locale = getLanguageRouteParam( 'locale' );
 
 	page(
-		'/jetpack/connect/:type(personal|premium|pro)/:interval(yearly|monthly)?',
+		'/jetpack/connect/:type(personal|premium|pro|backup|realtimebackup|jetpack_search)/:interval(yearly|monthly)?',
 		controller.persistMobileAppFlow,
 		controller.setMasterbar,
 		controller.connect,
@@ -113,30 +113,6 @@ export default function() {
 		'/jetpack/connect/plans/:interval(yearly|monthly)?/:site',
 		siteSelection,
 		controller.plansSelection,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/jetpack/connect/user-type/:site?',
-		siteSelection,
-		controller.userType,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/jetpack/connect/site-type/:site?',
-		siteSelection,
-		controller.siteType,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/jetpack/connect/site-topic/:site?',
-		siteSelection,
-		controller.siteTopic,
 		makeLayout,
 		clientRender
 	);

@@ -18,23 +18,11 @@
 # Client initialization
 /client/boot @Automattic/team-calypso
 
-# Client blocks
-/client/blocks/inline-help @Automattic/zelda
-
-# Client state
-/client/state/signup @Automattic/zelda
-
-# Client components
-/client/components/site-verticals-suggestion-search @Automattic/zelda
-
 # Client framework parts
 /client/config @Automattic/team-calypso
 /client/controller @Automattic/team-calypso
 /client/document @Automattic/team-calypso
 /client/layout @Automattic/team-calypso
-
-# Client sites
-/client/my-sites/checklist @Automattic/zelda
 
 # Comments management
 /client/my-sites/comment* @Automattic/serenity
@@ -113,9 +101,6 @@
 # Server infrastructure
 /server @Automattic/team-calypso
 
-# Signup
-/client/signup @Automattic/zelda
-
 # Test infrastructure
 /test @Automattic/team-calypso
 
@@ -130,6 +115,10 @@
 /apps/full-site-editing/full-site-editing-plugin/posts-list-block @Automattic/ajax
 /apps/full-site-editing/full-site-editing-plugin/starter-page-templates @Automattic/ajax
 /apps/full-site-editing/full-site-editing-plugin/global-styles @Automattic/cylon @nosolosw
+
+# FSE Workflow Files
+/.github/workflows/full-site-editing-plugin.yml @Automattic/cylon
+/.github/workflows/send-calypso-app-build-trigger.sh @Automattic/cylon
 
 # WPcom Block Editor
 /apps/wpcom-block-editor @Automattic/cylon @Automattic/ajax

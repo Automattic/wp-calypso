@@ -6,9 +6,10 @@
 		"checkJs": false,
 		"jsx": "react",
 		"declaration": true,
-		"declarationDir": "./types",
+		"declarationDir": "dist/types",
 		"emitDeclarationOnly": true,
 		"isolatedModules": true,
+		"rootDir": "src",
 
 		"strict": true,
 		"noUnusedLocals": true,
@@ -22,8 +23,10 @@
 		"forceConsistentCasingInFileNames": true,
 
 		"typeRoots": [ "../../node_modules/@types" ],
-		// "types": [],
-		"lib": [ "ESNext", "DOM" ]
+		"lib": [ "ESNext", "DOM" ],
+
+		"composite": true,
+		"tsBuildInfoFile": "../../.tsc-cache/packages__media-library"
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]

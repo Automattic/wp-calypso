@@ -18,7 +18,6 @@ import actions from 'lib/plugins/actions';
 jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'lib/wp', () => require( './mocks/wpcom' ) );
 jest.mock( 'lib/analytics', () => ( {
-	mc: { bumpStat: () => {} },
 	tracks: { recordEvent: () => {} },
 } ) );
 

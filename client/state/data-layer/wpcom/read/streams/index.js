@@ -9,7 +9,7 @@ import { random, map, includes, get, noop } from 'lodash';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import warn from 'lib/warn';
-import { READER_STREAMS_PAGE_REQUEST } from 'state/action-types';
+import { READER_STREAMS_PAGE_REQUEST } from 'state/reader/action-types';
 import { receivePage, receiveUpdates } from 'state/reader/streams/actions';
 import { receivePosts } from 'state/reader/posts/actions';
 import { keyForPost } from 'reader/post-key';

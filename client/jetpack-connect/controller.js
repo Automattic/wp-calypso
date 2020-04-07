@@ -16,9 +16,6 @@ import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
 import JetpackNewSite from './jetpack-new-site/index';
 import JetpackSignup from './signup';
-import JetpackUserType from './user-type/index';
-import JetpackSiteTopic from './site-topic';
-import JetpackSiteType from './site-type';
 import JetpackSsoForm from './sso';
 import NoDirectAccessError from './no-direct-access-error';
 import OrgCredentialsForm from './remote-credentials';
@@ -43,6 +40,13 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 } from 'lib/plans/constants';
 
+import {
+	PRODUCT_JETPACK_BACKUP_DAILY,
+	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_REALTIME,
+	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+} from 'lib/products-values/constants';
+
 /**
  * Module variables
  */
@@ -62,11 +66,15 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 			personal: PLAN_JETPACK_PERSONAL,
 			premium: PLAN_JETPACK_PREMIUM,
 			pro: PLAN_JETPACK_BUSINESS,
+			realtimebackup: PRODUCT_JETPACK_BACKUP_REALTIME,
+			backup: PRODUCT_JETPACK_BACKUP_DAILY,
 		},
 		monthly: {
 			personal: PLAN_JETPACK_PERSONAL_MONTHLY,
 			premium: PLAN_JETPACK_PREMIUM_MONTHLY,
 			pro: PLAN_JETPACK_BUSINESS_MONTHLY,
+			realtimebackup: PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+			backup: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 		},
 	};
 
@@ -118,9 +126,6 @@ export function connect( context, next ) {
 	const { path, pathname, params, query } = context;
 	const { type = false, interval } = params;
 	const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
-
-	debug( 'entered connect flow with params %o', params );
-
 	const planSlug = getPlanSlugFromFlowType( type, interval );
 
 	// Not clearing the plan here, because other flows can set the cookie before arriving here.
@@ -138,6 +143,7 @@ export function connect( context, next ) {
 			path={ path }
 			type={ type }
 			url={ query.url }
+			forceRemoteInstall={ query.forceInstall }
 		/>
 	);
 	next();
@@ -265,30 +271,6 @@ export function plansSelection( context, next ) {
 			queryRedirect={ context.query.redirect }
 		/>
 	);
-	next();
-}
-
-export function userType( context, next ) {
-	analytics.pageView.record( 'jetpack/connect/user-type', 'Jetpack Site User Type Category' );
-
-	context.primary = <JetpackUserType />;
-
-	next();
-}
-
-export function siteType( context, next ) {
-	analytics.pageView.record( 'jetpack/connect/site-type', 'Jetpack Site Type Selection' );
-
-	context.primary = <JetpackSiteType />;
-
-	next();
-}
-
-export function siteTopic( context, next ) {
-	analytics.pageView.record( 'jetpack/connect/site-topic', 'Jetpack Site Topic Selection' );
-
-	context.primary = <JetpackSiteTopic />;
-
 	next();
 }
 

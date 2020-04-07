@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
@@ -22,7 +21,8 @@ import { isRequestingSitePost } from 'state/posts/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getSectionName } from 'state/ui/selectors';
 import { decodeEntities } from 'lib/formatting';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
+import { bumpStat } from 'lib/analytics/mc';
 import QueryPosts from 'components/data/query-posts';
 import SiteIcon from 'blocks/site-icon';
 
@@ -51,8 +51,8 @@ class ResumeEditing extends React.Component {
 	}
 
 	trackAnalytics = () => {
-		analytics.ga.recordEvent( 'Master Bar', 'Resumed Editing' );
-		analytics.mc.bumpStat( 'calypso_edit_via', 'masterbar_resume_editing' );
+		gaRecordEvent( 'Master Bar', 'Resumed Editing' );
+		bumpStat( 'calypso_edit_via', 'masterbar_resume_editing' );
 	};
 
 	render() {

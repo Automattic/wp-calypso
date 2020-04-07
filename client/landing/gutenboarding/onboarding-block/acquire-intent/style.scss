@@ -1,0 +1,116 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+@import '../../mixins';
+@import '../../variables.scss';
+
+$acquire-intent-transition-duration: 200ms;
+$acquire-intent-transition-algorithm: ease-in-out;
+
+.acquire-intent {
+	@include onboarding-font-recoleta;
+	background-color: var( --contrastColor );
+	color: var( --mainColor );
+	font-size: 64px;
+	tab-size: 4;
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	min-height: calc( 100vh - #{$gutenboarding-header-height} );
+	padding: 20px;
+	transition: color $acquire-intent-transition-duration
+			$acquire-intent-transition-algorithm,
+		background-color $acquire-intent-transition-duration
+			$acquire-intent-transition-algorithm;
+
+	@include break-small {
+		display: flex;
+		align-items: center;
+		padding: 0 120px;
+	}
+
+	@include break-large {
+		padding: 12px 170px 0;
+	}
+}
+
+.acquire-intent__footer {
+	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
+
+	&--hidden {
+		// use this to fade-in the footer; since the buttons are disabled we don't need to hide them
+		opacity: 0;
+	}
+}
+
+.madlib__input {
+	@include onboarding-font-recoleta;
+	background: transparent;
+	border: none;
+	font-size: inherit;
+	line-height: 1em;
+	height: 1.01em;
+	padding: 0;
+
+	color: var( --mainColor );
+	border-bottom: 2px solid var( --mainColor );
+
+	transition: border-bottom $acquire-intent-transition-duration
+			$acquire-intent-transition-algorithm,
+		color $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
+
+	&:focus {
+		outline: none;
+	}
+
+	// TODO focus for accessibility?
+	// .accessible-focus &:focus {
+	// 	outline: 2px solid var( --highlightColor );
+	// }
+}
+
+// Themed core button component
+.components-button.is-primary.acquire-intent__question-skip:not( :disabled ):not( [aria-disabled='true'] ) {
+	background: var( --mainColor );
+	border-color: var( --mainColor );
+	border-radius: 4px;
+	box-shadow: none;
+	color: var( --contrastColor );
+	font-size: 14px;
+	font-weight: 500;
+	letter-spacing: 0;
+	padding: 20px 32px;
+	// @TODO: work out hover-state animations
+	transition: background $acquire-intent-transition-duration
+			$acquire-intent-transition-algorithm,
+		border-color $acquire-intent-transition-duration
+			$acquire-intent-transition-algorithm,
+		color $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
+
+	&:active,
+	&:hover,
+	&:focus {
+		background: var( --highlightColor );
+		border-color: var( --highlightColor );
+		color: var( --contrastColor );
+		outline-color: transparent;
+		box-shadow: none;
+	}
+}
+
+.site-title {
+	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
+
+	&--without-value {
+		.madlib__input {
+			width: 200px;
+			display: inline-block;
+			vertical-align: middle;
+			border: none;
+		}
+	}
+
+	&--hidden {
+		visibility: hidden;
+		opacity: 0;
+	}
+}

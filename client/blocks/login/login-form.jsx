@@ -2,7 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { capitalize, defer, includes, get } from 'lodash';
+import { capitalize, defer, includes, get, startsWith } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
@@ -77,6 +77,9 @@ export class LoginForm extends Component {
 		socialServiceResponse: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		userEmail: PropTypes.string,
+		isJetpack: PropTypes.bool,
+		isGutenboarding: PropTypes.bool,
+		locale: PropTypes.string,
 	};
 
 	state = {
@@ -110,7 +113,7 @@ export class LoginForm extends Component {
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { disableAutoFocus } = this.props;
+		const { disableAutoFocus, isJetpack, isGutenboarding } = this.props;
 
 		if (
 			this.props.socialAccountIsLinking !== nextProps.socialAccountIsLinking &&
@@ -136,7 +139,7 @@ export class LoginForm extends Component {
 				loginFormFlow: true,
 			} );
 
-			page( login( { isNative: true, twoFactorAuthType: 'link' } ) );
+			page( login( { isNative: true, twoFactorAuthType: 'link', isJetpack, isGutenboarding } ) );
 		}
 	}
 
@@ -419,12 +422,45 @@ export class LoginForm extends Component {
 			requestError,
 			socialAccountIsLinking: linkingSocialUser,
 			isJetpackWooCommerceFlow,
+			isGutenboarding,
 			wccomFrom,
+			currentRoute,
+			currentQuery,
+			pathname,
+			locale,
 		} = this.props;
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 
+		const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
+
 		let signupUrl = config( 'signup_url' );
+		const signupFlow = get( currentQuery, 'signup_flow' );
+
+		// copied from login-links.jsx
+		if (
+			// Match locales like `/log-in/jetpack/es`
+			startsWith( currentRoute, '/log-in/jetpack' )
+		) {
+			// Basic validation that we're in a valid Jetpack Authorization flow
+			if (
+				includes( get( currentQuery, 'redirect_to' ), '/jetpack/connect/authorize' ) &&
+				includes( get( currentQuery, 'redirect_to' ), '_wp_nonce' )
+			) {
+				/**
+				 * `log-in/jetpack/:locale` is reached as part of the Jetpack connection flow. In
+				 * this case, the redirect_to will handle signups as part of the flow. Use the
+				 * `redirect_to` parameter directly for signup.
+				 */
+				signupUrl = currentQuery.redirect_to;
+			} else {
+				signupUrl = '/jetpack/new';
+			}
+		} else if ( '/jetpack-connect' === pathname ) {
+			signupUrl = '/jetpack/new';
+		} else if ( signupFlow ) {
+			signupUrl += '/' + signupFlow;
+		}
 
 		if ( isOauthLogin && config.isEnabled( 'signup/wpcc' ) ) {
 			const oauth2Flow = isCrowdsignalOAuth2Client( oauth2Client ) ? 'crowdsignal' : 'wpcc';
@@ -434,6 +470,10 @@ export class LoginForm extends Component {
 			};
 
 			signupUrl = `/start/${ oauth2Flow }?${ stringify( oauth2Params ) }`;
+		}
+
+		if ( isGutenboarding ) {
+			signupUrl = '/gutenboarding' + langFragment;
 		}
 
 		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
@@ -509,7 +549,17 @@ export class LoginForm extends Component {
 						/>
 
 						{ requestError && requestError.field === 'usernameOrEmail' && (
-							<FormInputValidation isError text={ requestError.message } />
+							<FormInputValidation isError text={ requestError.message }>
+								{ 'unknown_user' === requestError.code &&
+									this.props.translate(
+										' Would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
+										{
+											components: {
+												newAccountLink: <a href={ signupUrl } />,
+											},
+										}
+									) }
+							</FormInputValidation>
 						) }
 
 						<div
@@ -626,6 +676,7 @@ export default connect(
 				getInitialQueryArguments( state ).email_address ||
 				getCurrentQueryArguments( state ).email_address,
 			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+			currentQuery: getCurrentQueryArguments( state ),
 		};
 	},
 	{

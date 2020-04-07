@@ -70,7 +70,7 @@ const DomainRegistrationDetails = ( {
 				icon={ <img alt="" src="/calypso/images/upgrades/wait-time.svg" /> }
 				title={ i18n.translate( 'When will it be ready?', { comment: '"it" refers to a domain' } ) }
 				description={ i18n.translate(
-					'Your domain should start working immediately, but may be unreliable during the first 72 hours.'
+					'Your domain should start working immediately, but may be unreliable during the first 30 minutes.'
 				) }
 				buttonText={ i18n.translate( 'Learn more about your domain' ) }
 				href={ DOMAIN_WAITING }

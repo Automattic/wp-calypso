@@ -10,7 +10,7 @@ import {
 	READER_FEED_REQUEST,
 	READER_FEED_REQUEST_SUCCESS,
 	READER_FEED_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 
 describe( 'actions', () => {
 	describe( '#requestFeed', () => {

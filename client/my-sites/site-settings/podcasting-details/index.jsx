@@ -34,7 +34,7 @@ import PodcastingPublishNotice from './publish-notice';
 import PodcastingSupportLink from './support-link';
 import podcastingTopics from './topics';
 import TermTreeSelector from 'blocks/term-tree-selector';
-import UpgradeNudge from 'blocks/upgrade-nudge';
+import UpsellNudge from 'blocks/upsell-nudge';
 
 /**
  * Selectors, actions, and query components
@@ -42,6 +42,7 @@ import UpgradeNudge from 'blocks/upgrade-nudge';
 import QueryTerms from 'components/data/query-terms';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isPrivateSite from 'state/selectors/is-private-site';
+import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -233,12 +234,17 @@ class PodcastingDetails extends Component {
 						</h1>
 					</HeaderCake>
 					{ ! error && plansDataLoaded && (
-						<UpgradeNudge
+						<UpsellNudge
 							plan={ PLAN_PERSONAL }
 							title={ translate( 'Upload Audio with WordPress.com Personal' ) }
-							message={ translate( 'Embed podcast episodes directly from your media library.' ) }
+							description={ translate(
+								'Embed podcast episodes directly from your media library.'
+							) }
 							feature={ FEATURE_AUDIO_UPLOADS }
 							event="podcasting_details_upload_audio"
+							tracksImpressionName="calypso_upgrade_nudge_impression"
+							tracksClickName="calypso_upgrade_nudge_cta_click"
+							showIcon={ true }
 						/>
 					) }
 					{ ! error && (
@@ -377,10 +383,10 @@ class PodcastingDetails extends Component {
 	renderSettingsError() {
 		// If there is a reason that we can't display the podcasting settings
 		// screen, it will be rendered here.
-		const { isPrivate, isUnsupportedSite, userCanManagePodcasting } = this.props;
+		const { isPrivate, isComingSoon, isUnsupportedSite, userCanManagePodcasting } = this.props;
 
 		if ( isPrivate ) {
-			return <PodcastingPrivateSiteMessage />;
+			return <PodcastingPrivateSiteMessage isComingSoon={ isComingSoon } />;
 		}
 
 		if ( ! userCanManagePodcasting ) {
@@ -493,6 +499,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		siteId,
 		siteSlug,
 		isPrivate: isPrivateSite( state, siteId ),
+		isComingSoon: isSiteComingSoon( state, siteId ),
 		isPodcastingEnabled,
 		podcastingCategoryId,
 		isCategoryChanging,

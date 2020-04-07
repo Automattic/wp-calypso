@@ -8,7 +8,8 @@ import { useRef } from 'react';
  */
 import {
 	WpcomStoreState,
-	initialWpcomStoreState,
+	getInitialWpcomStoreState,
+	PossiblyCompleteDomainContactDetails,
 	DomainContactDetails,
 	ManagedContactDetails,
 	ManagedContactDetailsErrors,
@@ -27,9 +28,19 @@ type WpcomStoreAction =
 	| { type: 'UPDATE_PHONE'; payload: string }
 	| { type: 'UPDATE_PHONE_NUMBER_COUNTRY'; payload: string }
 	| { type: 'UPDATE_POSTAL_CODE'; payload: string }
-	| { type: 'UPDATE_COUNTRY_CODE'; payload: string };
+	| { type: 'TOUCH_CONTACT_DETAILS' }
+	| { type: 'UPDATE_COUNTRY_CODE'; payload: string }
+	| {
+			type: 'LOAD_DOMAIN_CONTACT_DETAILS_FROM_CACHE';
+			payload: PossiblyCompleteDomainContactDetails;
+	  };
 
-export function useWpcomStore( registerStore, onEvent ) {
+export function useWpcomStore(
+	registerStore,
+	onEvent,
+	managedContactDetails: ManagedContactDetails,
+	updateContactDetailsCache: ( DomainContactDetails ) => void
+) {
 	// Only register once
 	const registerIsComplete = useRef< boolean >( false );
 	if ( registerIsComplete.current ) {
@@ -42,8 +53,10 @@ export function useWpcomStore( registerStore, onEvent ) {
 		action: WpcomStoreAction
 	): ManagedContactDetails {
 		switch ( action.type ) {
-			case 'UPDATE_CONTACT_DETAILS':
+			case 'UPDATE_CONTACT_DETAILS': {
+				updateContactDetailsCache( action.payload );
 				return updaters.updateDomainFields( state, action.payload );
+			}
 			case 'UPDATE_VAT_ID':
 				return updaters.updateVatId( state, action.payload );
 			case 'UPDATE_PHONE':
@@ -56,6 +69,10 @@ export function useWpcomStore( registerStore, onEvent ) {
 				return updaters.updateCountryCode( state, action.payload );
 			case 'APPLY_DOMAIN_CONTACT_VALIDATION_RESULTS':
 				return updaters.setErrorMessages( state, action.payload );
+			case 'TOUCH_CONTACT_DETAILS':
+				return updaters.touchContactFields( state );
+			case 'LOAD_DOMAIN_CONTACT_DETAILS_FROM_CACHE':
+				return updaters.populateDomainFieldsFromCache( state, action.payload );
 			default:
 				return state;
 		}
@@ -81,7 +98,8 @@ export function useWpcomStore( registerStore, onEvent ) {
 
 	registerStore( 'wpcom', {
 		reducer( state: WpcomStoreState | undefined, action: WpcomStoreAction ): WpcomStoreState {
-			const checkedState = state === undefined ? initialWpcomStoreState : state;
+			const checkedState =
+				state === undefined ? getInitialWpcomStoreState( managedContactDetails ) : state;
 			return {
 				contactDetails: contactReducer( checkedState.contactDetails, action ),
 				siteId: siteIdReducer( checkedState.siteId, action ),
@@ -124,6 +142,10 @@ export function useWpcomStore( registerStore, onEvent ) {
 				return { type: 'UPDATE_COUNTRY_CODE', payload };
 			},
 
+			touchContactFields(): WpcomStoreAction {
+				return { type: 'TOUCH_CONTACT_DETAILS' };
+			},
+
 			// TODO: type this; need to use error messages from contact form
 			setContactField( key, field ) {
 				if ( ! field.isValid ) {
@@ -140,6 +162,12 @@ export function useWpcomStore( registerStore, onEvent ) {
 
 			updateVatId( payload: string ): WpcomStoreAction {
 				return { type: 'UPDATE_VAT_ID', payload: payload };
+			},
+
+			loadDomainContactDetailsFromCache(
+				payload: PossiblyCompleteDomainContactDetails
+			): WpcomStoreAction {
+				return { type: 'LOAD_DOMAIN_CONTACT_DETAILS_FROM_CACHE', payload };
 			},
 		},
 

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { READER_EXPAND_CARD, READER_RESET_CARD_EXPANSIONS } from 'state/action-types';
+import { READER_EXPAND_CARD, READER_RESET_CARD_EXPANSIONS } from 'state/reader/action-types';
 import { markPostSeen } from 'state/reader/posts/actions';
 import { reduxDispatch } from 'lib/redux-bridge';
 import DISPLAY_TYPES from 'state/reader/posts/display-types';

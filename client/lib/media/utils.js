@@ -17,6 +17,7 @@ import {
 	GalleryColumnedTypes,
 	GallerySizeableTypes,
 	GalleryDefaultAttrs,
+	ValidationErrors as MediaValidationErrors,
 } from './constants';
 import { stringify } from 'lib/shortcode';
 import impureLodash from 'lib/impure-lodash';
@@ -587,4 +588,72 @@ export function createTransientMedia( file ) {
 	}
 
 	return transientMedia;
+}
+
+/**
+ * Validates a media item for a site, and returns validation errors (if any).
+ *
+ * @param  {object}      site Site object
+ * @param  {object}      item Media item
+ * @returns {Array|null}      Validation errors, or null if no site.
+ */
+export function validateMediaItem( site, item ) {
+	const itemErrors = [];
+
+	if ( ! site ) {
+		return;
+	}
+
+	if ( ! isSupportedFileTypeForSite( item, site ) ) {
+		if ( isSupportedFileTypeInPremium( item, site ) ) {
+			itemErrors.push( MediaValidationErrors.FILE_TYPE_NOT_IN_PLAN );
+		} else {
+			itemErrors.push( MediaValidationErrors.FILE_TYPE_UNSUPPORTED );
+		}
+	}
+
+	if ( true === isExceedingSiteMaxUploadSize( item, site ) ) {
+		itemErrors.push( MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE );
+	}
+
+	return itemErrors;
+}
+
+/**
+ * Given a media file URL (possibly served through photon) and site slug, returns information
+ * required to correctly proxy the asset through the media proxy. Specifically, it returns
+ * an object with the following keys:
+ * - query: query string extracted from url
+ * - filePath: path of the file on remote site, even if url is photon url
+ * - isRelativeToSiteRoot: true if the file come from remote site identified by siteSlug, false otherwise
+ *
+ * @param {string} mediaUrl Media file URL.
+ * @param {string} siteSlug Slug of the site this file belongs to.
+ * @returns {object}	Dictionary
+ */
+export function mediaURLToProxyConfig( mediaUrl, siteSlug ) {
+	const { pathname, search: query, protocol, hostname } = getUrlParts( mediaUrl );
+	let filePath = pathname;
+	let isRelativeToSiteRoot = true;
+
+	if ( [ 'http:', 'https:' ].indexOf( protocol ) === -1 ) {
+		isRelativeToSiteRoot = false;
+	} else if ( hostname !== siteSlug ) {
+		isRelativeToSiteRoot = false;
+		// CDN URLs like i0.wp.com/mysite.com/media.jpg should also be considered relative to mysite.com
+		if ( /^i[0-2]\.wp\.com$/.test( hostname ) ) {
+			const [ first, ...rest ] = filePath.substr( 1 ).split( '/' );
+			filePath = '/' + rest.join( '/' );
+
+			if ( first === siteSlug ) {
+				isRelativeToSiteRoot = true;
+			}
+		}
+	}
+
+	return {
+		query,
+		filePath,
+		isRelativeToSiteRoot,
+	};
 }

@@ -1,25 +1,27 @@
 /**
  * External dependencies
  */
-import config from '../../config';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-import initJetpackCloudRoutes from './routes';
-import { bootApp } from 'boot/common';
+import config from 'config';
 
-/**
- * Style dependencies
- */
-import 'components/environment-badge/style.scss';
-import 'layout/style.scss';
-import 'assets/stylesheets/jetpack-cloud.scss';
+export default function() {
+	page( '/', context => {
+		let redirectPath = '/error';
 
-window.AppBoot = () => {
-	if ( ! config.isEnabled( 'jetpack-cloud' ) ) {
-		window.location.href = '/';
-	} else {
-		bootApp( 'Jetpack Cloud', initJetpackCloudRoutes );
-	}
-};
+		if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
+			redirectPath = '/backups';
+		} else if ( config.isEnabled( 'jetpack-cloud/scan' ) ) {
+			redirectPath = '/scan';
+		}
+
+		if ( context.querystring ) {
+			redirectPath += `?${ context.querystring }`;
+		}
+
+		page.redirect( redirectPath );
+	} );
+}

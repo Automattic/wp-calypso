@@ -56,6 +56,8 @@ Plan or product slug. Can be one of the following:
 - `jetpack_backup_daily_monthly`
 - `jetpack_backup_realtime`
 - `jetpack_backup_realtime_monthly`
+- `jetpack_scan`
+- `jetpack_scan_monthly`
 
 ### `className`
 

@@ -12,7 +12,7 @@ import {
 	READER_UNFOLLOW_TAG_REQUEST,
 	READER_UNFOLLOW_TAG_RECEIVE,
 	READER_FOLLOW_TAG_REQUEST,
-} from 'state/action-types';
+} from 'state/reader/action-types';
 
 import 'state/data-layer/wpcom/read/tags';
 import 'state/data-layer/wpcom/read/tags/mine/delete';

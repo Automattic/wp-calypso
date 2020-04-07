@@ -7,41 +7,41 @@ import styled from '@emotion/styled';
 import {
 	useSelect,
 	useDispatch,
-	useLineItems,
-	usePaymentMethodId,
+	useFormStatus,
+	useIsStepActive,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { useHasDomainsInCart, isLineItemADomain } from '../hooks/has-domains';
+import { useHasDomainsInCart } from '../hooks/has-domains';
 import Field from './field';
-import { SummaryLine, SummaryDetails, SummarySpacerLine } from './summary-details';
+import { SummaryLine, SummaryDetails } from './summary-details';
 import { LeftColumn, RightColumn } from './ie-fallback';
-import { prepareDomainContactDetails, isValid } from '../types';
+import { prepareDomainContactDetails, prepareDomainContactDetailsErrors, isValid } from '../types';
 
 export default function WPContactForm( {
-	siteUrl,
 	summary,
 	isComplete,
 	isActive,
 	CountrySelectMenu,
 	countriesList,
 	renderDomainContactFields,
+	updateContactDetails,
+	updateCountryCode,
+	updatePostalCode,
+	shouldShowContactDetailsValidationErrors,
 } ) {
 	const translate = useTranslate();
 	const isDomainFieldsVisible = useHasDomainsInCart();
 	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
-	const setters = useDispatch( 'wpcom' );
-
-	const [ paymentMethodId ] = usePaymentMethodId();
-	const [ items ] = useLineItems();
-	const firstDomainItem = items.find( isLineItemADomain );
-	const domainName = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
+	const { formStatus } = useFormStatus();
+	const isStepActive = useIsStepActive();
+	const isDisabled = ! isStepActive || formStatus !== 'ready';
 
 	if ( summary && isComplete ) {
-		return <ContactFormSummary />;
+		return <ContactFormSummary isDomainFieldsVisible={ isDomainFieldsVisible } />;
 	}
 	if ( ! isActive ) {
 		return null;
@@ -51,14 +51,16 @@ export default function WPContactForm( {
 		<BillingFormFields>
 			{ renderContactDetails( {
 				translate,
-				domainName,
 				isDomainFieldsVisible,
 				contactInfo,
 				renderDomainContactFields,
-				setters,
+				updateContactDetails,
+				updateCountryCode,
+				updatePostalCode,
 				CountrySelectMenu,
 				countriesList,
-				paymentMethodId,
+				shouldShowContactDetailsValidationErrors,
+				isDisabled,
 			} ) }
 		</BillingFormFields>
 	);
@@ -95,7 +97,7 @@ const FieldRow = styled( GridRow )`
 
 function isEligibleForVat( country ) {
 	//TODO: Detect whether people are in EU or AU and return true if they are
-	const countriesWithVAT = [ 'AU' ];
+	const countriesWithVAT = [];
 	return countriesWithVAT.includes( country );
 }
 
@@ -117,23 +119,29 @@ function VatIdField() {
 	);
 }
 
-function TaxFields( { section, taxInfo, setters, CountrySelectMenu, countriesList } ) {
+function TaxFields( {
+	section,
+	taxInfo,
+	CountrySelectMenu,
+	countriesList,
+	updatePostalCode,
+	updateCountryCode,
+	isDisabled,
+} ) {
 	const translate = useTranslate();
 	const { postalCode, countryCode } = taxInfo;
-	const { updatePostalCode, updateCountryCode, applyDomainContactValidationResults } = setters;
 
-	const isZip = isZipOrPostal() === 'zip';
 	return (
 		<FieldRow>
 			<LeftColumn>
 				<Field
 					id={ section + '-postal-code' }
 					type="text"
-					label={ isZip ? translate( 'Zip code' ) : translate( 'Postal code' ) }
+					label={ translate( 'Postal code' ) }
 					value={ postalCode.value }
+					disabled={ isDisabled }
 					onChange={ value => {
 						updatePostalCode( value );
-						applyDomainContactValidationResults( { postalCode: value.length > 0 ? [] : [ '' ] } );
 					} }
 					autoComplete={ section + ' postal-code' }
 					isError={ postalCode.isTouched && ! isValid( postalCode ) }
@@ -146,12 +154,9 @@ function TaxFields( { section, taxInfo, setters, CountrySelectMenu, countriesLis
 					translate={ translate }
 					onChange={ event => {
 						updateCountryCode( event.target.value );
-						applyDomainContactValidationResults( {
-							countryCode: event.target.value.length > 0 ? [] : [ '' ],
-						} );
 					} }
 					isError={ countryCode.isTouched && ! isValid( countryCode ) }
-					isDisabled={ false } // TODO
+					isDisabled={ isDisabled }
 					errorMessage={ translate( 'This field is required.' ) }
 					currentValue={ countryCode.value }
 					countriesList={ countriesList }
@@ -164,16 +169,10 @@ function TaxFields( { section, taxInfo, setters, CountrySelectMenu, countriesLis
 TaxFields.propTypes = {
 	section: PropTypes.string.isRequired,
 	taxInfo: PropTypes.object.isRequired,
-	setters: PropTypes.shape( {
-		updatePostalCode: PropTypes.func.isRequired,
-		updateCountryCode: PropTypes.func.isRequired,
-	} ).isRequired,
+	updatePostalCode: PropTypes.func.isRequired,
+	updateCountryCode: PropTypes.func.isRequired,
+	isDisabled: PropTypes.bool,
 };
-
-function isZipOrPostal() {
-	//TODO: Add location detection to return "zip" or "postal"
-	return 'postal';
-}
 
 const DomainContactFieldsDescription = styled.p`
 	font-size: 14px;
@@ -181,11 +180,13 @@ const DomainContactFieldsDescription = styled.p`
 	margin: 0 0 16px;
 `;
 
-function ContactFormSummary() {
+function ContactFormSummary( { isDomainFieldsVisible } ) {
 	const translate = useTranslate();
 	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
 
-	//Check if paymentData is empty
+	const showDomainContactSummary = isDomainFieldsVisible;
+
+	// Check if paymentData is empty
 	if ( Object.entries( contactInfo ).length === 0 ) {
 		return null;
 	}
@@ -206,24 +207,44 @@ function ContactFormSummary() {
 		<GridRow>
 			<div>
 				<SummaryDetails>
-					{ fullName && <SummaryLine>{ fullName }</SummaryLine> }
+					{ showDomainContactSummary && fullName && <SummaryLine>{ fullName }</SummaryLine> }
 
-					{ contactInfo.email.value.length > 0 && (
-						<SummarySpacerLine>{ contactInfo.email.value }</SummarySpacerLine>
+					{ showDomainContactSummary && contactInfo.organization.value?.length > 0 && (
+						<SummaryLine>{ contactInfo.organization.value } </SummaryLine>
 					) }
 
-					{ contactInfo.address1.value.length > 0 && (
+					{ showDomainContactSummary && contactInfo.email.value?.length > 0 && (
+						<SummaryLine>{ contactInfo.email.value }</SummaryLine>
+					) }
+
+					{ showDomainContactSummary && contactInfo.alternateEmail.value?.length > 0 && (
+						<SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>
+					) }
+
+					{ showDomainContactSummary && contactInfo.phone.value?.length > 0 && (
+						<SummaryLine>{ contactInfo.phone.value }</SummaryLine>
+					) }
+				</SummaryDetails>
+
+				<SummaryDetails>
+					{ showDomainContactSummary && contactInfo.address1.value?.length > 0 && (
 						<SummaryLine>{ contactInfo.address1.value } </SummaryLine>
 					) }
 
-					{ cityAndState && <SummaryLine>{ cityAndState }</SummaryLine> }
+					{ showDomainContactSummary && contactInfo.address2.value?.length > 0 && (
+						<SummaryLine>{ contactInfo.address2.value } </SummaryLine>
+					) }
+
+					{ showDomainContactSummary && cityAndState && (
+						<SummaryLine>{ cityAndState }</SummaryLine>
+					) }
 
 					{ postalAndCountry && <SummaryLine>{ postalAndCountry }</SummaryLine> }
 				</SummaryDetails>
 
-				{ contactInfo.vatId.value.length > 0 && (
+				{ contactInfo.vatId.value?.length > 0 && (
 					<SummaryDetails>
-						{ contactInfo.vatId.value.length > 0 && (
+						{ contactInfo.vatId.value?.length > 0 && (
 							<SummaryLine>
 								{ translate( 'VAT indentification number:' ) }
 								{ contactInfo.vatId.value }
@@ -237,7 +258,7 @@ function ContactFormSummary() {
 }
 
 function joinNonEmptyValues( joinString, ...values ) {
-	return values.filter( value => value.length > 0 ).join( joinString );
+	return values.filter( value => value?.length > 0 ).join( joinString );
 }
 
 function getContactDetailsFormat( isDomainFieldsVisible ) {
@@ -249,14 +270,16 @@ function getContactDetailsFormat( isDomainFieldsVisible ) {
 
 function renderContactDetails( {
 	translate,
-	domainName,
 	isDomainFieldsVisible,
 	contactInfo,
 	renderDomainContactFields,
-	setters,
+	updateContactDetails,
+	updateCountryCode,
+	updatePostalCode,
 	CountrySelectMenu,
 	countriesList,
-	paymentMethodId,
+	shouldShowContactDetailsValidationErrors,
+	isDisabled,
 } ) {
 	const format = getContactDetailsFormat( isDomainFieldsVisible );
 	const requiresVatId = isEligibleForVat( contactInfo.countryCode.value );
@@ -270,11 +293,11 @@ function renderContactDetails( {
 						) }
 					</DomainContactFieldsDescription>
 					{ renderDomainContactFields(
-						[ domainName ],
 						prepareDomainContactDetails( contactInfo ),
-						setters.updateContactDetails,
-						setters.applyDomainContactValidationResults,
-						paymentMethodId
+						prepareDomainContactDetailsErrors( contactInfo ),
+						updateContactDetails,
+						shouldShowContactDetailsValidationErrors,
+						isDisabled
 					) }
 					{ requiresVatId && <VatIdField /> }
 				</React.Fragment>
@@ -285,9 +308,11 @@ function renderContactDetails( {
 					<TaxFields
 						section="contact"
 						taxInfo={ contactInfo }
-						setters={ setters }
+						updateCountryCode={ updateCountryCode }
+						updatePostalCode={ updatePostalCode }
 						CountrySelectMenu={ CountrySelectMenu }
 						countriesList={ countriesList }
+						isDisabled={ isDisabled }
 					/>
 					{ requiresVatId && <VatIdField /> }
 				</React.Fragment>

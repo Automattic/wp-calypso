@@ -12,17 +12,11 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal Dependencies
  */
-import {
-	VIEW_CONTACT,
-	VIEW_RICH_RESULT,
-	VIEW_CHECKLIST,
-	VIEW_ONBOARDING_WELCOME,
-} from './constants';
+import { VIEW_CONTACT, VIEW_RICH_RESULT, VIEW_ONBOARDING_WELCOME } from './constants';
 import {
 	selectResult,
 	resetInlineHelpContactForm,
 	hideOnboardingWelcomePrompt,
-	hideChecklistPrompt,
 } from 'state/inline-help/actions';
 import { Button } from '@automattic/components';
 import Popover from 'components/popover';
@@ -33,13 +27,11 @@ import InlineHelpRichResult from './inline-help-rich-result';
 import {
 	getSearchQuery,
 	getInlineHelpCurrentlySelectedResult,
-	isInlineHelpChecklistPromptVisible,
 	isOnboardingWelcomePromptVisible,
 } from 'state/inline-help/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
 import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
 import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
-import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import { getSelectedSiteId, getSection } from 'state/ui/selectors';
 import getCurrentRoute from 'state/selectors/get-current-route';
@@ -69,7 +61,6 @@ class InlineHelpPopover extends Component {
 		optIn: PropTypes.func,
 		redirect: PropTypes.func,
 		isEligibleForChecklist: PropTypes.bool.isRequired,
-		isChecklistPromptVisible: PropTypes.bool,
 		isOnboardingWelcomeVisible: PropTypes.bool,
 	};
 
@@ -86,10 +77,6 @@ class InlineHelpPopover extends Component {
 	componentDidMount() {
 		if ( this.props.isOnboardingWelcomeVisible ) {
 			return this.openOnboardingWelcomeView();
-		}
-
-		if ( this.props.isChecklistPromptVisible && this.props.isEligibleForChecklist ) {
-			return this.openChecklistView();
 		}
 	}
 
@@ -132,16 +119,11 @@ class InlineHelpPopover extends Component {
 		if ( this.props.isOnboardingWelcomeVisible ) {
 			return this.openOnboardingWelcomeView();
 		}
-		this.props.hideChecklistPrompt();
 		this.setState( { showSecondaryView: false } );
 	};
 
 	openContactView = () => {
 		this.openSecondaryView( VIEW_CONTACT );
-	};
-
-	openChecklistView = () => {
-		this.openSecondaryView( VIEW_CHECKLIST );
 	};
 
 	openOnboardingWelcomeView = () => {
@@ -227,7 +209,6 @@ class InlineHelpPopover extends Component {
 								closePopover={ onClose }
 							/>
 						),
-						[ VIEW_CHECKLIST ]: <WpcomChecklist closePopover={ onClose } viewMode="prompt" />,
 						[ VIEW_ONBOARDING_WELCOME ]: <ChecklistOnboardingWelcome onClose={ onClose } />,
 					}[ this.state.activeSecondaryView ]
 				}
@@ -236,16 +217,12 @@ class InlineHelpPopover extends Component {
 	};
 
 	renderPrimaryView = () => {
-		const {
-			translate,
-			showNotification,
-			siteId,
-			setNotification,
-			setStoredTask,
-			showOptIn,
-			showOptOut,
-			onClose,
-		} = this.props;
+		const { translate, siteId, showOptIn, showOptOut, isCheckout } = this.props;
+
+		// Don't show additional items inside Checkout.
+		if ( isCheckout ) {
+			return null;
+		}
 
 		return (
 			<>
@@ -267,14 +244,6 @@ class InlineHelpPopover extends Component {
 						{ translate( 'Switch to Block Editor' ) }
 					</Button>
 				) }
-
-				<WpcomChecklist
-					viewMode="navigation"
-					closePopover={ onClose }
-					showNotification={ showNotification }
-					setNotification={ setNotification }
-					setStoredTask={ setStoredTask }
-				/>
 			</>
 		);
 	};
@@ -364,25 +333,25 @@ function mapStateToProps( state ) {
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
 	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
 	const isEligibleForChecklist = isEligibleForDotcomChecklist( state, siteId );
+	const showSwitchEditorButton = currentRoute.match( /^\/(block-editor|post|page)\// );
 
 	return {
 		isOnboardingWelcomeVisible: isEligibleForChecklist && isOnboardingWelcomePromptVisible( state ),
-		isChecklistPromptVisible: isInlineHelpChecklistPromptVisible( state ),
 		searchQuery: getSearchQuery( state ),
 		isEligibleForChecklist: isEligibleForDotcomChecklist( state, siteId ),
 		selectedSite: getHelpSelectedSite( state ),
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 		classicUrl: `/${ classicRoute }`,
 		siteId,
-		showOptOut: isGutenbergOptOutEnabled( state, siteId ),
-		showOptIn: optInEnabled && isCalypsoClassic,
+		showOptOut: showSwitchEditorButton && isGutenbergOptOutEnabled( state, siteId ),
+		showOptIn: showSwitchEditorButton && optInEnabled && isCalypsoClassic,
 		gutenbergUrl,
+		isCheckout: section.name && section.name === 'checkout',
 	};
 }
 
 const mapDispatchToProps = {
 	hideOnboardingWelcomePrompt,
-	hideChecklistPrompt,
 	optOut,
 	optIn,
 	recordTracksEvent,

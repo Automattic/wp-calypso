@@ -7,7 +7,7 @@ import { get } from 'lodash';
  * Returns the requested rewind Activity ID.
  *
  * @param  {object}        state  Global state tree
- * @param  {number|string} siteId Site ID
+ * @param  {?number|string} siteId Site ID
  * @returns {?object}              Activity log item if found, otherwise null
  */
 export default function getRequestedRewind( state, siteId ) {

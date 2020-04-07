@@ -931,6 +931,41 @@ const contextLinksForSection = {
 			),
 		},
 	],
+	checkout: [
+		{
+			link: localizeUrl( 'https://en.support.wordpress.com/plan-features/' ),
+			post_id: 134698,
+			title: translate( 'WordPress.com Plans' ),
+			description: translate(
+				'Learn about the capabilities and features that the different plans unlock for your site.'
+			),
+		},
+		{
+			link: localizeUrl( 'https://en.support.wordpress.com/jetpack-add-ons/' ),
+			post_id: 115025,
+			title: translate( 'Jetpack Plans' ),
+			description: translate(
+				'Learn about the free Jetpack plugin, its benefits, and the useful capabilities and features that a Jetpack plan unlocks.'
+			),
+		},
+		{
+			link: localizeUrl( 'https://en.support.wordpress.com/manage-purchases/' ),
+			post_id: 111349,
+			title: translate( 'Manage Purchases and Refund Policy' ),
+			description: translate(
+				'Have a question or need to change something about a purchase you have made? Learn how.'
+			),
+		},
+		{
+			link: localizeUrl( 'https://en.support.wordpress.com/auto-renewal/' ),
+			post_id: 110924,
+			title: translate( 'Subscriptions for Plans and Domains' ),
+			description: translate(
+				'Your WordPress.com plans and any domains you add to your sites are based on a yearly ' +
+					'subscription that renews automatically.'
+			),
+		},
+	],
 };
 
 /*

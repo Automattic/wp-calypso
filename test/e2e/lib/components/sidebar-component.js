@@ -60,8 +60,12 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		return await this._scrollToAndClickMenuItem( 'plan' );
 	}
 
+	async selectMyHome() {
+		return await this._scrollToAndClickMenuItem( 'myhome' );
+	}
+
 	async selectStats() {
-		return await this._scrollToAndClickMenuItem( 'menus' );
+		return await this._scrollToAndClickMenuItem( 'stats' );
 	}
 
 	async selectActivity() {

@@ -34,6 +34,7 @@ import sanitize from 'server/sanitize';
 import utils from 'server/bundler/utils';
 import { pathToRegExp } from 'utils';
 import sections from 'sections';
+import isSectionEnabled from 'sections-filter';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'login';
 import { serverRouter, getNormalizedPath } from 'server/isomorphic-routing';
 import {
@@ -55,7 +56,6 @@ import analytics from 'server/lib/analytics';
 import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'landing/gutenboarding/section';
-import { JETPACK_CLOUD_SECTION_DEFINITION } from 'landing/jetpack-cloud/section';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -391,23 +391,51 @@ function setUpLoggedInRoute( req, res, next ) {
 		'X-Frame-Options': 'SAMEORIGIN',
 	} );
 
-	const LANG_REVISION_FILE_URL = 'https://widgets.wp.com/languages/calypso/lang-revisions.json';
-	const langPromise = superagent
-		.get( LANG_REVISION_FILE_URL )
-		.then( response => {
-			const languageRevisions = filterLanguageRevisions( response.body );
+	const setupRequests = [];
 
-			req.context.languageRevisions = languageRevisions;
+	if ( config.isEnabled( 'use-translation-chunks' ) ) {
+		const target = getBuildTargetFromRequest( req );
+		const rootPath = path.join( __dirname, '..', '..', '..' );
+		const langRevisionsPath = path.join(
+			rootPath,
+			'public',
+			target,
+			'languages',
+			'lang-revisions.json'
+		);
+		const langPromise = fs.promises
+			.readFile( langRevisionsPath, 'utf8' )
+			.then( languageRevisions => {
+				req.context.languageRevisions = languageRevisions;
 
-			return languageRevisions;
-		} )
-		.catch( error => {
-			console.error( 'Failed to fetch the language revision files.', error );
+				return languageRevisions;
+			} )
+			.catch( error => {
+				console.error( 'Failed to read the language revision files.', error );
 
-			throw error;
-		} );
+				throw error;
+			} );
 
-	const setupRequests = [ langPromise ];
+		setupRequests.push( langPromise );
+	} else {
+		const LANG_REVISION_FILE_URL = 'https://widgets.wp.com/languages/calypso/lang-revisions.json';
+		const langPromise = superagent
+			.get( LANG_REVISION_FILE_URL )
+			.then( response => {
+				const languageRevisions = filterLanguageRevisions( response.body );
+
+				req.context.languageRevisions = languageRevisions;
+
+				return languageRevisions;
+			} )
+			.catch( error => {
+				console.error( 'Failed to fetch the language revision files.', error );
+
+				throw error;
+			} );
+
+		setupRequests.push( langPromise );
+	}
 
 	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 		const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
@@ -657,12 +685,6 @@ function handleLocaleSubdomains( req, res, next ) {
 	next();
 }
 
-const jetpackCloudEnvs = [
-	'jetpack-cloud-development',
-	'jetpack-cloud-stage',
-	'jetpack-cloud-production',
-];
-
 module.exports = function() {
 	const app = express();
 
@@ -681,23 +703,9 @@ module.exports = function() {
 		next();
 	} );
 
-	if ( jetpackCloudEnvs.includes( calypsoEnv ) ) {
-		JETPACK_CLOUD_SECTION_DEFINITION.paths.forEach( sectionPath =>
-			handleSectionPath( JETPACK_CLOUD_SECTION_DEFINITION, sectionPath, 'entry-jetpack-cloud' )
-		);
-
-		// catchall to render 404 for all routes not whitelisted in client/sections
-		app.use( render404( 'entry-jetpack-cloud' ) );
-
-		// Error handling middleware for displaying the server error 500 page must be the very last middleware defined
-		app.use( renderServerError( 'entry-jetpack-cloud' ) );
-
-		return app;
-	}
-
 	// redirect homepage if the Reader is disabled
 	app.get( '/', function( request, response, next ) {
-		if ( ! config.isEnabled( 'reader' ) ) {
+		if ( ! config.isEnabled( 'reader' ) && config.isEnabled( 'stats' ) ) {
 			response.redirect( '/stats' );
 		} else {
 			next();
@@ -735,15 +743,6 @@ module.exports = function() {
 		app.get( '/discover', function( req, res, next ) {
 			if ( ! req.context.isLoggedIn ) {
 				res.redirect( config( 'discover_logged_out_redirect_url' ) );
-			} else {
-				next();
-			}
-		} );
-
-		// redirect logged-out tag pages to en.wordpress.com
-		app.get( '/tag/:tag_slug', function( req, res, next ) {
-			if ( ! req.context.isLoggedIn ) {
-				res.redirect( 'https://en.wordpress.com/tag/' + encodeURIComponent( req.params.tag_slug ) );
 			} else {
 				next();
 			}
@@ -819,7 +818,7 @@ module.exports = function() {
 		app.get( pathRegex, setupDefaultContext( entrypoint ), function( req, res, next ) {
 			req.context.sectionName = section.name;
 
-			if ( ! entrypoint && config.isEnabled( 'code-splitting' ) ) {
+			if ( ! entrypoint ) {
 				req.context.chunkFiles = getFilesForChunk( section.name, req );
 			} else {
 				req.context.chunkFiles = EMPTY_ASSETS;
@@ -843,6 +842,7 @@ module.exports = function() {
 
 	sections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
+		.filter( isSectionEnabled )
 		.forEach( section => {
 			section.paths.forEach( sectionPath => handleSectionPath( section, sectionPath ) );
 

@@ -28,7 +28,7 @@ import './style.scss';
 const DEFAULT_FILES = [
 	'docs/guide/index.md',
 	'README.md',
-	'.github/CONTRIBUTING.md',
+	'docs/CONTRIBUTING.md',
 	'docs/coding-guidelines.md',
 	'docs/coding-guidelines/javascript.md',
 	'docs/coding-guidelines/css.md',

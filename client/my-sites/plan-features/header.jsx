@@ -12,13 +12,13 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal Dependencies
  **/
+import { ProductIcon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import InfoPopover from 'components/info-popover';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import PlanPrice from 'my-sites/plan-price';
 import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
 import PlanPill from 'components/plans/plan-pill';
-import PlanIcon from 'components/plans/plan-icon';
 import { TYPE_FREE } from 'lib/plans/constants';
 import { PLANS_LIST } from 'lib/plans/plans-list';
 import { getYearlyPlanByMonthly, planMatches, getPlanClass } from 'lib/plans';
@@ -59,7 +59,7 @@ export class PlanFeaturesHeader extends Component {
 		return (
 			<header className={ headerClasses }>
 				<div className="plan-features__header-figure">
-					<PlanIcon plan={ planType } />
+					<ProductIcon slug={ planType } />
 				</div>
 				<div className="plan-features__header-text">
 					<h4 className="plan-features__header-title">{ title }</h4>
@@ -90,6 +90,7 @@ export class PlanFeaturesHeader extends Component {
 			selectedPlan,
 			title,
 			audience,
+			isEligibleForPlanStepTest,
 			translate,
 		} = this.props;
 
@@ -103,7 +104,12 @@ export class PlanFeaturesHeader extends Component {
 					{ planLevelsMatch( selectedPlan, planType ) && (
 						<PlanPill>{ translate( 'Suggested' ) }</PlanPill>
 					) }
-					{ popular && ! selectedPlan && <PlanPill>{ translate( 'Popular' ) }</PlanPill> }
+					{ popular && ! selectedPlan && ! isEligibleForPlanStepTest && (
+						<PlanPill>{ translate( 'Popular' ) }</PlanPill>
+					) }
+					{ popular && ! selectedPlan && isEligibleForPlanStepTest && (
+						<PlanPill>{ translate( 'Most popular' ) }</PlanPill>
+					) }
 					{ newPlan && ! selectedPlan && <PlanPill>{ translate( 'New' ) }</PlanPill> }
 					{ bestValue && ! selectedPlan && <PlanPill>{ translate( 'Best Value' ) }</PlanPill> }
 				</header>
@@ -132,7 +138,7 @@ export class PlanFeaturesHeader extends Component {
 					{ bestValue && <PlanPill>{ translate( 'Best Value' ) }</PlanPill> }
 				</header>
 				<div className="plan-features__graphic">
-					<PlanIcon plan={ planType } />
+					<ProductIcon slug={ planType } />
 				</div>
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
@@ -168,6 +174,7 @@ export class PlanFeaturesHeader extends Component {
 			hideMonthly,
 			isInSignup,
 			plansWithScroll,
+			isEligibleForPlanStepTest,
 		} = this.props;
 
 		const isDiscounted = !! discountPrice;
@@ -177,8 +184,11 @@ export class PlanFeaturesHeader extends Component {
 		} );
 
 		if ( isInSignup || plansWithScroll ) {
+			const classes = classNames( 'plan-features__header-billing-info', {
+				'plan-features__header-billing-info-plan-step-test': isEligibleForPlanStepTest,
+			} );
 			return (
-				<div className={ 'plan-features__header-billing-info' }>
+				<div className={ classes }>
 					<span>{ billingTimeFrame }</span>
 				</div>
 			);
@@ -257,7 +267,7 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	renderPriceGroup( fullPrice, discountedPrice = null ) {
-		const { currencyCode, isInSignup, plansWithScroll } = this.props;
+		const { currencyCode, isInSignup, plansWithScroll, isEligibleForPlanStepTest } = this.props;
 		const displayFlatPrice = isInSignup && ! plansWithScroll;
 
 		if ( fullPrice && discountedPrice ) {
@@ -287,6 +297,7 @@ export class PlanFeaturesHeader extends Component {
 				currencyCode={ currencyCode }
 				rawPrice={ fullPrice }
 				isInSignup={ displayFlatPrice }
+				isEligibleForPlanStepTest={ isEligibleForPlanStepTest }
 			/>
 		);
 	}

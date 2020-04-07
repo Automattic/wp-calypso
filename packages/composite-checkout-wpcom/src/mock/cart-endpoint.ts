@@ -1,3 +1,6 @@
+/**
+ * External dependencies
+ */
 import '@automattic/calypso-polyfills';
 
 /**
@@ -5,15 +8,16 @@ import '@automattic/calypso-polyfills';
  */
 import { RequestCart } from '../types';
 
-/**
- * A fake WPCOM shopping cart endpoint.
- */
-export async function mockSetCartEndpoint( {
-	products: requestProducts,
-	currency: requestCurrency,
-	coupon: requestCoupon,
-	locale: requestLocale,
-}: RequestCart ): Promise< object > {
+export async function mockSetCartEndpoint(
+	_: string,
+	requestCart: RequestCart
+): Promise< object > {
+	const {
+		products: requestProducts,
+		currency: requestCurrency,
+		coupon: requestCoupon,
+		locale: requestLocale,
+	}: RequestCart = requestCart;
 	const products = requestProducts.map( convertRequestProductToResponseProduct( requestCurrency ) );
 
 	const taxInteger = products.reduce( ( accum, current ) => {
@@ -44,6 +48,7 @@ export async function mockSetCartEndpoint( {
 		coupon: requestCoupon,
 		is_coupon_applied: true,
 		coupon_discounts_integer: [],
+		tax: {},
 	};
 }
 
@@ -62,7 +67,21 @@ function convertRequestProductToResponseProduct( currency ) {
 					item_subtotal_integer: 14400,
 					item_subtotal_display: 'R$144',
 					item_tax: 0,
-					meta: '',
+					meta: product.meta,
+					volume: 1,
+					extra: {},
+				};
+			case 5:
+				return {
+					product_id: 5,
+					product_name: 'Domain Mapping',
+					product_slug: 'domain_map',
+					currency: currency,
+					is_domain_registration: false,
+					item_subtotal_integer: 0,
+					item_subtotal_display: 'R$0',
+					item_tax: 0,
+					meta: product.meta,
 					volume: 1,
 					extra: {},
 				};

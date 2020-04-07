@@ -13,6 +13,7 @@ import classnames from 'classnames';
  */
 import AsyncLoad from 'components/async-load';
 import MasterbarLoggedIn from 'layout/masterbar/logged-in';
+import JetpackCloudMasterbar from 'landing/jetpack-cloud/components/masterbar';
 import GlobalNotices from 'components/global-notices';
 import HtmlIsIframeClassname from 'layout/html-is-iframe-classname';
 import notices from 'notices';
@@ -100,6 +101,50 @@ class Layout extends Component {
 		// intentionally don't remove these in unmount
 	}
 
+	shouldLoadInlineHelp() {
+		if ( ! config.isEnabled( 'inline-help' ) ) {
+			return false;
+		}
+
+		if (
+			'jetpack-connect' === this.props.sectionName &&
+			'/jetpack/new' !== this.props.currentRoute
+		) {
+			return false;
+		}
+
+		if ( '/log-in/jetpack' === this.props.currentRoute ) {
+			return false;
+		}
+
+		if ( '/me/account/closed' === this.props.currentRoute ) {
+			return false;
+		}
+
+		if ( 'happychat' === this.props.sectionName ) {
+			return false;
+		}
+
+		if ( 'devdocs' === this.props.sectionName ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	renderMasterbar() {
+		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
+			? JetpackCloudMasterbar
+			: MasterbarLoggedIn;
+
+		return (
+			<MasterbarComponent
+				section={ this.props.sectionGroup }
+				isCheckout={ this.props.sectionName === 'checkout' }
+			/>
+		);
+	}
+
 	render() {
 		const sectionClass = classnames(
 			'layout',
@@ -127,7 +172,7 @@ class Layout extends Component {
 		const optionalBodyProps = () => {
 			const optionalProps = {};
 
-			if ( this.props.isFrankenflow ) {
+			if ( this.props.isFrankenflow || this.props.isCheckoutFromGutenboarding ) {
 				optionalProps.bodyClass = 'is-frankenflow';
 			}
 
@@ -150,10 +195,7 @@ class Layout extends Component {
 				<AsyncLoad require="layout/guided-tours" placeholder={ null } />
 				{ ! isE2ETest() && <AsyncLoad require="layout/nps-survey-notice" placeholder={ null } /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
-				<MasterbarLoggedIn
-					section={ this.props.sectionGroup }
-					isCheckout={ this.props.sectionName === 'checkout' }
-				/>
+				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<LayoutLoader />
 				{ this.props.isOffline && <OfflineStatus /> }
@@ -185,13 +227,9 @@ class Layout extends Component {
 				{ 'development' === process.env.NODE_ENV && (
 					<AsyncLoad require="components/webpack-build-monitor" placeholder={ null } />
 				) }
-				{ ( 'jetpack-connect' !== this.props.sectionName ||
-					this.props.currentRoute === '/jetpack/new' ) &&
-					this.props.currentRoute !== '/log-in/jetpack' &&
-					this.props.currentRoute !== '/me/account/closed' &&
-					'happychat' !== this.props.sectionName && (
-						<AsyncLoad require="blocks/inline-help" placeholder={ null } />
-					) }
+				{ this.shouldLoadInlineHelp() && (
+					<AsyncLoad require="blocks/inline-help" placeholder={ null } />
+				) }
 				<AsyncLoad require="blocks/support-article-dialog" placeholder={ null } />
 				<AsyncLoad require="blocks/app-banner" placeholder={ null } />
 				{ config.isEnabled( 'gdpr-banner' ) && (
@@ -213,7 +251,10 @@ export default connect( state => {
 	const sectionJitmPath = getMessagePathForJITM( currentRoute );
 	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
 	const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
-	const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';
+	const isCheckoutFromGutenboarding =
+		'checkout' === sectionName && '1' === getCurrentQueryArguments( state )?.preLaunch;
+	const noMasterbarForRoute =
+		isJetpackLogin || isCheckoutFromGutenboarding || currentRoute === '/me/account/closed';
 	const noMasterbarForSection = 'signup' === sectionName || 'jetpack-connect' === sectionName;
 	const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 	const isJetpackWooCommerceFlow =
@@ -222,7 +263,9 @@ export default connect( state => {
 	const oauth2Client = getCurrentOAuth2Client( state );
 	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
 	const isEligibleForJITM = [ 'stats', 'plans', 'themes', 'plugins' ].indexOf( sectionName ) >= 0;
-	const isFrankenflow = startsWith( currentRoute, '/start/frankenflow' );
+	const isFrankenflow =
+		startsWith( currentRoute, '/start/frankenflow' ) ||
+		startsWith( currentRoute, '/start/prelaunch' );
 
 	return {
 		masterbarIsHidden:
@@ -252,5 +295,6 @@ export default connect( state => {
 		See https://github.com/Automattic/wp-calypso/pull/31277 for more details. */
 		shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 		isFrankenflow,
+		isCheckoutFromGutenboarding,
 	};
 } )( Layout );

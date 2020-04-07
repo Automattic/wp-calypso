@@ -313,6 +313,7 @@ function ExistingCardPayButton( { disabled, id, stripeConfiguration } ) {
 				} )
 			}
 			buttonState={ disabled ? 'disabled' : 'primary' }
+			isBusy={ 'submitting' === formStatus }
 			fullWidth
 		>
 			{ buttonString }

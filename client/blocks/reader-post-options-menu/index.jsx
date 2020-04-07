@@ -198,8 +198,8 @@ class ReaderPostOptionsMenu extends React.Component {
 						<FollowButton
 							tagName={ PopoverMenuItem }
 							siteUrl={ followUrl }
-							followLabel={ showConversationFollowButton ? translate( 'Follow Site' ) : null }
-							followingLabel={ showConversationFollowButton ? translate( 'Following Site' ) : null }
+							followLabel={ showConversationFollowButton ? translate( 'Follow site' ) : null }
+							followingLabel={ showConversationFollowButton ? translate( 'Following site' ) : null }
 						/>
 					) }
 
@@ -215,13 +215,13 @@ class ReaderPostOptionsMenu extends React.Component {
 
 					{ this.props.showVisitPost && post.URL && (
 						<PopoverMenuItem onClick={ this.visitPost } icon="external">
-							{ translate( 'Visit Post' ) }
+							{ translate( 'Visit post' ) }
 						</PopoverMenuItem>
 					) }
 
 					{ this.props.showEditPost && isEditPossible && (
 						<PopoverMenuItem onClick={ this.editPost } icon="pencil">
-							{ translate( 'Edit Post' ) }
+							{ translate( 'Edit post' ) }
 						</PopoverMenuItem>
 					) }
 
@@ -232,19 +232,19 @@ class ReaderPostOptionsMenu extends React.Component {
 
 					{ isBlockPossible && (
 						<PopoverMenuItem onClick={ this.blockSite }>
-							{ translate( 'Block Site' ) }
+							{ translate( 'Block site' ) }
 						</PopoverMenuItem>
 					) }
 
 					{ ( ( this.props.showReportPost && isBlockPossible ) || isDiscoverPost ) && (
 						<PopoverMenuItem onClick={ this.reportPost }>
-							{ translate( 'Report this Post' ) }
+							{ translate( 'Report this post' ) }
 						</PopoverMenuItem>
 					) }
 
 					{ this.props.showReportSite && site && isBlockPossible && (
 						<PopoverMenuItem onClick={ this.reportSite }>
-							{ translate( 'Report this Site' ) }
+							{ translate( 'Report this site' ) }
 						</PopoverMenuItem>
 					) }
 				</EllipsisMenu>

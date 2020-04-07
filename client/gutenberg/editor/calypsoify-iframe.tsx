@@ -37,12 +37,13 @@ import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
 import { setEditorIframeLoaded, startEditingPost } from 'state/ui/editor/actions';
 import { Placeholder } from './placeholder';
 import WebPreview from 'components/web-preview';
-import { trashPost } from 'state/posts/actions';
+import { editPost, trashPost } from 'state/posts/actions';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'lib/protect-form';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ConvertToBlocksDialog from 'components/convert-to-blocks';
 import config from 'config';
+import EditorDocumentHead from 'post-editor/editor-document-head';
 
 /**
  * Types
@@ -59,6 +60,7 @@ interface Props {
 	duplicatePostId: T.PostId;
 	postId: T.PostId;
 	postType: T.PostType;
+	editorType: 'site' | 'post'; // Note: a page or other CPT is a type of post.
 	pressThis: any;
 	siteAdminUrl: T.URL | null;
 	fseParentPageId: T.PostId;
@@ -230,7 +232,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 		if ( EditorActions.SetDraftId === action && ! this.props.postId ) {
 			const { postId } = payload;
-			const { siteId, currentRoute } = this.props;
+			const { siteId, currentRoute, postType } = this.props;
 
 			if ( ! endsWith( currentRoute, `/${ postId }` ) ) {
 				this.props.replaceHistory( `${ currentRoute }/${ postId }`, true );
@@ -238,6 +240,9 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 				//set postId on state.ui.editor.postId, so components like editor revisions can read from it
 				this.props.startEditingPost( siteId, postId );
+
+				//set post type on state.posts.[ id ].type, so components like document head can read from it
+				this.props.editPost( siteId, postId, { type: postType } );
 			}
 		}
 
@@ -435,15 +440,22 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		previewPort.onmessage = ( message: MessageEvent ) => {
 			previewPort.close();
 
-			const { frameNonce } = this.props;
+			const { frameNonce, unmappedSiteUrl } = this.props;
 			const { previewUrl, editedPost } = message.data;
-
 			const parsedPreviewUrl = url.parse( previewUrl, true );
+
 			if ( frameNonce ) {
 				parsedPreviewUrl.query[ 'frame-nonce' ] = frameNonce;
 			}
+
 			parsedPreviewUrl.query.iframe = 'true';
 			delete parsedPreviewUrl.search;
+
+			const { host: unmappedSiteUrlHost } = url.parse( unmappedSiteUrl );
+			if ( unmappedSiteUrlHost ) {
+				parsedPreviewUrl.host = unmappedSiteUrlHost;
+				parsedPreviewUrl.hostname = unmappedSiteUrlHost;
+			}
 
 			this.setState( {
 				previewUrl: url.format( parsedPreviewUrl ),
@@ -562,6 +574,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 					title={ this.getStatsTitle() }
 					properties={ this.getStatsProps() }
 				/>
+				<EditorDocumentHead />
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<ConvertToBlocksDialog
 					showDialog={ isConversionPromptVisible }
@@ -614,7 +627,14 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 const mapStateToProps = (
 	state: T.AppState,
-	{ postId, postType, duplicatePostId, fseParentPageId, creatingNewHomepage }: Props
+	{
+		postId,
+		postType,
+		duplicatePostId,
+		fseParentPageId,
+		creatingNewHomepage,
+		editorType = 'post',
+	}: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
 	const currentRoute = getCurrentRoute( state );
@@ -640,7 +660,10 @@ const mapStateToProps = (
 		queryArgs = wpcom.addSupportParams( queryArgs );
 	}
 
-	const siteAdminUrl = getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
+	const siteAdminUrl =
+		editorType === 'site'
+			? getSiteAdminUrl( state, siteId, 'admin.php?page=gutenberg-edit-site' )
+			: getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
 
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
 
@@ -674,6 +697,7 @@ const mapStateToProps = (
 			partial.placeholder,
 			'wp_template_part'
 		),
+		unmappedSiteUrl: getSiteOption( state, siteId, 'unmapped_url' ),
 	};
 };
 
@@ -684,6 +708,7 @@ const mapDispatchToProps = {
 	openPostRevisionsDialog,
 	setEditorIframeLoaded,
 	startEditingPost,
+	editPost,
 	trashPost,
 	updateSiteFrontPage,
 };

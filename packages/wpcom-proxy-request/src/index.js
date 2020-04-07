@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-import uid from 'uid';
+import { v4 as uuidv4 } from 'uuid';
 import WPError from 'wp-error';
-import event from 'component-event';
 import ProgressEvent from 'progress-event';
 import debugFactory from 'debug';
 
@@ -102,7 +101,7 @@ debug( 'using "origin": %o', origin );
  * @param {Function} [fn] - callback response
  * @returns {window.XMLHttpRequest} XMLHttpRequest instance
  */
-const request = ( originalParams, fn ) => {
+const makeRequest = ( originalParams, fn ) => {
 	const params = Object.assign( {}, originalParams );
 
 	debug( 'request(%o)', params );
@@ -112,8 +111,8 @@ const request = ( originalParams, fn ) => {
 		install();
 	}
 
-	// generate a uid for this API request
-	const id = uid();
+	// generate a uuid for this API request
+	const id = uuidv4();
 	params.callback = id;
 	params.supports_args = true; // supports receiving variable amount of arguments
 	params.supports_error_obj = true; // better Error object info
@@ -156,9 +155,9 @@ const request = ( originalParams, fn ) => {
 			fn( error, null, e.headers );
 		};
 
-		event.bind( xhr, 'load', xhrOnLoad );
-		event.bind( xhr, 'abort', xhrOnError );
-		event.bind( xhr, 'error', xhrOnError );
+		xhr.addEventListener( 'load', xhrOnLoad );
+		xhr.addEventListener( 'abort', xhrOnError );
+		xhr.addEventListener( 'error', xhrOnError );
 	}
 
 	if ( loaded ) {
@@ -170,6 +169,40 @@ const request = ( originalParams, fn ) => {
 
 	return xhr;
 };
+
+/**
+ * Performs a "proxied REST API request". This happens by calling
+ * `iframe.postMessage()` on the proxy iframe instance, which from there
+ * takes care of WordPress.com user authentication (via the currently
+ * logged-in user's cookies).
+ *
+ * If no function is specified as second parameter, a promise is returned.
+ *
+ * @param {object} originalParams - request parameters
+ * @param {Function} [fn] - callback response
+ * @returns {window.XMLHttpRequest|Promise} XMLHttpRequest instance or Promise
+ */
+const request = ( originalParams, fn ) => {
+	// if callback is provided, behave traditionally
+	if ( 'function' === typeof fn ) {
+		// request method
+		return makeRequest( originalParams, fn );
+	}
+
+	// but if not, return a Promise
+	return new Promise( ( res, rej ) => {
+		makeRequest( originalParams, ( err, response ) => {
+			err ? rej( err ) : res( response );
+		} );
+	} );
+};
+
+/**
+ * Set proxy to "access all users' blogs" mode.
+ */
+export function requestAllBlogsAccess() {
+	return request( { metaAPI: { accessAllUsersBlogs: true } } );
+}
 
 /**
  * Calls the `postMessage()` function on the <iframe>.
@@ -261,7 +294,7 @@ function install() {
 	buffered = [];
 
 	// listen to messages sent to `window`
-	event.bind( window, 'message', onmessage );
+	window.addEventListener( 'message', onmessage );
 
 	// create the <iframe>
 	iframe = document.createElement( 'iframe' );
@@ -286,7 +319,7 @@ const reloadProxy = () => {
  */
 function uninstall() {
 	debug( 'uninstall()' );
-	event.unbind( window, 'message', onmessage );
+	window.removeEventListener( 'message', onmessage );
 	document.body.removeChild( iframe );
 	loaded = false;
 	iframe = null;

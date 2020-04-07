@@ -1,3 +1,19 @@
+export const CONTACT_DETAILS_FORM_FIELDS = [
+	'firstName',
+	'lastName',
+	'organization',
+	'email',
+	'alternateEmail',
+	'phone',
+	'address1',
+	'address2',
+	'city',
+	'state',
+	'postalCode',
+	'countryCode',
+	'fax',
+];
+
 export const CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES = [ 'GB', 'IE' ];
 
 // We must exclude country codes that return

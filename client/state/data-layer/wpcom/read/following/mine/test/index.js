@@ -18,7 +18,8 @@ import {
 	updateSeenOnFollow,
 } from '../';
 import { subscriptionsFromApi } from '../utils';
-import { READER_FOLLOWS_SYNC_START, NOTICE_CREATE } from 'state/action-types';
+import { NOTICE_CREATE } from 'state/action-types';
+import { READER_FOLLOWS_SYNC_START } from 'state/reader/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveFollows, follow, syncComplete } from 'state/reader/follows/actions';
 

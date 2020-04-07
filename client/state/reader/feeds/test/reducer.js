@@ -13,9 +13,8 @@ import {
 	READER_FEED_REQUEST_SUCCESS,
 	READER_FEED_REQUEST_FAILURE,
 	READER_FEED_UPDATE,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
+} from 'state/reader/action-types';
+import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { captureConsole } from 'test/helpers/console';
 
 describe( 'reducer', () => {

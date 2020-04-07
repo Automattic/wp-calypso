@@ -9,6 +9,9 @@ import { castArray } from 'lodash';
  */
 import {
 	MEDIA_DELETE,
+	MEDIA_ERRORS_CLEAR,
+	MEDIA_ITEM_CREATE,
+	MEDIA_ITEM_ERRORS_CLEAR,
 	MEDIA_ITEM_REQUEST,
 	MEDIA_ITEM_REQUEST_FAILURE,
 	MEDIA_ITEM_REQUEST_SUCCESS,
@@ -18,6 +21,7 @@ import {
 	MEDIA_REQUEST_FAILURE,
 	MEDIA_REQUEST_SUCCESS,
 	MEDIA_REQUESTING,
+	MEDIA_SOURCE_CHANGE,
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/sites/media';
@@ -80,13 +84,15 @@ export function requestingMedia( siteId, query ) {
  *
  * @param  {number} siteId Site ID
  * @param  {object} query  Query object
+ * @param  {object} error  Error object
  * @returns {object}        Action object
  */
-export function failMediaRequest( siteId, query ) {
+export function failMediaRequest( siteId, query, error = null ) {
 	return {
 		type: MEDIA_REQUEST_FAILURE,
 		siteId,
 		query,
+		error,
 	};
 }
 
@@ -144,13 +150,15 @@ export function requestingMediaItem( siteId, mediaId ) {
  *
  * @param  {number} siteId  Site ID
  * @param  {number} mediaId Media ID
+ * @param  {object} error   Error object
  * @returns {object}         Action object
  */
-export function failMediaItemRequest( siteId, mediaId ) {
+export function failMediaItemRequest( siteId, mediaId, error = null ) {
 	return {
 		type: MEDIA_ITEM_REQUEST_FAILURE,
 		siteId,
 		mediaId,
+		error,
 	};
 }
 
@@ -171,6 +179,22 @@ export function successMediaItemRequest( siteId, mediaId ) {
 }
 
 /**
+ * Returns an action object used in signalling that a media item for the site
+ * are being created.
+ *
+ * @param  {object}  site           Site object
+ * @param  {object}  transientMedia Fake incomplete media item, used before media is sent to the server
+ * @returns {object}                Action object
+ */
+export function createMediaItem( site, transientMedia ) {
+	return {
+		type: MEDIA_ITEM_CREATE,
+		site,
+		transientMedia,
+	};
+}
+
+/**
  * Returns an action object used in signalling that media item(s) for the site
  * are to be deleted.
  *
@@ -187,5 +211,48 @@ export function deleteMedia( siteId, mediaIds ) {
 		type: MEDIA_DELETE,
 		mediaIds: castArray( mediaIds ),
 		siteId,
+	};
+}
+
+/**
+ * Returns an action object used in signalling that the media source for the site has changed.
+ *
+ * @param   {number} siteId Site ID
+ * @returns {object}        Action object
+ */
+export function changeMediaSource( siteId ) {
+	return {
+		type: MEDIA_SOURCE_CHANGE,
+		siteId,
+	};
+}
+
+/**
+ * Returns an action object used in signalling that the media errors of a certain type have been cleared.
+ *
+ * @param  {number}  siteId    Site ID
+ * @param  {string}  errorType Error type
+ * @returns {object}           Action object
+ */
+export function clearMediaErrors( siteId, errorType ) {
+	return {
+		type: MEDIA_ERRORS_CLEAR,
+		siteId,
+		errorType,
+	};
+}
+
+/**
+ * Returns an action object used in signalling that the errors for a certain media item have been cleared.
+ *
+ * @param  {number}   siteId Site ID
+ * @param  {number}  mediaId Media ID
+ * @returns {object}         Action object
+ */
+export function clearMediaItemErrors( siteId, mediaId ) {
+	return {
+		type: MEDIA_ITEM_ERRORS_CLEAR,
+		siteId,
+		mediaId,
 	};
 }
