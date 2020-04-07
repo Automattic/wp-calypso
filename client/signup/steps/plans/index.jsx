@@ -139,6 +139,7 @@ export class PlansStep extends Component {
 					plansWithScroll={ true }
 					planTypes={ planTypes }
 					flowName={ flowName }
+					isGutenboarding={ this.props.isGutenboarding }
 				/>
 			</div>
 		);
@@ -195,6 +196,7 @@ export class PlansStep extends Component {
 				allowBackFirstStep={ !! selectedSite }
 				backUrl={ backUrl }
 				backLabelText={ backLabelText }
+				hideFormattedHeader={ this.props.isGutenboarding }
 			/>
 		);
 	}

@@ -1,0 +1,15 @@
+.gutenboarding-header {
+	display: flex;
+	margin: 0 27px 20px;
+	justify-content: space-between;
+
+	& > header {
+		text-align: left;
+	}
+
+	&__select-free-plan {
+		color: var( --color-neutral );
+		text-decoration: underline;
+		cursor: pointer;
+	}
+}

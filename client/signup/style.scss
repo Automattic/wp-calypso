@@ -299,8 +299,8 @@ body.is-section-signup .layout.gravatar .formatted-header {
 body.is-section-signup.is-frankenflow {
 	background: var( --color-surface-backdrop );
 
-	.signup-header .wordpress-logo {
-		fill: var( --color-wordpress-com );
+	.signup-header {
+		display: none;
 	}
 
 	.signup-processing-screen__content {
@@ -330,14 +330,14 @@ body.is-section-signup.is-frankenflow .layout:not( .dops ):not( .is-wccom-oauth-
 		.formatted-header__title {
 			color: var( --color-text );
 		}
-	
+
 		.formatted-header__subtitle {
 			color: var( --color-text );
 		}
-	
+
 		a {
 			color: var( --color-link );
-	
+
 			&:hover {
 				color: var( --color-link-dark );
 			}
