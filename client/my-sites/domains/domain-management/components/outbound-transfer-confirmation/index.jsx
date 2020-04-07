@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { cancelTransferRequest } from 'lib/domains/wapi-domain-info/actions';
+import { acceptTransfer, cancelTransferRequest } from 'lib/domains/wapi-domain-info/actions';
 import notices from 'notices';
 
 /**
@@ -54,8 +54,16 @@ class OutboundTransferConfirmation extends React.PureComponent {
 	};
 
 	onAcceptTransferClick = () => {
+		const { domain, translate } = this.props;
 		this.setState( { isAccepting: true } );
-		// TODO: make this button work
+		acceptTransfer( domain.name, error => {
+			this.setStateIfMounted( { isAccepting: false } );
+			if ( error ) {
+				notices.error( error.message );
+			} else {
+				notices.success( translate( 'The domain transfer was accepted successfully.' ) );
+			}
+		} );
 	};
 
 	onCancelTransferClick = () => {
