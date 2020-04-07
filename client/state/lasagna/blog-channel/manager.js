@@ -14,9 +14,9 @@ import { channelLeave, CHANNELS } from 'state/lasagna/channel';
  * Module variables
  */
 export const namespace = 'blog';
-const MAX_SECONDS_KEEP_CHANNEL_ACTIVE = 60 * 15; // 15 minutes
-const MAX_SECONDS_SINCE_LAST_UPDATE = 60 * 15; // 15 minutes
-const MAX_CHANNELS_OPEN = 3;
+const MAX_SECONDS_KEEP_CHANNEL_ACTIVE = 60 * 60; // 1 hour
+const MAX_SECONDS_SINCE_LAST_UPDATE = 60 * 45; // 45 minutes
+const MAX_CHANNELS_OPEN = 20;
 const debug = createDebug( 'lasagna:manager:blog' );
 const channelTopicPrefix = `public:push:${ namespace }:`;
 
