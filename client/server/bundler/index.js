@@ -7,6 +7,7 @@ const webpack = require( 'webpack' );
 const chalk = require( 'chalk' );
 const hotMiddleware = require( 'webpack-hot-middleware' );
 const webpackConfig = require( 'webpack.config' );
+const { execSync } = require( 'child_process' );
 
 const config = require( 'config' );
 
@@ -14,6 +15,9 @@ const protocol = process.env.PROTOCOL || config( 'protocol' );
 const host = process.env.HOST || config( 'hostname' );
 const port = process.env.PORT || config( 'port' );
 const shouldProfile = process.env.PROFILE === 'true';
+const shouldBuildChunksMap =
+	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
+	process.env.ENABLE_FEATURES === 'use-translation-chunks';
 
 function middleware( app ) {
 	const compiler = webpack( webpackConfig );
@@ -31,6 +35,15 @@ function middleware( app ) {
 				profile: true,
 			} )
 		);
+	}
+
+	// In development environment we need to wait for initial webpack compile
+	// to finish and execute the build-languages script if translation chunks
+	// feature is enabled.
+	if ( shouldBuildChunksMap ) {
+		callbacks.push( () => {
+			execSync( 'node bin/build-languages' );
+		} );
 	}
 
 	compiler.hooks.done.tap( 'Calypso', function() {
