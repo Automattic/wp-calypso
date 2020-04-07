@@ -40,7 +40,7 @@ before( async function() {
 describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, function() {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Public Pages: @parallel', function() {
+	describe( 'Public Pages: @parallel @ie11canary', function() {
 		let fileDetails;
 		const pageTitle = dataHelper.randomPhrase();
 		const pageQuote =
@@ -58,6 +58,16 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 				this.loginFlow = new LoginFlow( driver );
 			}
 			return await this.loginFlow.loginAndStartNewPage( null, true );
+		} );
+
+		step( 'Post editor loads in iframe', async function() {
+			if ( config.get( 'browser' ) === 'ie' ) {
+				// We don't mind if IE opens the post editor in wp-admin, just
+				// as long as a Gutenberg editor has opened.
+				return;
+			}
+
+			await GutenbergEditorComponent.Expect( driver, 'iframe' );
 		} );
 
 		step( 'Can enter page title, content and image', async function() {

@@ -49,7 +49,7 @@ before( async function() {
 describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, function() {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Public Posts: Preview and Publish a Public Post @parallel', function() {
+	describe( 'Public Posts: Preview and Publish a Public Post @parallel @ie11canary', function() {
 		let fileDetails;
 		const blogPostTitle = dataHelper.randomPhrase();
 		const blogPostQuote =
@@ -66,6 +66,16 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		step( 'Can log in', async function() {
 			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
+		} );
+
+		step( 'Post editor loads in iframe', async function() {
+			if ( config.get( 'browser' ) === 'ie' ) {
+				// We don't mind if IE opens the post editor in wp-admin, just
+				// as long as a Gutenberg editor has opened.
+				return;
+			}
+
+			await GutenbergEditorComponent.Expect( driver, 'iframe' );
 		} );
 
 		step( 'Can enter post title, content and image', async function() {
