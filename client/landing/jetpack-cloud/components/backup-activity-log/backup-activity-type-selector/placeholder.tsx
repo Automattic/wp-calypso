@@ -13,7 +13,11 @@ import { Button } from '@automattic/components';
 const BackupsActivityTypeSelectorPlaceholder: FunctionComponent = () => {
 	const translate = useTranslate();
 
-	return <Button disabled>{ translate( 'Activity type' ) }</Button>;
+	return (
+		<Button className="backup-activity-type-selector__placeholder" disabled>
+			{ translate( 'Activity type' ) }
+		</Button>
+	);
 };
 
 export default BackupsActivityTypeSelectorPlaceholder;

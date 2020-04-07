@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
+import { Moment } from 'moment';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import { Moment } from 'moment';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 
 /**
  * Internal dependencies
  */
-import { Activity, ActivityTypeCount, Filter } from './types';
+import { Activity, ActivityCount, ActivityTypeCount, Filter } from './types';
 import { getHttpData } from 'state/data-layer/http-data';
 import {
 	requestActivityLogs,
@@ -21,12 +21,17 @@ import {
 } from 'state/data-getters';
 import { useLocalizedMoment } from 'components/localized-moment';
 import ActivityCard from 'landing/jetpack-cloud/components/activity-card';
-import ActivityTypeSelector from './activity-type-selector';
-import ActivityTypeSelectorPlaceholder from './activity-type-selector/placeholder';
-import DateRangeSelector from './date-range-selector';
-import DateRangeSelectorPlaceholder from './date-range-selector/placeholder';
+import ActivityTypeSelector from './backup-activity-type-selector';
+import ActivityTypeSelectorPlaceholder from './backup-activity-type-selector/placeholder';
+import DateRangeSelector from './backup-date-range-selector';
+import DateRangeSelectorPlaceholder from './backup-date-range-selector/placeholder';
 import Pagination from 'components/pagination';
 import Spinner from 'components/spinner';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 interface Props {
 	baseFilter?: Filter;
@@ -66,7 +71,7 @@ const BackupActivityLog: FunctionComponent< Props > = ( {
 	};
 
 	// we use this request to get the date ranges and therefore do not want to subject i tto filter limitations
-	const activityCounts = useSelector(
+	const activityCounts = useSelector< object, ActivityCount[] | undefined >(
 		() => getHttpData( requestActivityCountsId( siteId, {} ) ).data
 	);
 
@@ -140,8 +145,8 @@ const BackupActivityLog: FunctionComponent< Props > = ( {
 		);
 
 	const renderFilterBar = () => (
-		<div>
-			{ translate( 'Filter by:' ) }
+		<div className="backup-activity-log__filter-bar">
+			<span>{ translate( 'Filter by:' ) }</span>
 			{ showActivityTypeSelector && renderActivityTypeSelector() }
 			{ showDateRangeSelector && renderDateRangeSelector() }
 		</div>
@@ -168,10 +173,14 @@ const BackupActivityLog: FunctionComponent< Props > = ( {
 
 		return (
 			<>
-				{ renderPagination( 'activity-log__pagination-top', loadedActivities.length, actualPage ) }
+				{ renderPagination(
+					'backup-activity-log__pagination-top',
+					loadedActivities.length,
+					actualPage
+				) }
 				{ renderedActivities }
 				{ renderPagination(
-					'activity-log__pagination-bottom',
+					'backup-activity-log__pagination-top',
 					loadedActivities.length,
 					actualPage
 				) }

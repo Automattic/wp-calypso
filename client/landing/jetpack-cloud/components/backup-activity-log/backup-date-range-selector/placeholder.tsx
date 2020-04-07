@@ -12,7 +12,11 @@ import { Button } from '@automattic/components';
 const BackupsDateRangeSelectorPlaceholder: FunctionComponent = () => {
 	const translate = useTranslate();
 
-	return <Button disabled>{ translate( 'Date range' ) }</Button>;
+	return (
+		<Button className="backup-date-range-selector__placeholder" disabled>
+			{ translate( 'Date range' ) }
+		</Button>
+	);
 };
 
 export default BackupsDateRangeSelectorPlaceholder;

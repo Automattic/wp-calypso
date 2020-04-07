@@ -29,7 +29,7 @@ const BackupsDateRangeSelector: FunctionComponent< Props > = ( {
 	const translate = useTranslate();
 
 	const renderTrigger = ( { buttonRef, onTriggerClick } ) => (
-		<Button ref={ buttonRef } onClick={ onTriggerClick }>
+		<Button className="backup-date-range-selector" ref={ buttonRef } onClick={ onTriggerClick }>
 			{ translate( 'Date range' ) }
 		</Button>
 	);

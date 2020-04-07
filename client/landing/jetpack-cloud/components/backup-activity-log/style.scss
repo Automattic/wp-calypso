@@ -1,0 +1,9 @@
+.backup-activity-log__filter-bar {
+	display: flex;
+	direction: row;
+	align-content: center;
+
+	& * {
+		margin-left: 10px;
+	}
+}

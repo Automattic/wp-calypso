@@ -18,3 +18,8 @@ export interface ActivityTypeCount {
 	key: string;
 	name: StringConstructor;
 }
+
+export interface ActivityCount {
+	date: string;
+	count: number;
+}

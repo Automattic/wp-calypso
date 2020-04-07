@@ -39,7 +39,7 @@ const BackupsActivityTypeSelector: FunctionComponent< Props > = ( {
 
 	return (
 		<>
-			<Button ref={ buttonRef } onClick={ togglePopover }>
+			<Button className="backup-activity-type-selector" ref={ buttonRef } onClick={ togglePopover }>
 				{ translate( 'Activity type' ) }
 			</Button>
 			<Popover context={ buttonRef.current } isVisible={ showSelector } position="bottom">
