@@ -105,7 +105,8 @@ class PostRelativeTime extends React.PureComponent {
 			const scheduledTime = scheduledDate.calendar( null, {
 				sameElse: this.props.translate( '%(displayDate)s [at] LT', {
 					args: { displayDate },
-					comment: 'moment.js formatting string: "displayDate" refers to date (eg. 21 April) and LT refers to time (eg. 18:00) - "at" is translated',
+					comment: 
+					'"displayDate" refers to date (eg. 21 April) & LT refers to time (eg. 18:00) - "at" is translated',
 				} ),
 			} );
 
