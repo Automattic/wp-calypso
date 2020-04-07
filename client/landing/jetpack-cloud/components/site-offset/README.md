@@ -1,6 +1,6 @@
 # loaded applySiteOffset
 
-This module provides support for using applySiteOffset inside React components with including the necessary selectors and query components.
+This module provides support for using applySiteOffset inside React components without including the necessary selectors and query components.
 
 # `withApplySiteOffset`
 
