@@ -45,6 +45,13 @@
 	}
 }
 
+// Pulsing background color for loading placeholders
+@keyframes highlight {
+	50% {
+		background-color: var( --color-warning-10 );
+	}
+}
+
 // Another pulsing animation for placeholders
 @keyframes loading-fade {
 	0% {
