@@ -40,7 +40,7 @@ before( async function() {
 describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, function() {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Public Pages: @parallel @ie11canary', function() {
+	describe( 'Public Pages: @parallel', function() {
 		let fileDetails;
 		const pageTitle = dataHelper.randomPhrase();
 		const pageQuote =
