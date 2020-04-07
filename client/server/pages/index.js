@@ -867,6 +867,10 @@ module.exports = function() {
 		'entry-gutenboarding'
 	);
 
+	// Handle redirection from development basename
+	// TODO: Remove after a few months
+	handleSectionPath( GUTENBOARDING_SECTION_DEFINITION, `/gutenboarding`, 'entry-gutenboarding' );
+
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post(
 		'/cspreport',
