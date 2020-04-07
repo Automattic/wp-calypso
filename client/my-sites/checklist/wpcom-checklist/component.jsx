@@ -36,6 +36,7 @@ import PendingGSuiteTosNoticeDialog from 'my-sites/domains/components/domain-war
 import { domainManagementEdit, domainManagementList } from 'my-sites/domains/paths';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 import { localizeUrl } from 'lib/i18n-utils';
+import getMenusUrl from 'state/selectors/get-menus-url';
 
 const userLib = userFactory();
 
@@ -174,9 +175,12 @@ class WpcomChecklistComponent extends PureComponent {
 	};
 
 	handleUpdateSiteMenu = () => {
+		const { menusUrl, translate } = this.props;
 		this.props.openSupportArticleDialog( {
 			postId: 59580,
 			postUrl: localizeUrl( 'https://wordpress.com/support/menus/' ),
+			actionLabel: translate( 'Go to the Customizer' ),
+			actionUrl: menusUrl,
 		} );
 	};
 
@@ -1050,6 +1054,7 @@ export default connect(
 			needsDomainVerification,
 			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 			domains: getDomainsBySiteId( state, siteId ),
+			menusUrl: getMenusUrl( state, siteId ),
 		};
 	},
 	{
