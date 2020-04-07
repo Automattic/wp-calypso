@@ -249,11 +249,16 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		await this.openBlockInserterAndSearch( name );
 		// Using a JS click here since the Webdriver click wasn't working
-		const button = await this.driver.findElement( inserterBlockItemSelector );
+		let button = await this.driver.findElement( inserterBlockItemSelector );
 		await this.driver
 			.actions( { bridge: true } )
 			.move( { origin: button } )
 			.perform();
+
+		// Get the button again after it is re-mounted by react. I think this is
+		// needed because a hover popover appears when going over the button.
+		await this.driver.wait( until.stalenessOf( button ) );
+		button = await this.driver.findElement( inserterBlockItemSelector );
 		await this.driver.executeScript( 'arguments[0].click();', button );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, insertedBlockSelector );
 		return await this.driver.findElement( insertedBlockSelector ).getAttribute( 'id' );
