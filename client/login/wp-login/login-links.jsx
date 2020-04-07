@@ -255,8 +255,6 @@ export class LoginLinks extends React.Component {
 			locale,
 		} = this.props;
 
-		const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
-
 		let signupUrl = config( 'signup_url' );
 		const signupFlow = get( currentQuery, 'signup_flow' );
 		if (
@@ -311,7 +309,8 @@ export class LoginLinks extends React.Component {
 		}
 
 		if ( isGutenboarding ) {
-			signupUrl = '/gutenboarding' + langFragment;
+			const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
+			signupUrl = this.props.signupUrl || '/gutenboarding' + langFragment;
 		}
 
 		return (

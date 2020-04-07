@@ -59,7 +59,7 @@ window.AppBoot = async () => {
 	initializeAnalytics( undefined, generateGetSuperProps() );
 	// Add accessible-focus listener.
 	accessibleFocus();
-	
+
 	let locale = DEFAULT_LOCALE_SLUG;
 	try {
 		const [ userLocale, localeData ] = await getLocale();
