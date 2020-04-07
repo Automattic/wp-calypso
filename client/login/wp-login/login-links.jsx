@@ -252,7 +252,9 @@ export class LoginLinks extends React.Component {
 			translate,
 			wccomFrom,
 			isGutenboarding,
+			locale,
 		} = this.props;
+
 		let signupUrl = config( 'signup_url' );
 		const signupFlow = get( currentQuery, 'signup_flow' );
 		if (
@@ -307,6 +309,7 @@ export class LoginLinks extends React.Component {
 		}
 
 		if ( isGutenboarding ) {
+			const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
 			signupUrl = this.props.signupUrl || '/gutenboarding' + langFragment;
 		}
 
