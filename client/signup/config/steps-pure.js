@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { noop } from 'lodash';
 import i18n from 'i18n-calypso';
 
@@ -264,8 +265,16 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem', 'isPreLaunch', 'isGutenboardingCreate' ],
 			props: {
-				headerText: i18n.translate( 'Getting ready to launch your website' ),
-				subHeaderText: i18n.translate( "Pick a plan that's right for you. Upgrade as you grow." ),
+				isGutenboarding: true,
+				headerText: i18n.translate( 'Choose a plan' ),
+				subHeaderText: i18n.translate(
+					'Pick a plan that’s right for you. Switch plans as your needs change. {{br/}} There’s no risk, you can cancel for a full refund within 30 days.',
+					{
+						components: { br: <br /> },
+						comment:
+							'Subheader of the plans page where users land from onboarding after they picked a paid domain',
+					}
+				),
 				fallbackHeaderText: i18n.translate(
 					"Almost there, pick a plan that's right for you. Upgrade as you grow."
 				),
