@@ -1,3 +1,5 @@
+@import '../landing/gutenboarding/mixins';
+
 body.is-section-signup {
 	// Use WordPress.com’s brand color for the signup background
 	background: var( --color-wordpress-com );
@@ -297,7 +299,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 
 // Background color override for new flow
 body.is-section-signup.is-frankenflow {
-	background: var( --color-surface-backdrop );
+	background: var( --color-white );
 
 	.signup-header {
 		display: none;
@@ -321,6 +323,51 @@ body.is-section-signup.is-frankenflow {
 
 	.flow-progress-indicator.flow-progress-indicator__frankenflow {
 		color: var( --color-text );
+	}
+
+	.plan-features__header {
+		border-color: transparent;
+	}
+
+	tr:last-child .plan-features__table-item,
+	tr:first-child .plan-features__table-item {
+		border-radius: 0;
+	}
+
+	.plan-features__header,
+	.plan-features__table th,
+	.plan-features__table td {
+		background: rgba( 248, 248, 248, 0.7 );
+	}
+
+	.plans-wrapper,
+	.plan-features__content {
+		padding: 8px 0 0;
+	}
+
+	.plan-price__integer {
+		font-weight: 500;
+	}
+
+	.plan-price__integer {
+		font-weight: 500;
+	}
+
+	.plan-features__header-title {
+		font-weight: 500;
+	}
+
+	.wordpress-logo {
+		display: none;
+	}
+
+	.formatted-header__title {
+		@include onboarding-heading-text;
+		font-size: 32px;
+	}
+
+	.formatted-header__subtitle {
+		margin-bottom: 16px;
 	}
 }
 
