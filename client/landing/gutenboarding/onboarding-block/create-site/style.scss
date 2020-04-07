@@ -1,6 +1,10 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import '../../mixins';
 
+$progress-step-title-height: 50px;
+$progress-step-title-margin: 40px;
+$progress-duration: 5s;
+
 .create-site__background {
 	position: fixed;
 	top: 0;
@@ -26,23 +30,47 @@
 		max-width: 540px;
 		transform: translateX( -50% );
 
-		.create-site__title {
-			@include onboarding-heading-text-mobile;
-			text-align: center;
-			margin-bottom: 20px;
-		}
-		.create-site__progress-text {
-			text-align: center;
-			margin: 20px 0;
-		}
-		// progress bar overrides
-		.progress-bar {
-			height: 7px;
+		.create-site__progress {
+			height: $progress-step-title-height;
+			overflow: hidden;
 		}
 
-		.progress-bar,
-		.progress-bar__progress {
-			border-radius: unset;
+		.create-site__progress-steps {
+			animation: progress-steps $progress-duration ease-out forwards;
+
+			@keyframes progress-steps {
+				@for $i from 0 through 3 {
+					#{$i / 3 * 100%} {
+						transform: translateY( -$progress-step-title-height * ( $i - 1 ) );
+					}
+				}
+			}
+		}
+
+		.create-site__progress-bar {
+			height: 7px;
+			background: var( --mainColor );
+			transform: scaleX( 0 );
+			transform-origin: 0% 0%;
+			margin-top: 1em;
+
+			animation: progress-move #{$progress-duration + 1} ease-out forwards;
+
+			@keyframes progress-move {
+				@for $i from 1 through 3 {
+					#{$i / 3 * 100%} {
+						transform: scaleX( #{$i / 3} );
+					}
+				}
+			}
+		}
+
+		.create-site__progress-step {
+			@include onboarding-heading-text-mobile;
+			text-align: center;
+			vertical-align: middle;
+			margin: 0;
+			height: $progress-step-title-height;
 		}
 	}
 }
