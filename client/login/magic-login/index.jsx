@@ -33,6 +33,7 @@ import JetpackHeader from 'components/jetpack-header';
 import RequestLoginEmailForm from './request-login-email-form';
 import GlobalNotices from 'components/global-notices';
 import Gridicon from 'components/gridicon';
+import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
 
 /**
  * Style dependencies
@@ -168,7 +169,9 @@ const mapState = state => ( {
 	query: getCurrentQueryArguments( state ),
 	showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
 	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
-	isGutenboardingLogin: getCurrentRoute( state )?.startsWith( '/log-in/gutenboarding/link' ),
+	isGutenboardingLogin: getCurrentRoute( state )?.startsWith(
+		`/log-in/${ GUTENBOARDING_BASE_NAME }/link`
+	),
 } );
 
 const mapDispatch = {

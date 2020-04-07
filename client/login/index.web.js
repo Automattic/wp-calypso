@@ -20,6 +20,7 @@ import { setUpLocale, setSection, makeLayoutMiddleware } from 'controller/shared
 import { redirectLoggedIn } from 'controller/web-util';
 import LayoutLoggedOut from 'layout/logged-out';
 import { getLanguageRouteParam } from 'lib/i18n-utils';
+import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
 
 export const LOGIN_SECTION_DEFINITION = {
 	name: 'login',
@@ -57,7 +58,7 @@ export default router => {
 			[
 				`/log-in/link/${ lang }`,
 				`/log-in/jetpack/link/${ lang }`,
-				`/log-in/gutenboarding/link/${ lang }`,
+				`/log-in/${ GUTENBOARDING_BASE_NAME }/link/${ lang }`,
 			],
 			setUpLocale,
 			setSection( LOGIN_SECTION_DEFINITION ),
@@ -75,8 +76,8 @@ export default router => {
 				`/log-in/:socialService(google|apple)/callback/${ lang }`,
 				`/log-in/:isJetpack(jetpack)/${ lang }`,
 				`/log-in/:isJetpack(jetpack)/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
-				`/log-in/:isGutenboarding(gutenboarding)/${ lang }`,
-				`/log-in/:isGutenboarding(gutenboarding)/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
+				`/log-in/:isGutenboarding(${ GUTENBOARDING_BASE_NAME })/${ lang }`,
+				`/log-in/:isGutenboarding(${ GUTENBOARDING_BASE_NAME })/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
 				`/log-in/${ lang }`,
 			],
 			redirectJetpack,
