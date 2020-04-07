@@ -20,7 +20,7 @@ jest.mock( 'layout/guided-tours/positioning', () => 'Positioning' );
 jest.mock( 'layout/guided-tours/tours/main-tour', () => 'MainTour' );
 jest.mock( 'layout/masterbar/logged-in', () => 'LoggedIn' );
 jest.mock( 'layout/community-translator/launcher', () => 'Launcher' );
-jest.mock( 'components/banner', () => 'Banner' );
+jest.mock( 'blocks/upsell-nudge', () => 'UpsellNudge' );
 jest.mock( 'components/notice', () => 'Notice' );
 jest.mock( 'components/notice/notice-action', () => 'NoticeAction' );
 
