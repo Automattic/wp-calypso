@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { ChangeEvent, FunctionComponent, useState, useRef } from 'react';
+import React, { ChangeEvent, FunctionComponent, useRef } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -16,20 +16,21 @@ import Popover from 'components/popover';
 interface Props {
 	activityTypeCounts: ActivityTypeCount[];
 	hiddenActivities: string[];
+	onClick: () => void;
 	setHiddenActivities: ( hiddenActivityKeys: string[] ) => void;
+	visible: boolean;
 }
 
 const BackupsActivityTypeSelector: FunctionComponent< Props > = ( {
 	activityTypeCounts,
 	hiddenActivities,
+	onClick,
 	setHiddenActivities,
+	visible,
 } ) => {
 	const translate = useTranslate();
 
-	const [ showSelector, setShowSelector ] = useState( false );
 	const buttonRef = useRef( null );
-
-	const togglePopover = () => setShowSelector( ! showSelector );
 
 	const onChange = ( { target: { name, checked } }: ChangeEvent< HTMLInputElement > ) => {
 		setHiddenActivities(
@@ -39,10 +40,10 @@ const BackupsActivityTypeSelector: FunctionComponent< Props > = ( {
 
 	return (
 		<>
-			<Button className="backup-activity-type-selector" ref={ buttonRef } onClick={ togglePopover }>
+			<Button className="backup-activity-type-selector" ref={ buttonRef } onClick={ onClick }>
 				{ translate( 'Activity type' ) }
 			</Button>
-			<Popover context={ buttonRef.current } isVisible={ showSelector } position="bottom">
+			<Popover context={ buttonRef.current } isVisible={ visible } position="bottom">
 				{ activityTypeCounts.map( ( { key, name, count } ) => (
 					<FormLabel key={ key } optional={ false } required={ false }>
 						<FormCheckbox

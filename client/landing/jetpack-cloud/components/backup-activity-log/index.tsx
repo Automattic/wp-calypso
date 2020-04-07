@@ -57,6 +57,9 @@ const BackupActivityLog: FunctionComponent< Props > = ( {
 	const [ selectedStartDate, setSelectedStartDate ] = useState< Moment | null >( null );
 	const [ selectedEndDate, setSelectedEndDate ] = useState< Moment | null >( null );
 
+	const [ selectingDateRange, setSelectingDateRange ] = useState( false );
+	const [ selectingActivityType, setSelectingActivityType ] = useState( false );
+
 	const filter = {
 		...baseFilter,
 		page,
@@ -74,11 +77,6 @@ const BackupActivityLog: FunctionComponent< Props > = ( {
 	const activityCounts = useSelector< object, ActivityCount[] | undefined >(
 		() => getHttpData( requestActivityCountsId( siteId, {} ) ).data
 	);
-
-	const oldestDate = activityCounts ? moment( activityCounts[ 0 ].date ) : null;
-	const newestDate = activityCounts
-		? moment( activityCounts[ activityCounts.length - 1 ].date )
-		: null;
 
 	if ( selectedStartDate ) {
 		filter.after = selectedStartDate.toISOString();
@@ -120,25 +118,38 @@ const BackupActivityLog: FunctionComponent< Props > = ( {
 		/>
 	);
 
+	const onActivityTypeClick = () => {
+		setSelectingDateRange( false );
+		setSelectingActivityType( ! selectingActivityType );
+	};
+
 	const renderActivityTypeSelector = () =>
 		activityTypeCounts ? (
 			<ActivityTypeSelector
-				hiddenActivities={ hiddenActivities }
 				activityTypeCounts={ activityTypeCounts }
+				hiddenActivities={ hiddenActivities }
+				onClick={ onActivityTypeClick }
 				setHiddenActivities={ setHiddenActivities }
+				visible={ selectingActivityType }
 			/>
 		) : (
 			<ActivityTypeSelectorPlaceholder />
 		);
 
+	const onDateRangeClick = () => {
+		setSelectingActivityType( false );
+		setSelectingDateRange( ! selectingDateRange );
+	};
+
 	const renderDateRangeSelector = () =>
-		oldestDate && newestDate ? (
+		activityCounts ? (
 			<DateRangeSelector
-				selectedStartDate={ selectedStartDate }
-				selectedEndDate={ selectedEndDate }
-				oldestDate={ oldestDate }
-				newestDate={ newestDate }
+				activityCounts={ activityCounts }
+				onClick={ onDateRangeClick }
 				onDateCommit={ onDateCommit }
+				selectedEndDate={ selectedEndDate }
+				selectedStartDate={ selectedStartDate }
+				visible={ selectingDateRange }
 			/>
 		) : (
 			<DateRangeSelectorPlaceholder />
@@ -180,7 +191,7 @@ const BackupActivityLog: FunctionComponent< Props > = ( {
 				) }
 				{ renderedActivities }
 				{ renderPagination(
-					'backup-activity-log__pagination-top',
+					'backup-activity-log__pagination-bottom',
 					loadedActivities.length,
 					actualPage
 				) }
