@@ -49,6 +49,11 @@ const CreateSite: FunctionComponent< {} > = () => {
 						className="create-site__progress-bar"
 						onAnimationEnd={ () => setCreateAndRedirect( true ) }
 					/>
+					<div className="create-site__progress-numbered-steps">
+						{ progressSteps.map( ( _, index ) => (
+							<p>{ `Step ${ index + 1 } of ${ progressSteps.length }` }</p>
+						) ) }
+					</div>
 				</div>
 			</div>
 		</div>
