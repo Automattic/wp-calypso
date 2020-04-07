@@ -19,11 +19,14 @@ import {
 	requestActivityActionTypeCountsId,
 	requestActivityActionTypeCounts,
 } from 'state/data-getters';
-import ActivityCard from 'landing/jetpack-cloud/components/activity-card';
-import Pagination from 'components/pagination';
-import ActivityTypeSelector from './activity-type-selector';
-import DateRangeSelector from './date-range-selector';
 import { useLocalizedMoment } from 'components/localized-moment';
+import ActivityCard from 'landing/jetpack-cloud/components/activity-card';
+import ActivityTypeSelector from './activity-type-selector';
+import ActivityTypeSelectorPlaceholder from './activity-type-selector/placeholder';
+import DateRangeSelector from './date-range-selector';
+import DateRangeSelectorPlaceholder from './date-range-selector/placeholder';
+import Pagination from 'components/pagination';
+import Spinner from 'components/spinner';
 
 interface Props {
 	baseFilter?: Filter;
@@ -112,37 +115,39 @@ const BackupActivityLog: FunctionComponent< Props > = ( {
 		/>
 	);
 
-	const renderFilterBar = (
-		loadedActivityTypeCounts: ActivityTypeCount[],
-		loadedOldestDate: Moment,
-		loadedNewestDate: Moment
-	) => (
+	const renderActivityTypeSelector = () =>
+		activityTypeCounts ? (
+			<ActivityTypeSelector
+				hiddenActivities={ hiddenActivities }
+				activityTypeCounts={ activityTypeCounts }
+				setHiddenActivities={ setHiddenActivities }
+			/>
+		) : (
+			<ActivityTypeSelectorPlaceholder />
+		);
+
+	const renderDateRangeSelector = () =>
+		oldestDate && newestDate ? (
+			<DateRangeSelector
+				selectedStartDate={ selectedStartDate }
+				selectedEndDate={ selectedEndDate }
+				oldestDate={ oldestDate }
+				newestDate={ newestDate }
+				onDateCommit={ onDateCommit }
+			/>
+		) : (
+			<DateRangeSelectorPlaceholder />
+		);
+
+	const renderFilterBar = () => (
 		<div>
 			{ translate( 'Filter by:' ) }
-			{ showActivityTypeSelector && (
-				<ActivityTypeSelector
-					hiddenActivities={ hiddenActivities }
-					activityTypeCounts={ loadedActivityTypeCounts }
-					setHiddenActivities={ setHiddenActivities }
-				/>
-			) }
-			{ showDateRangeSelector && (
-				<DateRangeSelector
-					selectedStartDate={ selectedStartDate }
-					selectedEndDate={ selectedEndDate }
-					oldestDate={ loadedOldestDate }
-					newestDate={ loadedNewestDate }
-					onDateCommit={ onDateCommit }
-				/>
-			) }
+			{ showActivityTypeSelector && renderActivityTypeSelector() }
+			{ showDateRangeSelector && renderDateRangeSelector() }
 		</div>
 	);
-	const renderData = (
-		loadedActivities: Activity[],
-		loadedActivityTypeCounts: ActivityTypeCount[],
-		loadedOldestDate: Moment,
-		loadedNewestDate: Moment
-	) => {
+
+	const renderLogs = ( loadedActivities: Activity[] ) => {
 		const actualPage = Math.max(
 			1,
 			Math.min( page, Math.ceil( loadedActivities.length / pageSize ) )
@@ -163,8 +168,6 @@ const BackupActivityLog: FunctionComponent< Props > = ( {
 
 		return (
 			<>
-				{ ( showActivityTypeSelector || showDateRangeSelector ) &&
-					renderFilterBar( loadedActivityTypeCounts, loadedOldestDate, loadedNewestDate ) }
 				{ renderPagination( 'activity-log__pagination-top', loadedActivities.length, actualPage ) }
 				{ renderedActivities }
 				{ renderPagination(
@@ -178,11 +181,8 @@ const BackupActivityLog: FunctionComponent< Props > = ( {
 
 	return (
 		<div>
-			{ activities && activityTypeCounts && oldestDate && newestDate ? (
-				renderData( activities, activityTypeCounts, oldestDate, newestDate )
-			) : (
-				<p>{ 'loading...' }</p>
-			) }
+			{ ( showActivityTypeSelector || showDateRangeSelector ) && renderFilterBar() }
+			{ activities ? renderLogs( activities ) : <Spinner /> }
 		</div>
 	);
 };

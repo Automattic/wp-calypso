@@ -7,7 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { ActivityTypeCount } from './types';
+import { ActivityTypeCount } from '../types';
 import { Button } from '@automattic/components';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
