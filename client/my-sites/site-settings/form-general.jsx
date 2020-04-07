@@ -27,7 +27,7 @@ import FormRadio from 'components/forms/form-radio';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Timezone from 'components/timezone';
 import SiteIconSetting from './site-icon-setting';
-import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
@@ -665,7 +665,7 @@ export class SiteSettingsFormGeneral extends Component {
 							</div>
 						</CompactCard>
 						{ site && ! isBusiness( site.plan ) && ! siteIsVip && (
-							<Banner
+							<UpsellNudge
 								feature={ FEATURE_NO_BRANDING }
 								plan={ PLAN_BUSINESS }
 								title={ translate(
@@ -674,6 +674,7 @@ export class SiteSettingsFormGeneral extends Component {
 								description={ translate(
 									'Upgrade to remove the footer credit, use advanced SEO tools and more'
 								) }
+								showIcon={ true }
 							/>
 						) }
 					</div>
