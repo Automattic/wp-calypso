@@ -34,6 +34,8 @@ import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { emailManagement } from 'my-sites/email/paths';
 import PendingGSuiteTosNoticeDialog from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice-dialog';
 import { domainManagementEdit, domainManagementList } from 'my-sites/domains/paths';
+import { openSupportArticleDialog } from 'state/inline-support-article/actions';
+import { localizeUrl } from 'lib/i18n-utils';
 
 const userLib = userFactory();
 
@@ -73,7 +75,7 @@ class WpcomChecklistComponent extends PureComponent {
 			service_list_added: this.renderServiceListAddedTask,
 			staff_info_added: this.renderStaffInfoAddedTask,
 			product_list_added: this.renderProductListAddedTask,
-			site_menu_created: this.renderSiteMenuCreatedTask,
+			site_menu_updated: this.renderSiteMenuUpdateTask,
 		};
 	}
 
@@ -169,6 +171,13 @@ class WpcomChecklistComponent extends PureComponent {
 	handleLaunchSite = () => {
 		const { siteId } = this.props;
 		this.props.launchSiteOrRedirectToLaunchSignupFlow( siteId );
+	};
+
+	handleUpdateSiteMenu = () => {
+		this.props.openSupportArticleDialog( {
+			postId: 59580,
+			postUrl: localizeUrl( 'https://wordpress.com/support/menus/' ),
+		} );
 	};
 
 	verificationTaskButtonText() {
@@ -988,7 +997,7 @@ class WpcomChecklistComponent extends PureComponent {
 		);
 	};
 
-	renderSiteMenuCreatedTask = ( TaskComponent, baseProps, task ) => {
+	renderSiteMenuUpdateTask = ( TaskComponent, baseProps, task ) => {
 		const { translate } = this.props;
 
 		return (
@@ -1002,10 +1011,7 @@ class WpcomChecklistComponent extends PureComponent {
 					"Building an effective navigation menu makes it easier for someone to find what they're looking for and improve search engine rankings."
 				) }
 				duration={ translate( '%d minute', '%d minutes', { count: 10, args: [ 10 ] } ) }
-				onClick={ this.handleTaskStart( {
-					task,
-					dialog: 'site-menu-tutorial',
-				} ) }
+				onClick={ this.handleUpdateSiteMenu }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Create a site menu' ) }
 				showSkip={ true }
@@ -1052,5 +1058,6 @@ export default connect(
 		requestGuidedTour,
 		requestSiteChecklistTaskUpdate,
 		launchSiteOrRedirectToLaunchSignupFlow,
+		openSupportArticleDialog,
 	}
 )( localize( WpcomChecklistComponent ) );
