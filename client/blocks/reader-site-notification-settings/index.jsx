@@ -161,7 +161,10 @@ class ReaderSiteNotificationSettings extends Component {
 							wrapperClassName="reader-site-notification-settings__popout-form-toggle"
 							id="reader-site-notification-settings__notifications"
 						/>
-						<FormLabel htmlFor="reader-site-notification-settings__notifications">
+						<FormLabel
+							htmlFor="reader-site-notification-settings__notifications"
+							onClick={ this.toggleNewPostNotification }
+						>
 							{ translate( 'Notify me of new posts' ) }
 						</FormLabel>
 						<p className="reader-site-notification-settings__popout-hint">
@@ -182,7 +185,10 @@ class ReaderSiteNotificationSettings extends Component {
 								id={ 'reader-site-notification-settings__email-posts' }
 							/>
 						) }
-						<FormLabel htmlFor="reader-site-notification-settings__email-posts">
+						<FormLabel
+							htmlFor="reader-site-notification-settings__email-posts"
+							onClick={ this.toggleNewPostEmail }
+						>
 							{ translate( 'Email me new posts' ) }
 						</FormLabel>
 						{ isEmailBlocked && (
@@ -228,7 +234,10 @@ class ReaderSiteNotificationSettings extends Component {
 								checked={ sendNewCommentsByEmail }
 								id="reader-site-notification-settings__email-comments"
 							/>
-							<FormLabel htmlFor="reader-site-notification-settings__email-comments">
+							<FormLabel
+								htmlFor="reader-site-notification-settings__email-comments"
+								onClick={ this.toggleNewCommentEmail }
+							>
 								{ translate( 'Email me new comments' ) }
 							</FormLabel>
 						</div>
