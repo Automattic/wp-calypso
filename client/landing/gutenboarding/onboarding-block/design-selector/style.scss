@@ -24,28 +24,58 @@
 	}
 
 	.design-selector__grid {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		column-gap: 64px;
-		row-gap: 64px;
-		margin-top: 30px;
-
-		@include break-large {
-			grid-template-columns: 1fr 1fr 1fr;
-		}
-
-		@include onboarding-break-gigantic {
-			grid-template-columns: 1fr 1fr 1fr 1fr;
-		}
+		float: left;
+		margin: 0 -32px 30px;
+		width: 100%;
 	}
 
 	.design-selector__design-option {
 		cursor: pointer;
+		width: calc( 50% - 64px );
+		margin: 0 32px 48px;
 
 		&:hover,
 		&:focus {
 			.design-selector__image-frame {
 				border-color: var( --highlightColor );
+			}
+		}
+		@include break-large {
+			width: calc( 33.33% - 64px );
+		}
+
+		@include onboarding-break-gigantic {
+			width: calc( 25% - 64px );
+		}
+	}
+
+	@supports (display: grid) {
+		.design-selector__grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			column-gap: 64px;
+			row-gap: 48px;
+			margin: 0 0 30px;
+
+			@include break-large {
+				grid-template-columns: 1fr 1fr 1fr;
+			}
+
+			@include onboarding-break-gigantic {
+				grid-template-columns: 1fr 1fr 1fr 1fr;
+			}
+		}
+
+		.design-selector__design-option {
+			width: auto;
+			margin: 0;
+
+			@include break-large {
+				width: auto;
+			}
+
+			@include onboarding-break-gigantic {
+				width: auto;
 			}
 		}
 	}
@@ -73,7 +103,7 @@
 	.design-selector__option-name {
 		color: var( --studio-gray-40 );
 		display: block;
-		margin-top: 16px;
+		margin: 16px 0;
 		text-align: center;
 		width: 100%;
 		@include onboarding-medium-text;
