@@ -7,3 +7,12 @@
 		margin-left: 10px;
 	}
 }
+
+.backup-date-range-selector,
+.backup-activity-type-selector {
+	background: var( --studio-white );
+	border-radius: 3px;
+	border: 1px solid var( --studio-gray-10 );
+	color: var( --studio-gray-40 );
+	font-size: 12px;
+}
