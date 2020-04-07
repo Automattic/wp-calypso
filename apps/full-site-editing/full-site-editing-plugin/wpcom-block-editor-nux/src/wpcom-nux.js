@@ -13,7 +13,7 @@ import { registerPlugin } from '@wordpress/plugins';
 /**
  * Internal dependencies
  */
-import './styles.scss';
+import './style.scss';
 import blockImage from './images/block.svg';
 import blockPickerImage from './images/block-picker.svg';
 import editorImage from './images/editor.svg';
