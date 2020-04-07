@@ -3,7 +3,7 @@
  */
 import debugFactory from 'debug';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '@automattic/composite-checkout-wpcom';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'my-sites/checkout/composite-checkout/wpcom';
 import { defaultRegistry } from '@automattic/composite-checkout';
 
 /**

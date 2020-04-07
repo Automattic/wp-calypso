@@ -5,7 +5,7 @@ import debugFactory from 'debug';
 import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	areRequiredFieldsNotEmpty,
-} from '@automattic/composite-checkout-wpcom';
+} from 'my-sites/checkout/composite-checkout/wpcom';
 
 const debug = debugFactory( 'calypso:composite-checkout:contact-validation' );
 

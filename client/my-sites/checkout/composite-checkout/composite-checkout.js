@@ -18,7 +18,7 @@ import {
 	areDomainsInLineItems,
 	domainManagedContactDetails,
 	taxManagedContactDetails,
-} from '@automattic/composite-checkout-wpcom';
+} from 'my-sites/checkout/composite-checkout/wpcom';
 import { CheckoutProvider, defaultRegistry } from '@automattic/composite-checkout';
 
 /**

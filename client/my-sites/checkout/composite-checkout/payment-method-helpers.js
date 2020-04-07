@@ -4,7 +4,7 @@
 import React, { useReducer, useEffect, useState } from 'react';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { prepareDomainContactDetails } from '@automattic/composite-checkout-wpcom';
+import { prepareDomainContactDetails } from 'my-sites/checkout/composite-checkout/wpcom';
 import wp from 'lib/wp';
 
 /**

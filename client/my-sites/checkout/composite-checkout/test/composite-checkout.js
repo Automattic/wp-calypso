@@ -10,7 +10,10 @@ import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider as ReduxProvider } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect'; // eslint-disable-line import/no-extraneous-dependencies
-import { mockSetCartEndpoint, mockGetCartEndpointWith } from '@automattic/composite-checkout-wpcom';
+import {
+	mockSetCartEndpoint,
+	mockGetCartEndpointWith,
+} from 'my-sites/checkout/composite-checkout/wpcom';
 import { render, act, fireEvent } from '@testing-library/react'; // eslint-disable-line import/no-extraneous-dependencies
 
 /**
