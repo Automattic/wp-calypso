@@ -24,13 +24,13 @@
 	}
 
 	.design-selector__grid {
-		float: left;
 		margin: 0 -32px 30px;
 		width: 100%;
 	}
 
 	.design-selector__design-option {
 		cursor: pointer;
+		float: left;
 		width: calc( 50% - 64px );
 		margin: 0 32px 48px;
 
