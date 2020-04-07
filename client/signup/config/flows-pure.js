@@ -17,6 +17,7 @@ export function generateFlows( {
 	getLaunchDestination = noop,
 	getThankYouNoSiteDestination = noop,
 	getChecklistThemeDestination = noop,
+	getPreLaunchEditorDestination = noop,
 } = {} ) {
 	const flows = {
 		account: {
@@ -349,6 +350,17 @@ export function generateFlows( {
 			description: 'Frankenflow launch for a site created from Gutenboarding',
 			lastModified: '2020-01-22',
 			pageTitle: translate( 'Launch your site' ),
+			providesDependenciesInQuery: [ 'siteSlug' ],
+		};
+	}
+
+	if ( isEnabled( 'gutenboarding' ) ) {
+		flows.prelaunch = {
+			steps: [ 'plans-with-domain' ],
+			destination: getPreLaunchEditorDestination,
+			description: 'Gutenboarding flow for creating a site with a paid domain',
+			lastModified: '2020-04-06',
+			pageTitle: translate( 'Get a domain for your site' ),
 			providesDependenciesInQuery: [ 'siteSlug' ],
 		};
 	}

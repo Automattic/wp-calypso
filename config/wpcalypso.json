@@ -47,6 +47,7 @@
 		"gutenboarding": true,
 		"gutenboarding/mshot-preview": false,
 		"gutenboarding/style-preview": true,
+		"gutenboarding/style-preview-verticals": false,
 		"happychat": true,
 		"help": true,
 		"help/courses": true,

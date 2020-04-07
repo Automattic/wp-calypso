@@ -7,7 +7,7 @@ import url from 'url';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import config from 'config';
+import config, { isEnabled } from 'config';
 import { get, reject, transform } from 'lodash';
 
 /**
@@ -39,6 +39,7 @@ import { getTopJITM } from 'state/jitm/selectors';
 import AsyncLoad from 'components/async-load';
 import UpsellNudge from 'blocks/upsell-nudge';
 import { preventWidows } from 'lib/formatting';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 const DOMAIN_UPSELL_NUDGE_DISMISS_KEY = 'domain_upsell_nudge_dismiss';
 
@@ -81,6 +82,10 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
+
 		const eventName = 'calypso_domain_credit_reminder_impression';
 		const eventProperties = { cta_name: 'current_site_domain_notice' };
 		const { translate } = this.props;
@@ -105,6 +110,10 @@ export class SiteNotice extends React.Component {
 
 	domainUpsellNudge() {
 		if ( ! this.props.isPlanOwner || this.props.domainUpsellNudgeDismissedDate ) {
+			return null;
+		}
+
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -197,6 +206,10 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
+
 		const { site, activeDiscount } = this.props;
 		const { nudgeText, nudgeEndsTodayText, ctaText, name } = activeDiscount;
 
@@ -240,20 +253,23 @@ export class SiteNotice extends React.Component {
 		const siteRedirectNotice = this.getSiteRedirectNotice( site );
 		const domainCreditNotice = this.domainCreditNotice();
 
+		const showJitms =
+			! ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) &&
+			( discountOrFreeToPaid || config.isEnabled( 'jitms' ) );
+
 		return (
 			<div className="current-site__notices">
 				<QueryProductsList />
 				<QueryActivePromotions />
 				{ siteRedirectNotice }
-				{ discountOrFreeToPaid ||
-					( config.isEnabled( 'jitms' ) && (
-						<AsyncLoad
-							require="blocks/jitm"
-							messagePath={ messagePath }
-							template="sidebar-banner"
-							placeholder={ null }
-						/>
-					) ) }
+				{ showJitms && (
+					<AsyncLoad
+						require="blocks/jitm"
+						messagePath={ messagePath }
+						template="sidebar-banner"
+						placeholder={ null }
+					/>
+				) }
 				<QuerySitePlans siteId={ site.ID } />
 				{ ! hasJITM && domainCreditNotice }
 				{ ! ( hasJITM || discountOrFreeToPaid || domainCreditNotice ) && this.domainUpsellNudge() }
@@ -282,6 +298,7 @@ export default connect(
 			isPlanOwner: isCurrentUserCurrentPlanOwner( state, siteId ),
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			domainUpsellNudgeDismissedDate: getPreference( state, DOMAIN_UPSELL_NUDGE_DISMISS_KEY ),
+			isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 			isMigrationInProgress,
 			hasJITM: getTopJITM( state, messagePath ),
 			messagePath,

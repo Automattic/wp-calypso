@@ -263,7 +263,9 @@ export default connect( state => {
 	const oauth2Client = getCurrentOAuth2Client( state );
 	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
 	const isEligibleForJITM = [ 'stats', 'plans', 'themes', 'plugins' ].indexOf( sectionName ) >= 0;
-	const isFrankenflow = startsWith( currentRoute, '/start/frankenflow' );
+	const isFrankenflow =
+		startsWith( currentRoute, '/start/frankenflow' ) ||
+		startsWith( currentRoute, '/start/prelaunch' );
 
 	return {
 		masterbarIsHidden:

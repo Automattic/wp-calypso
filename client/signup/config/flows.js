@@ -19,6 +19,7 @@ function getCheckoutUrl( dependencies ) {
 		{
 			signup: 1,
 			...( dependencies.isPreLaunch && { preLaunch: 1 } ),
+			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
 		},
 		`/checkout/${ dependencies.siteSlug }`
 	);
@@ -74,6 +75,10 @@ function getEditorDestination( dependencies ) {
 	return `/block-editor/page/${ dependencies.siteSlug }/home`;
 }
 
+function getPreLaunchEditorDestination( dependencies ) {
+	return `/block-editor/page/${ dependencies.siteSlug }/home?is-gutenboarding`;
+}
+
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
@@ -82,6 +87,7 @@ const flows = generateFlows( {
 	getThankYouNoSiteDestination,
 	getChecklistThemeDestination,
 	getEditorDestination,
+	getPreLaunchEditorDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

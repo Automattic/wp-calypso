@@ -19,11 +19,15 @@ import {
 	isPandoraEnabled,
 	isQuoraEnabled,
 	isAdRollEnabled,
+	isGoogleAnalyticsEnabled,
+	isGoogleAnalyticsEnhancedEcommerceEnabled,
 	TRACKING_IDS,
 	EXPERIAN_CONVERSION_PIXEL_URL,
 	YAHOO_GEMINI_CONVERSION_PIXEL_URL,
 	PANDORA_CONVERSION_PIXEL_URL,
 	ICON_MEDIA_ORDER_PIXEL_URL,
+	GA_PRODUCT_BRAND_WPCOM,
+	GA_PRODUCT_BRAND_JETPACK,
 } from './constants';
 import { loadTrackingScripts } from './load-tracking-scripts';
 import { recordParamsInFloodlightGtag } from './floodlight';
@@ -74,6 +78,7 @@ export async function recordOrder( cart, orderId ) {
 	recordOrderInBing( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInCriteo( cart, orderId );
+	recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo );
 
 	// Fire a single tracking event without any details about what was purchased
 
@@ -430,6 +435,62 @@ function recordOrderInGoogleAds( cart, orderId ) {
 		debug( 'recordOrderInGoogleAds: Record WPCom Purchase', params );
 		window.gtag( ...params );
 	}
+}
+
+function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo ) {
+	if ( ! isAdTrackingAllowed() ) {
+		debug( 'recordOrderInGAEnhancedEcommerce: [Skipping] ad tracking is disallowed' );
+		return;
+	}
+
+	if ( ! isGoogleAnalyticsEnabled || ! isGoogleAnalyticsEnhancedEcommerceEnabled ) {
+		debug( 'recordOrderInGAEnhancedEcommerce: [Skipping] Google Analytics is not enabled' );
+		return;
+	}
+
+	let products, brand, totalCostUSD;
+
+	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
+		products = wpcomJetpackCartInfo.wpcomProducts;
+		brand = GA_PRODUCT_BRAND_WPCOM;
+		totalCostUSD = wpcomJetpackCartInfo.wpcomCostUSD;
+	} else if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
+		products = wpcomJetpackCartInfo.jetpackProducts;
+		brand = GA_PRODUCT_BRAND_JETPACK;
+		totalCostUSD = wpcomJetpackCartInfo.jetpackCostUSD;
+	} else {
+		debug( 'recordOrderInGAEnhancedEcommerce: [Skipping] No products' );
+		return;
+	}
+
+	const items = [];
+	products.map( product => {
+		items.push( {
+			id: product.product_id.toString(),
+			name: product.product_name_en.toString(),
+			quantity: parseInt( product.volume ),
+			price: ( costToUSD( product.cost, cart.currency ) ?? '' ).toString(),
+			brand,
+		} );
+	} );
+
+	const params = [
+		'event',
+		'purchase',
+		{
+			transaction_id: orderId.toString(),
+			value: parseFloat( totalCostUSD ),
+			currency: 'USD',
+			tax: parseFloat( cart.total_tax ?? 0 ),
+			coupon: cart.coupon_code?.toString() ?? '',
+			affiliation: brand,
+			items,
+		},
+	];
+
+	window.gtag( ...params );
+
+	debug( 'recordOrderInGAEnhancedEcommerce: Record WPCom Purchase', params );
 }
 
 /**

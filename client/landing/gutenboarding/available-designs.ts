@@ -37,11 +37,11 @@ const availableDesigns: Readonly< AvailableDesigns > = {
 			categories: [ 'featured', 'portfolio' ],
 		},
 		{
-			title: 'Camden',
-			slug: 'Camden',
+			title: 'Camdem',
+			slug: 'Camdem',
 			template: 'camdem',
 			theme: 'maywood',
-			src: 'https://public-api.wordpress.com/rest/v1/template/demo/maywood/maywood2/',
+			src: 'https://public-api.wordpress.com/rest/v1/template/demo/maywood/camdem/',
 			fonts: {
 				headings: 'Space Mono',
 				base: 'Roboto',

@@ -856,6 +856,8 @@ function getCheckoutEventHandler( reduxDispatch ) {
 						currency: action.payload.total.amount.currency,
 						is_signup: action.payload.responseCart.is_signup,
 						products: action.payload.responseCart.products,
+						coupon_code: action.payload.couponItem?.wpcom_meta.couponCode ?? '',
+						total_tax: action.payload.responseCart.total_tax,
 					},
 					orderId: transactionResult.receipt_id,
 				} );

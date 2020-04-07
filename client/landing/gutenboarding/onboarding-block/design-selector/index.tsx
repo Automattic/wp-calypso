@@ -21,6 +21,8 @@ import './style.scss';
 
 type Design = import('../../stores/onboard/types').Design;
 
+const makeOptionId = ( { slug }: Design ): string => `design-selector__option-name__${ slug }`;
+
 const DesignSelector: React.FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 	const { push } = useHistory();
@@ -82,10 +84,16 @@ const DesignSelector: React.FunctionComponent = () => {
 							} }
 						>
 							<span className="design-selector__image-frame">
-								<img alt={ design.title } src={ getDesignUrl( design ) } />
+								<img
+									alt=""
+									aria-labelledby={ makeOptionId( design ) }
+									src={ getDesignUrl( design ) }
+								/>
 							</span>
 							<span className="design-selector__option-overlay">
-								<span className="design-selector__option-name">{ design.title }</span>
+								<span id={ makeOptionId( design ) } className="design-selector__option-name">
+									{ design.title }
+								</span>
 							</span>
 						</button>
 					) ) }

@@ -57,7 +57,7 @@ class CheckoutContainer extends React.Component {
 					<Button
 						borderless
 						className="navigation-link back"
-						onClick={ () => window.history.go( -2 ) } // going back to signup flow and skipping '/launch' step
+						onClick={ () => window.history.go( this.props.isGutenboardingCreate ? -1 : -2 ) } // going back to signup flow and skipping '/launch' step
 					>
 						<Gridicon icon="arrow-left" size={ 18 } />
 						{ this.props.translate( 'Back' ) }

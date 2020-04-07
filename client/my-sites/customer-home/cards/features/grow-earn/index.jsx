@@ -5,6 +5,7 @@ import React from 'react';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
@@ -18,14 +19,19 @@ import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sid
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import { getSiteOption } from 'state/sites/selectors';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-export const GrowEarn = ( { siteSlug, expandToolsAndTrack } ) => {
+export const GrowEarn = ( { siteSlug, expandToolsAndTrack, isSiteWPForTeamsProp } ) => {
 	const translate = useTranslate();
+
+	if ( isEnabled( 'signup/wpforteams' ) && isSiteWPForTeamsProp ) {
+		return null;
+	}
 
 	return (
 		<Card className="grow-earn">
@@ -65,6 +71,7 @@ export default connect(
 		return {
 			siteSlug: getSelectedSiteSlug( state ),
 			isStaticHomePage: ! isClassicEditor && pageOnFront,
+			isSiteWPForTeamsProp: isSiteWPForTeams( state, siteId ),
 		};
 	},
 	dispatch => ( {
