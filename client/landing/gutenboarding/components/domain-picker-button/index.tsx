@@ -77,6 +77,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 						onClose={ handleClose }
 						onFocusOutside={ handleClose }
 						position={ 'bottom center' }
+						expandOnMobile={ true }
 					>
 						<DomainPicker
 							currentDomain={ currentDomain }

@@ -1,3 +1,5 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+
 .domain-picker-button {
 	.dashicon {
 		margin-left: 0.5em;
@@ -17,7 +19,17 @@
 }
 
 .domain-picker-button__popover-container {
-	position: fixed;
-	left: 72px;
-	top: 54px;
+	.components-popover__header {
+		display: none;
+	}
+
+	.components-popover.is-expanded .components-popover__content {
+		height: 100%;
+	}
+
+	@include break-small {
+		position: fixed;
+		left: 72px;
+		top: 54px;
+	}
 }
