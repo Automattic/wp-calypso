@@ -22,7 +22,7 @@ const QueryJetpackScan = ( { siteId }: Props ) => {
 		if ( requestingJetpackScan ) {
 			return;
 		}
-		dispatch( requestJetpackScanStatus( siteId ) );
+		siteId && dispatch( requestJetpackScanStatus( siteId ) );
 	}, [ siteId ] );
 
 	return null;
