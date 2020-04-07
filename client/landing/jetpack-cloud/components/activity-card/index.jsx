@@ -40,6 +40,8 @@ class ActivityCard extends Component {
 	triggerDownload = () => page.redirect( this.createDownloadUrl( this.props.activity.rewindId ) );
 	triggerDetails = () => page.redirect( this.createDetailUrl( this.props.activity.rewindId ) );
 
+	popoverContext = React.createRef();
+
 	render() {
 		const { activity, allowRestore, gmtOffset, timezone, translate } = this.props;
 
@@ -82,14 +84,14 @@ class ActivityCard extends Component {
 							borderless
 							className="activity-card__actions-button"
 							onClick={ this.togglePopoverMenu }
-							ref="popoverMenuButton"
+							ref={ this.popoverContext }
 						>
 							{ translate( 'Actions' ) }
 							<Gridicon icon="add" className="activity-card__actions-icon" />
 						</Button>
 
 						<PopoverMenu
-							context={ this.refs && this.refs.popoverMenuButton }
+							context={ this.popoverContext.current }
 							isVisible={ this.state.showPopoverMenu }
 							onClose={ this.closePopoverMenu }
 							className="activity-card__popover"
