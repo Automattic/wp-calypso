@@ -51,12 +51,8 @@ function WpcomNux() {
 	const dismissWpcomNux = () => setWpcomNuxStatus( { isNuxEnabled: false } );
 
 	// @TODO: Change to 'Welcome to your new website' for Gutenboarding, in other situations keep "editor"
-	const welcomeHeading = __( 'Welcome to the WordPress editor' );
+	const welcomeHeading = __( 'Welcome to your new website' );
 
-	/**
-	 * Currently, the Guide content is mostly copied from Gutenberg. This can be
-	 * updated if/as we have new designs for the NUX on wpcom.
-	 */
 	return (
 		<Guide
 			className="wpcom-block-editor-nux"
@@ -64,69 +60,60 @@ function WpcomNux() {
 			finishButtonText={ __( 'Get started' ) }
 			onFinish={ dismissWpcomNux }
 		>
-			<GuidePage className="wpcom-block-editor-nux__page">
-				<h1 className="wpcom-block-editor-nux__heading">{ welcomeHeading }</h1>
-				<p className="wpcom-block-editor-nux__text">
-					{ __( 'Create and edit site pages, and customize the look and feel of each page.' ) }
-				</p>
-				<img
-					alt=""
-					aria-hidden="true"
-					className="wpcom-block-editor-nux__image"
-					src={ editorImage }
-				/>
-			</GuidePage>
+			<NuxPage
+				heading={ welcomeHeading }
+				description={ __(
+					'Create and edit site pages, and customize the look and feel of each page.'
+				) }
+				imgSrc={ editorImage }
+				alignBottom
+			/>
 
-			<GuidePage className="wpcom-block-editor-nux__page">
-				<h1 className="wpcom-block-editor-nux__heading">
-					{ __( 'Create pages and add your content' ) }
-				</h1>
-				<img
-					alt=""
-					aria-hidden="true"
-					className="wpcom-block-editor-nux__image"
-					src={ blockImage }
-				/>
-				<p className="wpcom-block-editor-nux__text">
-					{ __(
-						'Create and rearrange your site pages. Customize your site navigation menus so your visitors can explore your site.'
-					) }
-				</p>
-			</GuidePage>
+			<NuxPage
+				heading={ __( 'Create pages and add your content' ) }
+				description={ __(
+					'Create and rearrange your site pages. Customize your site navigation menus so your visitors can explore your site.'
+				) }
+				imgSrc={ blockImage }
+			/>
 
-			<GuidePage className="wpcom-block-editor-nux__page">
-				<h1 className="wpcom-block-editor-nux__heading">{ __( 'Add anything you want' ) }</h1>
-				<img
-					alt=""
-					aria-hidden="true"
-					className="wpcom-block-editor-nux__image"
-					src={ blockPickerImage }
-				/>
-				<p className="wpcom-block-editor-nux__text">
-					{ __(
-						'Insert text, photos, forms, Yelp reviews, testimonials, maps, and many more types of blocks. Rearrange blocks on your pages to meet your needs.'
-					) }
-				</p>
-			</GuidePage>
+			<NuxPage
+				heading={ __( 'Add anything you want' ) }
+				description={ __(
+					'Insert text, photos, forms, Yelp reviews, testimonials, maps, and many more types of blocks. Rearrange blocks on your pages to meet your needs.'
+				) }
+				imgSrc={ blockPickerImage }
+			/>
 
 			{ /* @TODO: hide for sites that are already public */ }
-			<GuidePage className="wpcom-block-editor-nux__page">
-				<h1 className="wpcom-block-editor-nux__heading">
-					{ __( "Private until you're ready to launch" ) }
-				</h1>
+			<NuxPage
+				heading={ __( "Private until you're ready to launch" ) }
+				description={ __(
+					"Your site remains private until you're ready to launch. Take your time and make as many changes as you need until it's ready to share with the world."
+				) }
+				imgSrc={ privateImage }
+				alignBottom
+			/>
+		</Guide>
+	);
+}
+
+function NuxPage( { alignBottom = false, heading, description, imgSrc } ) {
+	return (
+		<GuidePage className="wpcom-block-editor-nux__page">
+			<div className="wpcom-block-editor-nux__text">
+				<h1 className="wpcom-block-editor-nux__heading">{ heading }</h1>
+				<div className="wpcom-block-editor-nux__description">{ description }</div>
+			</div>
+			<div className="wpcom-block-editor-nux__visual">
 				<img
 					alt=""
 					aria-hidden="true"
-					className="wpcom-block-editor-nux__image"
-					src={ privateImage }
+					className={ 'wpcom-block-editor-nux__image' + ( alignBottom ? ' align-bottom' : '' ) }
+					src={ imgSrc }
 				/>
-				<p className="wpcom-block-editor-nux__text">
-					{ __(
-						"Your site remains private until you're ready to launch. Take your time and make as many changes as you need until it's ready to share with the world."
-					) }
-				</p>
-			</GuidePage>
-		</Guide>
+			</div>
+		</GuidePage>
 	);
 }
 
