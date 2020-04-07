@@ -17,28 +17,42 @@ import './style.scss';
 import { ProgressBar } from '@automattic/components';
 
 const CREATE_SITE_PROGRESS_TOTAL = 100;
-const CREATE_SITE_PROGRESS_STEP_COUNT = 3;
 const CREATE_SITE_PROGRESS_INTERVAL = 2000;
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const CreateSite: FunctionComponent< {} > = () => {
 	const { __: NO__ } = useI18n();
 	const shouldTriggerCreate = useNewQueryParam();
-	const [ progressComplete, setProgressComplete ] = React.useState( 0 );
 	const [ shouldCreateAndRedirect, setCreateAndRedirect ] = React.useState( false );
 
+	// Some very rudimentary progress illusions
+	const [ currentStepIndex, setCurentStepIndex ] = React.useState( 0 );
+	const progressSteps = [
+		{
+			title: NO__( 'Building your site' ),
+		},
+		{
+			title: NO__( 'Getting your domain' ),
+		},
+		{
+			title: NO__( 'Applying design' ),
+		},
+	];
+	const progressStepFactor = CREATE_SITE_PROGRESS_TOTAL / progressSteps.length;
+	const progressBarValue = ( currentStepIndex + 1 ) * progressStepFactor;
+
 	useEffect( () => {
-		if ( progressComplete < CREATE_SITE_PROGRESS_TOTAL ) {
+		const isProgressComplete = currentStepIndex >= progressSteps.length - 1;
+		if ( ! isProgressComplete ) {
 			setTimeout( () => {
-				const progressFactor = CREATE_SITE_PROGRESS_TOTAL / CREATE_SITE_PROGRESS_STEP_COUNT;
-				setProgressComplete( progressComplete + progressFactor );
+				setCurentStepIndex( currentStepIndex + 1 );
 			}, CREATE_SITE_PROGRESS_INTERVAL );
 		}
 
-		if ( shouldTriggerCreate && progressComplete >= CREATE_SITE_PROGRESS_TOTAL ) {
+		if ( shouldTriggerCreate && isProgressComplete ) {
 			setCreateAndRedirect( true );
 		}
-	}, [ progressComplete ] );
+	}, [ currentStepIndex ] );
 
 	return (
 		<div className="create-site__background">
@@ -50,12 +64,14 @@ const CreateSite: FunctionComponent< {} > = () => {
 					</div>
 				</div>
 				<div className="create-site__content">
-					<h1 className="create-site__title">{ NO__( 'Building your site' ) }</h1>
+					<h1 className="create-site__title">{ progressSteps[ currentStepIndex ].title }</h1>
 					<div className="create-site__progress">
-						<ProgressBar value={ progressComplete } total={ CREATE_SITE_PROGRESS_TOTAL } />
+						<ProgressBar value={ progressBarValue } total={ CREATE_SITE_PROGRESS_TOTAL } />
 					</div>
-					{ /* TODO: interpolate this test with step count args */ }
-					<p className="create-site__progress-text">{ NO__( 'Step 1 of 3' ) }</p>
+					{ /* TODO: interpolate this test in an i18n method with step count args */ }
+					<p className="create-site__progress-text">
+						{ `Step ${ currentStepIndex + 1 } of ${ progressSteps.length }` }
+					</p>
 				</div>
 			</div>
 		</div>
