@@ -22,7 +22,7 @@ export const socketConnect = ( store, jwt, userId ) => {
 		return;
 	}
 
-	import( 'phoenix' ).then( ( { Socket } ) => {
+	import( /* webpackChunkName: "phoenix" */ 'phoenix' ).then( ( { Socket } ) => {
 		socket = new Socket( url, { params: { jwt, user_id: userId } } );
 
 		socket.onOpen( () => {
