@@ -4,6 +4,7 @@
 $progress-step-title-height: 40px;
 $progress-step-number-step-height: 45px;
 $progress-duration: 5s;
+$progress-widget-height: 300px;
 
 .create-site__background {
 	position: fixed;
@@ -24,11 +25,14 @@ $progress-duration: 5s;
 
 	.create-site__content {
 		position: absolute;
-		top: 25%;
+		top: calc( 50% - #{$progress-widget-height / 4} );
 		left: 50%;
 		width: 100%;
 		max-width: 540px;
+		height: $progress-widget-height;
 		transform: translateX( -50% );
+		// for mobiles
+		padding: 1em;
 
 		.create-site__progress {
 			height: $progress-step-title-height;
