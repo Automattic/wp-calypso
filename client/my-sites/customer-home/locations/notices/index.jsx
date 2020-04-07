@@ -18,7 +18,7 @@ const cardComponents = {
 	'home-notice-celebrate-site-setup-complete': CelebrateSiteSetupComplete,
 };
 
-const Notices = ( { checklistMode, cards } ) => {
+const Notices = ( { checklistMode, displayChecklist, cards } ) => {
 	return (
 		<>
 			{ cards &&
@@ -28,6 +28,7 @@ const Notices = ( { checklistMode, cards } ) => {
 						React.createElement( cardComponents[ card ], {
 							key: index,
 							checklistMode,
+							displayChecklist,
 						} )
 				) }
 		</>

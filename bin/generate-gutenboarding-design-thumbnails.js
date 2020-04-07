@@ -12,6 +12,16 @@
  * (I didn't want to add these to dependencies just for this script since these are kinda heavy ones)
  * https://www.npmjs.com/package/capture-website
  * https://www.npmjs.com/package/sharp
+ *
+ * Ensure browser is installed by removing `PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true` in `package.json` and run `npm ci`
+ * (maybe there's easier way?)
+ *
+ *
+ * Then convert this file to json:
+ * client/landing/gutenboarding/available-designs.ts
+ * - Rename to .json
+ * - Remove some JS to make it look more like json
+ * - run `npx prettier client/landing/gutenboarding/available-designs.json --write` to fix the rest
  */
 
 const captureWebsite = require( 'capture-website' );
@@ -28,8 +38,9 @@ const viewportWidth = 1280; // Browser width for capturing the screenshot
 
 const getDesignUrl = design => {
 	return wpUrl.addQueryArgs( design.src, {
-		font_headings: design.fonts[ 0 ],
-		font_base: design.fonts[ 1 ],
+		font_base: design.fonts.base,
+		font_headings: design.fonts.headings,
+		site_title: design.title,
 	} );
 };
 

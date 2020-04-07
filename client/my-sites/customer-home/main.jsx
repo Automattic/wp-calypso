@@ -43,6 +43,7 @@ const Home = ( {
 	canUserUseCustomerHome,
 	checklistMode,
 	hasChecklistData,
+	displayChecklist,
 	layout,
 	site,
 	siteId,
@@ -66,18 +67,13 @@ const Home = ( {
 			<PageViewTracker path={ `/home/:site` } title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-			{ siteId && (
-				<QueryHomeLayout
-					siteId={ siteId }
-					isNowLaunched={ checklistMode === 'launched' ? true : false }
-				/>
-			) }
+			{ siteId && <QueryHomeLayout siteId={ siteId } /> }
 			<SidebarNavigation />
 			<div className="customer-home__heading">
 				<FormattedHeader
 					headerText={ translate( 'My Home' ) }
 					subHeaderText={ translate(
-						'Your home base for all the posting, editing, and growing of your site'
+						'Your home base for posting, editing, and growing your site.'
 					) }
 					align="left"
 				/>
@@ -91,7 +87,11 @@ const Home = ( {
 			</div>
 			{ layout ? (
 				<>
-					<Notices cards={ layout.notices } checklistMode={ checklistMode } />
+					<Notices
+						cards={ layout.notices }
+						checklistMode={ checklistMode }
+						displayChecklist={ displayChecklist }
+					/>
 					<Upsells cards={ layout.upsells } />
 					{ hasChecklistData && (
 						<div className="customer-home__layout">
@@ -129,6 +129,7 @@ const mapStateToProps = state => {
 	const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
 	const user = getCurrentUser( state );
 	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
+	const layout = getHomeLayout( state, siteId );
 
 	return {
 		site: getSelectedSite( state ),
@@ -138,9 +139,10 @@ const mapStateToProps = state => {
 		hasChecklistData,
 		isStaticHomePage:
 			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
+		displayChecklist: layout?.primary?.includes( 'home-primary-checklist-site-setup' ),
 		siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 		user,
-		layout: getHomeLayout( state, siteId ),
+		layout,
 	};
 };
 

@@ -4,13 +4,13 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
 import { withLocalizedMoment } from 'components/localized-moment';
-
 /**
  * Style dependencies
  */
@@ -18,6 +18,7 @@ import './style.scss';
 
 class PostRelativeTime extends React.PureComponent {
 	static propTypes = {
+		showPublishedStatus: PropTypes.bool.isRequired,
 		post: PropTypes.object.isRequired,
 		includeNonDraftStatuses: PropTypes.bool,
 		link: PropTypes.string,
@@ -36,6 +37,7 @@ class PostRelativeTime extends React.PureComponent {
 			case 'new':
 				return null;
 			case 'draft':
+			case 'future':
 			case 'pending':
 				return this.props.post.modified;
 			default:
@@ -43,7 +45,28 @@ class PostRelativeTime extends React.PureComponent {
 		}
 	}
 
-	getRelativeTimeText() {
+	getDisplayedTimeFromPost( post ) {
+		const moment = this.props.moment;
+
+		const now = moment();
+
+		if ( ! post ) {
+			// Placeholder text: "a few seconds ago" in English locale
+			return now.fromNow();
+		}
+
+		const { status, modified, date } = post;
+		const time = moment( includes( [ 'draft', 'pending', 'future' ], status ) ? modified : date );
+		if ( now.diff( time, 'days' ) >= 7 ) {
+			// Like "Mar 15, 2013 6:23 PM" in English locale
+			return time.format( 'lll' );
+		}
+
+		// Like "3 days ago" in English locale
+		return time.fromNow();
+	}
+
+	getTimeText() {
 		const time = this.getTimestamp();
 		if ( ! time ) {
 			return null;
@@ -53,7 +76,7 @@ class PostRelativeTime extends React.PureComponent {
 			<span className="post-relative-time-status__time">
 				<Gridicon icon="time" size={ this.props.gridiconSize || 18 } />
 				<time className="post-relative-time-status__time-text" dateTime={ time }>
-					{ this.props.moment( time ).fromNow() }
+					{ this.getDisplayedTimeFromPost( this.props.post ) }
 				</time>
 			</span>
 		);
@@ -73,7 +96,14 @@ class PostRelativeTime extends React.PureComponent {
 			statusText = this.props.translate( 'pending review' );
 			statusClassName += ' is-pending';
 		} else if ( status === 'future' ) {
-			statusText = this.props.translate( 'scheduled' );
+			const scheduledTime = this.props.moment( this.props.post.date ).fromNow();
+
+			statusText = this.props.translate( 'scheduled %(scheduledTime)s', {
+				comment: '%(scheduledTime)s is a future human time, for example "in 3 days"',
+				args: {
+					scheduledTime,
+				},
+			} );
 			statusClassName += ' is-scheduled';
 			statusIcon = 'calendar';
 		} else if ( status === 'trash' ) {
@@ -101,7 +131,8 @@ class PostRelativeTime extends React.PureComponent {
 	}
 
 	render() {
-		const timeText = this.getRelativeTimeText();
+		const { post, showPublishedStatus } = this.props;
+		const timeText = this.getTimeText();
 		const statusText = this.getStatusText();
 		const relativeTimeClass = timeText ? 'post-relative-time-status' : null;
 		const time = this.getTimestamp();
@@ -109,7 +140,7 @@ class PostRelativeTime extends React.PureComponent {
 		let innerText = (
 			<span>
 				{ timeText }
-				{ statusText }
+				{ ( post.status === 'future' || showPublishedStatus ) && statusText }
 			</span>
 		);
 

@@ -244,7 +244,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 	} );
 
-	describe( 'Basic Public Post @canary @parallel', function() {
+	describe( 'Basic Public Post @canary @ie11canary @parallel', function() {
 		describe( 'Publish a New Post', function() {
 			const blogPostTitle = dataHelper.randomPhrase();
 			const blogPostQuote =
@@ -278,13 +278,24 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				);
 			} );
 
-			step( 'Can see the Jetpack blocks', async function() {
+			step( 'Can see the Earn blocks', async function() {
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-				await gEditorComponent.openBlockInserterAndSearch( 'Jetpack' );
+				await gEditorComponent.openBlockInserterAndSearch( 'earn' );
 				assert.strictEqual(
-					await gEditorComponent.isBlockCategoryPresent( 'Jetpack' ),
+					await gEditorComponent.isBlockCategoryPresent( 'Earn' ),
 					true,
-					'Jetpack blocks are not present'
+					'Earn (Jetpack) blocks are not present'
+				);
+				await gEditorComponent.closeBlockInserter();
+			} );
+
+			step( 'Can see the Grow blocks', async function() {
+				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+				await gEditorComponent.openBlockInserterAndSearch( 'grow' );
+				assert.strictEqual(
+					await gEditorComponent.isBlockCategoryPresent( 'Grow' ),
+					true,
+					'Grow (Jetpack) blocks are not present'
 				);
 				await gEditorComponent.closeBlockInserter();
 			} );

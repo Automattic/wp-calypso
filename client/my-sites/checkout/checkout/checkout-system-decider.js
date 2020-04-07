@@ -32,6 +32,7 @@ export default function CheckoutSystemDecider( {
 	couponCode,
 	isComingFromSignup,
 	isComingFromGutenboarding,
+	isGutenboardingCreate,
 	plan,
 	selectedSite,
 	reduxStore,
@@ -91,6 +92,7 @@ export default function CheckoutSystemDecider( {
 			couponCode={ couponCode }
 			isComingFromSignup={ isComingFromSignup }
 			isComingFromGutenboarding={ isComingFromGutenboarding }
+			isGutenboardingCreate={ isGutenboardingCreate }
 			plan={ plan }
 			selectedSite={ selectedSite }
 			reduxStore={ reduxStore }

@@ -4,7 +4,6 @@
 import * as React from 'react';
 import { addQueryArgs } from '@wordpress/url';
 import { useSelect } from '@wordpress/data';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -12,6 +11,7 @@ import classNames from 'classnames';
 import { STORE_KEY } from '../../stores/onboard';
 import * as T from './types';
 import { useLangRouteParam } from '../../path';
+import { isEnabled } from 'config';
 
 type Design = import('../../stores/onboard/types').Design;
 type Font = import('../../constants').Font;
@@ -40,15 +40,19 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 				const templateUrl = `https://public-api.wordpress.com/rest/v1/template/demo/${ encodeURIComponent(
 					selectedDesign.theme
 				) }/${ encodeURIComponent( selectedDesign.template ) }/`;
-				const url = addQueryArgs( templateUrl, {
+				let url = addQueryArgs( templateUrl, {
 					language: language,
-					vertical: siteVertical?.label,
 					site_title: siteTitle,
 					...( selectedFonts && {
 						font_headings: selectedFonts.headings,
 						font_base: selectedFonts.base,
 					} ),
 				} );
+				if ( isEnabled( 'gutenboarding/style-preview-verticals' ) ) {
+					url = addQueryArgs( url, {
+						vertical: siteVertical?.label,
+					} );
+				}
 				let resp;
 
 				try {
@@ -133,21 +137,16 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 
 	return (
 		<div className={ `style-preview__preview is-viewport-${ viewport }` }>
-			{ viewport === 'desktop' && (
-				<div role="presentation" className="style-preview__preview-bar">
-					<div role="presentation" className="style-preview__preview-bar-dot" />
-					<div role="presentation" className="style-preview__preview-bar-dot" />
-					<div role="presentation" className="style-preview__preview-bar-dot" />
-				</div>
-			) }
-			<iframe
-				ref={ iframe }
-				className={ classNames( {
-					'style-preview__iframe': true,
-					hideScroll: viewport !== 'desktop',
-				} ) }
-				title="preview"
-			/>
+			<div className="style-preview__preview-wrapper">
+				{ viewport === 'desktop' && (
+					<div role="presentation" className="style-preview__preview-bar">
+						<div role="presentation" className="style-preview__preview-bar-dot" />
+						<div role="presentation" className="style-preview__preview-bar-dot" />
+						<div role="presentation" className="style-preview__preview-bar-dot" />
+					</div>
+				) }
+				<iframe ref={ iframe } className="style-preview__iframe" title="preview" />
+			</div>
 		</div>
 	);
 };

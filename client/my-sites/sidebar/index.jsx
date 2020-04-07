@@ -67,6 +67,8 @@ import {
 	SIDEBAR_SECTION_MANAGE,
 } from './constants';
 import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+
 /**
  * Style dependencies
  */
@@ -169,12 +171,18 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		let label = translate( 'My Home' );
+
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			label = translate( 'Home' );
+		}
+
 		return (
 			<SidebarItem
 				materialIcon="home"
 				tipTarget="myhome"
 				onNavigate={ this.trackCustomerHomeClick }
-				label={ translate( 'My Home' ) }
+				label={ label }
 				selected={ itemLinkMatches( [ '/home' ], path ) }
 				link={ '/home' + siteSuffix }
 			/>
@@ -225,6 +233,10 @@ export class MySitesSidebar extends Component {
 	earn() {
 		const { site, canUserUseEarn } = this.props;
 
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
+
 		if ( site && ! canUserUseEarn ) {
 			return null;
 		}
@@ -270,6 +282,25 @@ export class MySitesSidebar extends Component {
 				preloadSectionName="customize"
 				forceInternalLink
 				expandSection={ this.expandDesignSection }
+			/>
+		);
+	}
+
+	customize() {
+		const { showCustomizerLink, translate, path } = this.props;
+
+		if ( ! showCustomizerLink ) {
+			return null;
+		}
+
+		return (
+			<SidebarItem
+				label={ translate( 'Customize' ) }
+				selected={ itemLinkMatches( '/customize', path ) }
+				link={ this.props.customizeUrl }
+				onNavigate={ this.trackCustomizeClick }
+				preloadSectionName="customize"
+				materialIcon="gesture"
 			/>
 		);
 	}
@@ -340,6 +371,10 @@ export class MySitesSidebar extends Component {
 	upgrades() {
 		const { path, translate, canUserManageOptions } = this.props;
 
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
+
 		let domainsLink = '/domains/manage';
 
 		if ( this.props.siteSuffix ) {
@@ -379,6 +414,10 @@ export class MySitesSidebar extends Component {
 		} = this.props;
 
 		if ( ! site ) {
+			return null;
+		}
+
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -492,6 +531,10 @@ export class MySitesSidebar extends Component {
 		const { path, site } = this.props;
 		const marketingLink = '/marketing' + this.props.siteSuffix;
 
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
+
 		if ( site && ! this.props.canUserPublishPosts ) {
 			return null;
 		}
@@ -520,6 +563,10 @@ export class MySitesSidebar extends Component {
 
 	hosting() {
 		const { translate, path, siteSuffix, canViewAtomicHosting } = this.props;
+
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
 
 		if ( ! canViewAtomicHosting ) {
 			return null;
@@ -594,6 +641,10 @@ export class MySitesSidebar extends Component {
 
 	wpAdmin() {
 		const { site } = this.props;
+
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
 
 		if ( ! site || ! site.options ) {
 			return null;
@@ -705,7 +756,7 @@ export class MySitesSidebar extends Component {
 					{ this.site() }
 				</ExpandableSidebarMenu>
 
-				{ this.design() ? (
+				{ ! ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) && this.design() ? (
 					<ExpandableSidebarMenu
 						onClick={ this.toggleSection( SIDEBAR_SECTION_DESIGN ) }
 						expanded={ this.props.isDesignSectionOpen }
@@ -715,6 +766,8 @@ export class MySitesSidebar extends Component {
 						{ this.design() }
 					</ExpandableSidebarMenu>
 				) : null }
+
+				{ isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams && this.customize() }
 
 				{ tools && (
 					<ExpandableSidebarMenu
@@ -816,6 +869,7 @@ function mapStateToProps( state ) {
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
 		canViewAtomicHosting: canSiteViewAtomicHosting( state ),
+		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 	};
 }
 

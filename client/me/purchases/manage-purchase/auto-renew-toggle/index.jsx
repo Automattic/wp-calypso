@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -18,8 +19,12 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import { createNotice } from 'state/notices/actions';
 import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
+import AutoRenewPaymentMethodDialog from './auto-renew-payment-method-dialog';
 import FormToggle from 'components/forms/form-toggle';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
+import { isExpired, isOneTimePurchase, isRechargeable } from '../../../../lib/purchases';
+import { getEditCardDetailsPath } from '../../utils';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 class AutoRenewToggle extends Component {
 	static propTypes = {
@@ -33,6 +38,7 @@ class AutoRenewToggle extends Component {
 		compact: PropTypes.bool,
 		withTextStatus: PropTypes.bool,
 		toggleSource: PropTypes.string,
+		siteSlug: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -41,6 +47,7 @@ class AutoRenewToggle extends Component {
 
 	state = {
 		showAutoRenewDisablingDialog: false,
+		showPaymentMethodDialog: false,
 		isTogglingToward: null,
 		isRequesting: false,
 	};
@@ -63,6 +70,36 @@ class AutoRenewToggle extends Component {
 		} );
 	};
 
+	closeAutoRenewPaymentMethodDialog() {
+		this.setState( {
+			showPaymentMethodDialog: false,
+		} );
+	}
+
+	goToUpdatePaymentMethod = () => {
+		const { purchase, siteSlug, productSlug, isAtomicSite, toggleSource } = this.props;
+		this.closeAutoRenewPaymentMethodDialog();
+
+		this.props.recordTracksEvent( 'calypso_auto_renew_no_payment_method_dialog_add_click', {
+			product_slug: productSlug,
+			is_atomic: isAtomicSite,
+			toggle_source: toggleSource,
+		} );
+
+		page( getEditCardDetailsPath( siteSlug, purchase ) );
+	};
+
+	onCloseAutoRenewPaymentMethodDialog = () => {
+		const { productSlug, isAtomicSite, toggleSource } = this.props;
+		this.closeAutoRenewPaymentMethodDialog();
+
+		this.props.recordTracksEvent( 'calypso_auto_renew_no_payment_method_dialog_close', {
+			product_slug: productSlug,
+			is_atomic: isAtomicSite,
+			toggle_source: toggleSource,
+		} );
+	};
+
 	toggleAutoRenew = () => {
 		const {
 			purchase: { id: purchaseId, productSlug },
@@ -74,6 +111,23 @@ class AutoRenewToggle extends Component {
 
 		const updateAutoRenew = isEnabled ? disableAutoRenew : enableAutoRenew;
 		const isTogglingToward = ! isEnabled;
+
+		const recordEvent = () => {
+			this.props.recordTracksEvent( 'calypso_purchases_manage_purchase_toggle_auto_renew', {
+				product_slug: productSlug,
+				is_atomic: isAtomicSite,
+				is_toggling_toward: isTogglingToward,
+				toggle_source: this.props.toggleSource,
+			} );
+		};
+
+		if ( isTogglingToward && ! isRechargeable( this.props.purchase ) ) {
+			this.setState( {
+				showPaymentMethodDialog: true,
+			} );
+			recordEvent();
+			return;
+		}
 
 		this.setState( {
 			isTogglingToward,
@@ -111,12 +165,7 @@ class AutoRenewToggle extends Component {
 			} );
 		} );
 
-		this.props.recordTracksEvent( 'calypso_purchases_manage_purchase_toggle_auto_renew', {
-			product_slug: productSlug,
-			is_atomic: isAtomicSite,
-			is_toggling_toward: isTogglingToward,
-			toggle_source: this.props.toggleSource,
-		} );
+		recordEvent();
 	};
 
 	onToggleAutoRenew = () => {
@@ -150,8 +199,16 @@ class AutoRenewToggle extends Component {
 		return isEnabled ? translate( 'Auto-renew (on)' ) : translate( 'Auto-renew (off)' );
 	}
 
+	shouldRender( purchase ) {
+		return ! isExpired( purchase ) && ! isOneTimePurchase( purchase );
+	}
+
 	render() {
 		const { planName, siteDomain, purchase, compact, withTextStatus } = this.props;
+
+		if ( ! this.shouldRender( purchase ) ) {
+			return null;
+		}
 
 		const ToggleComponent = compact ? CompactFormToggle : FormToggle;
 
@@ -173,6 +230,12 @@ class AutoRenewToggle extends Component {
 					onClose={ this.onCloseAutoRenewDisablingDialog }
 					onConfirm={ this.toggleAutoRenew }
 				/>
+				<AutoRenewPaymentMethodDialog
+					isVisible={ this.state.showPaymentMethodDialog }
+					purchase={ purchase }
+					onClose={ this.onCloseAutoRenewPaymentMethodDialog }
+					onAddClick={ this.goToUpdatePaymentMethod }
+				/>
 			</>
 		);
 	}
@@ -184,6 +247,7 @@ export default connect(
 		isEnabled: ! isExpiring( purchase ),
 		currentUserId: getCurrentUserId( state ),
 		isAtomicSite: isSiteAtomic( state, purchase.siteId ),
+		siteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{
 		fetchUserPurchases,

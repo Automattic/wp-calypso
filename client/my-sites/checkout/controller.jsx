@@ -63,6 +63,7 @@ export function checkout( context, next ) {
 				couponCode={ couponCode }
 				isComingFromSignup={ !! context.query.signup }
 				isComingFromGutenboarding={ !! context.query.preLaunch }
+				isGutenboardingCreate={ !! context.query.isGutenboardingCreate }
 				plan={ plan }
 				selectedSite={ selectedSite }
 				reduxStore={ context.store }

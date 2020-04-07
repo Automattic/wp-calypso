@@ -25,8 +25,10 @@ import {
 	getRecommendedDomainSuggestion,
 } from '../../utils/domain-suggestions';
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
-
+import { usePath, useCurrentStep, Step } from '../../path';
 import wp from '../../../../lib/wp';
+
+type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
 
 const wpcom = wp.undocumented();
 
@@ -64,21 +66,17 @@ interface Cart {
 const Header: FunctionComponent = () => {
 	const { __: NO__ } = useI18n();
 
-	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
+	const currentStep = useCurrentStep();
+
 	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
 
 	const newSite = useSelect( select => select( SITE_STORE ).getNewSite() );
 
-	const { domain, siteTitle, siteWasCreatedForDomainPurchase } = useSelect( select =>
-		select( ONBOARD_STORE ).getState()
-	);
+	const { domain, siteTitle } = useSelect( select => select( ONBOARD_STORE ).getState() );
 
-	const {
-		createSite,
-		setDomain,
-		resetOnboardStore,
-		setSiteWasCreatedForDomainPurchase,
-	} = useDispatch( ONBOARD_STORE );
+	const makePath = usePath();
+
+	const { createSite, setDomain, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
 	const allSuggestions = useDomainSuggestions( siteTitle );
 	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice(
@@ -95,16 +93,28 @@ const Header: FunctionComponent = () => {
 	}, [ siteTitle, setDomain ] );
 
 	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
+	const [ isRedirecting, setIsRedirecting ] = useState( false );
 
 	const {
-		location: { pathname },
+		location: { pathname, search },
+		push,
 	} = useHistory();
+
 	useEffect( () => {
-		// Dialogs usually close naturally when the user clicks the browser's
-		// back/forward buttons because their parent is unmounted. However
-		// this header isn't unmounted on route changes so we need to
-		// explicitly hide the dialog.
-		setShowSignupDialog( false );
+		// This handles opening the signup modal when there is a ?signup query parameter
+		// then removes the parameter.
+		// The use case is a user clicking "Create account" from login
+		// TODO: We can remove this condition when we've converted signup into it's own page
+		if ( ! showSignupDialog && new URLSearchParams( search ).has( 'signup' ) ) {
+			setShowSignupDialog( true );
+			push( makePath( Step[ currentStep ] ) );
+		} else {
+			// Dialogs usually close naturally when the user clicks the browser's
+			// back/forward buttons because their parent is unmounted. However
+			// this header isn't unmounted on route changes so we need to
+			// explicitly hide the dialog.
+			setShowSignupDialog( false );
+		}
 	}, [ pathname, setShowSignupDialog ] );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -131,18 +141,8 @@ const Header: FunctionComponent = () => {
 		[ createSite, freeDomainSuggestion ]
 	);
 
-	const handleCreateSiteForDomains: typeof handleCreateSite = ( ...args ) => {
-		setSiteWasCreatedForDomainPurchase( true );
-		handleCreateSite( ...args );
-	};
-
 	const closeAuthDialog = () => {
 		setShowSignupDialog( false );
-	};
-
-	const handleSignupForDomains = () => {
-		setShowSignupDialog( true );
-		setSiteWasCreatedForDomainPurchase( true );
 	};
 
 	useEffect( () => {
@@ -152,8 +152,9 @@ const Header: FunctionComponent = () => {
 	}, [ newUser, handleCreateSite ] );
 
 	useEffect( () => {
-		if ( newSite ) {
-			if ( siteWasCreatedForDomainPurchase ) {
+		// isRedirecting check this is needed to make sure we don't overwrite the first window.location.replace() call
+		if ( newSite && ! isRedirecting ) {
+			if ( ! domain?.is_free ) {
 				// I'd rather not make my own product, but this works.
 				// lib/cart-items helpers did not perform well.
 				const domainProduct = {
@@ -172,11 +173,9 @@ const Header: FunctionComponent = () => {
 						...cart,
 						products: [ ...cart.products, domainProduct ],
 					} );
-
+					setIsRedirecting( true );
 					resetOnboardStore();
-					window.location.replace(
-						`/checkout/${ newSite.site_slug }?redirect_to=%2Fgutenboarding%2Fdesign`
-					);
+					window.location.replace( `/start/prelaunch?siteSlug=${ newSite.blogid }` );
 				};
 				go();
 				return;
@@ -184,7 +183,7 @@ const Header: FunctionComponent = () => {
 			resetOnboardStore();
 			window.location.replace( `/block-editor/page/${ newSite.site_slug }/home?is-gutenboarding` );
 		}
-	}, [ domain, siteWasCreatedForDomainPurchase, newSite, resetOnboardStore ] );
+	}, [ domain, newSite, resetOnboardStore, isRedirecting ] );
 
 	return (
 		<div
@@ -205,17 +204,15 @@ const Header: FunctionComponent = () => {
 					</div>
 				</div>
 				<div className="gutenboarding__header-section-item">
-					{ siteTitle && (
+					{ // We display the DomainPickerButton as soon as we have a domain suggestion,
+					//   unless we're still at the IntentGathering step. In that case, we only
+					//   show it comes from a site title (but hide it if it comes from a vertical).
+					currentDomain && ( siteTitle || currentStep !== 'IntentGathering' ) && (
 						<DomainPickerButton
 							className="gutenboarding__header-domain-picker-button"
 							disabled={ ! currentDomain }
 							currentDomain={ currentDomain }
 							onDomainSelect={ setDomain }
-							onDomainPurchase={ () =>
-								currentUser
-									? handleCreateSiteForDomains( currentUser.username )
-									: handleSignupForDomains()
-							}
 						>
 							{ domainElement }
 						</DomainPickerButton>
