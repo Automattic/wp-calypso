@@ -11,6 +11,7 @@ import config from 'config';
 // Enable/disable ad-tracking
 // These should not be put in the json config as they must not differ across environments
 export const isGoogleAnalyticsEnabled = true;
+export const isGoogleAnalyticsEnhancedEcommerceEnabled = true;
 export const isFloodlightEnabled = true;
 export const isFacebookEnabled = true;
 export const isBingEnabled = true;
@@ -88,3 +89,6 @@ export const TRACKING_IDS = {
 // This name is something we created to store a session id for DCM Floodlight session tracking
 export const DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid';
 export const DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS = 1800;
+
+export const GA_PRODUCT_BRAND_WPCOM = 'WordPress.com';
+export const GA_PRODUCT_BRAND_JETPACK = 'Jetpack';
