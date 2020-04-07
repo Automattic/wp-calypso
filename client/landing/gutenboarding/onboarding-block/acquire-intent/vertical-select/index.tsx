@@ -129,6 +129,8 @@ const VerticalSelect: React.FunctionComponent = () => {
 	const handleSelect = ( vertical: SiteVertical ) => {
 		setSiteVertical( vertical );
 		setIsFocused( false ); // prevent executing handleBlur()
+		// empty suggestions cache once a vertical is selceted
+		setSuggestions( [] );
 	};
 
 	const handleBlur = () => {
