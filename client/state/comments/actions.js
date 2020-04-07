@@ -19,6 +19,7 @@ import {
 	COMMENTS_UNLIKE,
 	COMMENTS_WRITE,
 	COMMENTS_COUNT_INCREMENT,
+	COMMENTS_COUNT_RECEIVE,
 } from 'state/action-types';
 import { READER_EXPAND_COMMENTS } from 'state/reader/action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
@@ -378,4 +379,11 @@ export const incrementCommentCount = ( { siteId, postId } ) => ( {
 	type: COMMENTS_COUNT_INCREMENT,
 	siteId,
 	postId,
+} );
+
+export const receiveCommentCount = ( { siteId, postId, totalCommentsCount } ) => ( {
+	type: COMMENTS_COUNT_RECEIVE,
+	siteId,
+	postId,
+	totalCommentsCount,
 } );

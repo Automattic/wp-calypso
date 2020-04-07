@@ -8,6 +8,7 @@ import { noop, truncate, get } from 'lodash';
 import classnames from 'classnames';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
+import { InView } from 'react-intersection-observer';
 
 /**
  * Internal Dependencies
@@ -31,6 +32,8 @@ import {
 import DiscoverFollowButton from 'reader/discover/follow-button';
 import { expandCard as expandCardAction } from 'state/ui/reader/card-expansions/actions';
 import isReaderCardExpanded from 'state/selectors/is-reader-card-expanded';
+import { getPostTotalCommentsCount } from 'state/comments/selectors/get-post-total-comments-count';
+import { setViewFeedPost, unsetViewFeedPost } from 'state/reader/viewing/actions';
 
 /**
  * Style dependencies
@@ -60,6 +63,15 @@ class ReaderPostCard extends React.Component {
 		onCommentClick: noop,
 		isSelected: false,
 		showSiteName: true,
+	};
+
+	toggleItemView = inView => {
+		const { post } = this.props;
+		if ( inView ) {
+			this.props.setViewFeedPost( { siteId: post.site_ID, postId: post.ID } );
+			return;
+		}
+		this.props.unsetViewFeedPost( { siteId: post.site_ID, postId: post.ID } );
 	};
 
 	propagateCardClick = () => {
@@ -115,6 +127,7 @@ class ReaderPostCard extends React.Component {
 	render() {
 		const {
 			post,
+			commentsCount,
 			discoverPost,
 			discoverSite,
 			site,
@@ -162,6 +175,7 @@ class ReaderPostCard extends React.Component {
 		const readerPostActions = (
 			<ReaderPostActions
 				post={ discoverPost || post }
+				commentsCount={ commentsCount }
 				site={ site }
 				visitUrl={ post.URL }
 				showVisit={ true }
@@ -205,14 +219,16 @@ class ReaderPostCard extends React.Component {
 		let readerPostCard;
 		if ( compact ) {
 			readerPostCard = (
-				<ConversationPost
-					post={ post }
-					title={ title }
-					isDiscover={ isDiscover }
-					postByline={ postByline }
-					commentIds={ postKey.comments }
-					onClick={ this.handleCardClick }
-				/>
+				<InView onChange={ this.toggleItemView }>
+					<ConversationPost
+						post={ post }
+						title={ title }
+						isDiscover={ isDiscover }
+						postByline={ postByline }
+						commentIds={ postKey.comments }
+						onClick={ this.handleCardClick }
+					/>
+				</InView>
 			);
 		} else if ( isPhotoPost ) {
 			readerPostCard = (
@@ -237,21 +253,23 @@ class ReaderPostCard extends React.Component {
 			);
 		} else {
 			readerPostCard = (
-				<StandardPost
-					post={ post }
-					title={ title }
-					isDiscover={ isDiscover }
-					isExpanded={ isExpanded }
-					expandCard={ expandCard }
-					site={ site }
-					postKey={ postKey }
-				>
-					{ isDailyPostChallengeOrPrompt( post ) && site && (
-						<DailyPostButton post={ post } site={ site } />
-					) }
-					{ discoverFollowButton }
-					{ readerPostActions }
-				</StandardPost>
+				<InView onChange={ this.toggleItemView }>
+					<StandardPost
+						post={ post }
+						title={ title }
+						isDiscover={ isDiscover }
+						isExpanded={ isExpanded }
+						expandCard={ expandCard }
+						site={ site }
+						postKey={ postKey }
+					>
+						{ isDailyPostChallengeOrPrompt( post ) && site && (
+							<DailyPostButton post={ post } site={ site } />
+						) }
+						{ discoverFollowButton }
+						{ readerPostActions }
+					</StandardPost>
+				</InView>
 			);
 		}
 
@@ -277,6 +295,7 @@ class ReaderPostCard extends React.Component {
 export default connect(
 	( state, ownProps ) => ( {
 		isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
+		commentsCount: getPostTotalCommentsCount( state, ownProps.post.site_ID, ownProps.post.ID ),
 	} ),
-	{ expandCard: expandCardAction }
+	{ expandCard: expandCardAction, setViewFeedPost, unsetViewFeedPost }
 )( ReaderPostCard );
