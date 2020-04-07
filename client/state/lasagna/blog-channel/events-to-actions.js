@@ -7,7 +7,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { incrementCommentCount, receiveComments } from 'state/comments/actions';
-import { updateChannel } from 'state/lasagna/socket';
+import { updateChannel } from 'state/lasagna/channel';
 import { namespace } from './manager';
 
 /**
@@ -23,16 +23,19 @@ export default function( channel, topic, store ) {
 			return;
 		}
 
+		const siteId = comment.post.site_ID;
+		const postId = comment.post.ID;
+
 		store.dispatch(
 			receiveComments( {
-				siteId: comment.post.site_ID,
-				postId: comment.post.ID,
+				siteId,
+				postId,
 				comments: [ comment ],
 				commentById: true,
 			} )
 		);
 
-		store.dispatch( incrementCommentCount( comment.post.site_ID, comment.post.ID ) );
+		store.dispatch( incrementCommentCount( { siteId, postId } ) );
 
 		// update channel
 		updateChannel( { namespace, topic } );

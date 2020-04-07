@@ -18,6 +18,7 @@ import {
 	COMMENTS_TREE_SITE_REQUEST,
 	COMMENTS_UNLIKE,
 	COMMENTS_WRITE,
+	COMMENTS_COUNT_INCREMENT,
 } from 'state/action-types';
 import { READER_EXPAND_COMMENTS } from 'state/reader/action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
@@ -371,4 +372,10 @@ export const setActiveReply = ( { siteId, postId, commentId } ) => ( {
 		postId,
 		commentId,
 	},
+} );
+
+export const incrementCommentCount = ( { siteId, postId } ) => ( {
+	type: COMMENTS_COUNT_INCREMENT,
+	siteId,
+	postId,
 } );

@@ -16,51 +16,63 @@ import { resetChannels } from 'state/lasagna/channel';
  */
 const debug = createDebug( 'lasagna:socket' );
 const url = config( 'lasagna_url' );
-export let SOCKET = null;
+export const SOCKET = {
+	status: 'init',
+	ref: null,
+};
+
+// Expose socket in development
+if ( process.env.NODE_ENV === 'development' ) {
+	window.SOCKET = SOCKET;
+}
 
 export function connectSocket( { store, jwt, userId } ) {
-	if ( SOCKET !== null ) {
+	if ( SOCKET.status !== 'init' ) {
 		return;
 	}
 
+	SOCKET.status = 'opening';
+	debug( 'opening' );
+
 	import( 'phoenix' ).then( ( { Socket } ) => {
-		SOCKET = new Socket( url, { params: { jwt, user_id: userId } } );
+		const socketInstance = new Socket( url, { params: { jwt, user_id: userId } } );
+		SOCKET.ref = socketInstance;
 
-		// Expose socket in development
-		if ( process.env.NODE_ENV === 'development' ) {
-			window.SOCKET = SOCKET;
-		}
-
-		SOCKET.onOpen( () => {
+		socketInstance.onOpen( () => {
 			debug( 'opened' );
+			SOCKET.status = 'opened';
 			store.dispatch( socketConnected() );
 		} );
 
-		SOCKET.onClose( () => {
+		socketInstance.onClose( () => {
 			debug( 'closed' );
+			SOCKET.status = 'closed';
 			store.dispatch( socketClosed() );
 			// @TODO: verify this Phoenix.js state, dispatch attempting reconnect here?
 		} );
 
-		SOCKET.onError( () => {
+		socketInstance.onError( () => {
+			SOCKET.status = 'open_error';
 			debug( 'connection error' );
 			store.dispatch( socketConnectError() );
 			// @TODO: verify this Phoenix.js state, dispatch attempting reconnect here?
 		} );
 
-		SOCKET.connect();
+		socketInstance.connect();
 	} );
 }
 
 export function disconnectSocket( { store } ) {
 	debug( 'disconnected' );
-	SOCKET && SOCKET.disconnect();
-	resetSocket();
+	SOCKET.ref && SOCKET.ref.disconnect();
+	initSocket();
 	resetChannels();
 	store.dispatch( socketDisconnected() );
 }
 
-export function resetSocket() {
-	debug( 'reset' );
-	SOCKET = null;
+export function initSocket() {
+	debug( 'init' );
+
+	SOCKET.status = 'init';
+	SOCKET.ref = null;
 }

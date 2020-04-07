@@ -21,6 +21,7 @@ import { combineReducers } from 'state/utils';
 export const feed = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SERIALIZE:
+		case READER_VIEW_FULL_POST_SET:
 		case LASAGNA_SOCKET_DISCONNECTED:
 			return {};
 
@@ -32,11 +33,18 @@ export const feed = ( state = {}, action ) => {
 			const siteId = action.payload.siteId;
 			const postId = action.payload.postId;
 			const postsList = state[ action.payload.siteId ] ? state[ siteId ] : [];
-			postsList.push( postId );
-			return {
-				...state,
-				[ siteId ]: postsList,
-			};
+
+			// keep unique list of post ids
+			if ( postsList.indexOf( postId ) === -1 ) {
+				postsList.push( postId );
+
+				return {
+					...state,
+					[ siteId ]: postsList,
+				};
+			}
+
+			return state;
 		}
 
 		case READER_VIEW_FEED_POST_UNSET: {
