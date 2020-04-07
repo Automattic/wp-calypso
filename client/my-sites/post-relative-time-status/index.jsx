@@ -100,16 +100,11 @@ class PostRelativeTime extends React.PureComponent {
 			const moment = this.props.moment;
 			const scheduledDate = moment( this.props.post.date );
 			const now = moment();
-			const scheduledTime =
-				scheduledDate.diff( now, 'days' ) <= 7
-					? scheduledDate.calendar()
-					: scheduledDate.format( 'LL' ) +
-					  ' ' +
-					  this.props.translate( 'at', {
-							context: 'scheduled for 21 April at 02:00',
-					  } ) +
-					  ' ' +
-					  scheduledDate.format( 'LT' );
+			const scheduledTime = scheduledDate.calendar( null, {
+				sameElse: this.props.translate( 'LL [at] LT', {
+					comment: 'moment.js formatting string'
+				}
+			);
 
 			statusText = this.props.translate( 'scheduled for %(scheduledTime)s', {
 				comment: '%(scheduledTime)s is when a scheduled post is set to be published',
