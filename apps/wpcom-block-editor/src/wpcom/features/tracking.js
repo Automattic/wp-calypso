@@ -30,6 +30,20 @@ const getTypeForBlockId = blockId => {
 };
 
 /**
+ * Ensure you are working with block object. This either returns the object
+ * or tries to lookup the block by id.
+ *
+ * @param {string|object} block Block object or string identifier.
+ * @returns {object|null} block object or null.
+ */
+const ensureBlockObject = block => {
+	if ( typeof block === 'object' ) {
+		return block;
+	}
+	return select( 'core/block-editor' ).getBlock( block );
+};
+
+/**
  * This helper function tracks the given blocks recursively
  * in order to track inner blocks.
  *
@@ -55,6 +69,9 @@ function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parent
 	}
 
 	castBlocks.forEach( block => {
+		// Make this compatible with actions that pass only block id, not objects.
+		block = ensureBlockObject( block );
+
 		const eventProperties = {
 			...propertiesHandler( block, parentBlock ),
 			inner_block: !! parentBlock,
