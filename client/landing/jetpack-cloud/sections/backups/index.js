@@ -19,6 +19,8 @@ import {
 } from 'landing/jetpack-cloud/sections/backups/controller';
 import { backupMainPath, backupRestorePath, backupDownloadPath, backupDetailPath } from './paths';
 
+import 'landing/jetpack-cloud/style.scss';
+
 export default function() {
 	if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
 		/* handles /backups/:site/detail/:backupId, see `backupDetailPath` */

@@ -1,0 +1,35 @@
+.button.jetpack-cloud-button.is-borderless {
+	align-items: center;
+	border-radius: 3px;
+	display: flex;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 600;
+	line-height: 23px;
+	padding: 8px 16px;
+	width: auto;
+
+	&.is-primary {
+		background: var( --studio-jetpack-green-40 );
+		color: var( --studio-white );
+
+		&:hover,
+		&:focus {
+			background: var( --studio-jetpack-green-30 );
+		}
+
+		&:active {
+			background: var( --studio-jetpack-green-50 );
+		}
+
+		&:disabled {
+			background: var( --studio-gray-10 );
+		}
+	}
+
+	@include breakpoint( '<660px' ) {
+		width: 100%;
+		text-align: center;
+		justify-content: center;
+	}
+}

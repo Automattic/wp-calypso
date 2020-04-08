@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
+import Button from 'landing/jetpack-cloud/components/jetpack-cloud-button';
 import { defaultRewindConfig, RewindConfig } from './types';
 import { rewindBackup } from 'state/activity-log/actions';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
@@ -58,8 +58,8 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 					alt="jetpack cloud download ready"
 				/>
 			</div>
-			<h3 className="rewind-flow__title">{ translate( 'Create downloadable backup' ) }</h3>
-			<p className="rewind-flow__info">
+			<h1>{ translate( 'Create downloadable backup' ) }</h1>
+			<p>
 				{ translate(
 					'{{strong}}%(backupDisplayDate)s{{/strong}} is the selected point to create a download backup of. ',
 					{
@@ -72,7 +72,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			<h4 className="rewind-flow__cta">{ translate( 'Choose the items you wish to restore:' ) }</h4>
+			<h2>{ translate( 'Choose the items you wish to restore:' ) }</h2>
 			<RewindConfigEditor currentConfig={ rewindConfig } onConfigChange={ setRewindConfig } />
 			<RewindFlowNotice
 				gridicon="notice-outline"
@@ -81,7 +81,6 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 				link="https://jetpack.com/support/backup"
 			/>
 			<Button
-				className="rewind-flow__primary-button"
 				primary
 				onClick={ requestDownload }
 				disabled={ Object.values( rewindConfig ).every( setting => ! setting ) }

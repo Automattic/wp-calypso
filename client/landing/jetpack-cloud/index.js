@@ -8,6 +8,11 @@ import page from 'page';
  */
 import config from 'config';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default function() {
 	page( '/', context => {
 		let redirectPath = '/error';
