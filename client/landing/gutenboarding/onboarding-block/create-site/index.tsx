@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
 import { Icon } from '@wordpress/components';
 
@@ -14,16 +15,16 @@ import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const CreateSite: FunctionComponent< {} > = () => {
-	const { __: NO__ } = useI18n();
+	const { __ } = useI18n();
 	const shouldTriggerCreate = useNewQueryParam();
 	const [ shouldCreateAndRedirect, setCreateAndRedirect ] = React.useState( false );
 
 	// Some very rudimentary progress illusions
 
 	const progressSteps = [
-		NO__( 'Building your site' ),
-		NO__( 'Getting your domain' ),
-		NO__( 'Applying design' ),
+		__( 'Building your site' ),
+		__( 'Getting your domain' ),
+		__( 'Applying design' ),
 	];
 
 	return (
@@ -51,7 +52,12 @@ const CreateSite: FunctionComponent< {} > = () => {
 					/>
 					<div className="create-site__progress-numbered-steps">
 						{ progressSteps.map( ( _, index ) => (
-							<p>{ `Step ${ index + 1 } of ${ progressSteps.length }` }</p>
+							<p>
+								{ sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
+									currentStep: index + 1,
+									totalSteps: progressSteps.length,
+								} ) }
+							</p>
 						) ) }
 					</div>
 				</div>

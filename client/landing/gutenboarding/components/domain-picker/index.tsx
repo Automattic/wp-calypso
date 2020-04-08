@@ -93,8 +93,8 @@ const SearchIcon = () => (
 );
 
 const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, currentDomain } ) => {
-	const { __: NO__ } = useI18n();
-	const label = NO__( 'Search for a domain' );
+	const { __ } = useI18n();
+	const label = __( 'Search for a domain' );
 
 	const { domainSearch } = useSelect( select => select( STORE_KEY ).getState() );
 	const { setDomainSearch } = useDispatch( STORE_KEY );
@@ -112,7 +112,7 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 			<PanelBody>
 				<PanelRow className="domain-picker__panel-row">
 					<div className="domain-picker__header">
-						<div className="domain-picker__header-title">{ NO__( 'Choose a domain' ) }</div>
+						<div className="domain-picker__header-title">{ __( 'Choose a domain' ) }</div>
 						<CloseButton onClose={ () => onClose() } />
 					</div>
 					<div className="domain-picker__search">
@@ -130,7 +130,7 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 				<PanelRow className="domain-picker__panel-row">
 					<p className="domain-picker__free-text">
 						<FreeDomainIcon />
-						{ NO__( 'Free for the first year with any paid plan' ) }
+						{ __( 'Free for the first year with any paid plan' ) }
 					</p>
 				</PanelRow>
 
@@ -170,7 +170,7 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 					<div className="domain-picker__footer">
 						<div className="domain-picker__footer-options"></div>
 						<Button className="domain-picker__footer-button" isPrimary onClick={ () => onClose() }>
-							{ NO__( 'Confirm' ) }
+							{ __( 'Confirm' ) }
 						</Button>
 					</div>
 				</PanelRow>
