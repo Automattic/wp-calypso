@@ -20,6 +20,7 @@ import { getSitePurchases } from 'state/purchases/selectors';
 import { planHasFeature, planHasSuperiorFeature } from 'lib/plans';
 import { managePurchase } from 'me/purchases/paths';
 import { isJetpackProduct } from 'lib/products-values';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 import './style.scss';
 
@@ -95,6 +96,12 @@ class ProductPlanOverlapNotices extends Component {
 		return availableProducts[ currentPlanSlug ].product_name;
 	}
 
+	clickPurchaseHandler = productSlug => {
+		this.props.recordTracksEvent( 'calypso_product_overlap_purchase_click', {
+			purchase_slug: productSlug,
+		} );
+	};
+
 	getProductItem( productSlug ) {
 		const { purchases } = this.props;
 		const productPurchase = purchases.find( purchase => purchase.productSlug === productSlug );
@@ -105,7 +112,10 @@ class ProductPlanOverlapNotices extends Component {
 
 		return (
 			<li key={ productSlug }>
-				<a href={ managePurchase( productPurchase.domain, productPurchase.id ) }>
+				<a
+					href={ managePurchase( productPurchase.domain, productPurchase.id ) }
+					onClick={ () => this.clickPurchaseHandler( productSlug ) }
+				>
 					{ this.getProductName( productSlug ) }
 				</a>
 			</li>
@@ -165,13 +175,18 @@ class ProductPlanOverlapNotices extends Component {
 	}
 }
 
-export default connect( ( state, { siteId } ) => {
-	const selectedSiteId = siteId || getSelectedSiteId( state );
+export default connect(
+	( state, { siteId } ) => {
+		const selectedSiteId = siteId || getSelectedSiteId( state );
 
-	return {
-		availableProducts: getAvailableProductsList( state ),
-		currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
-		purchases: getSitePurchases( state, selectedSiteId ),
-		selectedSiteId,
-	};
-} )( localize( ProductPlanOverlapNotices ) );
+		return {
+			availableProducts: getAvailableProductsList( state ),
+			currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
+			purchases: getSitePurchases( state, selectedSiteId ),
+			selectedSiteId,
+		};
+	},
+	{
+		recordTracksEvent,
+	}
+)( localize( ProductPlanOverlapNotices ) );
