@@ -31,7 +31,7 @@
 		"watch": "check-npm-client && tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/load-script": "file:../load-script",
+		"@automattic/load-script": "^1.0.0",
 		"cookie": "0.4.0",
 		"debug": "^4.1.1",
 		"hash.js": "^1.1.7",

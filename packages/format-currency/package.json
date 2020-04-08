@@ -25,7 +25,7 @@
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"dependencies": {
 		"@babel/runtime": "^7.8.4",
-		"i18n-calypso": "file:../i18n-calypso"
+		"i18n-calypso": "^5.0.0"
 	},
 	"scripts": {
 		"clean": "check-npm-client && npx rimraf dist",
