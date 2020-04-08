@@ -15,8 +15,9 @@ import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsFooter from 'landing/jetpack-cloud/components/stats-footer';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
-function ScanUpsellPage( { siteSlug } ) {
+function ScanUpsellPage( props ) {
 	return (
 		<Main wideLayout className="scan__main">
 			<DocumentHead title="Scanner" />
@@ -32,9 +33,10 @@ function ScanUpsellPage( { siteSlug } ) {
 				<Button
 					primary
 					// TODO: Use Jetpack redirect.
-					href={ `https://wordpress.com/checkout/jetpack_scan/${ siteSlug }` }
+					href={ `https://wordpress.com/checkout/jetpack_scan/${ props.siteSlug }` }
 					className="scan__button"
 					target="_blank"
+					onClick={ () => props.recordTracksEvent( 'cloud_scan_upsell_click' ) }
 				>
 					{ translate( 'Upgrade now' ) }
 				</Button>
@@ -47,6 +49,9 @@ function ScanUpsellPage( { siteSlug } ) {
 	);
 }
 
-export default connect( state => ( {
-	siteSlug: getSelectedSiteSlug( state ),
-} ) )( ScanUpsellPage );
+export default connect(
+	state => ( {
+		siteSlug: getSelectedSiteSlug( state ),
+	} ),
+	{ recordTracksEvent }
+)( ScanUpsellPage );
