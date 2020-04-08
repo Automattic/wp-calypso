@@ -157,8 +157,8 @@
 			}
 		}
 
-		&:focus,
-		&:hover {
+		&:not( :disabled ):focus,
+		&:not( :disabled ):hover {
 			border-color: var( --studio-blue-30 );
 			box-shadow: 0 0 0 1px var( --studio-blue-30 );
 		}
@@ -167,6 +167,8 @@
 	&.placeholder {
 		@include placeholder();
 		min-width: 30%;
+		background-position: 30px;
+		background-repeat: no-repeat;
 	}
 }
 
