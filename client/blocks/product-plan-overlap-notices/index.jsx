@@ -96,9 +96,9 @@ class ProductPlanOverlapNotices extends Component {
 		return availableProducts[ currentPlanSlug ].product_name;
 	}
 
-	clickPurchaseHandler = purchaseId => {
+	clickPurchaseHandler = productSlug => {
 		this.props.recordTracksEvent( 'calypso_product_overlap_purchase_click', {
-			purchase_id: purchaseId,
+			purchase_slug: productSlug,
 		} );
 	};
 
@@ -114,7 +114,7 @@ class ProductPlanOverlapNotices extends Component {
 			<li key={ productSlug }>
 				<a
 					href={ managePurchase( productPurchase.domain, productPurchase.id ) }
-					onClick={ () => this.clickPurchaseHandler( productPurchase.id ) }
+					onClick={ () => this.clickPurchaseHandler( productSlug ) }
 				>
 					{ this.getProductName( productSlug ) }
 				</a>
