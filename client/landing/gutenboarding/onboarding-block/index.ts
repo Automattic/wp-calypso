@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { BlockConfiguration } from '@wordpress/blocks';
 
 /**
@@ -13,9 +12,9 @@ import edit from './edit';
 export const name = 'automattic/onboarding';
 
 export const settings: BlockConfiguration< Attributes > = {
-	title: __( 'Onboarding' ),
-	category: 'layout', // @TODO
-	description: __( 'Onboarding wizard block' ),
+	title: 'WordPress.com onboarding block',
+	category: 'layout',
+	description: '',
 	attributes: {
 		align: {
 			type: 'string',
