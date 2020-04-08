@@ -17,7 +17,7 @@ import ThreatDialog from 'landing/jetpack-cloud/components/threat-dialog';
 import ThreatItem from 'landing/jetpack-cloud/components/threat-item';
 import { Threat, ThreatAction } from 'landing/jetpack-cloud/components/threat-item/types';
 import getJetpackCredentials from 'state/selectors/get-jetpack-credentials';
-import { requestJetpackScanThreatAction } from 'state/jetpack-scan/threats/actions';
+import { fixThreatAlert, ignoreThreatAlert } from 'state/jetpack/site-alerts/actions';
 
 /**
  * Style dependencies
@@ -58,19 +58,19 @@ const ScanThreats = ( { site, threats }: Props ) => {
 	}, [] );
 
 	const confirmAction = React.useCallback( () => {
-		window.alert(
-			`We are going to ${ actionToPerform } threat ${ selectedThreat?.id } on site ${ site.name }`
-		);
+		const actionCreator = actionToPerform === 'fix' ? fixThreatAlert : ignoreThreatAlert;
 		closeDialog();
 		setFixingThreats( stateThreats => [ ...stateThreats, selectedThreat ] );
-		dispatch( requestJetpackScanThreatAction( site.ID, selectedThreat.id ) );
+		dispatch( actionCreator( site.ID, selectedThreat.id ) );
 	}, [ actionToPerform, closeDialog, dispatch, selectedThreat, site ] );
 
 	const confirmFixAllThreats = React.useCallback( () => {
-		window.alert( `Starting to fix ${ threats.length } threats found...` );
+		threats.forEach( threat => {
+			dispatch( fixThreatAlert( site.ID, threat.id ) );
+		} );
 		setShowFixAllThreatsDialog( false );
 		setFixingThreats( threats );
-	}, [ threats ] );
+	}, [ dispatch, site, threats ] );
 
 	return (
 		<>
