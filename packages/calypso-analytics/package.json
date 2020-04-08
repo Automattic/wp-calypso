@@ -26,7 +26,7 @@
 	},
 	"scripts": {
 		"clean": "check-npm-client && npx rimraf dist \"../../.tsc-cache/packages__calypso-analytics*\"",
-		"prepublish": "check-npm-client && npm run clean",
+		"prepublish": "check-npm-client && yarn run clean",
 		"prepare": "check-npm-client && tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
 		"watch": "check-npm-client && tsc --project ./tsconfig.json --watch"
 	},

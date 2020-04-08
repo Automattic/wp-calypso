@@ -18,10 +18,10 @@
 	"scripts": {
 		"bundle": "check-npm-client && calypso-build --env.WP",
 		"build:dev": "check-npm-client && npm run bundle --",
-		"build:prod": "check-npm-client && NODE_ENV=production npm run bundle --",
+		"build:prod": "check-npm-client && NODE_ENV=production yarn run bundle --",
 		"build": "check-npm-client && npm-run-all --parallel \"build:* -- {@}\" --",
 		"clean": "check-npm-client && npx rimraf dist",
-		"prebuild": "check-npm-client && npm run clean"
+		"prebuild": "check-npm-client && yarn run clean"
 	},
 	"dependencies": {
 		"debug": "4.1.1"
