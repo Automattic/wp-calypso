@@ -20,7 +20,7 @@
 	.security-icon {
 		display: block;
 		margin: 0 auto;
-		width: 56px;
+		width: 48px;
 
 		@include breakpoint( '>660px' ) {
 			margin: 0;
@@ -39,18 +39,15 @@
 }
 
 .scan__header {
-	color: var( --color-neutral-80 );
+	color: var( --studio-black );
 	font-size: 28px;
 	line-height: 1;
-	margin: 30px 0;
+	margin: 32px 0 16px;
 
 	@include breakpoint( '>660px' ) {
-		font-size: 48px;
+		font-size: 36px;
+		font-weight: 600;
 	}
-}
-
-.scan__header--okay {
-	color: var( --color-primary-40 );
 }
 
 .scan__button {

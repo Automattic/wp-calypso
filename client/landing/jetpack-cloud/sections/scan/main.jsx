@@ -32,9 +32,7 @@ class ScanPage extends Component {
 		return (
 			<>
 				<SecurityIcon />
-				<h1 className="scan__header scan__header--okay">
-					{ translate( 'Don’t worry about a thing' ) }
-				</h1>
+				<h1 className="scan__header">{ translate( 'Don’t worry about a thing' ) }</h1>
 				<p>
 					The last Jetpack scan ran <strong>{ moment( lastScanTimestamp ).fromNow() }</strong> and
 					everything looked great.
@@ -56,7 +54,7 @@ class ScanPage extends Component {
 		return (
 			<>
 				<SecurityIcon icon="in-progress" />
-				<h1 className="scan__header scan__header--okay">{ translate( 'Preparing to scan' ) }</h1>
+				<h1 className="scan__header">{ translate( 'Preparing to scan' ) }</h1>
 				<ProgressBar value={ 1 } total={ 100 } color="#069E08" />
 				<p>
 					Welcome to Jetpack Scan, we are taking a first look at your site now and the results will
