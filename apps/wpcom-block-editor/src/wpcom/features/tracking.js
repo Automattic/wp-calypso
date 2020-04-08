@@ -216,7 +216,6 @@ const REDUX_TRACKING = {
 		removeBlocks: trackBlockRemoval,
 		removeBlock: trackBlockRemoval,
 		moveBlockToPosition: getBlocksTracker( 'wpcom_block_moved_via_dragging' ),
-		deleteBlock: trackBlockRemoval,
 		insertBlock: trackBlockInsertion,
 		insertBlocks: trackBlockInsertion,
 		replaceBlock: trackBlockReplacement,
