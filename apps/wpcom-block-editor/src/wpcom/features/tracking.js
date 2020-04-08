@@ -78,6 +78,11 @@ function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parent
  * This is a convenience method that processes the first argument of the action (blocks)
  * and calls your tracking for each of the blocks involved in the action.
  *
+ * This method tracks only blocks explicitly listed as a target of the action.
+ * If you also want to track an event for all child blocks, use `trackBlocksHandler`.
+ *
+ * @see {@link trackBlocksHandler} for a recursive version.
+ *
  * @param {string} eventName event name
  * @returns {Function} track handler
  */
@@ -98,6 +103,18 @@ const trackBlockInsertion = blocks => {
 	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( { name } ) => ( {
 		block_name: name,
 		blocks_replaced: false,
+	} ) );
+};
+
+/**
+ * Track block removal.
+ *
+ * @param {object|Array} blocks block instance object or an array of such objects
+ * @returns {void}
+ */
+const trackBlockRemoval = blocks => {
+	trackBlocksHandler( blocks, 'wpcom_block_deleted', ( { name } ) => ( {
+		block_name: name,
 	} ) );
 };
 
@@ -179,10 +196,10 @@ const REDUX_TRACKING = {
 	'core/block-editor': {
 		moveBlocksUp: getBlocksTracker( 'wpcom_block_moved_up' ),
 		moveBlocksDown: getBlocksTracker( 'wpcom_block_moved_down' ),
-		removeBlocks: getBlocksTracker( 'wpcom_block_deleted' ),
-		removeBlock: getBlocksTracker( 'wpcom_block_deleted' ),
+		removeBlocks: trackBlockRemoval,
+		removeBlock: trackBlockRemoval,
 		moveBlockToPosition: getBlocksTracker( 'wpcom_block_moved_via_dragging' ),
-		deleteBlock: getBlocksTracker( 'wpcom_block_deleted' ),
+		deleteBlock: trackBlockRemoval,
 		insertBlock: trackBlockInsertion,
 		insertBlocks: trackBlockInsertion,
 		replaceBlock: trackBlockReplacement,
@@ -238,7 +255,7 @@ if (
 		},
 	} ) );
 
-	// Registers Plugin.
+	// Registers Plugin.e
 	registerPlugin( 'wpcom-block-editor-tracking', {
 		render: () => {
 			EVENT_TYPES.forEach( eventType =>
