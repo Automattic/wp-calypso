@@ -21,8 +21,8 @@ const debug = debugFactory( 'wpcom-block-editor:tracking' );
 /**
  * Looks up the block name based on its id.
  *
- * @param {string} blockId Blog identifier.
- * @returns {string|null} Blg name if it exists. Otherwise, `null`.
+ * @param {string} blockId Block identifier.
+ * @returns {string|null} Block name if it exists. Otherwise, `null`.
  */
 const getTypeForBlockId = blockId => {
 	const block = select( 'core/block-editor' ).getBlock( blockId );
