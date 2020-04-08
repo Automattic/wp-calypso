@@ -15,7 +15,12 @@ import { ShortcodeBlockComponent } from './blocks/shortcode-block-component';
 import { ImageBlockComponent } from './blocks/image-block-component';
 
 export default class GutenbergEditorComponent extends AsyncBaseContainer {
-	constructor( driver, url, editorType = 'iframe' ) {
+	/**
+	 * @param {*} driver the selenium driver
+	 * @param {*} url url to visit, or null to stay on the same page
+	 * @param { 'iframe' | 'wp-admin' | 'preferIFrame' } editorType editor type the test expect to be on the page
+	 */
+	constructor( driver, url, editorType = 'preferIFrame' ) {
 		super( driver, By.css( '.edit-post-header' ), url );
 		this.editorType = editorType;
 
@@ -37,15 +42,21 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async _preInit() {
-		if ( this.editorType !== 'iframe' ) {
+		if ( this.editorType !== 'iframe' && this.editorType !== 'preferIFrame' ) {
 			return;
 		}
 		await this.driver.switchTo().defaultContent();
-		await this.driver.wait(
-			until.ableToSwitchToFrame( this.editoriFrameSelector ),
-			this.explicitWaitMS,
-			'Could not locate the editor iFrame.'
-		);
+		try {
+			await this.driver.wait(
+				until.ableToSwitchToFrame( this.editoriFrameSelector ),
+				this.explicitWaitMS,
+				'Could not locate the editor iFrame.'
+			);
+		} catch ( error ) {
+			if ( this.editorType === 'preferIFrame' ) {
+				return;
+			}
+		}
 		await this.driver.sleep( 2000 );
 	}
 
