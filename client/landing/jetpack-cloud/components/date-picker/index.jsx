@@ -29,10 +29,10 @@ class DatePicker extends Component {
 	};
 
 	getDisplayDate = ( date, showTodayYesterday = true ) => {
-		const { moment, translate } = this.props;
+		const { today, moment, translate } = this.props;
 
-		const daysDiff = moment().diff( date, 'days' );
-		const yearToday = moment().format( 'YYYY' );
+		const daysDiff = moment( today ).diff( date, 'days' );
+		const yearToday = moment( today ).format( 'YYYY' );
 		const yearDate = moment( date ).format( 'YYYY' );
 
 		const dateFormat = yearToday === yearDate ? 'MMM D' : 'MMM D, YYYY';
@@ -78,9 +78,9 @@ class DatePicker extends Component {
 	};
 
 	canGoToNextDay = () => {
-		const { moment, selectedDate } = this.props;
+		const { today, moment, selectedDate } = this.props;
 
-		return ! moment( selectedDate ).isSame( moment(), 'day' );
+		return ! moment( selectedDate ).isSame( moment( today ), 'day' );
 	};
 
 	goToActivityLog = () => {

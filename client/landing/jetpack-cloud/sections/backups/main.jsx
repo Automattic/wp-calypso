@@ -160,6 +160,8 @@ class BackupsPage extends Component {
 
 		const selectedDateString = this.TO_REMOVE_getSelectedDateString();
 
+		const today = applySiteOffset( moment(), { timezone, gmtOffset } );
+
 		const backupAttempts = getBackupAttemptsForDate( logs, selectedDateString );
 		const deltas = getDailyBackupDeltas( logs, selectedDateString );
 		const realtimeEvents = getEventsInDailyBackup( logs, selectedDateString );
@@ -178,6 +180,7 @@ class BackupsPage extends Component {
 					selectedDate={ this.getSelectedDate() }
 					siteId={ siteId }
 					oldestDateAvailable={ oldestDateAvailable }
+					today={ today }
 					siteSlug={ siteSlug }
 				/>
 
