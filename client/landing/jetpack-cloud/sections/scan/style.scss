@@ -47,11 +47,12 @@
 	@include breakpoint( '>660px' ) {
 		font-size: 36px;
 		font-weight: 600;
+		margin: 32px 0 24px;
 	}
 }
 
 .scan__button {
-	margin: 30px 0;
+	margin: 16px 0;
 	width: 100%;
 	text-align: center;
 
