@@ -98,6 +98,8 @@
 	display: block;
 	width: 100%;
 	position: relative;
+	// for IE, see https://github.com/Automattic/wp-calypso/pull/40881#issuecomment-610836378
+	vertical-align: top;
 
 	+ .style-preview__font-option {
 		margin-top: 1em;
