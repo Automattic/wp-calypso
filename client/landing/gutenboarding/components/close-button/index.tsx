@@ -10,9 +10,9 @@ interface CloseButtonProps {
 }
 
 const CloseButton = ( { onClose }: CloseButtonProps ) => {
-	const { __: NO__ } = useI18n();
+	const { __ } = useI18n();
 	return (
-		<Button onClick={ onClose } label={ NO__( 'Close dialog' ) }>
+		<Button onClick={ onClose } label={ __( 'Close dialog' ) }>
 			<svg
 				width="12"
 				height="12"

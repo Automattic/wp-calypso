@@ -33,7 +33,7 @@ interface Props {
 }
 
 const SignupForm = ( { onRequestClose }: Props ) => {
-	const { __: NO__ } = useI18n();
+	const { __ } = useI18n();
 	const [ emailVal, setEmailVal ] = useState( '' );
 	const [ passwordVal, setPasswordVal ] = useState( '' );
 	const { createAccount, clearErrors } = useDispatch( USER_STORE );
@@ -79,7 +79,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	};
 
 	const tos = __experimentalCreateInterpolateElement(
-		NO__( 'By creating an account you agree to our <link_to_tos>Terms of Service</link_to_tos>.' ),
+		__( 'By creating an account you agree to our <link_to_tos>Terms of Service</link_to_tos>.' ),
 		{
 			link_to_tos: <ExternalLink href="https://wordpress.com/tos/" />,
 		}
@@ -91,13 +91,13 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 			case 'already_taken':
 			case 'already_active':
 			case 'email_exists':
-				errorMessage = NO__( 'An account with this email address already exists.' );
+				errorMessage = __( 'An account with this email address already exists.' );
 				break;
 			case 'password_invalid':
 				errorMessage = newUserError.message;
 				break;
 			default:
-				errorMessage = NO__(
+				errorMessage = __(
 					'Sorry, something went wrong when trying to create your account. Please try again.'
 				);
 				break;
@@ -116,7 +116,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	return (
 		<Modal
 			className={ 'signup-form' }
-			title={ NO__( 'Save your progress' ) }
+			title={ __( 'Save your progress' ) }
 			onRequestClose={ closeModal }
 			focusOnMount={ false }
 			isDismissible={ false }
@@ -127,12 +127,12 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 			<SignupFormHeader onRequestClose={ closeModal } />
 
 			<div className="signup-form__body">
-				<h1 className="signup-form__title">{ NO__( 'Save your progress' ) }</h1>
+				<h1 className="signup-form__title">{ __( 'Save your progress' ) }</h1>
 
 				<form onSubmit={ handleSignUp }>
 					<fieldset>
 						<legend className="signup-form__legend">
-							<p>{ NO__( 'Enter an email and password to save your progress and continue' ) }</p>
+							<p>{ __( 'Enter an email and password to save your progress and continue' ) }</p>
 						</legend>
 
 						<TextControl
@@ -140,7 +140,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 							disabled={ isFetchingNewUser }
 							type="email"
 							onChange={ setEmailVal }
-							placeholder={ NO__( 'Email address' ) }
+							placeholder={ __( 'Email address' ) }
 							required
 							autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 						/>
@@ -150,7 +150,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 							disabled={ isFetchingNewUser }
 							type="password"
 							onChange={ setPasswordVal }
-							placeholder={ NO__( 'Password' ) }
+							placeholder={ __( 'Password' ) }
 							required
 						/>
 
@@ -162,14 +162,14 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 
 						<div className="signup-form__footer">
 							<p className="signup-form__login-link">
-								<span>{ NO__( 'Already have an account?' ) }</span>{ ' ' }
+								<span>{ __( 'Already have an account?' ) }</span>{ ' ' }
 								<Button className="signup-form__link" isLink href={ loginUrl }>
-									{ NO__( 'Log in' ) }
+									{ __( 'Log in' ) }
 								</Button>
 							</p>
 
 							<ModalSubmitButton disabled={ isFetchingNewUser } isBusy={ isFetchingNewUser }>
-								{ NO__( 'Create account' ) }
+								{ __( 'Create account' ) }
 							</ModalSubmitButton>
 
 							<p className="signup-form__link signup-form__terms-of-service-link">{ tos }</p>

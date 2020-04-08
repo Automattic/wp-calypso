@@ -16,7 +16,7 @@ interface Props {
 }
 
 const EnterPasswordForm = ( props: Props ) => {
-	const { __: NO__ } = useI18n();
+	const { __ } = useI18n();
 
 	const [ passwordVal, setPasswordVal ] = useState( '' );
 	const { reset } = useDispatch( AUTH_STORE );
@@ -34,8 +34,8 @@ const EnterPasswordForm = ( props: Props ) => {
 	};
 
 	const changeEmailOrUsernameLinkText = includes( usernameOrEmail, '@' )
-		? NO__( 'Change Email Address' )
-		: NO__( 'Change Username' );
+		? __( 'Change Email Address' )
+		: __( 'Change Username' );
 
 	return (
 		<form onSubmit={ onSubmitPassword }>
@@ -54,7 +54,7 @@ const EnterPasswordForm = ( props: Props ) => {
 				onChange={ setPasswordVal }
 			/>
 			<TextControl
-				label={ NO__( 'Password' ) }
+				label={ __( 'Password' ) }
 				type="password"
 				// focusing on the field causes 1password to autofill the password.
 				// eslint-disable-next-line
@@ -66,7 +66,7 @@ const EnterPasswordForm = ( props: Props ) => {
 			<div>
 				{ props.tos }
 
-				<ModalSubmitButton>{ NO__( 'Login' ) }</ModalSubmitButton>
+				<ModalSubmitButton>{ __( 'Login' ) }</ModalSubmitButton>
 			</div>
 		</form>
 	);

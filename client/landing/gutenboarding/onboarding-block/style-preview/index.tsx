@@ -32,7 +32,7 @@ const StylePreview: React.FunctionComponent = () => {
 
 	const hasSelectedDesign = !! selectedDesign;
 
-	const { __: NO__ } = useI18n();
+	const { __ } = useI18n();
 	const makePath = usePath();
 	const [ selectedViewport, setSelectedViewport ] = React.useState< T.Viewport >( 'desktop' );
 
@@ -59,13 +59,13 @@ const StylePreview: React.FunctionComponent = () => {
 		<div className="style-preview">
 			<div className="style-preview__header">
 				<div className="style-preview__titles">
-					<Title>{ NO__( 'Select your fonts' ) }</Title>
-					<SubTitle>{ NO__( 'Add some personality to your design.' ) }</SubTitle>
+					<Title>{ __( 'Select your fonts' ) }</Title>
+					<SubTitle>{ __( 'Add some personality to your design.' ) }</SubTitle>
 				</div>
 				<ViewportSelect selected={ selectedViewport } onSelect={ setSelectedViewport } />
 				<div className="style-preview__actions">
 					<Link isLink to={ makePath( Step.DesignSelection ) }>
-						{ NO__( 'Choose another design' ) }
+						{ __( 'Choose another design' ) }
 					</Link>
 					{ hasSelectedDesign && (
 						<Button
@@ -76,7 +76,7 @@ const StylePreview: React.FunctionComponent = () => {
 								currentUser ? handleCreateSite( currentUser.username ) : handleSignup()
 							}
 						>
-							{ NO__( 'Continue' ) }
+							{ __( 'Continue' ) }
 						</Button>
 					) }
 				</div>

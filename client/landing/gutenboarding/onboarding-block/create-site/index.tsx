@@ -14,16 +14,16 @@ import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const CreateSite: FunctionComponent< {} > = () => {
-	const { __: NO__ } = useI18n();
+	const { __ } = useI18n();
 	const shouldTriggerCreate = useNewQueryParam();
 	const [ shouldCreateAndRedirect, setCreateAndRedirect ] = React.useState( false );
 
 	// Some very rudimentary progress illusions
 
 	const progressSteps = [
-		NO__( 'Building your site' ),
-		NO__( 'Getting your domain' ),
-		NO__( 'Applying design' ),
+		__( 'Building your site' ),
+		__( 'Getting your domain' ),
+		__( 'Applying design' ),
 	];
 
 	return (
