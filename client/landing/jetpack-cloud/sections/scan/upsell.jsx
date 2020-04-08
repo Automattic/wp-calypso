@@ -27,7 +27,7 @@ function ScanUpsellPage( props ) {
 				<h1 className="scan__header">{ translate( 'Your site does not have scan' ) }</h1>
 				<p>
 					{ translate(
-						'Get automatic scanning and one-click fixes to keep your site one step ahead of security threats.'
+						'Automatic scanning and one-click fixes keep your site one step ahead of security threats.'
 					) }
 				</p>
 				<Button
