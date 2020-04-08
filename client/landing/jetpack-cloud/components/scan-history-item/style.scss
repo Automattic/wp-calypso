@@ -7,12 +7,18 @@
 		border-left: 3px solid var( --studio-gray-50 );
 	}
 
+	.card-heading {
+		font-size: 18px;
+		line-height: 24px;
+	}
+
 	&__subheader {
 		color: var( --color-threat-ignored );
-		font-size: 13px;
+		font-size: 14px;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
+		margin-top: 4px;
 
 		@include breakpoint( '>960px' ) {
 			flex-direction: row;
@@ -41,7 +47,7 @@
 		}
 	}
 
-	&__badge {
+	&__badge.badge {
 		width: 60px;
 		margin-top: 10px;
 		letter-spacing: 1px;
@@ -57,5 +63,9 @@
 		&.is-ignored {
 			background-color: var( --color-threat-ignored );
 		}
+	}
+
+	.foldable-card__header {
+		border-bottom: 1px solid var( --studio-gray-5 );
 	}
 }
