@@ -82,8 +82,9 @@ class ScanPage extends Component {
 				<SecurityIcon icon="scan-error" />
 				<h1 className="scan__header">{ translate( 'Something went wrong' ) }</h1>
 				<p>
-					The scan did not complete successfully. In order to complete the scan you need to contact
-					support.
+					The scan was unable to process the themes directory and did not completed successfully. In
+					order to complete the scan you will need to speak to support who can help determine what
+					went wrong.
 				</p>
 				<Button
 					primary
