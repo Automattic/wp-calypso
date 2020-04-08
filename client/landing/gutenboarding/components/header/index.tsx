@@ -154,7 +154,7 @@ const Header: FunctionComponent = () => {
 	useEffect( () => {
 		// isRedirecting check this is needed to make sure we don't overwrite the first window.location.replace() call
 		if ( newSite && ! isRedirecting ) {
-			if ( ! domain?.is_free ) {
+			if ( domain && ! domain.is_free ) {
 				// I'd rather not make my own product, but this works.
 				// lib/cart-items helpers did not perform well.
 				const domainProduct = {
