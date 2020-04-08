@@ -22,26 +22,26 @@ export const socketConnect = ( store, jwt, userId ) => {
 		return;
 	}
 
-	import( /* webpackChunkName: "phoenix" */ 'phoenix' ).then( ( { Socket } ) => {
-		socket = new Socket( url, { params: { jwt, user_id: userId } } );
-
-		socket.onOpen( () => {
-			debug( 'socket opened' );
-			store.dispatch( socketConnected() );
-		} );
-
-		socket.onClose( () => {
-			debug( 'socket closed' );
-			// @TODO: verify this Phoenix.js state, dispatch attempting reconnect here?
-		} );
-
-		socket.onError( () => {
-			debug( 'socket error' );
-			// @TODO: verify this Phoenix.js state, dispatch attempting reconnect here?
-		} );
-
-		socket.connect();
-	} );
+	// import( /* webpackChunkName: "phoenix" */ 'phoenix' ).then( ( { Socket } ) => {
+	// 	socket = new Socket( url, { params: { jwt, user_id: userId } } );
+	//
+	// 	socket.onOpen( () => {
+	// 		debug( 'socket opened' );
+	// 		store.dispatch( socketConnected() );
+	// 	} );
+	//
+	// 	socket.onClose( () => {
+	// 		debug( 'socket closed' );
+	// 		// @TODO: verify this Phoenix.js state, dispatch attempting reconnect here?
+	// 	} );
+	//
+	// 	socket.onError( () => {
+	// 		debug( 'socket error' );
+	// 		// @TODO: verify this Phoenix.js state, dispatch attempting reconnect here?
+	// 	} );
+	//
+	// 	socket.connect();
+	// } );
 };
 
 export const socketDisconnect = store => {
