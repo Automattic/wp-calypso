@@ -117,6 +117,14 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 
+		'onboarding-plan-first': {
+			steps: [ 'user', 'plans', 'domains' ],
+			destination: getSignupDestination,
+			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
+			lastModified: '2020-03-03',
+			showRecaptcha: true,
+		},
+
 		desktop: {
 			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
 			destination: getSignupDestination,

@@ -11,6 +11,7 @@ import stepConfig from './steps';
 import userFactory from 'lib/user';
 import { generateFlows } from 'signup/config/flows-pure';
 import { addQueryArgs } from 'lib/url';
+import { abtest } from 'lib/abtest';
 
 const user = userFactory();
 
@@ -107,6 +108,13 @@ function filterDestination( destination, dependencies ) {
 }
 
 function getDefaultFlowName() {
+	if (
+		config.isEnabled( 'signup/onboarding-flow' ) &&
+		'variantShowSwapped' === abtest( 'domainStepPlanStepSwap' )
+	) {
+		return 'onboarding-plan-first';
+	}
+
 	return config.isEnabled( 'signup/onboarding-flow' ) ? 'onboarding' : 'main';
 }
 
