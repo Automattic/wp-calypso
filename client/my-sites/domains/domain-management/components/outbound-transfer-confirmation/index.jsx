@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 import { Button } from '@automattic/components';
 import { acceptTransfer, cancelTransferRequest } from 'lib/domains/wapi-domain-info/actions';
 import notices from 'notices';
+import { getMaintenanceMessageFromError } from '../../../../../landing/domains/utils';
 
 /**
  * Style dependencies
@@ -59,9 +60,13 @@ class OutboundTransferConfirmation extends React.PureComponent {
 		acceptTransfer( domain.name, error => {
 			this.setStateIfMounted( { isAccepting: false } );
 			if ( error ) {
-				notices.error( error.message );
+				notices.error( this.getErrorMessage( error ) );
 			} else {
-				notices.success( translate( 'The domain transfer was accepted successfully.' ) );
+				notices.success(
+					translate(
+						'You have successfully expedited your domain transfer. There is nothing else you need to do.'
+					)
+				);
 			}
 		} );
 	};
@@ -78,13 +83,34 @@ class OutboundTransferConfirmation extends React.PureComponent {
 			error => {
 				this.setStateIfMounted( { isCanceling: false } );
 				if ( error ) {
-					notices.error( error.message );
+					notices.error( this.getErrorMessage( error ) );
 				} else {
-					notices.success( translate( 'The domain transfer was cancelled successfully.' ) );
+					notices.success(
+						translate(
+							'You have successfully cancelled your domain transfer. There is nothing else you need to do.'
+						)
+					);
 				}
 			}
 		);
 	};
+
+	getErrorMessage( error ) {
+		const { translate } = this.props;
+
+		switch ( error.error ) {
+			case 'no_pending_transfer':
+				return translate(
+					'This domain is no longer awaiting transfer. If your transfer has completed successfully or ' +
+						'you previously cancelled your domain transfer, there is nothing else you need to do.'
+				);
+			case 'domain_registration_unavailable':
+			case 'tld-in-maintenance':
+				return getMaintenanceMessageFromError( error, translate );
+			default:
+				return error.message;
+		}
+	}
 
 	render() {
 		const { domain, translate } = this.props;
