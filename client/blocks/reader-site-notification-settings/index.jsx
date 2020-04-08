@@ -14,7 +14,6 @@ import Gridicon from 'components/gridicon';
 import ReaderPopover from 'reader/components/reader-popover';
 import SegmentedControl from 'components/segmented-control';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormLabel from 'components/forms/form-label';
 import { getReaderFollows } from 'state/reader/follows/selectors';
 import {
 	subscribeToNewPostEmail,
@@ -160,13 +159,9 @@ class ReaderSiteNotificationSettings extends Component {
 							checked={ sendNewPostsByNotification }
 							wrapperClassName="reader-site-notification-settings__popout-form-toggle"
 							id="reader-site-notification-settings__notifications"
-						/>
-						<FormLabel
-							htmlFor="reader-site-notification-settings__notifications"
-							onClick={ this.toggleNewPostNotification }
 						>
 							{ translate( 'Notify me of new posts' ) }
-						</FormLabel>
+						</CompactFormToggle>
 						<p className="reader-site-notification-settings__popout-hint">
 							{ translate( 'Receive web and mobile notifications for new posts from this site.' ) }
 						</p>
@@ -183,25 +178,25 @@ class ReaderSiteNotificationSettings extends Component {
 								onChange={ this.toggleNewPostEmail }
 								checked={ sendNewPostsByEmail }
 								id={ 'reader-site-notification-settings__email-posts' }
-							/>
+							>
+								{ translate( 'Email me new posts' ) }
+							</CompactFormToggle>
 						) }
-						<FormLabel
-							htmlFor="reader-site-notification-settings__email-posts"
-							onClick={ this.toggleNewPostEmail }
-						>
-							{ translate( 'Email me new posts' ) }
-						</FormLabel>
+
 						{ isEmailBlocked && (
-							<p className="reader-site-notification-settings__popout-instructions-hint">
-								{ translate(
-									'You currently have email delivery turned off. Visit your {{a}}Notification Settings{{/a}} to turn it back on.',
-									{
-										components: {
-											a: <a href="/me/notifications/subscriptions" />,
-										},
-									}
-								) }
-							</p>
+							<div>
+								{ translate( 'Email me new posts' ) }
+								<p className="reader-site-notification-settings__popout-instructions-hint">
+									{ translate(
+										'You currently have email delivery turned off. Visit your {{a}}Notification Settings{{/a}} to turn it back on.',
+										{
+											components: {
+												a: <a href="/me/notifications/subscriptions" />,
+											},
+										}
+									) }
+								</p>
+							</div>
 						) }
 					</div>
 
@@ -233,13 +228,9 @@ class ReaderSiteNotificationSettings extends Component {
 								onChange={ this.toggleNewCommentEmail }
 								checked={ sendNewCommentsByEmail }
 								id="reader-site-notification-settings__email-comments"
-							/>
-							<FormLabel
-								htmlFor="reader-site-notification-settings__email-comments"
-								onClick={ this.toggleNewCommentEmail }
 							>
 								{ translate( 'Email me new comments' ) }
-							</FormLabel>
+							</CompactFormToggle>
 						</div>
 					) }
 				</ReaderPopover>
