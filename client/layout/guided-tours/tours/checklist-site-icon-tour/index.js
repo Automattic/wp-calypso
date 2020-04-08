@@ -54,7 +54,7 @@ export const ChecklistSiteIconTour = makeTour(
 					</p>
 					<ButtonRow>
 						<Continue target="settings-site-icon-change" step="choose-image" click hidden />
-						<SiteLink isButton={ false } href="/checklist/:site">
+						<SiteLink isButton={ false } href="/home/:site">
 							{ translate( 'Return to the checklist' ) }
 						</SiteLink>
 					</ButtonRow>
@@ -137,7 +137,7 @@ export const ChecklistSiteIconTour = makeTour(
 							'Your Site Icon has been saved. Let’s move on and see what’s next on our checklist.'
 						) }
 					</p>
-					<SiteLink isButton href="/checklist/:site">
+					<SiteLink isButton href="/home/:site">
 						{ translate( 'Return to the checklist' ) }
 					</SiteLink>
 				</Fragment>

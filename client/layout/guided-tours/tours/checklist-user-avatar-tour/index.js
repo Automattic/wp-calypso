@@ -49,7 +49,7 @@ export const ChecklistUserAvatarTour = makeTour(
 					</p>
 					<ButtonRow>
 						<Continue target="edit-gravatar" step="image-notice" click hidden />
-						<SiteLink isButton={ false } href="/checklist/:site">
+						<SiteLink isButton={ false } href="/home/:site">
 							{ translate( 'Return to the checklist' ) }
 						</SiteLink>
 					</ButtonRow>
@@ -112,7 +112,7 @@ export const ChecklistUserAvatarTour = makeTour(
 								"Let's move on and see what's next on our checklist."
 						) }
 					</p>
-					<SiteLink isButton href="/checklist/:site">
+					<SiteLink isButton href="/home/:site">
 						{ translate( 'Return to the checklist' ) }
 					</SiteLink>
 				</Fragment>
