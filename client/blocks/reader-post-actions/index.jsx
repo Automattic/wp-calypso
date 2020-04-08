@@ -31,7 +31,6 @@ const ReaderPostActions = props => {
 		post,
 		site,
 		onCommentClick,
-		commentsCount,
 		showEdit,
 		showVisit,
 		showMenu,
@@ -88,7 +87,7 @@ const ReaderPostActions = props => {
 				<li className="reader-post-actions__item">
 					<CommentButton
 						key="comment-button"
-						commentCount={ commentsCount || post.discussion.comment_count }
+						commentCount={ post.discussion.comment_count }
 						onClick={ onCommentClick }
 						tagName="div"
 						size={ iconSize }
@@ -132,7 +131,6 @@ ReaderPostActions.propTypes = {
 	onCommentClick: PropTypes.func,
 	showEdit: PropTypes.bool,
 	iconSize: PropTypes.number,
-	commentsCount: PropTypes.number,
 	showMenu: PropTypes.bool,
 	showMenuFollow: PropTypes.bool,
 	visitUrl: PropTypes.string,

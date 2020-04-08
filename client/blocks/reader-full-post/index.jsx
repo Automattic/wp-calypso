@@ -64,7 +64,6 @@ import QueryPostLikes from 'components/data/query-post-likes';
 import getCurrentStream from 'state/selectors/get-reader-current-stream';
 import { setViewFullPost, unsetViewFullPost } from 'state/reader/viewing/actions';
 import { getNextItem, getPreviousItem } from 'state/reader/streams/selectors';
-import { getPostTotalCommentsCount } from 'state/comments/selectors/get-post-total-comments-count';
 
 /**
  * Style dependencies
@@ -74,7 +73,6 @@ import './style.scss';
 export class FullPostView extends React.Component {
 	static propTypes = {
 		post: PropTypes.object,
-		reduxCommentsCount: PropTypes.number,
 		onClose: PropTypes.func.isRequired,
 		referralPost: PropTypes.object,
 		referralStream: PropTypes.string,
@@ -289,23 +287,12 @@ export class FullPostView extends React.Component {
 	};
 
 	render() {
-		const {
-			post,
-			site,
-			feed,
-			referralPost,
-			referral,
-			blogId,
-			feedId,
-			postId,
-			reduxCommentsCount,
-		} = this.props;
+		const { post, site, feed, referralPost, referral, blogId, feedId, postId } = this.props;
 
 		if ( post.is_error ) {
 			return <ReaderFullPostUnavailable post={ post } onBackClick={ this.handleBack } />;
 		}
 
-		const commentCount = reduxCommentsCount || get( post, 'discussion.comment_count' );
 		const siteName = getSiteName( { site, post } );
 		const classes = { 'reader-full-post': true };
 		const showRelatedPosts = post && ! post.is_external && post.site_ID;
@@ -330,6 +317,7 @@ export class FullPostView extends React.Component {
 		const externalHref = isDiscoverPost( referralPost ) ? referralPost.URL : post.URL;
 		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
 		const startingCommentId = this.getCommentIdFromUrl();
+		const commentCount = get( post, 'discussion.comment_count' );
 		const postKey = { blogId, feedId, postId };
 
 		/*eslint-disable react/no-danger */
@@ -430,7 +418,6 @@ export class FullPostView extends React.Component {
 							<ReaderPostActions
 								post={ post }
 								site={ site }
-								commentsCount={ commentCount }
 								onCommentClick={ this.handleCommentClick }
 								fullPost={ true }
 							/>
@@ -526,8 +513,6 @@ export default connect(
 			props.previousPost = getPreviousItem( state, postKey );
 			props.nextPost = getNextItem( state, postKey );
 		}
-
-		props.reduxCommentsCount = getPostTotalCommentsCount( state, post.site_ID, post.ID );
 
 		return props;
 	},

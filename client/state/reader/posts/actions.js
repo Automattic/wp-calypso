@@ -7,7 +7,11 @@ import { filter, forEach, compact, partition, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'state/reader/action-types';
+import {
+	READER_POSTS_RECEIVE,
+	READER_POST_SEEN,
+	READER_POST_DISCUSSION_COUNT_INCREMENT,
+} from 'state/reader/action-types';
 import { runFastRules, runSlowRules } from './normalization-rules';
 import wpcom from 'lib/wp';
 import { keyForPost, keyToString } from 'reader/post-key';
@@ -160,4 +164,17 @@ export const markPostSeen = ( post, site ) => ( dispatch, getState ) => {
 			}
 		}
 	}
+};
+
+/**
+ * Increment post discussion count
+ *
+ * @param globalId string reader global id
+ * @returns redux action
+ */
+export const incrementPostDiscussionCount = ( { globalId } ) => {
+	return {
+		type: READER_POST_DISCUSSION_COUNT_INCREMENT,
+		globalId,
+	};
 };

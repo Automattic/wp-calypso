@@ -32,7 +32,6 @@ import {
 import DiscoverFollowButton from 'reader/discover/follow-button';
 import { expandCard as expandCardAction } from 'state/ui/reader/card-expansions/actions';
 import isReaderCardExpanded from 'state/selectors/is-reader-card-expanded';
-import { getPostTotalCommentsCount } from 'state/comments/selectors/get-post-total-comments-count';
 import { setViewFeedPost, unsetViewFeedPost } from 'state/reader/viewing/actions';
 
 /**
@@ -127,7 +126,6 @@ class ReaderPostCard extends React.Component {
 	render() {
 		const {
 			post,
-			commentsCount,
 			discoverPost,
 			discoverSite,
 			site,
@@ -175,7 +173,6 @@ class ReaderPostCard extends React.Component {
 		const readerPostActions = (
 			<ReaderPostActions
 				post={ discoverPost || post }
-				commentsCount={ commentsCount }
 				site={ site }
 				visitUrl={ post.URL }
 				showVisit={ true }
@@ -295,7 +292,6 @@ class ReaderPostCard extends React.Component {
 export default connect(
 	( state, ownProps ) => ( {
 		isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
-		commentsCount: getPostTotalCommentsCount( state, ownProps.post.site_ID, ownProps.post.ID ),
 	} ),
 	{ expandCard: expandCardAction, setViewFeedPost, unsetViewFeedPost }
 )( ReaderPostCard );

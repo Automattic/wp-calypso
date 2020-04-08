@@ -7,7 +7,11 @@ import { keyBy, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'state/reader/action-types';
+import {
+	READER_POSTS_RECEIVE,
+	READER_POST_SEEN,
+	READER_POST_DISCUSSION_COUNT_INCREMENT,
+} from 'state/reader/action-types';
 import { combineReducers } from 'state/utils';
 
 /**
@@ -19,12 +23,32 @@ import { combineReducers } from 'state/utils';
  */
 export function items( state = {}, action ) {
 	switch ( action.type ) {
-		case READER_POSTS_RECEIVE:
+		case READER_POSTS_RECEIVE: {
 			const posts = action.posts || action.payload.posts;
 			return { ...state, ...keyBy( posts, 'global_ID' ) };
+		}
+
+		case READER_POST_DISCUSSION_COUNT_INCREMENT: {
+			if ( ! action.globalId ) {
+				return state;
+			}
+
+			return {
+				...state,
+				[ action.globalId ]: {
+					...state[ action.globalId ],
+					discussion: {
+						...state[ action.globalId ].discussion,
+						comment_count: state[ action.globalId ].discussion.comment_count + 1,
+					},
+				},
+			};
+		}
 	}
+
 	return state;
 }
+
 export function seen( state = {}, action ) {
 	const id = get( action, 'payload.post.global_ID' );
 
