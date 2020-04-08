@@ -255,9 +255,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			.move( { origin: button } )
 			.perform();
 
-		// Get the button again after it is re-mounted by react. I think this is
-		// needed because a hover popover appears when going over the button.
-		await this.driver.wait( until.stalenessOf( button ) );
+		// Try getting the button one more time since it can go stale.
 		button = await this.driver.findElement( inserterBlockItemSelector );
 		await this.driver.executeScript( 'arguments[0].click();', button );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, insertedBlockSelector );
