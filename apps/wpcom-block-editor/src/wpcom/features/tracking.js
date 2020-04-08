@@ -255,7 +255,7 @@ if (
 		},
 	} ) );
 
-	// Registers Plugin.e
+	// Registers Plugin.
 	registerPlugin( 'wpcom-block-editor-tracking', {
 		render: () => {
 			EVENT_TYPES.forEach( eventType =>
