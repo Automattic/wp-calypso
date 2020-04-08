@@ -57,6 +57,7 @@ export class DateRange extends Component {
 		renderTrigger: PropTypes.func,
 		renderHeader: PropTypes.func,
 		renderInputs: PropTypes.func,
+		visible: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -586,6 +587,15 @@ export class DateRange extends Component {
 	}
 
 	/**
+	 * Returns is the popover is visible, respecting the controlled overide 'visible' property.
+	 *
+	 * @returns {boolean} if the popover is visible
+	 */
+	isPopoverVisible() {
+		return this.props.visible !== undefined ? this.props.visible : this.state.popoverVisible;
+	}
+
+	/**
 	 * Renders the Popover component
 	 *
 	 * @returns {ReactComponent} the Popover component
@@ -607,7 +617,7 @@ export class DateRange extends Component {
 		return (
 			<Popover
 				className="date-range__popover"
-				isVisible={ this.state.popoverVisible }
+				isVisible={ this.isPopoverVisible() }
 				context={ this.triggerButtonRef.current }
 				position="bottom"
 				onClose={ this.closePopoverAndCommit }
@@ -684,7 +694,7 @@ export class DateRange extends Component {
 	render() {
 		const rootClassNames = classNames( {
 			'date-range': true,
-			'toggle-visible': this.state.popoverVisible,
+			'toggle-visible': this.isPopoverVisible(),
 		} );
 
 		const triggerProps = {

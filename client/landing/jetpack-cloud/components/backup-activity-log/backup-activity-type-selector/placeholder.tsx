@@ -14,7 +14,7 @@ const BackupsActivityTypeSelectorPlaceholder: FunctionComponent = () => {
 	const translate = useTranslate();
 
 	return (
-		<Button className="backup-activity-type-selector__placeholder" disabled>
+		<Button borderless className="backup-activity-type-selector__placeholder">
 			{ translate( 'Activity type' ) }
 		</Button>
 	);

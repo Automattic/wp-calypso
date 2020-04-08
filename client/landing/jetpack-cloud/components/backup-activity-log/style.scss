@@ -8,8 +8,10 @@
 	}
 }
 
-.backup-date-range-selector,
-.backup-activity-type-selector {
+button.is-borderless.backup-date-range-selector,
+button.is-borderless.backup-activity-type-selector,
+button.is-borderless.backup-date-range-selector__placeholder,
+button.is-borderless.backup-activity-type-selector__placholder {
 	background: var( --studio-white );
 	border-radius: 3px;
 	border: 1px solid var( --studio-gray-10 );

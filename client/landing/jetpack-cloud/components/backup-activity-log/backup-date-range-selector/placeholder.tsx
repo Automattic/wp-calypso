@@ -13,7 +13,7 @@ const BackupsDateRangeSelectorPlaceholder: FunctionComponent = () => {
 	const translate = useTranslate();
 
 	return (
-		<Button className="backup-date-range-selector__placeholder" disabled>
+		<Button borderless className="backup-date-range-selector__placeholder">
 			{ translate( 'Date range' ) }
 		</Button>
 	);

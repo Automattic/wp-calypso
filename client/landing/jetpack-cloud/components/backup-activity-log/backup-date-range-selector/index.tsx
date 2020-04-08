@@ -3,60 +3,88 @@
  */
 import { Moment } from 'moment';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useRef } from 'react';
+import React, { FunctionComponent, MutableRefObject } from 'react';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import DatePicker from 'components/date-picker';
-import Popover from 'components/popover';
+import DateRange from 'components/date-range';
 import { ActivityCount } from '../types';
+import { useLocalizedMoment } from 'components/localized-moment';
+import Gridicon from 'components/gridicon';
 
 interface Props {
 	activityCounts: ActivityCount[];
 	onClick: () => void;
-	onDateCommit: ( selectedStartDate: Moment | null, selectedEndDate: Moment | null ) => void;
+	onSelectedDatesChange: (
+		selectedStartDate: Moment | null,
+		selectedEndDate: Moment | null
+	) => void;
 	selectedEndDate: Moment | null;
 	selectedStartDate: Moment | null;
 	visible: boolean;
 }
 
 const BackupsDateRangeSelector: FunctionComponent< Props > = ( {
-	// activityCounts,
-	onClick,
-	// selectedEndDate,
-	// selectedStartDate,
+	activityCounts,
+	selectedEndDate,
+	selectedStartDate,
 	visible,
+	onSelectedDatesChange,
 } ) => {
 	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 
-	const buttonRef = useRef( null );
+	const renderButtonText = (
+		startDate: Date | Moment | null | undefined,
+		endDate: Date | Moment | null | undefined
+	) => {
+		if ( selectedStartDate === null && selectedEndDate === null ) {
+			return translate( 'Date range' );
+		}
+		return translate( '%(startDate)s - %(endDate)s', {
+			args: {
+				startDate: startDate
+					? moment( startDate ).format( 'L' )
+					: moment( activityCounts[ 0 ].date ).format( 'L ' ),
+				endDate: endDate
+					? moment( endDate ).format( 'L' )
+					: moment( activityCounts[ activityCounts.length - 1 ].date ).format( 'L ' ),
+			},
+		} );
+	};
 
-	// const onSelectDate = ( selectedDate: Moment ) => {
-	// 	// console.log( 'selectedDate: ', selectedDate );
-	// };
+	const renderTrigger = ( {
+		buttonRef,
+		endDate,
+		onTriggerClick,
+		startDate,
+	}: {
+		onTriggerClick: () => void;
+		onClearClick: () => void;
+		buttonRef: MutableRefObject< null >;
+		startDate: Date | Moment | null | undefined;
+		endDate: Date | Moment | null | undefined;
+	} ) => (
+		<Button
+			borderless
+			className="backup-date-range-selector"
+			ref={ buttonRef }
+			onClick={ onTriggerClick }
+		>
+			{ renderButtonText( startDate, endDate ) }
+		</Button>
+	);
 
+	// TODO: This is a timezone mess. The DateRange operates with an un-modified moment. Everything going in and out needs to be carefully transformed.
 	return (
-		<>
-			<Button className="backup-date-range-selector" ref={ buttonRef } onClick={ onClick }>
-				{ translate( 'Date range' ) }
-			</Button>
-			<Popover context={ buttonRef.current } isVisible={ visible } position="bottom">
-				<DatePicker
-				// calendarViewDate={ this.state.focusedMonth }
-				// rootClassNames={ rootClassNames }
-				// modifiers={ modifiers }
-				// showOutsideDays={ false }
-				// fromMonth={ this.momentDateToJsDate( this.props.firstSelectableDate ) }
-				// toMonth={ this.momentDateToJsDate( this.props.lastSelectableDate ) }
-				// onSelectDay={ onSelectDate }
-				// selectedDays={ selected }
-				// numberOfMonths={ this.getNumberOfMonths() }
-				// disabledDays={ this.getDisabledDaysConfig() }
-				/>
-			</Popover>
-		</>
+		<DateRange
+			renderTrigger={ renderTrigger }
+			onDateCommit={ onSelectedDatesChange }
+			firstSelectableDate={ moment( activityCounts[ 0 ].date ) }
+			lastSelectableDate={ moment( activityCounts[ activityCounts.length - 1 ].date ) }
+		/>
 	);
 };
 

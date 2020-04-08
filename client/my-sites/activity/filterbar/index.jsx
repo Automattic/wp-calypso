@@ -30,6 +30,11 @@ export class Filterbar extends Component {
 		showActivityDates: false,
 	};
 
+	defaultProps = {
+		useActivityTypeSelector: true,
+		useDateRangeSelector: true,
+	};
+
 	goBack = () => {
 		const { previousRoute } = this.props;
 		if ( previousRoute ) {
@@ -105,7 +110,15 @@ export class Filterbar extends Component {
 	};
 
 	render() {
-		const { translate, siteId, filter, isLoading, isVisible } = this.props;
+		const {
+			translate,
+			siteId,
+			filter,
+			isLoading,
+			isVisible,
+			useActivityTypeSelector,
+			useDateRangeSelector,
+		} = this.props;
 
 		if ( siteId && isLoading && this.isEmptyFilter( filter ) ) {
 			return <div className="filterbar is-loading" />;
@@ -129,20 +142,24 @@ export class Filterbar extends Component {
 			<div className="filterbar" id="filterbar">
 				<div className="filterbar__wrap card">
 					<span className="filterbar__label">{ translate( 'Filter by:' ) }</span>
-					<DateRangeSelector
-						isVisible={ this.state.showActivityDates }
-						onButtonClick={ this.toggleDateRangeSelector }
-						onClose={ this.closeDateRangeSelector }
-						filter={ filter }
-						siteId={ siteId }
-					/>
-					<ActionTypeSelector
-						filter={ filter }
-						siteId={ siteId }
-						isVisible={ this.state.showActivityTypes }
-						onButtonClick={ this.toggleActivityTypesSelector }
-						onClose={ this.closeActivityTypes }
-					/>
+					{ useDateRangeSelector && (
+						<DateRangeSelector
+							isVisible={ this.state.showActivityDates }
+							onButtonClick={ this.toggleDateRangeSelector }
+							onClose={ this.closeDateRangeSelector }
+							filter={ filter }
+							siteId={ siteId }
+						/>
+					) }
+					{ useActivityTypeSelector && (
+						<ActionTypeSelector
+							filter={ filter }
+							siteId={ siteId }
+							isVisible={ this.state.showActivityTypes }
+							onButtonClick={ this.toggleActivityTypesSelector }
+							onClose={ this.closeActivityTypes }
+						/>
+					) }
 					{ this.renderCloseButton() }
 				</div>
 				<div className="filterbar__mobile-wrap" />
@@ -151,16 +168,30 @@ export class Filterbar extends Component {
 	}
 }
 
+const getResetFilter = ( useActivityTypeSelector, useDateRangeSelector ) => {
+	const resetFilter = { page: 1 };
+	if ( useActivityTypeSelector ) {
+		resetFilter.group = null;
+	}
+	if ( useDateRangeSelector ) {
+		resetFilter.on = null;
+		resetFilter.after = null;
+		resetFilter.before = null;
+	}
+
+	return resetFilter;
+};
+
 const mapStateToProps = state => ( {
 	previousRoute: getPreviousRoute( state ),
 } );
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch, { useActivityTypeSelector, useDateRangeSelector } ) => ( {
 	resetFilters: siteId =>
 		dispatch(
 			withAnalytics(
 				recordTracksEvent( 'calypso_activitylog_filterbar_reset' ),
-				updateFilter( siteId, { group: null, after: null, before: null, on: null, page: 1 } )
+				updateFilter( siteId, getResetFilter( useActivityTypeSelector, useDateRangeSelector ) )
 			)
 		),
 } );
