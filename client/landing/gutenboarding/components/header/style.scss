@@ -39,8 +39,9 @@ $padding--gutenboarding__header: $grid-size;
 }
 
 .gutenboarding__header-wp-logo {
-	margin-left: 24px - $padding--gutenboarding__header - $margin-left--gutenboarding__header-section-item; // we want 24px exact on spec: ( 24 - header padding - own margin )
-	color: var( --studio-blue-90 );
+	margin-left: 24px - $padding--gutenboarding__header -
+		$margin-left--gutenboarding__header-section-item; // we want 24px exact on spec: ( 24 - header padding - own margin )
+	color: var( --studio-black );
 	display: flex;
 }
 
