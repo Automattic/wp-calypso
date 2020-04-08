@@ -16,6 +16,7 @@ import MagicLogin from './magic-login';
 import WPLogin from './wp-login';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
+import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
 
 const enhanceContextWithLogin = context => {
 	const {
@@ -33,7 +34,7 @@ const enhanceContextWithLogin = context => {
 	context.primary = (
 		<WPLogin
 			isJetpack={ isJetpack === 'jetpack' }
-			isGutenboarding={ isGutenboarding === 'gutenboarding' }
+			isGutenboarding={ isGutenboarding === GUTENBOARDING_BASE_NAME }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }
 			socialService={ socialService }

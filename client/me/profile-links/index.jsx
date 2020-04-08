@@ -20,7 +20,6 @@ import ProfileLinksAddOther from 'me/profile-links-add-other';
 import { deleteUserProfileLink, resetUserProfileLinkErrors } from 'state/profile-links/actions';
 import getProfileLinks from 'state/selectors/get-profile-links';
 import getProfileLinksErrorType from 'state/selectors/get-profile-links-error-type';
-import ListEnd from 'components/list-end';
 
 /**
  * Style dependencies
@@ -185,7 +184,6 @@ class ProfileLinks extends React.Component {
 					/>
 				</SectionHeader>
 				<Card>{ this.state.showingForm ? this.renderForm() : this.renderProfileLinks() }</Card>
-				<ListEnd />
 			</Fragment>
 		);
 	}

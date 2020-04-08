@@ -47,6 +47,7 @@
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/remote-install": true,
 		"jetpack/happychat": true,
+		"jetpack/search-product": true,
 		"jitms": true,
 		"keyboard-shortcuts": true,
 		"lasagna": false,
