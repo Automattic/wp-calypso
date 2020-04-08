@@ -262,7 +262,7 @@ export class ConversationCommentList extends React.Component {
 								commentText={ this.state.commentText }
 								showReadMoreInActions={ true }
 								displayType={ POST_COMMENT_DISPLAY_TYPES.excerpt }
-								highlightNew={ true }
+								shouldHighlightNew={ true }
 							/>
 						);
 					} ) }

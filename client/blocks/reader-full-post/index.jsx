@@ -461,6 +461,7 @@ export class FullPostView extends React.Component {
 										showConversationFollowButton={ true }
 										followSource={ READER_FULL_POST }
 										shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
+										shouldHighlightNew={ true }
 									/>
 								) }
 							</div>
