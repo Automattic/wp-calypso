@@ -15,8 +15,8 @@
 		"precommit": "check-npm-client && node scripts/pre-commit-hook.js",
 		"precommitcirclecivalidate": "check-npm-client && ./scripts/git-pre-commit-circleci-validate",
 		"test": "check-npm-client && ./run.sh ${TESTARGS:-$npm_package_defaultTestArgs}",
-		"encryptconfig": "check-npm-client && openssl enc -md sha1 -aes-256-cbc -pass env:CONFIG_KEY -out ./config/encrypted.enc -in ./config/local-$NODE_CONFIG_ENV.json",
-		"decryptconfig": "check-npm-client && openssl enc -md sha1 -aes-256-cbc -d -pass env:CONFIG_KEY -in ./config/encrypted.enc -out ./config/local-$NODE_CONFIG_ENV.json"
+		"encryptconfig": "openssl enc -md sha1 -aes-256-cbc -pass env:CONFIG_KEY -out ./config/encrypted.enc -in ./config/local-$NODE_CONFIG_ENV.json",
+		"decryptconfig": "openssl enc -md sha1 -aes-256-cbc -d -pass env:CONFIG_KEY -in ./config/encrypted.enc -out ./config/local-$NODE_CONFIG_ENV.json"
 	},
 	"dependencies": {
 		"@babel/core": "7.2.2",
