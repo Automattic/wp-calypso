@@ -26,5 +26,6 @@
 		"backups": true,
 		"jetpack-cloud-settings": true
 	},
+	"site_filter": [ "jetpack" ],
 	"theme": "jetpack-cloud"
 }
