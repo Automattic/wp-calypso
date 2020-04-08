@@ -1,22 +1,22 @@
 @import 'jetpack-connect/colors.scss';
 
-@mixin section-border ( $position ) {
-  &::before {
-  	display: block;
-  	content: '';
-  	position: absolute;
-  	#{ $position }: 0;
-  	left: -8px;
-  	width: calc( 100% + 16px );
-  	height: 1px;
-  	box-sizing: border-box;
-  	background: var( --color-border-subtle );
+@mixin section-border( $position ) {
+	&::before {
+		display: block;
+		content: '';
+		position: absolute;
+		#{ $position }: 0;
+		left: -8px;
+		width: calc( 100% + 16px );
+		height: 1px;
+		box-sizing: border-box;
+		background: var( --color-border-subtle );
 
-  	@include breakpoint( '>660px' ) {
-  		width: calc( 100% + 60px );
-  		left: -30px;
-  	}
-  }
+		@include breakpoint( '>660px' ) {
+			width: calc( 100% + 60px );
+			left: -30px;
+		}
+	}
 }
 
 .checkout {
@@ -465,19 +465,20 @@
 
 	// Redirect Payment Box
 	// -----------------------------------
-	.redirect-payment-box, .wechat-payment-box {
-		 .checkout__payment-box-section {
-			 .checkout__checkout-field {
-				 padding: 0 15px 15px;
-			 }
+	.redirect-payment-box,
+	.wechat-payment-box {
+		.checkout__payment-box-section {
+			.checkout__checkout-field {
+				padding: 0 15px 15px;
+			}
 
-			 .checkout__country-payment-fields {
-				 .checkout__checkout-field {
-					 padding-left: 0;
-					 flex-basis: calc( 100% - 30px );
-				 }
-			 }
-		 }
+			.checkout__country-payment-fields {
+				.checkout__checkout-field {
+					padding-left: 0;
+					flex-basis: calc( 100% - 30px );
+				}
+			}
+		}
 	}
 
 	// Credits Payment Box
@@ -499,7 +500,6 @@
 			}
 
 			.checkout__payment-box-section-content {
-
 				> h6 {
 					color: var( --color-primary );
 					font-size: 18px;
@@ -801,7 +801,6 @@
 		justify-content: left;
 	}
 }
-
 
 .checkout__payment-chat-button.is-borderless {
 	color: var( --color-accent );
@@ -1215,10 +1214,10 @@
 }
 
 .composite-checkout__testing-banner {
-  @media( min-width: 700px ) {
-    margin: auto;
-    max-width: 556px;
-  }
+	@media ( min-width: 700px ) {
+		margin: auto;
+		max-width: 556px;
+	}
 }
 
 .is-section-checkout.is-frankenflow {
@@ -1230,16 +1229,5 @@
 		top: 6px;
 		left: 11px;
 		padding: 0;
-	}
-	.checkout__site-created--gutenboarding {
-		display: flex;
-		flex-direction: column;
-		text-align: center;
-		margin-bottom: 60px;
-
-		.checkout__site-created-image {
-			height: 50px;
-			margin-bottom: 16px;
-		}
 	}
 }

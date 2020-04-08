@@ -49,42 +49,7 @@ class CheckoutContainer extends React.Component {
 		}
 	}
 
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	renderCheckoutHeader() {
-		if ( this.props.isComingFromGutenboarding ) {
-			return (
-				<>
-					<Button
-						borderless
-						className="navigation-link back"
-						onClick={ () => window.history.go( this.props.isGutenboardingCreate ? -1 : -2 ) } // going back to signup flow and skipping '/launch' step
-					>
-						<Gridicon icon="arrow-left" size={ 18 } />
-						{ this.props.translate( 'Back' ) }
-					</Button>
-					<div className="checkout__site-created--gutenboarding">
-						<img
-							src="/calypso/images/signup/confetti.svg"
-							aria-hidden="true"
-							className="checkout__site-created-image"
-							alt=""
-						/>
-						<FormattedHeader
-							headerText={ this.props.translate(
-								'Your WordPress.com site is ready! Finish your purchase to get the most out of it.'
-							) }
-						/>
-						<div>
-							{ this.props.translate( '{{em}}%(siteSlug)s{{/em}} is up and running!', {
-								components: { em: <em /> },
-								args: { siteSlug: this.props.selectedSite.slug },
-								comment: '`siteSlug` is the WordPress.com site, e.g., testsite.wordpress.com',
-							} ) }
-						</div>
-					</div>
-				</>
-			);
-		}
 		return this.state.headerText && <FormattedHeader headerText={ this.state.headerText } />;
 	}
 
@@ -92,8 +57,7 @@ class CheckoutContainer extends React.Component {
 
 	shouldDisplaySiteCreatedNotice() {
 		return (
-			this.props.isComingFromSignup &&
-			! this.props.isComingFromGutenboarding &&
+			( this.props.isComingFromSignup || this.props.isComingFromGutenboarding ) &&
 			isSiteCreatedDateNew( get( this.props, 'selectedSite.options.created_at', '' ) )
 		);
 	}
@@ -118,6 +82,16 @@ class CheckoutContainer extends React.Component {
 
 		return (
 			<>
+				{ this.props.isComingFromGutenboarding && (
+					<Button
+						borderless
+						className="navigation-link back" // eslint-disable-line wpcalypso/jsx-classname-namespace
+						onClick={ () => window.history.go( this.props.isGutenboardingCreate ? -1 : -2 ) } // going back to signup flow and skipping '/launch' step
+					>
+						<Gridicon icon="arrow-left" size={ 18 } />
+						{ this.props.translate( 'Back' ) }
+					</Button>
+				) }
 				{ this.renderCheckoutHeader() }
 				{ this.shouldDisplaySiteCreatedNotice() && (
 					<TransactionData>
