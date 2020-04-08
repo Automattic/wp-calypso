@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
 import { Icon } from '@wordpress/components';
 
@@ -51,7 +52,12 @@ const CreateSite: FunctionComponent< {} > = () => {
 					/>
 					<div className="create-site__progress-numbered-steps">
 						{ progressSteps.map( ( _, index ) => (
-							<p>{ `Step ${ index + 1 } of ${ progressSteps.length }` }</p>
+							<p>
+								{ sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
+									currentStep: index + 1,
+									totalSteps: progressSteps.length,
+								} ) }
+							</p>
 						) ) }
 					</div>
 				</div>
