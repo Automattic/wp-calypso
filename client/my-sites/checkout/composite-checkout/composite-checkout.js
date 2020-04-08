@@ -124,6 +124,17 @@ export default function CompositeCheckout( {
 		[ translate ]
 	);
 
+	const showErrorMessageBriefly = useCallback(
+		error => {
+			debug( 'error', error );
+			const message = error && error.toString ? error.toString() : error;
+			notices.error( message || translate( 'An error occurred during your purchase.' ), {
+				duration: 5000,
+			} );
+		},
+		[ translate ]
+	);
+
 	const showInfoMessage = useCallback( message => {
 		debug( 'info', message );
 		notices.info( message );
@@ -259,7 +270,7 @@ export default function CompositeCheckout( {
 	const domainContactValidationCallback = createContactValidationCallback( {
 		validateDomainContact: validateDomainContactDetails || wpcomValidateDomainContactInformation,
 		recordEvent,
-		showErrorMessage,
+		showErrorMessage: showErrorMessageBriefly,
 		translate,
 	} );
 
