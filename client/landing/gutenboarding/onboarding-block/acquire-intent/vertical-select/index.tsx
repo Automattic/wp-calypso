@@ -63,15 +63,25 @@ const VerticalSelect: React.FunctionComponent = () => {
 
 	const animatedPlaceholder = useTyper(
 		[
+			/* translators: Input placeholder content, e.g. "My site is about [[ photography ]]" */
 			__( 'photography' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ blogging ]]" */
 			__( 'blogging' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ travel ]]" */
 			__( 'travel' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ marketing ]]" */
 			__( 'marketing' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ fashion ]]" */
 			__( 'fashion' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ shopping ]]" */
 			__( 'shopping' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ design ]]" */
 			__( 'design' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ real estate ]]" */
 			__( 'real estate' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ food ]]" */
 			__( 'food' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ sports ]]" */
 			__( 'sports' ),
 		],
 		isInputEmpty,
