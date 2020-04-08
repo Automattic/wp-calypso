@@ -13,7 +13,7 @@ How it works right now:
 - Placeholders can also be scrolled into view - it monitors for 'scroll' events with useCapture = true (debounced to 200ms) so that we can re-check if any known placeholders have now appeared.
 - It hooks into the `page()` system in order to clear pending events when the user navigates (or, at least, when that navigation is done via the `page` library rather than replaceState/pushState)
 
-You can enable this in development by running `ENABLE_FEATURES=perfmon npm start`. You may also want to enable the `google-analytics` feature in your config file (or by URL, &flags=google-analytics) if you want to observe the events being sent to Google Analytics.
+You can enable this in development by running `ENABLE_FEATURES=perfmon yarn start`. You may also want to enable the `google-analytics` feature in your config file (or by URL, &flags=google-analytics) if you want to observe the events being sent to Google Analytics.
 
 You can see how many active placeholders (visible and non visible) there detected during each check by running this in your console:
 
