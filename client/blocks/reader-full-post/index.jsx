@@ -370,6 +370,7 @@ export class FullPostView extends React.Component {
 							{ shouldShowComments( post ) && (
 								<CommentButton
 									key="comment-button"
+									commentCount={ commentCount }
 									onClick={ this.handleCommentClick }
 									tagName="div"
 								/>
@@ -417,7 +418,6 @@ export class FullPostView extends React.Component {
 							<ReaderPostActions
 								post={ post }
 								site={ site }
-								commentsCount={ commentCount }
 								onCommentClick={ this.handleCommentClick }
 								fullPost={ true }
 							/>
