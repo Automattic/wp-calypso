@@ -1,11 +1,14 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
+
+/* eslint-disable import/no-extraneous-dependencies */
 const webpackMiddleware = require( 'webpack-dev-middleware' );
 const webpack = require( 'webpack' );
-const chalk = require( 'chalk' );
 const hotMiddleware = require( 'webpack-hot-middleware' );
+/* eslint-enable import/no-extraneous-dependencies */
+
+const chalk = require( 'chalk' );
 const webpackConfig = require( 'webpack.config' );
 const { execSync } = require( 'child_process' );
 
