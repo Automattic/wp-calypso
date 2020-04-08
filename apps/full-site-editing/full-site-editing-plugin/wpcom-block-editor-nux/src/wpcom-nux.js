@@ -50,7 +50,6 @@ function WpcomNux() {
 
 	const dismissWpcomNux = () => setWpcomNuxStatus( { isNuxEnabled: false } );
 
-	// @TODO: Change to 'Welcome to your new website' for Gutenboarding, in other situations keep "editor"
 	const isFromGutenboarding = !! window.calypsoifyGutenberg?.isGutenboarding;
 	const welcomeHeading = isFromGutenboarding
 		? __( 'Welcome to your new website' )
