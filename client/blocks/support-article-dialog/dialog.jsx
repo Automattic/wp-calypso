@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { noop } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
@@ -44,6 +44,19 @@ export const SupportArticleDialog = ( {
 	const isLoading = ! post;
 	const postKey = { blogId: SUPPORT_BLOG_ID, postId };
 	const siteId = post?.site_ID;
+
+	useEffect( () => {
+		//If a url includes an anchor, let's scroll this into view!
+		if ( typeof window !== 'undefined' && actionUrl.indexOf( '#' ) !== -1 && post?.content ) {
+			setTimeout( () => {
+				const anchorId = actionUrl.split( '#' ).pop();
+				const element = document.getElementById( anchorId );
+				if ( element ) {
+					element.scrollIntoView();
+				}
+			}, 0 );
+		}
+	}, [ actionUrl, post ] );
 
 	return (
 		<Dialog
