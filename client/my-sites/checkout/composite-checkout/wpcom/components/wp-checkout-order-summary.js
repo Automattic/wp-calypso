@@ -1,32 +1,18 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
-import {
-	useLineItems,
-	useTotal,
-	renderDisplayValueMarkdown,
-	useEvents,
-	useFormStatus,
-} from '@automattic/composite-checkout';
+import { useLineItems, useTotal, renderDisplayValueMarkdown } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Button from './button';
-import Coupon from './coupon';
 import { isLineItemADomain } from '../hooks/has-domains';
 
-export default function WPCheckoutOrderSummary( { siteUrl, couponStatus, couponFieldStateProps } ) {
-	const translate = useTranslate();
-	const { formStatus } = useFormStatus();
+export default function WPCheckoutOrderSummary( { siteUrl } ) {
 	const [ items ] = useLineItems();
-	const onEvent = useEvents();
-	//TODO: tie the default coupon field visibility based on whether there is a coupon in the cart
-	const [ isCouponFieldVisible, setIsCouponFieldVisible ] = useState( false );
-	const hasCouponBeenApplied = couponStatus === 'applied';
 
 	const firstDomainItem = items.find( isLineItemADomain );
 	const domainUrl = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
@@ -41,27 +27,7 @@ export default function WPCheckoutOrderSummary( { siteUrl, couponStatus, couponF
 						return <ProductListItem key={ product.id }>{ product.label }</ProductListItem>;
 					} ) }
 				</ProductList>
-
-				{ ! hasCouponBeenApplied && ! isCouponFieldVisible && formStatus === 'ready' && (
-					<AddCouponButton
-						buttonState="text-button"
-						onClick={ () => {
-							handleAddCouponButtonClick( setIsCouponFieldVisible, onEvent );
-						} }
-					>
-						{ translate( 'Add a coupon' ) }
-					</AddCouponButton>
-				) }
 			</SummaryContent>
-
-			{ isCouponFieldVisible && (
-				<CouponField
-					id="order-summary-coupon"
-					disabled={ formStatus !== 'ready' }
-					couponStatus={ couponStatus }
-					couponFieldStateProps={ couponFieldStateProps }
-				/>
-			) }
 		</React.Fragment>
 	);
 }
@@ -113,26 +79,6 @@ const ProductListItem = styled.li`
 	padding: 0;
 	list-style-type: none;
 `;
-
-const CouponField = styled( Coupon )`
-	margin-top: 16px;
-`;
-
-const AddCouponButton = styled( Button )`
-	font-size: ${props => props.theme.fontSize.small};
-	margin-top: 8px;
-
-	@media ( ${props => props.theme.breakpoints.smallPhoneUp} ) {
-		margin-top: 0;
-	}
-`;
-
-function handleAddCouponButtonClick( setIsCouponFieldVisible, onEvent ) {
-	setIsCouponFieldVisible( true );
-	onEvent( {
-		type: 'a8c_checkout_add_coupon_button_clicked',
-	} );
-}
 
 function shouldItemBeInSummary( item ) {
 	const itemTypesToIgnore = [ 'tax', 'credits', 'wordpress-com-credits' ];

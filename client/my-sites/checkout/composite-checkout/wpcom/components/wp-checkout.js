@@ -136,13 +136,7 @@ export default function WPCheckout( {
 		<Checkout>
 			<CheckoutStepBody
 				activeStepContent={ null }
-				completeStepContent={
-					<WPCheckoutOrderSummary
-						siteUrl={ siteUrl }
-						couponStatus={ couponStatus }
-						couponFieldStateProps={ couponFieldStateProps }
-					/>
-				}
+				completeStepContent={ <WPCheckoutOrderSummary siteUrl={ siteUrl } /> }
 				titleContent={ <WPCheckoutOrderSummaryTitle /> }
 				errorMessage={ translate( 'There was an error with the summary step.' ) }
 				isStepActive={ false }
