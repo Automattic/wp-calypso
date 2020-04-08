@@ -130,11 +130,10 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 				<h1 className="signup-form__title">{ NO__( 'Save your progress' ) }</h1>
 
 				<form onSubmit={ handleSignUp }>
+					<legend className="signup-form__legend">
+						<p>{ NO__( 'Enter an email and password to save your progress and continue' ) }</p>
+					</legend>
 					<fieldset>
-						<legend className="signup-form__legend">
-							<p>{ NO__( 'Enter an email and password to save your progress and continue' ) }</p>
-						</legend>
-
 						<TextControl
 							value={ emailVal }
 							disabled={ isFetchingNewUser }
