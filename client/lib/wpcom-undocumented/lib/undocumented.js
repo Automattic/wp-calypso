@@ -2489,8 +2489,7 @@ Undocumented.prototype.startMigration = function( sourceSiteId, targetSiteId ) {
 Undocumented.prototype.getAtomicSiteMediaViaProxy = function(
 	siteIdOrSlug,
 	mediaPath,
-	{ query = '', maxSize },
-	fn
+	{ query = '', maxSize }
 ) {
 	const safeQuery = query.replace( /^\?/, '' );
 	const params = {
@@ -2498,36 +2497,53 @@ Undocumented.prototype.getAtomicSiteMediaViaProxy = function(
 		apiNamespace: 'wpcom/v2',
 	};
 
-	const fetchMedia = () => this.wpcom.req.get( { ...params, responseType: 'blob' }, fn );
+	return new Promise( ( resolve, _reject ) => {
+		const fetchMedia = () =>
+			this.wpcom.req.get( { ...params, responseType: 'blob' }, ( error, data ) => {
+				if ( error || ! ( data instanceof Blob ) ) {
+					_reject( error );
+				} else {
+					resolve( data );
+				}
+			} );
 
-	if ( ! maxSize ) {
-		return fetchMedia();
-	}
-
-	return this.wpcom.req.get( { ...params, method: 'HEAD' }, ( err, data, headers ) => {
-		if ( headers[ 'Content-Length' ] > maxSize ) {
-			fn( { message: 'exceeded_max_size' }, null );
-			return;
+		if ( ! maxSize ) {
+			return fetchMedia();
 		}
 
-		fetchMedia();
+		return this.wpcom.req.get( { ...params, method: 'HEAD' }, ( err, data, headers ) => {
+			if ( headers[ 'Content-Length' ] > maxSize ) {
+				_reject( { message: 'exceeded_max_size' } );
+				return;
+			}
+
+			fetchMedia();
+		} );
 	} );
 };
 
 Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function(
 	siteIdOrSlug,
 	mediaPath,
-	options,
-	fn
+	options
 ) {
-	return this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, options, ( err, data ) => {
-		if ( data instanceof Blob || ( err && err.message === 'exceeded_max_size' ) ) {
-			fn( err, data );
-			return;
-		}
+	let retries = 0;
+	const request = () =>
+		this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, options ).catch( error => {
+			// Retry three times with exponential backoff times
+			if ( retries < 3 ) {
+				return new Promise( resolve => {
+					++retries;
+					setTimeout( () => {
+						resolve( request() );
+					}, ( retries * retries * 1000 ) / 2 );
+				} );
+			}
 
-		return this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, options, fn );
-	} );
+			return Promise.reject( error );
+		} );
+
+	return request();
 };
 
 export default Undocumented;
