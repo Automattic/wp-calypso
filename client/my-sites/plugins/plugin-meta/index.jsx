@@ -33,7 +33,7 @@ import WpcomPluginInstallButton from 'my-sites/plugins/plugin-install-button-wpc
 import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer';
 import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
 import { userCan } from 'lib/site/utils';
-import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { TYPE_BUSINESS } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import { isBusiness, isEcommerce, isEnterprise } from 'lib/products-values';
@@ -614,11 +614,12 @@ export class PluginMeta extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="plugin-meta__upgrade_nudge">
-				<Banner
+				<UpsellNudge
 					event="calypso_plugin_detail_page_upgrade_nudge"
 					href={ bannerURL }
 					plan={ plan }
 					title={ title }
+					showIcon={ true }
 				/>
 			</div>
 		);

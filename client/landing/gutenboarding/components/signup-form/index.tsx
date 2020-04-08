@@ -17,6 +17,7 @@ import { useLangRouteParam, usePath, Step, useCurrentStep } from '../../path';
 import ModalSubmitButton from '../modal-submit-button';
 import './style.scss';
 import SignupFormHeader from './header';
+import GUTENBOARDING_BASE_NAME from '../../basename.json';
 
 // TODO: deploy this change to @types/wordpress__element
 declare module '@wordpress/element' {
@@ -105,12 +106,12 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 
 	const langFragment = lang ? `/${ lang }` : '';
 	const loginRedirectUrl = encodeURIComponent(
-		`${ window.location.origin }/gutenboarding${ makePath( Step.CreateSite ) }?new`
+		`${ window.location.origin }/${ GUTENBOARDING_BASE_NAME }${ makePath( Step.CreateSite ) }?new`
 	);
 	const signupUrl = encodeURIComponent(
-		`/gutenboarding${ makePath( Step[ currentStep ] ) }?signup`
+		`/${ GUTENBOARDING_BASE_NAME }${ makePath( Step[ currentStep ] ) }?signup`
 	);
-	const loginUrl = `/log-in/gutenboarding${ langFragment }?redirect_to=${ loginRedirectUrl }&signup_url=${ signupUrl }`;
+	const loginUrl = `/log-in/${ GUTENBOARDING_BASE_NAME }${ langFragment }?redirect_to=${ loginRedirectUrl }&signup_url=${ signupUrl }`;
 
 	return (
 		<Modal

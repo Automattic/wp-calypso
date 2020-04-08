@@ -27,12 +27,12 @@ import getRewindState from 'state/selectors/get-rewind-state';
 import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySitePurchases from 'components/data/query-site-purchases';
+import QueryRewindCapabilities from 'components/data/query-rewind-capabilities';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 import Filterbar from 'my-sites/activity/filterbar';
 import ActivityCard from '../../components/activity-card';
-import siteSupportsRealtimeBackup from 'state/selectors/site-supports-realtime-backup';
 import Pagination from 'components/pagination';
 import MissingCredentialsWarning from '../../components/missing-credentials';
 import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials.js';
@@ -40,6 +40,7 @@ import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import { applySiteOffset } from 'lib/site/timezone';
 import QuerySiteSettings from 'components/data/query-site-settings'; // Required to get site time offset
+import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
 
 /**
  * Style dependencies
@@ -172,6 +173,7 @@ class BackupsPage extends Component {
 				<QueryRewindState siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />
 				<QuerySiteSettings siteId={ siteId } />
+				<QueryRewindCapabilities siteId={ siteId } />
 
 				<DatePicker
 					onDateChange={ this.onDateChange }
@@ -346,7 +348,8 @@ const mapStateToProps = state => {
 	const rewind = getRewindState( state, siteId );
 	const restoreStatus = rewind.rewind && rewind.rewind.status;
 	const doesRewindNeedCredentials = getDoesRewindNeedCredentials( state, siteId );
-	const hasRealtimeBackups = siteSupportsRealtimeBackup( state, siteId );
+	const siteCapabilities = getRewindCapabilities( state, siteId );
+
 	const allowRestore =
 		'active' === rewind.state && ! ( 'queued' === restoreStatus || 'running' === restoreStatus );
 
@@ -358,7 +361,7 @@ const mapStateToProps = state => {
 		allowRestore,
 		doesRewindNeedCredentials,
 		filter,
-		hasRealtimeBackups,
+		hasRealtimeBackups: siteCapabilities.includes( 'backup-realtime' ),
 		logs: logs?.data ?? [],
 		rewind,
 		siteId,

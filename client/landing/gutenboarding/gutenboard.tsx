@@ -22,6 +22,7 @@ import Header from './components/header';
 import { name, settings } from './onboarding-block';
 import './style.scss';
 import { fontPairings, getFontTitle } from './constants';
+import GUTENARDING_BASE_NAME from './basename.json';
 
 registerBlockType( name, settings );
 
@@ -76,7 +77,7 @@ export function Gutenboard() {
 	} = useHistory();
 
 	useEffect( () => {
-		recordTracksPageViewWithPageParams( `/gutenboarding${ pathname }` );
+		recordTracksPageViewWithPageParams( `/${ GUTENARDING_BASE_NAME }${ pathname }` );
 	}, [ pathname ] );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */

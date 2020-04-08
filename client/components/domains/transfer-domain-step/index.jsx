@@ -30,7 +30,7 @@ import { PLAN_PERSONAL } from 'lib/plans/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import { getCurrentUser, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 import Notice from 'components/notice';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -407,12 +407,13 @@ class TransferDomainStep extends React.Component {
 		if ( hasToUpgradeToPayForADomain( selectedSite, cart, searchQuery ) ) {
 			content = (
 				<div>
-					<Banner
+					<UpsellNudge
 						description={ translate(
 							'Only .blog domains are included with your plan, to use a different tld upgrade to a Personal plan.'
 						) }
 						plan={ PLAN_PERSONAL }
 						title={ translate( 'Personal plan required' ) }
+						showIcon={ true }
 					/>
 					{ content }
 				</div>
