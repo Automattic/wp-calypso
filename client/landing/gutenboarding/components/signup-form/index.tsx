@@ -78,10 +78,13 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		}
 	};
 
+	/* translators: Link to localized WordPress.com terms of service if it exists */
+	const localizedTosLink = __( 'https://wordpress.com/tos/' );
+
 	const tos = __experimentalCreateInterpolateElement(
 		__( 'By creating an account you agree to our <link_to_tos>Terms of Service</link_to_tos>.' ),
 		{
-			link_to_tos: <ExternalLink href="https://wordpress.com/tos/" />,
+			link_to_tos: <ExternalLink href={ localizedTosLink } />,
 		}
 	);
 
