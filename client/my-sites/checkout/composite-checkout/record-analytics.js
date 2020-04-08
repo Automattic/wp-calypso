@@ -85,15 +85,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					} )
 				);
 
-			case 'a8c_checkout_contact_field_invalid_error':
-				return reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_composite_contact_field_invalid_error', {
-						error_type: action.payload.type,
-						error_field: action.payload.field,
-						error_message: action.payload.message,
-					} )
-				);
-
 			case 'a8c_checkout_add_coupon':
 				return reduxDispatch(
 					recordTracksEvent( 'calypso_checkout_composite_coupon_add_submit', {

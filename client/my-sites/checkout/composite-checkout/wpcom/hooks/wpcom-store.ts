@@ -146,20 +146,6 @@ export function useWpcomStore(
 				return { type: 'TOUCH_CONTACT_DETAILS' };
 			},
 
-			// TODO: type this; need to use error messages from contact form
-			setContactField( key, field ) {
-				if ( ! field.isValid ) {
-					onEvent( {
-						type: 'a8c_checkout_contact_field_invalid_error',
-						payload: {
-							type: 'Field error',
-							field: key,
-						},
-					} );
-				}
-				return { type: 'CONTACT_SET_FIELD', payload: { key, field } };
-			},
-
 			updateVatId( payload: string ): WpcomStoreAction {
 				return { type: 'UPDATE_VAT_ID', payload: payload };
 			},
