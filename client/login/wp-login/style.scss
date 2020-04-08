@@ -373,7 +373,7 @@ $image-height: 47px;
 		border-color: #007cba;
 		color: #fff;
 		width: auto;
-		min-width: 170px;
+		min-width: 100%;
 		text-align: center;
 		font-size: 14px;
 		line-height: 14px;
@@ -394,6 +394,10 @@ $image-height: 47px;
 			color: #fff;
 			outline-color: transparent;
 			box-shadow: none;
+		}
+
+		@include break-mobile {
+			min-width: 170px;
 		}
 	}
 
