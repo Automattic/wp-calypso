@@ -38,7 +38,7 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { persistSignupDestination } from 'signup/utils';
-import { isJetpackBackupSlug as getIsJetpackBackupSlug } from 'lib/products-values';
+import { isJetpackProductSlug as getJetpackProductSlug } from 'lib/products-values';
 
 const CALYPSO_PLANS_PAGE = '/plans/';
 const CALYPSO_MY_PLAN_PAGE = '/plans/my-plan/';
@@ -78,7 +78,7 @@ class Plans extends Component {
 		if ( this.props.selectedPlan ) {
 			return this.selectPlan( this.props.selectedPlan );
 		}
-		if ( this.props.hasPlan || this.props.notJetpack ) {
+		if ( ( this.props.hasPlan && ! this.props.product_slug ) || this.props.notJetpack ) {
 			return this.redirect( CALYPSO_PLANS_PAGE );
 		}
 		if ( ! this.props.selectedSite && this.props.isSitesInitialized ) {
@@ -157,7 +157,6 @@ class Plans extends Component {
 
 	selectPlan = cartItem => {
 		clearPlan();
-
 		if ( ! cartItem || cartItem.product_slug === PLAN_JETPACK_FREE ) {
 			return this.selectFreeJetpackPlan();
 		}
@@ -175,6 +174,7 @@ class Plans extends Component {
 		addItem( cartItem );
 		this.props.completeFlow();
 		persistSignupDestination( this.getMyPlansDestination() );
+
 		this.redirect( '/checkout/', cartItem.product_slug );
 	};
 
@@ -246,9 +246,9 @@ const connectComponent = connect(
 		const selectedSiteSlug = selectedSite ? selectedSite.slug : '';
 
 		const selectedPlanSlug = retrievePlan();
-		const isJetpackBackupSlug = getIsJetpackBackupSlug( selectedPlanSlug );
+		const isJetpackProductSlug = getJetpackProductSlug( selectedPlanSlug );
 
-		const selectedPlan = isJetpackBackupSlug
+		const selectedPlan = isJetpackProductSlug
 			? getProductBySlug( state, selectedPlanSlug )
 			: getPlanBySlug( state, selectedPlanSlug );
 
