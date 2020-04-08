@@ -27,8 +27,6 @@ export default function WPCheckoutOrderReview( {
 	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
-	responseCart,
-	CheckoutTerms,
 } ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
@@ -57,10 +55,6 @@ export default function WPCheckoutOrderReview( {
 			<WPOrderReviewSection>
 				<WPOrderReviewTotal total={ total } />
 			</WPOrderReviewSection>
-
-			<CheckoutTermsUI>
-				<CheckoutTerms cart={ responseCart } />
-			</CheckoutTermsUI>
 		</div>
 	);
 }
@@ -72,47 +66,10 @@ WPCheckoutOrderReview.propTypes = {
 	removeCoupon: PropTypes.func.isRequired,
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
-	responseCart: PropTypes.object.isRequired,
-	CheckoutTerms: PropTypes.elementType.isRequired,
 };
 
 const CouponField = styled( Coupon )`
 	margin: 24px 30px 24px 0;
 	padding-bottom: 24px;
 	border-bottom: 1px solid ${props => props.theme.colors.borderColorLight};
-`;
-
-const CheckoutTermsUI = styled.div`
-	& > * {
-		margin: 16px 16px 16px -24px;
-		padding-left: 24px;
-		position: relative;
-	}
-
-	& div:first-of-type {
-		padding-left: 0;
-		margin-left: 0;
-	}
-
-	svg {
-		width: 16px;
-		height: 16px;
-		position: absolute;
-		top: 0;
-		left: 0;
-	}
-
-	p {
-		font-size: 12px;
-		margin: 0;
-		word-break: break-word;
-	}
-
-	a {
-		text-decoration: underline;
-	}
-
-	a:hover {
-		text-decoration: none;
-	}
 `;

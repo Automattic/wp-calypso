@@ -3,6 +3,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
+import styled from '@emotion/styled';
 import {
 	Checkout,
 	CheckoutStepBody,
@@ -164,8 +165,6 @@ export default function WPCheckout( {
 							variantRequestStatus={ variantRequestStatus }
 							variantSelectOverride={ variantSelectOverride }
 							getItemVariants={ getItemVariants }
-							responseCart={ responseCart }
-							CheckoutTerms={ CheckoutTerms }
 						/>
 					}
 					titleContent={ <OrderReviewTitle /> }
@@ -212,7 +211,15 @@ export default function WPCheckout( {
 				) }
 				<CheckoutStep
 					stepId="payment-method-step"
-					activeStepContent={ paymentMethodStep.activeStepContent }
+					activeStepContent={
+						<React.Fragment>
+							{ paymentMethodStep.activeStepContent }
+
+							<CheckoutTermsUI>
+								<CheckoutTerms cart={ responseCart } />
+							</CheckoutTermsUI>
+						</React.Fragment>
+					}
 					completeStepContent={ paymentMethodStep.completeStepContent }
 					titleContent={ paymentMethodStep.titleContent }
 					editButtonText={ translate( 'Edit' ) }
@@ -230,3 +237,38 @@ export default function WPCheckout( {
 function setActiveStepNumber( stepNumber ) {
 	window.location.hash = '#step' + stepNumber;
 }
+
+const CheckoutTermsUI = styled.div`
+	& > * {
+		margin: 16px 16px 16px -24px;
+		padding-left: 24px;
+		position: relative;
+	}
+
+	& div:first-of-type {
+		padding-left: 0;
+		margin-left: 0;
+	}
+
+	svg {
+		width: 16px;
+		height: 16px;
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+
+	p {
+		font-size: 12px;
+		margin: 0;
+		word-break: break-word;
+	}
+
+	a {
+		text-decoration: underline;
+	}
+
+	a:hover {
+		text-decoration: none;
+	}
+`;
