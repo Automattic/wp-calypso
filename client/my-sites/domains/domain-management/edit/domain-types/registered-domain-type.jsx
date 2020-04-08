@@ -46,6 +46,14 @@ class RegisteredDomainType extends React.Component {
 		const { domain, translate, purchase, moment } = this.props;
 		const { registrationDate, expiry } = domain;
 
+		if ( domain.pendingTransfer ) {
+			return {
+				statusText: translate( 'Outbound transfer initiated' ),
+				statusClass: 'status-error',
+				icon: 'cached',
+			};
+		}
+
 		if ( purchase && shouldRenderExpiringCreditCard( purchase ) ) {
 			return {
 				statusText: translate( 'Action required' ),
@@ -59,14 +67,6 @@ class RegisteredDomainType extends React.Component {
 				statusText: translate( 'Action required' ),
 				statusClass: 'status-error',
 				icon: 'info',
-			};
-		}
-
-		if ( domain.pendingTransfer ) {
-			return {
-				statusText: translate( 'Outbound transfer initiated' ),
-				statusClass: 'status-error',
-				icon: 'cached',
 			};
 		}
 
@@ -119,7 +119,7 @@ class RegisteredDomainType extends React.Component {
 		const { domain, purchase, translate, moment } = this.props;
 		const domainsLink = link => <a href={ link } target="_blank" rel="noopener noreferrer" />;
 
-		if ( ! domain.expired ) {
+		if ( ! domain.expired || domain.pendingTransfer ) {
 			return null;
 		}
 
@@ -212,7 +212,7 @@ class RegisteredDomainType extends React.Component {
 
 		const recentlyRegistered = isRecentlyRegistered( registrationDate );
 
-		if ( ! recentlyRegistered ) {
+		if ( ! recentlyRegistered || domain.pendingTransfer ) {
 			return null;
 		}
 
