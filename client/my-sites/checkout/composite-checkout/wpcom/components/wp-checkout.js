@@ -162,6 +162,7 @@ export default function WPCheckout( {
 						/>
 					}
 					titleContent={ <OrderReviewTitle /> }
+					completeStepContent={ <InactiveOrderReview /> }
 					editButtonText={ translate( 'Edit' ) }
 					editButtonAriaLabel={ translate( 'Edit the payment method' ) }
 					nextStepButtonText={ translate( 'Continue' ) }
@@ -232,6 +233,24 @@ function setActiveStepNumber( stepNumber ) {
 	window.location.hash = '#step' + stepNumber;
 }
 
+function InactiveOrderReview() {
+	const [ items ] = useLineItems();
+	return (
+		<SummaryContent>
+			<ProductList>
+				{ items.filter( shouldItemBeInSummary ).map( product => {
+					return <ProductListItem key={ product.id }>{ product.label }</ProductListItem>;
+				} ) }
+			</ProductList>
+		</SummaryContent>
+	);
+}
+
+function shouldItemBeInSummary( item ) {
+	const itemTypesToIgnore = [ 'tax', 'credits', 'wordpress-com-credits' ];
+	return ! itemTypesToIgnore.includes( item.type );
+}
+
 const CheckoutTermsUI = styled.div`
 	& > * {
 		margin: 16px 16px 16px -24px;
@@ -265,4 +284,25 @@ const CheckoutTermsUI = styled.div`
 	a:hover {
 		text-decoration: none;
 	}
+`;
+
+const SummaryContent = styled.div`
+	margin-top: 12px;
+
+	@media ( ${props => props.theme.breakpoints.smallPhoneUp} ) {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+	}
+`;
+
+const ProductList = styled.ul`
+	margin: 0;
+	padding: 0;
+`;
+
+const ProductListItem = styled.li`
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
 `;

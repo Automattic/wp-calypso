@@ -17,19 +17,7 @@ export default function WPCheckoutOrderSummary( { siteUrl } ) {
 	const firstDomainItem = items.find( isLineItemADomain );
 	const domainUrl = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
 
-	return (
-		<React.Fragment>
-			{ domainUrl && <DomainURL>{ domainUrl }</DomainURL> }
-
-			<SummaryContent>
-				<ProductList>
-					{ items.filter( shouldItemBeInSummary ).map( product => {
-						return <ProductListItem key={ product.id }>{ product.label }</ProductListItem>;
-					} ) }
-				</ProductList>
-			</SummaryContent>
-		</React.Fragment>
-	);
+	return <React.Fragment>{ domainUrl && <DomainURL>{ domainUrl }</DomainURL> }</React.Fragment>;
 }
 
 export function WPCheckoutOrderSummaryTitle() {
@@ -58,29 +46,3 @@ const DomainURL = styled.div`
 	margin-top: -12px;
 	word-break: break-word;
 `;
-
-const SummaryContent = styled.div`
-	margin-top: 12px;
-
-	@media ( ${props => props.theme.breakpoints.smallPhoneUp} ) {
-		display: flex;
-		justify-content: space-between;
-		align-items: flex-end;
-	}
-`;
-
-const ProductList = styled.ul`
-	margin: 0;
-	padding: 0;
-`;
-
-const ProductListItem = styled.li`
-	margin: 0;
-	padding: 0;
-	list-style-type: none;
-`;
-
-function shouldItemBeInSummary( item ) {
-	const itemTypesToIgnore = [ 'tax', 'credits', 'wordpress-com-credits' ];
-	return ! itemTypesToIgnore.includes( item.type );
-}
