@@ -150,7 +150,7 @@ export function useWpcomStore(
 			setContactField( key, field ) {
 				if ( ! field.isValid ) {
 					onEvent( {
-						type: 'a8c_checkout_error',
+						type: 'a8c_checkout_contact_field_invalid_error',
 						payload: {
 							type: 'Field error',
 							field: key,
