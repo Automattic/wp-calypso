@@ -148,34 +148,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		} );
 	} );
 
-	describe( 'Insert a Pricing Table block: @parallel', function() {
-		step( 'Can log in', async function() {
-			this.loginFlow = new LoginFlow( driver, gutenbergUser );
-			return await this.loginFlow.loginAndStartNewPost( null, true );
-		} );
-
-		step( 'Can insert the Pricing Table block', async function() {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			await gEditorComponent.addBlock( 'Pricing Table' );
-			return await driverHelper.waitTillPresentAndDisplayed(
-				driver,
-				By.css( '.wp-block-coblocks-pricing-table' )
-			);
-		} );
-
-		step( 'Can publish and view content', async function() {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			return await gEditorComponent.publish( { visit: true } );
-		} );
-
-		step( 'Can see the Pricing Table block in our published post', async function() {
-			return await driverHelper.waitTillPresentAndDisplayed(
-				driver,
-				By.css( '.wp-block-coblocks-pricing-table' )
-			);
-		} );
-	} );
-
 	describe( 'Insert a Logos & Badges block: @parallel', function() {
 		let fileDetails;
 
@@ -227,6 +199,34 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 			return await driverHelper.waitTillPresentAndDisplayed(
 				driver,
 				By.css( '.wp-block-coblocks-logos' )
+			);
+		} );
+	} );
+
+	describe( 'Insert a Pricing Table block: @parallel', function() {
+		step( 'Can log in', async function() {
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
+			return await this.loginFlow.loginAndStartNewPost( null, true );
+		} );
+
+		step( 'Can insert the Pricing Table block', async function() {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			await gEditorComponent.addBlock( 'Pricing Table' );
+			return await driverHelper.waitTillPresentAndDisplayed(
+				driver,
+				By.css( '.wp-block-coblocks-pricing-table' )
+			);
+		} );
+
+		step( 'Can publish and view content', async function() {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			return await gEditorComponent.publish( { visit: true } );
+		} );
+
+		step( 'Can see the Pricing Table block in our published post', async function() {
+			return await driverHelper.waitTillPresentAndDisplayed(
+				driver,
+				By.css( '.wp-block-coblocks-pricing-table' )
 			);
 		} );
 	} );
