@@ -7,7 +7,7 @@ This package contains a number of CSS custom properties used in Calypso.
 ## Installation
 
 ```sh
-npm install @automattic/calypso-color-schemes
+yarn add @automattic/calypso-color-schemes
 ```
 
 ## Usage

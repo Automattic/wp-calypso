@@ -13,7 +13,7 @@ Compatible with Node.js and web browsers.
 Introduce the `wpcom` dependency into your `package.json` ...
 
 ```cli
-npm install --save wpcom
+yarn add wpcom
 ```
 
 ... and then initialize it with your API token ([optional](#authentication)).

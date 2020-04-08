@@ -22,7 +22,7 @@ If you’d like to contribute code, first, you will need to run Calypso locally.
 1.	Make sure you have `git`, `node`, and `npm` installed.
 2.	Clone this repository locally.
 3.	Add `127.0.0.1 calypso.localhost` to your local hosts file.
-4.	Execute `npm start` from the root directory of the repository.
+4.	Execute `yarn start` from the root directory of the repository.
 5.	Open `http://calypso.localhost:3000` in your browser.
 
 For more detailed instructions, see [Installing Calypso](../docs/install.md).
@@ -30,7 +30,7 @@ For more detailed instructions, see [Installing Calypso](../docs/install.md).
 
 ## Development Workflow
 
-Running `npm start` will build all the code and continuously watch the front-end JS and CSS/Sass for changes and rebuild accordingly.
+Running `yarn start` will build all the code and continuously watch the front-end JS and CSS/Sass for changes and rebuild accordingly.
 
 See [Development Workflow](../docs/development-workflow.md) for details on how to run tests, control what debug messages to receive, and where to look for errors and warnings.
 
