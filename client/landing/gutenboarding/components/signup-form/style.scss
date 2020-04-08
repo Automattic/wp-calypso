@@ -53,10 +53,13 @@
 			transform: translateX( -50% );
 		}
 	}
-	.signup-form__legend p {
-		@include onboarding-large-text;
-		margin: 0 0 42px;
-		color: var( --studio-gray-40 );
+	.signup-form__legend {
+		padding-bottom: 42px;
+
+		& > p {
+			@include onboarding-large-text;
+			color: var( --studio-gray-40 );
+		}
 	}
 
 	.components-text-control__input {
