@@ -50,8 +50,8 @@ function WpcomNux() {
 
 	const dismissWpcomNux = () => setWpcomNuxStatus( { isNuxEnabled: false } );
 
-	const isFromGutenboarding = !! window.calypsoifyGutenberg?.isGutenboarding;
-	const welcomeHeading = isFromGutenboarding
+	const isGutenboarding = !! window.calypsoifyGutenberg?.isGutenboarding;
+	const welcomeHeading = isGutenboarding
 		? __( 'Welcome to your new website' )
 		: __( 'Welcome to the WordPress editor' );
 
