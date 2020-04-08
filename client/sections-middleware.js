@@ -3,6 +3,7 @@
  */
 import config from 'config';
 import page from 'page';
+import { addMiddleware, resetMiddlewares } from 'redux-dynamic-middlewares';
 
 /**
  * Internal dependencies
@@ -27,6 +28,16 @@ function activateSection( sectionDefinition, context ) {
 
 async function loadSection( context, sectionDefinition ) {
 	context.store.dispatch( { type: 'SECTION_SET', isLoading: true } );
+
+	if ( sectionDefinition.module === 'reader' ) {
+		resetMiddlewares();
+		const isBrowser = typeof window === 'object';
+		const lasagnaMiddleware =
+			isBrowser &&
+			config.isEnabled( 'lasagna' ) &&
+			require( './state/lasagna/middleware.js' ).default;
+		addMiddleware( lasagnaMiddleware );
+	}
 
 	// If the section chunk is not loaded within 400ms, report it to analytics
 	const loadReportTimeout = setTimeout( () => {

@@ -3,11 +3,11 @@
  */
 import thunkMiddleware from 'redux-thunk';
 import { createStore, applyMiddleware, compose } from 'redux';
+import dynamicMiddlewares from 'redux-dynamic-middlewares';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
 import initialReducer from './reducer';
 
 /**
@@ -53,7 +53,7 @@ export function createReduxStore( initialState, reducer = initialReducer ) {
 		noticesMiddleware,
 		isBrowser && require( './happychat/middleware.js' ).default,
 		isBrowser && require( './happychat/middleware-calypso.js' ).default,
-		isBrowser && config.isEnabled( 'lasagna' ) && require( './lasagna/middleware.js' ).default,
+		dynamicMiddlewares,
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
 		isBrowser && require( './lib/middleware.js' ).default,
 		isAudioSupported && require( './audio/middleware.js' ).default,
