@@ -11,11 +11,7 @@ import { useLineItems, useFormStatus } from '@automattic/composite-checkout';
  */
 import joinClasses from './join-classes';
 import Coupon from './coupon';
-import {
-	WPOrderReviewLineItems,
-	WPOrderReviewTotal,
-	WPOrderReviewSection,
-} from './wp-order-review-line-items';
+import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 
 export default function WPCheckoutOrderReview( {
 	className,
@@ -28,7 +24,7 @@ export default function WPCheckoutOrderReview( {
 	getItemVariants,
 	onChangePlanLength,
 } ) {
-	const [ items, total ] = useLineItems();
+	const [ items ] = useLineItems();
 	const { formStatus } = useFormStatus();
 
 	return (
@@ -51,10 +47,6 @@ export default function WPCheckoutOrderReview( {
 				couponStatus={ couponStatus }
 				couponFieldStateProps={ couponFieldStateProps }
 			/>
-
-			<WPOrderReviewSection>
-				<WPOrderReviewTotal total={ total } />
-			</WPOrderReviewSection>
 		</div>
 	);
 }

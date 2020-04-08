@@ -28,6 +28,7 @@ import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary, { WPCheckoutOrderSummaryTitle } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import { isCompleteAndValid, prepareDomainContactDetails } from '../types';
+import { WPOrderReviewTotal, WPOrderReviewSection } from './wp-order-review-line-items';
 
 const ContactFormTitle = () => {
 	const translate = useTranslate();
@@ -207,13 +208,7 @@ export default function WPCheckout( {
 				<CheckoutStep
 					stepId="payment-method-step"
 					activeStepContent={
-						<React.Fragment>
-							{ paymentMethodStep.activeStepContent }
-
-							<CheckoutTermsUI>
-								<CheckoutTerms cart={ responseCart } />
-							</CheckoutTermsUI>
-						</React.Fragment>
+						<PaymentMethodStep CheckoutTerms={ CheckoutTerms } responseCart={ responseCart } />
 					}
 					completeStepContent={ paymentMethodStep.completeStepContent }
 					titleContent={ paymentMethodStep.titleContent }
@@ -231,6 +226,23 @@ export default function WPCheckout( {
 
 function setActiveStepNumber( stepNumber ) {
 	window.location.hash = '#step' + stepNumber;
+}
+
+function PaymentMethodStep( { CheckoutTerms, responseCart } ) {
+	const total = useTotal();
+	return (
+		<React.Fragment>
+			{ paymentMethodStep.activeStepContent }
+
+			<CheckoutTermsUI>
+				<CheckoutTerms cart={ responseCart } />
+			</CheckoutTermsUI>
+
+			<WPOrderReviewSection>
+				<WPOrderReviewTotal total={ total } />
+			</WPOrderReviewSection>
+		</React.Fragment>
+	);
 }
 
 function InactiveOrderReview() {
