@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { removeItemFromResponseCart, addCouponToResponseCart } from '../src/types';
+import { removeItemFromResponseCart, addCouponToResponseCart } from '../types';
 
 describe( 'removeItemFromResponseCart', function() {
 	const baseResponseCart = {

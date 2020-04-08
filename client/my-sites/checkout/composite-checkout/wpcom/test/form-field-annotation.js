@@ -16,7 +16,7 @@ import { ThemeProvider } from 'emotion-theming';
 /**
  * Internal dependencies
  */
-import FormFieldAnnotation from '../src/components/form-field-annotation';
+import FormFieldAnnotation from '../components/form-field-annotation';
 
 // Add the custom matchers provided by 'jest-emotion'
 expect.extend( matchers );

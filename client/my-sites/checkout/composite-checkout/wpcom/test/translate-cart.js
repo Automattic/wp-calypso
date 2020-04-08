@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { translateWpcomCartToCheckoutCart } from '../src/lib/translate-cart';
+import { translateWpcomCartToCheckoutCart } from '../lib/translate-cart';
 
 describe( 'translateWpcomCartToCheckoutCart', function() {
 	describe( 'Cart with one plan only (BRL)', function() {

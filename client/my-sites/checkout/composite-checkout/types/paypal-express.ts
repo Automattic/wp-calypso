@@ -4,7 +4,7 @@
 import {
 	WPCOMCartItem,
 	getNonProductWPCOMCartItemTypes,
-} from '@automattic/composite-checkout-wpcom';
+} from 'my-sites/checkout/composite-checkout/wpcom';
 
 /**
  * Internal dependencies
