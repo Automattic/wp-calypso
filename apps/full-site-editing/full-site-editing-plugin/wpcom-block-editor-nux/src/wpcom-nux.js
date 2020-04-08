@@ -88,7 +88,7 @@ function WpcomNux() {
 				imgSrc={ blockPickerImage }
 			/>
 
-			{ /* @TODO: hide for sites that are already public */ }
+			{ /* @TODO: hide for sites that are already public
 			<NuxPage
 				heading={ __( "Private until you're ready to launch" ) }
 				description={ __(
@@ -97,6 +97,7 @@ function WpcomNux() {
 				imgSrc={ privateImage }
 				alignBottom
 			/>
+			*/ }
 		</Guide>
 	);
 }
