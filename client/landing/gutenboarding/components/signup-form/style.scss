@@ -90,7 +90,7 @@
 
 	.signup-form__login-link {
 		@include onboarding-medium-text;
-		margin: 27px 0;
+		margin: 4px 0 29px;
 		color: var( --studio-gray-40 );
 
 		.signup-form__link {
@@ -107,8 +107,8 @@
 	.signup-form__terms-of-service-link {
 		@include onboarding-x-small-text;
 		text-align: center;
-		color: var( --studio-gray-40 );
-		margin: 20px 0;
+		color: var( --studio-gray-30 );
+		margin: 15px 0 20px;
 
 		.components-external-link {
 			text-decoration: none;
