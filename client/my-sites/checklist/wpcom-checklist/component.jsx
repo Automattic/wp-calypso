@@ -1014,7 +1014,10 @@ class WpcomChecklistComponent extends PureComponent {
 					"Building an effective navigation menu makes it easier for someone to find what they're looking for and improve search engine rankings."
 				) }
 				duration={ translate( '%d minute', '%d minutes', { count: 10, args: [ 10 ] } ) }
-				onClick={ this.handleUpdateSiteMenu }
+				onClick={ () => {
+					this.trackTaskStart( task );
+					this.handleUpdateSiteMenu();
+				} }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Create a site menu' ) }
 				showSkip={ true }
