@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight as compose, get } from 'lodash';
+import { flowRight as compose, get, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
 
@@ -21,7 +21,9 @@ import QueryReaderSite from 'components/data/query-reader-site';
 import { getPostByKey } from 'state/reader/posts/selectors';
 import { SUPPORT_BLOG_ID } from 'blocks/inline-help/constants';
 import getInlineSupportArticlePostId from 'state/selectors/get-inline-support-article-post-id';
-import getInlineSupportArticlePostUrl from 'state/selectors/get-inline-support-article-post-url';
+import getInlineSupportArticleActionUrl from 'state/selectors/get-inline-support-article-action-url';
+import getInlineSupportArticleActionLabel from 'state/selectors/get-inline-support-article-action-label';
+import getInlineSupportArticleActionIsExternal from 'state/selectors/get-inline-support-article-action-is-external';
 import { closeSupportArticleDialog } from 'state/inline-support-article/actions';
 
 /**
@@ -32,22 +34,29 @@ import './content.scss';
 
 export class SupportArticleDialog extends Component {
 	static propTypes = {
+		actionIsExternal: PropTypes.bool,
+		actionLabel: PropTypes.string,
+		actionUrl: PropTypes.string,
 		closeSupportArticleDialog: PropTypes.func.isRequired,
 		post: PropTypes.object,
 		postId: PropTypes.number,
-		postUrl: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
 
 	getDialogButtons() {
-		const { postUrl, translate } = this.props;
+		const { actionIsExternal, actionLabel, actionUrl, translate } = this.props;
 		return [
 			<Button onClick={ this.props.closeSupportArticleDialog }>
 				{ translate( 'Close', { textOnly: true } ) }
 			</Button>,
-			postUrl && (
-				<Button href={ postUrl } target="_blank" primary>
-					{ translate( 'Visit Article' ) } <Gridicon icon="external" size={ 12 } />
+			actionUrl && (
+				<Button
+					href={ actionUrl }
+					target={ actionIsExternal ? '_blank' : undefined }
+					primary
+					onClick={ () => ( actionIsExternal ? noop() : this.props.closeSupportArticleDialog() ) }
+				>
+					{ actionLabel } { actionIsExternal && <Gridicon icon="external" size={ 12 } /> }
 				</Button>
 			),
 		].filter( Boolean );
@@ -95,10 +104,12 @@ export default compose(
 	connect(
 		state => {
 			const postId = getInlineSupportArticlePostId( state );
-			const postUrl = getInlineSupportArticlePostUrl( state );
+			const actionUrl = getInlineSupportArticleActionUrl( state );
+			const actionLabel = getInlineSupportArticleActionLabel( state );
+			const actionIsExternal = getInlineSupportArticleActionIsExternal( state );
 			const post = getPostByKey( state, { blogId: SUPPORT_BLOG_ID, postId } );
 
-			return { post, postId, postUrl };
+			return { post, postId, actionUrl, actionLabel, actionIsExternal };
 		},
 		{ closeSupportArticleDialog }
 	),

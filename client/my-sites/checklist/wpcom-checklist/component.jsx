@@ -34,6 +34,9 @@ import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import { emailManagement } from 'my-sites/email/paths';
 import PendingGSuiteTosNoticeDialog from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice-dialog';
 import { domainManagementEdit, domainManagementList } from 'my-sites/domains/paths';
+import { openSupportArticleDialog } from 'state/inline-support-article/actions';
+import { localizeUrl } from 'lib/i18n-utils';
+import getMenusUrl from 'state/selectors/get-menus-url';
 
 const userLib = userFactory();
 
@@ -73,6 +76,7 @@ class WpcomChecklistComponent extends PureComponent {
 			service_list_added: this.renderServiceListAddedTask,
 			staff_info_added: this.renderStaffInfoAddedTask,
 			product_list_added: this.renderProductListAddedTask,
+			site_menu_updated: this.renderSiteMenuUpdateTask,
 		};
 	}
 
@@ -107,7 +111,6 @@ class WpcomChecklistComponent extends PureComponent {
 		const { siteId } = this.props;
 
 		if ( taskId ) {
-			this.props.successNotice( 'You completed a task!', { duration: 5000 } );
 			this.props.requestSiteChecklistTaskUpdate( siteId, taskId );
 			this.trackTaskDismiss( taskId );
 		}
@@ -168,6 +171,16 @@ class WpcomChecklistComponent extends PureComponent {
 	handleLaunchSite = () => {
 		const { siteId } = this.props;
 		this.props.launchSiteOrRedirectToLaunchSignupFlow( siteId );
+	};
+
+	handleUpdateSiteMenu = () => {
+		const { menusUrl, translate } = this.props;
+		this.props.openSupportArticleDialog( {
+			postId: 59580,
+			postUrl: localizeUrl( 'https://wordpress.com/support/menus/' ),
+			actionLabel: translate( 'Go to the Customizer' ),
+			actionUrl: menusUrl,
+		} );
 	};
 
 	verificationTaskButtonText() {
@@ -986,6 +999,32 @@ class WpcomChecklistComponent extends PureComponent {
 			/>
 		);
 	};
+
+	renderSiteMenuUpdateTask = ( TaskComponent, baseProps, task ) => {
+		const { translate } = this.props;
+
+		return (
+			<TaskComponent
+				{ ...baseProps }
+				bannerImageSrc="/calypso/images/stats/tasks/personalize-your-site.svg"
+				completedButtonText={ translate( 'View tutorial' ) }
+				completedDescription={ translate( 'You can edit your site menu whenever you like.' ) }
+				completedTitle={ translate( 'You created a site menu' ) }
+				description={ translate(
+					"Building an effective navigation menu makes it easier for someone to find what they're looking for and improve search engine rankings."
+				) }
+				duration={ translate( '%d minute', '%d minutes', { count: 10, args: [ 10 ] } ) }
+				onClick={ () => {
+					this.trackTaskStart( task );
+					this.handleUpdateSiteMenu();
+				} }
+				onDismiss={ this.handleTaskDismiss( task.id ) }
+				title={ translate( 'Create a site menu' ) }
+				showSkip={ true }
+				buttonText={ translate( 'Start with a tutorial' ) }
+			/>
+		);
+	};
 }
 
 export default connect(
@@ -1017,6 +1056,7 @@ export default connect(
 			needsDomainVerification,
 			siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 			domains: getDomainsBySiteId( state, siteId ),
+			menusUrl: getMenusUrl( state, siteId ),
 		};
 	},
 	{
@@ -1025,5 +1065,6 @@ export default connect(
 		requestGuidedTour,
 		requestSiteChecklistTaskUpdate,
 		launchSiteOrRedirectToLaunchSignupFlow,
+		openSupportArticleDialog,
 	}
 )( localize( WpcomChecklistComponent ) );
