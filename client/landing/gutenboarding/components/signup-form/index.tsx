@@ -19,6 +19,8 @@ import './style.scss';
 import SignupFormHeader from './header';
 import GUTENBOARDING_BASE_NAME from '../../basename.json';
 
+import { localizeUrl } from '../../../../lib/i18n-utils';
+
 // TODO: deploy this change to @types/wordpress__element
 declare module '@wordpress/element' {
 	// eslint-disable-next-line no-shadow
@@ -78,8 +80,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		}
 	};
 
-	/* translators: Link to localized WordPress.com terms of service if it exists */
-	const localizedTosLink = __( 'https://wordpress.com/tos/' );
+	const localizedTosLink = localizeUrl( 'https://wordpress.com/tos/' );
 
 	const tos = __experimentalCreateInterpolateElement(
 		__( 'By creating an account you agree to our <link_to_tos>Terms of Service</link_to_tos>.' ),
