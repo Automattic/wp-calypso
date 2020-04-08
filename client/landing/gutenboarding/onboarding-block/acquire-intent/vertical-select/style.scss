@@ -15,21 +15,6 @@
 			border-radius: 2px;
 		}
 	}
-	&--without-value {
-		.vertical-select__input-wrapper {
-			position: relative;
-			width: 400px;
-			display: inline-block;
-			vertical-align: middle;
-			height: 1.05em;
-			line-height: 1em;
-		}
-		.madlib__input {
-			position: absolute;
-			width: 100%;
-			border: none; //not transparent to prevent a flicker of 100% bottom border when this class is removed
-		}
-	}
 }
 
 .vertical-select__suggestions-wrapper {
@@ -48,6 +33,7 @@
 	color: var( --studio-gray-5 );
 	position: absolute;
 	left: 0;
+	width: 400px;
 }
 
 .vertical-select__arrow {

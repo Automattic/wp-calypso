@@ -5,8 +5,7 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import photon from 'photon';
 import React from 'react';
 
@@ -15,10 +14,35 @@ import React from 'react';
  */
 import fixtures from './fixtures';
 import ListItemVideo from 'my-sites/media-library/list-item-video';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
 
 const WIDTH = 450;
 
 const styleUrl = url => `url(${ url })`;
+
+const initialReduxState = {
+	siteSettings: {},
+	sites: {
+		items: [],
+	},
+	media: {
+		queries: {},
+	},
+	currentUser: {
+		capabilities: {},
+	},
+	ui: {
+		editor: {
+			imageEditor: {},
+		},
+	},
+};
+
+function renderWithRedux( ui ) {
+	const store = createStore( state => state, initialReduxState );
+	return render( <Provider store={ store }>{ ui }</Provider> );
+}
 
 describe( 'MediaLibraryListItem video', () => {
 	let wrapper;
@@ -42,22 +66,26 @@ describe( 'MediaLibraryListItem video', () => {
 
 	describe( 'thumbnail display mode', () => {
 		test( 'defaults to photon', () => {
-			wrapper = shallow( getItem() );
+			const { container } = renderWithRedux( getItem() );
 
-			expect( wrapper.props().style.backgroundImage ).to.be.equal( expectedBackground() );
+			expect(
+				container.querySelector( '.media-library__list-item-video' ).style.backgroundImage
+			).toBe( expectedBackground() );
 		} );
 		test( 'returns a photon thumbnail for type MEDIA_IMAGE_RESIZER', () => {
-			wrapper = shallow( getItem( 'MEDIA_IMAGE_RESIZER' ) );
+			const { container } = renderWithRedux( getItem( 'MEDIA_IMAGE_RESIZER' ) );
 
-			expect( wrapper.props().style.backgroundImage ).to.be.equal( expectedBackground() );
+			expect(
+				container.querySelector( '.media-library__list-item-video' ).style.backgroundImage
+			).toBe( expectedBackground() );
 		} );
 
 		test( 'returns existing fmt_hd thumbnail for type MEDIA_IMAGE_THUMBNAIL', () => {
-			wrapper = shallow( getItem( 'MEDIA_IMAGE_THUMBNAIL' ) );
+			const { container } = renderWithRedux( getItem( 'MEDIA_IMAGE_THUMBNAIL' ) );
 
-			expect( wrapper.props().style.backgroundImage ).to.be.equal(
-				styleUrl( fixtures.media[ 1 ].thumbnails.fmt_hd )
-			);
+			expect(
+				container.querySelector( '.media-library__list-item-video' ).style.backgroundImage
+			).toBe( styleUrl( fixtures.media[ 1 ].thumbnails.fmt_hd ) );
 		} );
 	} );
 } );

@@ -26,7 +26,7 @@ import SiteBackupCard from './site-backup-card';
 import NoticeAction from 'components/notice/notice-action';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import Notice from 'components/notice';
-import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { recordTracksEvent } from 'state/analytics/actions';
 import {
 	getAutomatedTransferStatus,
@@ -77,11 +77,12 @@ class Hosting extends Component {
 		}
 
 		const getUpgradeBanner = () => (
-			<Banner
+			<UpsellNudge
 				title={ translate( 'Upgrade to the Business plan to access all hosting features' ) }
 				event="calypso_hosting_configuration_upgrade_click"
 				href={ `/checkout/${ siteId }/business` }
 				plan={ PLAN_BUSINESS }
+				showIcon={ true }
 			/>
 		);
 

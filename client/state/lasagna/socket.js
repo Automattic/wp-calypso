@@ -34,7 +34,7 @@ export function connectSocket( { store, jwt, userId } ) {
 	SOCKET.status = 'opening';
 	debug( 'opening' );
 
-	import( 'phoenix' ).then( ( { Socket } ) => {
+	import( /* webpackChunkName: "phoenix" */ 'phoenix' ).then( ( { Socket } ) => {
 		const socketInstance = new Socket( url, { params: { jwt, user_id: userId } } );
 		SOCKET.ref = socketInstance;
 

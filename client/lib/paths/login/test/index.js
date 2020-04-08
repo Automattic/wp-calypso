@@ -76,7 +76,7 @@ describe( 'index', () => {
 
 		test( 'should return the login url for Gutenboarding specific login', () => {
 			const url = login( { isNative: true, isGutenboarding: true } );
-			expect( url ).toEqual( '/log-in/gutenboarding' );
+			expect( url ).toMatchSnapshot();
 		} );
 
 		test( 'should return the login url with WooCommerce from handler', () => {

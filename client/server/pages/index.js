@@ -55,6 +55,7 @@ import { logSectionResponse } from './analytics';
 import analytics from 'server/lib/analytics';
 import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
+import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'landing/gutenboarding/section';
 
 const debug = debugFactory( 'calypso:pages' );
@@ -860,7 +861,15 @@ module.exports = function() {
 	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
-	handleSectionPath( GUTENBOARDING_SECTION_DEFINITION, '/gutenboarding', 'entry-gutenboarding' );
+	handleSectionPath(
+		GUTENBOARDING_SECTION_DEFINITION,
+		`/${ GUTENBOARDING_BASE_NAME }`,
+		'entry-gutenboarding'
+	);
+
+	// Handle redirection from development basename
+	// TODO: Remove after a few months
+	handleSectionPath( GUTENBOARDING_SECTION_DEFINITION, `/gutenboarding`, 'entry-gutenboarding' );
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post(
