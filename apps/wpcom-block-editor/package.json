@@ -17,7 +17,7 @@
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
 		"bundle": "check-npm-client && calypso-build --env.WP",
-		"build:dev": "ncheck-npm-client && pm run bundle --",
+		"build:dev": "check-npm-client && pm run bundle --",
 		"build:prod": "check-npm-client && NODE_ENV=production npm run bundle --",
 		"build": "check-npm-client && npm-run-all --parallel \"build:* -- {@}\" --",
 		"clean": "check-npm-client && npx rimraf dist",
