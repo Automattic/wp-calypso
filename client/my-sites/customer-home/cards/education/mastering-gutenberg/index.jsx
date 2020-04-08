@@ -4,13 +4,12 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { Button, Dialog } from '@automattic/components';
+import { Button, Card, Dialog } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 
 /**
  * Internal dependencies
  */
-import DismissibleCard from 'blocks/dismissible-card';
 import CardHeading from 'components/card-heading';
 import Gridicon from 'components/gridicon';
 import { localizeUrl } from 'lib/i18n-utils';
@@ -65,8 +64,8 @@ class MasteringGutenberg extends Component {
 				<Dialog additionalClassNames="mastering-gutenberg__dialog" isVisible={ showDialog }>
 					<iframe
 						title={ translate( 'Video demonstration' ) }
-						width="560"
-						height="315"
+						width="853"
+						height="480"
 						src={ `https://www.youtube.com/embed/${ videoId }?rel=0&autoplay=1` }
 						frameBorder="0"
 						allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
@@ -80,10 +79,7 @@ class MasteringGutenberg extends Component {
 						</Button>
 					</div>
 				</Dialog>
-				<DismissibleCard
-					preferenceName="customer-home-mastering-gutenberg-card"
-					className="mastering-gutenberg"
-				>
+				<Card className="mastering-gutenberg">
 					{ ! isMobile() && (
 						<div className="mastering-gutenberg__illustration">
 							<img src="/calypso/images/illustrations/gutenberg-mini.svg" alt="" />
@@ -109,7 +105,7 @@ class MasteringGutenberg extends Component {
 							{ translate( 'Customizing posts and pages with blocks' ) }
 						</Button>
 					</div>
-				</DismissibleCard>
+				</Card>
 			</Fragment>
 		);
 	}
