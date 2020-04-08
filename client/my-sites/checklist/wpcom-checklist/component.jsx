@@ -200,10 +200,6 @@ class WpcomChecklistComponent extends PureComponent {
 		return translate( 'Resend email' );
 	}
 
-	backToChecklist = () => {
-		page( `/checklist/${ this.props.siteSlug }` );
-	};
-
 	render() {
 		const { siteId, taskList, taskStatuses, updateCompletion } = this.props;
 
@@ -772,7 +768,6 @@ class WpcomChecklistComponent extends PureComponent {
 					url: taskUrls[ task.id ],
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
-				backToChecklist={ this.backToChecklist }
 				showSkip={ false }
 				buttonText={ translate( 'Start' ) }
 			/>
@@ -812,7 +807,6 @@ class WpcomChecklistComponent extends PureComponent {
 					url: taskUrls[ task.id ],
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
-				backToChecklist={ this.backToChecklist }
 				showSkip={ false }
 				buttonText={ translate( 'Start' ) }
 			/>
@@ -843,7 +837,6 @@ class WpcomChecklistComponent extends PureComponent {
 					url: taskUrls[ task.id ],
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
-				backToChecklist={ this.backToChecklist }
 				showSkip={ false }
 				buttonText={ translate( 'Update homepage' ) }
 				action="update-homepage"
@@ -881,7 +874,6 @@ class WpcomChecklistComponent extends PureComponent {
 					url: taskUrls[ task.id ],
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
-				backToChecklist={ this.backToChecklist }
 				showSkip={ false }
 				buttonText={ translate( 'Start' ) }
 			/>
@@ -916,7 +908,6 @@ class WpcomChecklistComponent extends PureComponent {
 					url: taskUrls[ task.id ],
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
-				backToChecklist={ this.backToChecklist }
 				showSkip={ false }
 				buttonText={ translate( 'Start' ) }
 			/>
@@ -959,7 +950,6 @@ class WpcomChecklistComponent extends PureComponent {
 				duration={ translate( '%d minute', '%d minutes', { count: 5, args: [ 5 ] } ) }
 				targetUrl={ taskUrls[ task.id ] }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
-				backToChecklist={ this.backToChecklist }
 				showSkip={ false }
 				buttonText={ translate( 'Start' ) }
 			/>
@@ -993,7 +983,6 @@ class WpcomChecklistComponent extends PureComponent {
 				duration={ translate( '%d minute', '%d minutes', { count: 10, args: [ 10 ] } ) }
 				targetUrl={ taskUrls[ task.id ] }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
-				backToChecklist={ this.backToChecklist }
 				showSkip={ false }
 				buttonText={ translate( 'Start' ) }
 			/>
