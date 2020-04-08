@@ -97,7 +97,7 @@ class ProductPlanOverlapNotices extends Component {
 	}
 
 	clickPurchaseHandler = purchaseId => {
-		this.props.recordTracksEvent( 'calypso_product_overlap_purchase_view', {
+		this.props.recordTracksEvent( 'calypso_product_overlap_purchase_click', {
 			purchase_id: purchaseId,
 		} );
 	};
