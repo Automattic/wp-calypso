@@ -20,7 +20,7 @@ import './style.scss';
 import blockImage from './images/block.svg';
 import blockPickerImage from './images/block-picker.svg';
 import editorImage from './images/editor.svg';
-import privateImage from './images/private.svg';
+//import privateImage from './images/private.svg';
 
 function WpcomNux() {
 	const { isWpcomNuxEnabled, isSPTOpen } = useSelect( select => ( {
