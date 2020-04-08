@@ -65,7 +65,7 @@
 		"jetpack/happychat": true,
 		"jetpack/search-product": true,
 		"jitms": true,
-		"lasagna": true,
+		"lasagna": false,
 		"legal-updates-banner": false,
 		"login/magic-login": true,
 		"login/native-login-links": true,
