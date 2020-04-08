@@ -32,11 +32,13 @@ async function loadSection( context, sectionDefinition ) {
 	if ( sectionDefinition.module === 'reader' ) {
 		resetMiddlewares();
 		const isBrowser = typeof window === 'object';
-		const lasagnaMiddleware =
-			isBrowser &&
-			config.isEnabled( 'lasagna' ) &&
-			require( './state/lasagna/middleware.js' ).default;
-		addMiddleware( lasagnaMiddleware );
+		if ( isBrowser && config.isEnabled( 'lasagna' ) ) {
+			import( /* webpackChunkName: "lasagnaMiddleware" */ 'state/lasagna/middleware.js' ).then(
+				lasagnaMiddleware => {
+					addMiddleware( lasagnaMiddleware.default );
+				}
+			);
+		}
 	}
 
 	// If the section chunk is not loaded within 400ms, report it to analytics
