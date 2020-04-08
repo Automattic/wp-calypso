@@ -20,7 +20,7 @@ interface Props {
 }
 
 const SiteTitle: React.FunctionComponent< Props > = ( { isVisible } ) => {
-	const { __: NO__ } = useI18n();
+	const { __ } = useI18n();
 	const { siteTitle, siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 	const history = useHistory();
@@ -51,7 +51,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible } ) => {
 	}, [ siteVertical, inputRef ] );
 
 	// translators: Form input for a site's title where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
-	const madlibTemplate = NO__( 'Itʼs called <Input />' );
+	const madlibTemplate = __( 'Itʼs called <Input />' );
 	const madlib = __experimentalCreateInterpolateElement( madlibTemplate, {
 		Input: (
 			<span

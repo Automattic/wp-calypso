@@ -21,7 +21,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	isSelected = false,
 	onSelect,
 } ) => {
-	const { __: NO__ } = useI18n();
+	const { __ } = useI18n();
 
 	return (
 		<label className="domain-picker__suggestion-item">
@@ -35,7 +35,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				/>
 				{ suggestion.domain_name }
 				{ isRecommended && (
-					<div className="domain-picker__badge is-recommended">{ NO__( 'Recommended' ) }</div>
+					<div className="domain-picker__badge is-recommended">{ __( 'Recommended' ) }</div>
 				) }
 			</div>
 			<div
@@ -44,12 +44,12 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				} ) }
 			>
 				{ suggestion.is_free ? (
-					NO__( 'Free' )
+					__( 'Free' )
 				) : (
 					<>
-						<span className="domain-picker__free-text"> { NO__( 'Free' ) } </span>
+						<span className="domain-picker__free-text"> { __( 'Free' ) } </span>
 						<span className="domain-picker__price-is-paid">
-							{ sprintf( NO__( '%s/year' ), suggestion.cost ) }{ ' ' }
+							{ sprintf( __( '%s/year' ), suggestion.cost ) }{ ' ' }
 						</span>
 					</>
 				) }

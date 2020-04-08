@@ -17,7 +17,7 @@ import SiteTitle from './site-title';
 import './style.scss';
 
 const AcquireIntent: FunctionComponent = () => {
-	const { __: NO__ } = useI18n();
+	const { __ } = useI18n();
 	const { siteVertical, siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
 	const makePath = usePath();
 
@@ -38,7 +38,7 @@ const AcquireIntent: FunctionComponent = () => {
 						to={ siteVertical && makePath( Step.DesignSelection ) }
 					>
 						{ /* @TODO: add transitions and correct action */ }
-						{ siteTitle ? NO__( 'Choose a design' ) : NO__( 'Donʼt know yet' ) }
+						{ siteTitle ? __( 'Choose a design' ) : __( 'Donʼt know yet' ) }
 					</Link>
 				</div>
 			</div>

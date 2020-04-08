@@ -23,24 +23,44 @@ add_action(
 			true
 		);
 
-		// Block front end style.
-		wp_register_style(
-			'jetpack-timeline',
-			plugins_url( 'style.css', __FILE__ ),
-			array(),
-			filemtime( __DIR__ . '/style.css' )
+		// Register block.
+		register_block_type(
+			'jetpack/timeline',
+			array(
+				'editor_script' => 'jetpack-timeline',
+			)
 		);
 
-		// Block editor style.
-		wp_register_style(
-			'jetpack-timeline-editor',
-			plugins_url( 'editor.css', __FILE__ ),
-			array(),
-			filemtime( __DIR__ . '/editor.css' )
+		// Allow vars for CSS props.
+		add_filter(
+			'safe_style_css',
+			function( $attr ) {
+				$attr[] = '--timeline-background-color';
+				$attr[] = '--timeline-text-color';
+				return $attr;
+			},
+			10,
+			2
 		);
 
 		wp_set_script_translations( 'jetpack-timeline', 'full-site-editing' );
+
 	}
 );
 
-require_once __DIR__ . '/blocks/timeline.php';
+// Register block assets.
+add_action(
+	'enqueue_block_assets',
+	function() {
+		$style_file = is_rtl()
+		? 'jetpack-timeline.rtl.css'
+		: 'jetpack-timeline.css';
+
+		wp_enqueue_style(
+			'jetpack-timeline',
+			plugins_url( 'dist/' . $style_file, __FILE__ ),
+			array(),
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
+		);
+	}
+);

@@ -42,14 +42,14 @@ export class SupportArticleDialog extends Component {
 	getDialogButtons() {
 		const { postUrl, translate } = this.props;
 		return [
+			<Button onClick={ this.props.closeSupportArticleDialog }>
+				{ translate( 'Close', { textOnly: true } ) }
+			</Button>,
 			postUrl && (
 				<Button href={ postUrl } target="_blank" primary>
 					{ translate( 'Visit Article' ) } <Gridicon icon="external" size={ 12 } />
 				</Button>
 			),
-			<Button onClick={ this.props.closeSupportArticleDialog }>
-				{ translate( 'Close', { textOnly: true } ) }
-			</Button>,
 		].filter( Boolean );
 	}
 
