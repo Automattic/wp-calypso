@@ -13,6 +13,16 @@
 	min-height: calc( 100vh - 111px ); // Padding of .layout__content: 79px + 32px;
 }
 
+.scan__content p {
+	font-size: 18px;
+	margin-bottom: 16px;
+	line-height: 24px;
+
+	@include breakpoint( '>660px' ) {
+		margin-bottom: 24px;
+	}
+}
+
 .scan__content {
 	padding: 40px 16px 0;
 	flex: 1 0 auto;
