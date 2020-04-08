@@ -12,9 +12,9 @@ jest.mock( 'store', () => ( {
 } ) );
 
 jest.mock(
-	'components/banner',
+	'blocks/upsell-nudge',
 	() =>
-		function Banner() {
+		function UpsellNudge() {
 			return <div />;
 		}
 );
@@ -94,14 +94,14 @@ describe( 'SiteSettingsFormGeneral ', () => {
 		expect( comp.find( '.site-settings__site-options' ).length ).toBe( 1 );
 	} );
 
-	describe( 'Upsell Banner should get appropriate plan constant', () => {
+	describe( 'UpsellNudge should get appropriate plan constant', () => {
 		[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( plan => {
 			test( `Business 1 year for (${ plan })`, () => {
 				const comp = shallow(
 					<SiteSettingsFormGeneral { ...props } siteIsJetpack={ false } site={ { plan } } />
 				);
-				expect( comp.find( 'Banner' ).length ).toBe( 1 );
-				expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_BUSINESS );
+				expect( comp.find( 'UpsellNudge' ).length ).toBe( 1 );
+				expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_BUSINESS );
 			} );
 		} );
 
@@ -110,14 +110,14 @@ describe( 'SiteSettingsFormGeneral ', () => {
 				const comp = shallow(
 					<SiteSettingsFormGeneral { ...props } siteIsJetpack={ false } site={ { plan } } />
 				);
-				expect( comp.find( 'Banner' ).length ).toBe( 1 );
-				expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_BUSINESS );
+				expect( comp.find( 'UpsellNudge' ).length ).toBe( 1 );
+				expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_BUSINESS );
 			} );
 		} );
 
-		test( 'No banner for jetpack plans', () => {
+		test( 'No UpsellNudge for jetpack plans', () => {
 			const comp = shallow( <SiteSettingsFormGeneral { ...props } siteIsJetpack={ true } /> );
-			expect( comp.find( 'Banner' ).length ).toBe( 0 );
+			expect( comp.find( 'UpsellNudge' ).length ).toBe( 0 );
 		} );
 	} );
 

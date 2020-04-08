@@ -7,7 +7,7 @@
 /**
  * Internal dependencies
  */
-import { getThankYouPageUrl } from '../composite-checkout-thank-you';
+import { getThankYouPageUrl } from '../use-get-thank-you-url';
 import { isEnabled } from 'config';
 
 let mockGSuiteCountryIsValid = true;
@@ -204,7 +204,7 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			getUrlFromCookie,
-			isEligibleForSignupDestination: true,
+			isEligibleForSignupDestinationResult: true,
 		} );
 		expect( url ).toBe( '/cookie' );
 	} );

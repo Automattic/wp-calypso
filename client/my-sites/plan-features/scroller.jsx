@@ -123,12 +123,12 @@ export default class PlanFeaturesScroller extends PureComponent {
 	}
 
 	handleWindowResize = () => {
-		cancelAnimationFrame( this.updateViewportWidthRaf );
+		window.cancelAnimationFrame( this.updateViewportWidthRaf );
 		this.updateViewportWidthRaf = window.requestAnimationFrame( this.updateViewportWidth );
 	};
 
 	handleScroll = () => {
-		cancelAnimationFrame( this.updateScrollPositionRaf );
+		window.cancelAnimationFrame( this.updateScrollPositionRaf );
 		this.updateScrollPositionRaf = window.requestAnimationFrame( this.updateScrollPosition );
 	};
 
@@ -293,7 +293,7 @@ export default class PlanFeaturesScroller extends PureComponent {
 		return (
 			/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
 			<div className={ containerClass }>
-				<style>{ `.signup__step.is-plans { overflow-x: hidden; }` }</style>
+				<style>{ `[class^="signup__step is-plans"]  { overflow-x: hidden; }` }</style>
 				{ this.renderStyle( vars ) }
 				<div
 					className={ classNames( 'plan-features__scroll-left', { disabled: disabledLeft } ) }
