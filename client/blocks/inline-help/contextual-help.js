@@ -95,9 +95,7 @@ const contextLinksForSection = {
 	],
 	sharing: [
 		{
-			link: localizeUrl(
-				'https://wordpress.com/support/video-tutorials/connect-to-social-media/'
-			),
+			link: localizeUrl( 'https://wordpress.com/support/video-tutorials/connect-to-social-media/' ),
 			post_id: 130825,
 			title: translate( 'Integrate and Connect to Social Media' ),
 			description: translate(
