@@ -35,7 +35,8 @@ class ScanPage extends Component {
 				<h1 className="scan__header">{ translate( 'Don’t worry about a thing' ) }</h1>
 				<p>
 					The last Jetpack scan ran <strong>{ moment( lastScanTimestamp ).fromNow() }</strong> and
-					everything looked great.
+					everything looked great. <br />
+					Run a manual scan now or wait for Jetpack to scan your site later today.
 				</p>
 				{ isEnabled( 'jetpack-cloud/on-demand-scan' ) && (
 					<Button
