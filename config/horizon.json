@@ -50,6 +50,7 @@
 		"jetpack/search-product": true,
 		"jitms": true,
 		"keyboard-shortcuts": true,
+		"lasagna": false,
 		"legal-updates-banner": false,
 		"login/native-login-links": true,
 		"login/wp-login": true,

@@ -41,6 +41,7 @@
 		"jetpack/connect/remote-install": true,
 		"jetpack/personalPlan": true,
 		"jitms": false,
+		"lasagna": false,
 		"legal-updates-banner": false,
 		"login/magic-login": false,
 		"login/native-login-links": false,

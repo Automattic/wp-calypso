@@ -44,6 +44,7 @@
 		"jetpack/connect/remote-install": true,
 		"jetpack/happychat": true,
 		"jitms": true,
+		"lasagna": false,
 		"legal-updates-banner": true,
 		"login/native-login-links": true,
 		"login/wp-login": true,

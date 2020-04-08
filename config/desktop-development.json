@@ -51,6 +51,7 @@
 		"jetpack/happychat": true,
 		"jetpack_core_inline_update": true,
 		"jitms": false,
+		"lasagna": false,
 		"keyboard-shortcuts": true,
 		"legal-updates-banner": true,
 		"login/magic-login": false,
