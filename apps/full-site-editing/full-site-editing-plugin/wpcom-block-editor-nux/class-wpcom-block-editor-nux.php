@@ -57,7 +57,7 @@ class WPCOM_Block_Editor_NUX {
 		wp_localize_script(
 			'wpcom-block-editor-nux-script',
 			'wpcomBlockEditorNuxAssetsUrl',
-			plugins_url( 'dist/', __FILE__ ),
+			plugins_url( 'dist/', __FILE__ )
 		);
 
 		$style_path = 'dist/wpcom-block-editor-nux' . ( is_rtl() ? '.rtl' : '' ) . '.css';
