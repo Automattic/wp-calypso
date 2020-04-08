@@ -78,9 +78,11 @@ class PostCommentList extends React.Component {
 		commentsTree: PropTypes.object,
 		requestPostComments: PropTypes.func.isRequired,
 		requestComment: PropTypes.func.isRequired,
+		shouldHighlightNew: PropTypes.bool,
 	};
 
 	static defaultProps = {
+		shouldHighlightNew: false,
 		pageSize: NUMBER_OF_COMMENTS_PER_FETCH,
 		initialSize: NUMBER_OF_COMMENTS_PER_FETCH,
 		showCommentCount: true,
@@ -224,6 +226,7 @@ class PostCommentList extends React.Component {
 				depth={ 0 }
 				maxDepth={ this.props.maxDepth }
 				showNestingReplyArrow={ this.props.showNestingReplyArrow }
+				shouldHighlightNew={ this.props.shouldHighlightNew }
 			/>
 		);
 	};

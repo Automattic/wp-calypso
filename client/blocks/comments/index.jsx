@@ -15,6 +15,7 @@ import { requestPostComments } from 'state/comments/actions';
 
 class PostComments extends React.Component {
 	static propTypes = {
+		shouldHighlightNew: PropTypes.bool,
 		post: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 			site_ID: PropTypes.number.isRequired,
@@ -22,6 +23,7 @@ class PostComments extends React.Component {
 	};
 
 	static defaultProps = {
+		shouldHighlightNew: false,
 		shouldPollForNewComments: false,
 	};
 

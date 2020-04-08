@@ -86,7 +86,7 @@ class PostComment extends React.PureComponent {
 
 		// connect()ed props:
 		currentUser: PropTypes.object.isRequired,
-		highlightNew: PropTypes.bool,
+		shouldHighlightNew: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -99,7 +99,7 @@ class PostComment extends React.PureComponent {
 		showNestingReplyArrow: false,
 		showReadMoreInActions: false,
 		hidePingbacksAndTrackbacks: false,
-		highlightNew: false,
+		shouldHighlightNew: false,
 	};
 
 	state = {
@@ -338,7 +338,7 @@ class PostComment extends React.PureComponent {
 			overflowY,
 			showReadMoreInActions,
 			hidePingbacksAndTrackbacks,
-			highlightNew,
+			shouldHighlightNew,
 		} = this.props;
 
 		const comment = get( commentsTree, [ commentId, 'data' ] );
@@ -391,7 +391,7 @@ class PostComment extends React.PureComponent {
 
 		// highlight comments not older than 10s
 		const isHighlighted =
-			highlightNew && new Date().getTime() - new Date( comment.date ).getTime() < 10000;
+			shouldHighlightNew && new Date().getTime() - new Date( comment.date ).getTime() < 10000;
 
 		const postCommentClassnames = classnames( 'comments__comment', {
 			[ 'depth-' + depth ]: depth <= maxDepth && depth <= 3, // only indent up to 3
