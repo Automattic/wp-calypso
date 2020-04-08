@@ -97,12 +97,12 @@
  * Fireworks
  */
 
-$color1: #fff922;
-$color2: #685fd7;
-$color3: #ecfec7;
-$color4: #a3fdec;
-$color5: #feb352;
-$color6: #b82806;
+$ecf_color1: #fff922;
+$ecf_color2: #685fd7;
+$ecf_color3: #ecfec7;
+$ecf_color4: #a3fdec;
+$ecf_color5: #feb352;
+$ecf_color6: #b82806;
 
 // Contain the fireworks, so they never cause scrollbars to appear.
 .event-countdown__fireworks {
@@ -119,59 +119,59 @@ $color6: #b82806;
 		width: 4px;
 		height: 4px;
 		border-radius: 50%;
-		animation: 1s bang ease-out infinite backwards, 1s gravity ease-in infinite backwards, 5s position linear infinite backwards;
+		animation: 1s event_countdown_bang ease-out infinite backwards, 1s event_countdown_gravity ease-in infinite backwards, 5s event_countdown_position linear infinite backwards;
 		mix-blend-mode: overlay;
-		box-shadow: -120px -218.66667px $color1,
-			248px -16.66667px $color3,
-			190px 16.33333px $color1,
-			-113px -308.66667px $color5,
-			-109px -287.66667px $color6,
-			-50px -313.66667px $color5,
-			226px -31.66667px $color5,
-			180px -351.66667px $color5,
-			-12px -338.66667px $color3,
-			220px -388.66667px $color3,
-			-69px -27.66667px $color5,
-			-111px -339.66667px $color1,
-			155px -237.66667px $color2,
-			-152px -380.66667px $color2,
-			-50px -37.66667px $color2,
-			-95px -175.66667px $color3,
-			-88px 10.33333px $color1,
-			112px -309.66667px $color1,
-			69px -415.66667px $color5,
-			168px -100.66667px $color5,
-			-244px 24.33333px $color6,
-			97px -325.66667px $color5,
-			-211px -182.66667px $color3,
-			236px -126.66667px $color4,
-			140px -196.66667px $color1,
-			125px -175.66667px $color2,
-			118px -381.66667px $color5,
-			144px -111.66667px $color6,
-			36px -78.66667px $color4,
-			-63px -196.66667px $color2,
-			-218px -227.66667px $color3,
-			-134px -377.66667px $color4,
-			-36px -412.66667px $color4,
-			209px -106.66667px $color3,
-			91px -278.66667px $color1,
-			-22px -191.66667px $color3,
-			139px -392.66667px $color3,
-			56px -2.66667px $color1,
-			-156px -276.66667px $color5,
-			-163px -233.66667px $color3,
-			-238px -346.66667px $color3,
-			62px -363.66667px $color1,
-			244px -170.66667px $color1,
-			224px -142.66667px $color2,
-			141px -208.66667px $color2,
-			211px -285.66667px $color5,
-			181px -128.66667px $color1,
-			90px -123.66667px $color2,
-			189px 70.33333px $color3,
-			-18px -383.66667px $color3,
-			100px -6.66667px $color5;
+		box-shadow: -120px -218.66667px $ecf_color1,
+			248px -16.66667px $ecf_color3,
+			190px 16.33333px $ecf_color1,
+			-113px -308.66667px $ecf_color5,
+			-109px -287.66667px $ecf_color6,
+			-50px -313.66667px $ecf_color5,
+			226px -31.66667px $ecf_color5,
+			180px -351.66667px $ecf_color5,
+			-12px -338.66667px $ecf_color3,
+			220px -388.66667px $ecf_color3,
+			-69px -27.66667px $ecf_color5,
+			-111px -339.66667px $ecf_color1,
+			155px -237.66667px $ecf_color2,
+			-152px -380.66667px $ecf_color2,
+			-50px -37.66667px $ecf_color2,
+			-95px -175.66667px $ecf_color3,
+			-88px 10.33333px $ecf_color1,
+			112px -309.66667px $ecf_color1,
+			69px -415.66667px $ecf_color5,
+			168px -100.66667px $ecf_color5,
+			-244px 24.33333px $ecf_color6,
+			97px -325.66667px $ecf_color5,
+			-211px -182.66667px $ecf_color3,
+			236px -126.66667px $ecf_color4,
+			140px -196.66667px $ecf_color1,
+			125px -175.66667px $ecf_color2,
+			118px -381.66667px $ecf_color5,
+			144px -111.66667px $ecf_color6,
+			36px -78.66667px $ecf_color4,
+			-63px -196.66667px $ecf_color2,
+			-218px -227.66667px $ecf_color3,
+			-134px -377.66667px $ecf_color4,
+			-36px -412.66667px $ecf_color4,
+			209px -106.66667px $ecf_color3,
+			91px -278.66667px $ecf_color1,
+			-22px -191.66667px $ecf_color3,
+			139px -392.66667px $ecf_color3,
+			56px -2.66667px $ecf_color1,
+			-156px -276.66667px $ecf_color5,
+			-163px -233.66667px $ecf_color3,
+			-238px -346.66667px $ecf_color3,
+			62px -363.66667px $ecf_color1,
+			244px -170.66667px $ecf_color1,
+			224px -142.66667px $ecf_color2,
+			141px -208.66667px $ecf_color2,
+			211px -285.66667px $ecf_color5,
+			181px -128.66667px $ecf_color1,
+			90px -123.66667px $ecf_color2,
+			189px 70.33333px $ecf_color3,
+			-18px -383.66667px $ecf_color3,
+			100px -6.66667px $ecf_color5;
 	}
 
 	> .event-countdown__fireworks-after {
@@ -181,26 +181,13 @@ $color6: #b82806;
 }
 
 
-@-webkit-keyframes bang {
+@keyframes event_countdown_bang {
 	from {
 		box-shadow: 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white;
 	}
 }
 
-@keyframes bang {
-	from {
-		box-shadow: 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white;
-	}
-}
-
-@-webkit-keyframes gravity {
-	to {
-		transform: translateY( 200px );
-		opacity: 0;
-	}
-}
-
-@keyframes gravity {
+@keyframes event_countdown_gravity {
 	to {
 		transform: translateY( 200px );
 		-webkit-transform: translateY( 200px );
@@ -208,34 +195,7 @@ $color6: #b82806;
 	}
 }
 
-@-webkit-keyframes position {
-	0%, 19.9% {
-		margin-top: 10%;
-		margin-left: 40%;
-	}
-
-	20%, 39.9% {
-		margin-top: 40%;
-		margin-left: 30%;
-	}
-
-	40%, 59.9% {
-		margin-top: 20%;
-		margin-left: 70%;
-	}
-
-	60%, 79.9% {
-		margin-top: 30%;
-		margin-left: 20%;
-	}
-
-	80%, 99.9% {
-		margin-top: 30%;
-		margin-left: 80%;
-	}
-}
-
-	@keyframes position {
+@keyframes event_countdown_position {
 	0%, 19.9% {
 		margin-top: 10%;
 		margin-left: 40%;
