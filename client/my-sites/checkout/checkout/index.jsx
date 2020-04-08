@@ -387,7 +387,6 @@ export class Checkout extends React.Component {
 
 		const isCartEmpty = isEmpty( getAllCartItems( cart ) );
 		const isReceiptEmpty = ':receiptId' === pendingOrReceiptId;
-
 		// We will show the Thank You page if there's a site slug and either one of the following is true:
 		// - has a receipt number
 		// - does not have a receipt number but has an item in cart(as in the case of paying with a redirect payment type)
@@ -477,9 +476,11 @@ export class Checkout extends React.Component {
 		// Especially around the Concierge / Checklist logic.
 
 		let renewalItem,
+			signupDestination,
 			displayModeParam = {};
 		const {
 			cart,
+			product,
 			redirectTo,
 			selectedSite,
 			selectedSiteSlug,
@@ -530,8 +531,13 @@ export class Checkout extends React.Component {
 
 		this.setDestinationIfEcommPlan( pendingOrReceiptId );
 
-		const signupDestination =
-			retrieveSignupDestination() || this.getFallbackDestination( pendingOrReceiptId );
+		// if it is a Jetpack product, use product info as a parameter
+		if ( product ) {
+			signupDestination = this.getFallbackDestination( pendingOrReceiptId );
+		} else {
+			signupDestination =
+				retrieveSignupDestination() || this.getFallbackDestination( pendingOrReceiptId );
+		}
 
 		if ( hasRenewalItem( cart ) ) {
 			renewalItem = getRenewalItems( cart )[ 0 ];
@@ -838,6 +844,7 @@ export class Checkout extends React.Component {
 
 	render() {
 		const { plan, product, purchaseId, selectedFeature, selectedSiteSlug } = this.props;
+
 		let analyticsPath = '';
 		let analyticsProps = {};
 		if ( purchaseId && product ) {
