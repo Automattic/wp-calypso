@@ -16,7 +16,7 @@ export default class ChecklistPage extends AsyncBaseContainer {
 		super( driver, By.css( '.customer-home__layout .checklist' ), url );
 		this.headerSelector = By.css( '.customer-home__layout .checklist-site-setup__heading' );
 		this.updateHomepageTaskSelector = By.css(
-			'.customer-home__layout .checklist__task:nth-child(2) button.checklist__task-title-button'
+			'.customer-home__layout .checklist__task:nth-child(3) button.checklist__task-title-button'
 		);
 		this.updateHomepageButtonSelector = By.css(
 			'.customer-home__layout button[data-e2e-action="update-homepage"]'
