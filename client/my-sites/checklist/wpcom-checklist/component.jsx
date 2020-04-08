@@ -111,7 +111,6 @@ class WpcomChecklistComponent extends PureComponent {
 		const { siteId } = this.props;
 
 		if ( taskId ) {
-			this.props.successNotice( 'You completed a task!', { duration: 5000 } );
 			this.props.requestSiteChecklistTaskUpdate( siteId, taskId );
 			this.trackTaskDismiss( taskId );
 		}
