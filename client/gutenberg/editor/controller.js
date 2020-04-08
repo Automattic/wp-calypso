@@ -125,6 +125,7 @@ export const authenticate = ( context, next ) => {
 
 	const siteUrl = getSiteUrl( state, siteId );
 	const wpAdminLoginUrl = addQueryArgs( { redirect_to: returnUrl }, `${ siteUrl }/wp-login.php` );
+	debugger;
 	window.location.replace( wpAdminLoginUrl );
 };
 
@@ -150,6 +151,7 @@ export const redirect = async ( context, next ) => {
 				? getGutenbergEditorUrl( state, siteId, postId, postType )
 				: getSiteEditorUrl( state, siteId );
 		// pass along parameters, for example press-this
+		debugger;
 		return window.location.replace( addQueryArgs( context.query, url ) );
 	}
 

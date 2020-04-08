@@ -543,6 +543,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 	onIframeLoaded = ( iframeUrl: string ) => {
 		if ( ! this.successfulIframeLoad ) {
+			debugger;
 			window.location.replace( iframeUrl );
 			return;
 		}
