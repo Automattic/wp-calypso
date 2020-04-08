@@ -111,10 +111,12 @@ function NuxPage( { alignBottom = false, heading, description, imgSrc } ) {
 			</div>
 			<div className="wpcom-block-editor-nux__visual">
 				<img
+					// Force remount so the stale image doesn't remain while new image is fetched
+					key={ imgSrc }
+					src={ imgSrc }
 					alt=""
 					aria-hidden="true"
 					className={ 'wpcom-block-editor-nux__image' + ( alignBottom ? ' align-bottom' : '' ) }
-					src={ imgSrc }
 				/>
 			</div>
 		</GuidePage>
