@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import BackupActivityLog from 'landing/jetpack-cloud/components/backup-activity-log';
+import ActivityCardList from 'landing/jetpack-cloud/components/activity-card-list';
 
 const BackupActivityLogPage: FunctionComponent = () => {
 	const translate = useTranslate();
@@ -23,9 +23,10 @@ const BackupActivityLogPage: FunctionComponent = () => {
 					'This is the complete event history for your site. Filter by date range and/or activity type.'
 				) }
 			</p>
-			{ siteId && <BackupActivityLog siteId={ siteId } /> }
+			{ siteId && <ActivityCardList siteId={ siteId } /> }
 		</div>
 	);
 };
 
 export default BackupActivityLogPage;
+s;
