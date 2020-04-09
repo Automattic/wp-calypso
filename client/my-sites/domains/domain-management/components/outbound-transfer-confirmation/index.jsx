@@ -2,6 +2,7 @@
  * External dependencies
  *
  */
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -13,6 +14,7 @@ import { Button } from '@automattic/components';
 import { acceptTransfer, cancelTransferRequest } from 'lib/domains/wapi-domain-info/actions';
 import notices from 'notices';
 import { getMaintenanceMessageFromError } from '../../../../../landing/domains/utils';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -24,6 +26,7 @@ class OutboundTransferConfirmation extends React.PureComponent {
 		domain: PropTypes.object.isRequired,
 		siteId: PropTypes.number.isRequired,
 		translate: PropTypes.func.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
 	};
 
 	constructor( props ) {
@@ -69,6 +72,7 @@ class OutboundTransferConfirmation extends React.PureComponent {
 				);
 			}
 		} );
+		this.props.recordTracksEvent( 'calypso_outbound_transfer_accept_click' );
 	};
 
 	onCancelTransferClick = () => {
@@ -93,6 +97,7 @@ class OutboundTransferConfirmation extends React.PureComponent {
 				}
 			}
 		);
+		this.props.recordTracksEvent( 'calypso_outbound_transfer_cancel_click' );
 	};
 
 	getErrorMessage( error ) {
@@ -170,4 +175,4 @@ class OutboundTransferConfirmation extends React.PureComponent {
 	}
 }
 
-export default localize( OutboundTransferConfirmation );
+export default connect( null, { recordTracksEvent } )( localize( OutboundTransferConfirmation ) );
