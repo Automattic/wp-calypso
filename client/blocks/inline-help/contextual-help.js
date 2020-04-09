@@ -968,11 +968,45 @@ const contextLinksForSection = {
 	],
 	domains: [
 		{
-			link: localizeUrl( 'https://en.support.wordpress.com/all-about-domains/' ),
-			post_id: 41171,
-			title: translate( 'All About Domains' ),
+			link: localizeUrl( 'https://en.support.wordpress.com/add-email/' ),
+			post_id: 34087,
+			title: translate( 'Add Email to your Domain' ),
 			description: translate(
-				'Set up your domain whether it’s registered with WordPress.com or elsewhere.'
+				'Want to use a custom email with your domain, such as info@yourgroovydomain.com? There are multiple ways to add email to your custom domain.'
+			),
+		},
+		{
+			link: localizeUrl( 'https://en.support.wordpress.com/domains/custom-dns/' ),
+			post_id: 6595,
+			title: translate( 'Manage Custom DNS' ),
+			description: translate(
+				'Custom DNS records are special settings that change how your domain works. They allow you to connect your domain to third-party services that are not hosted on WordPress.com, such as an email provider.'
+			),
+		},
+		{
+			link: localizeUrl(
+				'https://en.support.wordpress.com/move-domain/transfer-domain-registration/'
+			),
+			post_id: 41298,
+			title: translate( 'Transfer a Domain to Another Registrar' ),
+			description: translate(
+				'This article walks you through transferring your domain registration to another registrar. Your domain will need to be unlocked and privacy removed (if applicable) for the transfer.'
+			),
+		},
+		{
+			link: localizeUrl( 'https://en.support.wordpress.com/domain-mapping-vs-domain-transfer/' ),
+			post_id: 41298,
+			title: translate( 'Connect an Existing Domain' ),
+			description: translate(
+				'There are two ways to use a domain that you bought with another registrar. (A registrar is a company with whom you can buy domains).'
+			),
+		},
+		{
+			link: localizeUrl( 'https://en.support.wordpress.com/domains/' ),
+			post_id: 1988,
+			title: translate( 'All about domains' ),
+			description: translate(
+				'A domain name is an address people use to visit your site. It tells the web browser where to look for your site. Just like a street address, a domain is how people visit your website online. And, like having a sign in front of your store, a custom domain name helps give your site a professional look.'
 			),
 		},
 	],
