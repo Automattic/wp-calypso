@@ -41,7 +41,7 @@ class BackupDetailPage extends Component {
 
 		const backups = logs.filter( event => event.rewindId === backupId );
 		const thisBackup = backups[ 0 ];
-		const meta = get( thisBackup, 'activityDescription[2]', 'children[0]', '' );
+		const meta = get( thisBackup, 'activityDescription[2].children[0]', '' );
 
 		const metaList =
 			meta &&

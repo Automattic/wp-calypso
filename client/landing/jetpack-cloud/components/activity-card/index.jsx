@@ -15,6 +15,11 @@ import ActivityActor from 'my-sites/activity/activity-log-item/activity-actor';
 import ActivityDescription from 'my-sites/activity/activity-log-item/activity-description';
 import { applySiteOffset } from 'lib/site/timezone';
 import PopoverMenu from 'components/popover/menu';
+import {
+	backupDetailPath,
+	backupDownloadPath,
+	backupRestorePath,
+} from 'landing/jetpack-cloud/sections/backups/paths';
 
 /**
  * Style dependencies
@@ -31,16 +36,17 @@ class ActivityCard extends Component {
 		};
 	}
 
+	popoverContext = React.createRef();
+
 	togglePopoverMenu = () => this.setState( { showPopoverMenu: ! this.state.showPopoverMenu } );
 	closePopoverMenu = () => this.setState( { showPopoverMenu: false } );
-	createRestoreUrl = restoreId => `/backups/${ this.props.siteSlug }/restore/${ restoreId }`;
-	createDownloadUrl = downloadId => `/backups/${ this.props.siteSlug }/download/${ downloadId }`;
-	createDetailUrl = backupId => `/backups/${ this.props.siteSlug }/detail/${ backupId }`;
-	triggerRestore = () => page.redirect( this.createRestoreUrl( this.props.activity.rewindId ) );
-	triggerDownload = () => page.redirect( this.createDownloadUrl( this.props.activity.rewindId ) );
-	triggerDetails = () => page.redirect( this.createDetailUrl( this.props.activity.rewindId ) );
 
-	popoverContext = React.createRef();
+	triggerRestore = () =>
+		page.redirect( backupRestorePath( this.props.siteSlug, this.props.activity.rewindId ) );
+	triggerDownload = () =>
+		page.redirect( backupDownloadPath( this.props.siteSlug, this.props.activity.rewindId ) );
+	triggerDetails = () =>
+		page.redirect( backupDetailPath( this.props.siteSlug, this.props.activity.rewindId ) );
 
 	render() {
 		const { activity, allowRestore, gmtOffset, timezone, translate } = this.props;
