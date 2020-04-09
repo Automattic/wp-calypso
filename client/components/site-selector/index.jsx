@@ -511,6 +511,11 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 			}
 		}
 
+		// Jetpack Cloud: default to /backups/ when in the details of a particular backup
+		if ( path.match( /^\/backups\/.*\/(download|restore|detail)/ ) ) {
+			path = '/backups';
+		}
+
 		return path;
 	}
 };
