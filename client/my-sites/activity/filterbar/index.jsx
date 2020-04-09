@@ -30,7 +30,7 @@ export class Filterbar extends Component {
 		showActivityDates: false,
 	};
 
-	defaultProps = {
+	static defaultProps = {
 		useActivityTypeSelector: true,
 		useDateRangeSelector: true,
 	};
@@ -74,8 +74,12 @@ export class Filterbar extends Component {
 	};
 
 	renderCloseButton = () => {
-		const { filter } = this.props;
-		if ( filter && ( filter.group || filter.before || filter.after ) ) {
+		const { filter, useActivityTypeSelector, useDateRangeSelector } = this.props;
+		if (
+			filter &&
+			( ( filter.group && useActivityTypeSelector ) ||
+				( ( filter.before || filter.after ) && useDateRangeSelector ) )
+		) {
 			return (
 				<Button onClick={ this.handleRemoveFilters } borderless className="filterbar__icon-reset">
 					<Gridicon icon="cross" />

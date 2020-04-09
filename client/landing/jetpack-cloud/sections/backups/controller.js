@@ -39,11 +39,9 @@ export function backupActivity( context, next ) {
 	next();
 }
 
-/* handles /backups/:site/detail/:backupId, see `backupDetailPath` */
+/* handles /backups/:site/detail/:rewindId, see `backupDetailPath` */
 export function backupDetail( context, next ) {
-	const backupId = context.params.backupId;
-
-	context.primary = <BackupDetailPage backupId={ backupId } />;
+	context.primary = <BackupDetailPage rewindId={ context.params.rewindId } />;
 	next();
 }
 

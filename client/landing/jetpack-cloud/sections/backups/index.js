@@ -42,9 +42,9 @@ export default function() {
 			clientRender
 		);
 
-		/* handles /backups/:site/detail/:backupId, see `backupDetailPath` */
+		/* handles /backups/:site/detail/:rewindId, see `backupDetailPath` */
 		page(
-			backupDetailPath( ':site', ':backupId' ),
+			backupDetailPath( ':site', ':rewindId' ),
 			siteSelection,
 			navigation,
 			backupDetail,
