@@ -36,7 +36,7 @@ function forceTeamA8C( context, next ) {
 
 export async function lazyLoadDependencies() {
 	const isBrowser = typeof window === 'object';
-	if ( isBrowser && config.isEnabled( 'lasagna' ) ) {
+	if ( isBrowser && config.isEnabled( 'lasagna' ) && config.isEnabled( 'reader' ) ) {
 		const lasagnaMiddleware = await import(
 			/* webpackChunkName: "lasagnaMiddleware" */ 'state/lasagna/middleware.js'
 		);
@@ -45,6 +45,8 @@ export async function lazyLoadDependencies() {
 }
 
 export default function () {
+	lazyLoadDependencies();
+
 	if ( config.isEnabled( 'reader' ) ) {
 		page(
 			'/read',

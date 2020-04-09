@@ -38,11 +38,6 @@ async function loadSection( context, sectionDefinition ) {
 		const requiredModule = await load( sectionDefinition.name, sectionDefinition.module );
 		// call the module initialization function (possibly async, registers page.js handlers etc.)
 		await requiredModule.default( controller.clientRouter, addReducerToStore( context.store ) );
-
-		// lazy load dependencies before section is activated
-		if ( requiredModule.lazyLoadDependencies ) {
-			await requiredModule.lazyLoadDependencies();
-		}
 	} finally {
 		context.store.dispatch( { type: 'SECTION_SET', isLoading: false } );
 
