@@ -12,15 +12,36 @@ import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
 import {
 	backups,
+	backupActivity,
 	backupDetail,
 	backupDownload,
 	backupRestore,
 	wrapInSiteOffsetProvider,
 } from 'landing/jetpack-cloud/sections/backups/controller';
-import { backupMainPath, backupRestorePath, backupDownloadPath, backupDetailPath } from './paths';
+import {
+	backupMainPath,
+	backupActivityPath,
+	backupRestorePath,
+	backupDownloadPath,
+	backupDetailPath,
+} from './paths';
 
 export default function() {
 	if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
+		/* handles /backups/activity, see `backupActivityPath` */
+		page( backupActivityPath(), siteSelection, sites, makeLayout, clientRender );
+
+		/* handles /backups/activity/:site, see `backupActivityPath` */
+		page(
+			backupActivityPath( ':site' ),
+			siteSelection,
+			navigation,
+			backupActivity,
+			wrapInSiteOffsetProvider,
+			makeLayout,
+			clientRender
+		);
+
 		/* handles /backups/:site/detail/:backupId, see `backupDetailPath` */
 		page(
 			backupDetailPath( ':site', ':backupId' ),
