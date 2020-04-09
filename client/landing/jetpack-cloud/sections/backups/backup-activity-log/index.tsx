@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getHttpData } from 'state/data-layer/http-data';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestActivityLogs, getRequestActivityLogsId } from 'state/data-getters';
-import { updateFilter } from 'state/activity-log/actions';
+import { setFilter } from 'state/activity-log/actions';
 import ActivityCardList from 'landing/jetpack-cloud/components/activity-card-list';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 
@@ -25,7 +25,7 @@ const BackupActivityLogPage: FunctionComponent = () => {
 
 	// when we load this page clear the filter
 	useEffect( () => {
-		dispatch( updateFilter( siteId, { page: 1 } ) );
+		dispatch( setFilter( siteId, { page: 1 } ) );
 	}, [ dispatch, siteId ] );
 
 	// when the filter changes, re-request the logs
