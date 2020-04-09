@@ -46,7 +46,6 @@
 /client/lib/domains/google-apps-users @Automattic/larimar
 /client/lib/gsuite @Automattic/larimar
 /client/me/purchases/remove-purchase/index.jsx @Automattic/larimar
-/client/my-sites/checklist/wpcom-checklist/component.jsx @Automattic/larimar
 /client/my-sites/checkout/checkout-thank-you/google-apps-details.jsx @Automattic/larimar
 /client/my-sites/checkout/checkout-thank-you/index.jsx @Automattic/larimar
 /client/my-sites/checkout/checkout/domain-details-form.jsx @Automattic/larimar
