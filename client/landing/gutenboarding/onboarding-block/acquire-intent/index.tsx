@@ -22,7 +22,7 @@ const AcquireIntent: FunctionComponent = () => {
 	const makePath = usePath();
 
 	return (
-		<div className="acquire-intent">
+		<div className="gutenboarding-page acquire-intent">
 			<div className="acquire-intent__questions">
 				<VerticalSelect />
 				{ /* We are rendering everything to keep the content vertically centered on desktop while preventing jumping */ }

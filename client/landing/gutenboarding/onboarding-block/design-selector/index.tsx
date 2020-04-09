@@ -47,7 +47,7 @@ const DesignSelector: React.FunctionComponent = () => {
 	};
 
 	return (
-		<div className="design-selector">
+		<div className="gutenboarding-page design-selector">
 			<div className="design-selector__header">
 				<div className="design-selector__heading">
 					<Title>{ __( 'Choose a starting design' ) }</Title>
