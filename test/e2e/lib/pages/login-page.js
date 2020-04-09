@@ -27,7 +27,6 @@ export default class LoginPage extends AsyncBaseContainer {
 		const changeAccountSelector = By.css( '#loginAsAnotherUser' );
 
 		const setUsername = async () => {
-			// If there is already a logged in user, we display the Gravatar and 'Continue as [user]' button and hide login form
 			await driverHelper.waitTillPresentAndDisplayed( driver, userNameSelector );
 			await driverHelper.waitTillFocused( driver, userNameSelector );
 			await driverHelper.setWhenSettable( driver, userNameSelector, username );
