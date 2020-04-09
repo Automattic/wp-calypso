@@ -5,7 +5,12 @@ import '@automattic/calypso-polyfills';
 import { setLocaleData } from '@wordpress/i18n';
 import { I18nProvider } from '@automattic/react-i18n';
 import { getLanguageSlugs } from '../../lib/i18n-utils';
-import { getLanguageFile, switchWebpackCSS } from '../../lib/i18n-utils/switch-locale';
+import {
+	getLanguageFile,
+	getLanguageManifestFile,
+	getTranslationChunkFile,
+	switchWebpackCSS,
+} from '../../lib/i18n-utils/switch-locale';
 import React from 'react';
 import ReactDom from 'react-dom';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
@@ -39,6 +44,7 @@ function generateGetSuperProps() {
 }
 
 const DEFAULT_LOCALE_SLUG: string = config( 'i18n_default_locale_slug' );
+const USE_TRANSLATION_CHUNKS: string = config.isEnabled( 'use-translation-chunks' );
 
 type User = import('@automattic/data-stores').User.CurrentUser;
 
@@ -77,8 +83,13 @@ window.AppBoot = async () => {
 
 	let locale = DEFAULT_LOCALE_SLUG;
 	try {
-		const [ userLocale, localeData ] = await getLocale();
+		const [ userLocale, { translatedChunks, ...localeData } ] = await getLocale();
 		setLocaleData( localeData );
+
+		if ( USE_TRANSLATION_CHUNKS ) {
+			setupTranslationChunks( userLocale, translatedChunks );
+		}
+
 		locale = userLocale;
 
 		// FIXME: Use rtl detection tooling
@@ -146,6 +157,16 @@ async function getLocaleData( locale: string ) {
 	if ( locale === DEFAULT_LOCALE_SLUG ) {
 		return {};
 	}
+
+	if ( USE_TRANSLATION_CHUNKS ) {
+		const manifest = await getLanguageManifestFile( locale );
+		const localeData = {
+			...manifest.locale,
+			translatedChunks: manifest.translatedChunks,
+		};
+		return localeData;
+	}
+
 	return getLanguageFile( locale );
 }
 
@@ -167,4 +188,35 @@ function waitForCurrentUser(): Promise< User | undefined > {
 
 function getLocaleFromUser( user: User ): string {
 	return user.locale_variant || user.language;
+}
+
+function setupTranslationChunks( localeSlug: string, translatedChunks: string[] = [] ) {
+	if ( ! window.__requireChunkCallback__ ) {
+		return;
+	}
+
+	const loadedTranslationChunks = {};
+	const loadTranslationForChunkIfNeeded = chunkId => {
+		if ( ! translatedChunks.includes( chunkId ) || loadedTranslationChunks[ chunkId ] ) {
+			return;
+		}
+
+		return getTranslationChunkFile( chunkId, localeSlug ).then( translations => {
+			setLocaleData( translations );
+			loadedTranslationChunks[ chunkId ] = true;
+		} );
+	};
+	const installedChunks = new Set(
+		( window.installedChunks || [] ).concat( window.__requireChunkCallback__.getInstalledChunks() )
+	);
+
+	installedChunks.forEach( chunkId => {
+		loadTranslationForChunkIfNeeded( chunkId );
+	} );
+
+	window.__requireChunkCallback__.add( ( { publicPath, scriptSrc }, promises ) => {
+		const chunkId = scriptSrc.replace( publicPath, '' ).replace( /\.js$/, '' );
+
+		promises.push( loadTranslationForChunkIfNeeded( chunkId ) );
+	} );
 }
