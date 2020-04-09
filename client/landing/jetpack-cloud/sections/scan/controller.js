@@ -12,7 +12,8 @@ import ScanHistoryPage from './history';
 import ScanUpsellPage from './upsell';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
-import { JETPACK_SCAN_PRODUCTS } from 'lib/products-values/constants';
+import { JETPACK_SCAN_PRODUCTS, PRODUCT_JETPACK_SCAN } from 'lib/products-values/constants';
+import { getPlan, planHasFeature } from 'lib/plans';
 import { fetchSitePurchases } from 'state/purchases/actions';
 import { makeLayout, render as clientRender } from 'controller';
 
@@ -23,7 +24,13 @@ export function showUpsellIfNoScan( context, next ) {
 	let purchases = getSitePurchases( getState(), siteId );
 
 	const showUpsellOrNext = () => {
-		if ( purchases.find( purchase => JETPACK_SCAN_PRODUCTS.includes( purchase.productSlug ) ) ) {
+		const hasScan = purchases.find(
+			purchase =>
+				JETPACK_SCAN_PRODUCTS.includes( purchase.productSlug ) ||
+				( getPlan( purchase.productSlug ) &&
+					planHasFeature( purchase.productSlug, PRODUCT_JETPACK_SCAN ) )
+		);
+		if ( hasScan ) {
 			return next();
 		}
 		context.primary = <ScanUpsellPage />;
