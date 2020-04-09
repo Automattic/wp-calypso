@@ -36,6 +36,7 @@ import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/u
 import guessTimezone from 'lib/i18n-utils/guess-timezone';
 import { preventWidows } from 'lib/formatting';
 import scrollTo from 'lib/scroll-to';
+import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import isVipSite from 'state/selectors/is-vip-site';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
@@ -504,7 +505,7 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	renderLaunchSite() {
-		const { translate, siteDomains, siteSlug, siteId, isPaidPlan } = this.props;
+		const { translate, siteDomains, siteSlug, siteId, isPaidPlan, isComingSoon } = this.props;
 
 		const launchSiteClasses = classNames( 'site-settings__general-settings-launch-site-button', {
 			'site-settings__disable-privacy-settings': ! siteDomains.length,
@@ -531,7 +532,7 @@ export class SiteSettingsFormGeneral extends Component {
 				<Card className="site-settings__general-settings-launch-site">
 					<div className="site-settings__general-settings-launch-site-text">
 						<p>
-							{ btnText
+							{ isComingSoon
 								? translate(
 										"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
 								  )
@@ -707,6 +708,7 @@ const connectComponent = connect(
 				? ownProps.withComingSoonOption
 				: 'variant' === abtest( 'ATPrivacy' ),
 			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
+			isComingSoon: isSiteComingSoon( state, siteId ),
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			siteIsJetpack,
 			siteIsVip: isVipSite( state, siteId ),
