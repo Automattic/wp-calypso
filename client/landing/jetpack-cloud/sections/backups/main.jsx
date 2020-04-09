@@ -109,7 +109,7 @@ class BackupsPage extends Component {
 				// Looking for the last backup on the date
 				if (
 					! backupsOnSelectedDate.lastBackup &&
-					backupStatusNames.includes( log.activityName )
+					includes( backupStatusNames, log.activityName )
 				) {
 					backupsOnSelectedDate.lastBackup = log;
 				} else {
