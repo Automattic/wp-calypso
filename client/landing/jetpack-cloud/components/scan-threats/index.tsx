@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { numberFormat, translate } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import { Button } from '@automattic/components';
@@ -17,6 +17,7 @@ import ThreatDialog from 'landing/jetpack-cloud/components/threat-dialog';
 import ThreatItem from 'landing/jetpack-cloud/components/threat-item';
 import { Threat, ThreatAction } from 'landing/jetpack-cloud/components/threat-item/types';
 import getJetpackCredentials from 'state/selectors/get-jetpack-credentials';
+import { fixThreatAlert, ignoreThreatAlert } from 'state/jetpack/site-alerts/actions';
 
 /**
  * Style dependencies
@@ -29,15 +30,18 @@ interface Props {
 		name: string;
 	};
 	threats: Array< Threat >;
-	userHasCredentials: boolean;
 }
 
-const ScanThreats = ( { site, threats, userHasCredentials }: Props ) => {
+const ScanThreats = ( { site, threats }: Props ) => {
 	const [ fixingThreats, setFixingThreats ] = React.useState< Array< Threat > >( [] );
 	const [ selectedThreat, setSelectedThreat ] = React.useState< Threat >( threats[ 0 ] );
 	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
 	const [ showFixAllThreatsDialog, setShowFixAllThreatsDialog ] = React.useState( false );
 	const [ actionToPerform, setActionToPerform ] = React.useState< ThreatAction >( 'fix' );
+	const userHasCredentials = useSelector(
+		state => ! isEmpty( getJetpackCredentials( state, site.ID, 'main' ) )
+	);
+	const dispatch = useDispatch();
 
 	const openFixAllThreatsDialog = React.useCallback( () => {
 		setShowFixAllThreatsDialog( true );
@@ -54,18 +58,19 @@ const ScanThreats = ( { site, threats, userHasCredentials }: Props ) => {
 	}, [] );
 
 	const confirmAction = React.useCallback( () => {
-		window.alert(
-			`We are going to ${ actionToPerform } threat ${ selectedThreat?.id } on site ${ site.name }`
-		);
+		const actionCreator = actionToPerform === 'fix' ? fixThreatAlert : ignoreThreatAlert;
 		closeDialog();
 		setFixingThreats( stateThreats => [ ...stateThreats, selectedThreat ] );
-	}, [ actionToPerform, closeDialog, selectedThreat, site ] );
+		dispatch( actionCreator( site.ID, selectedThreat.id ) );
+	}, [ actionToPerform, closeDialog, dispatch, selectedThreat, site ] );
 
 	const confirmFixAllThreats = React.useCallback( () => {
-		window.alert( `Starting to fix ${ threats.length } threats found...` );
+		threats.forEach( threat => {
+			dispatch( fixThreatAlert( site.ID, threat.id ) );
+		} );
 		setShowFixAllThreatsDialog( false );
 		setFixingThreats( threats );
-	}, [ threats ] );
+	}, [ dispatch, site, threats ] );
 
 	return (
 		<>
@@ -146,11 +151,4 @@ const ScanThreats = ( { site, threats, userHasCredentials }: Props ) => {
 	);
 };
 
-const mapStateToProps = ( state, { site } ) => {
-	return {
-		site: site,
-		userHasCredentials: ! isEmpty( getJetpackCredentials( state, site.ID, 'main' ) ),
-	};
-};
-
-export default connect( mapStateToProps )( ScanThreats );
+export default ScanThreats;
