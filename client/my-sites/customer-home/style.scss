@@ -59,7 +59,7 @@
 .customer-home__card-subheader {
 	color: var( --color-text-subtle );
 	font-size: 0.85rem;
-	margin: -0.5rem 0 1rem;
+	margin-bottom: 16px;
 }
 
 .customer-home__layout {
@@ -73,7 +73,9 @@
 }
 .customer-home__layout-col {
 	.card-heading {
-		margin-top: -8px;
+		font-weight: 500;
+		margin-top: 0;
+		margin-bottom: 4px;
 	}
 
 	a:last-child .vertical-nav-item {
@@ -86,10 +88,6 @@
 	}
 }
 .customer-home__layout-col-right {
-	.vertical-nav {
-		margin-top: 0;
-	}
-
 	.vertical-nav-item {
 		border-bottom: 1px solid var( --color-neutral-5 );
 		box-shadow: none;

@@ -44,7 +44,9 @@ const FreePhotoLibrary = ( { openSupportArticleDialogAndTrack } ) => {
 					/>
 				</button>
 			) }
-			<CardHeading>{ translate( 'Over 40,000 Free Photos' ) }</CardHeading>
+			<CardHeading tagName="h2" size={ 16 }>
+				{ translate( 'Over 40,000 free photos' ) }
+			</CardHeading>
 			<p className="free-photo-library__text customer-home__card-subheader">
 				{ translate(
 					'The WordPress.com Free Photo Library integrates ' +

@@ -22,7 +22,9 @@ const ChecklistSiteSetup = ( { checklistMode } ) => {
 	return (
 		<div className="checklist-site-setup">
 			<Card className="checklist-site-setup__heading">
-				<CardHeading>{ translate( 'Site Setup List' ) }</CardHeading>
+				<CardHeading tagName="h2" size={ 16 }>
+					{ translate( 'Site setup list' ) }
+				</CardHeading>
 			</Card>
 			<WpcomChecklist displayMode={ checklistMode } />
 		</div>

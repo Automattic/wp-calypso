@@ -150,15 +150,17 @@ export const QuickLinks = ( {
 	if ( ! isMobile() ) {
 		return (
 			<Card className="quick-links">
-				<CardHeading>{ translate( 'Quick Links' ) }</CardHeading>
+				<CardHeading tagName="h2" size={ 16 }>
+					{ translate( 'Quick links' ) }
+				</CardHeading>
 				{ quickLinks }
 			</Card>
 		);
 	}
 	return (
 		<FoldableCard
-			className="quick-links card-heading-21"
-			header={ translate( 'Quick Links' ) }
+			className="quick-links card-heading-16"
+			header={ translate( 'Quick links' ) }
 			expanded
 		>
 			{ quickLinks }

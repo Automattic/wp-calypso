@@ -23,22 +23,18 @@ import { getSelectedEditor } from 'state/selectors/get-selected-editor';
  */
 import './style.scss';
 
-/**
- * Image dependencies
- */
-import happinessIllustration from 'assets/images/customer-home/happiness.png';
-
 const Support = ( { trackContactAction, trackDocsAction } ) => {
 	const translate = useTranslate();
 
 	return (
 		<Card className="support">
-			<CardHeading>{ translate( 'Support' ) }</CardHeading>
+			<CardHeading tagName="h2" size={ 16 }>
+				{ translate( 'Support' ) }
+			</CardHeading>
 			<h6 className="support__header customer-home__card-subheader">
-				{ translate( 'Get all the help you need' ) }
+				{ translate( 'Get all the help you need.' ) }
 			</h6>
 			<div className="support__content">
-				<img src={ happinessIllustration } alt={ translate( 'Support' ) } />
 				<VerticalNav>
 					<VerticalNavItem
 						path={ localizeUrl( 'https://wordpress.com/support' ) }

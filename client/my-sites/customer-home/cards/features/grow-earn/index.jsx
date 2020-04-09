@@ -29,9 +29,11 @@ export const GrowEarn = ( { siteSlug, expandToolsAndTrack } ) => {
 
 	return (
 		<Card className="grow-earn">
-			<CardHeading>{ translate( 'Grow & Earn' ) }</CardHeading>
+			<CardHeading tagName="h2" size={ 16 }>
+				{ translate( 'Grow & earn' ) }
+			</CardHeading>
 			<h6 className="grow-earn__card-subheader customer-home__card-subheader">
-				{ translate( 'Grow your audience and earn money' ) }
+				{ translate( 'Grow your audience and earn money.' ) }
 			</h6>
 			<VerticalNav>
 				<VerticalNavItem

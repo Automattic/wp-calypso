@@ -1,22 +1,3 @@
-.customer-home__layout .support .support__content {
-	display: flex;
-	justify-content: space-between;
-
-	img {
-		margin: 0 7% 0 0;
-		width: 137px;
-		height: 119px;
-
-		@include breakpoint( '>960px' ) {
-			display: none;
-		}
-	}
-
-	.vertical-nav {
-		width: 60%;
-
-		@include breakpoint( '>960px' ) {
-			width: 100%;
-		}
-	}
+.customer-home__layout .support {
+	padding-bottom: 12px;
 }

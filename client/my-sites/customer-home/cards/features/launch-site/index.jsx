@@ -26,9 +26,11 @@ export const LaunchSite = ( { isPrimary, launchSiteAndTrack, siteId } ) => {
 
 	return (
 		<Card className="launch-site">
-			<CardHeading>{ translate( 'Site Privacy' ) }</CardHeading>
+			<CardHeading tagName="h2" size={ 16 }>
+				{ translate( 'Site privacy' ) }
+			</CardHeading>
 			<h6 className="customer-home__card-subheader launch-site__card-subheader">
-				{ translate( 'Your site is private' ) }
+				{ translate( 'Your site is private.' ) }
 			</h6>
 			<p>
 				{ translate(

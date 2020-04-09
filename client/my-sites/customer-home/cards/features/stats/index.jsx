@@ -63,7 +63,7 @@ export const Stats = ( {
 						) }
 					</>
 				) }
-				<CardHeading>
+				<CardHeading tagName="h2" size={ 16 }>
 					{ config.isEnabled( 'home/experimental-layout' )
 						? translate( 'Page views' )
 						: translate( 'Stats at a glance' ) }

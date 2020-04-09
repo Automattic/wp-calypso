@@ -1,6 +1,10 @@
 .checklist-site-setup {
 	.checklist-site-setup__heading {
-		margin-bottom: -16px;
+		margin-bottom: 0;
+
+		.card-heading {
+			margin-bottom: 0;
+		}
 	}
 
 	.checklist__tasks {

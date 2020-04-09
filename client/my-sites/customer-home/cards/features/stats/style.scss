@@ -1,13 +1,12 @@
 .stats__subheader {
 	color: var( --color-text-subtle );
 	font-size: 0.85rem;
-	margin: -0.5rem 0 1rem;
 }
 
 .stats__data {
 	display: flex;
 	justify-content: center;
-	margin-bottom: 1rem;
+	margin: 16px 0;
 
 	@include breakpoint( '1040px-1280px' ) {
 		flex-direction: column;
