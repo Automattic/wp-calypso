@@ -3,34 +3,81 @@
 @import 'assets/stylesheets/shared/animation'; // Needed for the placeholder
 @import '../../mixins';
 
-.domain-picker {
-	min-width: 530px;
+.domain-picker.components-panel {
+	border: none;
 
 	.components-panel__body.is-opened {
 		padding: 36px;
+	}
+
+	@include break-small {
+		min-width: 520px;
 	}
 }
 
 .domain-picker__header {
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 14px;
+	align-items: flex-start;
+	margin-bottom: 27px;
 }
 
 .domain-picker__header-title {
 	@include onboarding-font-recoleta;
 	font-size: 26px;
+	line-height: 35px;
+	margin-bottom: 3px;
 }
 
-.domain-picker__close-button {
-	font-size: 14px;
-	text-transform: lowercase;
+.domain-picker__search {
+	position: relative;
+	margin-bottom: -7px;
 
-	&.components-button.is-tertiary {
-		color: var( --color-neutral-40 );
-		text-decoration: underline;
+	input[type='text'].components-text-control__input {
+		padding: 6px 40px 6px 16px;
+		height: 38px;
+		background: #f0f0f0;
+		border: none;
+
+		&::placeholder {
+			color: var( --studio-black );
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 2px var( --studio-blue-30 );
+			background: var( --studio-white );
+		}
 	}
+
+	svg {
+		position: absolute;
+		top: 6px;
+		right: 8px;
+	}
+}
+
+.domain-picker__free-text {
+	color: var( --studio-green-40 );
+}
+
+.domain-picker__footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: 0 -36px -36px;
+	padding: 24px 36px;
+	border-top: 1px solid #f0f0f0;
+}
+
+.domain-picker__footer-options.components-button {
+	@include onboarding-medium-text;
+	color: var( --color-neutral-100 );
+}
+
+.domain-picker__footer-button.components-button {
+	@include onboarding-medium-text;
+	padding: 0 24px;
+	height: 38px;
 }
 
 .domain-picker__connect-domain {
@@ -46,44 +93,18 @@
 }
 
 .domain-picker__panel-row {
+
 	// Increasing specificity because @wordpress/components stylesheets are loaded after gutenboarding stylesheets.
 	// See https://github.com/Automattic/wp-calypso/pull/38554/commits/e1f9673bcfd9eaa6469a0cfecda9b915a520961a
 	// See https://github.com/WordPress/gutenberg/pull/19535
 	&.components-panel__row {
 		flex-direction: column;
 		align-items: stretch;
+
+		label {
+			max-width: 100%;
+		}
 	}
-
-	+ .domain-picker__panel-row {
-		margin-top: 36px;
-	}
-}
-
-.domain-picker__suggestion-header {
-	display: flex;
-	justify-content: space-between;
-	padding-bottom: 12px;
-}
-
-.domain-picker__suggestion-header-title {
-	font-size: 12px;
-	font-weight: 600;
-	letter-spacing: 2px;
-	text-transform: uppercase;
-	color: var( --color-neutral-40 );
-}
-
-.domain-picker__suggestion-header-description {
-	font-size: 12px;
-	color: var( --color-neutral-40 );
-
-	em {
-		font-weight: 600;
-	}
-}
-
-.domain-picker__suggestion-item-group {
-	border: 1px solid var( --color-neutral-5 );
 }
 
 .domain-picker__suggestion-none {
@@ -93,16 +114,20 @@
 	width: 100%;
 	height: 46px;
 	border-radius: 0;
-	padding: 0 16px;
+	padding: 0;
+	margin-bottom: 10px;
 	font-size: 14px;
 }
+
 .domain-picker__suggestion-item {
 	// Increasing specificity because @wordpress/components stylesheets are loaded after gutenboarding stylesheets.
 	// See https://github.com/Automattic/wp-calypso/pull/38554/commits/e1f9673bcfd9eaa6469a0cfecda9b915a520961a
 	// See https://github.com/WordPress/gutenberg/pull/19535
-	&.components-button {
-		@extend .domain-picker__suggestion-none;
+	@extend .domain-picker__suggestion-none;
+	cursor: pointer;
+	margin-bottom: 7px;
 
+	&.components-button {
 		&.is-tertiary {
 			color: var( --color-text );
 
@@ -112,21 +137,58 @@
 			}
 		}
 	}
-
-	+ .domain-picker__suggestion-item {
-		border-top: 1px solid var( --color-neutral-5 );
-	}
 }
 
 .domain-picker__suggestion-item-name {
+	letter-spacing: 0.4px;
+
+	input[type='radio'].domain-picker__suggestion-radio-button {
+		width: 16px;
+		height: 16px;
+		margin: 0 12px 0 0;
+		padding: 0;
+		vertical-align: middle;
+		position: relative;
+
+		&:checked {
+			border-color: var( --studio-blue-30 );
+			background-color: var( --studio-blue-30 );
+
+			&::before {
+				content: '';
+				width: 12px;
+				height: 12px;
+				border: 2px solid white;
+				border-radius: 50%;
+				position: absolute;
+				margin: 0;
+				background: transparent;
+			}
+
+			&:focus {
+				border-color: var( --studio-blue-30 );
+				box-shadow: 0 0 0 1px var( --studio-blue-30 );
+			}
+		}
+
+		&:not( :disabled ):focus,
+		&:not( :disabled ):hover {
+			border-color: var( --studio-blue-30 );
+			box-shadow: 0 0 0 1px var( --studio-blue-30 );
+		}
+	}
+
 	&.placeholder {
 		@include placeholder();
 		min-width: 30%;
+		background-position: 30px;
+		background-repeat: no-repeat;
 	}
 }
 
 .domain-picker__has-domain {
 	align-items: center;
+
 	.components-button {
 		color: var( --studio-blue-30 );
 	}
@@ -134,11 +196,14 @@
 
 .domain-picker__badge {
 	display: inline-flex;
-	border-radius: 1000px;
-	padding: 0.3em 1em;
+	border-radius: 2px;
+	padding: 0 10px;
+	line-height: 20px;
+	height: 20px;
 	align-items: center;
-	font-size: 0.75em;
-	margin-left: 1em;
+	font-size: 10px;
+	margin-left: 10px;
+	text-transform: uppercase;
 
 	background-color: var( --studio-blue-50 );
 	color: var( --color-text-inverted );
@@ -150,15 +215,15 @@
 }
 
 .domain-picker__price {
-	color: var( --studio-gray-20 );
+	color: var( --studio-gray-40 );
 	white-space: nowrap;
-
-	&.is-paid {
-		text-decoration: line-through;
-	}
 
 	&.placeholder {
 		@include placeholder();
 		min-width: 64px;
 	}
+}
+
+.domain-picker__price-is-paid {
+	text-decoration: line-through;
 }

@@ -4,6 +4,7 @@
 import { combineReducers, withStorageKey } from 'state/utils';
 
 import conversations from './conversations/reducer';
+import fullView from './full-view/reducer';
 import feeds from './feeds/reducer';
 import feedSearches from './feed-searches/reducer';
 import follows from './follows/reducer';
@@ -24,6 +25,7 @@ const combinedReducer = combineReducers( {
 	feeds,
 	feedSearches,
 	follows,
+	fullView,
 	lists,
 	posts,
 	recommendedSites,

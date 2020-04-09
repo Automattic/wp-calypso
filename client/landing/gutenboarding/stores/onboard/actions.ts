@@ -67,11 +67,9 @@ export const resetOnboardStore = () => ( {
 	type: 'RESET_ONBOARD_STORE' as const,
 } );
 
-export const setSiteWasCreatedForDomainPurchase = (
-	siteWasCreatedForDomainPurchase: boolean
-) => ( {
-	type: 'SET_SITE_WAS_CREATED_FOR_DOMAIN_PURCHASE' as const,
-	siteWasCreatedForDomainPurchase,
+export const setSelectedSite = ( selectedSite: number ) => ( {
+	type: 'SET_SELECTED_SITE' as const,
+	selectedSite,
 } );
 
 export function* createSite(
@@ -126,8 +124,8 @@ export type OnboardAction = ReturnType<
 	| typeof setDomainSearch
 	| typeof setFonts
 	| typeof setSelectedDesign
+	| typeof setSelectedSite
 	| typeof setSiteTitle
 	| typeof setSiteVertical
-	| typeof setSiteWasCreatedForDomainPurchase
 	| typeof togglePageLayout
 >;

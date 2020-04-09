@@ -16,7 +16,7 @@ import { STORE_KEY } from '../../stores/onboard';
 import designs from '../../available-designs';
 
 const FontSelect: React.FunctionComponent = () => {
-	const { __: NO__ } = useI18n();
+	const { __ } = useI18n();
 	const { selectedDesign, selectedFonts } = useSelect( select => select( STORE_KEY ).getState() );
 	const { setFonts } = useDispatch( STORE_KEY );
 
@@ -36,7 +36,7 @@ const FontSelect: React.FunctionComponent = () => {
 			</span>
 		</>
 	) : (
-		NO__( 'Default fonts' )
+		__( 'Default fonts' )
 	);
 
 	const fontPairingsFilter = ( pair: FontPair ): boolean => {

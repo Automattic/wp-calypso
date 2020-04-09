@@ -78,17 +78,17 @@ class CurrentPlan extends Component {
 	}
 
 	renderThankYou() {
-		const { currentPlan, product, requestProduct } = this.props;
+		const { currentPlan, product } = this.props;
 
-		if ( requestProduct && startsWith( product, 'jetpack_backup' ) ) {
+		if ( startsWith( product, 'jetpack_backup' ) ) {
 			return <BackupProductThankYou />;
 		}
 
-		if ( requestProduct && startsWith( product, 'jetpack_scan' ) ) {
+		if ( startsWith( product, 'jetpack_scan' ) ) {
 			return <ScanProductThankYou />;
 		}
 
-		if ( requestProduct && startsWith( product, 'jetpack_search' ) ) {
+		if ( startsWith( product, 'jetpack_search' ) ) {
 			return <SearchProductThankYou />;
 		}
 

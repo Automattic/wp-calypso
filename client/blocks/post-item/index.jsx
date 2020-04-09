@@ -27,8 +27,6 @@ import { hideActiveSharePanel, togglePostSelection } from 'state/ui/post-type-li
 import { bumpStat } from 'state/analytics/actions';
 import ExternalLink from 'components/external-link';
 import FormInputCheckbox from 'components/forms/form-checkbox';
-import PostTime from 'blocks/post-time';
-import PostStatus from 'blocks/post-status';
 import PostShare from 'blocks/post-share';
 import PostTypeListPostThumbnail from 'my-sites/post-type-list/post-thumbnail';
 import PostActionCounts from 'my-sites/post-type-list/post-action-counts';
@@ -38,6 +36,7 @@ import PostActionsEllipsisMenuTrash from 'my-sites/post-type-list/post-actions-e
 import PostTypeSiteInfo from 'my-sites/post-type-list/post-type-site-info';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 import { preload } from 'sections-helper';
+import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 
 /**
  * Style dependencies
@@ -145,6 +144,8 @@ class PostItem extends React.Component {
 			isTypeWpBlock,
 		} = this.props;
 
+		const ICON_SIZE = 12;
+
 		const title = post ? post.title : null;
 		const isPlaceholder = ! globalId;
 		const isTrashed = post && 'trash' === post.status;
@@ -205,10 +206,16 @@ class PostItem extends React.Component {
 						</h1>
 						<div className="post-item__meta">
 							<span className="post-item__meta-time-status">
-								<a href={ enabledPostLink } className="post-item__time-status-link">
-									<PostTime globalId={ globalId } />
-									<PostStatus globalId={ globalId } showAll={ showPublishedStatus } />
-								</a>
+								{ post && (
+									<PostRelativeTimeStatus
+										post={ post }
+										link={ enabledPostLink }
+										target={ null }
+										gridiconSize={ ICON_SIZE }
+										includeBasicStatus={ true }
+										showPublishedStatus={ showPublishedStatus }
+									/>
+								) }
 							</span>
 							<PostActionCounts globalId={ globalId } />
 						</div>

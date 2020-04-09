@@ -54,9 +54,9 @@ class DailyBackupStatus extends Component {
 		let displayableDate;
 
 		if ( isToday ) {
-			displayableDate = translate( 'Latest: Today ' ) + backupDate.format( 'H:mm a' );
+			displayableDate = translate( 'Latest: Today ' ) + backupDate.format( 'LT' );
 		} else {
-			displayableDate = backupDate.format( dateFormat + ', H:mm a' );
+			displayableDate = backupDate.format( dateFormat + ', LT' );
 		}
 
 		return displayableDate;
@@ -93,7 +93,7 @@ class DailyBackupStatus extends Component {
 		const backupDate = applySiteOffset( backup.activityTs, { timezone, gmtOffset } );
 
 		const displayDate = backupDate.format( 'L' );
-		const displayTime = backupDate.format( 'H:mm' );
+		const displayTime = backupDate.format( 'LT' );
 
 		return (
 			<Card className="daily-backup-status__failed">

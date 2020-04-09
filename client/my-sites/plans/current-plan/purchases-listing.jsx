@@ -5,7 +5,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, find, isEmpty } from 'lodash';
+import { filter, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,7 +35,6 @@ import {
 import {
 	isFreeJetpackPlan,
 	isFreePlan,
-	isJetpackBackup,
 	isJetpackProduct,
 	getJetpackProductDisplayName,
 	getJetpackProductTagline,
@@ -92,13 +91,6 @@ class PurchasesListing extends Component {
 		);
 	}
 
-	getJetpackBackupPurchase() {
-		return (
-			find( this.props.purchases, purchase => purchase.active && isJetpackBackup( purchase ) ) ??
-			null
-		);
-	}
-
 	getTitle( purchase ) {
 		const { currentPlanSlug } = this.props;
 
@@ -121,12 +113,12 @@ class PurchasesListing extends Component {
 			return getJetpackProductTagline( purchase );
 		}
 
-		const jetpackBackupPurchase = this.getJetpackBackupPurchase();
+		const productPurchases = this.getProductPurchases();
 
 		if ( currentPlanSlug ) {
 			const planObject = getPlan( currentPlanSlug );
 			return (
-				planObject.getTagline?.( jetpackBackupPurchase?.productSlug ) ??
+				planObject.getTagline?.( productPurchases[ 0 ]?.productSlug ) ??
 				translate(
 					'Unlock the full potential of your site with all the features included in your plan.'
 				)
@@ -236,7 +228,7 @@ class PurchasesListing extends Component {
 		const { translate } = this.props;
 
 		// Get all products and filter out falsy items.
-		const productPurchases = this.getProductPurchases().filter( Boolean );
+		const productPurchases = this.getProductPurchases();
 
 		if ( isEmpty( productPurchases ) ) {
 			return null;

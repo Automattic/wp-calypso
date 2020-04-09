@@ -15,7 +15,7 @@ interface Props {
 }
 
 const EnterUsernameOrEmailForm = ( props: Props ) => {
-	const { __: NO__ } = useI18n();
+	const { __ } = useI18n();
 
 	const [ usernameOrEmailVal, setUsernameOrEmailVal ] = useState( '' );
 	const { submitUsernameOrEmail } = useDispatch( AUTH_STORE );
@@ -28,7 +28,7 @@ const EnterUsernameOrEmailForm = ( props: Props ) => {
 	return (
 		<form onSubmit={ onSubmitUsernameOrEmail }>
 			<TextControl
-				label={ NO__( 'Email Address or Username' ) }
+				label={ __( 'Email Address or Username' ) }
 				value={ usernameOrEmailVal }
 				// todo loading state
 				onChange={ setUsernameOrEmailVal }
@@ -38,7 +38,7 @@ const EnterUsernameOrEmailForm = ( props: Props ) => {
 			<div>
 				{ props.tos }
 
-				<ModalSubmitButton>{ NO__( 'Login' ) }</ModalSubmitButton>
+				<ModalSubmitButton>{ __( 'Login' ) }</ModalSubmitButton>
 			</div>
 		</form>
 	);

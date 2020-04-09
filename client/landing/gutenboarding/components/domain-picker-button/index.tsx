@@ -26,7 +26,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 	children,
 	className,
 	onDomainSelect,
-	onDomainPurchase,
 	currentDomain,
 	...buttonProps
 } ) => {
@@ -40,16 +39,6 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 			return;
 		}
 		setDomainPopoverVisibility( false );
-	};
-
-	const handleDomainSelect: typeof onDomainSelect = selectedDomain => {
-		setDomainPopoverVisibility( false );
-		onDomainSelect( selectedDomain );
-	};
-
-	const handlePaidDomainSelect = ( selectedDomain: DomainSuggestion ) => {
-		setDomainPopoverVisibility( false );
-		onDomainPurchase( selectedDomain );
 	};
 
 	return (
@@ -66,17 +55,27 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				ref={ buttonRef }
 			>
 				<span>{ children }</span>
-				<Dashicon icon="arrow-down-alt2" />
+				<Dashicon icon="arrow-down-alt2" size={ 16 } />
 			</Button>
 			{ isDomainPopoverVisible && (
-				<Popover onClose={ handleClose } onFocusOutside={ handleClose } focusOnMount={ false }>
-					<DomainPicker
-						onDomainSelect={ handleDomainSelect }
-						onDomainPurchase={ handlePaidDomainSelect }
+				<div className="domain-picker-button__popover-container">
+					<Popover
+						className="domain-picker-button__popover"
+						focusOnMount={ false }
+						noArrow
+						onClickOutside={ handleClose } // TODO: investigate why clicking outside is ignored
 						onClose={ handleClose }
-						currentDomain={ currentDomain }
-					/>
-				</Popover>
+						onFocusOutside={ handleClose }
+						position={ 'bottom center' }
+						expandOnMobile={ true }
+					>
+						<DomainPicker
+							currentDomain={ currentDomain }
+							onClose={ handleClose }
+							onDomainSelect={ onDomainSelect }
+						/>
+					</Popover>
+				</div>
 			) }
 		</>
 	);

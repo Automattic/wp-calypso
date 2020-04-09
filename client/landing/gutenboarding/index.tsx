@@ -16,6 +16,7 @@ import { initializeAnalytics } from '@automattic/calypso-analytics';
 /**
  * Internal dependencies
  */
+import GUTENBOARDING_BASE_NAME from './basename.json';
 import { Gutenboard } from './gutenboard';
 import { setupWpDataDebug } from './devtools';
 import accessibleFocus from 'lib/accessible-focus';
@@ -47,11 +48,25 @@ interface AppWindow extends Window {
 }
 declare const window: AppWindow;
 
+/**
+ * Handle redirects from development phase
+ * TODO: Remove after a few months. See section definition as well.
+ */
+const DEVELOPMENT_BASENAME = '/gutenboarding';
+
 window.AppBoot = async () => {
 	if ( ! config.isEnabled( 'gutenboarding' ) ) {
 		window.location.href = '/';
 		return;
 	}
+
+	if ( window.location.pathname.startsWith( DEVELOPMENT_BASENAME ) ) {
+		const url = new URL( window.location.href );
+		url.pathname = GUTENBOARDING_BASE_NAME + url.pathname.substring( DEVELOPMENT_BASENAME.length );
+		window.location.replace( url.toString() );
+		return;
+	}
+
 	setupWpDataDebug();
 	// User is left undefined here because the user account will not be created
 	// until after the user has completed the gutenboarding flow.
@@ -74,7 +89,7 @@ window.AppBoot = async () => {
 
 	ReactDom.render(
 		<I18nProvider locale={ locale }>
-			<BrowserRouter basename="gutenboarding">
+			<BrowserRouter basename={ GUTENBOARDING_BASE_NAME }>
 				<Switch>
 					<Route exact path={ path }>
 						<Gutenboard />

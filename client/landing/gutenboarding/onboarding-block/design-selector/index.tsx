@@ -21,8 +21,10 @@ import './style.scss';
 
 type Design = import('../../stores/onboard/types').Design;
 
+const makeOptionId = ( { slug }: Design ): string => `design-selector__option-name__${ slug }`;
+
 const DesignSelector: React.FunctionComponent = () => {
-	const { __: NO__ } = useI18n();
+	const { __ } = useI18n();
 	const { push } = useHistory();
 	const makePath = usePath();
 	const { setSelectedDesign, setFonts, resetOnboardStore } = useDispatch( ONBOARD_STORE );
@@ -48,9 +50,9 @@ const DesignSelector: React.FunctionComponent = () => {
 		<div className="design-selector">
 			<div className="design-selector__header">
 				<div className="design-selector__heading">
-					<Title>{ NO__( 'Choose a starting design' ) }</Title>
+					<Title>{ __( 'Choose a starting design' ) }</Title>
 					<SubTitle>
-						{ NO__(
+						{ __(
 							'Get started with one of our top website layouts. You can always change it later'
 						) }
 					</SubTitle>
@@ -61,7 +63,7 @@ const DesignSelector: React.FunctionComponent = () => {
 					to={ makePath( Step.IntentGathering ) }
 					isLink
 				>
-					{ NO__( 'Start over' ) }
+					{ __( 'Start over' ) }
 				</Link>
 			</div>
 			<div className="design-selector__design-grid">
@@ -82,10 +84,16 @@ const DesignSelector: React.FunctionComponent = () => {
 							} }
 						>
 							<span className="design-selector__image-frame">
-								<img alt={ design.title } src={ getDesignUrl( design ) } />
+								<img
+									alt=""
+									aria-labelledby={ makeOptionId( design ) }
+									src={ getDesignUrl( design ) }
+								/>
 							</span>
 							<span className="design-selector__option-overlay">
-								<span className="design-selector__option-name">{ design.title }</span>
+								<span id={ makeOptionId( design ) } className="design-selector__option-name">
+									{ design.title }
+								</span>
 							</span>
 						</button>
 					) ) }

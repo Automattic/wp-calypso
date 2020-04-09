@@ -1,9 +1,36 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+
 .domain-picker-button {
 	.dashicon {
 		margin-left: 0.5em;
+		margin-top: 2px;
 		transition: transform 100ms ease-in-out;
 	}
 	&.is-open .dashicon {
 		transform: rotate( 180deg );
+	}
+}
+
+.domain-picker-button__popover {
+	.components-popover__content {
+		border: 1px solid var( --studio-gray-5 );
+		box-shadow: 0 4px 10px rgba( 0, 0, 0, 0.12 );
+		border-radius: 4px;
+	}
+}
+
+.domain-picker-button__popover-container {
+	.components-popover__header {
+		display: none;
+	}
+
+	.components-popover.is-expanded .components-popover__content {
+		height: 100%;
+	}
+
+	@include break-small {
+		position: fixed;
+		left: 72px;
+		top: 54px;
 	}
 }

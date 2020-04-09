@@ -31,7 +31,7 @@ registerStore< State >( STORE_KEY, {
 		'pageLayouts',
 		'selectedDesign',
 		'selectedFonts',
-		'siteWasCreatedForDomainPurchase',
+		'selectedSite',
 	],
 } );
 

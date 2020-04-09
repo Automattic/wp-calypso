@@ -81,20 +81,17 @@ const pageLayouts: Reducer< string[], OnboardAction > = ( state = [], action ) =
 	return state;
 };
 
-const siteWasCreatedForDomainPurchase: Reducer< boolean, OnboardAction > = (
-	state = false,
+const selectedSite: Reducer< number | undefined, OnboardAction > = (
+	state = undefined,
 	action
 ) => {
-	switch ( action.type ) {
-		case 'SET_SITE_WAS_CREATED_FOR_DOMAIN_PURCHASE':
-			return action.siteWasCreatedForDomainPurchase;
-
-		case 'RESET_ONBOARD_STORE':
-			return false;
-
-		default:
-			return state;
+	if ( action.type === 'SET_SELECTED_SITE' ) {
+		return action.selectedSite;
 	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
 };
 
 const selectedFonts: Reducer< FontPair | undefined, OnboardAction > = (
@@ -118,7 +115,7 @@ const reducer = combineReducers( {
 	siteTitle,
 	siteVertical,
 	pageLayouts,
-	siteWasCreatedForDomainPurchase,
+	selectedSite,
 } );
 
 export type State = ReturnType< typeof reducer >;

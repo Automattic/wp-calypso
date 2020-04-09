@@ -29,6 +29,7 @@ import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 import Gridicon from 'components/gridicon';
 import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgrade-intent';
 import { Button } from '@automattic/components';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -351,13 +352,17 @@ export class CheckoutThankYouHeader extends PureComponent {
 			primaryPurchase,
 			selectedSite,
 			displayMode,
+			isAtomic,
 		} = this.props;
 		const headerButtonClassName = 'button is-primary';
 		const isConciergePurchase = 'concierge' === displayMode;
 
 		if (
 			! isConciergePurchase &&
-			( hasFailedPurchases || ! primaryPurchase || ! selectedSite || selectedSite.jetpack )
+			( hasFailedPurchases ||
+				! primaryPurchase ||
+				! selectedSite ||
+				( selectedSite.jetpack && ! isAtomic ) )
 		) {
 			return null;
 		}
@@ -466,6 +471,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 export default connect(
 	( state, ownProps ) => ( {
 		upgradeIntent: ownProps.upgradeIntent || getCheckoutUpgradeIntent( state ),
+		isAtomic: isAtomicSite( state, ownProps.selectedSite.ID ),
 	} ),
 	{
 		recordStartTransferClickInThankYou,

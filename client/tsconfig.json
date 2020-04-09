@@ -17,7 +17,6 @@
 	"references": [
 		{ "path": "../packages/calypso-analytics" },
 		{ "path": "../packages/components" },
-		{ "path": "../packages/composite-checkout-wpcom" },
 		{ "path": "../packages/data-stores" },
 		{ "path": "../packages/media-library" },
 		{ "path": "../packages/react-i18n" }

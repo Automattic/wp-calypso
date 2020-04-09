@@ -1,7 +1,13 @@
 /**
  * Internal dependencies
  */
-import { CreateSiteParams, NewSiteErrorResponse, NewSiteSuccessResponse } from './types';
+import {
+	CreateSiteParams,
+	NewSiteErrorResponse,
+	NewSiteSuccessResponse,
+	SiteDetails,
+	SiteError,
+} from './types';
 import { WpcomClientCredentials } from '../shared-types';
 import { wpcomRequest } from '../wpcom-request-controls';
 
@@ -57,18 +63,43 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		}
 	}
 
+	const receiveSite = ( siteId: number, response: SiteDetails | undefined ) => ( {
+		type: 'RECEIVE_SITE' as const,
+		siteId,
+		response,
+	} );
+
+	const receiveSiteFailed = ( siteId: number, response: SiteError | undefined ) => ( {
+		type: 'RECEIVE_SITE_FAILED' as const,
+		siteId,
+		response,
+	} );
+
+	const reset = () => ( {
+		type: 'RESET_SITE_STORE' as const,
+	} );
+
 	return {
 		fetchNewSite,
 		receiveNewSite,
 		receiveNewSiteFailed,
 		createSite,
+		receiveSite,
+		receiveSiteFailed,
+		reset,
 	};
 }
 
-type ActionCreators = ReturnType< typeof createActions >;
+export type ActionCreators = ReturnType< typeof createActions >;
 
-export type Action = ReturnType<
-	| ActionCreators[ 'fetchNewSite' ]
-	| ActionCreators[ 'receiveNewSite' ]
-	| ActionCreators[ 'receiveNewSiteFailed' ]
->;
+export type Action =
+	| ReturnType<
+			| ActionCreators[ 'fetchNewSite' ]
+			| ActionCreators[ 'receiveNewSite' ]
+			| ActionCreators[ 'receiveNewSiteFailed' ]
+			| ActionCreators[ 'receiveSite' ]
+			| ActionCreators[ 'receiveSiteFailed' ]
+			| ActionCreators[ 'reset' ]
+	  >
+	// Type added so we can dispatch actions in tests, but has no runtime cost
+	| { type: 'TEST_ACTION' };

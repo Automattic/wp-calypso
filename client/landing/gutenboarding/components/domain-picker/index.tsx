@@ -2,11 +2,10 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
-import { Button, Panel, PanelBody, PanelRow, TextControl } from '@wordpress/components';
+import { Button, Panel, PanelBody, PanelRow, TextControl, Icon } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { times } from 'lodash';
 import { useI18n } from '@automattic/react-i18n';
-import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -21,6 +20,7 @@ import {
 	getPaidDomainSuggestions,
 	getRecommendedDomainSuggestion,
 } from '../../utils/domain-suggestions';
+import CloseButton from '../close-button';
 import { useDomainSuggestions } from '../../hooks/use-domain-suggestions';
 import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 
@@ -40,13 +40,6 @@ export interface Props {
 	onDomainSelect: ( domainSuggestion: DomainSuggestion ) => void;
 
 	/**
-	 * Callback that will be invoked when a paid domain is selected.
-	 *
-	 * @param domainSuggestion The selected domain.
-	 */
-	onDomainPurchase: ( domainSuggestion: DomainSuggestion ) => void;
-
-	/**
 	 * Callback that will be invoked when a close button is clicked
 	 */
 	onClose: () => void;
@@ -59,14 +52,26 @@ export interface Props {
 	currentDomain?: DomainSuggestion;
 }
 
-const DomainPicker: FunctionComponent< Props > = ( {
-	onDomainSelect,
-	onDomainPurchase,
-	onClose,
-	currentDomain,
-} ) => {
-	const { __: NO__ } = useI18n();
-	const label = NO__( 'Search for a domain' );
+const SearchIcon = () => (
+	<Icon
+		icon={ () => (
+			<svg
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				<path d="M6 18L10 14.5" stroke="black" strokeWidth="1.5" />
+				<circle cx="13.5" cy="11.5" r="4.75" stroke="black" strokeWidth="1.5" />
+			</svg>
+		) }
+	/>
+);
+
+const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, currentDomain } ) => {
+	const { __ } = useI18n();
+	const label = __( 'Search for a domain' );
 
 	const { domainSearch } = useSelect( select => select( STORE_KEY ).getState() );
 	const { setDomainSearch } = useDispatch( STORE_KEY );
@@ -84,12 +89,14 @@ const DomainPicker: FunctionComponent< Props > = ( {
 			<PanelBody>
 				<PanelRow className="domain-picker__panel-row">
 					<div className="domain-picker__header">
-						<div className="domain-picker__header-title">{ NO__( 'Choose a new domain' ) }</div>
-						<Button className="domain-picker__close-button" isTertiary onClick={ () => onClose() }>
-							{ NO__( 'Skip for now' ) }
-						</Button>
+						<div className="domain-picker__header-group">
+							<div className="domain-picker__header-title">{ __( 'Choose a domain' ) }</div>
+							<p>{ __( 'Free for the first year with any paid plan' ) }</p>
+						</div>
+						<CloseButton onClose={ () => onClose() } />
 					</div>
 					<div className="domain-picker__search">
+						<SearchIcon />
 						<TextControl
 							hideLabelFromVision
 							label={ label }
@@ -101,28 +108,28 @@ const DomainPicker: FunctionComponent< Props > = ( {
 				</PanelRow>
 
 				<PanelRow className="domain-picker__panel-row">
-					<div className="domain-picker__suggestion-header">
-						<div className="domain-picker__suggestion-header-title">
-							{ NO__( 'Professional domain' ) }
-						</div>
-						<div className="domain-picker__suggestion-header-description">
-							{ __experimentalCreateInterpolateElement(
-								NO__( '<Price>Free</Price> for the first year with a paid plan' ),
-								{ Price: <em /> }
-							) }
-						</div>
-					</div>
 					<div className="domain-picker__suggestion-item-group">
+						{ ! freeSuggestions && <SuggestionItemPlaceholder /> }
+						{ freeSuggestions &&
+							( freeSuggestions.length ? (
+								<SuggestionItem
+									suggestion={ freeSuggestions[ 0 ] }
+									isSelected={ currentDomain?.domain_name === freeSuggestions[ 0 ].domain_name }
+									onSelect={ onDomainSelect }
+								/>
+							) : (
+								<SuggestionNone />
+							) ) }
 						{ ! paidSuggestions &&
-							times( PAID_DOMAINS_TO_SHOW, i => <SuggestionItemPlaceholder key={ i } /> ) }
+							times( PAID_DOMAINS_TO_SHOW - 1, i => <SuggestionItemPlaceholder key={ i } /> ) }
 						{ paidSuggestions &&
 							( paidSuggestions?.length ? (
 								paidSuggestions.map( suggestion => (
 									<SuggestionItem
 										suggestion={ suggestion }
 										isRecommended={ suggestion === recommendedSuggestion }
-										isCurrent={ currentDomain?.domain_name === suggestion.domain_name }
-										onClick={ () => onDomainPurchase( suggestion ) }
+										isSelected={ currentDomain?.domain_name === suggestion.domain_name }
+										onSelect={ onDomainSelect }
 										key={ suggestion.domain_name }
 									/>
 								) )
@@ -133,21 +140,16 @@ const DomainPicker: FunctionComponent< Props > = ( {
 				</PanelRow>
 
 				<PanelRow className="domain-picker__panel-row">
-					<div className="domain-picker__suggestion-header">
-						<div className="domain-picker__suggestion-header-title">{ NO__( 'Subdomain' ) }</div>
-					</div>
-					<div className="domain-picker__suggestion-item-group">
-						{ ! freeSuggestions && <SuggestionItemPlaceholder /> }
-						{ freeSuggestions &&
-							( freeSuggestions.length ? (
-								<SuggestionItem
-									suggestion={ freeSuggestions[ 0 ] }
-									isCurrent={ currentDomain?.domain_name === freeSuggestions[ 0 ].domain_name }
-									onClick={ () => onDomainSelect( freeSuggestions[ 0 ] ) }
-								/>
-							) : (
-								<SuggestionNone />
-							) ) }
+					<div className="domain-picker__footer">
+						<div className="domain-picker__footer-options"></div>
+						<Button
+							className="domain-picker__footer-button"
+							disabled={ ! freeSuggestions?.length && ! paidSuggestions?.length }
+							isPrimary
+							onClick={ onClose }
+						>
+							{ __( 'Confirm' ) }
+						</Button>
 					</div>
 				</PanelRow>
 			</PanelBody>

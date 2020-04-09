@@ -7,7 +7,6 @@ import { Suggestions } from '@automattic/components';
 import { useI18n } from '@automattic/react-i18n';
 import { __experimentalCreateInterpolateElement } from '@wordpress/element';
 import { ENTER, TAB } from '@wordpress/keycodes';
-import classnames from 'classnames';
 import { remove } from 'lodash';
 
 /**
@@ -29,7 +28,7 @@ type Suggestion = SiteVertical & { category?: string };
 const VERTICALS_STORE = Verticals.register();
 
 const VerticalSelect: React.FunctionComponent = () => {
-	const { __: NO__ } = useI18n();
+	const { __ } = useI18n();
 	const inputRef = React.useRef< HTMLSpanElement >( document.createElement( 'span' ) );
 	const [ isFocused, setIsFocused ] = React.useState< boolean >( false );
 	const [ suggestions, setSuggestions ] = React.useState< Suggestion[] >( [] );
@@ -64,16 +63,26 @@ const VerticalSelect: React.FunctionComponent = () => {
 
 	const animatedPlaceholder = useTyper(
 		[
-			NO__( 'photography' ),
-			NO__( 'blogging' ),
-			NO__( 'travel' ),
-			NO__( 'marketing' ),
-			NO__( 'fashion' ),
-			NO__( 'shopping' ),
-			NO__( 'design' ),
-			NO__( 'real estate' ),
-			NO__( 'food' ),
-			NO__( 'sports' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ photography ]]" */
+			__( 'photography' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ blogging ]]" */
+			__( 'blogging' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ travel ]]" */
+			__( 'travel' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ marketing ]]" */
+			__( 'marketing' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ fashion ]]" */
+			__( 'fashion' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ shopping ]]" */
+			__( 'shopping' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ design ]]" */
+			__( 'design' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ real estate ]]" */
+			__( 'real estate' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ food ]]" */
+			__( 'food' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ sports ]]" */
+			__( 'sports' ),
 		],
 		isInputEmpty,
 		{ delayBetweenWords: 800, delayBetweenCharacters: 110 }
@@ -130,6 +139,8 @@ const VerticalSelect: React.FunctionComponent = () => {
 	const handleSelect = ( vertical: SiteVertical ) => {
 		setSiteVertical( vertical );
 		setIsFocused( false ); // prevent executing handleBlur()
+		// empty suggestions cache once a vertical is selceted
+		setSuggestions( [] );
 	};
 
 	const handleBlur = () => {
@@ -168,18 +179,15 @@ const VerticalSelect: React.FunctionComponent = () => {
 	}, [ siteVertical, inputRef ] );
 
 	// translators: Form input for a site's topic where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
-	const madlibTemplate = NO__( 'My site is about <Input />' );
+	const madlibTemplate = __( 'My site is about <Input />' );
 	// translators: Form input for a site's topic where "<Input />" is replaced with the topic selected by the user.
-	const madlibTemplateWithPeriod = NO__( 'My site is about <Input />.' );
+	const madlibTemplateWithPeriod = __( 'My site is about <Input />.' );
 	const madlib = __experimentalCreateInterpolateElement(
 		siteVertical ? madlibTemplateWithPeriod : madlibTemplate,
 		{
 			Input: (
 				<span className="vertical-select__suggestions-wrapper">
 					<span className="vertical-select__input-wrapper">
-						{ isInputEmpty && (
-							<span className="vertical-select__placeholder">{ animatedPlaceholder }</span>
-						) }
 						<span
 							contentEditable
 							tabIndex={ 0 }
@@ -194,6 +202,7 @@ const VerticalSelect: React.FunctionComponent = () => {
 							onFocus={ () => setIsFocused( true ) }
 							onBlur={ handleBlur }
 						/>
+						<span className="vertical-select__placeholder">{ animatedPlaceholder }</span>
 					</span>
 					{ /* us visibility to keep the layout fixed with and without the arrow */ }
 					{ showArrow && <Arrow className="vertical-select__arrow" /> }
@@ -204,7 +213,7 @@ const VerticalSelect: React.FunctionComponent = () => {
 								query={ inputText }
 								suggestions={ suggestions }
 								suggest={ handleSelect }
-								title={ NO__( 'Suggestions' ) }
+								title={ __( 'Suggestions' ) }
 							/>
 						) }
 					</div>
@@ -213,15 +222,7 @@ const VerticalSelect: React.FunctionComponent = () => {
 		}
 	);
 
-	return (
-		<form
-			className={ classnames( 'vertical-select', {
-				'vertical-select--without-value': isInputEmpty,
-			} ) }
-		>
-			{ madlib }
-		</form>
-	);
+	return <form className="vertical-select">{ madlib }</form>;
 };
 
 export default VerticalSelect;
