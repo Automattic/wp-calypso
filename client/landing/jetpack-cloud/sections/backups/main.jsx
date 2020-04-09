@@ -59,8 +59,12 @@ class BackupsPage extends Component {
 	state = this.getDefaultState();
 
 	getDefaultState() {
+		const { queryDate } = this.props;
+
+		const selectedDate = ! queryDate ? null : queryDate;
+
 		return {
-			selectedDate: null,
+			selectedDate: selectedDate,
 		};
 	}
 
