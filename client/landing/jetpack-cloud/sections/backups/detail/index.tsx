@@ -16,7 +16,7 @@ import { Button } from '@automattic/components';
 import { getHttpData } from 'state/data-layer/http-data';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { requestActivityLogs, getRequestActivityLogsId } from 'state/data-getters';
-import { updateFilter } from 'state/activity-log/actions';
+import { setFilter } from 'state/activity-log/actions';
 import { useApplySiteOffset } from 'landing/jetpack-cloud/components/site-offset';
 import { useLocalizedMoment } from 'components/localized-moment';
 import ActivityCardList from 'landing/jetpack-cloud/components/activity-card-list';
@@ -53,10 +53,10 @@ const BackupDetailPage: FunctionComponent< Props > = ( { rewindId } ) => {
 		?.endOf( 'day' )
 		.toISOString();
 
-	// 	// when we load this page clear the filter, locking it to the date of the backup
+	// when we load this page update the filter, locking it to the date of the backup
 	useEffect( () => {
-		// TODO: move filter modification functions to utils
-		dispatch( updateFilter( siteId, { page: 1, before: toTimeStamp, after: fromTimestamp } ) );
+		// future work: move filter modification functions to utils
+		dispatch( setFilter( siteId, { page: 1, before: toTimeStamp, after: fromTimestamp } ) );
 	}, [ dispatch, fromTimestamp, siteId, toTimeStamp ] );
 
 	//when the filter changes, re-request the logs
@@ -70,11 +70,15 @@ const BackupDetailPage: FunctionComponent< Props > = ( { rewindId } ) => {
 	const render = ( loadedBackup, loadedLogs ) => (
 		<>
 			<BackupDetailSummary thisBackup={ loadedBackup } />
-			<ActivityCardList
-				showDateRangeSelector={ false }
-				logs={ loadedLogs }
-				pageSize={ DETAIL_PAGE_SIZE }
-			/>
+			{ loadedLogs.length > 1 ? (
+				<ActivityCardList
+					showDateRangeSelector={ false }
+					logs={ loadedLogs }
+					pageSize={ DETAIL_PAGE_SIZE }
+				/>
+			) : (
+				<div>{ translate( 'This backup contains no changes.' ) }</div>
+			) }
 		</>
 	);
 
