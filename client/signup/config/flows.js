@@ -56,7 +56,7 @@ function getRedirectDestination( dependencies ) {
 }
 
 function getSignupDestination( dependencies ) {
-	return `/checklist/${ dependencies.siteSlug }`;
+	return `/checklist/${ dependencies.asiteSlug }`;
 }
 
 function getLaunchDestination( dependencies ) {
