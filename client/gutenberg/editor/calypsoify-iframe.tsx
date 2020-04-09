@@ -547,21 +547,15 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			// Sometimes (like in IE) the WindowActions.Loaded message arrives
 			// after the onLoad event is fired. To deal with this case we'll
 			// poll `this.successfulIframeLoad` for a while before redirecting.
-			let cancelPolling = false;
 
 			// Checks to see if the iFrame has loaded every 200ms. If it has
 			// loaded, then resolve the promise.
+			let cancelPolling = false;
 			const pollForLoadedFlag = new Promise( resolve => {
-				const waitForSuccessfulLoad = () => {
-					if ( this.successfulIframeLoad ) {
-						resolve();
-						return;
-					}
-
-					! cancelPolling && setTimeout( waitForSuccessfulLoad, 200 );
-				};
-
-				setTimeout( waitForSuccessfulLoad, 200 );
+				const pendingIsLoadedFlag = setInterval( () => {
+					( cancelPolling || this.successfulIframeLoad ) && clearInterval( pendingIsLoadedFlag );
+					this.successfulIframeLoad && resolve( 'iframe-loaded' );
+				}, 200 );
 			} );
 
 			const fiveSeconds = new Promise( resolve => setTimeout( resolve, 5000, 'timeout' ) );
