@@ -29,4 +29,3 @@ const BackupActivityLogPage: FunctionComponent = () => {
 };
 
 export default BackupActivityLogPage;
-s;
