@@ -28,8 +28,11 @@ export default class ReaderPage extends AsyncBaseContainer {
 
 	async shareLatestPost() {
 		const shareButtonSelector = by.css( '.reader-share__button' );
-		const hasSharablePost = await driverHelper.isElementPresent( this.driver, shareButtonSelector );
 
+		// Allow the components to settle and finish loading, one hopes.
+		await this.driver.sleep( 2000 );
+
+		const hasSharablePost = await driverHelper.isElementPresent( this.driver, shareButtonSelector );
 		if ( ! hasSharablePost ) {
 			// no shareable posts on this screen. try moving into a combined card
 			const firstComboCardPostSelector = by.css( '.reader-combined-card__post-title-link' );
@@ -43,7 +46,7 @@ export default class ReaderPage extends AsyncBaseContainer {
 		);
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( '.reader-popover .site__info' )
+			by.css( '.site-selector__sites .site__content' )
 		);
 	}
 
