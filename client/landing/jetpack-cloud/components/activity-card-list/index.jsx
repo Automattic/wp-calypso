@@ -37,8 +37,9 @@ class ActivityCardList extends Component {
 	};
 
 	static defaultProps = {
+		showActivityTypeSelector: true,
+		showDateRangeSelector: true,
 		showDateSeparators: true,
-		showFilter: true,
 		showPagination: true,
 	};
 
@@ -93,6 +94,19 @@ class ActivityCardList extends Component {
 
 	renderData() {
 		const { filter, logs, pageSize, showFilter, showPagination, siteId } = this.props;
+	render() {
+		const {
+			allowRestore,
+			filter,
+			logs,
+			moment,
+			pageSize,
+			showActivityTypeSelector,
+			showDateRangeSelector,
+			showPagination,
+			siteId,
+			siteSlug,
+		} = this.props;
 		const { page: requestedPage } = filter;
 
 		const actualPage = Math.max(
@@ -103,6 +117,10 @@ class ActivityCardList extends Component {
 		return (
 			<>
 				{ showFilter && (
+			<div className="activity-card-list">
+				<QueryRewindCapabilities siteId={ siteId } />
+				<QueryRewindState siteId={ siteId } />
+				{ ( showActivityTypeSelector || showDateRangeSelector ) && (
 					<Filterbar
 						{ ...{
 							siteId,
@@ -110,6 +128,8 @@ class ActivityCardList extends Component {
 							isLoading: false,
 							isVisible: true,
 						} }
+						useActivityTypeSelector={ showActivityTypeSelector }
+						useDateRangeSelector={ showDateRangeSelector }
 					/>
 				) }
 				{ showPagination && (
