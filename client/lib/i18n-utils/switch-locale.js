@@ -46,6 +46,19 @@ export function getLanguageFilePathUrl() {
 }
 
 /**
+ * Get the base path for language related files that are served from within Calypso.
+ *
+ * @returns {string} The internal base file path for language files.
+ */
+export function getLanguagesInternalBasePath() {
+	if ( ! window.__requireChunkCallback__ ) {
+		return '/calypso/evergreen/languages';
+	}
+
+	return window.__requireChunkCallback__.getPublicPath() + 'languages';
+}
+
+/**
  * Get the language file URL for the given locale and file type, js or json.
  * A revision cache buster will be appended automatically if `setLangRevisions` has been called beforehand.
  *
@@ -90,9 +103,7 @@ function setLocaleInDOM() {
 	switchWebpackCSS( isRTL );
 }
 
-export async function getLanguageFile( targetLocaleSlug ) {
-	const url = getLanguageFileUrl( targetLocaleSlug, 'json', window.languageRevisions || {} );
-
+export async function getFile( url ) {
 	const response = await dedupedGet( url );
 	if ( response.ok ) {
 		if ( response.bodyUsed ) {
@@ -106,6 +117,76 @@ export async function getLanguageFile( targetLocaleSlug ) {
 
 	// Invalid response.
 	throw new Error();
+}
+
+export function getLanguageFile( targetLocaleSlug ) {
+	const url = getLanguageFileUrl( targetLocaleSlug, 'json', window.languageRevisions || {} );
+
+	return getFile( url );
+}
+
+/**
+ * Get the language manifest file URL for the given locale.
+ * A revision cache buster will be appended automatically if `setLangRevisions` has been called beforehand.
+ *
+ * @param {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @param {object} languageRevisions An optional language revisions map. If it exists, the function will append the revision within as cache buster.
+ *
+ * @returns {string} A language manifest file URL.
+ */
+export function getLanguageManifestFileUrl( localeSlug, languageRevisions = {} ) {
+	const revision = languageRevisions[ localeSlug ];
+	const fileUrl = `${ getLanguagesInternalBasePath() }/${ localeSlug }-language-manifest.json`;
+
+	return typeof revision === 'number' ? fileUrl + `?v=${ revision }` : fileUrl;
+}
+
+/**
+ * Get the language manifest file for the given locale.
+ *
+ * @param  {string} targetLocaleSlug A locale slug. e.g. fr, jp, zh-tw
+ *
+ * @returns {Promise} Language manifest json content
+ */
+export function getLanguageManifestFile( targetLocaleSlug ) {
+	const url = getLanguageManifestFileUrl( targetLocaleSlug, window.languageRevisions || {} );
+
+	return getFile( url );
+}
+
+/**
+ * Get the translation chunk file URL for the given chunk id and locale.
+ * A revision cache buster will be appended automatically if `setLangRevisions` has been called beforehand.
+ *
+ * @param {string} chunkId A chunk id. e.g. chunk-abc.min
+ * @param {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @param {object} languageRevisions An optional language revisions map. If it exists, the function will append the revision within as cache buster.
+ *
+ * @returns {string} A translation chunk file URL.
+ */
+export function getTranslationChunkFileUrl( chunkId, localeSlug, languageRevisions = {} ) {
+	const revision = languageRevisions[ localeSlug ];
+	const fileUrl = `${ getLanguagesInternalBasePath() }/${ localeSlug }-${ chunkId }.json`;
+
+	return typeof revision === 'number' ? fileUrl + `?v=${ revision }` : fileUrl;
+}
+
+/**
+ * Get the translation chunk file for the given chunk id and locale.
+ *
+ * @param {string} chunkId A chunk id. e.g. chunk-abc.min
+ * @param  {string} targetLocaleSlug A locale slug. e.g. fr, jp, zh-tw
+ *
+ * @returns {Promise} Translation chunk json content
+ */
+export function getTranslationChunkFile( chunkId, targetLocaleSlug ) {
+	const url = getTranslationChunkFileUrl(
+		chunkId,
+		targetLocaleSlug,
+		window.languageRevisions || {}
+	);
+
+	return getFile( url );
 }
 
 let lastRequestedLocale = null;
