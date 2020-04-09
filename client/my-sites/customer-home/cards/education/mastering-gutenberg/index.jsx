@@ -49,6 +49,14 @@ const MasteringGutenberg = () => {
 					showIcon={ false }
 					text={ translate( 'Adjusting settings of blocks' ) }
 				/>
+				<InlineSupportLink
+					supportPostId={ 145498 }
+					supportLink={ localizeUrl( 'https://support.wordpress.com/free-photo-library' ) }
+					showIcon={ false }
+					text={ translate(
+						'Add free beautiful copyright-free photos to create stunning designs'
+					) }
+				/>
 			</div>
 		</Card>
 	);

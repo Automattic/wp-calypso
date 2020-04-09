@@ -27,6 +27,7 @@ const Primary = ( { checklistMode, cards } ) => {
 	}
 	return (
 		<div className="primary">
+			<MasteringGutenberg />
 			{ cards &&
 				cards.map(
 					( card, index ) =>
