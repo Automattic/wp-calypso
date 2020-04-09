@@ -531,9 +531,13 @@ export class SiteSettingsFormGeneral extends Component {
 				<Card className="site-settings__general-settings-launch-site">
 					<div className="site-settings__general-settings-launch-site-text">
 						<p>
-							{ translate(
-								"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
-							) }
+							{ btnText
+								? translate(
+										"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
+								  )
+								: translate(
+										"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
+								  ) }
 						</p>
 					</div>
 					<div className={ launchSiteClasses }>{ btnComponent }</div>
