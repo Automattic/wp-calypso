@@ -289,7 +289,6 @@
 
 	.button.is-borderless.inline-help__more-button,
 	.button.is-borderless.inline-help__contact-button,
-	.button.is-borderless.inline-help__back-to-help-button,
 	.button.is-borderless.inline-help__cancel-button {
 		text-align: left;
 		position: relative;
@@ -323,8 +322,7 @@
 	}
 
 	// Hide/Show buttons as needed
-	.inline-help__cancel-button,
-	.inline-help__back-to-help-button {
+	.inline-help__cancel-button {
 		display: none;
 	}
 
@@ -336,17 +334,6 @@
 
 		.inline-help__cancel-button {
 			display: block;
-		}
-	}
-
-	.is-onboarding-welcome-active & {
-		.inline-help__cancel-button,
-		.inline-help__more-button {
-			display: none;
-		}
-		.inline-help__contact-button,
-		.inline-help__back-to-help-button {
-			display: inline-block;
 		}
 	}
 }

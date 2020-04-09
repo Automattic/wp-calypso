@@ -12,23 +12,14 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal Dependencies
  */
-import { VIEW_CONTACT, VIEW_RICH_RESULT, VIEW_ONBOARDING_WELCOME } from './constants';
-import {
-	selectResult,
-	resetInlineHelpContactForm,
-	hideOnboardingWelcomePrompt,
-} from 'state/inline-help/actions';
+import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
+import { selectResult, resetInlineHelpContactForm } from 'state/inline-help/actions';
 import { Button } from '@automattic/components';
 import Popover from 'components/popover';
-import ChecklistOnboardingWelcome from 'my-sites/checklist/wpcom-checklist/checklist-onboarding-welcome';
 import InlineHelpSearchResults from './inline-help-search-results';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpRichResult from './inline-help-rich-result';
-import {
-	getSearchQuery,
-	getInlineHelpCurrentlySelectedResult,
-	isOnboardingWelcomePromptVisible,
-} from 'state/inline-help/selectors';
+import { getSearchQuery, getInlineHelpCurrentlySelectedResult } from 'state/inline-help/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
 import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
 import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
@@ -61,33 +52,16 @@ class InlineHelpPopover extends Component {
 		optIn: PropTypes.func,
 		redirect: PropTypes.func,
 		isEligibleForChecklist: PropTypes.bool.isRequired,
-		isOnboardingWelcomeVisible: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		onClose: noop,
-		isOnboardingWelcomeVisible: false,
 	};
 
 	state = {
 		showSecondaryView: false,
 		activeSecondaryView: '',
 	};
-
-	componentDidMount() {
-		if ( this.props.isOnboardingWelcomeVisible ) {
-			return this.openOnboardingWelcomeView();
-		}
-	}
-
-	componentDidUpdate( prevProps ) {
-		if (
-			prevProps.isOnboardingWelcomeVisible !== this.props.isOnboardingWelcomeVisible &&
-			! this.props.isOnboardingWelcomeVisible
-		) {
-			this.closeSecondaryView();
-		}
-	}
 
 	openResultView = event => {
 		event.preventDefault();
@@ -114,11 +88,6 @@ class InlineHelpPopover extends Component {
 		this.props.recordTracksEvent( `calypso_inlinehelp_${ this.state.activeSecondaryView }_hide` );
 		this.props.selectResult( -1 );
 		this.props.resetContactForm();
-		// If the welcome message is still active, return to that view
-		// otherwise close the secondary view altogether.
-		if ( this.props.isOnboardingWelcomeVisible ) {
-			return this.openOnboardingWelcomeView();
-		}
 		this.setState( { showSecondaryView: false } );
 	};
 
@@ -126,23 +95,10 @@ class InlineHelpPopover extends Component {
 		this.openSecondaryView( VIEW_CONTACT );
 	};
 
-	openOnboardingWelcomeView = () => {
-		this.openSecondaryView( VIEW_ONBOARDING_WELCOME );
-	};
-
 	renderPopoverFooter = () => {
 		const { translate } = this.props;
 		return (
 			<div className="inline-help__footer">
-				<Button
-					onClick={ this.props.hideOnboardingWelcomePrompt }
-					className="inline-help__back-to-help-button"
-					borderless
-				>
-					<Gridicon icon="chevron-left" className="inline-help__gridicon-left" />
-					{ translate( 'Help' ) }
-				</Button>
-
 				<Button
 					onClick={ this.moreHelpClicked }
 					className="inline-help__more-button"
@@ -209,7 +165,6 @@ class InlineHelpPopover extends Component {
 								closePopover={ onClose }
 							/>
 						),
-						[ VIEW_ONBOARDING_WELCOME ]: <ChecklistOnboardingWelcome onClose={ onClose } />,
 					}[ this.state.activeSecondaryView ]
 				}
 			</div>
@@ -268,7 +223,6 @@ class InlineHelpPopover extends Component {
 	render() {
 		const popoverClasses = {
 			'is-secondary-view-active': this.state.showSecondaryView,
-			'is-onboarding-welcome-active': VIEW_ONBOARDING_WELCOME === this.state.activeSecondaryView,
 		};
 
 		return (
@@ -332,11 +286,9 @@ function mapStateToProps( state ) {
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
 	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
-	const isEligibleForChecklist = isEligibleForDotcomChecklist( state, siteId );
 	const showSwitchEditorButton = currentRoute.match( /^\/(block-editor|post|page)\// );
 
 	return {
-		isOnboardingWelcomeVisible: isEligibleForChecklist && isOnboardingWelcomePromptVisible( state ),
 		searchQuery: getSearchQuery( state ),
 		isEligibleForChecklist: isEligibleForDotcomChecklist( state, siteId ),
 		selectedSite: getHelpSelectedSite( state ),
@@ -351,7 +303,6 @@ function mapStateToProps( state ) {
 }
 
 const mapDispatchToProps = {
-	hideOnboardingWelcomePrompt,
 	optOut,
 	optIn,
 	recordTracksEvent,
