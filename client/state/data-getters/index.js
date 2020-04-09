@@ -12,7 +12,6 @@ import { filterStateToApiQuery } from 'state/activity-log/utils';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import fromActivityLogApi from 'state/data-layer/wpcom/sites/activity/from-api';
 import fromActivityTypeApi from 'state/data-layer/wpcom/sites/activity-types/from-api';
-import fromActivityCountApi from 'state/data-layer/wpcom/sites/activity-counts/from-api';
 
 /**
  * Fetches content from a URL with a GET request
@@ -32,19 +31,15 @@ export const requestFromUrl = url =>
 		fromApi: () => data => [ [ `get-at-url-${ url }`, data ] ],
 	} );
 
-export const requestActivityActionTypeCountsId = ( siteId, filter ) => {
-	const before = filter && filter.before ? filter.before : '';
-	const after = filter && filter.after ? filter.after : '';
-	const on = filter && filter.on ? filter.on : '';
-	return `activity-log-type-counts-${ siteId }-${ after }-${ before }-${ on }`;
-};
-
 export const requestActivityActionTypeCounts = (
 	siteId,
 	filter,
 	{ freshness = 10 * 1000 } = {}
 ) => {
-	const id = requestActivityActionTypeCountsId( siteId, filter );
+	const before = filter && filter.before ? filter.before : '';
+	const after = filter && filter.after ? filter.after : '';
+	const on = filter && filter.on ? filter.on : '';
+	const id = `activity-log-${ siteId }-${ after }-${ before }-${ on }`;
 
 	return requestHttpData(
 		id,
@@ -66,37 +61,7 @@ export const requestActivityActionTypeCounts = (
 	);
 };
 
-export const requestActivityCountsId = ( siteId, filter ) => {
-	const before = filter && filter.before ? filter.before : '';
-	const after = filter && filter.after ? filter.after : '';
-	const on = filter && filter.on ? filter.on : '';
-	return `activity-log-counts-${ siteId }-${ after }-${ before }-${ on }`;
-};
-
-export const requestActivityCounts = ( siteId, filter, { freshness = 10 * 1000 } = {} ) => {
-	const id = requestActivityCountsId( siteId, filter );
-
-	return requestHttpData(
-		id,
-		http(
-			{
-				apiNamespace: 'wpcom/v2',
-				method: 'GET',
-				path: `/sites/${ siteId }/activity/count`,
-				query: omit( filterStateToApiQuery( filter ), 'aggregate' ),
-			},
-			{}
-		),
-		{
-			freshness,
-			fromApi: () => data => {
-				return [ [ id, fromActivityCountApi( data ) ] ];
-			},
-		}
-	);
-};
-
-export const requestActivityLogsId = ( siteId, filter ) => {
+export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000 } = {} ) => {
 	const group =
 		filter && filter.group && filter.group.length ? sortBy( filter.group ).join( ',' ) : '';
 	const before = filter && filter.before ? filter.before : '';
@@ -104,13 +69,9 @@ export const requestActivityLogsId = ( siteId, filter ) => {
 	const on = filter && filter.on ? filter.on : '';
 	const aggregate = filter && filter.aggregate ? filter.aggregate : '';
 
-	return `activity-log-${ siteId }-${ group }-${ after }-${ before }-${ on }-${ aggregate }`;
-};
-
-export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000 } = {} ) => {
-	const requestId = requestActivityLogsId( siteId, filter );
+	const id = `activity-log-${ siteId }-${ group }-${ after }-${ before }-${ on }-${ aggregate }`;
 	return requestHttpData(
-		requestId,
+		id,
 		http(
 			{
 				apiNamespace: 'wpcom/v2',
@@ -123,7 +84,7 @@ export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000
 		{
 			freshness,
 			fromApi: () => data => {
-				return [ [ requestId, fromActivityLogApi( data ) ] ];
+				return [ [ id, fromActivityLogApi( data ) ] ];
 			},
 		}
 	);
