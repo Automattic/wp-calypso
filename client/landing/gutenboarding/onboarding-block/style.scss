@@ -13,21 +13,31 @@
 }
 
 .gutenboarding-page-enter {
-	animation: gutenboarding-page-appear 0.5s ease-out forwards;
+	animation: gutenboarding-page-appear 240ms ease-out forwards;
+	z-index: 1;
 }
 
 .gutenboarding-page-exit {
-	animation: gutenboarding-page-appear 0.5s ease-out forwards;
-	animation-direction: reverse;
+	animation: gutenboarding-page-disappear 240ms ease-out forwards;
+	z-index: 0;
 }
 
 @keyframes gutenboarding-page-appear {
 	from {
 		opacity: 0;
-		transform: translateY( 20px );
+		transform: translateY( 10px );
 	}
 	to {
 		opacity: 1;
 		transform: translateY( 0 );
+	}
+}
+
+@keyframes gutenboarding-page-disappear {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
 	}
 }
