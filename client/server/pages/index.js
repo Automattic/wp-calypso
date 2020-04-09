@@ -106,14 +106,24 @@ function isUAInBrowserslist( userAgentString, environment = 'defaults' ) {
 }
 
 function getBuildTargetFromRequest( request ) {
-	const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
-	const isEvergreen = ! isDesktop && isUAInBrowserslist( request.useragent.source, 'evergreen' );
-	const isForcedFallback = request.query.forceFallback;
-	// Development is always evergreen, except desktop
 	const isDevelopment = process.env.NODE_ENV === 'development';
-	return ( isDevelopment && ! isDesktop ) || ( isEvergreen && ! isForcedFallback )
+	const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
+
+	const devTarget = process.env.DEV_TARGET || 'evergreen';
+	const uaTarget = isUAInBrowserslist( request.useragent.source, 'evergreen' )
 		? 'evergreen'
-		: null;
+		: 'fallback';
+
+	// Did the user force fallback, via query parameter?
+	const prodTarget = request.query.forceFallback ? 'fallback' : uaTarget;
+
+	let target = isDevelopment ? devTarget : prodTarget;
+
+	if ( isDesktop ) {
+		target = 'fallback';
+	}
+
+	return target === 'fallback' ? null : target;
 }
 
 const ASSETS_PATH = path.join( __dirname, '../', 'bundler' );

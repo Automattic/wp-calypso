@@ -2,7 +2,6 @@
  * External dependencies
  *
  */
-
 import React, { Fragment } from 'react';
 import classNames from 'classnames';
 import path from 'path';
@@ -60,6 +59,7 @@ class Document extends React.Component {
 			addEvergreenCheck,
 			requestFrom,
 			useTranslationChunks,
+			target,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
@@ -207,7 +207,7 @@ class Document extends React.Component {
 					 * this lets us have the performance benefit in prod, without breaking HMR in dev
 					 * since the manifest needs to be updated on each save
 					 */ }
-					{ env === 'development' && <script src="/calypso/evergreen/manifest.js" /> }
+					{ env === 'development' && <script src={ `/calypso/${ target }/manifest.js` } /> }
 					{ env !== 'development' && (
 						<script
 							nonce={ inlineScriptNonce }
