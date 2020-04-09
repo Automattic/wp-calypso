@@ -15,6 +15,7 @@
 
 			@include breakpoint( '>660px' ) {
 				flex-flow: row;
+				max-width: 1000px;
 			}
 
 			.product-card {
