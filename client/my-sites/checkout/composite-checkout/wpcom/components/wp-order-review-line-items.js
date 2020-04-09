@@ -309,7 +309,7 @@ WPOrderReviewLineItems.propTypes = {
 };
 
 const WPOrderReviewList = styled.ul`
-	margin: -10px 0 0;
+	margin: -10px 0 10px 0;
 	padding: 0;
 `;
 
