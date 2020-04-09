@@ -35,8 +35,8 @@
 
 	input[type='text'].components-text-control__input {
 		padding: 6px 40px 6px 16px;
-		height: 36px;
-		background: var( --studio-gray-0 );
+		height: 38px;
+		background: #f0f0f0;
 		border: none;
 
 		&::placeholder {
@@ -64,7 +64,9 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 14px;
+	margin: 0 -36px -36px;
+	padding: 24px 36px;
+	border-top: 1px solid #f0f0f0;
 }
 
 .domain-picker__footer-options.components-button {
@@ -75,6 +77,7 @@
 .domain-picker__footer-button.components-button {
 	@include onboarding-medium-text;
 	padding: 0 24px;
+	height: 38px;
 }
 
 .domain-picker__connect-domain {
@@ -137,6 +140,8 @@
 }
 
 .domain-picker__suggestion-item-name {
+	letter-spacing: 0.4px;
+
 	input[type='radio'].domain-picker__suggestion-radio-button {
 		width: 16px;
 		height: 16px;
@@ -208,7 +213,7 @@
 }
 
 .domain-picker__price {
-	color: var( --studio-gray-20 );
+	color: var( --studio-gray-40 );
 	white-space: nowrap;
 
 	&.placeholder {
