@@ -26,16 +26,22 @@ export default class LoginPage extends AsyncBaseContainer {
 		const passwordSelector = By.css( '#password' );
 		const changeAccountSelector = By.css( '#loginAsAnotherUser' );
 
-		try {
+		const setUsername = async () => {
 			// If there is already a logged in user, we display the Gravatar and 'Continue as [user]' button and hide login form
 			await driverHelper.waitTillPresentAndDisplayed( driver, userNameSelector );
 			await driverHelper.waitTillFocused( driver, userNameSelector );
 			await driverHelper.setWhenSettable( driver, userNameSelector, username );
+		};
+
+		try {
+			await setUsername();
 		} catch ( error ) {
 			console.error( error );
-			// In order to display login form, the link to login with another account should be clicked first
+			// If setting the username failed the first time, we might be on the
+			// "existing user" login page. So to display the actual login form,
+			// we click the link to login with another account.
 			await driverHelper.clickWhenClickable( driver, changeAccountSelector );
-			await driverHelper.setWhenSettable( driver, userNameSelector, username );
+			await setUsername();
 		}
 		await this.driver.sleep( 1000 );
 		await driver.findElement( userNameSelector ).sendKeys( Key.ENTER );
