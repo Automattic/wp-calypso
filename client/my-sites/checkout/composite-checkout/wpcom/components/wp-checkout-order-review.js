@@ -24,8 +24,9 @@ export default function WPCheckoutOrderReview( {
 	getItemVariants,
 	onChangePlanLength,
 } ) {
-	const [ items ] = useLineItems();
+	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
+	const isPurchaseFree = total.amount.value === 0;
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
@@ -41,12 +42,14 @@ export default function WPCheckoutOrderReview( {
 				/>
 			</WPOrderReviewSection>
 
-			<CouponField
-				id="order-review-coupon"
-				disabled={ formStatus !== 'ready' }
-				couponStatus={ couponStatus }
-				couponFieldStateProps={ couponFieldStateProps }
-			/>
+			{ ! isPurchaseFree && (
+				<CouponField
+					id="order-review-coupon"
+					disabled={ formStatus !== 'ready' }
+					couponStatus={ couponStatus }
+					couponFieldStateProps={ couponFieldStateProps }
+				/>
+			) }
 		</div>
 	);
 }
