@@ -57,11 +57,13 @@ export default class ReaderPage extends AsyncBaseContainer {
 
 		// Try a second time if the share menu is closed during the operation
 		// the first time.
+		let result;
 		try {
-			return await clickAndOpenShareModal();
+			result = await clickAndOpenShareModal();
 		} catch {
-			return await clickAndOpenShareModal();
+			result = await clickAndOpenShareModal();
 		}
+		return result;
 	}
 
 	async commentOnLatestPost( comment ) {
