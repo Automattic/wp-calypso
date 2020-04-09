@@ -54,11 +54,3 @@ input:disabled {
 		color: var( --color-neutral-20 );
 	}
 }
-
-.onboarding-block {
-	display: grid;
-}
-
-.onboarding-block > div {
-	grid-area: 1/1;
-}

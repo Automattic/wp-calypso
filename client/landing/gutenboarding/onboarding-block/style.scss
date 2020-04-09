@@ -14,16 +14,7 @@
 
 .gutenboarding-page {
 	transform-origin: center center;
-}
-
-.gutenboarding-page-enter {
-	animation: gutenboarding-page-appear 240ms ease-out forwards;
-	z-index: 1;
-}
-
-.gutenboarding-page-exit {
-	animation: gutenboarding-page-disappear 240ms ease-out forwards;
-	z-index: 0;
+	animation: gutenboarding-page-appear 300ms ease-out forwards;
 }
 
 @keyframes gutenboarding-page-appear {
@@ -34,14 +25,5 @@
 	to {
 		opacity: 1;
 		transform: translateY( 0 );
-	}
-}
-
-@keyframes gutenboarding-page-disappear {
-	from {
-		opacity: 1;
-	}
-	to {
-		opacity: 0;
 	}
 }

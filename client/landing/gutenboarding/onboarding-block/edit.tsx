@@ -4,7 +4,7 @@
 import { BlockEditProps } from '@wordpress/blocks';
 import { useSelect } from '@wordpress/data';
 import React, { FunctionComponent } from 'react';
-import { Redirect, Route } from 'react-router-dom';
+import { Redirect, Switch, Route } from 'react-router-dom';
 
 /**
  * Internal dependencies
@@ -18,7 +18,6 @@ import { Step, usePath, useNewQueryParam } from '../path';
 import AcquireIntent from './acquire-intent';
 import StylePreview from './style-preview';
 import { isEnabled } from '../../../config';
-import { CSSTransition } from 'react-transition-group';
 
 import './colors.scss';
 import './style.scss';
@@ -35,69 +34,35 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 			{ isCreatingSite && (
 				<Redirect push={ replaceHistory ? undefined : true } to={ makePath( Step.CreateSite ) } />
 			) }
-			<Route exact path={ makePath( Step.IntentGathering ) }>
-				{ ( { match } ) => (
-					<CSSTransition
-						in={ match !== null }
-						unmountOnExit
-						classNames="gutenboarding-page"
-						timeout={ 240 }
-					>
-						<AcquireIntent />
-					</CSSTransition>
-				) }
-			</Route>
+			<Switch>
+				<Route exact path={ makePath( Step.IntentGathering ) }>
+					<AcquireIntent />
+				</Route>
 
-			{ ! siteVertical && (
 				<Route path={ makePath( Step.DesignSelection ) }>
-					<Redirect to={ makePath( Step.IntentGathering ) } />
-				</Route>
-			) }
-
-			<Route path={ makePath( Step.DesignSelection ) }>
-				{ ( { match } ) => (
-					<CSSTransition
-						in={ match !== null }
-						unmountOnExit
-						classNames="gutenboarding-page"
-						timeout={ 250 }
-					>
+					{ ! siteVertical ? (
+						<Redirect to={ makePath( Step.IntentGathering ) } />
+					) : (
 						<DesignSelector />
-					</CSSTransition>
-				) }
-			</Route>
-
-			{ ! selectedDesign && ! isEnabled( 'gutenboarding/style-preview' ) && (
-				<Route path={ makePath( Step.Style ) }>
-					<Redirect to={ makePath( Step.DesignSelection ) } />
+					) }
 				</Route>
-			) }
 
-			<Route path={ makePath( Step.Style ) }>
-				{ ( { match } ) => (
-					<CSSTransition
-						in={ match !== null }
-						unmountOnExit
-						classNames="gutenboarding-page"
-						timeout={ 250 }
-					>
+				<Route path={ makePath( Step.Style ) }>
+					{ // Disable reason: Leave me alone, my nested ternaries are amazing ✨
+					// eslint-disable-next-line no-nested-ternary
+					! selectedDesign ? (
+						<Redirect to={ makePath( Step.DesignSelection ) } />
+					) : isEnabled( 'gutenboarding/style-preview' ) ? (
 						<StylePreview />
-					</CSSTransition>
-				) }
-			</Route>
+					) : (
+						<Redirect to={ makePath( Step.DesignSelection ) } />
+					) }
+				</Route>
 
-			<Route path={ makePath( Step.CreateSite ) }>
-				{ ( { match } ) => (
-					<CSSTransition
-						in={ match !== null }
-						unmountOnExit
-						classNames="gutenboarding-page"
-						timeout={ 250 }
-					>
-						<CreateSite />
-					</CSSTransition>
-				) }
-			</Route>
+				<Route path={ makePath( Step.CreateSite ) }>
+					<CreateSite />
+				</Route>
+			</Switch>
 		</div>
 	);
 };
