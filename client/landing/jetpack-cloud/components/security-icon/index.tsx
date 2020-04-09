@@ -11,6 +11,7 @@ import errorIcon from './images/error.svg';
 import okayIcon from './images/security-okay.svg';
 import scanErrorIcon from './images/security-error.svg';
 import inProgressIcon from './images/in-progress.svg';
+import infoIcon from './images/security-info.svg';
 
 interface Props {
 	icon: string;
@@ -20,7 +21,7 @@ interface Props {
 function SecurityIcon( props: Props ) {
 	const { icon, className } = props;
 
-	let iconPath = okayIcon;
+	let iconPath;
 	switch ( icon ) {
 		case 'error':
 			iconPath = scanErrorIcon;
@@ -30,6 +31,13 @@ function SecurityIcon( props: Props ) {
 			break;
 		case 'scan-error':
 			iconPath = errorIcon;
+			break;
+		case 'info':
+			iconPath = infoIcon;
+			break;
+		case 'success':
+		default:
+			iconPath = okayIcon;
 			break;
 	}
 
