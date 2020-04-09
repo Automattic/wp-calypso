@@ -185,7 +185,6 @@
 	&.placeholder {
 		@include placeholder();
 		min-width: 30%;
-		background-position: 30px;
 		background-repeat: no-repeat;
 	}
 }
