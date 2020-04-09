@@ -1,5 +1,7 @@
 .activity-card .activity-log-item__actor {
     margin-left: 0;
+    display: flex;
+    align-items: center;
 }
 
 .activity-card .button.is-borderless.is-primary {
@@ -24,6 +26,10 @@
 	color: #a7aaad;
 	font-size: 0.7rem;
 	margin-left: 0.2rem;
+}
+
+.activity-log-item__actor-info {
+	margin-left: 1rem;
 }
 
 .activity-card .activity-log-item__actor-info .activity-log-item__actor-name,

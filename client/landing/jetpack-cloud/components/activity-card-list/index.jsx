@@ -83,7 +83,7 @@ class ActivityCardList extends Component {
 				{ showPagination && (
 					<Pagination
 						compact={ isMobile() }
-						className="activity-card-list__pagination"
+						className="activity-card-list__pagination-top"
 						key="activity-card-list__pagination-top"
 						nextLabel={ 'Older' }
 						page={ actualPage }
@@ -97,7 +97,7 @@ class ActivityCardList extends Component {
 				{ showPagination && (
 					<Pagination
 						compact={ isMobile() }
-						className="activity-card-list__pagination"
+						className="activity-card-list__pagination-bottom"
 						key="activity-card-list__pagination-bottom"
 						nextLabel={ 'Older' }
 						page={ actualPage }
