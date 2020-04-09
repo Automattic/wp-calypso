@@ -19,6 +19,7 @@ export default ( eventName, eventProperties ) => {
 	// Required by Tracks when added manually
 	const blog_id = window._currentSiteId;
 	const site_type = window._currentSiteType;
+	const user_locale = window._currentUserLocale;
 
 	eventProperties = eventProperties || {};
 
@@ -49,7 +50,7 @@ export default ( eventName, eventProperties ) => {
 	eventProperties = omit( eventProperties, isUndefined );
 
 	// Populate custom properties.
-	eventProperties = { ...eventProperties, blog_id, site_type };
+	eventProperties = { ...eventProperties, blog_id, site_type, user_locale };
 
 	tracksDebug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
 
