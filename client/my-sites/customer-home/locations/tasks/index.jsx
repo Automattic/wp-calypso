@@ -16,7 +16,7 @@ const cardComponents = {
 	'home-banner-legacy-stats-banners': StatsBanners,
 };
 
-const Upsells = ( { cards, primary, siteId, slug } ) => {
+const Tasks = ( { cards, primary, siteId, slug } ) => {
 	const componentProps = {
 		primary,
 		siteId,
@@ -51,4 +51,4 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps )( Upsells );
+export default connect( mapStateToProps )( Tasks );

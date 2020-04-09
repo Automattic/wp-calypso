@@ -30,7 +30,7 @@ import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import QueryHomeLayout from 'components/data/query-home-layout';
 import { getHomeLayout } from 'state/selectors/get-home-layout';
 import Notices from 'my-sites/customer-home/locations/notices';
-import Upsells from 'my-sites/customer-home/locations/upsells';
+import Tasks from 'my-sites/customer-home/locations/tasks';
 import Primary from 'my-sites/customer-home/locations/primary';
 import Secondary from 'my-sites/customer-home/locations/secondary';
 
@@ -88,11 +88,11 @@ const Home = ( {
 			{ layout ? (
 				<>
 					<Notices
-						cards={ layout.notices }
+						cards={ layout.tasks }
 						checklistMode={ checklistMode }
 						displayChecklist={ displayChecklist }
 					/>
-					<Upsells cards={ layout.upsells } />
+					<Tasks cards={ layout.upsells } checklistMode={ checklistMode } />
 					{ hasChecklistData && (
 						<div className="customer-home__layout">
 							<div className="customer-home__layout-col customer-home__layout-col-left">
