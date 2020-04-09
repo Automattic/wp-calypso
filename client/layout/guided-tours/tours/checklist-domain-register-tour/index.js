@@ -51,7 +51,7 @@ export const ChecklistDomainRegisterTour = makeTour(
 					</p>
 					<ButtonRow>
 						<Continue hidden when={ whenLeavesAddDomainsRoute } step="finish" />
-						<SiteLink isButton={ false } href="/checklist/:site">
+						<SiteLink isButton={ false } href="/home/:site">
 							{ translate( 'Return to the checklist' ) }
 						</SiteLink>
 					</ButtonRow>

@@ -140,7 +140,7 @@ export const ChecklistAboutPageTour = makeTour(
 								'return to our checklist and see what’s next.'
 						) }
 					</p>
-					<SiteLink isButton href="/checklist/:site">
+					<SiteLink isButton href="/home/:site">
 						{ translate( 'Return to the checklist' ) }
 					</SiteLink>
 				</Fragment>

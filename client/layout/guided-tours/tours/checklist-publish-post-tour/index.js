@@ -90,7 +90,7 @@ export const ChecklistPublishPostTour = makeTour(
 					</p>
 					<ButtonRow>
 						<Next step="categories-tags">{ translate( 'All done, continue' ) }</Next>
-						<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
+						<SiteLink href="/home/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
 						<Continue step="categories-tags" hidden />
 					</ButtonRow>
 				</Fragment>
@@ -227,7 +227,7 @@ export const ChecklistPublishPostTour = makeTour(
 								'Let’s move on and see what’s next on our checklist.'
 						) }
 					</p>
-					<SiteLink isButton href="/checklist/:site">
+					<SiteLink isButton href="/home/:site">
 						{ translate( 'Return to the checklist' ) }
 					</SiteLink>
 				</Fragment>
