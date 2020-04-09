@@ -37,17 +37,17 @@ const MasteringGutenberg = () => {
 				</p>
 				<InlineSupportLink
 					supportPostId={ 147594 }
+					supportLink={ localizeUrl( 'https://wordpress.com/support/wordpress-editor/#blocks' ) }
+					showIcon={ false }
+					text={ translate( 'Customizing posts and pages with blocks' ) }
+				/>
+				<InlineSupportLink
+					supportPostId={ 147594 }
 					supportLink={ localizeUrl(
 						'https://wordpress.com/support/wordpress-editor/#configuring-a-block'
 					) }
 					showIcon={ false }
 					text={ translate( 'Adjusting settings of blocks' ) }
-				/>
-				<InlineSupportLink
-					supportPostId={ 147594 }
-					supportLink={ localizeUrl( 'https://wordpress.com/support/wordpress-editor/#blocks' ) }
-					showIcon={ false }
-					text={ translate( 'Customizing posts and pages with blocks' ) }
 				/>
 			</div>
 		</Card>
