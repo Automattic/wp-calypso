@@ -55,9 +55,15 @@ class DailyBackupStatus extends Component {
 		let displayableDate;
 
 		if ( isToday && withLatest ) {
-			displayableDate = translate( 'Latest: Today %s', { args: [ displayBackupTime ] } );
+			displayableDate = translate( 'Latest: Today %s', {
+				args: [ displayBackupTime ],
+				comment: '%s is the time of the last backup from today',
+			} );
 		} else if ( isToday ) {
-			displayableDate = translate( 'Today %s', { args: [ displayBackupTime ] } );
+			displayableDate = translate( 'Today %s', {
+				args: [ displayBackupTime ],
+				comment: '%s is the time of the last backup from today',
+			} );
 		} else if ( withLatest ) {
 			displayableDate = translate( 'Latest: %s', {
 				args: [ backupDate.format( dateFormat + ', LT' ) ],
@@ -106,7 +112,9 @@ class DailyBackupStatus extends Component {
 			<>
 				<Gridicon icon="cloud-upload" className="daily-backup-status__gridicon-error-state" />
 				<div className="daily-backup-status__failed-message">
-					{ translate( 'Backup failed' ) }: { backupTitleDate }
+					{ translate( 'Backup failed: %(backupDate)s', {
+						args: { backupDate: backupTitleDate },
+					} ) }
 				</div>
 				<div className="daily-backup-status__label">
 					<p>
