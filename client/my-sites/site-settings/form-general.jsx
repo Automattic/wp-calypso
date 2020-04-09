@@ -44,6 +44,7 @@ import { launchSite } from 'state/sites/launch/actions';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import FormInputCheckbox from 'components/forms/form-checkbox';
+import { hasLocalizedText } from 'blocks/eligibility-warnings/has-localized-text';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentDidMount() {
@@ -532,9 +533,12 @@ export class SiteSettingsFormGeneral extends Component {
 				<Card className="site-settings__general-settings-launch-site">
 					<div className="site-settings__general-settings-launch-site-text">
 						<p>
-							{ isComingSoon
+							{ isComingSoon &&
+							hasLocalizedText(
+								'Your site hasn\'t been launched yet. It is hidden from visitors behind a "Coming Soon" notice until it is launched.'
+							)
 								? translate(
-										"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
+										'Your site hasn\'t been launched yet. It is hidden from visitors behind a "Coming Soon" notice until it is launched.'
 								  )
 								: translate(
 										"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
