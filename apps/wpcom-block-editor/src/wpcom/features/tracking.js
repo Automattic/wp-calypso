@@ -34,13 +34,13 @@ const getTypeForBlockId = blockId => {
  * or tries to lookup the block by id.
  *
  * @param {string|object} block Block object or string identifier.
- * @returns {object|null} block object or null.
+ * @returns {object} block object or an empty object if not found.
  */
 const ensureBlockObject = block => {
 	if ( typeof block === 'object' ) {
 		return block;
 	}
-	return select( 'core/block-editor' ).getBlock( block );
+	return select( 'core/block-editor' ).getBlock( block ) || {};
 };
 
 /**
