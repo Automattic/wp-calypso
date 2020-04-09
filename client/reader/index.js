@@ -22,6 +22,7 @@ import {
 } from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
+import { addMiddleware } from 'redux-dynamic-middlewares';
 
 /**
  * Style dependencies
@@ -31,6 +32,16 @@ import './style.scss';
 function forceTeamA8C( context, next ) {
 	context.params.team = 'a8c';
 	next();
+}
+
+export async function lazyLoadDependencies() {
+	const isBrowser = typeof window === 'object';
+	if ( isBrowser && config.isEnabled( 'lasagna' ) ) {
+		const lasagnaMiddleware = await import(
+			/* webpackChunkName: "lasagnaMiddleware" */ 'state/lasagna/middleware.js'
+		);
+		addMiddleware( lasagnaMiddleware.default );
+	}
 }
 
 export default function () {

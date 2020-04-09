@@ -3,7 +3,6 @@
  */
 import config from 'config';
 import page from 'page';
-import { addMiddleware, resetMiddlewares } from 'redux-dynamic-middlewares';
 
 /**
  * Internal dependencies
@@ -29,18 +28,6 @@ function activateSection( sectionDefinition, context ) {
 async function loadSection( context, sectionDefinition ) {
 	context.store.dispatch( { type: 'SECTION_SET', isLoading: true } );
 
-	if ( sectionDefinition.module === 'reader' ) {
-		resetMiddlewares();
-		const isBrowser = typeof window === 'object';
-		if ( isBrowser && config.isEnabled( 'lasagna' ) ) {
-			import( /* webpackChunkName: "lasagnaMiddleware" */ 'state/lasagna/middleware.js' ).then(
-				lasagnaMiddleware => {
-					addMiddleware( lasagnaMiddleware.default );
-				}
-			);
-		}
-	}
-
 	// If the section chunk is not loaded within 400ms, report it to analytics
 	const loadReportTimeout = setTimeout( () => {
 		context.store.dispatch( bumpStat( 'calypso_chunk_waiting', sectionDefinition.name ) );
@@ -51,6 +38,11 @@ async function loadSection( context, sectionDefinition ) {
 		const requiredModule = await load( sectionDefinition.name, sectionDefinition.module );
 		// call the module initialization function (possibly async, registers page.js handlers etc.)
 		await requiredModule.default( controller.clientRouter, addReducerToStore( context.store ) );
+
+		// lazy load dependencies before section is activated
+		if ( requiredModule.lazyLoadDependencies ) {
+			await requiredModule.lazyLoadDependencies();
+		}
 	} finally {
 		context.store.dispatch( { type: 'SECTION_SET', isLoading: false } );
 
