@@ -1,0 +1,36 @@
+.jetpack-cloud-icon-header {
+	display: flex;
+	justify-content: center;
+	padding-bottom: 32px;
+	padding-top: 32px;
+	.gridicon {
+		fill: var( --color-primary );
+		height: 48px;
+		width: 48px;
+
+		&.is-error {
+			fill: var( --color-error );
+		}
+
+		&.is-warning {
+			fill: var();
+		}
+	}
+	img {
+		height: 48px;
+		width: 48px;
+	}
+
+	@include breakpoint( '>660px' ) {
+		justify-content: flex-start;
+
+		.gridicon {
+			height: 64px;
+			width: 64px;
+		}
+		img {
+			height: 64px;
+			width: 64px;
+		}
+	}
+}

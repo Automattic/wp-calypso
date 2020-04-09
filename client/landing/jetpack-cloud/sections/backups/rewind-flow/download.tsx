@@ -9,6 +9,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'landing/jetpack-cloud/components/jetpack-cloud-button';
+import IconHeader from 'landing/jetpack-cloud/components/jetpack-cloud-icon-header';
 import { defaultRewindConfig, RewindConfig } from './types';
 import { rewindBackup } from 'state/activity-log/actions';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
@@ -52,13 +53,11 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 
 	const renderConfirm = () => (
 		<>
-			<div className="rewind-flow__header">
-				<img
-					src="/calypso/images/illustrations/jetpack-cloud-download-ready.svg"
-					alt="jetpack cloud download ready"
-				/>
-			</div>
-			<h1>{ translate( 'Create downloadable backup' ) }</h1>
+			<IconHeader
+				imgPath="/calypso/images/illustrations/jetpack-cloud-download-ready.svg"
+				imgAlt="jetpack cloud download ready"
+			/>
+			<h2>{ translate( 'Create downloadable backup' ) }</h2>
 			<p>
 				{ translate(
 					'{{strong}}%(backupDisplayDate)s{{/strong}} is the selected point to create a download backup of. ',
@@ -72,7 +71,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			<h2>{ translate( 'Choose the items you wish to restore:' ) }</h2>
+			<h3>{ translate( 'Choose the items you wish to restore:' ) }</h3>
 			<RewindConfigEditor currentConfig={ rewindConfig } onConfigChange={ setRewindConfig } />
 			<RewindFlowNotice
 				gridicon="notice-outline"
@@ -98,9 +97,9 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 					alt="jetpack cloud download ready"
 				/>
 			</div>
-			<h3 className="rewind-flow__title">
+			<h2 className="rewind-flow__title">
 				{ translate( 'Currently creating a downloadable backup of your site' ) }
-			</h3>
+			</h2>
 			<ProgressBar percent={ downloadProgress } />
 			<p className="rewind-flow__info">
 				{ translate(
@@ -129,9 +128,9 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 					alt="jetpack cloud download success"
 				/>
 			</div>
-			<h3 className="rewind-flow__title">
+			<h2 className="rewind-flow__title">
 				{ translate( 'Your backup is now available for download.' ) }
-			</h3>
+			</h2>
 			<p className="rewind-flow__info">
 				{ translate(
 					'We successfully created a backup of your site from {{strong}}%(backupDisplayDate)s{{/strong}}.',
