@@ -18,6 +18,9 @@ import { Card } from '@automattic/components';
 import Notice from 'components/notice';
 import HelpContactForm from 'me/help/help-contact-form';
 import LimitedChatAvailabilityNotice from 'me/help/contact-form-notice/limited-chat-availability';
+import LiveChatClosureNotice, {
+	easterHolidayName,
+} from 'me/help/contact-form-notice/live-chat-closure';
 import HelpContactConfirmation from 'me/help/help-contact-confirmation';
 import HeaderCake from 'components/header-cake';
 import wpcomLib from 'lib/wp';
@@ -553,6 +556,20 @@ class HelpContact extends React.Component {
 						<LimitedChatAvailabilityNotice
 							compact={ compact }
 							showAt="2020-03-27 00:00Z"
+							hideAt="2020-04-12 00:00Z"
+						/>
+
+						<LiveChatClosureNotice
+							compact={ compact }
+							holidayName={ easterHolidayName }
+							displayAt="2020-04-12 00:00Z"
+							closesAt="2020-04-12 06:00Z"
+							reopensAt="2020-04-13 06:00Z"
+						/>
+
+						<LimitedChatAvailabilityNotice
+							compact={ compact }
+							showAt="2020-04-13 06:00Z"
 							hideAt="2021-01-01 00:00Z"
 						/>
 					</>
