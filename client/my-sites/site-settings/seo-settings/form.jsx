@@ -283,6 +283,7 @@ export class SeoForm extends React.Component {
 			isFetchingSite,
 			siteId,
 			siteIsJetpack,
+			siteIsComingSoon,
 			showAdvancedSeo,
 			showWebsiteMeta,
 			selectedSite,
@@ -329,7 +330,7 @@ export class SeoForm extends React.Component {
 						showDismiss={ false }
 						text={ ( function() {
 							if ( isSitePrivate ) {
-								if ( isSiteComingSoon ) {
+								if ( siteIsComingSoon ) {
 									return translate(
 										"SEO settings aren't recognized by search engines while your site is Coming Soon."
 									);
@@ -501,7 +502,7 @@ const mapStateToProps = state => {
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isSiteHidden: isHiddenSite( state, siteId ),
 		isSitePrivate: isPrivateSite( state, siteId ),
-		isSiteComingSoon: isSiteComingSoon( state, siteId ),
+		siteIsComingSoon: isSiteComingSoon( state, siteId ),
 		hasAdvancedSEOFeature: hasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
 		hasSeoPreviewFeature: hasFeature( state, siteId, FEATURE_SEO_PREVIEW_TOOLS ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
