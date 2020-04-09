@@ -41,7 +41,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 						in={ match !== null }
 						unmountOnExit
 						classNames="gutenboarding-page"
-						timeout={ 500 }
+						timeout={ 240 }
 					>
 						<AcquireIntent />
 					</CSSTransition>
@@ -60,7 +60,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 						in={ match !== null }
 						unmountOnExit
 						classNames="gutenboarding-page"
-						timeout={ 500 }
+						timeout={ 250 }
 					>
 						<DesignSelector />
 					</CSSTransition>
@@ -79,7 +79,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 						in={ match !== null }
 						unmountOnExit
 						classNames="gutenboarding-page"
-						timeout={ 500 }
+						timeout={ 250 }
 					>
 						<StylePreview />
 					</CSSTransition>
@@ -92,7 +92,7 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 						in={ match !== null }
 						unmountOnExit
 						classNames="gutenboarding-page"
-						timeout={ 500 }
+						timeout={ 250 }
 					>
 						<CreateSite />
 					</CSSTransition>

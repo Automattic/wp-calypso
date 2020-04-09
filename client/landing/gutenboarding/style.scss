@@ -30,14 +30,12 @@ $admin-sidebar-width-collapsed: 0;
 // Own/Gutenboarding styles
 @import './variables.scss';
 
-
 .gutenboarding__content-editor {
 	// overrides .edit-post-visual-editor
 	padding-top: 0;
 
 	@include break-small {
 		padding-top: $gutenboarding-header-height;
-
 	}
 }
 
@@ -57,8 +55,10 @@ input:disabled {
 	}
 }
 
-.is-block-content {
-	display: flex;
-	flex-direction: column;
-	width: 100%;
+.onboarding-block {
+	display: grid;
+}
+
+.onboarding-block > div {
+	grid-area: 1/1;
 }
