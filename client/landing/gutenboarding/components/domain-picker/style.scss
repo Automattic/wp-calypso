@@ -137,15 +137,12 @@
 			}
 		}
 	}
-}
-
-.domain-picker__suggestion-item-name {
-	letter-spacing: 0.4px;
 
 	input[type='radio'].domain-picker__suggestion-radio-button {
 		width: 16px;
 		height: 16px;
 		margin: 0 12px 0 0;
+		min-width: 16px; // prevents long domain from squishing the radio button
 		padding: 0;
 		vertical-align: middle;
 		position: relative;
@@ -177,6 +174,13 @@
 			box-shadow: 0 0 0 1px var( --studio-blue-30 );
 		}
 	}
+}
+
+.domain-picker__suggestion-item-name {
+	flex-grow: 1;
+	margin-right: 24px;
+	word-break: break-all;
+	letter-spacing: 0.4px;
 
 	&.placeholder {
 		@include placeholder();
@@ -188,6 +192,10 @@
 
 .domain-picker__domain-tld {
 	color: var( --studio-blue-40 );
+	// margin for recommended badge. this margin shouldn't
+	// be place on the badge because if the badge falls 
+	// on a newline, it will have whitespace on the left.
+	margin-right: 10px;
 }
 
 .domain-picker__has-domain {
@@ -206,7 +214,6 @@
 	height: 20px;
 	align-items: center;
 	font-size: 10px;
-	margin-left: 10px;
 	text-transform: uppercase;
 
 	background-color: var( --studio-blue-50 );
