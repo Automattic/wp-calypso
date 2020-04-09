@@ -6,6 +6,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import domReady from '@wordpress/dom-ready';
 import { __ } from '@wordpress/i18n';
+import { Popover } from '@wordpress/components';
 /* eslint-disable import/no-extraneous-dependencies */
 
 /**
@@ -41,16 +42,47 @@ function updateSettingsBar() {
 		saveButton && ( saveButton.innerText = __( 'Save' ) );
 
 		// Wrap 'Launch' button link to frankenflow.
+		const launchLinkContainer = document.createElement( 'div' );
 		const launchLink = document.createElement( 'a' );
+		const launchTipContainer = document.createElement( 'div' );
+		launchLinkContainer.className = 'gutenboarding-editor-overrides__launch-button-container';
 		launchLink.href = calypsoifyGutenberg.frankenflowUrl;
 		launchLink.target = '_top';
 		launchLink.className =
 			'gutenboarding-editor-overrides__launch-button components-button is-primary';
 		const textContent = document.createTextNode( __( 'Launch' ) );
 		launchLink.appendChild( textContent );
+		launchLinkContainer.appendChild( launchLink );
+		launchLinkContainer.appendChild( launchTipContainer );
 
 		// Put 'Launch' and 'Save' back on bar in desired order.
-		settingsBar.prepend( launchLink );
+		settingsBar.prepend( launchLinkContainer );
 		settingsBar.prepend( saveButton );
+
+		// We probably don't need this container, but I've added it in case we need some extra styling
+		const launchTipContentContainer = window.wp.element.createElement(
+			'span',
+			{ className: 'gutenboarding-editor-overrides__launch-button-content' },
+			__(
+				"When you've finished customizing your site's content, launch your site to make it public."
+			)
+		);
+
+		/*
+			TODO:
+				- Work out why the arrow isn't showing: https://developer.wordpress.org/block-editor/components/popover/#noarrow
+				- Define when and how the popover should close. After `n` seconds?
+		*/
+		window.wp.element.render(
+			window.wp.element.createElement(
+				Popover,
+				{
+					className: 'gutenboarding-editor-overrides__launch-button-tip',
+					position: 'bottom left',
+				},
+				launchTipContentContainer
+			),
+			launchTipContainer
+		);
 	} );
 }

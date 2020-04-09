@@ -1,9 +1,33 @@
 .gutenboarding-editor-overrides {
+
+	.block-editor-editor-skeleton__header {
+		// ensures the header and .gutenboarding-editor-overrides__launch-button-tip appear above the settings sidebar
+		z-index: 100;
+	}
+
     .editor-post-switch-to-draft,
     .editor-post-preview {
         display: none;
     }
-    
+
+	.gutenboarding-editor-overrides__launch-button-container {
+		display: inline-flex;
+	}
+
+	.gutenboarding-editor-overrides__launch-button-tip .components-popover__content {
+		margin-top: 8px;
+		padding: 14px;
+		font-size: 12px;
+		border-color: rgba( 0, 0, 0, 0.15 );
+		box-shadow: 0 0 3px 0 rgba( 0, 0, 0, 0.1 );
+	}
+
+	.arrow_box {
+		position: relative;
+		background: #88b7d5;
+		border: 4px solid #c2e1f5;
+	}
+
     .gutenboarding-editor-overrides__launch-button {
         padding: 0 12px;
         margin: 0 12px 0 3px;
