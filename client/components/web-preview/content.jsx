@@ -22,6 +22,7 @@ import SpinnerLine from 'components/spinner-line';
 import SeoPreviewPane from 'components/seo-preview-pane';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { isInlineHelpPopoverVisible } from 'state/inline-help/selectors';
+import { parse as parseUrl } from 'url';
 
 const debug = debugModule( 'calypso:web-preview' );
 
@@ -234,6 +235,23 @@ export class WebPreviewContent extends Component {
 		// Sometimes we force inline help open in the preview. In this case we don't want to hide it when the iframe loads
 		if ( ! this.props.isInlineHelpPopoverVisible ) {
 			this.focusIfNeeded();
+			// If the preview is loaded and the site is private atomic, there's a chance we ended up on
+			// "you need to login first" screen. These messages are handled by wpcomsh on the other end,
+			// and they make it possible to redirect to wp-login.php since it cannot be displayed in this
+			// iframe OR redirected to using <a href="" target="_top">.
+			const { protocol, host } = parseUrl( this.props.externalUrl );
+			this.iframe.contentWindow.postMessage( { connected: 'calypso' }, `${ protocol }//${ host }` );
+			window.addEventListener(
+				'message',
+				e => {
+					if ( e.data?.type === 'needs-auth' ) {
+						window.location.href =
+							`${ protocol }//${ host }/wp-login.php?redirect_to=` +
+							encodeURIComponent( window.location.href );
+					}
+				},
+				false
+			);
 		}
 	};
 
