@@ -265,7 +265,7 @@ function shouldItemBeInSummary( item ) {
 
 const CheckoutTermsUI = styled.div`
 	& > * {
-		margin: 16px 16px 16px -24px;
+		margin: 16px 0 16px -24px;
 		padding-left: 24px;
 		position: relative;
 	}
@@ -273,6 +273,7 @@ const CheckoutTermsUI = styled.div`
 	& div:first-of-type {
 		padding-left: 0;
 		margin-left: 0;
+		margin-top: 32px;
 	}
 
 	svg {

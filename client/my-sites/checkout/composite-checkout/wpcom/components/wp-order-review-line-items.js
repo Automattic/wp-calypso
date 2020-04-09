@@ -21,20 +21,12 @@ import { useHasDomainsInCart, isLineItemADomain } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
 
 export function WPOrderReviewSection( { children, className } ) {
-	return (
-		<OrderReviewSectionArea className={ joinClasses( [ className, 'order-review-section' ] ) }>
-			{ children }
-		</OrderReviewSectionArea>
-	);
+	return <div className={ joinClasses( [ className, 'order-review-section' ] ) }>{ children }</div>;
 }
 
 WPOrderReviewSection.propTypes = {
 	className: PropTypes.string,
 };
-
-const OrderReviewSectionArea = styled.div`
-	margin-bottom: 16px;
-`;
 
 function WPLineItem( {
 	item,
@@ -190,7 +182,7 @@ const LineItemUI = styled( WPLineItem )`
 	border-bottom: ${( { theme, total, isSummaryVisible } ) =>
 		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight};
 	position: relative;
-	margin-right: 30px;
+	margin-right: ${( { total } ) => ( total ? '0' : '30px' )};
 `;
 
 const LineItemTitleUI = styled.div`
