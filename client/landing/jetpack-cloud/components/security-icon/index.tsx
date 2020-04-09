@@ -21,7 +21,7 @@ interface Props {
 function SecurityIcon( props: Props ) {
 	const { icon, className } = props;
 
-	let iconPath = okayIcon;
+	let iconPath;
 	switch ( icon ) {
 		case 'error':
 			iconPath = scanErrorIcon;
@@ -33,8 +33,11 @@ function SecurityIcon( props: Props ) {
 			iconPath = errorIcon;
 			break;
 		case 'info':
-		default:
 			iconPath = infoIcon;
+			break;
+		case 'success':
+		default:
+			iconPath = okayIcon;
 			break;
 	}
 
