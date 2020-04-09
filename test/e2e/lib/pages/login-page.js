@@ -38,7 +38,7 @@ export default class LoginPage extends AsyncBaseContainer {
 			console.error( error );
 			// If setting the username failed the first time, we might be on the
 			// "existing user" login page. So to display the actual login form,
-			// we click the link to login with another account.
+			// we click the link to login with another account. Then try again.
 			await driverHelper.clickWhenClickable( driver, changeAccountSelector );
 			await setUsername();
 		}
