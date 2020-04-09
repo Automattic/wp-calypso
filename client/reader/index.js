@@ -44,8 +44,8 @@ export async function lazyLoadDependencies() {
 	}
 }
 
-export default function () {
-	lazyLoadDependencies();
+export default async function () {
+	await lazyLoadDependencies();
 
 	if ( config.isEnabled( 'reader' ) ) {
 		page(
