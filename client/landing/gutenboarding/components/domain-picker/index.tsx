@@ -52,29 +52,6 @@ export interface Props {
 	currentDomain?: DomainSuggestion;
 }
 
-const FreeDomainIcon = () => (
-	<Icon
-		icon={ () => (
-			<svg
-				width="15"
-				height="15"
-				viewBox="0 0 15 15"
-				fill="none"
-				xmlns="http://www.w3.org/2000/svg"
-			>
-				<path
-					d="M13.2878 8.60833L8.61291 13.2844C8.4918 13.4057 8.34798 13.5019 8.18968 13.5676C8.03137 13.6332 7.86169 13.667 7.69032 13.667C7.51895 13.667 7.34926 13.6332 7.19096 13.5676C7.03265 13.5019 6.88884 13.4057 6.76773 13.2844L1.16699 7.68876V1.16699H7.68706L13.2878 6.76919C13.5307 7.01358 13.667 7.34417 13.667 7.68876C13.667 8.03335 13.5307 8.36395 13.2878 8.60833V8.60833Z"
-					stroke="#008A20"
-					strokeWidth="1.5"
-					strokeLinecap="round"
-					strokeLinejoin="round"
-				/>
-				<circle cx="4.50033" cy="4.50033" r="0.833333" fill="#008A20" />
-			</svg>
-		) }
-	/>
-);
-
 const SearchIcon = () => (
 	<Icon
 		icon={ () => (
@@ -112,7 +89,10 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 			<PanelBody>
 				<PanelRow className="domain-picker__panel-row">
 					<div className="domain-picker__header">
-						<div className="domain-picker__header-title">{ __( 'Choose a domain' ) }</div>
+						<div className="domain-picker__header-group">
+							<div className="domain-picker__header-title">{ __( 'Choose a domain' ) }</div>
+							<p>{ __( 'Free for the first year with any paid plan' ) }</p>
+						</div>
 						<CloseButton onClose={ () => onClose() } />
 					</div>
 					<div className="domain-picker__search">
@@ -125,13 +105,6 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 							value={ domainSearch }
 						/>
 					</div>
-				</PanelRow>
-
-				<PanelRow className="domain-picker__panel-row">
-					<p className="domain-picker__free-text">
-						<FreeDomainIcon />
-						{ __( 'Free for the first year with any paid plan' ) }
-					</p>
 				</PanelRow>
 
 				<PanelRow className="domain-picker__panel-row">
@@ -169,7 +142,12 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 				<PanelRow className="domain-picker__panel-row">
 					<div className="domain-picker__footer">
 						<div className="domain-picker__footer-options"></div>
-						<Button className="domain-picker__footer-button" isPrimary onClick={ () => onClose() }>
+						<Button
+							className="domain-picker__footer-button"
+							disabled={ ! freeSuggestions?.length && ! paidSuggestions?.length }
+							isPrimary
+							onClick={ onClose }
+						>
 							{ __( 'Confirm' ) }
 						</Button>
 					</div>

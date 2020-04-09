@@ -1,7 +1,7 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /**
- * External dependecies
+ * External dependencies
  */
-
 const webpackMiddleware = require( 'webpack-dev-middleware' );
 const webpack = require( 'webpack' );
 const chalk = require( 'chalk' );
@@ -99,8 +99,7 @@ function middleware( app ) {
 	app.use(
 		webpackMiddleware( compiler, {
 			mode: 'development',
-			// Development is always evergreen.
-			publicPath: '/calypso/evergreen/',
+			publicPath: `/calypso/${ process.env.DEV_TARGET || 'evergreen' }/`,
 			stats: {
 				colors: true,
 				hash: true,

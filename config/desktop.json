@@ -17,6 +17,7 @@
 		"always_use_logout_url": true,
 		"blogger-plan": false,
 		"catch-js-errors": false,
+		"code-splitting": true,
 		"desktop": true,
 		"desktop-promo": false,
 		"domains/cctlds": true,
