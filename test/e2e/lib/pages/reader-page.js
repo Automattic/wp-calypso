@@ -29,7 +29,11 @@ export default class ReaderPage extends AsyncBaseContainer {
 	async shareLatestPost() {
 		const shareButtonSelector = by.css( '.reader-share__button' );
 
-		// Allow the components to settle and finish loading, one hopes.
+		// Allow the components to settle and finish loading, one hopes. There
+		// continues to be errors where the test cannot find the site selector
+		// below after opening the reader share button. The screencasts indicate
+		// that more posts are added to the page after the share modal opens,
+		// causing the share modal to close before it clicks the site button.
 		await this.driver.sleep( 2000 );
 
 		const hasSharablePost = await driverHelper.isElementPresent( this.driver, shareButtonSelector );
@@ -39,15 +43,25 @@ export default class ReaderPage extends AsyncBaseContainer {
 			await driverHelper.clickWhenClickable( this.driver, firstComboCardPostSelector );
 		}
 
-		await driverHelper.clickWhenClickable( this.driver, shareButtonSelector );
-		await driverHelper.waitTillPresentAndDisplayed(
-			this.driver,
-			by.css( '.site-selector__sites' )
-		);
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			by.css( '.site-selector__sites .site__content' )
-		);
+		async function clickAndOpenShareModal() {
+			await driverHelper.clickWhenClickable( this.driver, shareButtonSelector );
+			await driverHelper.waitTillPresentAndDisplayed(
+				this.driver,
+				by.css( '.site-selector__sites' )
+			);
+			return await driverHelper.clickWhenClickable(
+				this.driver,
+				by.css( '.site-selector__sites .site__content' )
+			);
+		}
+
+		// Try a second time if the share menu is closed during the operation
+		// the first time.
+		try {
+			return await clickAndOpenShareModal();
+		} catch {
+			return await clickAndOpenShareModal();
+		}
 	}
 
 	async commentOnLatestPost( comment ) {
