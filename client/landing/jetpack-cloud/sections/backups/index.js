@@ -37,6 +37,7 @@ export default function() {
 			siteSelection,
 			navigation,
 			backupActivity,
+			wrapInSiteOffsetProvider,
 			makeLayout,
 			clientRender
 		);
