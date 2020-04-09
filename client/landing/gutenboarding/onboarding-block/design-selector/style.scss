@@ -8,9 +8,18 @@
 	color: var( --mainColor );
 
 	.design-selector__header {
-		display: flex;
-		align-items: center;
+		display: block;
 		@include onboarding-heading-padding;
+
+		@include break-large {
+			display: flex;
+			align-items: center;
+		}
+
+		@include onboarding-break-gigantic {
+			display: flex;
+			align-items: center;
+		}
 	}
 
 	.design-selector__heading {
@@ -20,6 +29,15 @@
 	.design-selector__start-over-button {
 		&.is-link {
 			color: var( --color-text-subtle );
+			padding-top: 1em;
+
+			@include break-large {
+				padding-top: 0;
+			}
+
+			@include onboarding-break-gigantic {
+				padding-top: 0;
+			}
 		}
 	}
 
@@ -30,8 +48,8 @@
 	.design-selector__design-option {
 		cursor: pointer;
 		float: left;
-		width: calc( 50% - 64px );
-		margin: 0 32px 48px;
+		width: 100%;
+		margin: 0;
 
 		&:hover,
 		&:focus {
@@ -48,10 +66,10 @@
 		}
 	}
 
-	@supports (display: grid) {
+	@supports ( display: grid ) {
 		.design-selector__grid {
 			display: grid;
-			grid-template-columns: 1fr 1fr;
+			grid-template-columns: 1fr;
 			column-gap: 64px;
 			row-gap: 48px;
 			margin: 0 0 30px;
