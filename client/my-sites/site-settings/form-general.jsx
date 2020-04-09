@@ -32,6 +32,7 @@ import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { isJetpackSite, isCurrentPlanPaid } from 'state/sites/selectors';
+import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import guessTimezone from 'lib/i18n-utils/guess-timezone';
 import { preventWidows } from 'lib/formatting';
@@ -388,7 +389,13 @@ export class SiteSettingsFormGeneral extends Component {
 							<span>{ translate( 'Coming Soon' ) }</span>
 						</FormLabel>
 						<FormSettingExplanation isIndented>
-							{ translate( "Your site is hidden from visitors until it's ready for viewing." ) }
+							{ hasLocalizedText(
+								'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
+							)
+								? translate(
+										'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
+								  )
+								: translate( "Your site is hidden from visitors until it's ready for viewing." ) }
 						</FormSettingExplanation>
 					</>
 				) }
@@ -448,7 +455,15 @@ export class SiteSettingsFormGeneral extends Component {
 							<span>{ translate( 'Private' ) }</span>
 						</FormLabel>
 						<FormSettingExplanation isIndented>
-							{ translate( 'Your site is only visible to you and logged-in members you approve.' ) }
+							{ hasLocalizedText(
+								'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
+							)
+								? translate(
+										'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
+								  )
+								: translate(
+										'Your site is only visible to you and logged-in members you approve.'
+								  ) }
 						</FormSettingExplanation>
 					</>
 				) }
@@ -505,7 +520,7 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	renderLaunchSite() {
-		const { translate, siteDomains, siteSlug, siteId, isPaidPlan } = this.props;
+		const { translate, siteDomains, siteSlug, siteId, isPaidPlan, isComingSoon } = this.props;
 
 		const launchSiteClasses = classNames( 'site-settings__general-settings-launch-site-button', {
 			'site-settings__disable-privacy-settings': ! siteDomains.length,
@@ -710,6 +725,7 @@ const connectComponent = connect(
 				? ownProps.withComingSoonOption
 				: 'variant' === abtest( 'ATPrivacy' ),
 			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
+			isComingSoon: isSiteComingSoon( state, siteId ),
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			siteIsJetpack,
 			siteIsVip: isVipSite( state, siteId ),
