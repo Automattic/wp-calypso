@@ -2,58 +2,63 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
+import { Icon } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import AnimatedPlaceholder from '../animated-placeholder';
 import CreateAndRedirect from './create-and-redirect';
 import { useNewQueryParam } from '../../path';
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const CreateSite: FunctionComponent< {} > = () => {
-	const { __: NO__ } = useI18n();
+	const { __ } = useI18n();
 	const shouldTriggerCreate = useNewQueryParam();
+	const [ shouldCreateAndRedirect, setCreateAndRedirect ] = React.useState( false );
 
-	const createAndRedirect = shouldTriggerCreate ? <CreateAndRedirect /> : null;
+	// Some very rudimentary progress illusions
+
+	const progressSteps = [
+		__( 'Building your site' ),
+		__( 'Getting your domain' ),
+		__( 'Applying design' ),
+	];
 
 	return (
 		<div className="create-site__background">
-			{ createAndRedirect }
+			{ shouldTriggerCreate && shouldCreateAndRedirect && <CreateAndRedirect /> }
 			<div className="create-site__layout">
 				<div className="create-site__header">
-					<div className="create-site__toolbar">
-						<div className="create-site__placeholder create-site__placeholder-site">
-							Placeholder
-						</div>
-					</div>
-					<div className="create-site__settings">
-						<div className="create-site__placeholder create-site__placeholder-button">
-							Placeholder
-						</div>
-						<div className="create-site__placeholder create-site__placeholder-button">
-							Placeholder
-						</div>
-						<div className="create-site__placeholder create-site__placeholder-button">
-							Placeholder
-						</div>
+					<div className="gutenboarding__header-wp-logo">
+						<Icon icon="wordpress-alt" size={ 24 } />
 					</div>
 				</div>
 				<div className="create-site__content">
-					<div className="create-site__placeholder create-site__placeholder-title">Placeholder</div>
-					<div className="create-site__text">
-						<AnimatedPlaceholder
-							isSlow
-							texts={ [
-								NO__( 'We are creating your site.' ),
-								NO__( 'It will be ready in a moment.' ),
-								NO__( 'Almost there, hang on!' ),
-								NO__( 'Your site is almost ready!' ),
-								NO__( 'We are about to finish!' ),
-							] }
-						/>
+					<div className="create-site__progress">
+						<div className="create-site__progress-steps">
+							{ progressSteps.map( step => (
+								<div key={ step } className="create-site__progress-step">
+									{ step }
+								</div>
+							) ) }
+						</div>
+					</div>
+					<div
+						className="create-site__progress-bar"
+						onAnimationEnd={ () => setCreateAndRedirect( true ) }
+					/>
+					<div className="create-site__progress-numbered-steps">
+						{ progressSteps.map( ( _, index ) => (
+							<p>
+								{ sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
+									currentStep: index + 1,
+									totalSteps: progressSteps.length,
+								} ) }
+							</p>
+						) ) }
 					</div>
 				</div>
 			</div>

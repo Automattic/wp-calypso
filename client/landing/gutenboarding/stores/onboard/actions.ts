@@ -67,6 +67,11 @@ export const resetOnboardStore = () => ( {
 	type: 'RESET_ONBOARD_STORE' as const,
 } );
 
+export const setSelectedSite = ( selectedSite: number ) => ( {
+	type: 'SET_SELECTED_SITE' as const,
+	selectedSite,
+} );
+
 export function* createSite(
 	username: string,
 	freeDomainSuggestion?: DomainSuggestion,
@@ -119,6 +124,7 @@ export type OnboardAction = ReturnType<
 	| typeof setDomainSearch
 	| typeof setFonts
 	| typeof setSelectedDesign
+	| typeof setSelectedSite
 	| typeof setSiteTitle
 	| typeof setSiteVertical
 	| typeof togglePageLayout

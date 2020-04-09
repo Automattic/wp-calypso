@@ -12,11 +12,18 @@ import { SUPPORT_ARTICLE_DIALOG_OPEN, SUPPORT_ARTICLE_DIALOG_CLOSE } from 'state
  *
  * @returns {object}		Action
  */
-export function openSupportArticleDialog( { postId, postUrl = null } ) {
+export function openSupportArticleDialog( {
+	postId,
+	postUrl = null,
+	actionLabel = null,
+	actionUrl = null,
+} ) {
 	return {
 		type: SUPPORT_ARTICLE_DIALOG_OPEN,
 		postId,
 		postUrl,
+		actionLabel,
+		actionUrl,
 	};
 }
 

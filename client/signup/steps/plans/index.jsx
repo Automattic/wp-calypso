@@ -74,7 +74,7 @@ export class PlansStep extends Component {
 		this.props.submitSignupStep( step, {
 			cartItem,
 			// dependencies used only for 'plans-with-domain' step in Gutenboarding pre-launch flow
-			...( flowName === 'prelaunch' && { isPreLaunch: true, isGutenboardingCreate: true } ),
+			...( this.props.isGutenboarding && { isPreLaunch: true, isGutenboardingCreate: true } ),
 		} );
 		this.props.goToNextStep();
 	};
@@ -103,7 +103,11 @@ export class PlansStep extends Component {
 	};
 
 	isEligibleForPlanStepTest() {
-		return ! this.props.isLaunchPage && 'variantCopyUpdates' === abtest( 'planStepCopyUpdates' );
+		return (
+			! this.props.isLaunchPage &&
+			! this.props.isGutenboarding &&
+			'variantCopyUpdates' === abtest( 'planStepCopyUpdates' )
+		);
 	}
 
 	plansFeaturesList() {
@@ -135,6 +139,7 @@ export class PlansStep extends Component {
 					plansWithScroll={ true }
 					planTypes={ planTypes }
 					flowName={ flowName }
+					isGutenboarding={ this.props.isGutenboarding }
 				/>
 			</div>
 		);
@@ -191,6 +196,7 @@ export class PlansStep extends Component {
 				allowBackFirstStep={ !! selectedSite }
 				backUrl={ backUrl }
 				backLabelText={ backLabelText }
+				hideFormattedHeader={ this.props.isGutenboarding }
 			/>
 		);
 	}
@@ -216,6 +222,7 @@ PlansStep.propTypes = {
 	customerType: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 	planTypes: PropTypes.array,
+	isGutenboarding: PropTypes.bool,
 };
 
 /**

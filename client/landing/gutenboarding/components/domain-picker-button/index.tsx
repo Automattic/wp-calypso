@@ -55,7 +55,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				ref={ buttonRef }
 			>
 				<span>{ children }</span>
-				<Dashicon icon="arrow-down-alt2" />
+				<Dashicon icon="arrow-down-alt2" size={ 16 } />
 			</Button>
 			{ isDomainPopoverVisible && (
 				<div className="domain-picker-button__popover-container">
@@ -63,7 +63,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 						className="domain-picker-button__popover"
 						focusOnMount={ false }
 						noArrow
-						onClickOutside={ handleClose }
+						onClickOutside={ handleClose } // TODO: investigate why clicking outside is ignored
 						onClose={ handleClose }
 						onFocusOutside={ handleClose }
 						position={ 'bottom center' }

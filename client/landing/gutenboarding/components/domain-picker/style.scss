@@ -18,47 +18,55 @@
 .domain-picker__header {
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 14px;
+	align-items: flex-start;
+	margin-bottom: 27px;
 }
 
 .domain-picker__header-title {
 	@include onboarding-font-recoleta;
 	font-size: 26px;
 	line-height: 35px;
+	margin-bottom: 3px;
 }
 
 .domain-picker__search {
 	position: relative;
+	margin-bottom: -7px;
 
 	input[type='text'].components-text-control__input {
-		padding: 6px 8px 6px 40px;
-		height: 36px;
+		padding: 6px 40px 6px 16px;
+		height: 38px;
+		background: #f0f0f0;
+		border: none;
+
+		&::placeholder {
+			color: var( --studio-black );
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 2px var( --studio-blue-30 );
+			background: var( --studio-white );
+		}
 	}
 
 	svg {
 		position: absolute;
 		top: 6px;
-		left: 8px;
+		right: 8px;
 	}
 }
 
 .domain-picker__free-text {
-	color: var( --studio-green-50 );
-	line-height: 20px;
-	text-align: center;
-
-	svg {
-		margin: 8px;
-		vertical-align: middle;
-	}
+	color: var( --studio-green-40 );
 }
 
 .domain-picker__footer {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 14px;
+	margin: 0 -36px -36px;
+	padding: 24px 36px;
+	border-top: 1px solid #f0f0f0;
 }
 
 .domain-picker__footer-options.components-button {
@@ -69,6 +77,7 @@
 .domain-picker__footer-button.components-button {
 	@include onboarding-medium-text;
 	padding: 0 24px;
+	height: 38px;
 }
 
 .domain-picker__connect-domain {
@@ -84,6 +93,7 @@
 }
 
 .domain-picker__panel-row {
+
 	// Increasing specificity because @wordpress/components stylesheets are loaded after gutenboarding stylesheets.
 	// See https://github.com/Automattic/wp-calypso/pull/38554/commits/e1f9673bcfd9eaa6469a0cfecda9b915a520961a
 	// See https://github.com/WordPress/gutenberg/pull/19535
@@ -114,6 +124,8 @@
 	// See https://github.com/Automattic/wp-calypso/pull/38554/commits/e1f9673bcfd9eaa6469a0cfecda9b915a520961a
 	// See https://github.com/WordPress/gutenberg/pull/19535
 	@extend .domain-picker__suggestion-none;
+	cursor: pointer;
+	margin-bottom: 7px;
 
 	&.components-button {
 		&.is-tertiary {
@@ -128,6 +140,8 @@
 }
 
 .domain-picker__suggestion-item-name {
+	letter-spacing: 0.4px;
+
 	input[type='radio'].domain-picker__suggestion-radio-button {
 		width: 16px;
 		height: 16px;
@@ -157,8 +171,8 @@
 			}
 		}
 
-		&:focus,
-		&:hover {
+		&:not( :disabled ):focus,
+		&:not( :disabled ):hover {
 			border-color: var( --studio-blue-30 );
 			box-shadow: 0 0 0 1px var( --studio-blue-30 );
 		}
@@ -167,11 +181,14 @@
 	&.placeholder {
 		@include placeholder();
 		min-width: 30%;
+		background-position: 30px;
+		background-repeat: no-repeat;
 	}
 }
 
 .domain-picker__has-domain {
 	align-items: center;
+
 	.components-button {
 		color: var( --studio-blue-30 );
 	}
@@ -179,11 +196,14 @@
 
 .domain-picker__badge {
 	display: inline-flex;
-	border-radius: 1000px;
-	padding: 0.3em 1em;
+	border-radius: 2px;
+	padding: 0 10px;
+	line-height: 20px;
+	height: 20px;
 	align-items: center;
-	font-size: 0.75em;
-	margin-left: 1em;
+	font-size: 10px;
+	margin-left: 10px;
+	text-transform: uppercase;
 
 	background-color: var( --studio-blue-50 );
 	color: var( --color-text-inverted );
@@ -195,7 +215,7 @@
 }
 
 .domain-picker__price {
-	color: var( --studio-gray-20 );
+	color: var( --studio-gray-40 );
 	white-space: nowrap;
 
 	&.placeholder {

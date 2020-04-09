@@ -22,6 +22,7 @@ import Header from './components/header';
 import { name, settings } from './onboarding-block';
 import './style.scss';
 import { fontPairings, getFontTitle } from './constants';
+import GUTENARDING_BASE_NAME from './basename.json';
 
 registerBlockType( name, settings );
 
@@ -35,7 +36,7 @@ interface BlockListProps extends OriginalBlockList.Props {
 const BlockList = ( props: BlockListProps ) => <OriginalBlockList { ...props } />;
 
 export function Gutenboard() {
-	const { __: NO__ } = useI18n();
+	const { __ } = useI18n();
 
 	// TODO: Explore alternatives for loading fonts and optimizations
 	// TODO: Don't load like this
@@ -76,7 +77,7 @@ export function Gutenboard() {
 	} = useHistory();
 
 	useEffect( () => {
-		recordTracksPageViewWithPageParams( `/gutenboarding${ pathname }` );
+		recordTracksPageViewWithPageParams( `/${ GUTENARDING_BASE_NAME }${ pathname }` );
 	}, [ pathname ] );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -97,7 +98,7 @@ export function Gutenboard() {
 							<div
 								className="gutenboarding__content-editor edit-post-visual-editor editor-styles-wrapper"
 								role="region"
-								aria-label={ NO__( 'Onboarding screen content' ) }
+								aria-label={ __( 'Onboarding screen content' ) }
 								tabIndex={ -1 }
 							>
 								<BlockList

@@ -64,7 +64,7 @@ interface Cart {
 }
 
 const Header: FunctionComponent = () => {
-	const { __: NO__ } = useI18n();
+	const { __ } = useI18n();
 
 	const currentStep = useCurrentStep();
 
@@ -127,7 +127,7 @@ const Header: FunctionComponent = () => {
 			} ) }
 		>
 			{ recommendedDomainSuggestion
-				? sprintf( NO__( '%s is available' ), recommendedDomainSuggestion.domain_name )
+				? sprintf( __( '%s is available' ), recommendedDomainSuggestion.domain_name )
 				: 'example.wordpress.com' }
 		</span>
 	);
@@ -154,7 +154,7 @@ const Header: FunctionComponent = () => {
 	useEffect( () => {
 		// isRedirecting check this is needed to make sure we don't overwrite the first window.location.replace() call
 		if ( newSite && ! isRedirecting ) {
-			if ( ! domain?.is_free ) {
+			if ( domain && ! domain.is_free ) {
 				// I'd rather not make my own product, but this works.
 				// lib/cart-items helpers did not perform well.
 				const domainProduct = {
@@ -189,7 +189,7 @@ const Header: FunctionComponent = () => {
 		<div
 			className="gutenboarding__header"
 			role="region"
-			aria-label={ NO__( 'Top bar' ) }
+			aria-label={ __( 'Top bar' ) }
 			tabIndex={ -1 }
 		>
 			<section className="gutenboarding__header-section">
@@ -200,7 +200,7 @@ const Header: FunctionComponent = () => {
 				</div>
 				<div className="gutenboarding__header-section-item">
 					<div className="gutenboarding__header-site-title">
-						{ siteTitle ? siteTitle : NO__( 'Start your website' ) }
+						{ siteTitle ? siteTitle : __( 'Start your website' ) }
 					</div>
 				</div>
 				<div className="gutenboarding__header-section-item">

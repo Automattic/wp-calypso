@@ -45,6 +45,8 @@ import {
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+	PRODUCT_JETPACK_SEARCH,
+	PRODUCT_JETPACK_SEARCH_MONTHLY,
 } from 'lib/products-values/constants';
 
 /**
@@ -56,6 +58,7 @@ const analyticsPageTitleByType = {
 	personal: 'Jetpack Connect Personal',
 	premium: 'Jetpack Connect Premium',
 	pro: 'Jetpack Install Pro',
+	jetpack_search: 'Jetpack Search',
 };
 
 const removeSidebar = context => context.store.dispatch( hideSidebar() );
@@ -68,6 +71,7 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 			pro: PLAN_JETPACK_BUSINESS,
 			realtimebackup: PRODUCT_JETPACK_BACKUP_REALTIME,
 			backup: PRODUCT_JETPACK_BACKUP_DAILY,
+			jetpack_search: PRODUCT_JETPACK_SEARCH,
 		},
 		monthly: {
 			personal: PLAN_JETPACK_PERSONAL_MONTHLY,
@@ -75,6 +79,7 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 			pro: PLAN_JETPACK_BUSINESS_MONTHLY,
 			realtimebackup: PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
 			backup: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+			jetpack_search: PRODUCT_JETPACK_SEARCH_MONTHLY,
 		},
 	};
 
@@ -130,7 +135,6 @@ export function connect( context, next ) {
 
 	// Not clearing the plan here, because other flows can set the cookie before arriving here.
 	planSlug && storePlan( planSlug );
-
 	analytics.pageView.record( pathname, analyticsPageTitle );
 
 	removeSidebar( context );

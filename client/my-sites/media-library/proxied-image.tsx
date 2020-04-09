@@ -73,20 +73,13 @@ const ProxiedImage: React.FC< ProxiedImageProps > = function ProxiedImage( {
 				}
 				wpcom
 					.undocumented()
-					.getAtomicSiteMediaViaProxyRetry(
-						siteSlug,
-						filePath,
-						options,
-						( err: Error, data: Blob | null ) => {
-							if ( data instanceof Blob ) {
-								cacheResponse( requestId, data );
-								setImageObjectUrl( URL.createObjectURL( data ) );
-								debug( 'got image from API', { requestId, imageObjectUrl, data } );
-							} else if ( onError ) {
-								onError( err );
-							}
-						}
-					);
+					.getAtomicSiteMediaViaProxyRetry( siteSlug, filePath, options )
+					.then( ( data: Blob ) => {
+						cacheResponse( requestId, data );
+						setImageObjectUrl( URL.createObjectURL( data ) );
+						debug( 'got image from API', { requestId, imageObjectUrl, data } );
+					} )
+					.catch( onError );
 			}
 		}
 

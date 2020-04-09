@@ -81,6 +81,19 @@ const pageLayouts: Reducer< string[], OnboardAction > = ( state = [], action ) =
 	return state;
 };
 
+const selectedSite: Reducer< number | undefined, OnboardAction > = (
+	state = undefined,
+	action
+) => {
+	if ( action.type === 'SET_SELECTED_SITE' ) {
+		return action.selectedSite;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
 const selectedFonts: Reducer< FontPair | undefined, OnboardAction > = (
 	state = undefined,
 	action
@@ -102,6 +115,7 @@ const reducer = combineReducers( {
 	siteTitle,
 	siteVertical,
 	pageLayouts,
+	selectedSite,
 } );
 
 export type State = ReturnType< typeof reducer >;

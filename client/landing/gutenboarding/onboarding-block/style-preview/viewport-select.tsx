@@ -19,11 +19,11 @@ interface Props {
 	selected: T.Viewport;
 }
 const ViewportSelect: React.FunctionComponent< Props > = ( { onSelect, selected } ) => {
-	const { __: NO__ } = useI18n();
+	const { __ } = useI18n();
 	return (
 		<div className="style-preview__viewport-select">
 			<ViewportButton
-				aria-label={ NO__( 'Select desktop preview' ) }
+				aria-label={ __( 'Select desktop preview' ) }
 				onClick={ () => onSelect( 'desktop' ) }
 				isSelected={ selected === 'desktop' }
 			>
@@ -40,7 +40,7 @@ const ViewportSelect: React.FunctionComponent< Props > = ( { onSelect, selected 
 				</SVG>
 			</ViewportButton>
 			<ViewportButton
-				aria-label={ NO__( 'Select tablet preview' ) }
+				aria-label={ __( 'Select tablet preview' ) }
 				onClick={ () => onSelect( 'tablet' ) }
 				isSelected={ selected === 'tablet' }
 			>
@@ -58,7 +58,7 @@ const ViewportSelect: React.FunctionComponent< Props > = ( { onSelect, selected 
 				</SVG>
 			</ViewportButton>
 			<ViewportButton
-				aria-label={ NO__( 'Select mobile preview' ) }
+				aria-label={ __( 'Select mobile preview' ) }
 				onClick={ () => onSelect( 'mobile' ) }
 				isSelected={ selected === 'mobile' }
 			>

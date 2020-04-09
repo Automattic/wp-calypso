@@ -33,7 +33,7 @@ export const ChecklistUserEmailTour = makeTour(
 						) }
 					</p>
 					<ButtonRow>
-						<SiteLink isButton={ true } href="/checklist/:site">
+						<SiteLink isButton={ true } href="/home/:site">
 							{ translate( 'Return to the checklist' ) }
 						</SiteLink>
 					</ButtonRow>

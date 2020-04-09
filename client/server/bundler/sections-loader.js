@@ -1,5 +1,5 @@
 /**
- * External dependencies
+ * External dependecies
  */
 const { getOptions } = require( 'loader-utils' ); // eslint-disable-line import/no-extraneous-dependencies
 
@@ -13,22 +13,19 @@ const config = require( '../config' );
  *
  * It takes in a list of sections, and then for each one adds in a new key to the json
  * 'load'. The value for 'load' is a fn that returns the entry point for a section. (or a promise for the entry point)
- *
- * The exact import syntax used depends on the `useRequire` parameter. If `true`, synchronous `require`
- * expressions are used. That's needed for server. If `useRequire` is `false`, a dynamic (promise-returning)
- * `import()` expression is generated. That's useful for the code-splitting browser bundle.
+ * This needs to be done in a magic webpack loader in order to keep ability to easily switch code-splitting on and off.
+ * If we ever wanted to get rid of this file we need to commit to either on or off and manually adding the load
+ * functions to each section object.
  */
-function addModuleImportToSections( sections, { useRequire, onlyIsomorphic } = {} ) {
+function addModuleImportToSections( { sections, shouldSplit, onlyIsomorphic } ) {
 	sections.forEach( section => {
 		if ( onlyIsomorphic && ! section.isomorphic ) {
-			// don't generate an import statement for the section (that will prevent its code from being
-			// bundle), but don't remove the section from the list.
 			return;
 		}
 
-		section.load = useRequire
-			? `() => require( '${ section.module }' )`
-			: `() => import( /* webpackChunkName: '${ section.name }' */ '${ section.module }' )`;
+		const loaderFunction = `function() { return require( /* webpackChunkName: '${ section.name }' */ '${ section.module }'); }`;
+
+		section.load = shouldSplit ? loaderFunction.replace( 'require', 'import' ) : loaderFunction;
 	} );
 
 	// strip the outer quotation marks from the load statement
@@ -77,7 +74,7 @@ function filterSectionsInDevelopment( sections ) {
 
 const loader = function() {
 	const options = getOptions( this ) || {};
-	const { useRequire, onlyIsomorphic } = options;
+	const { forceRequire, onlyIsomorphic } = options;
 	let { include } = options;
 
 	let sections = filterSectionsInDevelopment( require( this.resourcePath ) );
@@ -97,9 +94,12 @@ const loader = function() {
 		}
 	}
 
-	return addModuleImportToSections( sections, { useRequire, onlyIsomorphic } );
+	return addModuleImportToSections( {
+		sections,
+		shouldSplit: config.isEnabled( 'code-splitting' ) && ! forceRequire,
+		onlyIsomorphic,
+	} );
 };
-
 loader.addModuleImportToSections = addModuleImportToSections;
 
 module.exports = loader;

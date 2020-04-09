@@ -10,7 +10,8 @@ import { Button } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import FixAllThreatsDialog from '../../components/fix-all-threats-dialog';
+import FixAllThreatsDialog from 'landing/jetpack-cloud/components/fix-all-threats-dialog';
+import QueryJetpackScan from 'components/data/query-jetpack-scan';
 import SecurityIcon from 'landing/jetpack-cloud/components/security-icon';
 import ThreatDialog from 'landing/jetpack-cloud/components/threat-dialog';
 import ThreatItem from 'landing/jetpack-cloud/components/threat-item';
@@ -68,6 +69,7 @@ const ScanThreats = ( { site, threats, userHasCredentials }: Props ) => {
 
 	return (
 		<>
+			<QueryJetpackScan siteId={ site.ID } />
 			<SecurityIcon icon="error" />
 			<h1 className="scan-threats scan__header">{ translate( 'Your site may be at risk' ) }</h1>
 			<p>
@@ -146,6 +148,7 @@ const ScanThreats = ( { site, threats, userHasCredentials }: Props ) => {
 
 const mapStateToProps = ( state, { site } ) => {
 	return {
+		site: site,
 		userHasCredentials: ! isEmpty( getJetpackCredentials( state, site.ID, 'main' ) ),
 	};
 };

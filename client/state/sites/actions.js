@@ -9,6 +9,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
+import config from 'config';
 import {
 	SITE_DELETE,
 	SITE_DELETE_FAILURE,
@@ -90,6 +91,7 @@ export function requestSites() {
 				site_activity: 'active',
 				fields: SITE_REQUEST_FIELDS,
 				options: SITE_REQUEST_OPTIONS,
+				filters: config( 'site_filter' ).join( ',' ),
 			} )
 			.then( response => {
 				dispatch( receiveSites( response.sites ) );

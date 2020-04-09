@@ -1,6 +1,11 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import '../../mixins';
 
+$progress-step-title-height: 40px;
+$progress-step-number-step-height: 45px;
+$progress-duration: 5s;
+$progress-widget-height: 300px;
+
 .create-site__background {
 	position: fixed;
 	top: 0;
@@ -8,7 +13,7 @@
 	right: 0;
 	bottom: 0;
 	z-index: 50;
-	background-color: var( --studio-gray-0 );
+	background-color: $white;
 
 	.create-site__header {
 		display: flex;
@@ -16,55 +21,83 @@
 		align-items: center;
 		height: 56px;
 		padding: 8px;
-		background-color: $white;
-
-		.create-site__toolbar,
-		.create-site__settings {
-			display: inline-flex;
-			align-items: center;
-		}
 	}
 
 	.create-site__content {
-		min-height: 70vh;
-		padding-top: 40px;
+		position: absolute;
+		top: calc( 50% - #{$progress-widget-height / 4} );
+		left: 50%;
+		width: 100%;
+		max-width: 540px;
+		height: $progress-widget-height;
+		transform: translateX( -50% );
+		// for mobiles
+		padding: 1em;
 
-		.create-site__text {
-			@include onboarding-font-recoleta;
-			margin-top: 60px;
-			text-align: center;
-			font-size: 32px;
-			color: var( --studio-blue-40 );
-			display: flex;
-			justify-content: center;
+		.create-site__progress {
+			height: $progress-step-title-height;
+			overflow: hidden;
+			margin-bottom: 20px;
+		}
 
-			.animated-input-placeholder span {
-				color: var( --studio-blue-40 );
+		.create-site__progress-steps {
+			animation: create-site__progress-steps $progress-duration ease-out forwards;
+
+			@keyframes create-site__progress-steps {
+				@for $i from 0 through 3 {
+					#{$i / 3 * 100%} {
+						transform: translateY( -$progress-step-title-height * ( $i - 1 ) );
+					}
+				}
 			}
 		}
-	}
 
-	.create-site__placeholder {
-		@include placeholder();
-		height: 16px;
-		border-radius: 8px;
-	}
+		.create-site__progress-bar {
+			height: 7px;
+			background: var( --mainColor );
+			transform: scaleX( 0 );
+			transform-origin: 0% 0%;
+			margin-top: 1em;
 
-	.create-site__placeholder-site {
-		margin-left: 18px;
-	}
+			animation: create-site__progress-bar-progress-move #{$progress-duration + 1} ease-out forwards;
 
-	.create-site__placeholder-button {
-		width: 40px;
-		margin: 0 8px;
-	}
+			@keyframes create-site__progress-bar-progress-move {
+				@for $i from 1 through 3 {
+					#{$i / 3 * 100%} {
+						transform: scaleX( #{$i / 3} );
+					}
+				}
+			}
+		}
 
-	.create-site__placeholder-title {
-		height: 40px;
-		min-width: 250px;
-		width: 40%;
-		max-width: 600px;
-		margin: 0 58px;
-		border-radius: 20px;
+		.create-site__progress-step {
+			@include onboarding-heading-text-mobile;
+			text-align: center;
+			vertical-align: middle;
+			margin: 0;
+			height: $progress-step-title-height;
+		}
+
+		.create-site__progress-numbered-steps {
+			height: $progress-step-title-height;
+			overflow: hidden;
+			margin-top: 0.7em;
+
+			> p {
+				height: $progress-step-number-step-height;
+				padding: 1em;
+				text-align: center;
+				color: var( --studio-gray-40 );
+
+				animation: create-site__progress-numbered-step-up $progress-duration steps( 2, end )
+					forwards;
+
+				@keyframes create-site__progress-numbered-step-up {
+					to {
+						transform: translateY( -$progress-step-number-step-height * 2 );
+					}
+				}
+			}
+		}
 	}
 }

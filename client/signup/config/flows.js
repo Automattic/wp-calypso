@@ -56,11 +56,11 @@ function getRedirectDestination( dependencies ) {
 }
 
 function getSignupDestination( dependencies ) {
-	return `/checklist/${ dependencies.siteSlug }`;
+	return `/home/${ dependencies.siteSlug }`;
 }
 
 function getLaunchDestination( dependencies ) {
-	return `/checklist/${ dependencies.siteSlug }?d=launched`;
+	return `/home/${ dependencies.siteSlug }?d=launched`;
 }
 
 function getThankYouNoSiteDestination() {
@@ -68,7 +68,7 @@ function getThankYouNoSiteDestination() {
 }
 
 function getChecklistThemeDestination( dependencies ) {
-	return `/checklist/${ dependencies.siteSlug }?d=theme`;
+	return `/home/${ dependencies.siteSlug }?d=theme`;
 }
 
 function getEditorDestination( dependencies ) {

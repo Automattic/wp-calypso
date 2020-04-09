@@ -83,12 +83,13 @@ class DomainManagementNavigationEnhanced extends React.Component {
 			return null;
 		}
 
+		// NOTE: remember to add translate to the description string once you start working on it
 		return (
 			<DomainManagementNavigationItem
 				path={ emailManagement( selectedSite.slug, domain.name ) }
 				materialIcon="email"
 				text={ translate( 'Manage your email accounts' ) }
-				description={ translate( '3 G Suite accounts' ) }
+				description={ '3 G Suite accounts' }
 			/>
 		);
 	}
@@ -100,12 +101,13 @@ class DomainManagementNavigationEnhanced extends React.Component {
 			return null;
 		}
 
+		// NOTE: remember to add translate to the description string once you start working on it
 		return (
 			<DomainManagementNavigationItem
 				path={ domainManagementNameServers( selectedSite.slug, domain.name ) }
 				materialIcon="language"
 				text={ translate( 'Change your name servers & DNS records' ) }
-				description={ translate( 'Destination: somewhere' ) }
+				description={ 'Destination: somewhere' }
 			/>
 		);
 	}
@@ -113,12 +115,13 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	getDnsRecords() {
 		const { selectedSite, translate, domain } = this.props;
 
+		// NOTE: remember to add translate to the description string once you start working on it
 		return (
 			<DomainManagementNavigationItem
 				path={ domainManagementDns( selectedSite.slug, domain.name ) }
 				materialIcon="language"
 				text={ translate( 'DNS records' ) }
-				description={ translate( 'Destination: somewhere' ) }
+				description={ 'Destination: somewhere' }
 			/>
 		);
 	}
@@ -158,12 +161,13 @@ class DomainManagementNavigationEnhanced extends React.Component {
 			return null;
 		}
 
+		// NOTE: remember to add translate to the description string once you start working on it
 		return (
 			<DomainManagementNavigationItem
 				path={ domainManagementTransfer( selectedSite.slug, domain.name ) }
 				materialIcon="sync_alt"
 				text={ translate( 'Transfer domain' ) }
-				description={ translate( 'Transfer lock: off' ) }
+				description={ 'Transfer lock: off' }
 			/>
 		);
 	}
@@ -256,13 +260,14 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	getSimilarDomains() {
 		const { selectedSite, translate } = this.props;
 
+		// NOTE: remember to add translate to the description string once you start working on it
 		return (
 			<DomainManagementNavigationItem
 				path={ domainAddNew( selectedSite.slug ) }
 				onClick={ this.handlePickCustomDomainClick }
 				materialIcon="search"
 				text={ translate( 'Find similar domains' ) }
-				description={ translate( 'Placeholder text' ) }
+				description={ 'Placeholder text' }
 			/>
 		);
 	}
@@ -270,13 +275,14 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	getSecurity() {
 		const { selectedSite, translate } = this.props;
 
+		// NOTE: remember to add translate to the description string once you start working on it
 		return (
 			<DomainManagementNavigationItem
 				path={ domainAddNew( selectedSite.slug ) }
 				onClick={ this.handlePickCustomDomainClick }
 				materialIcon="security"
 				text={ translate( 'Review your domain security' ) }
-				description={ translate( 'HTTPS encryption: on' ) }
+				description={ 'HTTPS encryption: on' }
 			/>
 		);
 	}

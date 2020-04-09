@@ -44,12 +44,28 @@ class WPCOM_Block_Editor_NUX {
 	public function enqueue_script_and_style() {
 		$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/wpcom-block-editor-nux.asset.php';
 		$script_dependencies = $asset_file['dependencies'];
+		$version             = $asset_file['version'];
+
 		wp_enqueue_script(
 			'wpcom-block-editor-nux-script',
 			plugins_url( 'dist/wpcom-block-editor-nux.js', __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/wpcom-block-editor-nux.js' ),
+			$version,
 			true
+		);
+
+		wp_localize_script(
+			'wpcom-block-editor-nux-script',
+			'wpcomBlockEditorNuxAssetsUrl',
+			plugins_url( 'dist/', __FILE__ )
+		);
+
+		$style_path = 'dist/wpcom-block-editor-nux' . ( is_rtl() ? '.rtl' : '' ) . '.css';
+		wp_enqueue_style(
+			'wpcom-block-editor-nux-style',
+			plugins_url( $style_path, __FILE__ ),
+			array(),
+			filemtime( plugin_dir_path( __FILE__ ) . $style_path )
 		);
 	}
 

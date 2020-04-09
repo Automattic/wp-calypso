@@ -48,3 +48,17 @@ export interface CreateSiteParams {
 		font_base?: string;
 	};
 }
+
+export interface SiteDetails {
+	ID: number;
+	name: string;
+	description: string;
+	URL: string;
+}
+
+export interface SiteError {
+	error: string;
+	message: string;
+}
+
+export type SiteResponse = SiteDetails | SiteError;
