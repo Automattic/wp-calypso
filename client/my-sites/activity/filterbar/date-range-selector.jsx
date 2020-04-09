@@ -250,7 +250,7 @@ export class DateRangeSelector extends Component {
 	};
 
 	render() {
-		const { customLabel, isVisible, lastSelectableDate, firstSelectableDate } = this.props;
+		const { customLabel, isVisible } = this.props;
 		const from = this.getFromDate();
 		const to = this.getToDate();
 		const now = new Date();
@@ -264,8 +264,7 @@ export class DateRangeSelector extends Component {
 			<DateRangePicker
 				selectedStartDate={ from }
 				selectedEndDate={ to }
-				firstSelectableDate={ firstSelectableDate }
-				lastSelectableDate={ lastSelectableDate ? lastSelectableDate : now }
+				lastSelectableDate={ now }
 				onDateCommit={ this.handleDateRangeCommit }
 				renderTrigger={ props => (
 					<Fragment>
