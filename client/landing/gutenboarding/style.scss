@@ -56,3 +56,9 @@ input:disabled {
 		color: var( --color-neutral-20 );
 	}
 }
+
+.is-block-content {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
