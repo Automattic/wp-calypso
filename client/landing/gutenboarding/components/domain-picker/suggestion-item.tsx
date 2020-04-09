@@ -15,6 +15,10 @@ interface Props {
 	onSelect: ( domainSuggestion: DomainSuggestion ) => void;
 }
 
+// foobar.com returns ['foobar.com', 'foobar', '.com'];
+// foobar.wordpress.com returns ['foobar.wordpress.com', 'foobar', '.wordpress.com'];
+const rxDomainParts = /([^.]*)(.*)/;
+
 const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	suggestion,
 	isRecommended = false,
@@ -22,6 +26,8 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	onSelect,
 } ) => {
 	const { __ } = useI18n();
+
+	const [ , domainName, domainTld ] = suggestion.domain_name.match( rxDomainParts );
 
 	return (
 		<label className="domain-picker__suggestion-item">
@@ -33,7 +39,8 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 					onChange={ () => void onSelect( suggestion ) }
 					checked={ isSelected }
 				/>
-				{ suggestion.domain_name }
+				<span>{ domainName }</span>
+				<span className="domain-picker__domain-tld">{ domainTld }</span>
 				{ isRecommended && (
 					<div className="domain-picker__badge is-recommended">{ __( 'Recommended' ) }</div>
 				) }
