@@ -2,15 +2,7 @@
  * Internal dependencies
  */
 
-import { ChecklistAboutPageTour } from './tours/checklist-about-page-tour';
-import { ChecklistContactPageTour } from './tours/checklist-contact-page-tour';
-import { ChecklistDomainRegisterTour } from './tours/checklist-domain-register-tour';
-import { ChecklistPublishPostTour } from './tours/checklist-publish-post-tour';
-import { ChecklistSiteIconTour } from './tours/checklist-site-icon-tour';
-import { ChecklistSiteTaglineTour } from './tours/checklist-site-tagline-tour';
 import { ChecklistSiteTitleTour } from './tours/checklist-site-title-tour';
-import { ChecklistUserAvatarTour } from './tours/checklist-user-avatar-tour';
-import { ChecklistUserEmailTour } from './tours/checklist-user-email-tour';
 import { EditorBasicsTour } from './tours/editor-basics-tour';
 import { GDocsIntegrationTour } from './tours/gdocs-integration-tour';
 import { JetpackBackupsRewindTour } from './tours/jetpack-backups-rewind-tour';
@@ -30,15 +22,7 @@ import { TutorialSitePreviewTour } from './tours/tutorial-site-preview-tour';
 import combineTours from './config-elements/combine-tours';
 
 export default combineTours( {
-	checklistAboutPage: ChecklistAboutPageTour,
-	checklistContactPage: ChecklistContactPageTour,
-	checklistDomainRegister: ChecklistDomainRegisterTour,
-	checklistPublishPost: ChecklistPublishPostTour,
-	checklistSiteIcon: ChecklistSiteIconTour,
-	checklistSiteTagline: ChecklistSiteTaglineTour,
 	checklistSiteTitle: ChecklistSiteTitleTour,
-	checklistUserAvatar: ChecklistUserAvatarTour,
-	checklistUserEmail: ChecklistUserEmailTour,
 	editorBasicsTour: EditorBasicsTour,
 	gdocsIntegrationTour: GDocsIntegrationTour,
 	jetpackBackupsRewind: JetpackBackupsRewindTour,
