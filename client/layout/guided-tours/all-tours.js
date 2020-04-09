@@ -2,9 +2,6 @@
  * Internal dependencies
  */
 
-import { ChecklistAboutPageTour } from './tours/checklist-about-page-tour';
-import { ChecklistContactPageTour } from './tours/checklist-contact-page-tour';
-import { ChecklistDomainRegisterTour } from './tours/checklist-domain-register-tour';
 import { ChecklistPublishPostTour } from './tours/checklist-publish-post-tour';
 import { ChecklistSiteIconTour } from './tours/checklist-site-icon-tour';
 import { ChecklistSiteTaglineTour } from './tours/checklist-site-tagline-tour';
@@ -30,9 +27,6 @@ import { TutorialSitePreviewTour } from './tours/tutorial-site-preview-tour';
 import combineTours from './config-elements/combine-tours';
 
 export default combineTours( {
-	checklistAboutPage: ChecklistAboutPageTour,
-	checklistContactPage: ChecklistContactPageTour,
-	checklistDomainRegister: ChecklistDomainRegisterTour,
 	checklistPublishPost: ChecklistPublishPostTour,
 	checklistSiteIcon: ChecklistSiteIconTour,
 	checklistSiteTagline: ChecklistSiteTaglineTour,

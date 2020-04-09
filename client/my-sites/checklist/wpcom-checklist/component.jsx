@@ -61,9 +61,7 @@ class WpcomChecklistComponent extends PureComponent {
 			site_icon_set: this.renderSiteIconSetTask,
 			blogdescription_set: this.renderBlogDescriptionSetTask,
 			avatar_uploaded: this.renderAvatarUploadedTask,
-			contact_page_updated: this.renderContactPageUpdatedTask,
 			post_published: this.renderPostPublishedTask,
-			custom_domain_registered: this.renderCustomDomainRegisteredTask,
 			mobile_app_installed: this.renderMobileAppInstalledTask,
 			site_launched: this.renderSiteLaunchedTask,
 			email_setup: this.renderEmailSetupTask,
@@ -449,32 +447,6 @@ class WpcomChecklistComponent extends PureComponent {
 		);
 	};
 
-	renderContactPageUpdatedTask = ( TaskComponent, baseProps, task ) => {
-		const { translate, taskUrls } = this.props;
-
-		return (
-			<TaskComponent
-				{ ...baseProps }
-				bannerImageSrc="/calypso/images/stats/tasks/contact.svg"
-				completedButtonText={ translate( 'Edit' ) }
-				completedTitle={ translate( 'You updated your Contact page' ) }
-				description={ translate(
-					'Encourage visitors to get in touch — a website is for connecting with people.'
-				) }
-				duration={ translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ) }
-				onClick={ this.handleTaskStart( {
-					task,
-					tourId: 'checklistContactPage',
-					url: taskUrls.contact_page_updated,
-				} ) }
-				onDismiss={ this.handleTaskDismiss( task.id ) }
-				title={ translate( 'Personalize your Contact page' ) }
-				showSkip={ false }
-				buttonText={ translate( 'Start' ) }
-			/>
-		);
-	};
-
 	renderPostPublishedTask = ( TaskComponent, baseProps, task ) => {
 		const { translate, taskUrls } = this.props;
 
@@ -493,32 +465,6 @@ class WpcomChecklistComponent extends PureComponent {
 				} ) }
 				onDismiss={ this.handleTaskDismiss( task.id ) }
 				title={ translate( 'Publish your first blog post' ) }
-				showSkip={ false }
-				buttonText={ translate( 'Start' ) }
-			/>
-		);
-	};
-
-	renderCustomDomainRegisteredTask = ( TaskComponent, baseProps, task ) => {
-		const { translate, siteSlug } = this.props;
-
-		return (
-			<TaskComponent
-				{ ...baseProps }
-				bannerImageSrc="/calypso/images/stats/tasks/custom-domain.svg"
-				completedButtonText={ translate( 'Change' ) }
-				completedTitle={ translate( 'You registered a custom domain' ) }
-				description={ translate(
-					'Memorable domain names make it easy for people to remember your address — and search engines love ’em.'
-				) }
-				duration={ translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ) }
-				onClick={ this.handleTaskStart( {
-					task,
-					tourId: 'checklistDomainRegister',
-					url: `/domains/add/${ siteSlug }`,
-				} ) }
-				onDismiss={ this.handleTaskDismiss( task.id ) }
-				title={ translate( 'Register a custom domain' ) }
 				showSkip={ false }
 				buttonText={ translate( 'Start' ) }
 			/>
