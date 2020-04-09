@@ -11,7 +11,6 @@ import BackupActivityLogPage from './backup-activity-log';
 import BackupDetailPage from './detail';
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 import BackupsPage from './main';
-import BackupActivityLogPage from './backup-activity-log';
 
 export function wrapInSiteOffsetProvider( context, next ) {
 	context.primary = (
