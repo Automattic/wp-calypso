@@ -2,9 +2,9 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { isMobile } from '@automattic/viewport';
 import React, { Component } from 'react';
 import momentDate from 'moment';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -31,9 +31,7 @@ import QueryRewindCapabilities from 'components/data/query-rewind-capabilities';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
-import Filterbar from 'my-sites/activity/filterbar';
-import ActivityCard from '../../components/activity-card';
-import Pagination from 'components/pagination';
+import ActivityCardList from 'landing/jetpack-cloud/components/activity-card-list';
 import MissingCredentialsWarning from '../../components/missing-credentials';
 import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials.js';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
@@ -47,7 +45,6 @@ import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
  */
 import './style.scss';
 
-const PAGE_SIZE = 10;
 const INDEX_FORMAT = 'YYYYMMDD';
 
 const backupStatusNames = [
@@ -154,6 +151,7 @@ class BackupsPage extends Component {
 			isLoadingBackups,
 			oldestDateAvailable,
 			timezone,
+			translate,
 			gmtOffset,
 		} = this.props;
 
@@ -170,7 +168,7 @@ class BackupsPage extends Component {
 
 		return (
 			<Main>
-				<DocumentHead title="Backups" />
+				<DocumentHead title={ translate( 'Backups' ) } />
 				<SidebarNavigation />
 				<QueryRewindState siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />
@@ -186,7 +184,7 @@ class BackupsPage extends Component {
 					siteSlug={ siteSlug }
 				/>
 
-				<div>{ isLoadingBackups && 'Loading backups...' }</div>
+				<div>{ isLoadingBackups && translate( 'Loading backups…' ) }</div>
 
 				{ ! isLoadingBackups && (
 					<>
@@ -218,70 +216,23 @@ class BackupsPage extends Component {
 		);
 	}
 
-	changePage = pageNumber => {
-		this.props.selectPage( this.props.siteId, pageNumber );
-		window.scrollTo( 0, 0 );
-	};
+	renderBackupSearch() {
+		const { logs, translate } = this.props;
 
-	renderActivityLog() {
-		const { allowRestore, filter, logs, moment, siteId } = this.props;
-		const { page: requestedPage } = filter;
-
-		const actualPage = Math.max(
-			1,
-			Math.min( requestedPage, Math.ceil( logs.length / PAGE_SIZE ) )
-		);
-		const theseLogs = logs.slice( ( actualPage - 1 ) * PAGE_SIZE, actualPage * PAGE_SIZE );
-
-		const cards = theseLogs.map( activity => (
-			<ActivityCard
-				{ ...{
-					key: activity.activityId,
-					moment,
-					activity,
-					allowRestore,
-				} }
-			/>
-		) );
+		// Filter out anything that is not restorable
+		const restorablePoints = logs.filter( event => !! event.activityIsRewindable );
 
 		return (
-			<div>
-				<div>Find a backup or restore point</div>
-				<div>
-					This is the complete event history for your site. Filter by date range and/ or activity
-					type.
+			<div className="backups__search">
+				<div className="backups__search-header">
+					{ translate( 'Find a backup or restore point' ) }
 				</div>
-				<Filterbar
-					{ ...{
-						siteId,
-						filter,
-						isLoading: false,
-						isVisible: true,
-					} }
-				/>
-				<Pagination
-					compact={ isMobile() }
-					className="backups__pagination"
-					key="backups__pagination-top"
-					nextLabel={ 'Older' }
-					page={ actualPage }
-					pageClick={ this.changePage }
-					perPage={ PAGE_SIZE }
-					prevLabel={ 'Newer' }
-					total={ logs.length }
-				/>
-				{ cards }
-				<Pagination
-					compact={ isMobile() }
-					className="backups__pagination"
-					key="backups__pagination-bottom"
-					nextLabel={ 'Older' }
-					page={ actualPage }
-					pageClick={ this.changePage }
-					perPage={ PAGE_SIZE }
-					prevLabel={ 'Newer' }
-					total={ logs.length }
-				/>
+				<div className="backups__search-description">
+					{ translate(
+						'This is the complete event history for your site. Filter by date range and/ or activity type.'
+					) }
+				</div>
+				<ActivityCardList logs={ restorablePoints } pageSize={ 10 } />
 			</div>
 		);
 	}
@@ -291,7 +242,7 @@ class BackupsPage extends Component {
 
 		return (
 			<div className="backups__page">
-				{ ! this.isEmptyFilter( filter ) ? this.renderActivityLog() : this.renderMain() }
+				{ ! this.isEmptyFilter( filter ) ? this.renderBackupSearch() : this.renderMain() }
 			</div>
 		);
 	}
@@ -381,4 +332,7 @@ const mapDispatchToProps = dispatch => ( {
 	selectPage: ( siteId, pageNumber ) => dispatch( updateFilter( siteId, { page: pageNumber } ) ),
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( withLocalizedMoment( BackupsPage ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( withLocalizedMoment( BackupsPage ) ) );
