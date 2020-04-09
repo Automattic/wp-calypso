@@ -28,7 +28,7 @@ const BackupActivityLogPage: FunctionComponent = () => {
 		dispatch( updateFilter( siteId, { page: 1 } ) );
 	}, [ dispatch, siteId ] );
 
-	//when the filter changes, re-request the logs
+	// when the filter changes, re-request the logs
 	useEffect( () => {
 		requestActivityLogs( siteId, filter );
 	}, [ filter, siteId ] );
