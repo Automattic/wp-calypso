@@ -299,6 +299,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	const reduxStore = createReduxStore( initialServerState );
 	setStore( reduxStore );
 
+	const flags = ( request.query.flags || '' ).split( ',' );
 	const context = Object.assign( {}, request.context, {
 		commitSha: process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)',
 		compileDebug: process.env.NODE_ENV === 'development',
@@ -320,6 +321,8 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		bodyClasses,
 		addEvergreenCheck: target === 'evergreen' && calypsoEnv !== 'development',
 		target: target || 'fallback',
+		useTranslationChunks:
+			config.isEnabled( 'use-translation-chunks' ) || flags.includes( 'use-translation-chunks' ),
 	} );
 
 	context.app = {

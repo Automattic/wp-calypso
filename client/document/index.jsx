@@ -59,6 +59,7 @@ class Document extends React.Component {
 			isWCComConnect,
 			addEvergreenCheck,
 			requestFrom,
+			useTranslationChunks,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
@@ -200,7 +201,7 @@ class Document extends React.Component {
 						/>
 					) }
 
-					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
+					{ i18nLocaleScript && ! useTranslationChunks && <script src={ i18nLocaleScript } /> }
 					{ /*
 					 * inline manifest in production, but reference by url for development.
 					 * this lets us have the performance benefit in prod, without breaking HMR in dev
