@@ -544,11 +544,13 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 	onIframeLoaded = async ( iframeUrl: string ) => {
 		if ( ! this.successfulIframeLoad ) {
-			// Sometimes (like in IE) the WindowActions.Loaded message arrives after
-			// the onLoad event is fired. To deal with this case we'll poll
-			// `this.successfulIframeLoad` for a while before redirecting.
+			// Sometimes (like in IE) the WindowActions.Loaded message arrives
+			// after the onLoad event is fired. To deal with this case we'll
+			// poll `this.successfulIframeLoad` for a while before redirecting.
 			let cancelPolling = false;
 
+			// Checks to see if the iFrame has loaded every 200ms. If it has
+			// loaded, then resolve the promise.
 			const pollForLoadedFlag = new Promise( resolve => {
 				const waitForSuccessfulLoad = () => {
 					if ( this.successfulIframeLoad ) {
@@ -564,6 +566,9 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 			const fiveSeconds = new Promise( resolve => setTimeout( resolve, 5000, 'timeout' ) );
 
+			// Figure out which happens first: 5 seconds have passed, or the
+			// iFrame has loaded successfully. If 5 seconds have passed, then
+			// assume the iFrame will never load and redirect to wp-admin.
 			if ( ( await Promise.race( [ pollForLoadedFlag, fiveSeconds ] ) ) === 'timeout' ) {
 				cancelPolling = true;
 				window.location.replace( iframeUrl );
