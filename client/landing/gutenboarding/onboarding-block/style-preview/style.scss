@@ -9,32 +9,23 @@
 }
 
 .style-preview__header {
-	display: grid;
-	grid-template-areas: 'title viewport-select actions';
-	column-gap: 1em;
-	align-items: center;
+	position: relative;
 	@include onboarding-heading-padding;
 }
 
-.style-preview__content {
-	display: grid;
-	grid-template-areas: 'fonts preview';
-	grid-template-columns: 163px auto;
-	column-gap: 100px;
-	flex: 1;
-}
-
-.style-preview__titles {
-	grid-area: title;
-}
-
 .style-preview__viewport-select {
-	grid-area: viewport-select;
+	display: block;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate( -50%, -50% );
 }
 
 .style-preview__actions {
-	grid-area: actions;
-	justify-self: end;
+	position: absolute;
+	top: 50%;
+	right: 0;
+	transform: translateY( -50% );
 
 	a.is-link {
 		@include onboarding-medium-text;
@@ -47,22 +38,81 @@
 	}
 }
 
+@supports (display: grid) {
+	.style-preview__header {
+		display: grid;
+		grid-template-areas: 'title viewport-select actions';
+		column-gap: 1em;
+		align-items: center;
+		@include onboarding-heading-padding;
+	}
+
+	.style-preview__titles {
+		grid-area: title;
+	}
+
+	.style-preview__viewport-select {
+		grid-area: viewport-select;
+		position: initial;
+		top: 0;
+		left: 0;
+		transform: none;
+	}
+
+	.style-preview__actions {
+		grid-area: actions;
+		position: initial;
+		top: 0;
+		left: 0;
+		transform: none;
+		justify-self: end;
+	}
+}
+
+.style-preview__content {
+	height: 100%;
+}
+
 .style-preview__font-options {
-	grid-area: fonts;
-	display: grid;
-	grid-template-columns: 100%;
-	row-gap: 1em;
-	align-self: start;
+	float: left;
+	width: 163px;
+}
+
+@supports (display: grid) {
+	.style-preview__content {
+		display: grid;
+		grid-template-areas: 'fonts preview';
+		grid-template-columns: 163px auto;
+		column-gap: 100px;
+		flex: 1;
+	}
+
+	.style-preview__font-options {
+		width: auto;
+	}
 }
 
 .style-preview__font-option {
 	min-height: 3.4em;
 	box-shadow: inset 0 0 0 1px var( --studio-gray-10 );
+	display: block;
+	width: 100%;
+	position: relative;
+	// for IE, see https://github.com/Automattic/wp-calypso/pull/40881#issuecomment-610836378
+	vertical-align: top;
 
-	display: flex;
-	flex-direction: column;
-	justify-content: space-around;
-	align-content: center;
+	+ .style-preview__font-option {
+		margin-top: 1em;
+	}
+
+	.style-preview__font-option-contents {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate( -50%, -50% );
+		width: 100%;
+	}
+
 
 	// Extra specificity to override core style
 	// This is effectively a more-specific synonmy of the same selector
@@ -89,9 +139,14 @@
 }
 
 .style-preview__preview {
-	grid-area: preview;
-	width: 100%;
-	margin: 0 auto;
+	float: left;
+	height: 100%;
+}
+
+.style-preview__preview {
+	width: calc( 100% - 163px );
+	margin: 0 auto 30px;
+	padding-left: 100px;
 
 	&.is-viewport-tablet {
 		max-width: 1024px;
@@ -99,6 +154,22 @@
 
 	&.is-viewport-mobile {
 		max-width: 351px;
+	}
+}
+
+@supports (display: grid) {
+	.style-preview__preview {
+		grid-area: preview;
+		width: 100%;
+		padding-left: 0;
+
+		&.is-viewport-tablet {
+			max-width: 1024px;
+		}
+
+		&.is-viewport-mobile {
+			max-width: 351px;
+		}
 	}
 }
 
