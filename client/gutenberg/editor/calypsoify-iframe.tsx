@@ -543,33 +543,40 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	};
 
 	onIframeLoaded = async ( iframeUrl: string ) => {
-		if ( ! this.successfulIframeLoad ) {
-			// Sometimes (like in IE) the WindowActions.Loaded message arrives
-			// after the onLoad event is fired. To deal with this case we'll
-			// poll `this.successfulIframeLoad` for a while before redirecting.
-
-			// Checks to see if the iFrame has loaded every 200ms. If it has
-			// loaded, then resolve the promise.
-			let cancelPolling = false;
-			const pollForLoadedFlag = new Promise( resolve => {
-				const pendingIsLoadedFlag = setInterval( () => {
-					( cancelPolling || this.successfulIframeLoad ) && clearInterval( pendingIsLoadedFlag );
-					this.successfulIframeLoad && resolve( 'iframe-loaded' );
-				}, 200 );
-			} );
-
-			const fiveSeconds = new Promise( resolve => setTimeout( resolve, 5000, 'timeout' ) );
-
-			// Figure out which happens first: 5 seconds have passed, or the
-			// iFrame has loaded successfully. If 5 seconds have passed, then
-			// assume the iFrame will never load and redirect to wp-admin.
-			if ( ( await Promise.race( [ pollForLoadedFlag, fiveSeconds ] ) ) === 'timeout' ) {
-				cancelPolling = true;
-				window.location.replace( iframeUrl );
-				return;
-			}
+		// Shortcut to avoid polling mechanism if not needed.
+		if ( this.successfulIframeLoad ) {
+			this.setState( { isIframeLoaded: true, currentIFrameUrl: iframeUrl } );
+			return;
 		}
-		this.setState( { isIframeLoaded: true, currentIFrameUrl: iframeUrl } );
+
+		// Sometimes (like in IE) the WindowActions.Loaded message arrives
+		// after the onLoad event is fired. To deal with this case we'll
+		// poll `this.successfulIframeLoad` for a while before redirecting.
+
+		// Checks to see if the iFrame has loaded every 200ms. If it has
+		// loaded, then resolve the promise.
+		let cancelPolling = false;
+		const pollForLoadedFlag = new Promise( resolve => {
+			const pendingIsLoadedFlag = setInterval( () => {
+				cancelPolling && clearInterval( pendingIsLoadedFlag );
+				this.successfulIframeLoad && resolve( 'iframe-loaded' );
+			}, 200 );
+		} );
+
+		const fiveSeconds = new Promise( resolve => setTimeout( resolve, 5000, 'timeout' ) );
+
+		// Figure out which happens first: 5 seconds have passed, or the
+		// iFrame has loaded successfully. If 5 seconds have passed, then
+		// assume the iFrame will never load and redirect to wp-admin.
+		const finishCondition = await Promise.race( [ pollForLoadedFlag, fiveSeconds ] );
+		cancelPolling = true; // Clears the interval next time it runs.
+
+		if ( finishCondition === 'timeout' ) {
+			// If we timed out, redirect to wp-admin.
+			window.location.replace( iframeUrl );
+		} else if ( finishCondition === 'iframe-loaded' ) {
+			this.setState( { isIframeLoaded: true, currentIFrameUrl: iframeUrl } );
+		}
 	};
 
 	render() {
