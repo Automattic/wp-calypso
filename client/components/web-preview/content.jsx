@@ -96,6 +96,9 @@ export class WebPreviewContent extends Component {
 		debug( 'message from iframe', data );
 
 		switch ( data.type ) {
+			case 'needs-auth':
+				this.redirectToAuth();
+				return;
 			case 'link':
 				page( data.payload.replace( /^https:\/\/wordpress\.com\//i, '/' ) );
 				this.props.onClose();
@@ -119,6 +122,13 @@ export class WebPreviewContent extends Component {
 				return;
 		}
 	};
+
+	redirectToAuth() {
+		const { protocol, host } = parseUrl( this.props.externalUrl );
+		window.location.href =
+			`${ protocol }//${ host }/wp-login.php?redirect_to=` +
+			encodeURIComponent( window.location.href );
+	}
 
 	handleLocationChange = payload => {
 		this.props.onLocationUpdate( payload.pathname );
@@ -241,17 +251,6 @@ export class WebPreviewContent extends Component {
 			// iframe OR redirected to using <a href="" target="_top">.
 			const { protocol, host } = parseUrl( this.props.externalUrl );
 			this.iframe.contentWindow.postMessage( { connected: 'calypso' }, `${ protocol }//${ host }` );
-			window.addEventListener(
-				'message',
-				e => {
-					if ( e.data?.type === 'needs-auth' ) {
-						window.location.href =
-							`${ protocol }//${ host }/wp-login.php?redirect_to=` +
-							encodeURIComponent( window.location.href );
-					}
-				},
-				false
-			);
 		}
 	};
 
