@@ -43,7 +43,7 @@ export default class ReaderPage extends AsyncBaseContainer {
 			await driverHelper.clickWhenClickable( this.driver, firstComboCardPostSelector );
 		}
 
-		async function clickAndOpenShareModal() {
+		const clickAndOpenShareModal = async () => {
 			await driverHelper.clickWhenClickable( this.driver, shareButtonSelector );
 			await driverHelper.waitTillPresentAndDisplayed(
 				this.driver,
@@ -53,7 +53,7 @@ export default class ReaderPage extends AsyncBaseContainer {
 				this.driver,
 				by.css( '.site-selector__sites .site__content' )
 			);
-		}
+		};
 
 		// Try a second time if the share menu is closed during the operation
 		// the first time.
