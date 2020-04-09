@@ -56,7 +56,7 @@ const StylePreview: React.FunctionComponent = () => {
 	);
 
 	return (
-		<div className="style-preview">
+		<div className="gutenboarding-page style-preview">
 			<div className="style-preview__header">
 				<div className="style-preview__titles">
 					<Title>{ __( 'Select your fonts' ) }</Title>
