@@ -46,6 +46,7 @@ class ActivityCardList extends Component {
 			showFilter,
 			showPagination,
 			siteId,
+			siteSlug,
 		} = this.props;
 		const { page: requestedPage } = filter;
 
@@ -62,6 +63,7 @@ class ActivityCardList extends Component {
 					moment,
 					activity,
 					allowRestore,
+					siteSlug,
 				} }
 			/>
 		) );
