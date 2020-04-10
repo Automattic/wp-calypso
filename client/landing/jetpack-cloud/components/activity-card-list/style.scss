@@ -2,6 +2,10 @@
     margin-bottom: 2rem;
 }
 
+.activity-card-list__pagination-bottom {
+	margin-bottom: 1rem;
+}
+
 @include breakpoint( '<660px' ) {
     .activity-card-list .filterbar__wrap.card {
         background: transparent;

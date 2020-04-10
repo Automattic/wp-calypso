@@ -24,7 +24,7 @@ import mediaImage from 'assets/images/illustrations/media.svg';
 
 class BackupDelta extends Component {
 	renderRealtime() {
-		const { allowRestore, timezone, gmtOffset, moment, translate } = this.props;
+		const { allowRestore, timezone, gmtOffset, moment, siteSlug, translate } = this.props;
 
 		const realtimeEvents = this.props.realtimeEvents.filter( event => event.activityIsRewindable );
 
@@ -37,17 +37,27 @@ class BackupDelta extends Component {
 					allowRestore,
 					timezone,
 					gmtOffset,
+					siteSlug,
 				} }
 			/>
 		) );
 
 		return (
 			<div className="backup-delta__realtime">
-				<div>{ translate( 'More backups from today' ) }</div>
+				<div className="backup-delta__realtime-header">
+					{ translate( 'More backups from today' ) }
+				</div>
+				<div className="backup-delta__realtime-description">
+					{ translate(
+						'Your site is backed up in real time (as you make changes) as well as in one daily backup.'
+					) }
+				</div>
 				{ cards.length ? (
 					cards
 				) : (
-					<div>{ translate( 'you have no more backups for this day' ) }</div>
+					<div className="backup-delta__realtime-emptyday">
+						{ translate( 'There were no changes on this day. Your daily backup is above.' ) }
+					</div>
 				) }
 			</div>
 		);

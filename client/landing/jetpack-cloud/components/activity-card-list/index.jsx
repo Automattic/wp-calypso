@@ -46,6 +46,7 @@ class ActivityCardList extends Component {
 			showFilter,
 			showPagination,
 			siteId,
+			siteSlug,
 		} = this.props;
 		const { page: requestedPage } = filter;
 
@@ -62,6 +63,7 @@ class ActivityCardList extends Component {
 					moment,
 					activity,
 					allowRestore,
+					siteSlug,
 				} }
 			/>
 		) );
@@ -83,7 +85,7 @@ class ActivityCardList extends Component {
 				{ showPagination && (
 					<Pagination
 						compact={ isMobile() }
-						className="activity-card-list__pagination"
+						className="activity-card-list__pagination-top"
 						key="activity-card-list__pagination-top"
 						nextLabel={ 'Older' }
 						page={ actualPage }
@@ -97,7 +99,7 @@ class ActivityCardList extends Component {
 				{ showPagination && (
 					<Pagination
 						compact={ isMobile() }
-						className="activity-card-list__pagination"
+						className="activity-card-list__pagination-bottom"
 						key="activity-card-list__pagination-bottom"
 						nextLabel={ 'Older' }
 						page={ actualPage }
