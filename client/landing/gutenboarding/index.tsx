@@ -51,6 +51,11 @@ type User = import('@automattic/data-stores').User.CurrentUser;
 interface AppWindow extends Window {
 	currentUser?: User;
 	i18nLocaleStrings?: string;
+	installedChunks?: string[];
+	__requireChunkCallback__?: {
+		add( callback: Function ): void;
+		getInstalledChunks(): string[];
+	};
 }
 declare const window: AppWindow;
 
@@ -83,7 +88,10 @@ window.AppBoot = async () => {
 
 	let locale = DEFAULT_LOCALE_SLUG;
 	try {
-		const [ userLocale, { translatedChunks, ...localeData } ] = await getLocale();
+		const [ userLocale, { translatedChunks, ...localeData } ]: (
+			| string
+			| any
+		 )[] = await getLocale();
 		setLocaleData( localeData );
 
 		if ( USE_TRANSLATION_CHUNKS ) {
@@ -195,8 +203,11 @@ function setupTranslationChunks( localeSlug: string, translatedChunks: string[] 
 		return;
 	}
 
-	const loadedTranslationChunks = {};
-	const loadTranslationForChunkIfNeeded = chunkId => {
+	interface TranslationChunksCache {
+		[ propName: string ]: undefined | boolean;
+	}
+	const loadedTranslationChunks: TranslationChunksCache = {};
+	const loadTranslationForChunkIfNeeded = ( chunkId: string ) => {
 		if ( ! translatedChunks.includes( chunkId ) || loadedTranslationChunks[ chunkId ] ) {
 			return;
 		}
@@ -214,9 +225,16 @@ function setupTranslationChunks( localeSlug: string, translatedChunks: string[] 
 		loadTranslationForChunkIfNeeded( chunkId );
 	} );
 
-	window.__requireChunkCallback__.add( ( { publicPath, scriptSrc }, promises ) => {
-		const chunkId = scriptSrc.replace( publicPath, '' ).replace( /\.js$/, '' );
+	interface RequireChunkCallbackParameters {
+		publicPath: string;
+		scriptSrc: string;
+	}
 
-		promises.push( loadTranslationForChunkIfNeeded( chunkId ) );
-	} );
+	window.__requireChunkCallback__.add(
+		( { publicPath, scriptSrc }: RequireChunkCallbackParameters, promises: any[] ) => {
+			const chunkId = scriptSrc.replace( publicPath, '' ).replace( /\.js$/, '' );
+
+			promises.push( loadTranslationForChunkIfNeeded( chunkId ) );
+		}
+	);
 }
