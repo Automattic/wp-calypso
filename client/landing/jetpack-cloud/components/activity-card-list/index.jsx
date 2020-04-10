@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { isMobile } from '@automattic/viewport';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -47,6 +48,7 @@ class ActivityCardList extends Component {
 			showPagination,
 			siteId,
 			siteSlug,
+			hasRealtimeBackups,
 		} = this.props;
 		const { page: requestedPage } = filter;
 
@@ -64,6 +66,7 @@ class ActivityCardList extends Component {
 					activity,
 					allowRestore,
 					siteSlug,
+					hasRealtimeBackups,
 				} }
 			/>
 		) );
@@ -123,11 +126,13 @@ const mapStateToProps = state => {
 	const allowRestore =
 		'active' === rewind.state &&
 		! ( 'queued' === restoreStatus || 'running' === restoreStatus ) &&
-		siteCapabilities.includes( 'restore' );
+		includes( siteCapabilities, 'restore' );
+	const hasRealtimeBackups = includes( siteCapabilities, 'backup-realtime' );
 
 	return {
 		siteId,
 		filter,
+		hasRealtimeBackups,
 		rewind,
 		allowRestore,
 	};
