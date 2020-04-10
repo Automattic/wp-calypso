@@ -230,29 +230,15 @@ export function createStripeMethod( { store, stripe, stripeConfiguration } ) {
 		activeContent: (
 			<StripeCreditCardFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
 		),
-		submitButton: <StripePayButton stripe={ stripe } stripeConfiguration={ stripeConfiguration } />,
+		submitButton: (
+			<StripePayButton
+				store={ store }
+				stripe={ stripe }
+				stripeConfiguration={ stripeConfiguration }
+			/>
+		),
 		inactiveContent: <StripeSummary />,
 		getAriaLabel: localize => localize( 'Credit Card' ),
-		isCompleteCallback: () => {
-			const cardholderName = store.selectors.getCardholderName( store.getState() );
-			const errors = store.selectors.getCardDataErrors( store.getState() );
-			const incompleteFieldKeys = store.selectors.getIncompleteFieldKeys( store.getState() );
-			const areThereErrors = Object.keys( errors ).some( errorKey => errors[ errorKey ] );
-			if ( ! cardholderName?.value.length ) {
-				// Touch the field so it displays a validation error
-				store.dispatch( store.actions.changeCardholderName( '' ) );
-			}
-			if ( incompleteFieldKeys.length > 0 ) {
-				// Show "this field is required" for each incomplete field
-				incompleteFieldKeys.map( key =>
-					store.dispatch( store.actions.setCardDataError( key, 'This field is required' ) )
-				); // TODO: localize this message
-			}
-			if ( areThereErrors || ! cardholderName?.value.length || incompleteFieldKeys.length > 0 ) {
-				return false;
-			}
-			return true;
-		},
 	};
 }
 
@@ -482,7 +468,7 @@ function LoadingFields() {
 	);
 }
 
-function StripePayButton( { disabled, stripe, stripeConfiguration } ) {
+function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
 	const { showErrorMessage, showInfoMessage } = useMessages();
@@ -574,20 +560,22 @@ function StripePayButton( { disabled, stripe, stripeConfiguration } ) {
 	return (
 		<Button
 			disabled={ disabled }
-			onClick={ () =>
-				submitStripePayment( {
-					name: cardholderName?.value,
-					items,
-					total,
-					stripe,
-					stripeConfiguration,
-					showErrorMessage,
-					beginStripeTransaction,
-					setFormSubmitting,
-					resetTransaction,
-					onEvent,
-				} )
-			}
+			onClick={ () => {
+				if ( isCreditCardFormValid( store ) ) {
+					submitStripePayment( {
+						name: cardholderName?.value,
+						items,
+						total,
+						stripe,
+						stripeConfiguration,
+						showErrorMessage,
+						beginStripeTransaction,
+						setFormSubmitting,
+						resetTransaction,
+						onEvent,
+					} );
+				}
+			} }
 			buttonState={ disabled ? 'disabled' : 'primary' }
 			isBusy={ 'submitting' === formStatus }
 			fullWidth
@@ -609,6 +597,27 @@ function StripeSummary() {
 			</SummaryLine>
 		</SummaryDetails>
 	);
+}
+
+function isCreditCardFormValid( store ) {
+	const cardholderName = store.selectors.getCardholderName( store.getState() );
+	const errors = store.selectors.getCardDataErrors( store.getState() );
+	const incompleteFieldKeys = store.selectors.getIncompleteFieldKeys( store.getState() );
+	const areThereErrors = Object.keys( errors ).some( errorKey => errors[ errorKey ] );
+	if ( ! cardholderName?.value.length ) {
+		// Touch the field so it displays a validation error
+		store.dispatch( store.actions.changeCardholderName( '' ) );
+	}
+	if ( incompleteFieldKeys.length > 0 ) {
+		// Show "this field is required" for each incomplete field
+		incompleteFieldKeys.map( key =>
+			store.dispatch( store.actions.setCardDataError( key, 'This field is required' ) )
+		); // TODO: localize this message
+	}
+	if ( areThereErrors || ! cardholderName?.value.length || incompleteFieldKeys.length > 0 ) {
+		return false;
+	}
+	return true;
 }
 
 async function submitStripePayment( {
