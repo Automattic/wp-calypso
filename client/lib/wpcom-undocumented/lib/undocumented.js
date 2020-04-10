@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { camelCase, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
+import { camelCase, isPlainObject, omit, pick, reject, snakeCase, set } from 'lodash';
 import { stringify } from 'qs';
 
 /**
@@ -694,6 +694,14 @@ Undocumented.prototype.validateDomainContactInformation = function(
 		function( error, successData ) {
 			if ( error ) {
 				return fn( error );
+			}
+
+			// Reshape the error messages to a nested object
+			if ( successData.messages ) {
+				successData.messages = Object.keys( successData.messages ).reduce( ( obj, key ) => {
+					set( obj, key, successData.messages[ key ] );
+					return obj;
+				}, {} );
 			}
 
 			const newData = mapKeysRecursively( successData, function( key ) {
