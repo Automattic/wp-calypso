@@ -31,6 +31,7 @@ import QueryHomeLayout from 'components/data/query-home-layout';
 import { getHomeLayout } from 'state/selectors/get-home-layout';
 import Notices from 'my-sites/customer-home/locations/notices';
 import Upsells from 'my-sites/customer-home/locations/upsells';
+import RecommendedTask from 'my-sites/customer-home/cards/tasks';
 import Primary from 'my-sites/customer-home/locations/primary';
 import Secondary from 'my-sites/customer-home/locations/secondary';
 
@@ -93,6 +94,7 @@ const Home = ( {
 						displayChecklist={ displayChecklist }
 					/>
 					<Upsells cards={ layout.upsells } />
+					{ ! displayChecklist && <RecommendedTask /> }
 					{ hasChecklistData && (
 						<div className="customer-home__layout">
 							<div className="customer-home__layout-col customer-home__layout-col-left">
