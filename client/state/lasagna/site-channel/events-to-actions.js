@@ -13,7 +13,7 @@ import { namespace } from './manager';
 /**
  * Module variables
  */
-const debug = debugFactory( 'lasagna:channel:public:push:blog' );
+const debug = debugFactory( 'lasagna:channel:public:push:site' );
 
 export default function( channel, topic, store ) {
 	channel.on( 'new_comment', ( { payload: comment } ) => {

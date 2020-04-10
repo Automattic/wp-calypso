@@ -5,7 +5,7 @@ import wpcom from 'lib/wp';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { SOCKET, connectSocket, disconnectSocket } from './socket';
 import userChannelMiddleware from './user-channel/actions-to-events';
-import blogChannelMiddleware from './blog-channel/actions-to-events';
+import siteChannelMiddleware from './site-channel/actions-to-events';
 
 /**
  * Compose a list of middleware into one middleware
@@ -54,4 +54,4 @@ const connectMiddleware = store => next => action => {
 	return next( action );
 };
 
-export default combineMiddleware( connectMiddleware, userChannelMiddleware, blogChannelMiddleware );
+export default combineMiddleware( connectMiddleware, userChannelMiddleware, siteChannelMiddleware );

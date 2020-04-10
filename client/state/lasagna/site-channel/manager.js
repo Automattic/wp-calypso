@@ -7,17 +7,17 @@ import createDebug from 'debug';
 /**
  * Internal dependencies
  */
-import { getViewingBlogIds } from 'state/reader/viewing/selectors';
+import { getViewingSiteIds } from 'state/reader/viewing/selectors';
 import { channelLeave, CHANNELS } from 'state/lasagna/channel';
 
 /**
  * Module variables
  */
-export const namespace = 'blog';
+export const namespace = 'site';
 const MAX_SECONDS_KEEP_CHANNEL_ACTIVE = 60 * 60; // 1 hour
 const MAX_SECONDS_SINCE_LAST_UPDATE = 60 * 45; // 45 minutes
 const MAX_CHANNELS_OPEN = 20;
-const debug = createDebug( 'lasagna:manager:blog' );
+const debug = createDebug( 'lasagna:manager:site' );
 const channelTopicPrefix = `public:push:${ namespace }:`;
 
 /**
@@ -45,7 +45,7 @@ export function getChannelTopic( action ) {
 export function leaveStaleChannels( store ) {
 	const state = store.getState();
 	const channels = CHANNELS[ namespace ] || {};
-	const viewingBlogIds = getViewingBlogIds( state );
+	const viewingSiteIds = getViewingSiteIds( state );
 
 	let oldestChannel = Number.MAX_INT;
 	let oldestTopic = null;
@@ -56,7 +56,7 @@ export function leaveStaleChannels( store ) {
 
 		const channel = channels[ topic ];
 
-		if ( viewingBlogIds.includes( channel.meta.blogId ) ) {
+		if ( viewingSiteIds.includes( channel.meta.siteId ) ) {
 			continue;
 		}
 
@@ -112,7 +112,7 @@ export function canJoinChannel( store, topic ) {
 export function canLeaveChannel( store, topic ) {
 	const state = store.getState();
 	const channels = CHANNELS[ namespace ] || {};
-	const viewingBlogIds = getViewingBlogIds( state );
+	const viewingSiteIds = getViewingSiteIds( state );
 
 	if ( Object.keys( channels ).length === 0 ) {
 		debug( topic, 'cannot leave, channels still loading or already left' );
@@ -124,9 +124,9 @@ export function canLeaveChannel( store, topic ) {
 		return false;
 	}
 	const channel = channels[ topic ];
-	const blogId = channel.meta.blogId;
+	const siteId = channel.meta.siteId;
 
-	if ( viewingBlogIds.includes( blogId ) ) {
+	if ( viewingSiteIds.includes( siteId ) ) {
 		debug( topic, 'cannot leave currently viewing' );
 		return false;
 	}

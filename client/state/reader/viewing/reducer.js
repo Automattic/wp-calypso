@@ -12,11 +12,11 @@ import { LASAGNA_SOCKET_DISCONNECTED } from 'state/lasagna/action-types';
 import { combineReducers } from 'state/utils';
 
 /**
- * List of post ids grouped by blog id which are currently visible to user in feed
+ * List of post ids grouped by site id which are currently visible to user in feed
  *
  * @param state redux store
  * @param action redux action
- * @returns state map of blog ids
+ * @returns state map of site ids
  */
 export const feed = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -67,11 +67,11 @@ export const feed = ( state = {}, action ) => {
 };
 
 /**
- * Id of the blog currently viewed by the user in full-post page (detail)
+ * Id of the site currently viewed by the user in full-post page (detail)
  *
  * @param state redux state
  * @param action redux action
- * @returns {null|number} blog id
+ * @returns {null|number} site id
  */
 export const fullPost = ( state = null, action ) => {
 	switch ( action.type ) {
