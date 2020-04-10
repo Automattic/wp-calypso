@@ -10,10 +10,12 @@ import {
 	HOSTING_SFTP_USERS_SET,
 	HOSTING_PHP_VERSION_REQUEST,
 	HOSTING_PHP_VERSION_SET_REQUEST,
+	HOSTING_CLEAR_CACHE_REQUEST,
 } from 'state/action-types';
 import 'state/data-layer/wpcom/sites/hosting/restore-database-password';
 import 'state/data-layer/wpcom/sites/hosting/sftp-user';
 import 'state/data-layer/wpcom/sites/hosting/php-version';
+import 'state/data-layer/wpcom/sites/hosting/clear-cache';
 
 export const restoreDatabasePassword = siteId => ( {
 	type: HOSTING_RESTORE_DATABASE_PASSWORD,
@@ -57,6 +59,17 @@ export const updateAtomicPhpVersion = ( siteId, version ) => ( {
 		dataLayer: {
 			trackRequest: true,
 			requestKey: `${ HOSTING_PHP_VERSION_SET_REQUEST }-${ siteId }`,
+		},
+	},
+} );
+
+export const clearWordPressCache = siteId => ( {
+	type: HOSTING_CLEAR_CACHE_REQUEST,
+	siteId,
+	meta: {
+		dataLayer: {
+			trackRequest: true,
+			requestKey: `${ HOSTING_CLEAR_CACHE_REQUEST }-${ siteId }`,
 		},
 	},
 } );
