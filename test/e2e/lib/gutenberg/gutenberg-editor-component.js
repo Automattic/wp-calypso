@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By, until } from 'selenium-webdriver';
+import { By, Key, until } from 'selenium-webdriver';
 import { kebabCase } from 'lodash';
 
 /**
@@ -447,13 +447,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async dismissEditorWelcomeModal() {
-		if (
-			await driverHelper.isElementPresent( this.driver, By.css( '.edit-post-welcome-guide' ) )
-		) {
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( '.edit-post-welcome-guide .components-modal__header .components-button' )
-			);
+		const welcomeModal = By.css( '.components-guide__container' );
+		if ( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, welcomeModal ) ) {
+			await this.driver.findElement( By.css( '.components-guide' ) ).sendKeys( Key.ESCAPE );
 		}
 	}
 }
