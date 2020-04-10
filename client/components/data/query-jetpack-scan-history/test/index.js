@@ -25,7 +25,7 @@ function setup( siteId ) {
 	);
 
 	const initialState = {
-		jetpackScan: { requestStatus: siteId },
+		jetpackScan: { history: { requestStatus: siteId } },
 	};
 
 	const store = createStore( state => state, initialState );
