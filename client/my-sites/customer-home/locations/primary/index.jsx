@@ -14,8 +14,8 @@ import QuickLinks from 'my-sites/customer-home/cards/primary/quick-links';
 const cardComponents = {
 	'home-feature-go-mobile-phones': GoMobile,
 	'home-primary-checklist-site-setup': ChecklistSiteSetup,
-	'home-education-mastering-gutenberg': MasteringGutenberg,
 	'home-primary-quick-links': QuickLinks,
+	'home-education-mastering-gutenberg': MasteringGutenberg,
 };
 
 const Primary = ( { checklistMode, cards } ) => {
@@ -23,7 +23,6 @@ const Primary = ( { checklistMode, cards } ) => {
 	if ( cards && cards.length < 1 ) {
 		cards = [ 'home-primary-quick-links' ];
 	}
-
 	return (
 		<div className="primary">
 			{ cards &&

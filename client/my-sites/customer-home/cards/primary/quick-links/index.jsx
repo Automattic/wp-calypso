@@ -155,7 +155,6 @@ export const QuickLinks = ( {
 			</Card>
 		);
 	}
-
 	return (
 		<FoldableCard
 			className="quick-links card-heading-21"
