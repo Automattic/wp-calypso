@@ -4,14 +4,23 @@
  * External dependencies
  */
 import { debounce } from 'lodash';
+import debug from 'debug';
 
 /**
  * Internal dependencies
  */
 import tracksRecordEvent from './track-record-event';
 
+const tracksDebug = debug( 'wpcom-block-editor:analytics:tracks' );
+
+let previewTerm;
 const trackSearchTerm = ( event, target ) => {
+	const key = event.key || event.keyCode;
 	const search_term = ( target.value || '' ).trim().toLowerCase();
+	if ( previewTerm === search_term && 'Enter' !== key ) {
+		return tracksDebug( 'Same term: %o, type %o key. Skip.', search_term, key );
+	}
+	previewTerm = search_term;
 
 	if ( search_term.length < 3 ) {
 		return;
