@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import momentDate from 'moment';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -59,8 +60,10 @@ class BackupsPage extends Component {
 	state = this.getDefaultState();
 
 	getDefaultState() {
+		const { date } = this.props;
+
 		return {
-			selectedDate: null,
+			selectedDate: date || null,
 		};
 	}
 
@@ -76,7 +79,10 @@ class BackupsPage extends Component {
 	}
 
 	onDateChange = date => {
+		const { siteSlug } = this.props;
+		const urlDate = date.format( 'YYYY-MM-DD' );
 		this.setState( { selectedDate: date } );
+		page( `/backups/${ siteSlug }/${ urlDate }` );
 	};
 
 	getSelectedDate() {

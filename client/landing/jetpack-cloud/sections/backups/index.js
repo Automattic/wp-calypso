@@ -13,6 +13,7 @@ import { makeLayout, render as clientRender } from 'controller';
 import {
 	backups,
 	backupActivity,
+	backupDate,
 	backupDetail,
 	backupDownload,
 	backupRestore,
@@ -22,6 +23,7 @@ import {
 	backupMainPath,
 	backupActivityPath,
 	backupRestorePath,
+	backupDatePath,
 	backupDownloadPath,
 	backupDetailPath,
 } from './paths';
@@ -75,6 +77,18 @@ export default function() {
 				clientRender
 			);
 		}
+
+		/* handles /backups/:site/:date */
+		page(
+			backupDatePath( ':site', ':date' ),
+			siteSelection,
+			navigation,
+			backupDate,
+			wrapInSiteOffsetProvider,
+			makeLayout,
+			clientRender
+		);
+
 		/* handles /backups/:site, see `backupMainPath` */
 		page(
 			backupMainPath( ':site' ),

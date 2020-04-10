@@ -1,6 +1,9 @@
 export const backupMainPath = ( siteName?: string | null ) =>
 	siteName ? `/backups/${ siteName }` : '/backups';
 
+export const backupDatePath = ( siteName?: string, date: string ) =>
+	`/backups/${ siteName }/${ date }`;
+
 export const backupActivityPath = ( siteName?: string | null ) =>
 	siteName ? `/backups/activity/${ siteName }` : '/backups/activity';
 

@@ -31,6 +31,13 @@ export function backupActivity( context, next ) {
 	next();
 }
 
+/* handles /backups/:site/:date */
+export function backupDate( context, next ) {
+	const date = context.params.date;
+	context.primary = <BackupsPage date={ date } />;
+	next();
+}
+
 /* handles /backups/:site/detail/:backupId, see `backupDetailPath` */
 export function backupDetail( context, next ) {
 	const backupId = context.params.backupId;
