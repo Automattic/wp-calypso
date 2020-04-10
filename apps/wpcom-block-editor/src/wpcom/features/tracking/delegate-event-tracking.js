@@ -25,10 +25,14 @@ const EVENTS_MAPPING = [ wpcomBlockEditorCloseClick(), wpcomBlockPickerSearchTer
  * bubbling.
  *
  * @param  {DOMEvent} event          the DOM event
- * @param  {string} targetSelector the CSS selector for the target element
+ * @param  {string|Function} targetSelector the CSS selector for the target element
  * @returns {Node}                the target element if found
  */
 const getMatchingEventTarget = ( event, targetSelector ) => {
+	if ( typeof targetSelector === 'function' ) {
+		return targetSelector( event );
+	}
+
 	return event.target.matches( targetSelector )
 		? event.target
 		: event.target.closest( targetSelector );
