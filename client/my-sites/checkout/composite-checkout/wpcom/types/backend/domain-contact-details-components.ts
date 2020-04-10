@@ -99,9 +99,9 @@ export type CaDomainContactExtraDetailsErrors = {
 };
 
 export type UkDomainContactExtraDetailsErrors = {
-	registrantType?: string;
-	registrationNumber?: string;
-	tradingName?: string;
+	registrantType?: { errorCode: string; errorMessage: string }[];
+	registrationNumber?: { errorCode: string; errorMessage: string }[];
+	tradingName?: { errorCode: string; errorMessage: string }[];
 };
 
 export type FrDomainContactExtraDetailsErrors = {
