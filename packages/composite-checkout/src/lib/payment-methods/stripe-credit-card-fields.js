@@ -280,7 +280,7 @@ function StripeCreditCardFields() {
 
 		if ( input.error && input.error.message ) {
 			onEvent( {
-				type: 'a8c_checkout_error',
+				type: 'a8c_checkout_stripe_field_invalid_error',
 				payload: {
 					type: 'Stripe field error',
 					field: input.elementType,

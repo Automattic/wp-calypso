@@ -76,9 +76,9 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					} )
 				);
 
-			case 'a8c_checkout_error':
+			case 'a8c_checkout_stripe_field_invalid_error':
 				return reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_composite_error', {
+					recordTracksEvent( 'calypso_checkout_composite_stripe_field_invalid_error', {
 						error_type: action.payload.type,
 						error_field: action.payload.field,
 						error_message: action.payload.message,
