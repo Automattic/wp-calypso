@@ -547,7 +547,8 @@ export class SiteSettingsFormGeneral extends Component {
 				<Card className="site-settings__general-settings-launch-site">
 					<div className="site-settings__general-settings-launch-site-text">
 						<p>
-							{ isComingSoon && hasLocalizedText(
+							{ isComingSoon &&
+							hasLocalizedText(
 								'Your site hasn\'t been launched yet. It is hidden from visitors behind a "Coming Soon" notice until it is launched.'
 							)
 								? translate(
@@ -764,7 +765,6 @@ const getFormSettings = settings => {
 		wpcom_coming_soon: settings.wpcom_coming_soon,
 		timezone_string: settings.timezone_string,
 	};
-
 
 	// handling `gmt_offset` and `timezone_string` values
 	const gmt_offset = settings.gmt_offset;
