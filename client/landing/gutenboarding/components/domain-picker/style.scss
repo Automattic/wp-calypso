@@ -3,6 +3,8 @@
 @import 'assets/stylesheets/shared/animation'; // Needed for the placeholder
 @import '../../mixins';
 
+$domain-picker__suggestion-item-height: 24px;
+
 .domain-picker.components-panel {
 	border: none;
 
@@ -31,7 +33,7 @@
 
 .domain-picker__search {
 	position: relative;
-	margin-bottom: -7px;
+	margin-bottom: -4px; // Reducing the spacing added by .components-panel__row
 
 	input[type='text'].components-text-control__input {
 		padding: 6px 40px 6px 16px;
@@ -108,14 +110,15 @@
 }
 
 .domain-picker__suggestion-none {
+	@include onboarding-medium-text;
+	line-height: 20px; // matching design
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;
 	width: 100%;
 	border-radius: 0;
-	padding: 13px 0;
+	padding: 10px 0;
 	margin-bottom: 7px;
-	font-size: 14px;
 	cursor: pointer;
 }
 
@@ -139,7 +142,7 @@
 	input[type='radio'].domain-picker__suggestion-radio-button {
 		width: 16px;
 		height: 16px;
-		margin: 1px 12px 0 0; // 1px cosmetic alignment
+		margin: 3px 12px 0 0; // 3px cosmetic alignment
 		min-width: 16px; // prevents long domain from squishing the radio button
 		padding: 0;
 		vertical-align: middle;
@@ -177,20 +180,24 @@
 .domain-picker__suggestion-item-name {
 	flex-grow: 1;
 	margin-right: 24px;
-	word-break: break-all;
 	letter-spacing: 0.4px;
+	min-height: $domain-picker__suggestion-item-height;
+
+	.domain-picker__domain-name {
+		word-break: break-word; // use hyphens if any to break domain name
+	}
 
 	&.placeholder {
 		@include placeholder();
-		min-width: 30%;
-		background-repeat: no-repeat;
+		max-width: 30%;
+		margin-right: auto; // position the placeholder to the left overriding justify-content: space-between
 	}
 }
 
 .domain-picker__domain-tld {
 	color: var( --studio-blue-40 );
 	// margin for recommended badge. this margin shouldn't
-	// be place on the badge because if the badge falls 
+	// be place on the badge because if the badge falls
 	// on a newline, it will have whitespace on the left.
 	margin-right: 10px;
 }
@@ -225,6 +232,7 @@
 .domain-picker__price {
 	color: var( --studio-gray-40 );
 	white-space: nowrap;
+	min-height: $domain-picker__suggestion-item-height;
 
 	&.placeholder {
 		@include placeholder();
