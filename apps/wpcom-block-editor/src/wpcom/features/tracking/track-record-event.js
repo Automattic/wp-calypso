@@ -1,13 +1,9 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
 import { isObjectLike, isUndefined, omit } from 'lodash';
 import debug from 'debug';
-
-/**
- * WordPress dependencies
- */
-import { select } from '@wordpress/data';
 
 const tracksDebug = debug( 'wpcom-block-editor:analytics:tracks' );
 
@@ -30,12 +26,6 @@ export default ( eventName, eventProperties ) => {
 		site_type: window._currentSiteType,
 		user_locale: window._currentUserLocale,
 	};
-
-	// Custom Properties: Populate with selected_block if it's the case.
-	const selectedBlock = select( 'core/block-editor' ).getSelectedBlock();
-	if ( selectedBlock ) {
-		customProperties.selected_block = selectedBlock.name;
-	}
 
 	eventProperties = eventProperties || {};
 
@@ -68,7 +58,7 @@ export default ( eventName, eventProperties ) => {
 	// Populate custom properties.
 	eventProperties = { ...eventProperties, ...customProperties };
 
-	tracksDebug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
+	tracksDebug( 'Recording event %o with actual props %o', eventName, eventProperties );
 
 	window._tkq.push( [ 'recordEvent', eventName, eventProperties ] );
 };
