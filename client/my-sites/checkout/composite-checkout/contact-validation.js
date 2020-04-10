@@ -54,7 +54,9 @@ export default function createContactValidationCallback( {
 					);
 				}
 				applyDomainContactValidationResults( { ...( data ? data.messages : {} ) } );
-				resolve( ! ( data && data.success && areRequiredFieldsNotEmpty( decoratedContactDetails ) ) );
+				resolve(
+					! ( data && data.success && areRequiredFieldsNotEmpty( decoratedContactDetails ) )
+				);
 			} );
 		} );
 	};
