@@ -9,6 +9,7 @@ import createDebug from 'debug';
  */
 import { getViewingSiteIds } from 'state/reader/viewing/selectors';
 import { channelLeave, CHANNELS } from 'state/lasagna/channel';
+import { isPrivateSite } from 'state/reader/sites/selectors';
 
 /**
  * Module variables
@@ -18,23 +19,28 @@ const MAX_SECONDS_KEEP_CHANNEL_ACTIVE = 60 * 60; // 1 hour
 const MAX_SECONDS_SINCE_LAST_UPDATE = 60 * 45; // 45 minutes
 const MAX_CHANNELS_OPEN = 20;
 const debug = createDebug( 'lasagna:manager:site' );
-const channelTopicPrefix = `public:push:${ namespace }:`;
+const publicChannelTopicPrefix = `public:push:${ namespace }:`;
+const privateChannelTopicPrefix = `private:push:${ namespace }:`;
 
 /**
  * Get the channel topic
  *
- * @param action redux action
- * @returns {string|boolean} topic string or false
+ * @param {object} store redux store
+ * @param {string} siteId the Id of the site
+ * @returns {string|boolean} topic string
  */
-export function getChannelTopic( action ) {
-	if ( ! action.payload ) {
+export function getChannelTopic( store, siteId ) {
+	const isPrivate = isPrivateSite( store.getState(), siteId );
+	if ( isPrivate === null ) {
+		// we don't have the site yet
 		return false;
 	}
 
-	if ( ! action.payload.siteId ) {
-		return false;
+	if ( isPrivate ) {
+		return privateChannelTopicPrefix + siteId;
 	}
-	return channelTopicPrefix + action.payload.siteId;
+
+	return publicChannelTopicPrefix + siteId;
 }
 
 /**
@@ -88,6 +94,11 @@ export function leaveStaleChannels( store ) {
 export function canJoinChannel( store, topic ) {
 	const channels = CHANNELS[ namespace ] || {};
 
+	if ( ! topic ) {
+		debug( topic, 'cannot join, topic missing' );
+		return false;
+	}
+
 	if ( channels[ topic ] ) {
 		debug( topic, 'cannot join already joined' );
 		return false;
@@ -114,13 +125,18 @@ export function canLeaveChannel( store, topic ) {
 	const channels = CHANNELS[ namespace ] || {};
 	const viewingSiteIds = getViewingSiteIds( state );
 
+	if ( ! topic ) {
+		debug( topic, 'cannot leave, topic missing' );
+		return false;
+	}
+
 	if ( Object.keys( channels ).length === 0 ) {
 		debug( topic, 'cannot leave, channels still loading or already left' );
 		return false;
 	}
 
 	if ( ! channels[ topic ] ) {
-		debug( topic, 'cannot leave, channels not found' );
+		debug( topic, 'cannot leave, channel not found' );
 		return false;
 	}
 	const channel = channels[ topic ];

@@ -47,3 +47,11 @@ export function getSite( state, siteId ) {
 export function getSiteByFeedUrl( state, feedUrl ) {
 	return find( state.reader.sites.items, { feed_URL: feedUrl } );
 }
+
+export function isPrivateSite( state, siteId ) {
+	const site = getSite( state, siteId );
+	if ( site ) {
+		return site.is_private;
+	}
+	return null;
+}

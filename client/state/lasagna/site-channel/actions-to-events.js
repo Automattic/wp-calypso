@@ -33,22 +33,20 @@ export default store => next => action => {
 			// connected.
 			const state = store.getState();
 			const siteId = getViewingFullPostSiteId( state );
-			const topic = getChannelTopic( { payload: { siteId } } );
+			const topic = getChannelTopic( store, siteId );
 			const meta = { siteId };
 
-			joinChannel( { store, namespace, topic, registerEventHandlers, meta } );
+			if ( topic ) {
+				joinChannel( { store, namespace, topic, registerEventHandlers, meta } );
+			}
 			break;
 		}
 
 		case READER_VIEW_FEED_POST_SET:
 		case READER_VIEW_FULL_POST_SET: {
 			// a full post or feed post is viewed, we will join their site channels
-			const topic = getChannelTopic( action );
-			if ( ! topic ) {
-				return next( action );
-			}
-
 			const { siteId, postId } = action.payload;
+			const topic = getChannelTopic( store, siteId );
 			const meta = { siteId, postId };
 
 			leaveStaleChannels( store, namespace );
@@ -62,10 +60,8 @@ export default store => next => action => {
 		case READER_VIEW_FULL_POST_UNSET:
 		case READER_VIEW_FEED_POST_UNSET: {
 			// a full post or feed post is not viewed, we will leave the channel
-			const topic = getChannelTopic( action );
-			if ( ! topic ) {
-				return next( action );
-			}
+			const { siteId } = action.payload;
+			const topic = getChannelTopic( store, siteId );
 
 			if ( canLeaveChannel( store, topic ) ) {
 				leaveChannel( { store, namespace, topic } );
