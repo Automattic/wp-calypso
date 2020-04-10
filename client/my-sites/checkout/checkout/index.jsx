@@ -371,10 +371,6 @@ export class Checkout extends React.Component {
 		return true;
 	}
 
-	emptyOutCart() {
-		replaceCartWithItems( [] );
-	}
-
 	/**
 	 * Purchases are of the format { [siteId]: [ { productId: ... } ] }
 	 * so we need to flatten them to get a list of purchases
@@ -505,7 +501,7 @@ export class Checkout extends React.Component {
 		}
 	}
 
-	getCheckoutCompleteRedirectPath = ( shouldHideUpsellNudges = false, shouldEmptyCart = false ) => {
+	getCheckoutCompleteRedirectPath = ( shouldHideUpsellNudges = false ) => {
 		// TODO: Cleanup and simplify this function.
 		// I wouldn't be surprised if it doesn't work as intended in some scenarios.
 		// Especially around the Concierge / Checklist logic.
@@ -616,8 +612,6 @@ export class Checkout extends React.Component {
 			return `${ signupDestination }/${ pendingOrReceiptId }`;
 		}
 
-		shouldEmptyCart && this.emptyOutCart();
-
 		const redirectPathForConciergeUpsell = this.maybeRedirectToConciergeNudge(
 			pendingOrReceiptId,
 			stepResult,
@@ -651,7 +645,7 @@ export class Checkout extends React.Component {
 		window.location.href = redirectUrl;
 	}
 
-	handleCheckoutCompleteRedirect = ( shouldHideUpsellNudges = false, shouldEmptyCart = false ) => {
+	handleCheckoutCompleteRedirect = ( shouldHideUpsellNudges = false ) => {
 		let product, purchasedProducts, renewalItem;
 
 		const {
@@ -663,10 +657,7 @@ export class Checkout extends React.Component {
 			translate,
 		} = this.props;
 
-		const redirectPath = this.getCheckoutCompleteRedirectPath(
-			shouldHideUpsellNudges,
-			shouldEmptyCart
-		);
+		const redirectPath = this.getCheckoutCompleteRedirectPath( shouldHideUpsellNudges );
 		const destinationFromCookie = retrieveSignupDestination();
 
 		this.props.clearPurchases();
