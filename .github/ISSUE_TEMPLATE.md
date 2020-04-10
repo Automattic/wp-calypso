@@ -34,5 +34,5 @@ https://github.com/Automattic/wp-calypso/blob/master/docs/CONTRIBUTING.md
 https://github.com/Automattic/wp-calypso/blob/master/docs/troubleshooting.md
 
 Helpful tips for screenshots:
-https://en.support.wordpress.com/make-a-screenshot/
+https://wordpress.com/support/make-a-screenshot/
 -->

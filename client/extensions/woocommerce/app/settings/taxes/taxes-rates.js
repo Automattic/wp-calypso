@@ -204,7 +204,7 @@ class TaxesRates extends Component {
 				) }
 				<ExternalLink
 					icon
-					href="https://en.support.wordpress.com/taxjar/"
+					href="https://wordpress.com/support/taxjar/"
 					target="_blank"
 					rel="noopener noreferrer"
 				>

@@ -17,6 +17,7 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import { useLocalizedMoment } from 'components/localized-moment';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getUserPurchases } from 'state/purchases/selectors';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -104,18 +105,24 @@ const GMClosureNotice = ( {
 
 	const REASON_MESSAGES = {
 		hasPlan: translate(
-			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, you can submit an email ticket through the contact form: {{contactLink}}https://wordpress.com/help/contact{{/contactLink}}',
+			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, you can submit an email ticket through the contact form: {{contactLink}}{{/contactLink}}',
 			{
 				components: {
 					contactLink: <a href="/help/contact" />,
 				},
+				args: {
+					linkUrl: 'https://wordpress.com/help/contact',
+				},
 			}
 		),
 		nonPlan: translate(
-			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, check our support site at {{supportLink}}https://en.support.wordpress.com{{/supportLink}}',
+			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, check our support site at {{supportLink}}%(linkUrl)s{{/supportLink}}',
 			{
 				components: {
-					supportLink: <a href="https://en.support.wordpress.com" />,
+					supportLink: <a href={ localizeUrl( 'https://wordpress.com/support/' ) } />,
+				},
+				args: {
+					linkUrl: localizeUrl( 'https://wordpress.com/support/' ),
 				},
 			}
 		),
@@ -125,7 +132,7 @@ const GMClosureNotice = ( {
 		'Our staff will be keeping an eye on the {{link}}Forums{{/link}} for urgent matters.',
 		{
 			components: {
-				link: <a href="https://en.forums.wordpress.com/forum/support/" />,
+				link: <a href={ localizeUrl( 'https://en.forums.wordpress.com/forum/support/' ) } />,
 			},
 		}
 	);

@@ -18,6 +18,7 @@ import NoticeAction from 'components/notice/notice-action';
 import { isJetpackSite } from 'state/sites/selectors';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import getJetpackConnectionStatus from 'state/selectors/get-jetpack-connection-status';
+import { localizeUrl } from 'lib/i18n-utils';
 
 const MailchimpSettings = ( {
 	siteId,
@@ -62,7 +63,7 @@ const MailchimpSettings = ( {
 						'Start building your mailing list by adding the Mailchimp block to your posts and pages. '
 					) }
 					<a
-						href={ 'https://support.wordpress.com/mailchimp-block/' }
+						href={ localizeUrl( 'https://wordpress.com/support/mailchimp-block/' ) }
 						target="_blank"
 						rel="noopener noreferrer"
 					>
