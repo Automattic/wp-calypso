@@ -5,14 +5,14 @@ import React from 'react';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
 
-interface CloseButtonProps {
+interface CloseButtonProps extends Button.ButtonProps {
 	onClose: () => void;
 }
 
-const CloseButton = ( { onClose }: CloseButtonProps ) => {
+const CloseButton = ( { onClose, ...buttonProps }: CloseButtonProps ) => {
 	const { __ } = useI18n();
 	return (
-		<Button onClick={ onClose } label={ __( 'Close dialog' ) }>
+		<Button onClick={ onClose } label={ __( 'Close dialog' ) } { ...buttonProps }>
 			<svg
 				width="12"
 				height="12"
