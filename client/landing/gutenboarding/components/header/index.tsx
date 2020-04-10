@@ -127,7 +127,8 @@ const Header: FunctionComponent = () => {
 			} ) }
 		>
 			{ recommendedDomainSuggestion
-				? sprintf( __( '%s is available' ), recommendedDomainSuggestion.domain_name )
+				? /* translators: domain name is available, eg: "yourname.com is available" */
+				  sprintf( __( '%s is available' ), recommendedDomainSuggestion.domain_name )
 				: 'example.wordpress.com' }
 		</span>
 	);
