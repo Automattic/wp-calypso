@@ -84,7 +84,6 @@ import { isRequestingPlans } from 'state/plans/selectors';
 import { isApplePayAvailable } from 'lib/web-payment';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
-import getPreviousPath from 'state/selectors/get-previous-path.js';
 import config from 'config';
 import { loadTrackingTool } from 'state/analytics/actions';
 import {
@@ -460,7 +459,7 @@ export class Checkout extends React.Component {
 			return;
 		}
 
-		const { cart, selectedSiteSlug, previousRoute } = this.props;
+		const { cart, selectedSiteSlug } = this.props;
 
 		// If the user has upgraded a plan from seeing our upsell (we find this by checking the previous route is /offer-plan-upgrade),
 		// then skip this section so that we do not show further upsells.
@@ -468,8 +467,7 @@ export class Checkout extends React.Component {
 			config.isEnabled( 'upsell/concierge-session' ) &&
 			! hasConciergeSession( cart ) &&
 			! hasJetpackPlan( cart ) &&
-			( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) ) &&
-			! previousRoute.includes( `/checkout/${ selectedSiteSlug }/offer-plan-upgrade` )
+			( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) )
 		) {
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
@@ -939,7 +937,6 @@ export default connect(
 			isPlansListFetching: isRequestingPlans( state ),
 			isSitePlansListFetching: isRequestingSitePlans( state, selectedSiteId ),
 			planSlug: getUpgradePlanSlugFromPath( state, selectedSiteId, props.product ),
-			previousRoute: getPreviousPath( state ),
 			isJetpackNotAtomic:
 				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ),
 		};

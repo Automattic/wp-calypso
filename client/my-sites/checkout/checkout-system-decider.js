@@ -33,6 +33,7 @@ export default function CheckoutSystemDecider( {
 	isComingFromSignup,
 	isComingFromGutenboarding,
 	isGutenboardingCreate,
+	isComingFromUpsell,
 	plan,
 	selectedSite,
 	reduxStore,
@@ -79,6 +80,7 @@ export default function CheckoutSystemDecider( {
 					feature={ selectedFeature }
 					plan={ plan }
 					cart={ cart }
+					isComingFromUpsell={ isComingFromUpsell }
 				/>
 			</StripeHookProvider>
 		);
@@ -93,6 +95,7 @@ export default function CheckoutSystemDecider( {
 			isComingFromSignup={ isComingFromSignup }
 			isComingFromGutenboarding={ isComingFromGutenboarding }
 			isGutenboardingCreate={ isGutenboardingCreate }
+			isComingFromUpsell={ isComingFromUpsell }
 			plan={ plan }
 			selectedSite={ selectedSite }
 			reduxStore={ reduxStore }
