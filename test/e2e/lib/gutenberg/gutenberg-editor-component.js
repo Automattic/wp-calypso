@@ -449,7 +449,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async dismissEditorWelcomeModal() {
 		const welcomeModal = By.css( '.components-guide__container' );
 		if ( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, welcomeModal ) ) {
-			await this.driver.findElement( By.css( '.components-guide' ) ).sendKeys( Key.ESCAPE );
+			await this.driver
+				.findElement( By.css( '.components-guide__forward-button' ) )
+				.sendKeys( Key.ESCAPE );
 		}
 	}
 }
