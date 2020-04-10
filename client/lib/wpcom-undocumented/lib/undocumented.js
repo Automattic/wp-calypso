@@ -689,7 +689,7 @@ Undocumented.prototype.validateDomainContactInformation = function(
 
 	return this.wpcom.req.post(
 		{ path: '/me/domain-contact-information/validate' },
-        query,
+		query,
 		data,
 		function( error, successData ) {
 			if ( error ) {
