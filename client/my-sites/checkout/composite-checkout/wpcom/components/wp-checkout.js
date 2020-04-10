@@ -28,7 +28,7 @@ import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary, { WPCheckoutOrderSummaryTitle } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import { isCompleteAndValid, prepareDomainContactDetails } from '../types';
-import { WPOrderReviewTotal, WPOrderReviewSection } from './wp-order-review-line-items';
+import { WPOrderReviewTotal, WPOrderReviewSection, LineItemUI } from './wp-order-review-line-items';
 
 const ContactFormTitle = () => {
 	const translate = useTranslate();
@@ -72,6 +72,7 @@ export default function WPCheckout( {
 	getItemVariants,
 	domainContactValidationCallback,
 	responseCart,
+	subtotal,
 } ) {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( submitCoupon );
@@ -208,7 +209,11 @@ export default function WPCheckout( {
 				<CheckoutStep
 					stepId="payment-method-step"
 					activeStepContent={
-						<PaymentMethodStep CheckoutTerms={ CheckoutTerms } responseCart={ responseCart } />
+						<PaymentMethodStep
+							CheckoutTerms={ CheckoutTerms }
+							responseCart={ responseCart }
+							subtotal={ subtotal }
+						/>
 					}
 					completeStepContent={ paymentMethodStep.completeStepContent }
 					titleContent={ paymentMethodStep.titleContent }
@@ -228,8 +233,9 @@ function setActiveStepNumber( stepNumber ) {
 	window.location.hash = '#step' + stepNumber;
 }
 
-function PaymentMethodStep( { CheckoutTerms, responseCart } ) {
-	const total = useTotal();
+function PaymentMethodStep( { CheckoutTerms, responseCart, subtotal } ) {
+	const [ items, total ] = useLineItems();
+	const taxes = items.filter( item => item.type === 'tax' );
 	return (
 		<React.Fragment>
 			{ paymentMethodStep.activeStepContent }
@@ -239,6 +245,10 @@ function PaymentMethodStep( { CheckoutTerms, responseCart } ) {
 			</CheckoutTermsUI>
 
 			<WPOrderReviewSection>
+				{ subtotal && <LineItemUI subtotal item={ subtotal } /> }
+				{ taxes.map( tax => (
+					<LineItemUI tax key={ tax.id } item={ tax } />
+				) ) }
 				<WPOrderReviewTotal total={ total } />
 			</WPOrderReviewSection>
 		</React.Fragment>

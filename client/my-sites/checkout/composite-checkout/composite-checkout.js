@@ -336,6 +336,7 @@ export default function CompositeCheckout( {
 					getItemVariants={ getItemVariants }
 					domainContactValidationCallback={ domainContactValidationCallback }
 					responseCart={ responseCart }
+					subtotal={ subtotal }
 					CheckoutTerms={ CheckoutTerms }
 				/>
 			</CheckoutProvider>
