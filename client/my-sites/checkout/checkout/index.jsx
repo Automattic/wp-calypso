@@ -357,12 +357,8 @@ export class Checkout extends React.Component {
 		return true;
 	}
 
-	emptyCartIfDomainWithoutPlan() {
-		const { selectedSiteSlug, currentRoute } = this.props;
-
-		if ( currentRoute.includes( `/checkout/offer-plan-with-domain/${ selectedSiteSlug }` ) ) {
-			replaceCartWithItems( [] );
-		}
+	emptyOutCart() {
+		replaceCartWithItems( [] );
 	}
 
 	/**
@@ -477,7 +473,7 @@ export class Checkout extends React.Component {
 		}
 	}
 
-	getCheckoutCompleteRedirectPath = () => {
+	getCheckoutCompleteRedirectPath = ( shouldHideUpsellNudges = false, shouldEmptyCart = false ) => {
 		// TODO: Cleanup and simplify this function.
 		// I wouldn't be surprised if it doesn't work as intended in some scenarios.
 		// Especially around the Concierge / Checklist logic.
@@ -576,6 +572,8 @@ export class Checkout extends React.Component {
 			return `${ signupDestination }/${ pendingOrReceiptId }`;
 		}
 
+		shouldEmptyCart && this.emptyOutCart();
+
 		const redirectPathForConciergeUpsell = this.maybeRedirectToConciergeNudge(
 			pendingOrReceiptId,
 			shouldHideUpsellNudges
@@ -605,7 +603,7 @@ export class Checkout extends React.Component {
 		window.location.href = redirectUrl;
 	}
 
-	handleCheckoutCompleteRedirect = () => {
+	handleCheckoutCompleteRedirect = ( shouldHideUpsellNudges = false, shouldEmptyCart = false ) => {
 		let product, purchasedProducts, renewalItem;
 
 		const {
@@ -617,7 +615,10 @@ export class Checkout extends React.Component {
 			translate,
 		} = this.props;
 
-		const redirectPath = this.getCheckoutCompleteRedirectPath();
+		const redirectPath = this.getCheckoutCompleteRedirectPath(
+			shouldHideUpsellNudges,
+			shouldEmptyCart
+		);
 		const destinationFromCookie = retrieveSignupDestination();
 
 		this.props.clearPurchases();
@@ -938,7 +939,6 @@ export default connect(
 			previousRoute: getPreviousPath( state ),
 			isJetpackNotAtomic:
 				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ),
-			shouldHideUpsellNudge: shouldHideUpsellNudge( state ),
 		};
 	},
 	{
