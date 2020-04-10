@@ -167,11 +167,11 @@ export class UpsellNudge extends React.Component {
 		}
 	}
 
-	handleClickDecline = ( shouldHideUpsellNudges = true, shouldEmptyCart = false ) => {
+	handleClickDecline = ( shouldHideUpsellNudges = true ) => {
 		const { trackUpsellButtonClick, upsellType, handleCheckoutCompleteRedirect } = this.props;
 
 		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
-		handleCheckoutCompleteRedirect( shouldHideUpsellNudges, shouldEmptyCart );
+		handleCheckoutCompleteRedirect( shouldHideUpsellNudges );
 	};
 
 	getCheckoutUrl( url ) {
