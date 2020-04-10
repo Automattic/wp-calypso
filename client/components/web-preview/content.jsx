@@ -254,8 +254,13 @@ export class WebPreviewContent extends Component {
 			// "you need to login first" screen. These messages are handled by wpcomsh on the other end,
 			// and they make it possible to redirect to wp-login.php since it cannot be displayed in this
 			// iframe OR redirected to using <a href="" target="_top">.
-			const { protocol, host } = parseUrl( this.props.externalUrl );
-			this.iframe.contentWindow.postMessage( { connected: 'calypso' }, `${ protocol }//${ host }` );
+			if ( this.props.isPrivateAtomic ) {
+				const { protocol, host } = parseUrl( this.props.externalUrl );
+				this.iframe.contentWindow.postMessage(
+					{ connected: 'calypso' },
+					`${ protocol }//${ host }`
+				);
+			}
 		}
 	};
 
