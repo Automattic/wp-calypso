@@ -22,6 +22,7 @@ export const navigationMiddleware = store => {
 		switch ( action.type ) {
 			case ACTIVITY_LOG_FILTER_SET:
 			case ACTIVITY_LOG_FILTER_UPDATE:
+				/* eslint-disable no-case-declarations */
 				const afterFilter = next( action );
 
 				if (
@@ -38,7 +39,7 @@ export const navigationMiddleware = store => {
 				const query = filterStateToQuery( filter );
 
 				page( addQueryArgs( query, window.location.pathname + window.location.hash ) );
-
+				/* eslint-enable no-case-declarations */
 				return afterFilter;
 
 			case NAVIGATE:
