@@ -154,20 +154,34 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getTransferDomain() {
-		const { selectedSite, translate, domain } = this.props;
-		const { expired } = domain;
+		const { moment, selectedSite, translate, domain } = this.props;
+		const { expired, isLocked, transferAwayEligibleAt } = domain;
 
 		if ( expired && ! this.isDomainInGracePeriod() ) {
 			return null;
 		}
 
-		// NOTE: remember to add translate to the description string once you start working on it
+		let description;
+
+		if ( transferAwayEligibleAt ) {
+			description = translate( 'Outbound transfers available after %(startDate)s', {
+				args: {
+					startDate: moment( transferAwayEligibleAt ).format( 'LL' ),
+				},
+				comment: '%(startDate)s is a date string, e.g. April 1, 2020',
+			} );
+		} else if ( isLocked ) {
+			description = translate( 'Transfer lock: on' );
+		} else {
+			description = translate( 'Transfer lock: off' );
+		}
+
 		return (
 			<DomainManagementNavigationItem
 				path={ domainManagementTransfer( selectedSite.slug, domain.name ) }
 				materialIcon="sync_alt"
 				text={ translate( 'Transfer domain' ) }
-				description={ 'Transfer lock: off' }
+				description={ description }
 			/>
 		);
 	}
