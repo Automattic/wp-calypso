@@ -20,6 +20,7 @@ function getCheckoutUrl( dependencies ) {
 			signup: 1,
 			...( dependencies.isPreLaunch && { preLaunch: 1 } ),
 			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
+			...( dependencies.isUpsellItem && { upgrade: 1 } ),
 		},
 		`/checkout/${ dependencies.siteSlug }`
 	);

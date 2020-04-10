@@ -246,5 +246,6 @@ export default connect(
 	},
 	{
 		trackUpsellButtonClick,
+		hideUpsellNudge,
 	}
 )( localize( UpsellNudge ) );

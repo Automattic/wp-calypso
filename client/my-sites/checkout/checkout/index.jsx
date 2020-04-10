@@ -357,16 +357,6 @@ export class Checkout extends React.Component {
 		return true;
 	}
 
-	isComingFromUpsell() {
-		const { previousRoute, selectedSiteSlug } = this.props;
-
-		return (
-			previousRoute.includes( `/checkout/${ selectedSiteSlug }/offer-plan-upgrade` ) ||
-			previousRoute.includes( `/checkout/offer-plan-with-domain/${ selectedSiteSlug }` ) ||
-			previousRoute.includes( `/start/plan-only` )
-		);
-	}
-
 	emptyCartIfDomainWithoutPlan() {
 		const { selectedSiteSlug, currentRoute } = this.props;
 
@@ -468,8 +458,6 @@ export class Checkout extends React.Component {
 
 		const { cart, selectedSiteSlug, previousRoute } = this.props;
 
-		// If the user has upgraded a plan from seeing our upsell (we find this by checking the previous route is /offer-plan-upgrade),
-		// then skip this section so that we do not show further upsells.
 		if (
 			config.isEnabled( 'upsell/concierge-session' ) &&
 			! hasConciergeSession( cart ) &&
@@ -950,6 +938,7 @@ export default connect(
 			previousRoute: getPreviousPath( state ),
 			isJetpackNotAtomic:
 				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ),
+			shouldHideUpsellNudge: shouldHideUpsellNudge( state ),
 		};
 	},
 	{

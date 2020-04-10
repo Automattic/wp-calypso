@@ -79,6 +79,8 @@ export class PlansStep extends Component {
 					isPreLaunch: true,
 					isGutenboardingCreate: true,
 				} ),
+			// dependency used only for 'plans-plan-only' step in plan-only flow.
+			...( flowName === 'plan-only' && { isUpsellItem: true } ),
 		} );
 		this.props.goToNextStep();
 	};
