@@ -29,7 +29,13 @@ export function backups( context, next ) {
 
 /* handles /backups/activity/:site, see `backupsActivityPath` */
 export function backupActivity( context, next ) {
-	context.primary = <BackupActivityLogPage />;
+	context.primary = (
+		<BackupActivityLogPage
+			after={ context.query.after }
+			before={ context.query.before }
+			group={ context.query.group }
+		/>
+	);
 	next();
 }
 
