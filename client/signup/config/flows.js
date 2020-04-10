@@ -11,7 +11,6 @@ import stepConfig from './steps';
 import userFactory from 'lib/user';
 import { generateFlows } from 'signup/config/flows-pure';
 import { addQueryArgs } from 'lib/url';
-import { abtest } from 'lib/abtest';
 
 const user = userFactory();
 
@@ -28,6 +27,10 @@ function getCheckoutUrl( dependencies ) {
 
 function dependenciesContainCartItem( dependencies ) {
 	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
+}
+
+function dependenciesContainDomainItemWithoutPlan( dependencies ) {
+	return dependencies.domainItem && ! dependencies.cartItem;
 }
 
 function getSiteDestination( dependencies ) {
@@ -100,6 +103,10 @@ function removeUserStepFromFlow( flow ) {
 }
 
 function filterDestination( destination, dependencies ) {
+	if ( dependenciesContainDomainItemWithoutPlan( dependencies ) ) {
+		return getPlanUpsellUrl( dependencies );
+	}
+
 	if ( dependenciesContainCartItem( dependencies ) ) {
 		return getCheckoutUrl( dependencies );
 	}
@@ -108,13 +115,6 @@ function filterDestination( destination, dependencies ) {
 }
 
 function getDefaultFlowName() {
-	if (
-		config.isEnabled( 'signup/onboarding-flow' ) &&
-		'variantShowSwapped' === abtest( 'domainStepPlanStepSwap' )
-	) {
-		return 'onboarding-plan-first';
-	}
-
 	return config.isEnabled( 'signup/onboarding-flow' ) ? 'onboarding' : 'main';
 }
 

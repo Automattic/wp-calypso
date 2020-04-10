@@ -130,6 +130,14 @@ export default function () {
 		);
 	}
 
+	page(
+		'/checkout/offer-plan-with-domain/:site?',
+		siteSelection,
+		upsellNudge,
+		makeLayout,
+		clientRender
+	);
+
 	page( '/checkout/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
 
 	page( '/checkout/:product/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );

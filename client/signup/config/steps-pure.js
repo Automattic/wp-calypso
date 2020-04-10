@@ -251,6 +251,17 @@ export function generateSteps( {
 			},
 		},
 
+		'plans-plan-only': {
+			stepName: 'plans-plan-only',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			props: {
+				hideFreePlan: true,
+				planTypes: [ TYPE_PERSONAL, TYPE_PREMIUM ],
+			},
+		},
+
 		'plans-store-nux': {
 			stepName: 'plans-store-nux',
 			apiRequestFunction: addPlanToCart,

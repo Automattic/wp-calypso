@@ -11,15 +11,30 @@ import { translate } from 'i18n-calypso';
 import steps from 'signup/config/steps-pure';
 import flows from 'signup/config/flows';
 import userFactory from 'lib/user';
+import { abtest } from 'lib/abtest';
+import config from 'config';
 
 const user = userFactory();
 
 const { defaultFlowName } = flows;
 
+function getABTestFlowName() {
+	if (
+		config.isEnabled( 'signup/onboarding-flow' ) &&
+		'variantShowSwapped' === abtest( 'domainStepPlanStepSwap' )
+	) {
+		return 'onboarding-plan-first';
+	}
+
+	return defaultFlowName;
+}
+
 export function getFlowName( parameters ) {
-	return parameters.flowName && isFlowName( parameters.flowName )
-		? parameters.flowName
-		: defaultFlowName;
+	if ( parameters.flowName && isFlowName( parameters.flowName ) ) {
+		return parameters.flowName;
+	}
+
+	return getABTestFlowName();
 }
 
 function isFlowName( pathFragment ) {

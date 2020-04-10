@@ -357,6 +357,24 @@ export class Checkout extends React.Component {
 		return true;
 	}
 
+	isComingFromUpsell() {
+		const { previousRoute, selectedSiteSlug } = this.props;
+
+		return (
+			previousRoute.includes( `/checkout/${ selectedSiteSlug }/offer-plan-upgrade` ) ||
+			previousRoute.includes( `/checkout/offer-plan-with-domain/${ selectedSiteSlug }` ) ||
+			previousRoute.includes( `/start/plan-only` )
+		);
+	}
+
+	emptyCartIfDomainWithoutPlan() {
+		const { selectedSiteSlug, currentRoute } = this.props;
+
+		if ( currentRoute.includes( `/checkout/offer-plan-with-domain/${ selectedSiteSlug }` ) ) {
+			replaceCartWithItems( [] );
+		}
+	}
+
 	/**
 	 * Purchases are of the format { [siteId]: [ { productId: ... } ] }
 	 * so we need to flatten them to get a list of purchases
@@ -570,7 +588,11 @@ export class Checkout extends React.Component {
 			return `${ signupDestination }/${ pendingOrReceiptId }`;
 		}
 
-		const redirectPathForConciergeUpsell = this.maybeRedirectToConciergeNudge( pendingOrReceiptId );
+		const redirectPathForConciergeUpsell = this.maybeRedirectToConciergeNudge(
+			pendingOrReceiptId,
+			shouldHideUpsellNudges
+		);
+		
 		if ( redirectPathForConciergeUpsell ) {
 			return redirectPathForConciergeUpsell;
 		}
