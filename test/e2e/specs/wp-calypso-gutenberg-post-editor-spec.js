@@ -302,10 +302,12 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 			step( 'Can publish and view content', async function() {
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-				await gEditorComponent.publish( { visit: true } );
+				return await gEditorComponent.publish( { visit: true } );
 			} );
 
 			step( 'Can see correct post title', async function() {
+				console.log( 'wait to load...' );
+				await this.driver.sleep( 5000 );
 				const viewPostPage = await ViewPostPage.Expect( driver );
 				const postTitle = await viewPostPage.postTitle();
 				console.log( 'expected: ' + blogPostTitle.toLowerCase() );
