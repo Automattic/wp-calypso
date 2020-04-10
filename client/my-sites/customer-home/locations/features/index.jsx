@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,8 +16,11 @@ const cardComponents = {
 };
 
 const Features = ( { cards } ) => {
+	const translate = useTranslate();
+
 	return (
 		<>
+			<h2>{ translate( 'Learn and grow' ) }</h2>
 			{ cards &&
 				cards.map(
 					( card, index ) =>
