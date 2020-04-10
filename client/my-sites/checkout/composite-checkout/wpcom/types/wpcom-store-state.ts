@@ -436,10 +436,15 @@ function prepareUkDomainContactExtraDetailsErrors(
 	details: ManagedContactDetails
 ): UkDomainContactExtraDetailsErrors | null {
 	if ( details.tldExtraFields?.uk ) {
+		// Needed for compatibility with existing component props
+		const toErrorPayload = ( errorMessage, index ) => {
+			return { errorCode: index.toString(), errorMessage };
+		};
+
 		return {
-			registrantType: details.tldExtraFields.uk.registrantType.errors[ 0 ],
-			registrationNumber: details.tldExtraFields.uk.registrationNumber.errors[ 0 ],
-			tradingName: details.tldExtraFields.uk.tradingName.errors[ 0 ],
+			registrantType: details.tldExtraFields.uk.registrantType.errors.map( toErrorPayload ),
+			registrationNumber: details.tldExtraFields.uk.registrationNumber.errors.map( toErrorPayload ),
+			tradingName: details.tldExtraFields.uk.tradingName.errors.map( toErrorPayload ),
 		};
 	}
 	return null;
@@ -623,20 +628,23 @@ function applyDomainContactDetailsUpdate(
  * assume input came from the user.
  */
 export type ManagedContactDetailsUpdaters = {
-	updatePhone: ( ManagedContactDetails, string ) => ManagedContactDetails;
-	updatePhoneNumberCountry: ( ManagedContactDetails, string ) => ManagedContactDetails;
-	updatePostalCode: ( ManagedContactDetails, string ) => ManagedContactDetails;
-	updateCountryCode: ( ManagedContactDetails, string ) => ManagedContactDetails;
+	updatePhone: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
+	updatePhoneNumberCountry: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
+	updatePostalCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
+	updateCountryCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateDomainContactFields: (
-		ManagedContactDetails,
-		DomainContactDetails
+		arg0: ManagedContactDetails,
+		arg1: DomainContactDetails
 	) => ManagedContactDetails;
-	touchContactFields: ( ManagedContactDetails ) => ManagedContactDetails;
-	updateVatId: ( ManagedContactDetails, string ) => ManagedContactDetails;
-	setErrorMessages: ( ManagedContactDetails, ManagedContactDetailsErrors ) => ManagedContactDetails;
+	touchContactFields: ( arg0: ManagedContactDetails ) => ManagedContactDetails;
+	updateVatId: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
+	setErrorMessages: (
+		arg0: ManagedContactDetails,
+		arg1: ManagedContactDetailsErrors
+	) => ManagedContactDetails;
 	populateDomainFieldsFromCache: (
-		ManagedContactDetails,
-		PossiblyCompleteDomainContactDetails
+		arg0: ManagedContactDetails,
+		arg1: PossiblyCompleteDomainContactDetails
 	) => ManagedContactDetails;
 };
 
