@@ -451,7 +451,21 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async dismissEditorWelcomeModal() {
 		const welcomeModal = By.css( '.components-guide__container' );
 		if ( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, welcomeModal ) ) {
-			await this.driver.findElement( By.css( '.components-guide' ) ).sendKeys( Key.ESCAPE );
+			try {
+				// Easiest way to dismiss it, but it might not work in IE.
+				await this.driver.findElement( By.css( '.components-guide' ) ).sendKeys( Key.ESCAPE );
+			} catch {
+				// Click to the last page of the welcome guide.
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css( 'ul.components-guide__page-control li:last-child button' )
+				);
+				// Click the finish button.
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css( '.components-guide__finish-button' )
+				);
+			}
 		}
 	}
 }
