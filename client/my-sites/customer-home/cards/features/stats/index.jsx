@@ -11,7 +11,6 @@ import { Card } from '@automattic/components';
  */
 import CardHeading from 'components/card-heading';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
 import QuerySiteStats from 'components/data/query-site-stats';
 
@@ -21,7 +20,6 @@ import QuerySiteStats from 'components/data/query-site-stats';
 import './style.scss';
 
 export const Stats = ( {
-	hideStats,
 	insightsData,
 	insightsStatsQuery,
 	insightsStatsType,
@@ -33,10 +31,6 @@ export const Stats = ( {
 	trafficStatsQuery,
 } ) => {
 	const translate = useTranslate();
-
-	if ( hideStats ) {
-		return null;
-	}
 
 	return (
 		<Card className="stats">
@@ -96,8 +90,6 @@ export const Stats = ( {
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
-	const isJetpack = isJetpackSite( state, siteId );
-	const isStatsModuleActive = isJetpackModuleActive( state, siteId, 'stats' );
 
 	const trafficStatsType = 'statsVisits';
 	const trafficStatsQuery = {
@@ -124,11 +116,7 @@ const mapStateToProps = state => {
 		insightsStatsQuery
 	);
 
-	const hideStats =
-		( isJetpack && ! isStatsModuleActive ) || ( showInsights && ! insightsData?.percent );
-
 	return {
-		hideStats,
 		insightsData,
 		insightsStatsQuery,
 		insightsStatsType,
