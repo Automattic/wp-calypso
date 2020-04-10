@@ -8,7 +8,6 @@ import React, { FunctionComponent } from 'react';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import Gridicon from 'components/gridicon';
 
 /**
  * Style dependencies
@@ -27,22 +26,19 @@ const JetpackCloudBackupUpsell: FunctionComponent< Props > = ( { siteSlug } ) =>
 	return (
 		<Card className="upsell">
 			<div className="upsell__header">
-				<Gridicon icon="cloud-upload" size={ 72 } />
+				<img
+					src="/calypso/images/illustrations/jetpack-cloud-backup-error.svg"
+					alt="jetpack cloud backup error"
+				/>
 			</div>
-			<h3 className="upsell__title">{ translate( 'Go ahead, try something new' ) }</h3>
+			<h2 className="upsell__title">{ translate( 'Your site does not have backups' ) }</h2>
 			<p className="upsell__copy">
 				{ translate(
-					'Make a mistake or two. {{span}}Experiment{{/span}}. With {{a}}Jetpack Backup{{/a}} you can revert changes or restore an earlier version of your site if you need to. No {{span}}ifs{{/span}}, {{span}}ands{{/span}}, or {{span}}uh-ohs{{/span}} about it.',
-					{
-						components: {
-							a: <a href={ jetpackBackupLink } target="_blank" rel="noopener noreferrer" />,
-							span: <span />,
-						},
-					}
+					'Get peace of mind knowing your work will be saved, add backups today. Choose from real time or daily backups.'
 				) }
 			</p>
 			<Button className="upsell__upgrade-button" href={ jetpackBackupLink } primary>
-				{ translate( 'Upgrade' ) }
+				{ translate( 'Upgrade Now' ) }
 			</Button>
 		</Card>
 	);

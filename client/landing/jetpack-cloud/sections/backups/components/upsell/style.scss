@@ -1,3 +1,18 @@
+.upsell {
+	padding: 16px;
+
+	& > * {
+		margin-bottom: 16px;
+	}
+
+	@include breakpoint( '>660px' ) {
+		padding: 32px 64px;
+		& > * {
+			margin-bottom: 32px;
+		}
+	}
+}
+
 .upsell__header {
 	display: flex;
 	justify-content: center;
@@ -5,35 +20,30 @@
 		justify-content: flex-start;
 	}
 
-	.gridicon {
-		fill: var( --color-primary );
+	img {
+		width: 72px;
 	}
 }
 
 .upsell__title {
-	color: var( --color-primary );
-	font-size: 32px;
+	font-style: normal;
 	font-weight: 600;
-	margin-bottom: 15px;
+	font-size: 22px;
+	line-height: 32px;
 	@include breakpoint( '>660px' ) {
-		font-size: 48px;
+		font-size: 36px;
+		line-height: 40px;
 	}
 }
 
 .upsell__copy {
-	font-size: 18px;
-	a,
-	a:visited {
-		font-weight: bold;
-		text-decoration: underline;
-		color: var( --color-text );
-	}
-	a:hover {
-		color: var( --color-text-subtle );
-	}
-
-	span {
-		font-style: italic;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 16px;
+	line-height: 24px;
+	@include breakpoint( '>660px' ) {
+		font-size: 18px;
+		line-height: 24px;
 	}
 }
 
