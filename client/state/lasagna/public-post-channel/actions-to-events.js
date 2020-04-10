@@ -60,7 +60,6 @@ export default ( store ) => ( next ) => ( action ) => {
 			}
 
 			joinChannel( store, site, post );
-
 			break;
 		}
 
