@@ -110,13 +110,13 @@
 .domain-picker__suggestion-none {
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
+	align-items: flex-start;
 	width: 100%;
-	height: 46px;
 	border-radius: 0;
-	padding: 0;
-	margin-bottom: 10px;
+	padding: 13px 0;
+	margin-bottom: 7px;
 	font-size: 14px;
+	cursor: pointer;
 }
 
 .domain-picker__suggestion-item {
@@ -124,8 +124,6 @@
 	// See https://github.com/Automattic/wp-calypso/pull/38554/commits/e1f9673bcfd9eaa6469a0cfecda9b915a520961a
 	// See https://github.com/WordPress/gutenberg/pull/19535
 	@extend .domain-picker__suggestion-none;
-	cursor: pointer;
-	margin-bottom: 7px;
 
 	&.components-button {
 		&.is-tertiary {
@@ -141,7 +139,7 @@
 	input[type='radio'].domain-picker__suggestion-radio-button {
 		width: 16px;
 		height: 16px;
-		margin: 0 12px 0 0;
+		margin: 1px 12px 0 0; // 1px cosmetic alignment
 		min-width: 16px; // prevents long domain from squishing the radio button
 		padding: 0;
 		vertical-align: middle;
