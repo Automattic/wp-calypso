@@ -28,6 +28,7 @@ import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import { isCancelable } from 'lib/purchases';
 import { cancelPurchase } from 'me/purchases/paths';
 import RemovePurchase from 'me/purchases/remove-purchase';
+import { withoutHttp } from 'lib/url';
 
 import './style.scss';
 
@@ -101,13 +102,32 @@ class DomainManagementNavigationEnhanced extends React.Component {
 			return null;
 		}
 
-		// NOTE: remember to add translate to the description string once you start working on it
+		const { name, URL } = selectedSite;
+
+		const { pointsToWpcom } = domain;
+
+		let destination;
+
+		if ( pointsToWpcom ) {
+			destination = name || withoutHttp( URL );
+		} else {
+			destination = translate( 'external', {
+				comment: 'Displayed when the domain is not pointed to WordPress.com',
+			} );
+		}
+
+		const description = translate( 'Destination: %(destination)s', {
+			args: {
+				destination,
+			},
+		} );
+
 		return (
 			<DomainManagementNavigationItem
 				path={ domainManagementNameServers( selectedSite.slug, domain.name ) }
 				materialIcon="language"
 				text={ translate( 'Change your name servers & DNS records' ) }
-				description={ 'Destination: somewhere' }
+				description={ description }
 			/>
 		);
 	}
