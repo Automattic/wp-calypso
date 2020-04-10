@@ -23,6 +23,10 @@ import SeoPreviewPane from 'components/seo-preview-pane';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { isInlineHelpPopoverVisible } from 'state/inline-help/selectors';
 import { parse as parseUrl } from 'url';
+import { getSelectedSite } from 'state/ui/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isPrivateSite from 'state/selectors/is-private-site';
+import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 
 const debug = debugModule( 'calypso:web-preview' );
 
@@ -124,10 +128,11 @@ export class WebPreviewContent extends Component {
 	};
 
 	redirectToAuth() {
-		const { protocol, host } = parseUrl( this.props.externalUrl );
-		window.location.href =
-			`${ protocol }//${ host }/wp-login.php?redirect_to=` +
-			encodeURIComponent( window.location.href );
+		const { isPrivateAtomic, url } = this.props;
+		if ( isPrivateAtomic ) {
+			window.location.href =
+				`${ url }/wp-login.php?redirect_to=` + encodeURIComponent( window.location.href );
+		}
 	}
 
 	handleLocationChange = payload => {
@@ -407,8 +412,13 @@ WebPreviewContent.defaultProps = {
 	overridePost: null,
 };
 
-const mapState = state => ( {
-	isInlineHelpPopoverVisible: isInlineHelpPopoverVisible( state ),
-} );
+const mapState = state => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		isInlineHelpPopoverVisible: isInlineHelpPopoverVisible( state ),
+		isPrivateAtomic: isSiteAutomatedTransfer( state, siteId ) && isPrivateSite( state, siteId ),
+		url: getSelectedSite( state ).URL,
+	};
+};
 
 export default connect( mapState, { recordTracksEvent } )( localize( WebPreviewContent ) );
