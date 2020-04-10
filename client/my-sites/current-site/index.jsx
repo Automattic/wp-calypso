@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -82,13 +83,20 @@ class CurrentSite extends Component {
 				) : (
 					<AllSites />
 				) }
-				<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
-				<AsyncLoad require="my-sites/current-site/stale-cart-items-notice" placeholder={ null } />
-				<AsyncLoad
-					require="my-sites/current-site/notice"
-					placeholder={ null }
-					site={ selectedSite }
-				/>
+				{ config.isEnabled( 'jetpack-cloud' ) && (
+					<Fragment>
+						<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
+						<AsyncLoad
+							require="my-sites/current-site/stale-cart-items-notice"
+							placeholder={ null }
+						/>
+						<AsyncLoad
+							require="my-sites/current-site/notice"
+							placeholder={ null }
+							site={ selectedSite }
+						/>
+					</Fragment>
+				) }
 			</Card>
 		);
 	}
