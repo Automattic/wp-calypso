@@ -308,6 +308,8 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			step( 'Can see correct post title', async function() {
 				const viewPostPage = await ViewPostPage.Expect( driver );
 				const postTitle = await viewPostPage.postTitle();
+				console.log( 'expected: ' + blogPostTitle.toLowerCase() );
+				console.log( 'actual: ' + postTitle.toLowerCase() );
 				assert.strictEqual(
 					postTitle.toLowerCase(),
 					blogPostTitle.toLowerCase(),
