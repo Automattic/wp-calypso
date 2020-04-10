@@ -138,5 +138,6 @@
 		"jetpack-cloud-settings": false
 	},
 	"site_filter": [],
-	"theme": "default"
+	"theme": "default",
+	"site_name": "WordPress.com"
 }
