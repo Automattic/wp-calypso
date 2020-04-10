@@ -8,24 +8,15 @@ import React from 'react';
  */
 import GoMobile from 'my-sites/customer-home/cards/features/go-mobile';
 import ChecklistSiteSetup from 'my-sites/customer-home/cards/primary/checklist-site-setup';
-import MasteringGutenberg from 'my-sites/customer-home/cards/education/mastering-gutenberg';
-import QuickLinks from 'my-sites/customer-home/cards/primary/quick-links';
 
 const cardComponents = {
 	'home-feature-go-mobile-phones': GoMobile,
 	'home-primary-checklist-site-setup': ChecklistSiteSetup,
-	'home-education-mastering-gutenberg': MasteringGutenberg,
-	'home-primary-quick-links': QuickLinks,
 };
 
-const Primary = ( { checklistMode, cards } ) => {
-	// Always ensure we have primary content.
-	if ( cards && cards.length < 1 ) {
-		cards = [ 'home-primary-quick-links' ];
-	}
-
+const UpNext = ( { checklistMode, cards } ) => {
 	return (
-		<div className="primary">
+		<div className="up-next">
 			{ cards &&
 				cards.map(
 					( card, index ) =>
@@ -39,4 +30,4 @@ const Primary = ( { checklistMode, cards } ) => {
 	);
 };
 
-export default Primary;
+export default UpNext;

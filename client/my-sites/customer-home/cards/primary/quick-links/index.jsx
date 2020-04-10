@@ -4,10 +4,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
+import { Card } from '@automattic/components';
+import { isMobile } from '@automattic/viewport';
 
 /**
  * Internal dependencies
  */
+import CardHeading from 'components/card-heading';
 import FoldableCard from 'components/foldable-card';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
@@ -144,8 +147,21 @@ export const QuickLinks = ( {
 		</div>
 	);
 
+	if ( ! isMobile() ) {
+		return (
+			<Card className="quick-links">
+				<CardHeading>{ translate( 'Quick Links' ) }</CardHeading>
+				{ quickLinks }
+			</Card>
+		);
+	}
+
 	return (
-		<FoldableCard className="quick-links card-heading-21" header={ translate( 'Quick Links' ) }>
+		<FoldableCard
+			className="quick-links card-heading-21"
+			header={ translate( 'Quick Links' ) }
+			expanded
+		>
 			{ quickLinks }
 		</FoldableCard>
 	);

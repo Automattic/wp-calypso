@@ -30,9 +30,10 @@ import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import QueryHomeLayout from 'components/data/query-home-layout';
 import { getHomeLayout } from 'state/selectors/get-home-layout';
 import Notices from 'my-sites/customer-home/locations/notices';
-import Tasks from 'my-sites/customer-home/locations/tasks';
-import Primary from 'my-sites/customer-home/locations/primary';
-import Secondary from 'my-sites/customer-home/locations/secondary';
+import UpNext from 'my-sites/customer-home/locations/up-next';
+import Stats from 'my-sites/customer-home/locations/stats';
+import Features from 'my-sites/customer-home/locations/features';
+import Management from 'my-sites/customer-home/locations/management';
 
 /**
  * Style dependencies
@@ -88,18 +89,19 @@ const Home = ( {
 			{ layout ? (
 				<>
 					<Notices
-						cards={ layout.tasks }
+						cards={ layout.notices }
 						checklistMode={ checklistMode }
 						displayChecklist={ displayChecklist }
 					/>
-					<Tasks cards={ layout.upsells } checklistMode={ checklistMode } />
+					<UpNext cards={ layout[ 'up-next' ] } checklistMode={ checklistMode } />
 					{ hasChecklistData && (
 						<div className="customer-home__layout">
 							<div className="customer-home__layout-col customer-home__layout-col-left">
-								<Primary cards={ layout.primary } checklistMode={ checklistMode } />
+								<Stats cards={ layout.stats } />
+								<Features cards={ layout.features } />
 							</div>
 							<div className="customer-home__layout-col customer-home__layout-col-right">
-								<Secondary cards={ layout.secondary } />
+								<Management cards={ layout.management } />
 							</div>
 						</div>
 					) }
