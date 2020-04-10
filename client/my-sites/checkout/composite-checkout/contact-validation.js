@@ -3,6 +3,7 @@
  */
 import debugFactory from 'debug';
 import {
+	prepareDomainContactValidationRequest,
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	areRequiredFieldsNotEmpty,
 } from 'my-sites/checkout/composite-checkout/wpcom';
@@ -23,7 +24,11 @@ export default function createContactValidationCallback( {
 		decoratedContactDetails
 	) {
 		return new Promise( resolve => {
-			validateDomainContact( contactDetails, domainNames, ( httpErrors, data ) => {
+			const { contact_information, domain_names } = prepareDomainContactValidationRequest(
+				domainNames,
+				contactDetails
+			);
+			validateDomainContact( contact_information, domain_names, ( httpErrors, data ) => {
 				recordEvent( {
 					type: 'VALIDATE_DOMAIN_CONTACT_INFO',
 					payload: {
