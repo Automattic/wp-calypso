@@ -7,6 +7,7 @@ import debugFactory from 'debug';
  */
 import wpcomBlockPickerSearchTerm from './wpcom-block-picker-search-term-handler';
 import wpcomBlockEditorCloseClick from './wpcom-block-editor-close-click';
+import wpcomAutocompleteBlockSearchTerm from './wpcom-autocomplete-block-search-term';
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
@@ -17,7 +18,11 @@ const debug = debugFactory( 'wpcom-block-editor:tracking' );
  *
  * @type {Array}
  */
-const EVENTS_MAPPING = [ wpcomBlockEditorCloseClick(), wpcomBlockPickerSearchTerm() ];
+const EVENTS_MAPPING = [
+	wpcomBlockEditorCloseClick(),
+	wpcomBlockPickerSearchTerm(),
+	wpcomAutocompleteBlockSearchTerm(),
+];
 
 /**
  * Checks the event for a selector which matches
