@@ -13,6 +13,7 @@ import { includes } from 'lodash';
 import DocumentHead from 'components/data/document-head';
 import { updateFilter } from 'state/activity-log/actions';
 import {
+	isActivityBackup,
 	getBackupAttemptsForDate,
 	getDailyBackupDeltas,
 	getEventsInDailyBackup,
@@ -151,6 +152,7 @@ class BackupsPage extends Component {
 			siteSlug,
 			isLoadingBackups,
 			oldestDateAvailable,
+			lastDateAvailable,
 			timezone,
 			translate,
 			gmtOffset,
@@ -191,8 +193,11 @@ class BackupsPage extends Component {
 							allowRestore={ allowRestore }
 							siteSlug={ siteSlug }
 							backup={ backupsOnSelectedDate.lastBackup }
+							lastDateAvailable={ lastDateAvailable }
+							selectedDate={ this.getSelectedDate() }
 							timezone={ timezone }
 							gmtOffset={ gmtOffset }
+							onDateChange={ this.onDateChange }
 						/>
 						{ doesRewindNeedCredentials && (
 							<MissingCredentialsWarning settingsLink={ `/settings/${ siteSlug }` } />
@@ -260,6 +265,7 @@ const createIndexedLog = ( logs, timezone, gmtOffset ) => {
 		timezone,
 		gmtOffset,
 	} );
+	let lastDateAvailable = null;
 
 	if ( 'success' === logs.state ) {
 		logs.data.forEach( log => {
@@ -275,10 +281,15 @@ const createIndexedLog = ( logs, timezone, gmtOffset ) => {
 			if ( ! ( index in indexedLog ) ) {
 				//The first time we create the index for this date
 				indexedLog[ index ] = [];
+			}
 
-				//Check if the backup date is the oldest
+			// Check for the oldest and the last backup dates
+			if ( isActivityBackup( log ) ) {
 				if ( backupDate < oldestDateAvailable ) {
 					oldestDateAvailable = backupDate;
+				}
+				if ( backupDate > lastDateAvailable ) {
+					lastDateAvailable = backupDate;
 				}
 			}
 
@@ -289,6 +300,7 @@ const createIndexedLog = ( logs, timezone, gmtOffset ) => {
 	return {
 		indexedLog,
 		oldestDateAvailable,
+		lastDateAvailable,
 	};
 };
 
@@ -306,7 +318,11 @@ const mapStateToProps = state => {
 	const allowRestore =
 		'active' === rewind.state && ! ( 'queued' === restoreStatus || 'running' === restoreStatus );
 
-	const { indexedLog, oldestDateAvailable } = createIndexedLog( logs, timezone, gmtOffset );
+	const { indexedLog, oldestDateAvailable, lastDateAvailable } = createIndexedLog(
+		logs,
+		timezone,
+		gmtOffset
+	);
 
 	const isLoadingBackups = ! ( logs.state === 'success' );
 
@@ -323,6 +339,7 @@ const mapStateToProps = state => {
 		gmtOffset,
 		indexedLog,
 		oldestDateAvailable,
+		lastDateAvailable,
 		isLoadingBackups,
 	};
 };

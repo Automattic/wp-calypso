@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { get } from 'lodash';
@@ -38,7 +38,7 @@ class DailyBackupStatus extends Component {
 		//page.redirect( backupDetailPath( this.props.siteSlug, this.props.backup.rewindId ) );
 	}
 
-	getDisplayDate = date => {
+	getDisplayDate = ( date, withLatest = true ) => {
 		const { translate, moment, timezone, gmtOffset } = this.props;
 
 		//Apply the time offset
@@ -50,11 +50,24 @@ class DailyBackupStatus extends Component {
 		const yearDate = backupDate.format( 'YYYY' );
 
 		const dateFormat = yearToday === yearDate ? 'MMM D' : 'MMM D, YYYY';
+		const displayBackupTime = backupDate.format( 'LT' );
 
 		let displayableDate;
 
-		if ( isToday ) {
-			displayableDate = translate( 'Latest: Today ' ) + backupDate.format( 'LT' );
+		if ( isToday && withLatest ) {
+			displayableDate = translate( 'Latest: Today %s', {
+				args: [ displayBackupTime ],
+				comment: '%s is the time of the last backup from today',
+			} );
+		} else if ( isToday ) {
+			displayableDate = translate( 'Today %s', {
+				args: [ displayBackupTime ],
+				comment: '%s is the time of the last backup from today',
+			} );
+		} else if ( withLatest ) {
+			displayableDate = translate( 'Latest: %s', {
+				args: [ backupDate.format( dateFormat + ', LT' ) ],
+			} );
 		} else {
 			displayableDate = backupDate.format( dateFormat + ', LT' );
 		}
@@ -70,7 +83,7 @@ class DailyBackupStatus extends Component {
 		const meta = get( backup, 'activityDescription[2].children[0]', '' );
 
 		return (
-			<Card className="daily-backup-status__success">
+			<>
 				<div className="daily-backup-status__icon-section">
 					<Gridicon className="daily-backup-status__status-icon" icon="cloud-upload" />
 					<div className="daily-backup-status__title">{ translate( 'Latest backup' ) }</div>
@@ -82,36 +95,39 @@ class DailyBackupStatus extends Component {
 					onRestoreClick={ this.triggerRestore }
 					disabledRestore={ ! allowRestore }
 				/>
-			</Card>
+			</>
 		);
 	}
 
 	renderFailedBackup( backup ) {
 		const { translate, timezone, gmtOffset } = this.props;
 
-		const backupTitleDate = this.getDisplayDate( backup.activityTs );
+		const backupTitleDate = this.getDisplayDate( backup.activityTs, false );
 		const backupDate = applySiteOffset( backup.activityTs, { timezone, gmtOffset } );
 
 		const displayDate = backupDate.format( 'L' );
 		const displayTime = backupDate.format( 'LT' );
 
 		return (
-			<Card className="daily-backup-status__failed">
+			<>
 				<Gridicon icon="cloud-upload" className="daily-backup-status__gridicon-error-state" />
 				<div className="daily-backup-status__failed-message">
-					{ translate( 'Backup attempt failed' ) }
+					{ translate( 'Backup failed: %(backupDate)s', {
+						args: { backupDate: backupTitleDate },
+					} ) }
 				</div>
-				<div className="daily-backup-status__date">{ backupTitleDate }</div>
 				<div className="daily-backup-status__label">
 					<p>
 						{ translate(
-							'A backup for your site was attempted on %(displayDate)s at %(displayTime)s and was not able to be completed.',
+							'A backup for your site was attempted on %(displayDate)s at %(displayTime)s and was not ' +
+								'able to be completed.',
 							{ args: { displayDate, displayTime } }
 						) }
 					</p>
 					<p>
 						{ translate(
-							'Check out the {{a}}backups help guide{{/a}} or contact our support team to resolve the issue. View to get the issue resolved',
+							'Check out the {{a}}backups help guide{{/a}} or contact our support team to resolve the ' +
+								'issue. View to get the issue resolved',
 							{
 								components: {
 									a: (
@@ -135,34 +151,131 @@ class DailyBackupStatus extends Component {
 						{ translate( 'Contact support' ) }
 					</Button>
 				</div>
-			</Card>
+			</>
 		);
 	}
 
-	renderNoBackups() {
-		const { translate } = this.props;
+	renderNoBackup() {
+		const { translate, selectedDate, onDateChange } = this.props;
 
-		// todo: remove the mock dates by the real dates
-		const lastBackupAt = 'Yesterday 16:02';
-		const nextBackupAt = 'Today 16:02';
+		const displayDate = selectedDate.format( 'll' );
+		const nextDate = selectedDate.clone().add( 1, 'days' );
+		const displayNextDate = nextDate.format( 'll' );
 
 		return (
-			<Fragment>
-				<Gridicon icon="sync" />
+			<>
+				<Gridicon icon="cloud-upload" className="daily-backup-status__gridicon-no-backup" />
+				<div className="daily-backup-status__title">{ translate( 'No backup' ) }</div>
 
-				<div className="daily-backup-status__date">
-					{ translate( 'Backup Scheduled' ) }: { nextBackupAt }
+				<div className="daily-backup-status__label">
+					<p>
+						{ translate( 'The backup attempt for %(displayDate)s was delayed.', {
+							args: { displayDate },
+						} ) }
+					</p>
+					<p>
+						{ translate(
+							'But don’t worry, it was likely completed in the early hours the next morning. ' +
+								'Check the following day, {{link}}%(displayNextDate)s{{/link}} or contact support if you still need help.',
+							{
+								args: { displayNextDate },
+								components: {
+									//todo: href need implementation and add the correct query
+									link: (
+										<a
+											href="?date="
+											onClick={ event => {
+												event.preventDefault();
+												onDateChange( nextDate );
+											} }
+										/>
+									),
+								},
+							}
+						) }
+					</p>
 				</div>
-				<div>{ translate( 'Last daily backup' ) + ` ${ lastBackupAt }` }</div>
 
+				<Button
+					className="daily-backup-status__support-button"
+					href="https://jetpack.com/contact-support/"
+					target="_blank"
+					rel="noopener noreferrer"
+					isPrimary={ false }
+				>
+					{ translate( 'Contact support' ) }
+				</Button>
+			</>
+		);
+	}
+
+	renderNoBackupToday( lastBackupDate ) {
+		const { translate, timezone, gmtOffset, moment, onDateChange } = this.props;
+
+		const today = applySiteOffset( moment(), {
+			timezone: timezone,
+			gmtOffset: gmtOffset,
+		} );
+		const yesterday = today.subtract( 1, 'days' );
+
+		const lastBackupDay = lastBackupDate.isSame( yesterday, 'day' )
+			? translate( 'Yesterday ' )
+			: lastBackupDate.format( 'll' );
+
+		const lastBackupTime = lastBackupDate.format( 'LT' );
+
+		// Calculates the remaining hours for the next backup + 3 hours of safety margin
+		const hoursForNextBackup =
+			parseInt( lastBackupDate.format( 'H' ) ) - parseInt( today.format( 'H' ) ) + 3;
+
+		return (
+			<>
+				<Gridicon className="daily-backup-status__gridicon-backup-scheduled" icon="cloud-upload" />
+				<div className="daily-backup-status__static-title">
+					{ translate( 'Backup Scheduled:' ) }
+					<div>
+						{ translate( 'In the next %d hour', 'In the next %d hours', {
+							args: [ hoursForNextBackup ],
+							count: hoursForNextBackup,
+						} ) }
+					</div>
+				</div>
+				<div className="daily-backup-status__no-backup-last-backup">
+					{ translate( 'Last daily backup: {{link}}%(lastBackupDay)s %(lastBackupTime)s{{/link}}', {
+						args: { lastBackupDay, lastBackupTime },
+						components: {
+							//todo: href need implementation and add the correct query
+							link: (
+								<a
+									href="?date="
+									onClick={ event => {
+										event.preventDefault();
+										onDateChange( lastBackupDate );
+									} }
+								/>
+							),
+						},
+					} ) }
+				</div>
 				<ActionButtons disabledDownload={ true } disabledRestore={ true } />
-			</Fragment>
+			</>
 		);
 	}
 
 	renderBackupStatus( backup ) {
-		if ( ! backup ) {
-			return this.renderNoBackups();
+		const { selectedDate, lastDateAvailable, moment, timezone, gmtOffset } = this.props;
+
+		const today = applySiteOffset( moment(), {
+			timezone: timezone,
+			gmtOffset: gmtOffset,
+		} );
+
+		const isToday = today.isSame( selectedDate, 'day' );
+
+		if ( ! backup && isToday ) {
+			return this.renderNoBackupToday( lastDateAvailable );
+		} else if ( ! backup ) {
+			return this.renderNoBackup();
 		} else if ( isSuccessfulBackup( backup ) ) {
 			return this.renderGoodBackup( backup );
 		}
@@ -173,7 +286,11 @@ class DailyBackupStatus extends Component {
 	render() {
 		const backup = this.props.backup;
 
-		return <div className="daily-backup-status">{ this.renderBackupStatus( backup ) }</div>;
+		return (
+			<div className="daily-backup-status">
+				<Card className="daily-backup-status__success">{ this.renderBackupStatus( backup ) }</Card>
+			</div>
+		);
 	}
 }
 
