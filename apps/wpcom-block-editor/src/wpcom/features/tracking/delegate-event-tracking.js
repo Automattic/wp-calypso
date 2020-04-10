@@ -2,6 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+
 /**
  * Internal dependencies
  */
