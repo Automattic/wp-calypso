@@ -49,7 +49,7 @@ class RecommendedTask extends Component {
 			taskId = 'SocialMedia';
 			taskImage = '/calypso/images/stats/tasks/social-links.svg';
 			taskDescription = translate(
-				'Integrate your site with social media to automatically post your content and drive content to your site.'
+				'Integrate your site with social media to automatically post your content and drive traffic to your site.'
 			);
 			taskMinutes = '3';
 			actionText = translate( 'Connect accounts' );
