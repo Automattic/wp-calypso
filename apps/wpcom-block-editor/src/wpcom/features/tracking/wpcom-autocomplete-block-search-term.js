@@ -25,9 +25,11 @@ const trackAutocompleteTerm = () => {
 		return;
 	}
 
+	const context = 'autocompleter_block';
+
 	tracksRecordEvent( 'wpcom_block_picker_search_term', {
 		search_term: content,
-		context: 'autocompleter',
+		context,
 	} );
 
 	// Determine if there are results inspecting the DOM Tree.
@@ -38,7 +40,7 @@ const trackAutocompleteTerm = () => {
 
 	tracksRecordEvent( 'wpcom_block_picker_no_results', {
 		search_term: content,
-		context: 'autocompleter',
+		context,
 	} );
 };
 

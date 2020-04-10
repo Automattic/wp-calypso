@@ -34,6 +34,7 @@ const trackSearchTerm = ( event, target ) => {
 
 	const eventProperties = {
 		search_term,
+		context: 'inserter_menu',
 	};
 
 	/*
