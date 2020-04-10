@@ -98,6 +98,8 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 					<div className="domain-picker__search">
 						<SearchIcon />
 						<TextControl
+							// eslint-disable-next-line jsx-a11y/no-autofocus
+							autoFocus={ true }
 							hideLabelFromVision
 							label={ label }
 							placeholder={ label }
