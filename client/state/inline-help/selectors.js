@@ -115,13 +115,3 @@ export function isShowingQandAInlineHelpContactForm( state ) {
 export function isInlineHelpPopoverVisible( state ) {
 	return get( state, 'inlineHelp.popover.isVisible', false );
 }
-
-/**
- * Returns a bool indicating if the inline help popover is currently showing the onboarding welcome message.
- *
- * @param  {object}  state  Global state tree
- * @returns {boolean}        Is the inline help popover showing the onboarding welcome prompt.
- */
-export function isOnboardingWelcomePromptVisible( state ) {
-	return get( state, 'inlineHelp.onboardingWelcomePrompt.isVisible', false );
-}
