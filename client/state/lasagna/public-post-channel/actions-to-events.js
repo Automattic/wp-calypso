@@ -53,7 +53,6 @@ export default ( store ) => ( next ) => ( action ) => {
 				break;
 			}
 
-<<<<<<< HEAD
 			const site = getSite( state, post.site_ID );
 
 			if ( ! site ) {
@@ -61,19 +60,7 @@ export default ( store ) => ( next ) => ( action ) => {
 			}
 
 			joinChannel( store, site, post );
-=======
-			channel = socket.channel( channelTopicPrefix + post.global_ID );
-			registerEventHandlers( channel, store );
-			registerPresence( channel, store, 'posts', post.global_ID );
-			channel
-				.join()
-				.receive( 'ok', () => debug( 'channel join ok' ) )
-				.receive( 'error', ( { reason } ) => {
-					debug( 'channel join error', reason );
-					channel.leave();
-					channel = null;
-				} );
->>>>>>> d8f2713df2... Check in a bunch of stuff
+
 			break;
 		}
 
