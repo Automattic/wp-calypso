@@ -1,24 +1,24 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { isMobile } from '@automattic/viewport';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import ActivityCard from 'landing/jetpack-cloud/components/activity-card';
-import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
-import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
-import QueryRewindCapabilities from 'components/data/query-rewind-capabilities';
-import getRewindState from 'state/selectors/get-rewind-state';
-import QueryRewindState from 'components/data/query-rewind-state';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { updateFilter } from 'state/activity-log/actions';
 import { withLocalizedMoment } from 'components/localized-moment';
+import ActivityCard from 'landing/jetpack-cloud/components/activity-card';
 import Filterbar from 'my-sites/activity/filterbar';
+import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
+import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
+import getRewindState from 'state/selectors/get-rewind-state';
 import Pagination from 'components/pagination';
+import QueryRewindCapabilities from 'components/data/query-rewind-capabilities';
+import QueryRewindState from 'components/data/query-rewind-state';
 
 /**
  * Style dependencies
