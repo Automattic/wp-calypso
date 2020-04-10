@@ -18,7 +18,7 @@ import tracksRecordEvent from './track-record-event';
 const trackAutocompleteTerm = () => {
 	const search_term = get( select( 'core/block-editor' ).getSelectedBlock(), [
 		'attributes',
-		'search_term',
+		'content',
 	] );
 
 	if ( ! search_term ) {
