@@ -16,8 +16,10 @@ import {
 	useShoppingCart,
 	FormFieldAnnotation,
 	areDomainsInLineItems,
-	domainManagedContactDetails,
-	taxManagedContactDetails,
+	emptyManagedContactDetails,
+	applyContactDetailsRequiredMask,
+	domainRequiredContactDetails,
+	taxRequiredContactDetails,
 } from 'my-sites/checkout/composite-checkout/wpcom';
 import { CheckoutProvider, defaultRegistry } from '@automattic/composite-checkout';
 
@@ -41,11 +43,13 @@ import {
 	updateContactDetailsCache,
 } from 'state/domains/management/actions';
 import { FormCountrySelect } from 'components/forms/form-country-select';
+import RegistrantExtraInfoForm from 'components/domains/registrant-extra-info';
 import getCountries from 'state/selectors/get-countries';
 import { fetchPaymentCountries } from 'state/countries/actions';
 import { StateSelect } from 'my-sites/domains/components/form';
 import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
 import { getPlan, findPlansKeys } from 'lib/plans';
+import { getTld } from 'lib/domains';
 import { GROUP_WPCOM, TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
 import { requestProductsList } from 'state/products-list/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -199,7 +203,10 @@ export default function CompositeCheckout( {
 	useWpcomStore(
 		registerStore,
 		recordEvent,
-		areDomainsInLineItems( items ) ? domainManagedContactDetails : taxManagedContactDetails,
+		applyContactDetailsRequiredMask(
+			emptyManagedContactDetails,
+			areDomainsInLineItems( items ) ? domainRequiredContactDetails : taxRequiredContactDetails
+		),
 		updateContactDetailsCache
 	);
 
@@ -264,13 +271,20 @@ export default function CompositeCheckout( {
 	} );
 
 	const renderDomainContactFields = (
+		domainNames,
 		contactDetails,
+		tldExtraContactDetails,
 		contactDetailsErrors,
-		updateContactDetails,
+		tldExtraContactDetailsErrors,
+		updateDomainContactFields,
 		shouldShowContactDetailsValidationErrors,
 		isDisabled
 	) => {
+		debug( 'contactDetails:', contactDetails );
+		debug( 'tldExtraContactDetails:', tldExtraContactDetails );
 		const getIsFieldDisabled = () => isDisabled;
+		const tlds = getAllTlds( domainNames );
+
 		return (
 			<WPCheckoutErrorBoundary>
 				<ContactDetailsFormFields
@@ -279,10 +293,40 @@ export default function CompositeCheckout( {
 					contactDetailsErrors={
 						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
 					}
-					onContactDetailsChange={ updateContactDetails }
+					onContactDetailsChange={ updateDomainContactFields }
 					shouldForceRenderOnPropChange={ true }
 					getIsFieldDisabled={ getIsFieldDisabled }
 				/>
+				{ tlds.includes( 'ca' ) && (
+					<RegistrantExtraInfoForm
+						contactDetails={ contactDetails }
+						ccTldDetails={ tldExtraContactDetails?.ca }
+						onContactDetailsChange={ updateDomainContactFields }
+						tld={ 'ca' }
+						getDomainNames={ () => domainNames }
+						translate={ translate }
+					/>
+				) }
+				{ tlds.includes( 'uk' ) && (
+					<RegistrantExtraInfoForm
+						contactDetails={ contactDetails }
+						ccTldDetails={ tldExtraContactDetails?.uk }
+						onContactDetailsChange={ updateDomainContactFields }
+						tld={ 'uk' }
+						getDomainNames={ () => domainNames }
+						translate={ translate }
+					/>
+				) }
+				{ tlds.includes( 'fr' ) && (
+					<RegistrantExtraInfoForm
+						contactDetails={ contactDetails }
+						ccTldDetails={ tldExtraContactDetails?.fr }
+						onContactDetailsChange={ updateDomainContactFields }
+						tld={ 'fr' }
+						getDomainNames={ () => domainNames }
+						translate={ translate }
+					/>
+				) }
 			</WPCheckoutErrorBoundary>
 		);
 	};
@@ -655,4 +699,8 @@ function getAnalyticsPath( purchaseId, product, selectedSiteSlug, selectedFeatur
 		analyticsPath = '/checkout/no-site';
 	}
 	return { analyticsPath, analyticsProps };
+}
+
+function getAllTlds( domainNames ) {
+	return Array.from( new Set( domainNames.map( getTld ) ) ).sort();
 }
