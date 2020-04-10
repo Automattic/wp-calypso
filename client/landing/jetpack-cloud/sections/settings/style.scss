@@ -1,3 +1,13 @@
+.settings.main {
+    margin-left: auto;
+}
+
+@include breakpoint( '<660px' ) {
+    .settings__page {
+        margin: 0 1rem;
+    }
+}
+
 .settings__page-title {
     font-size: 1.3rem;
     font-weight: 500;

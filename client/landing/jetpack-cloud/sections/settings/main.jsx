@@ -34,41 +34,43 @@ class SettingsPage extends Component {
 				<DocumentHead title={ translate( 'Settings' ) } />
 				<SidebarNavigation />
 				<QueryRewindState siteId={ siteId } />
-				<div className="settings__page-title">{ translate( 'Server connection details' ) }</div>
-				{ isConnected && (
-					<Card compact={ true } className="settings__connected">
-						<Gridicon icon="checkmark-circle" />
-						<div className="settings__details">
-							<div className="settings__details-head">
-								{ translate( 'Server status: Connected' ) }
+				<div className="settings__page">
+					<div className="settings__page-title">{ translate( 'Server connection details' ) }</div>
+					{ isConnected && (
+						<Card compact={ true } className="settings__connected">
+							<Gridicon icon="checkmark-circle" />
+							<div className="settings__details">
+								<div className="settings__details-head">
+									{ translate( 'Server status: Connected' ) }
+								</div>
+								<div>{ translate( 'One-click restores are enabled.' ) }</div>
 							</div>
-							<div>{ translate( 'One-click restores are enabled.' ) }</div>
-						</div>
-					</Card>
-				) }
-				{ ! isConnected && (
-					<Card compact={ true } className="settings__disconnected">
-						<Gridicon icon="cross-circle" />
-						<div className="settings__details">
-							<div className="settings__details-head">
-								{ translate( 'Server status: Not connected' ) }
+						</Card>
+					) }
+					{ ! isConnected && (
+						<Card compact={ true } className="settings__disconnected">
+							<Gridicon icon="cross-circle" />
+							<div className="settings__details">
+								<div className="settings__details-head">
+									{ translate( 'Server status: Not connected' ) }
+								</div>
+								<div>
+									{ translate(
+										'Enter your server credentials to enable one-click restores for Backups. Find your server credentials.'
+									) }
+								</div>
 							</div>
-							<div>
-								{ translate(
-									'Enter your server credentials to enable one-click restores for Backups. Find your server credentials.'
-								) }
-							</div>
-						</div>
-					</Card>
-				) }
-				<RewindCredentialsForm
-					{ ...{
-						allowCancel: false,
-						role: 'main',
-						siteId,
-						showNotices: false,
-					} }
-				/>
+						</Card>
+					) }
+					<RewindCredentialsForm
+						{ ...{
+							allowCancel: false,
+							role: 'main',
+							siteId,
+							showNotices: false,
+						} }
+					/>
+				</div>
 			</Main>
 		);
 	}
