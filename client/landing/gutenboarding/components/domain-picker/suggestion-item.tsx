@@ -23,6 +23,11 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 } ) => {
 	const { __ } = useI18n();
 
+	const domain = suggestion.domain_name;
+	const dotPos = domain.indexOf( '.' );
+	const domainName = domain.slice( 0, dotPos );
+	const domainTld = domain.slice( dotPos );
+
 	return (
 		<label className="domain-picker__suggestion-item">
 			<div className="domain-picker__suggestion-item-name">
@@ -33,7 +38,8 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 					onChange={ () => void onSelect( suggestion ) }
 					checked={ isSelected }
 				/>
-				{ suggestion.domain_name }
+				<span>{ domainName }</span>
+				<span className="domain-picker__domain-tld">{ domainTld }</span>
 				{ isRecommended && (
 					<div className="domain-picker__badge is-recommended">{ __( 'Recommended' ) }</div>
 				) }
