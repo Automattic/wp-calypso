@@ -60,7 +60,7 @@ export default function WPContactForm( {
 				CountrySelectMenu={ CountrySelectMenu }
 				countriesList={ countriesList }
 				shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
-                isDisabled={ isDisabled }
+				isDisabled={ isDisabled }
 			/>
 		</BillingFormFields>
 	);
@@ -300,7 +300,7 @@ function RenderContactDetails( {
 						prepareTldExtraContactDetailsErrors( contactInfo ),
 						updateDomainContactFields,
 						shouldShowContactDetailsValidationErrors,
-                        isDisabled
+						isDisabled
 					) }
 					{ requiresVatId && <VatIdField /> }
 				</React.Fragment>
