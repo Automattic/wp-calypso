@@ -158,6 +158,7 @@
 		"@automattic/wpcom-block-editor": "^1.0.0-alpha.0",
 		"@babel/cli": "7.8.4",
 		"@babel/core": "7.8.4",
+		"@signal-noise/stylelint-scales": "1.2.0",
 		"@storybook/addon-actions": "5.3.14",
 		"@storybook/preset-scss": "1.0.2",
 		"@storybook/preset-typescript": "1.2.0",
