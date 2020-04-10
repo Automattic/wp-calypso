@@ -16,19 +16,19 @@ import { select } from '@wordpress/data';
 import tracksRecordEvent from './track-record-event';
 
 const trackAutocompleteTerm = () => {
-	const content = get( select( 'core/block-editor' ).getSelectedBlock(), [
+	const search_term = get( select( 'core/block-editor' ).getSelectedBlock(), [
 		'attributes',
-		'content',
+		'search_term',
 	] );
 
-	if ( ! content ) {
+	if ( ! search_term ) {
 		return;
 	}
 
-	const context = 'autocompleter_block';
+	const context = 'autocomplete_block';
 
 	tracksRecordEvent( 'wpcom_block_picker_search_term', {
-		search_term: content,
+		search_term,
 		context,
 	} );
 
@@ -39,7 +39,7 @@ const trackAutocompleteTerm = () => {
 	}
 
 	tracksRecordEvent( 'wpcom_block_picker_no_results', {
-		search_term: content,
+		search_term,
 		context,
 	} );
 };
