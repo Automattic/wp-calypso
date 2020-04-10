@@ -356,6 +356,10 @@ export class Checkout extends React.Component {
 		return true;
 	}
 
+	emptyOutCart() {
+		replaceCartWithItems( [] );
+	}
+
 	/**
 	 * Purchases are of the format { [siteId]: [ { productId: ... } ] }
 	 * so we need to flatten them to get a list of purchases
@@ -453,9 +457,9 @@ export class Checkout extends React.Component {
 		return;
 	}
 
-	maybeRedirectToConciergeNudge( pendingOrReceiptId, stepResult ) {
+	maybeRedirectToConciergeNudge( pendingOrReceiptId, stepResult, shouldHideUpsellNudges ) {
 		// Using hideNudge prop will disable any redirect to Nudge
-		if ( this.props.hideNudge ) {
+		if ( this.props.hideNudge || shouldHideUpsellNudges ) {
 			return;
 		}
 
@@ -486,7 +490,7 @@ export class Checkout extends React.Component {
 		}
 	}
 
-	getCheckoutCompleteRedirectPath = () => {
+	getCheckoutCompleteRedirectPath = ( shouldHideUpsellNudges = false, shouldEmptyCart = false ) => {
 		// TODO: Cleanup and simplify this function.
 		// I wouldn't be surprised if it doesn't work as intended in some scenarios.
 		// Especially around the Concierge / Checklist logic.
@@ -579,9 +583,12 @@ export class Checkout extends React.Component {
 			return `${ signupDestination }/${ pendingOrReceiptId }`;
 		}
 
+		shouldEmptyCart && this.emptyOutCart();
+
 		const redirectPathForConciergeUpsell = this.maybeRedirectToConciergeNudge(
 			pendingOrReceiptId,
-			stepResult
+			stepResult,
+			shouldHideUpsellNudges
 		);
 		if ( redirectPathForConciergeUpsell ) {
 			return redirectPathForConciergeUpsell;
@@ -607,7 +614,7 @@ export class Checkout extends React.Component {
 		window.location.href = redirectUrl;
 	}
 
-	handleCheckoutCompleteRedirect = () => {
+	handleCheckoutCompleteRedirect = ( shouldHideUpsellNudges = false, shouldEmptyCart = false ) => {
 		let product, purchasedProducts, renewalItem;
 
 		const {
@@ -619,7 +626,10 @@ export class Checkout extends React.Component {
 			translate,
 		} = this.props;
 
-		const redirectPath = this.getCheckoutCompleteRedirectPath();
+		const redirectPath = this.getCheckoutCompleteRedirectPath(
+			shouldHideUpsellNudges,
+			shouldEmptyCart
+		);
 		const destinationFromCookie = retrieveSignupDestination();
 
 		this.props.clearPurchases();
