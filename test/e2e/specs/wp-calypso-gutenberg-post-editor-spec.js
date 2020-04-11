@@ -308,9 +308,9 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			step( 'Can see correct post title', async function() {
 				console.log( 'wait to load...' );
 				await this.driver.sleep( 5000 );
+				console.log( 'expected: ' + blogPostTitle.toLowerCase() );
 				const viewPostPage = await ViewPostPage.Expect( driver );
 				const postTitle = await viewPostPage.postTitle();
-				console.log( 'expected: ' + blogPostTitle.toLowerCase() );
 				console.log( 'actual: ' + postTitle.toLowerCase() );
 				assert.strictEqual(
 					postTitle.toLowerCase(),
