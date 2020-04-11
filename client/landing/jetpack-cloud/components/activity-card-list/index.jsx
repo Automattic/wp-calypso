@@ -82,7 +82,7 @@ class ActivityCardList extends Component {
 		return logsByDate.map( ( { date, logs: dateLogs } ) => {
 			return (
 				<>
-					<div>{ date && date.format( 'LLL' ) }</div>
+					<div className="activity-card-list__date">{ date && date.format( 'MMM Do' ) }</div>
 					{ dateLogs.map( activity => (
 						<ActivityCard
 							{ ...{
