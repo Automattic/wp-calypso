@@ -13,7 +13,15 @@ import PaymentButtonFrontEndComponent from '../components/payment-button-front-e
 
 export default class ViewPostPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, By.css( '.entry-header' ) );
+		super( driver, By.css( '.type-post' ) );
+	}
+
+	async _preInit() {
+		await this.driver.sleep( 2000 );
+	}
+
+	async _postInit() {
+		await this.driver.sleep( 2000 );
 	}
 
 	async postTitle() {
