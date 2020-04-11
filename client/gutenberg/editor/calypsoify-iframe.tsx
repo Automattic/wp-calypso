@@ -549,22 +549,23 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			// `this.successfulIframeLoad` for a while before redirecting.
 			let cancelPolling = false;
 
-			// Resolve a promise once the iFrame loads.
 			const pollForLoadedFlag = new Promise( resolve => {
-				const pendingIsLoadedFlag = setInterval( () => {
-					cancelPolling && clearInterval( pendingIsLoadedFlag );
-					this.successfulIframeLoad && resolve( 'iframe-loaded' );
-				}, 200 );
+				const waitForSuccessfulLoad = () => {
+					if ( this.successfulIframeLoad ) {
+						resolve();
+						return;
+					}
+
+					! cancelPolling && setTimeout( waitForSuccessfulLoad, 200 );
+				};
+
+				setTimeout( waitForSuccessfulLoad, 200 );
 			} );
 
 			const fiveSeconds = new Promise( resolve => setTimeout( resolve, 5000, 'timeout' ) );
 
-			// Check which happens first: iframe has loaded or 5 seconds have passed.
-			const finishCondition = await Promise.race( [ pollForLoadedFlag, fiveSeconds ] );
-			cancelPolling = true;
-
-			// If 5 seconds have passed, redirect to wp-admin.
-			if ( finishCondition === 'timeout' ) {
+			if ( ( await Promise.race( [ pollForLoadedFlag, fiveSeconds ] ) ) === 'timeout' ) {
+				cancelPolling = true;
 				window.location.replace( iframeUrl );
 				return;
 			}
