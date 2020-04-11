@@ -17,14 +17,15 @@ import ActionPanelFigure from 'components/action-panel/figure';
 import ActionPanelCta from 'components/action-panel/cta';
 import Gridicon from 'components/gridicon';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { savePreference } from 'state/preferences/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const ConnectAccountsTask = ( { siteSlug } ) => {
+const ConnectAccountsTask = ( { skipTask, siteId, siteSlug } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -58,15 +59,29 @@ const ConnectAccountsTask = ( { siteSlug } ) => {
 					>
 						{ translate( 'Connect accounts' ) }
 					</Button>
-					<Button className="tasks__action-skip is-link">{ translate( 'Skip for now' ) }</Button>
+					<Button
+						className="tasks__action-skip is-link"
+						onClick={ () => {
+							skipTask( 'homeTaskConnectAccounts-' + siteId, true );
+						} }
+					>
+						{ translate( 'Skip for now' ) }
+					</Button>
 				</ActionPanelCta>
 			</ActionPanelBody>
 		</ActionPanel>
 	);
 };
 
-export default connect( state => {
+const mapStateToProps = state => {
 	return {
+		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state ),
 	};
-} )( ConnectAccountsTask );
+};
+
+const mapDispatchToProps = {
+	skipTask: savePreference,
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( ConnectAccountsTask );
