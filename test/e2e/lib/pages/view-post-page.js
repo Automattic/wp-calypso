@@ -17,11 +17,7 @@ export default class ViewPostPage extends AsyncBaseContainer {
 	}
 
 	async _preInit() {
-		await this.driver.sleep( 2000 );
-	}
-
-	async _postInit() {
-		await this.driver.sleep( 2000 );
+		await driverHelper.isEventuallyPresentAndDisplayed( this.driver, By.css( '.type-post' ) );
 	}
 
 	async postTitle() {
