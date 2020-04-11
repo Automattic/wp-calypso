@@ -3,6 +3,7 @@
  */
 import { connect } from 'react-redux';
 import { isMobile } from '@automattic/viewport';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 /**
@@ -10,6 +11,7 @@ import React, { Component } from 'react';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { updateFilter } from 'state/activity-log/actions';
+import { withApplySiteOffset } from '../site-offset';
 import { withLocalizedMoment } from 'components/localized-moment';
 import ActivityCard from 'landing/jetpack-cloud/components/activity-card';
 import Filterbar from 'my-sites/activity/filterbar';
@@ -26,6 +28,13 @@ import QueryRewindState from 'components/data/query-rewind-state';
 import './style.scss';
 
 class ActivityCardList extends Component {
+	static PropTypes = {
+		showFilter: PropTypes.boolean,
+		showPagination: PropTypes.boolean,
+		logs: PropTypes.array.isRequired,
+		pageSize: PropTypes.number.isRequired,
+	};
+
 	static defaultProps = {
 		showFilter: true,
 		showPagination: true,
@@ -36,18 +45,62 @@ class ActivityCardList extends Component {
 		window.scrollTo( 0, 0 );
 	};
 
+	splitLogsByDate( logs ) {
+		const { applySiteOffset, moment } = this.props;
+		const logsByDate = [];
+		let lastDate = null;
+		for ( const log of logs ) {
+			const activityDateMoment = applySiteOffset( moment( log.activityDate ) );
+			if ( lastDate && lastDate.isSame( activityDateMoment, 'day' ) ) {
+				logsByDate[ logsByDate.length - 1 ].logs.push( log );
+			} else {
+				logsByDate.push( { date: activityDateMoment, logs: [ log ] } );
+				lastDate = activityDateMoment;
+			}
+		}
+		return logsByDate;
+	}
+
+	renderLogs( logs ) {
+		const { allowRestore, moment, siteSlug } = this.props;
+		const logsByDate = this.splitLogsByDate( logs );
+
+		if ( logsByDate.length === 1 ) {
+			return logsByDate[ 0 ].logs.map( activity => (
+				<ActivityCard
+					{ ...{
+						key: activity.activityId,
+						moment,
+						activity,
+						allowRestore,
+						siteSlug,
+					} }
+				/>
+			) );
+		}
+
+		return logsByDate.map( ( { date, logs: dateLogs } ) => {
+			return (
+				<>
+					<div>{ date && date.format( 'LLL' ) }</div>
+					{ dateLogs.map( activity => (
+						<ActivityCard
+							{ ...{
+								key: activity.activityId,
+								moment,
+								activity,
+								allowRestore,
+								siteSlug,
+							} }
+						/>
+					) ) }
+				</>
+			);
+		} );
+	}
+
 	render() {
-		const {
-			allowRestore,
-			filter,
-			moment,
-			logs,
-			pageSize,
-			showFilter,
-			showPagination,
-			siteId,
-			siteSlug,
-		} = this.props;
+		const { filter, logs, pageSize, showFilter, showPagination, siteId } = this.props;
 		const { page: requestedPage } = filter;
 
 		const actualPage = Math.max(
@@ -55,18 +108,6 @@ class ActivityCardList extends Component {
 			Math.min( requestedPage, Math.ceil( logs.length / pageSize ) )
 		);
 		const theseLogs = logs.slice( ( actualPage - 1 ) * pageSize, actualPage * pageSize );
-
-		const cards = theseLogs.map( activity => (
-			<ActivityCard
-				{ ...{
-					key: activity.activityId,
-					moment,
-					activity,
-					allowRestore,
-					siteSlug,
-				} }
-			/>
-		) );
 
 		return (
 			<div className="activity-card-list">
@@ -95,7 +136,7 @@ class ActivityCardList extends Component {
 						total={ logs.length }
 					/>
 				) }
-				{ cards }
+				{ this.renderLogs( theseLogs ) }
 				{ showPagination && (
 					<Pagination
 						compact={ isMobile() }
@@ -140,4 +181,4 @@ const mapDispatchToProps = dispatch => ( {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)( withLocalizedMoment( ActivityCardList ) );
+)( withApplySiteOffset( withLocalizedMoment( ActivityCardList ) ) );
