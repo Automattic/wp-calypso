@@ -8,7 +8,7 @@ import createDebug from 'debug';
  * Internal dependencies
  */
 import { getViewingSiteIds } from 'state/reader/viewing/selectors';
-import { channelLeave, CHANNELS } from 'state/lasagna/channel';
+import { leaveChannel, CHANNELS } from 'state/lasagna/channel';
 import { isPrivateSite } from 'state/reader/sites/selectors';
 
 /**
@@ -74,13 +74,13 @@ export function leaveStaleChannels( store ) {
 		const now = moment().unix();
 		if ( now - channel.updatedAt > MAX_SECONDS_SINCE_LAST_UPDATE ) {
 			debug( topic, 'remove stale channel' );
-			channelLeave( { store, namespace, topic } );
+			leaveChannel( { store, namespace, topic } );
 		}
 	}
 
 	if ( Object.keys( channels ).length === MAX_CHANNELS_OPEN - 1 && oldestTopic ) {
 		debug( oldestTopic, 'almost full, remove oldest topic' );
-		channelLeave( { store, namespace, oldestTopic } );
+		leaveChannel( { store, namespace, oldestTopic } );
 	}
 }
 

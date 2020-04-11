@@ -74,7 +74,7 @@ export function joinChannel( {
 		.receive( 'error', ( { reason } ) => {
 			debug( topic, 'join error', reason );
 			store.dispatch( channelJoinError( namespace, reason ) );
-			leaveChannel( store, topic );
+			leaveChannel( { store, namespace, topic } );
 		} );
 
 	return channel;
@@ -82,22 +82,22 @@ export function joinChannel( {
 
 export function leaveChannel( { store, topic, namespace = DEFAULT_NAMESPACE } ) {
 	if ( SOCKET.status !== 'opened' ) {
-		debug( topic, 'channel leave, socket is ' + SOCKET.status );
+		debug( topic, 'leave, socket is ' + SOCKET.status );
 		return false;
 	}
 
 	if ( ! topic ) {
-		debug( topic, 'channel topic missing' );
+		debug( topic, 'leave, channel topic missing' );
 		return false;
 	}
 
 	if ( ! CHANNELS[ namespace ] ) {
-		debug( topic, 'no channel found to leave' );
+		debug( topic, 'leave, no channel found to leave' );
 		return false;
 	}
 
 	if ( ! CHANNELS[ namespace ][ topic ] ) {
-		debug( topic, 'no topic found to leave' );
+		debug( topic, 'leave, no topic found to leave' );
 		return false;
 	}
 
