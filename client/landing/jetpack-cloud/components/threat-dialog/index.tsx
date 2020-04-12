@@ -42,6 +42,7 @@ class ThreatDialog extends React.PureComponent< Props > {
 				{ translate( 'Go back' ) }
 			</Button>,
 			<Button
+				primary
 				className={ classnames( 'threat-dialog__btn', `threat-dialog__btn--${ action }-threat` ) }
 				onClick={ onConfirmation }
 			>
