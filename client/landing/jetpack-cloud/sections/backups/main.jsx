@@ -4,6 +4,7 @@
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import momentDate from 'moment';
+import page from 'page';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 
@@ -41,6 +42,7 @@ import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import { applySiteOffset } from 'lib/site/timezone';
 import QuerySiteSettings from 'components/data/query-site-settings'; // Required to get site time offset
 import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
+import { backupMainPath } from './paths';
 
 /**
  * Style dependencies
@@ -59,9 +61,9 @@ class BackupsPage extends Component {
 	state = this.getDefaultState();
 
 	getDefaultState() {
-		const { queryDate } = this.props;
+		const { queryDate, moment } = this.props;
 
-		const selectedDate = ! queryDate ? null : queryDate;
+		const selectedDate = ! queryDate ? null : moment( queryDate, INDEX_FORMAT );
 
 		return {
 			selectedDate: selectedDate,
@@ -80,7 +82,15 @@ class BackupsPage extends Component {
 	}
 
 	onDateChange = date => {
+		const { siteSlug } = this.props;
+
 		this.setState( { selectedDate: date } );
+
+		page(
+			backupMainPath( siteSlug, {
+				date: date.format( INDEX_FORMAT ),
+			} )
+		);
 	};
 
 	getSelectedDate() {
@@ -175,6 +185,7 @@ class BackupsPage extends Component {
 			<Main>
 				<DocumentHead title={ translate( 'Backups' ) } />
 				<SidebarNavigation />
+
 				<QueryRewindState siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />
 				<QuerySiteSettings siteId={ siteId } />
