@@ -28,7 +28,6 @@ import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import { isCancelable } from 'lib/purchases';
 import { cancelPurchase } from 'me/purchases/paths';
 import RemovePurchase from 'me/purchases/remove-purchase';
-import { withoutHttp } from 'lib/url';
 
 import './style.scss';
 
@@ -102,25 +101,26 @@ class DomainManagementNavigationEnhanced extends React.Component {
 			return null;
 		}
 
-		const { name, URL } = selectedSite;
+		const { wpcom_url: wpcomUrl } = selectedSite;
+		const { hasWpcomNameservers, pointsToWpcom, isPrimary } = domain;
 
-		const { pointsToWpcom } = domain;
+		let description;
 
-		let destination;
-
-		if ( pointsToWpcom ) {
-			destination = name || withoutHttp( URL );
-		} else {
-			destination = translate( 'external', {
-				comment: 'Displayed when the domain is not pointed to WordPress.com',
+		if ( hasWpcomNameservers && pointsToWpcom && isPrimary ) {
+			description = translate( 'Destination: Primary domain for %(wpcomUrl)s', {
+				args: {
+					wpcomUrl,
+				},
 			} );
+		} else if ( hasWpcomNameservers && pointsToWpcom && ! isPrimary ) {
+			description = translate( 'Destination: %(wpcomUrl)s', {
+				args: {
+					wpcomUrl,
+				},
+			} );
+		} else {
+			description = translate( 'Destination: external to WordPress.com' );
 		}
-
-		const description = translate( 'Destination: %(destination)s', {
-			args: {
-				destination,
-			},
-		} );
 
 		return (
 			<DomainManagementNavigationItem
