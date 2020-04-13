@@ -8,9 +8,9 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
 import { defaultRewindConfig, RewindConfig } from './types';
 import { rewindBackup } from 'state/activity-log/actions';
+import Button from 'landing/jetpack-cloud/components/jetpack-cloud-button';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import getBackupDownloadId from 'state/selectors/get-backup-download-id';
 import getBackupDownloadProgress from 'state/selectors/get-backup-download-progress';
@@ -81,7 +81,6 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 				link="https://jetpack.com/support/backup"
 			/>
 			<Button
-				className="rewind-flow__primary-button"
 				primary
 				onClick={ requestDownload }
 				disabled={ Object.values( rewindConfig ).every( setting => ! setting ) }
@@ -146,7 +145,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			<Button href={ downloadUrl } primary className="rewind-flow__primary-button">
+			<Button href={ downloadUrl } primary>
 				{ translate( 'Download file' ) }
 			</Button>
 			<CheckYourEmail
@@ -169,7 +168,6 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 				{ translate( 'An error occurred while creating your download' ) }
 			</h3>
 			<Button
-				className="rewind-flow__primary-button"
 				href={ `https://jetpack.com/contact-support/?scan-state=error&site-slug=${ siteSlug }` }
 				primary
 				rel="noopener noreferrer"

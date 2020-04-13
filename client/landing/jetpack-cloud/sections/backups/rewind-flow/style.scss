@@ -109,17 +109,6 @@ a.rewind-flow-notice__title-warning:visited {
 	}
 }
 
-.rewind-flow__primary-button {
-	margin-bottom: 22.5px;
-	text-align: center;
-	width: 100%;
-
-	@include breakpoint( '>660px' ) {
-		text-align: auto;
-		width: auto;
-	}
-}
-
 .rewind-flow__progress-bar {
 	margin-bottom: 22.5px;
 

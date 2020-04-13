@@ -11,7 +11,7 @@ import { get } from 'lodash';
  */
 import { withLocalizedMoment } from 'components/localized-moment';
 import Gridicon from 'components/gridicon';
-import Button from 'components/forms/form-button';
+import Button from 'landing/jetpack-cloud/components/jetpack-cloud-button';
 import { isSuccessfulBackup } from 'landing/jetpack-cloud/sections/backups/utils';
 import {
 	/*backupDetailPath,*/ backupDownloadPath,
@@ -142,11 +142,9 @@ class DailyBackupStatus extends Component {
 						) }
 					</p>
 					<Button
-						className="daily-backup-status__support-button"
 						href="https://jetpack.com/contact-support/"
 						target="_blank"
 						rel="noopener noreferrer"
-						isPrimary={ false }
 					>
 						{ translate( 'Contact support' ) }
 					</Button>
@@ -197,11 +195,9 @@ class DailyBackupStatus extends Component {
 				</div>
 
 				<Button
-					className="daily-backup-status__support-button"
 					href="https://jetpack.com/contact-support/"
 					target="_blank"
 					rel="noopener noreferrer"
-					isPrimary={ false }
 				>
 					{ translate( 'Contact support' ) }
 				</Button>
@@ -303,23 +299,14 @@ const ActionButtons = ( {
 	const translate = useTranslate();
 
 	return (
-		<>
-			<Button
-				className="daily-backup-status__download-button"
-				onClick={ onDownloadClick }
-				disabled={ disabledDownload }
-				isPrimary={ false }
-			>
+		<div className="daily-backup-status__action-buttons">
+			<Button onClick={ onDownloadClick } disabled={ disabledDownload }>
 				{ translate( 'Download backup' ) }
 			</Button>
-			<Button
-				className="daily-backup-status__restore-button"
-				disabled={ disabledRestore }
-				onClick={ onRestoreClick }
-			>
+			<Button disabled={ disabledRestore } onClick={ onRestoreClick } primary>
 				{ translate( 'Restore to this point' ) }
 			</Button>
-		</>
+		</div>
 	);
 };
 ActionButtons.defaultProps = {

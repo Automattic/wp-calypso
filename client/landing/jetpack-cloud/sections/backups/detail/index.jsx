@@ -19,7 +19,7 @@ import { emptyFilter } from 'state/activity-log/reducer';
 import { withLocalizedMoment } from 'components/localized-moment';
 import Gridicon from 'components/gridicon';
 import FoldableCard from 'components/foldable-card';
-import { Button } from '@automattic/components';
+import Button from '../../../components/jetpack-cloud-button';
 import Filterbar from 'my-sites/activity/filterbar';
 import { updateFilter } from 'state/activity-log/actions';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
@@ -78,8 +78,8 @@ class BackupDetailPage extends Component {
 					{ thisBackup && moment( thisBackup.activityDate ).format( 'YYYY-MM-DD' ) }
 				</div>
 				<div>
-					<Button primary={ false }>{ translate( 'Download backup' ) }</Button>
-					<Button primary={ true }>{ translate( 'Restore to this point' ) }</Button>
+					<Button>{ translate( 'Download backup' ) }</Button>
+					<Button primary>{ translate( 'Restore to this point' ) }</Button>
 				</div>
 				<FoldableCard header={ translate( 'Total # of files backed up' ) }>
 					<ul>{ metaList }</ul>

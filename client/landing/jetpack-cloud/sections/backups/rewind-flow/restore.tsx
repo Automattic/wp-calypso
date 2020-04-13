@@ -8,9 +8,9 @@ import React, { FunctionComponent, useCallback, useState } from 'react';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
 import { defaultRewindConfig, RewindConfig } from './types';
 import { rewindRestore } from 'state/activity-log/actions';
+import Button from 'landing/jetpack-cloud/components/jetpack-cloud-button';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import getInProgressRewindPercentComplete from 'state/selectors/get-in-progress-rewind-percent-complete';
 import getInProgressRewindStatus from 'state/selectors/get-in-progress-rewind-status';
@@ -99,7 +99,6 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				type={ RewindFlowNoticeLevel.WARNING }
 			/>
 			<Button
-				className="rewind-flow__primary-button"
 				primary
 				onClick={ onConfirm }
 				disabled={ Object.values( rewindConfig ).every( setting => ! setting ) }
@@ -161,7 +160,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			<Button primary href={ siteUrl } className="rewind-flow__primary-button">
+			<Button primary href={ siteUrl } disabled={ ! siteUrl }>
 				{ translate( 'View your website' ) }
 			</Button>
 		</>
@@ -179,7 +178,6 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				{ translate( 'An error occurred while restoring your site' ) }
 			</h3>
 			<Button
-				className="rewind-flow__primary-button"
 				href={ `https://jetpack.com/contact-support/?scan-state=error&site-slug=${ siteSlug }` }
 				primary
 				rel="noopener noreferrer"
