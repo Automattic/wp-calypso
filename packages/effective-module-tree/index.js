@@ -38,7 +38,7 @@ const findTree = ( packageJson, packagePath, parents, cache ) => {
 	const name = `${ packageJson.name }@${ packageJson.version }`;
 	if ( parents.includes( name ) ) {
 		debug( `Package ${ name } at ${ packagePath } seems to be a circular dependency!` );
-		return { [ name ]: '[Circular]' };
+		return { tree: { [ name ]: '[Circular]' }, isCacheable: false };
 	}
 
 	// We alredy solved this part of the tree
@@ -47,12 +47,14 @@ const findTree = ( packageJson, packagePath, parents, cache ) => {
 			`Package ${ name } at ${ packagePath } was already resolved, returning info from cache`
 		);
 		return {
-			...cache.get( packagePath ),
+			tree: cache.get( packagePath ),
+			isCacheable: true,
 		};
 	}
 
 	// For each dependency...
 	debug( `Finding dependencies for ${ name } at ${ packagePath }` );
+	let treeIsCacheable = true;
 	const dependencies = Object.keys( packageJson.dependencies || [] ).reduce(
 		( accumulated, dependency ) => {
 			let dependencyPath;
@@ -79,18 +81,26 @@ const findTree = ( packageJson, packagePath, parents, cache ) => {
 				return accumulated;
 			}
 
-			// Continue finding dependencies recursively
+			// Continue finding dependencies recursively.
+			const { tree, isCacheable } = findTree(
+				dependencyJson,
+				dependencyPath,
+				[ ...parents, name ],
+				cache
+			);
+			// Propagate 'cacheability': if the package is not cacheable, none of the parents should be.
+			treeIsCacheable = treeIsCacheable && isCacheable;
 			return {
 				...accumulated,
-				...findTree( dependencyJson, dependencyPath, [ ...parents, name ], cache ),
+				...tree,
 			};
 		},
 		{}
 	);
 
 	const result = { [ name ]: dependencies };
-	cache.set( packagePath, result );
-	return result;
+	if ( treeIsCacheable ) cache.set( packagePath, result );
+	return { tree: result, isCacheable: treeIsCacheable };
 };
 
 /**
@@ -102,8 +112,8 @@ const findTree = ( packageJson, packagePath, parents, cache ) => {
 const effectiveTree = async root => {
 	const packagePath = path.resolve( root );
 	const packageJson = require( path.join( packagePath ) );
-	const packages = findTree( packageJson, path.dirname( packagePath ), [], new Map() );
-	return treeify( packages, {
+	const { tree } = findTree( packageJson, path.dirname( packagePath ), [], new Map() );
+	return treeify( tree, {
 		sortFn: ( a, b ) => a.localeCompare( b ),
 	} );
 };
