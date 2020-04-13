@@ -697,7 +697,7 @@ Undocumented.prototype.validateDomainContactInformation = function(
 			}
 
 			// Reshape the error messages to a nested object
-			if ( successData.messages ) {
+			if ( successData.messages && query?.apiVersion === '1.2' ) {
 				successData.messages = Object.keys( successData.messages ).reduce( ( obj, key ) => {
 					set( obj, key, successData.messages[ key ] );
 					return obj;
