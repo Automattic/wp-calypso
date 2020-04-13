@@ -1,0 +1,43 @@
+.theme-jetpack-cloud .layout__primary,
+.color-scheme.is-jetpack-cloud .layout__primary {
+	.button {
+		color: var( --studio-gray-80 );
+		border-radius: 3px;
+		border: 1px solid var( --studio-gray-10 );
+
+		&:hover:enabled,
+		&:focus:enabled {
+			background: var( --studio-gray-0 );
+		}
+
+		&:active {
+			border: 1px solid var( --studio-gray-5 );
+		}
+
+		&[disabled],
+		&:disabled {
+			color: var( --studio-gray-10 );
+		}
+	}
+
+	.button.is-primary {
+		color: #fff;
+		background: var( --color-primary-40 );
+		border: none;
+
+		&:hover,
+		&:focus {
+			background: var( --color-primary-30 );
+			border: none;
+		}
+
+		&:active {
+			background: var( --color-primary-50 );
+		}
+
+		&[disabled],
+		&:disabled {
+			background: var( --studio-gray-10 );
+		}
+	}
+}
