@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { useTranslate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import 'moment-timezone'; // monkey patches the existing moment.js
 
 /**
@@ -13,7 +13,10 @@ import ContactFormNotice from 'me/help/contact-form-notice/index';
 import { useLocalizedMoment } from 'components/localized-moment';
 
 const DATE_FORMAT = 'LLL';
-const translate = useTranslate();
+
+export const easterHolidayName = translate( 'Easter', {
+	context: 'Holiday name',
+} );
 
 export const xmasHolidayName = translate( 'Christmas', {
 	context: 'Holiday name',
