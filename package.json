@@ -44,7 +44,7 @@
 		"prebuild": "check-npm-client && yarn run install-if-deps-outdated",
 		"build": "check-npm-client && yarn run build-static && yarn run build-packages && yarn run build-css && run-p -s build-devdocs:* && run-p -s build-server build-client-if-prod build-client-if-desktop",
 		"build-css": "check-npm-client && run-p -s build-css:*",
-		"build-css:directly": "check-npm-client && node-sass --importer node_modules/node-sass-package-importer/dist/cli.js --include-path client client/assets/stylesheets/directly.scss public/directly.css --output-style compressed && yarn run -s postcss public/directly.css",
+		"build-css:directly": "check-npm-client && node-sass --importer node_modules/node-sass-package-importer/dist/cli.js --include-path client client/assets/stylesheets/directly.scss public/directly.css --output-style compressed && yarn run -s postcss -- public/directly.css",
 		"build-css:editor": "check-npm-client && node-sass --importer node_modules/node-sass-package-importer/dist/cli.js --include-path client client/assets/stylesheets/editor.scss public/editor.css --output-style compressed && yarn run -s postcss -- public/editor.css",
 		"build-devdocs:search-index": "check-npm-client && node bin/generate-devdocs-search-index.js",
 		"build-docker": "check-npm-client && node bin/build-docker.js",
