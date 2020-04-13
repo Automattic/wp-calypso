@@ -11,10 +11,166 @@
     lodash "^4.17.4"
     recast "^0.12.1"
 
+"@automattic/babel-plugin-i18n-calypso@file:./packages/babel-plugin-i18n-calypso":
+  version "1.1.0"
+  dependencies:
+    gettext-parser "^4.0.0"
+    lodash "^4.17.14"
+
+"@automattic/babel-plugin-transform-wpcalypso-async@file:./packages/babel-plugin-transform-wpcalypso-async":
+  version "1.0.1"
+  dependencies:
+    lodash "^4.17.15"
+
+"@automattic/calypso-analytics@file:packages/calypso-analytics":
+  version "1.0.0-alpha.1"
+  dependencies:
+    "@automattic/load-script" "file:../../../Library/Caches/Yarn/v6/npm-@automattic-calypso-analytics-1.0.0-alpha.1-3ab200c5-1127-4d42-8904-e014dab0404a-1586762929837/node_modules/@automattic/load-script"
+    cookie "0.4.0"
+    debug "^4.1.1"
+    hash.js "^1.1.7"
+    lodash "^4.17.15"
+    tslib "^1.10.0"
+
+"@automattic/calypso-build@file:./packages/calypso-build":
+  version "6.1.0"
+  dependencies:
+    "@automattic/mini-css-extract-plugin-with-rtl" "0.8.0"
+    "@babel/cli" "7.8.4"
+    "@babel/core" "7.8.4"
+    "@babel/plugin-proposal-class-properties" "7.8.3"
+    "@babel/plugin-transform-react-jsx" "7.8.3"
+    "@babel/plugin-transform-runtime" "7.8.3"
+    "@babel/preset-env" "7.8.4"
+    "@babel/preset-react" "7.8.3"
+    "@babel/preset-typescript" "7.8.3"
+    "@types/webpack-env" "1.15.1"
+    "@wordpress/babel-plugin-import-jsx-pragma" "2.5.0"
+    "@wordpress/browserslist-config" "2.6.0"
+    "@wordpress/dependency-extraction-webpack-plugin" "2.2.0"
+    autoprefixer "9.7.3"
+    babel-jest "25.1.0"
+    babel-loader "8.0.6"
+    browserslist "^4.8.2"
+    caniuse-api "3.0.0"
+    css-loader "3.4.2"
+    duplicate-package-checker-webpack-plugin "3.0.0"
+    enzyme-adapter-react-16 "1.15.1"
+    enzyme-to-json "3.4.3"
+    file-loader "4.3.0"
+    jest-config "25.1.0"
+    jest-emotion "^10.0.27"
+    jest-enzyme "7.1.2"
+    node-sass "4.13.0"
+    postcss-custom-properties "9.0.2"
+    postcss-loader "3.0.0"
+    recursive-copy "2.0.10"
+    sass-loader "8.0.0"
+    terser-webpack-plugin "2.3.1"
+    thread-loader "2.1.3"
+    typescript "3.8.3"
+    webpack "4.42.0"
+    webpack-cli "3.3.10"
+    webpack-rtl-plugin "2.0.0"
+
+"@automattic/calypso-color-schemes@file:./packages/calypso-color-schemes", "@automattic/calypso-color-schemes@file:packages/calypso-color-schemes":
+  version "2.1.0"
+
+"@automattic/calypso-polyfills@file:packages/calypso-polyfills":
+  version "1.0.0"
+  dependencies:
+    core-js "3.6.3"
+    isomorphic-fetch "2.2.1"
+    regenerator-runtime "0.13.3"
+    svg4everybody "2.1.9"
+
 "@automattic/color-studio@2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@automattic/color-studio/-/color-studio-2.2.1.tgz#e920af382a4db624ebca1591adace289912bf37b"
   integrity sha512-doMeOR5ly+qviYgWhWStByZHnnv3AFBC4Tj6aZLTrw8voulIu9AUv3Z9eit8a68uzCI77VkN7fUFadOiYIYBWg==
+
+"@automattic/components@file:packages/components":
+  version "1.0.0-alpha.1"
+  dependencies:
+    "@babel/runtime" "^7.8.4"
+    classnames "^2.2.6"
+    gridicons "^3.3.1"
+    lodash "^4.17.15"
+    prop-types "^15.7.2"
+    react-modal "^3.8.1"
+
+"@automattic/composite-checkout@file:packages/composite-checkout":
+  version "1.0.0"
+  dependencies:
+    "@babel/runtime" "^7.8.4"
+    "@emotion/core" "^10.0.27"
+    "@emotion/styled" "^10.0.27"
+    "@wordpress/i18n" "^3.9.0"
+    debug "^4.1.1"
+    emotion-theming "^10.0.27"
+    prop-types "^15.7.2"
+    react-stripe-elements "4.0.2"
+
+"@automattic/data-stores@file:packages/data-stores":
+  version "1.0.0-alpha.1"
+  dependencies:
+    "@wordpress/data-controls" "^1.4.0"
+    "@wordpress/url" "^2.8.2"
+    fast-json-stable-stringify "^2.1.0"
+    qs "^6.9.1"
+    redux "^4.0.4"
+    tslib "^1.10.0"
+    wpcom-proxy-request "file:../../../Library/Caches/Yarn/v6/npm-@automattic-data-stores-1.0.0-alpha.1-c00c9d9e-8e4b-4878-9076-3e439919c71f-1586762930209/node_modules/@automattic/wpcom-proxy-request"
+
+"@automattic/effective-module-tree@file:packages/effective-module-tree":
+  version "0.0.1"
+  dependencies:
+    debug "^4.1.1"
+    object-treeify "^1.1.23"
+    yargs "^15.1.0"
+
+"@automattic/format-currency@file:packages/format-currency":
+  version "1.0.0-alpha.0"
+  dependencies:
+    "@babel/runtime" "^7.8.4"
+    i18n-calypso "file:../../../Library/Caches/Yarn/v6/npm-@automattic-format-currency-1.0.0-alpha.0-bf2e82ee-1e97-4fdc-b9e8-8c6822e99ccb-1586762930225/node_modules/@automattic/i18n-calypso"
+
+"@automattic/full-site-editing@file:apps/full-site-editing":
+  version "1.0.0"
+  dependencies:
+    "@wordpress/api-fetch" "*"
+    "@wordpress/block-editor" "*"
+    "@wordpress/blocks" "*"
+    "@wordpress/components" "*"
+    "@wordpress/compose" "*"
+    "@wordpress/data" "*"
+    "@wordpress/date" "*"
+    "@wordpress/dom-ready" "*"
+    "@wordpress/edit-post" "*"
+    "@wordpress/editor" "*"
+    "@wordpress/element" "*"
+    "@wordpress/hooks" "*"
+    "@wordpress/html-entities" "*"
+    "@wordpress/i18n" "*"
+    "@wordpress/keycodes" "*"
+    "@wordpress/plugins" "*"
+    "@wordpress/url" "*"
+    classnames "2.2.6"
+    lodash "*"
+    moment "*"
+    newspack-blocks "github:Automattic/newspack-blocks#v1.2.1"
+
+"@automattic/load-script@file:packages/load-script":
+  version "1.0.0"
+  dependencies:
+    "@babel/runtime" "^7.4.4"
+    debug "^4.0.0"
+
+"@automattic/material-design-icons@file:packages/material-design-icons":
+  version "1.0.0"
+
+"@automattic/media-library@file:packages/media-library":
+  version "1.0.0-alpha.0"
 
 "@automattic/mini-css-extract-plugin-with-rtl@0.8.0":
   version "0.8.0"
@@ -26,6 +182,29 @@
     schema-utils "^1.0.0"
     webpack-sources "^1.1.0"
 
+"@automattic/notifications@file:apps/notifications":
+  version "1.0.0"
+  dependencies:
+    "@automattic/calypso-color-schemes" "file:../../../Library/Caches/Yarn/v6/npm-@automattic-notifications-1.0.0-4d85ebb0-88c2-422a-b3bf-48592d5149bd-1586762930275/node_modules/packages/calypso-color-schemes"
+    "@automattic/calypso-polyfills" "file:../../../Library/Caches/Yarn/v6/npm-@automattic-notifications-1.0.0-4d85ebb0-88c2-422a-b3bf-48592d5149bd-1586762930275/node_modules/packages/calypso-polyfills"
+
+"@automattic/o2-blocks@file:apps/o2-blocks":
+  version "1.0.0"
+  dependencies:
+    "@wordpress/block-editor" "3.7.6"
+    "@wordpress/blocks" "6.12.0"
+    "@wordpress/components" "9.2.1"
+    "@wordpress/editor" "9.12.1"
+    "@wordpress/element" "2.11.0"
+    "@wordpress/i18n" "3.9.0"
+    classnames "2.2.6"
+
+"@automattic/react-i18n@file:packages/react-i18n":
+  version "1.0.0-alpha.0"
+  dependencies:
+    "@wordpress/compose" "1.x.x - 3.x.x"
+    tslib "^1.10.0"
+
 "@automattic/react-virtualized@9.21.2":
   version "9.21.2"
   resolved "https://registry.yarnpkg.com/@automattic/react-virtualized/-/react-virtualized-9.21.2.tgz#ea14243e7e7811eaa14daed3f0a6f4579208996f"
@@ -34,6 +213,35 @@
     clsx "^1.0.4"
     loose-envify "^1.4.0"
     react-lifecycles-compat "^3.0.4"
+
+"@automattic/tree-select@file:packages/tree-select":
+  version "1.0.3"
+
+"@automattic/viewport-react@file:packages/viewport-react":
+  version "1.0.0"
+  dependencies:
+    "@automattic/viewport" "file:../../../Library/Caches/Yarn/v6/npm-@automattic-viewport-react-1.0.0-f4b59f2d-f391-489b-bc0e-2af97499e424-1586762930294/node_modules/@automattic/viewport"
+    "@babel/runtime" "^7.8.4"
+    "@wordpress/compose" "^3.7.0"
+
+"@automattic/viewport@file:packages/viewport":
+  version "1.0.0"
+
+"@automattic/webpack-config-flag-plugin@file:packages/webpack-config-flag-plugin":
+  version "1.0.0"
+
+"@automattic/webpack-extensive-lodash-replacement-plugin@file:./packages/webpack-extensive-lodash-replacement-plugin":
+  version "0.0.2"
+  dependencies:
+    semver "^6.1.1"
+
+"@automattic/webpack-inline-constant-exports-plugin@file:./packages/webpack-inline-constant-exports-plugin":
+  version "0.0.1"
+
+"@automattic/wpcom-block-editor@file:apps/wpcom-block-editor":
+  version "1.0.0-alpha.0"
+  dependencies:
+    debug "4.1.1"
 
 "@babel/cli@7.8.4":
   version "7.8.4"
@@ -6169,6 +6377,14 @@ callsites@^3.0.0:
   resolved "https://registry.yarnpkg.com/callsites/-/callsites-3.1.0.tgz#b3630abd8943432f54b3f0519238e33cd7df2f73"
   integrity sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==
 
+"calypso-codemods@file:./packages/calypso-codemods":
+  version "0.1.6"
+  dependencies:
+    "5to6-codemod" "^1.8.0"
+    jscodeshift "^0.7.0"
+    lodash "^4.17.10"
+    react-codemod "^5.0.5"
+
 camel-case@3.0.x, camel-case@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/camel-case/-/camel-case-3.0.0.tgz#ca3c3688a4e9cf3a4cda777dc4dcbc713249cf73"
@@ -8909,6 +9125,11 @@ eslint-config-prettier@^6.10.0:
   dependencies:
     get-stdin "^6.0.0"
 
+"eslint-config-wpcalypso@file:./packages/eslint-config-wpcalypso":
+  version "5.0.0"
+  dependencies:
+    eslint-plugin-react-hooks "^2.0.0"
+
 eslint-import-resolver-node@^0.3.2:
   version "0.3.3"
   resolved "https://registry.yarnpkg.com/eslint-import-resolver-node/-/eslint-import-resolver-node-0.3.3.tgz#dbaa52b6b2816b50bc6711af75422de808e98404"
@@ -9040,6 +9261,9 @@ eslint-plugin-react@7.18.3, eslint-plugin-react@^7.14.3:
     prop-types "^15.7.2"
     resolve "^1.14.2"
     string.prototype.matchall "^4.0.2"
+
+"eslint-plugin-wpcalypso@file:./packages/eslint-plugin-wpcalypso":
+  version "4.1.0"
 
 eslint-scope@^4.0.0, eslint-scope@^4.0.3:
   version "4.0.3"
@@ -11248,6 +11472,29 @@ husky@3.1.0:
     run-node "^1.0.0"
     slash "^3.0.0"
 
+"i18n-calypso-cli@file:./packages/i18n-calypso-cli":
+  version "1.0.0"
+  dependencies:
+    commander "^4.0.0"
+    debug "^4.0.0"
+    globby "^10.0.0"
+    xgettext-js "^3.0.0"
+
+"i18n-calypso@file:packages/i18n-calypso":
+  version "5.0.0"
+  dependencies:
+    "@babel/runtime" "^7.8.4"
+    "@tannin/sprintf" "^1.1.0"
+    "@wordpress/compose" "^3.7.2"
+    debug "^4.0.0"
+    events "^3.0.0"
+    hash.js "^1.1.5"
+    interpolate-components "^1.1.1"
+    lodash "^4.17.11"
+    lru "^3.1.0"
+    tannin "^1.1.1"
+    use-subscription "^1.2.0"
+
 iconv-lite@0.4.24, iconv-lite@^0.4.24, iconv-lite@~0.4.13:
   version "0.4.24"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.24.tgz#2022b4b25fbddc21d2f524974a474aafe733908b"
@@ -11926,17 +12173,17 @@ is-number-object@^1.0.4:
   resolved "https://registry.yarnpkg.com/is-number-object/-/is-number-object-1.0.4.tgz#36ac95e741cf18b283fc1ddf5e83da798e3ec197"
   integrity sha512-zohwelOAur+5uXtk8O3GPQ1eAcu4ZX3UwxQhUlfFFMNpUd83gXgjbhJh6HmB6LUNV/ieOLQuDwJO3dWJosUeMw==
 
+is-number@7.0.0, is-number@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/is-number/-/is-number-7.0.0.tgz#7535345b896734d5f80c4d06c50955527a14f12b"
+  integrity sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==
+
 is-number@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/is-number/-/is-number-3.0.0.tgz#24fd6201a4782cf50561c810276afc7d12d71195"
   integrity sha1-JP1iAaR4LPUFYcgQJ2r8fRLXEZU=
   dependencies:
     kind-of "^3.0.2"
-
-is-number@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/is-number/-/is-number-7.0.0.tgz#7535345b896734d5f80c4d06c50955527a14f12b"
-  integrity sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==
 
 is-obj@^1.0.0, is-obj@^1.0.1:
   version "1.0.1"
@@ -16206,10 +16453,23 @@ performance-now@^2.1.0:
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
   integrity sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
 
+phoenix@1.4.16:
+  version "1.4.16"
+  resolved "https://registry.yarnpkg.com/phoenix/-/phoenix-1.4.16.tgz#83b887ddb69b676024fd1c6ea6849a46ae0d837f"
+  integrity sha512-XmKVTlFQuRwTYBO1WU1OaN2tzywRAtY6haUpxHPGxNZuyPEgmo+Caw7+BMlIPhipM197+d962i6sGZLylBtCbA==
+
 phone@2.4.2:
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/phone/-/phone-2.4.2.tgz#74d6a54288280470d0cefa31e2f0720b7e59005d"
   integrity sha512-d9oLwWCnInj5wJIZjSyAvyBd4SWM4p3C6VmZVAhAlWG8q0dLANTEfRLMn2ybL/TdXbTuOCY4GJbePf3ujPmVvQ==
+
+"photon@file:packages/photon":
+  version "3.0.0"
+  dependencies:
+    "@babel/runtime" "^7.8.4"
+    crc32 "0.2.2"
+    debug "^4.0.0"
+    seed-random "2.2.0"
 
 picomatch@^2.0.4, picomatch@^2.0.5, picomatch@^2.0.7:
   version "2.2.1"
@@ -22093,6 +22353,163 @@ worker-rpc@^0.1.0:
   dependencies:
     microevent.ts "~0.1.1"
 
+"wp-calypso@file:client":
+  version "0.17.0"
+  dependencies:
+    "@automattic/calypso-analytics" "file:../../../Library/Caches/Yarn/v6/npm-wp-calypso-0.17.0-8af2d15c-d8eb-447a-b0a3-25bccc13c429-1586762930871/node_modules/packages/calypso-analytics"
+    "@automattic/calypso-polyfills" "file:../../../Library/Caches/Yarn/v6/npm-wp-calypso-0.17.0-8af2d15c-d8eb-447a-b0a3-25bccc13c429-1586762930871/node_modules/packages/calypso-polyfills"
+    "@automattic/color-studio" "2.2.1"
+    "@automattic/components" "file:../../../Library/Caches/Yarn/v6/npm-wp-calypso-0.17.0-8af2d15c-d8eb-447a-b0a3-25bccc13c429-1586762930871/node_modules/packages/components"
+    "@automattic/composite-checkout" "file:../../../Library/Caches/Yarn/v6/npm-wp-calypso-0.17.0-8af2d15c-d8eb-447a-b0a3-25bccc13c429-1586762930871/node_modules/packages/composite-checkout"
+    "@automattic/data-stores" "file:../../../Library/Caches/Yarn/v6/npm-wp-calypso-0.17.0-8af2d15c-d8eb-447a-b0a3-25bccc13c429-1586762930871/node_modules/packages/data-stores"
+    "@automattic/format-currency" "file:../../../Library/Caches/Yarn/v6/npm-wp-calypso-0.17.0-8af2d15c-d8eb-447a-b0a3-25bccc13c429-1586762930871/node_modules/packages/format-currency"
+    "@automattic/load-script" "file:../../../Library/Caches/Yarn/v6/npm-wp-calypso-0.17.0-8af2d15c-d8eb-447a-b0a3-25bccc13c429-1586762930871/node_modules/packages/load-script"
+    "@automattic/material-design-icons" "file:../../../Library/Caches/Yarn/v6/npm-wp-calypso-0.17.0-8af2d15c-d8eb-447a-b0a3-25bccc13c429-1586762930871/node_modules/packages/material-design-icons"
+    "@automattic/react-i18n" "file:../../../Library/Caches/Yarn/v6/npm-wp-calypso-0.17.0-8af2d15c-d8eb-447a-b0a3-25bccc13c429-1586762930871/node_modules/packages/react-i18n"
+    "@automattic/react-virtualized" "9.21.2"
+    "@automattic/tree-select" "file:../../../Library/Caches/Yarn/v6/npm-wp-calypso-0.17.0-8af2d15c-d8eb-447a-b0a3-25bccc13c429-1586762930871/node_modules/packages/tree-select"
+    "@automattic/viewport" "file:../../../Library/Caches/Yarn/v6/npm-wp-calypso-0.17.0-8af2d15c-d8eb-447a-b0a3-25bccc13c429-1586762930871/node_modules/packages/viewport"
+    "@automattic/viewport-react" "file:../../../Library/Caches/Yarn/v6/npm-wp-calypso-0.17.0-8af2d15c-d8eb-447a-b0a3-25bccc13c429-1586762930871/node_modules/packages/viewport-react"
+    "@babel/runtime" "7.8.4"
+    "@emotion/core" "^10.0.27"
+    "@emotion/styled" "10.0.27"
+    "@github/webauthn-json" "0.4.1"
+    "@wordpress/api-fetch" "3.11.0"
+    "@wordpress/base-styles" "1.4.0"
+    "@wordpress/block-editor" "3.7.1"
+    "@wordpress/block-library" "2.14.1"
+    "@wordpress/blocks" "6.12.0"
+    "@wordpress/components" "9.2.1"
+    "@wordpress/compose" "3.11.0"
+    "@wordpress/core-data" "2.12.0"
+    "@wordpress/data" "4.14.0"
+    "@wordpress/data-controls" "1.8.0"
+    "@wordpress/dom" "2.8.0"
+    "@wordpress/edit-post" "3.13.1"
+    "@wordpress/editor" "9.12.1"
+    "@wordpress/element" "2.11.0"
+    "@wordpress/format-library" "1.14.1"
+    "@wordpress/i18n" "3.9.0"
+    "@wordpress/is-shallow-equal" "1.8.0"
+    "@wordpress/keycodes" "2.9.0"
+    "@wordpress/notices" "2.0.0"
+    "@wordpress/nux" "3.12.1"
+    "@wordpress/plugins" "2.12.0"
+    "@wordpress/redux-routine" "3.7.0"
+    "@wordpress/rich-text" "3.12.0"
+    "@wordpress/server-side-render" "1.8.1"
+    "@wordpress/shortcode" "2.6.0"
+    "@wordpress/url" "2.11.0"
+    "@wordpress/viewport" "2.13.0"
+    autosize "4.0.2"
+    body-parser "1.19.0"
+    browser-filesaver "1.1.1"
+    browserslist-useragent "3.0.2"
+    chalk "3.0.0"
+    chrono-node "1.3.5"
+    classnames "2.2.6"
+    clipboard "2.0.4"
+    component-closest "1.0.1"
+    component-file-picker "0.2.1"
+    cookie "0.4.0"
+    cookie-parser "1.4.4"
+    cpf_cnpj "0.2.0"
+    create-react-class "15.6.3"
+    creditcards "3.1.0"
+    d3-array "2.4.0"
+    d3-axis "1.0.12"
+    d3-scale "3.2.1"
+    d3-selection "1.4.1"
+    d3-shape "1.3.7"
+    debug "4.1.1"
+    deep-freeze "0.0.1"
+    diff "4.0.1"
+    doctrine "3.0.0"
+    dom-helpers "5.1.3"
+    dompurify "2.0.7"
+    draft-js "0.11.3"
+    email-validator "2.0.4"
+    emoji-text "0.2.6"
+    events "3.0.0"
+    express "4.17.1"
+    express-useragent "1.0.13"
+    fast-json-stable-stringify "2.0.0"
+    filesize "6.0.1"
+    flag-icon-css "3.4.5"
+    flux "3.1.3"
+    fuse.js "3.4.6"
+    get-video-id "3.1.4"
+    gridicons "3.3.1"
+    hash.js "1.1.7"
+    he "1.2.0"
+    html-to-react "1.4.2"
+    i18n-calypso "file:../../../Library/Caches/Yarn/v6/npm-wp-calypso-0.17.0-8af2d15c-d8eb-447a-b0a3-25bccc13c429-1586762930871/node_modules/packages/i18n-calypso"
+    immutability-helper "3.0.1"
+    immutable "3.8.2"
+    inherits "2.0.4"
+    is-my-json-valid "2.20.0"
+    jquery "1.12.3"
+    keymaster "1.6.2"
+    lodash "4.17.15"
+    lodash-es "4.17.15"
+    lru "3.1.0"
+    lunr "2.3.8"
+    marked "0.7.0"
+    moment "2.24.0"
+    moment-timezone "0.5.27"
+    morgan "1.9.1"
+    objectpath "1.2.2"
+    page "1.11.5"
+    path-browserify "1.0.0"
+    percentage-regex "3.0.0"
+    phoenix "1.4.16"
+    phone "2.4.2"
+    photon "file:../../../Library/Caches/Yarn/v6/npm-wp-calypso-0.17.0-8af2d15c-d8eb-447a-b0a3-25bccc13c429-1586762930871/node_modules/packages/photon"
+    prismjs "1.17.1"
+    prop-types "15.7.2"
+    qrcode.react "1.0.0"
+    qs "6.9.1"
+    react "16.12.0"
+    react-click-outside "3.0.1"
+    react-day-picker "7.4.0"
+    react-dom "16.12.0"
+    react-element-to-jsx-string "14.1.0"
+    react-lazily-render "1.2.0"
+    react-live "1.12.0"
+    react-modal "3.11.1"
+    react-redux "7.2.0"
+    react-router-dom "5.1.2"
+    react-spring "8.0.27"
+    react-stripe-elements "4.0.2"
+    react-transition-group "4.3.0"
+    reakit "1.0.0-beta.14"
+    redux "4.0.5"
+    redux-form "8.2.6"
+    redux-thunk "2.3.0"
+    refx "3.1.1"
+    resize-observer-polyfill "1.5.1"
+    rtlcss "2.4.0"
+    social-logos "2.1.0"
+    socket.io-client "2.3.0"
+    store "2.0.12"
+    striptags "3.1.1"
+    superagent "3.8.3"
+    textarea-caret "3.1.0"
+    tinymce "4.9.6"
+    to-title-case "1.0.0"
+    tracekit "0.4.5"
+    twemoji "12.1.4"
+    url "0.11.0"
+    use-debounce "3.1.0"
+    use-subscription "1.3.0"
+    utility-types "3.10.0"
+    uuid "7.0.2"
+    valid-url "1.0.9"
+    wpcom "file:../../../Library/Caches/Yarn/v6/npm-wp-calypso-0.17.0-8af2d15c-d8eb-447a-b0a3-25bccc13c429-1586762930871/node_modules/packages/wpcom.js"
+    wpcom-proxy-request "file:../../../Library/Caches/Yarn/v6/npm-wp-calypso-0.17.0-8af2d15c-d8eb-447a-b0a3-25bccc13c429-1586762930871/node_modules/packages/wpcom-proxy-request"
+    wpcom-xhr-request "1.1.3"
+    yamlparser "0.0.2"
+
 wp-error@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/wp-error/-/wp-error-1.3.0.tgz#720247aa326424991c58775cb2fedc9bfd885420"
@@ -22100,6 +22517,15 @@ wp-error@^1.3.0:
   dependencies:
     builtin-status-codes "^2.0.0"
     uppercamelcase "^1.1.0"
+
+"wpcom-proxy-request@file:packages/wpcom-proxy-request":
+  version "6.0.0"
+  dependencies:
+    "@babel/runtime" "^7.8.4"
+    debug "^4.1.1"
+    progress-event "^1.0.0"
+    uuid "^7.0.1"
+    wp-error "^1.3.0"
 
 wpcom-xhr-request@1.1.3:
   version "1.1.3"
@@ -22110,6 +22536,13 @@ wpcom-xhr-request@1.1.3:
     debug "^3.1.0"
     superagent "^3.8.3"
     wp-error "^1.3.0"
+
+"wpcom@file:packages/wpcom.js":
+  version "6.0.0"
+  dependencies:
+    "@babel/runtime" "^7.8.3"
+    debug "^4.1.1"
+    qs "^6.5.2"
 
 wrap-ansi@^2.0.0:
   version "2.1.0"
