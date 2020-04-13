@@ -154,14 +154,17 @@ function shouldShowCompositeCheckout(
 		return false;
 	}
 
-	// If the URL is adding a product, only allow things already supported
+	// If the URL is adding a product, only allow things already supported.
+	// Calypso uses special slugs that aren't real product slugs when adding
+	// products via URL, so we list those slugs here. Renewals use actual slugs,
+	// so they do not need to go through this check.
 	const isRenewal = !! purchaseId;
-	const slugsToAllow = [ 'personal', 'premium', 'blogger', 'ecommerce', 'business' ];
+	const pseudoSlugsToAllow = [ 'personal', 'premium', 'blogger', 'ecommerce', 'business' ];
 	const slugPrefixesToAllow = [ 'domain-mapping:' ];
 	if (
 		! isRenewal &&
 		productSlug &&
-		! slugsToAllow.find( slug => productSlug === slug ) &&
+		! pseudoSlugsToAllow.find( slug => productSlug === slug ) &&
 		! slugPrefixesToAllow.find( slugPrefix => productSlug.startsWith( slugPrefix ) )
 	) {
 		debug(
