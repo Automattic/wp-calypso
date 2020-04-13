@@ -102,17 +102,17 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		}
 
 		const { wpcom_url: wpcomUrl } = selectedSite;
-		const { hasWpcomNameservers, pointsToWpcom, isPrimary } = domain;
+		const { pointsToWpcom, isPrimary } = domain;
 
 		let description;
 
-		if ( hasWpcomNameservers && pointsToWpcom && isPrimary ) {
+		if ( pointsToWpcom && isPrimary ) {
 			description = translate( 'Destination: primary domain for %(wpcomUrl)s', {
 				args: {
 					wpcomUrl,
 				},
 			} );
-		} else if ( hasWpcomNameservers && pointsToWpcom && ! isPrimary ) {
+		} else if ( pointsToWpcom && ! isPrimary ) {
 			description = translate( 'Destination: %(wpcomUrl)s', {
 				args: {
 					wpcomUrl,
