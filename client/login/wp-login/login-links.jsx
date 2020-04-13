@@ -119,7 +119,8 @@ export class LoginLinks extends React.Component {
 
 				const { hostname } = parseUrl( redirectToQuery.site_url );
 				const linkText = hostname
-					? this.props.translate( 'Back to %(hostname)s', { args: { hostname } } )
+					? // translators: hostname is a the hostname part of the URL. eg "google.com"
+					  this.props.translate( 'Back to %(hostname)s', { args: { hostname } } )
 					: this.props.translate( 'Back' );
 
 				return (

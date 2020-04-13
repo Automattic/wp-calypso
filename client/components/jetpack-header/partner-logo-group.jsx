@@ -26,7 +26,8 @@ class PartnerLogoGroup extends PureComponent {
 		return (
 			<svg width={ width } viewBox={ viewBox }>
 				<title>
-					{ translate( 'Co-branded Jetpack and %(partnerName)s logo', {
+					{ // translators: partnerName is something like MilesWeb, WooCommerce or DreamHost
+					translate( 'Co-branded Jetpack and %(partnerName)s logo', {
 						args: {
 							partnerName,
 						},

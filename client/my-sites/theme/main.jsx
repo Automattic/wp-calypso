@@ -255,9 +255,12 @@ class ThemeSheet extends React.Component {
 		const photonSrc = screenshotFull && photon( screenshotFull, { width } );
 		const img = screenshotFull && (
 			<img
-				alt={ i18n.translate( 'Screenshot of the %(themeName)s theme', {
-					args: { themeName },
-				} ) }
+				alt={
+					// translators: %s is the theme name. Eg Twenty Twenty.
+					i18n.translate( 'Screenshot of the %(themeName)s theme', {
+						args: { themeName },
+					} )
+				}
 				className="theme__sheet-img"
 				src={ photonSrc || screenshotFull }
 				srcSet={ photonSrc && `${ photon( screenshotFull, { width, zoom: 2 } ) } 2x` }

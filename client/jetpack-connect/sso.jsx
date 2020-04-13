@@ -259,6 +259,9 @@ class JetpackSsoForm extends Component {
 
 	getTOSText() {
 		const { translate } = this.props;
+		// translators: "share details" is a link to a legal document.
+		// "share details" implies that both WordPress.com and %(siteName) will have access to the user info
+		// siteName is the partner's site name (eg. Google)
 		const text = translate(
 			'By logging in you agree to {{detailsLink}}share details{{/detailsLink}} between WordPress.com and %(siteName)s.',
 			{
@@ -283,6 +286,7 @@ class JetpackSsoForm extends Component {
 
 	getSubHeaderText() {
 		const { translate } = this.props;
+		// translators: siteName is a partner site name. Eg "Google.com" or "Tumblr.com".
 		const text = translate(
 			'To use Single Sign-On, WordPress.com needs to be able to connect to your account on %(siteName)s.',
 			{
@@ -418,7 +422,8 @@ class JetpackSsoForm extends Component {
 							<div className="jetpack-connect__sso-user-profile">
 								<Gravatar user={ currentUser } size={ 120 } imgSize={ 400 } />
 								<h3 className="jetpack-connect__sso-log-in-as">
-									{ translate( 'Log in as {{strong}}%s{{/strong}}', {
+									{ // translators: %s is the user's display name. Eg: Login in as "John Doe"
+									translate( 'Log in as {{strong}}%s{{/strong}}', {
 										args: currentUser.display_name,
 										components: {
 											strong: <strong className="jetpack-connect__sso-display-name" />,
