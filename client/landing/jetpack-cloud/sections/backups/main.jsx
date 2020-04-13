@@ -61,13 +61,26 @@ class BackupsPage extends Component {
 	state = this.getDefaultState();
 
 	getDefaultState() {
-		const { queryDate, moment } = this.props;
-
-		const selectedDate = ! queryDate ? null : moment( queryDate, INDEX_FORMAT );
-
 		return {
-			selectedDate: selectedDate,
+			selectedDate: null,
 		};
+	}
+
+	componentDidMount() {
+		const { queryDate, moment, timezone, gmtOffset } = this.props;
+
+		if ( queryDate ) {
+			const today = applySiteOffset( moment(), { timezone, gmtOffset } );
+
+			const dateToSelect = moment( queryDate, INDEX_FORMAT );
+
+			// If we don't have dateToSelect or it's greater than today, force null
+			if ( ! dateToSelect.isValid() || dateToSelect > today ) {
+				this.onDateChange( null );
+			} else {
+				this.onDateChange( dateToSelect );
+			}
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -86,11 +99,15 @@ class BackupsPage extends Component {
 
 		this.setState( { selectedDate: date } );
 
-		page(
-			backupMainPath( siteSlug, {
-				date: date.format( INDEX_FORMAT ),
-			} )
-		);
+		if ( date && date.isValid() ) {
+			page(
+				backupMainPath( siteSlug, {
+					date: date.format( INDEX_FORMAT ),
+				} )
+			);
+		} else {
+			page( backupMainPath( siteSlug ) );
+		}
 	};
 
 	getSelectedDate() {
