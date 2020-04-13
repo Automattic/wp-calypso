@@ -255,8 +255,8 @@ class RemovePurchase extends Component {
 		return (
 			<div>
 				<p>
-					{ // translators: productName is a product name, like Jetpack.
-					// domain is something like example.wordpress.com
+					{ /* translators: productName is a product name, like Jetpack.
+					 domain is something like example.wordpress.com */
 					translate( 'Are you sure you want to remove %(productName)s from {{domain/}}?', {
 						args: { productName },
 						components: { domain: <em>{ purchase.domain }</em> },

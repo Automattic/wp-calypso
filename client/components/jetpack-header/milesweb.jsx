@@ -10,7 +10,12 @@ function JetpackMileswebLogo( { darkColorScheme, translate } ) {
 		: 'jetpack-milesweb-connection.png';
 	return (
 		<img
-			alt={ translate( 'Co-branded Jetpack and MilesWeb logo' ) }
+			alt={
+				// translators: partnerName is something like MilesWeb, WooCommerce or DreamHost
+				translate( 'Co-branded Jetpack and %(partnerName)s logo', {
+					args: { partnerName: 'MilesWeb' },
+				} )
+			}
 			height="85px"
 			src={ `/calypso/images/jetpack/${ img }` }
 			width="662.5px"
