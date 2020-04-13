@@ -69,6 +69,7 @@ import {
 } from 'state/sites/selectors';
 import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
+import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
 import PlanTestimonials from '../plan-testimonials';
 import GutenboardingHeader from './gutenboarding-header';
@@ -278,7 +279,13 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getVisiblePlansForPlanFeatures( plans ) {
-		const { displayJetpackPlans, customerType, plansWithScroll, withWPPlanTabs } = this.props;
+		const {
+			displayJetpackPlans,
+			customerType,
+			currentQueryArgs,
+			plansWithScroll,
+			withWPPlanTabs,
+		} = this.props;
 
 		const isPlanOneOfType = ( plan, types ) =>
 			types.filter( type => planMatches( plan, { type } ) ).length > 0;
@@ -303,6 +310,14 @@ export class PlansFeaturesMain extends Component {
 			return plans.filter( plan =>
 				isPlanOneOfType( plan, [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ] )
 			);
+		}
+
+		if (
+			customerType !== 'personal' &&
+			currentQueryArgs &&
+			'business-bundle' in currentQueryArgs
+		) {
+			return plans.filter( plan => isPlanOneOfType( plan, [ TYPE_BUSINESS, TYPE_ECOMMERCE ] ) );
 		}
 
 		if ( customerType === 'personal' ) {
@@ -556,6 +571,7 @@ export default connect(
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack: isJetpackSite( state, siteId ),
 			isMultisite: isJetpackSiteMultiSite( state, siteId ),
+			currentQueryArgs: getCurrentQueryArguments( state ),
 			siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
 			sitePlanSlug: currentPlan && currentPlan.product_slug,
