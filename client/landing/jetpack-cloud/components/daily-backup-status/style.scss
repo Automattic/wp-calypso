@@ -53,20 +53,6 @@
 	font-style: italic;
 }
 
-.form-button.daily-backup-status__restore-button,
-.form-button.daily-backup-status__download-button,
-.form-button.daily-backup-status__support-button {
-	float: none;
-	display: block;
-	width: 100%;
-	text-align: center;
-	margin-left: 0;
-}
-
-.form-button.daily-backup-status__download-button {
-	margin: 1rem 0;
-}
-
 .daily-backup-status__meta,
 .daily-backup-status__title {
 	display: none;
