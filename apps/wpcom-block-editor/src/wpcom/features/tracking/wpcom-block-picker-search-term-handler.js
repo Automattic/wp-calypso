@@ -11,16 +11,16 @@ import debug from 'debug';
  */
 import tracksRecordEvent from './track-record-event';
 
-const tracksDebug = debug( 'wpcom-block-editor:analytics:tracks' );
+const tracksDebug = debug( 'wpcom-block-editor:analytics:tracks:block-search' );
 
-let previewTerm;
+let lastSearchTerm;
 const trackSearchTerm = ( event, target ) => {
 	const key = event.key || event.keyCode;
 	const search_term = ( target.value || '' ).trim().toLowerCase();
-	if ( previewTerm === search_term && 'Enter' !== key ) {
+	if ( lastSearchTerm === search_term && 'Enter' !== key ) {
 		return tracksDebug( 'Same term: %o, type %o key. Skip.', search_term, key );
 	}
-	previewTerm = search_term;
+	lastSearchTerm = search_term;
 
 	if ( search_term.length < 3 ) {
 		return;
