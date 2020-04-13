@@ -40,4 +40,46 @@
 			background: var( --studio-gray-10 );
 		}
 	}
+
+	.button.is-borderless {
+		border: none;
+		background: none;
+		color: var( --studio-gray-80 );
+		padding-left: 0;
+		padding-right: 0;
+
+		&:hover,
+		&:focus {
+			background: none;
+			color: var( --studio-gray-70 );
+		}
+
+		&[disabled],
+		&:disabled {
+			color: var( --color-neutral-20 );
+			cursor: default;
+
+			&:active,
+			&.is-active {
+				border-width: 0;
+			}
+		}
+	}
+
+	.button.is-borderless.is-primary {
+		color: var( --color-primary-40 );
+
+		&:focus {
+			color: var( --color-primary-30 );
+		}
+
+		&:active {
+			color: var( --color-primary-50 );
+		}
+
+		&[disabled],
+		&:disabled {
+			color: var( --studio-gray-10 );
+		}
+	}
 }
