@@ -286,27 +286,6 @@ export function areRequiredFieldsNotEmpty( details: ManagedContactDetails ): boo
 	);
 }
 
-/*
- * List of error messages for each field.
- */
-export type ManagedContactDetailsErrors = {
-	firstName?: string[];
-	lastName?: string[];
-	organization?: string[];
-	email?: string[];
-	alternateEmail?: string[];
-	phone?: string[];
-	phoneNumberCountry?: string[];
-	address1?: string[];
-	address2?: string[];
-	city?: string[];
-	state?: string[];
-	postalCode?: string[];
-	countryCode?: string[];
-	fax?: string[];
-	vatId?: string[];
-};
-
 function setManagedContactDetailsErrors(
 	errors: ManagedContactDetailsErrors,
 	details: ManagedContactDetails
