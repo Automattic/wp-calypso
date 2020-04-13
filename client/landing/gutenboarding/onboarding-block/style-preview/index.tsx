@@ -59,8 +59,10 @@ const StylePreview: React.FunctionComponent = () => {
 		<div className="gutenboarding-page style-preview">
 			<div className="style-preview__header">
 				<div className="style-preview__titles">
-					<Title>{ __( 'Select your fonts' ) }</Title>
-					<SubTitle>{ __( 'Add some personality to your design.' ) }</SubTitle>
+					<Title>{ __( 'Pick a font pairing' ) }</Title>
+					<SubTitle>
+						{ __( 'Add some personality to your design. You can fine-tune later.' ) }
+					</SubTitle>
 				</div>
 				<ViewportSelect selected={ selectedViewport } onSelect={ setSelectedViewport } />
 				<div className="style-preview__actions">

@@ -50,11 +50,9 @@ const DesignSelector: React.FunctionComponent = () => {
 		<div className="gutenboarding-page design-selector">
 			<div className="design-selector__header">
 				<div className="design-selector__heading">
-					<Title>{ __( 'Choose a starting design' ) }</Title>
+					<Title>{ __( 'Choose a design' ) }</Title>
 					<SubTitle>
-						{ __(
-							'Get started with one of our top website layouts. You can always change it later'
-						) }
+						{ __( 'Pick your favorite homepage layout. You can customize or change it later.' ) }
 					</SubTitle>
 				</div>
 				<Link
