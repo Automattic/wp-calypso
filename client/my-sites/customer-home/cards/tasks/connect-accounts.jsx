@@ -62,7 +62,7 @@ const ConnectAccountsTask = ( { skipTask, siteId, siteSlug } ) => {
 					<Button
 						className="tasks__action-skip is-link"
 						onClick={ () => {
-							skipTask( 'homeTaskConnectAccounts-' + siteId, true );
+							skipTask( 'dismissal-card-home-task-connect-accounts-' + siteId, true );
 						} }
 					>
 						{ translate( 'Skip for now' ) }
