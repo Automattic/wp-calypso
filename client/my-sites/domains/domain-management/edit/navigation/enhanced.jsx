@@ -107,7 +107,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		let description;
 
 		if ( hasWpcomNameservers && pointsToWpcom && isPrimary ) {
-			description = translate( 'Destination: Primary domain for %(wpcomUrl)s', {
+			description = translate( 'Destination: primary domain for %(wpcomUrl)s', {
 				args: {
 					wpcomUrl,
 				},
