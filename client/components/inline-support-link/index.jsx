@@ -12,6 +12,12 @@ import Gridicon from 'components/gridicon';
  */
 import ExternalLink from 'components/external-link';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+	withAnalytics,
+} from 'state/analytics/actions';
 import { localizeUrl } from 'lib/i18n-utils';
 
 /**
@@ -27,6 +33,10 @@ class InlineSupportLink extends Component {
 		text: PropTypes.string,
 		showIcon: PropTypes.bool,
 		iconSize: PropTypes.number,
+		trackEvent: PropTypes.string,
+		tracksOptions: PropTypes.object,
+		statsGroup: PropTypes.string,
+		statsName: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -38,17 +48,6 @@ class InlineSupportLink extends Component {
 		iconSize: 14,
 	};
 
-	handleClick = event => {
-		const { supportPostId, supportLink } = this.props;
-
-		if ( ! supportPostId ) {
-			return null;
-		}
-
-		event.preventDefault();
-		this.props.openSupportArticleDialog( { postId: supportPostId, postUrl: supportLink } );
-	};
-
 	render() {
 		const {
 			showText,
@@ -58,6 +57,7 @@ class InlineSupportLink extends Component {
 			showIcon,
 			iconSize,
 			translate,
+			openDialog,
 		} = this.props;
 
 		if ( ! supportPostId && ! supportLink ) {
@@ -75,7 +75,7 @@ class InlineSupportLink extends Component {
 			<LinkComponent
 				className="inline-support-link"
 				href={ url }
-				onClick={ this.handleClick }
+				onClick={ openDialog }
 				target="_blank"
 				rel="noopener noreferrer"
 				{ ...externalLinkProps }
@@ -87,4 +87,41 @@ class InlineSupportLink extends Component {
 	}
 }
 
-export default connect( null, { openSupportArticleDialog } )( localize( InlineSupportLink ) );
+const mapDispatchToProps = ( dispatch, ownProps ) => {
+	const {
+		tracksEvent,
+		tracksOptions,
+		statsGroup,
+		statsName,
+		supportPostId,
+		supportLink,
+	} = ownProps;
+	return {
+		openDialog: event => {
+			if ( ! supportPostId ) {
+				return;
+			}
+			event.preventDefault();
+			const analyticsEvents = [
+				...( tracksEvent ? [ recordTracksEvent( tracksEvent, tracksOptions ) ] : [] ),
+				...( statsGroup && statsName ? [ bumpStat( statsGroup, statsName ) ] : [] ),
+			];
+			if ( analyticsEvents.length > 0 ) {
+				return dispatch(
+					withAnalytics(
+						composeAnalytics( ...analyticsEvents ),
+						openSupportArticleDialog( { postId: supportPostId, postUrl: supportLink } )
+					)
+				);
+			}
+			return dispatch(
+				openSupportArticleDialog( {
+					postId: supportPostId,
+					postUrl: supportLink,
+				} )
+			);
+		},
+	};
+};
+
+export default connect( null, mapDispatchToProps )( localize( InlineSupportLink ) );

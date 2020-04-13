@@ -35,6 +35,7 @@ const MasteringGutenberg = () => {
 					supportLink={ localizeUrl( 'https://wordpress.com/support/wordpress-editor/#blocks' ) }
 					showIcon={ false }
 					text={ translate( 'Customizing posts and pages with blocks' ) }
+					tracksEvent={ 'calypso_customer_home_customizing_with_blocks_support_page_view' }
 				/>
 				<InlineSupportLink
 					supportPostId={ 147594 }
@@ -43,12 +44,7 @@ const MasteringGutenberg = () => {
 					) }
 					showIcon={ false }
 					text={ translate( 'Adjusting settings of blocks' ) }
-				/>
-				<InlineSupportLink
-					supportPostId={ 145498 }
-					supportLink={ localizeUrl( 'https://support.wordpress.com/free-photo-library' ) }
-					showIcon={ false }
-					text={ translate( 'Add beautiful copyright-free photos' ) }
+					tracksEvent={ 'calypso_customer_home_adjust_blocks_support_page_view' }
 				/>
 			</div>
 			{ ! isMobile() && (
