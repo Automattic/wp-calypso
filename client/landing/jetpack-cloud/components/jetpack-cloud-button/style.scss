@@ -1,7 +1,5 @@
 .button.jetpack-cloud-button.is-borderless {
-	// align-items: center;
 	border-radius: 3px;
-	// display: flex;
 	font-size: 16px;
 	font-style: normal;
 	font-weight: 600;
@@ -33,12 +31,14 @@
 		border: 1px solid var( --studio-gray-10 );
 	}
 
+	// resting primary button
 	&.is-primary {
 		background: var( --color-primary-40 );
 		border: none;
 		box-shadow: none;
 		color: var( --studio-white );
 
+		// hover/focused primary button
 		&:hover,
 		&:focus {
 			background: var( --color-primary-30 );
@@ -46,12 +46,14 @@
 			box-shadow: none;
 		}
 
+		// pressed secondary button
 		&:active {
 			background: var( --color-primary-50 );
 			border: none;
 			box-shadow: none;
 		}
 
+		// resting primary button
 		&:disabled {
 			background: var( --studio-gray-10 );
 			border: none;
