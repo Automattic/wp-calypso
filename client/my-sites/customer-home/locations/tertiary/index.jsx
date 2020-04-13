@@ -2,23 +2,19 @@
  * External dependencies
  */
 import React from 'react';
-import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import StatsWeeklyTraffic from 'my-sites/customer-home/cards/features/stats';
+import ManageSite from './manage-site';
 
 const cardComponents = {
-	'home-feature-stats-weekly-traffic': StatsWeeklyTraffic,
+	'home-section-manage-site': ManageSite,
 };
 
-const Stats = ( { cards } ) => {
-	const translate = useTranslate();
-
+const Tertiary = ( { cards } ) => {
 	return (
 		<>
-			<h2>{ translate( 'Stats at a glance' ) }</h2>
 			{ cards &&
 				cards.map(
 					( card, index ) =>
@@ -31,4 +27,4 @@ const Stats = ( { cards } ) => {
 	);
 };
 
-export default Stats;
+export default Tertiary;

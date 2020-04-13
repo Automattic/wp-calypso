@@ -13,6 +13,7 @@ const requestLayout = action => {
 			method: 'GET',
 			path: `/sites/${ action.siteId }/home/layout`,
 			apiNamespace: 'wpcom/v2',
+			query: { experimental: true },
 		},
 		action
 	);
