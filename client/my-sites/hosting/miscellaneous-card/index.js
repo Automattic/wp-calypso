@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Dialog } from '@automattic/components';
+import FormLabel from 'components/forms/form-label';
 import CardHeading from 'components/card-heading';
 import MaterialIcon from 'components/material-icon';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -29,21 +30,88 @@ const MiscellaneousCard = ( {
 	siteId,
 	translate,
 } ) => {
+	const [ showDialog, setShowDialog ] = useState( false );
+	const [ reason, setReason ] = useState( '' );
+
 	const clearCache = () => {
-		clearAtomicWordPressCache( siteId );
+		clearAtomicWordPressCache( siteId, reason );
+		setShowDialog( false );
+		setReason( '' );
 	};
 
-	const getContent = () => {
+	const showConfirmationDialog = () => {
+		setShowDialog( true );
+	};
+
+	const closeConfirmationDialog = () => {
+		setShowDialog( false );
+	};
+
+	const onReasonChange = event => {
+		setReason( event.target.value );
+	};
+
+	const getClearCacheContent = () => {
+		const clearCacheText = translate( 'Clear Cache' );
+		const clearCacheDisabled = ! reason || reason.length < 3;
+		const deleteButtons = [
+			<Button onClick={ closeConfirmationDialog }>{ translate( 'Cancel' ) }</Button>,
+			<Button primary scary disabled={ clearCacheDisabled } onClick={ clearCache }>
+				{ clearCacheText }
+			</Button>,
+		];
+
 		return (
 			<div>
+				<p>
+					{ translate( '{{strong}}Warning!{{/strong}}', {
+						components: {
+							strong: <strong />,
+						},
+					} ) }
+				</p>
+				<p>
+					{ translate(
+						'Although we allow WordPress cache clearing, it might make your site unresponsive or even ' +
+							'break it while the cache is rebuilding.'
+					) }
+				</p>
 				<Button
-					className="miscellaneous-card__clear-cache"
-					onClick={ clearCache }
+					onClick={ showConfirmationDialog }
 					busy={ isClearingCache }
 					disabled={ disabled || isClearingCache }
 				>
-					<span>{ translate( 'Clear WordPress Cache' ) }</span>
+					<span>{ clearCacheText }</span>
 				</Button>
+
+				<Dialog
+					isVisible={ showDialog }
+					buttons={ deleteButtons }
+					className="miscellaneous-card__confirm-dialog"
+				>
+					<h1 className="miscellaneous-card__confirm-header">{ clearCacheText }</h1>
+					<FormLabel
+						htmlFor="confirmDomainChangeInput"
+						className="miscellaneous-card__confirm-label"
+					>
+						<p>{ translate( 'Please tell us why you think a cache clear is required.' ) }</p>
+						<p>
+							{ translate(
+								'We use this information to audit plugins and give valuable feedback to plugin developers. ' +
+									'It is our way of giving back to the community and helping people learn more about WordPress.'
+							) }
+						</p>
+					</FormLabel>
+
+					<input
+						autoCapitalize="off"
+						type="text"
+						onChange={ onReasonChange }
+						value={ reason }
+						aria-required="true"
+						id="confirmDomainChangeInput"
+					/>
+				</Dialog>
 			</div>
 		);
 	};
@@ -56,7 +124,7 @@ const MiscellaneousCard = ( {
 		<Card className="miscellaneous-card">
 			<MaterialIcon icon="settings" size={ 32 } />
 			<CardHeading>{ translate( 'Miscellaneous' ) }</CardHeading>
-			{ getContent() }
+			{ getClearCacheContent() }
 		</Card>
 	);
 };

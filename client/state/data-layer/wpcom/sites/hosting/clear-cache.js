@@ -17,7 +17,9 @@ const clearWordPressCache = action =>
 			method: 'POST',
 			path: `/sites/${ action.siteId }/hosting/clear-cache`,
 			apiNamespace: 'wpcom/v2',
-			body: {},
+			body: {
+				reason: action.reason,
+			},
 		},
 		action
 	);

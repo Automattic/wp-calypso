@@ -63,8 +63,9 @@ export const updateAtomicPhpVersion = ( siteId, version ) => ( {
 	},
 } );
 
-export const clearWordPressCache = siteId => ( {
+export const clearWordPressCache = ( siteId, reason ) => ( {
 	type: HOSTING_CLEAR_CACHE_REQUEST,
+	reason,
 	siteId,
 	meta: {
 		dataLayer: {
