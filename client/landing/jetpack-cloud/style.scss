@@ -1,22 +1,25 @@
 .theme-jetpack-cloud .layout__primary,
 .color-scheme.is-jetpack-cloud .layout__primary {
 	.button {
-		color: var( --studio-gray-80 );
+		color: var( --color-primary-60 );
+		background: var( --studio-white );
+		border: 1px solid var( --color-primary-40 );
 		border-radius: 3px;
-		border: 1px solid var( --studio-gray-10 );
 
-		&:hover:enabled,
-		&:focus:enabled {
-			background: var( --studio-gray-0 );
+		&:hover,
+		&:focus {
+			background: var( --color-primary-0 );
 		}
 
 		&:active {
-			border: 1px solid var( --studio-gray-5 );
+			background: var( --color-primary-5 );
+			border-color: var( --color-primary-40 );
 		}
 
 		&[disabled],
 		&:disabled {
 			color: var( --studio-gray-10 );
+			border-color: var( --color-gray-10 );
 		}
 	}
 
