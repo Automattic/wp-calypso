@@ -12,6 +12,7 @@ import { useLineItems, useFormStatus } from '@automattic/composite-checkout';
 import joinClasses from './join-classes';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
+import { isLineItemADomain } from '../hooks/has-domains';
 
 export default function WPCheckoutOrderReview( {
 	className,
@@ -23,13 +24,19 @@ export default function WPCheckoutOrderReview( {
 	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
+	siteUrl,
 } ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
 	const isPurchaseFree = total.amount.value === 0;
 
+	const firstDomainItem = items.find( isLineItemADomain );
+	const domainUrl = firstDomainItem ? firstDomainItem.sublabel : siteUrl;
+
 	return (
 		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
+			{ domainUrl && <DomainURL>{ domainUrl }</DomainURL> }
+
 			<WPOrderReviewSection>
 				<WPOrderReviewLineItems
 					items={ items }
@@ -62,6 +69,11 @@ WPCheckoutOrderReview.propTypes = {
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
 };
+
+const DomainURL = styled.div`
+	margin-top: -12px;
+	word-break: break-word;
+`;
 
 const CouponField = styled( Coupon )`
 	margin: 24px 30px 24px 0;

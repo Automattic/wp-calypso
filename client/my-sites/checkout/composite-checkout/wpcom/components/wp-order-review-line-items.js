@@ -57,7 +57,7 @@ function WPLineItem( {
 				<LineItemPrice lineItem={ item } />
 			</span>
 			{ hasDeleteButton && formStatus === 'ready' && (
-				<React.Fragment>
+				<>
 					<DeleteButton
 						buttonState="borderless"
 						disabled={ isDisabled }
@@ -96,7 +96,7 @@ function WPLineItem( {
 						title={ modalCopy.title }
 						copy={ modalCopy.description }
 					/>
-				</React.Fragment>
+				</>
 			) }
 
 			{ shouldShowVariantSelector && (
@@ -310,8 +310,7 @@ WPOrderReviewLineItems.propTypes = {
 };
 
 const WPOrderReviewList = styled.ul`
-	margin: -10px 0 10px 0;
-	padding: 0;
+	margin: 10px 0;
 `;
 
 const WPOrderReviewListItems = styled.li`
@@ -319,14 +318,6 @@ const WPOrderReviewListItems = styled.li`
 	padding: 0;
 	display: block;
 	list-style: none;
-
-	:first-of-type .checkout-line-item {
-		padding-top: 10px;
-	}
-
-	:first-of-type button {
-		top: -3px;
-	}
 `;
 
 function returnModalCopy( product, translate, hasDomainsInCart ) {
