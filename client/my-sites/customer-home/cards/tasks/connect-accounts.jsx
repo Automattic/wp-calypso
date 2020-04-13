@@ -25,7 +25,7 @@ import { savePreference } from 'state/preferences/actions';
  */
 import './style.scss';
 
-const ConnectAccountsTask = ( { skipTask, siteId, siteSlug } ) => {
+const ConnectAccountsTask = ( { skipTask, siteSlug } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -59,12 +59,7 @@ const ConnectAccountsTask = ( { skipTask, siteId, siteSlug } ) => {
 					>
 						{ translate( 'Connect accounts' ) }
 					</Button>
-					<Button
-						className="tasks__action-skip is-link"
-						onClick={ () => {
-							skipTask( 'dismissal-card-home-task-connect-accounts-' + siteId, true );
-						} }
-					>
+					<Button className="tasks__action-skip is-link" onClick={ skipTask }>
 						{ translate( 'Skip for now' ) }
 					</Button>
 				</ActionPanelCta>
@@ -81,7 +76,16 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-	skipTask: savePreference,
+	skipTask: siteId =>
+		savePreference( `dismissible-card-home-task-connect-accounts-${ siteId }`, true ),
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( ConnectAccountsTask );
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	return {
+		...stateProps,
+		skipTask: () => dispatchProps.skipTask( stateProps.siteId ),
+		...ownProps,
+	};
+};
+
+export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( ConnectAccountsTask );
