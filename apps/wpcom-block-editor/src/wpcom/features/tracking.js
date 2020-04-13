@@ -192,6 +192,18 @@ const trackErrorNotices = ( content, options ) =>
 	} );
 
 /**
+ * Logs any block search from different context.
+ *
+ * @param {string} context Context where the blocks search happens.
+ */
+const trackSearchBlocks = ( { context } ) => {
+	tracksRecordEvent( 'wpcom_block_picker_search_term', {
+		search_term: select( 'automattic/tracking' ).getSearchTerm( context ),
+		context,
+	} );
+};
+
+/**
  * Tracker can be
  * - string - which means it is an event name and should be tracked as such automatically
  * - function - in case you need to load additional properties from the action.
@@ -222,6 +234,9 @@ const REDUX_TRACKING = {
 	},
 	'core/notices': {
 		createErrorNotice: trackErrorNotices,
+	},
+	'automattic/tracking': {
+		setSearchBlocks: trackSearchBlocks,
 	},
 };
 
