@@ -159,10 +159,10 @@ function shouldShowCompositeCheckout(
 	const slugsToAllow = [ 'personal', 'premium', 'blogger', 'ecommerce', 'business' ];
 	const slugPrefixesToAllow = [ 'domain-mapping:' ];
 	if (
-		( ! isRenewal,
+		! isRenewal &&
 		productSlug &&
-			! slugsToAllow.find( slug => productSlug === slug ) &&
-			! slugPrefixesToAllow.find( slugPrefix => productSlug.startsWith( slugPrefix ) ) )
+		! slugsToAllow.find( slug => productSlug === slug ) &&
+		! slugPrefixesToAllow.find( slugPrefix => productSlug.startsWith( slugPrefix ) )
 	) {
 		debug(
 			'shouldShowCompositeCheckout false because product does not match list of allowed products',
