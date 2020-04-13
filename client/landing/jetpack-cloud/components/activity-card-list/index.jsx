@@ -4,7 +4,7 @@
 import { connect } from 'react-redux';
 import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 
 /**
  * Internal dependencies
@@ -28,14 +28,16 @@ import QueryRewindState from 'components/data/query-rewind-state';
 import './style.scss';
 
 class ActivityCardList extends Component {
-	static PropTypes = {
-		showFilter: PropTypes.boolean,
-		showPagination: PropTypes.boolean,
+	static propTypes = {
 		logs: PropTypes.array.isRequired,
 		pageSize: PropTypes.number.isRequired,
+		showDateSeparators: PropTypes.bool,
+		showFilter: PropTypes.bool,
+		showPagination: PropTypes.bool,
 	};
 
 	static defaultProps = {
+		showDateSeparators: true,
 		showFilter: true,
 		showPagination: true,
 	};
@@ -62,27 +64,15 @@ class ActivityCardList extends Component {
 	}
 
 	renderLogs( logs ) {
-		const { allowRestore, moment, siteSlug } = this.props;
+		const { allowRestore, moment, siteSlug, showDateSeparators } = this.props;
 		const logsByDate = this.splitLogsByDate( logs );
 
-		if ( logsByDate.length === 1 ) {
-			return logsByDate[ 0 ].logs.map( activity => (
-				<ActivityCard
-					{ ...{
-						key: activity.activityId,
-						moment,
-						activity,
-						allowRestore,
-						siteSlug,
-					} }
-				/>
-			) );
-		}
-
-		return logsByDate.map( ( { date, logs: dateLogs } ) => {
+		return logsByDate.map( ( { date, logs: dateLogs }, index ) => {
 			return (
-				<>
-					<div className="activity-card-list__date">{ date && date.format( 'MMM Do' ) }</div>
+				<Fragment key={ `activity-card-list__date-group-${ index }` }>
+					{ showDateSeparators && (
+						<div className="activity-card-list__date">{ date && date.format( 'MMM Do' ) }</div>
+					) }
 					{ dateLogs.map( activity => (
 						<ActivityCard
 							{ ...{
@@ -94,7 +84,7 @@ class ActivityCardList extends Component {
 							} }
 						/>
 					) ) }
-				</>
+				</Fragment>
 			);
 		} );
 	}
