@@ -56,11 +56,14 @@ export const UpsellNudge = ( {
 		return null;
 	}
 
-	if ( ! href && site ) {
-		href = addQueryArgs( { feature, plan }, `/plans/${ site.slug }` );
-	}
+	const customerType = plan === 'business-bundle' ? 'business' : 'personal';
 
-	return <Banner { ...props } showIcon={ showIcon } className={ classes } />;
+	const link =
+		href && site
+			? href
+			: addQueryArgs( { feature, customerType }, `/plans/${ site.slug }?${ plan }` );
+
+	return <Banner { ...props } href={ link } showIcon={ showIcon } className={ classes } />;
 };
 
 export default connect( ( state, ownProps ) => {
