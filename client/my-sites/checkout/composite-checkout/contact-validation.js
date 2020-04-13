@@ -53,7 +53,7 @@ export default function createContactValidationCallback( {
 						)
 					);
 				}
-				applyDomainContactValidationResults( { ...( data ? data.messages : {} ) } );
+				applyDomainContactValidationResults( data?.messages ?? {} );
 				resolve(
 					! ( data && data.success && areRequiredFieldsNotEmpty( decoratedContactDetails ) )
 				);
