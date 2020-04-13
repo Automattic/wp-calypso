@@ -22,7 +22,7 @@ interface Props {
 	href?: string;
 	busy?: boolean;
 	onClick?: MouseEventHandler< Button >;
-	diasbled?: boolean;
+	disabled?: boolean;
 }
 
 const JetpackCloudButton: FunctionComponent< Props > = props => {
