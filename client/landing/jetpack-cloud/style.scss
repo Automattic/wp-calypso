@@ -72,6 +72,7 @@
 	.button.is-borderless.is-primary {
 		color: var( --color-primary-40 );
 
+		&:hover,
 		&:focus {
 			color: var( --color-primary-30 );
 		}
