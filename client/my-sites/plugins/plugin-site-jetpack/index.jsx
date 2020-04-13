@@ -13,6 +13,7 @@ import FoldableCard from 'components/foldable-card';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
+import PluginUpdateIndicator from 'my-sites/plugins/plugin-site-update-indicator';
 import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
 import Site from 'blocks/site';
@@ -73,27 +74,6 @@ class PluginSiteJetpack extends React.Component {
 		);
 	};
 
-	renderSummary = () => {
-		const actionLinks = this.props.site.plugin.action_links;
-		let summary;
-
-		if ( actionLinks ) {
-			if ( actionLinks.Settings ) {
-				summary = actionLinks.Settings;
-			}
-		}
-
-		return (
-			<div>
-				{ summary && (
-					<Button compact href={ summary }>
-						{ this.props.translate( 'Settings' ) }
-					</Button>
-				) }
-			</div>
-		);
-	};
-
 	renderPluginSite = () => {
 		const {
 			activation: canToggleActivation,
@@ -103,14 +83,37 @@ class PluginSiteJetpack extends React.Component {
 
 		const showAutoManagedMessage = this.props.isAutoManaged;
 
+		const actionLinks = this.props.site.plugin.action_links;
+		let settingsLink;
+
+		if ( actionLinks ) {
+			if ( actionLinks.Settings ) {
+				settingsLink = actionLinks.Settings;
+			}
+		}
+
 		return (
 			<FoldableCard
 				compact
 				clickableHeader
 				className="plugin-site-jetpack"
 				header={ <Site site={ this.props.site } indicator={ false } /> }
-				summary={ this.renderSummary() }
-				expandedSummary={ this.renderSummary() }
+				summary={
+					<PluginUpdateIndicator
+						site={ this.props.site }
+						plugin={ this.props.plugin }
+						notices={ this.props.notices }
+						expanded={ false }
+					/>
+				}
+				expandedSummary={
+					<PluginUpdateIndicator
+						site={ this.props.site }
+						plugin={ this.props.plugin }
+						notices={ this.props.notices }
+						expanded={ true }
+					/>
+				}
 			>
 				<div>
 					{ canToggleActivation && (
@@ -125,6 +128,11 @@ class PluginSiteJetpack extends React.Component {
 					) }
 					{ canToggleRemove && (
 						<PluginRemoveButton plugin={ this.props.site.plugin } site={ this.props.site } />
+					) }
+					{ settingsLink && (
+						<Button compact href={ settingsLink }>
+							{ this.props.translate( `Settings` ) }
+						</Button>
 					) }
 					{ showAutoManagedMessage && (
 						<div className="plugin-site-jetpack__automanage-notice">
