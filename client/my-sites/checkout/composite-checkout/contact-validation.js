@@ -45,18 +45,18 @@ export default function createContactValidationCallback( {
 							'There was an error validating your contact information. Please contact support.'
 						)
 					);
-					resolve( false );
-					return;
 				}
-				if ( data.messages ) {
+				if ( data && data.messages ) {
 					showErrorMessage(
 						translate(
 							'We could not validate your contact information. Please review and update all the highlighted fields.'
 						)
 					);
 				}
-				applyDomainContactValidationResults( { ...data.messages } );
-				resolve( ! ( data.success && areRequiredFieldsNotEmpty( decoratedContactDetails ) ) );
+				applyDomainContactValidationResults( data?.messages ?? {} );
+				resolve(
+					! ( data && data.success && areRequiredFieldsNotEmpty( decoratedContactDetails ) )
+				);
 			} );
 		} );
 	};
