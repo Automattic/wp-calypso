@@ -21,7 +21,7 @@ const trackAutocompleteBlockTerm = () => {
 		'content',
 	] );
 
-	if ( ! search_term ) {
+	if ( search_term.length < 3 ) {
 		return;
 	}
 
