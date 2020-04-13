@@ -145,7 +145,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			<Button href={ downloadUrl } primary>
+			<Button href={ downloadUrl } primary disabled={ ! downloadUrl }>
 				{ translate( 'Download file' ) }
 			</Button>
 			<CheckYourEmail

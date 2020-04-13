@@ -123,7 +123,7 @@
 	flex-direction: column;
 
 	& > :not( :first-child ) {
-		margin-left: auto;
+		margin-left: 0;
 		margin-top: 1rem;
 	}
 
@@ -132,7 +132,7 @@
 
 		& > :not( :first-child ) {
 			margin-left: 1rem;
-			margin-top: auto;
+			margin-top: 0;
 		}
 	}
 }
