@@ -3,10 +3,6 @@
 	margin: 0 27px 80px;
 	justify-content: space-between;
 
-	& > header {
-		text-align: left;
-	}
-
 	&__select-free-plan {
 		color: var( --color-neutral );
 		text-decoration: underline;

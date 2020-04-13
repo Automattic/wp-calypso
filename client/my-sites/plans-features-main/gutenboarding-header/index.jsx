@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -14,27 +15,28 @@ import FormattedHeader from 'components/formatted-header';
  */
 import './style.scss';
 
-const GutenboardingHeader = ( { translate, onFreePlanSelect } ) => {
+const GutenboardingHeader = ( { headerText, subHeaderText, onFreePlanSelect, translate } ) => {
 	return (
 		<div className="gutenboarding-header">
 			<FormattedHeader
-				headerText={ translate( 'Choose a plan' ) }
-				subHeaderText={ translate(
-					'Pick a plan that’s right for you. Switch plans as your needs change. {{br/}} There’s no risk, you can cancel for a full refund within 30 days.',
-					{
-						components: { br: <br /> },
-						comment:
-							'Subheader of the plans page where users land from onboarding after they picked a paid domain',
-					}
-				) }
+				headerText={ headerText }
+				subHeaderText={ subHeaderText }
 				compactOnMobile
 				isSecondary
+				align="left"
 			/>
 			<button className="gutenboarding-header__select-free-plan" onClick={ onFreePlanSelect }>
 				{ translate( 'Start with a free plan' ) }
 			</button>
 		</div>
 	);
+};
+
+GutenboardingHeader.propTypes = {
+	headerText: PropTypes.node,
+	subHeaderText: PropTypes.node,
+	onFreePlanSelect: PropTypes.func,
+	translate: PropTypes.func,
 };
 
 export default localize( GutenboardingHeader );
