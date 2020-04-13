@@ -998,7 +998,7 @@ const contextLinksForSection = {
 			post_id: 41298,
 			title: translate( 'Connect an Existing Domain' ),
 			description: translate(
-				'There are two ways to use a domain that you bought with another registrar. (A registrar is a company with whom you can buy domains).'
+				'You can connect an existing domain you own that’s registered elsewhere by either mapping or transferring. Domain mapping lets you connect a domain while keeping it registered at the current registrar (where you purchased the domain from). Domain transferring moves the domain to WordPress.com so we become the new registrar.'
 			),
 		},
 		{
