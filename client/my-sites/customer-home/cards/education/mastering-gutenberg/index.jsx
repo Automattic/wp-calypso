@@ -23,11 +23,6 @@ const MasteringGutenberg = () => {
 
 	return (
 		<Card className="mastering-gutenberg">
-			{ ! isMobile() && (
-				<div className="mastering-gutenberg__illustration">
-					<img src="/calypso/images/illustrations/gutenberg-mini.svg" alt="" />
-				</div>
-			) }
 			<div>
 				<CardHeading>{ translate( 'Master the Block Editor' ) }</CardHeading>
 				<p className="mastering-gutenberg__text customer-home__card-subheader">
@@ -53,11 +48,14 @@ const MasteringGutenberg = () => {
 					supportPostId={ 145498 }
 					supportLink={ localizeUrl( 'https://support.wordpress.com/free-photo-library' ) }
 					showIcon={ false }
-					text={ translate(
-						'Add free beautiful copyright-free photos to create stunning designs'
-					) }
+					text={ translate( 'Add beautiful copyright-free photos' ) }
 				/>
 			</div>
+			{ ! isMobile() && (
+				<div className="mastering-gutenberg__illustration">
+					<img src="/calypso/images/illustrations/gutenberg-mini.svg" alt="" />
+				</div>
+			) }
 		</Card>
 	);
 };
