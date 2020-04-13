@@ -128,8 +128,9 @@ describe( 'Effective tree generation', () => {
 		const tree = await effectiveTree( '/project/root/package.json' );
 
 		/**
-		 * Note that when we find 'a' in the chain root->b->c->a, it has been processed previously in the chain root->a
-		 * However, because the chain root->a ends up in a circular dependency, none of the packages in that chain is cached.
+		 * Note that when we find 'b' in the second chain (root->b->...), it has been processed previously in the first chain
+		 * (root->a->b->...). However, because that first chain ended in a circular dependency, none of the packages in the chain
+		 * was cached.
 		 *
 		 * This is a good thing. Otherwise, when we process 'b' the chain root->b we would pick 'b' from the cache,
 		 * (equal to 'b->c->a[Circular]'), and we would end up with the chain root->b->c->a[Circular], which is not true.
