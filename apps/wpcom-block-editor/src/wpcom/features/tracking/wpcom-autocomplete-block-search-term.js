@@ -15,7 +15,7 @@ import { select } from '@wordpress/data';
  */
 import tracksRecordEvent from './track-record-event';
 
-const trackAutocompleteTerm = () => {
+const trackAutocompleteBlockTerm = () => {
 	const search_term = get( select( 'core/block-editor' ).getSelectedBlock(), [
 		'attributes',
 		'content',
@@ -32,7 +32,7 @@ const trackAutocompleteTerm = () => {
 		context,
 	} );
 
-	// Determine if there are results inspecting the DOM Tree.
+	// Check if there are results, inspecting the DOM Tree.
 	const hasResults = !! document.querySelectorAll( '.components-autocomplete__popover' ).length;
 	if ( hasResults ) {
 		return;
@@ -108,5 +108,5 @@ function selectorHandler() {
 export default () => ( {
 	selector: selectorHandler,
 	type: 'keyup',
-	handler: debounce( trackAutocompleteTerm, 500 ),
+	handler: debounce( trackAutocompleteBlockTerm, 500 ),
 } );
