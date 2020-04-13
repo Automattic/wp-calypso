@@ -31,20 +31,23 @@ class DatePicker extends Component {
 	getDisplayDate = ( date, showTodayYesterday = true ) => {
 		const { today, moment, translate } = this.props;
 
-		const daysDiff = moment( today ).diff( date, 'days' );
+		if ( showTodayYesterday ) {
+			const isToday = today.isSame( date, 'day' );
+			const isYesterday = moment( today )
+				.add( -1, 'day' )
+				.isSame( date, 'day' );
+
+			if ( isToday ) {
+				return translate( 'Today' );
+			}
+			if ( isYesterday ) {
+				return translate( 'Yesterday' );
+			}
+		}
 		const yearToday = moment( today ).format( 'YYYY' );
 		const yearDate = moment( date ).format( 'YYYY' );
 
 		const dateFormat = yearToday === yearDate ? 'MMM D' : 'MMM D, YYYY';
-
-		if ( showTodayYesterday ) {
-			switch ( daysDiff ) {
-				case 0:
-					return translate( 'Today' );
-				case 1:
-					return translate( 'Yesterday' );
-			}
-		}
 
 		return moment( date ).format( dateFormat );
 	};

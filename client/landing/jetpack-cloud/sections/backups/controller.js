@@ -21,7 +21,9 @@ export function wrapInSiteOffsetProvider( context, next ) {
 
 /* handles /backups/:site, see `backupMainPath` */
 export function backups( context, next ) {
-	context.primary = <BackupsPage />;
+	const { date } = context.query;
+
+	context.primary = <BackupsPage queryDate={ date } />;
 	next();
 }
 
