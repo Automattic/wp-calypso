@@ -59,33 +59,28 @@ const backupStatusNames = [
 
 class BackupsPage extends Component {
 	componentDidMount() {
-		const { queryDate, moment, timezone, gmtOffset } = this.props;
+		const { queryDate, moment } = this.props;
 
 		// On first load, check if we have a selected date from the URL
 		if ( queryDate ) {
-			const today = applySiteOffset( moment(), { timezone, gmtOffset } );
-
-			const dateToSelect = moment( queryDate, INDEX_FORMAT );
-
-			// If we don't have dateToSelect or it's greater than today, force null
-			if ( ! dateToSelect.isValid() || dateToSelect > today ) {
-				this.onDateChange( null );
-			} else {
-				this.onDateChange( dateToSelect );
-			}
+			this.onDateChange( moment( queryDate, INDEX_FORMAT ) );
 		}
 	}
 
 	onDateChange = date => {
-		const { siteSlug } = this.props;
+		const { siteSlug, oldestDateAvailable, moment, timezone, gmtOffset } = this.props;
 
-		if ( date && date.isValid() ) {
+		const today = applySiteOffset( moment(), { timezone, gmtOffset } );
+
+		if ( date && date.isValid() && date <= today && date >= oldestDateAvailable ) {
+			// Valid dates
 			page(
 				backupMainPath( siteSlug, {
 					date: date.format( INDEX_FORMAT ),
 				} )
 			);
 		} else {
+			// No query for invalid dates
 			page( backupMainPath( siteSlug ) );
 		}
 	};
