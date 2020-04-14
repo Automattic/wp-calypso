@@ -492,4 +492,23 @@ describe( 'getThankYouPageUrl', () => {
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
+
+	it( 'redirects to thank you page if concierge and jetpack are not in the cart, personal is in the cart, but hideNudge is true', () => {
+		isEnabled.mockImplementation( flag => flag === 'upsell/concierge-session' );
+		const cart = {
+			products: [
+				{
+					product_slug: 'personal-bundle',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			receiptId: '1234abcd',
+			hideNudge: true,
+		} );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
+	} );
 } );
