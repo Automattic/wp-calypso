@@ -23,7 +23,7 @@ import tracksRecordEvent from './track-record-event';
  * which is previously handled by the `selectorHandler()` function.
  * The most important checks are performed there.
  */
-const trackAutocompleteBlockTerm = () => {
+const trackInserterInlineSearchTerm = () => {
 	// Pick up the search term from the `content` block attributes.
 	const search_term = get( select( 'core/block-editor' ).getSelectedBlock(), [
 		'attributes',
@@ -34,7 +34,7 @@ const trackAutocompleteBlockTerm = () => {
 		return;
 	}
 
-	const context = 'autocomplete_block';
+	const context = 'inserter_inline';
 
 	tracksRecordEvent( 'wpcom_block_picker_search_term', {
 		search_term,
@@ -115,7 +115,7 @@ function selectorHandler() {
 }
 /**
  * Return the event definition object to track `wpcom_block_picker_search_term`,
- * adding the context event property with the `autocompleter` value.
+ * adding the context event property with the `inserter_inline` value.
  * It also tracks `wpcom_block_picker_no_results` if the search term doesn't return any results.
  *
  * @returns {{handler: Function, selector: string|Function, type: string}} event object definition.
@@ -123,5 +123,5 @@ function selectorHandler() {
 export default () => ( {
 	selector: selectorHandler,
 	type: 'keyup',
-	handler: debounce( trackAutocompleteBlockTerm, 500 ),
+	handler: debounce( trackInserterInlineSearchTerm, 500 ),
 } );

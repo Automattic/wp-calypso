@@ -8,7 +8,7 @@ import debugFactory from 'debug';
  */
 import wpcomBlockPickerSearchTerm from './wpcom-block-picker-search-term-handler';
 import wpcomBlockEditorCloseClick from './wpcom-block-editor-close-click';
-import wpcomAutocompleteBlockSearchTerm from './wpcom-autocomplete-block-search-term';
+import wpcomInserterInlineSearchTerm from './wpcom-inserter-inline-search-term';
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
@@ -22,7 +22,7 @@ const debug = debugFactory( 'wpcom-block-editor:tracking' );
 const EVENTS_MAPPING = [
 	wpcomBlockEditorCloseClick(),
 	wpcomBlockPickerSearchTerm(),
-	wpcomAutocompleteBlockSearchTerm(),
+	wpcomInserterInlineSearchTerm(),
 ];
 
 /**
