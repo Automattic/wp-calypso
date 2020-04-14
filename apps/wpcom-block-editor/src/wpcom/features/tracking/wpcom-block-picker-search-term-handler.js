@@ -7,6 +7,11 @@ import { debounce } from 'lodash';
 import debug from 'debug';
 
 /**
+ * WordPress dependencies
+ */
+import { select } from '@wordpress/data';
+
+/**
  * Internal dependencies
  */
 import tracksRecordEvent from './track-record-event';
@@ -17,6 +22,7 @@ let lastSearchTerm;
 const trackSearchTerm = ( event, target ) => {
 	const key = event.key || event.keyCode;
 	const search_term = ( target.value || '' ).trim().toLowerCase();
+
 	if ( lastSearchTerm === search_term && 'Enter' !== key ) {
 		return tracksDebug( 'Same term: %o, type %o key. Skip.', search_term, key );
 	}
@@ -26,7 +32,20 @@ const trackSearchTerm = ( event, target ) => {
 		return;
 	}
 
-	tracksRecordEvent( 'wpcom_block_picker_search_term', { search_term } );
+	const eventProperties = {
+		search_term,
+	};
+
+	/*
+	 * Populate event properties with `selected_block`
+	 * if there is a selected block in the editor.
+	 */
+	const selectedBlock = select( 'core/block-editor' ).getSelectedBlock();
+	if ( selectedBlock ) {
+		eventProperties.selected_block = selectedBlock.name;
+	}
+
+	tracksRecordEvent( 'wpcom_block_picker_search_term', { ...eventProperties } );
 
 	// Create a separate event for search with no results to make it easier to filter by them
 	const hasResults = document.querySelectorAll( '.block-editor-inserter__no-results' ).length === 0;
@@ -34,7 +53,7 @@ const trackSearchTerm = ( event, target ) => {
 		return;
 	}
 
-	tracksRecordEvent( 'wpcom_block_picker_no_results', { search_term } );
+	tracksRecordEvent( 'wpcom_block_picker_no_results', { ...eventProperties } );
 };
 
 /**
