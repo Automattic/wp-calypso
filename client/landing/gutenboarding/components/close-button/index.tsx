@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { Button } from '@wordpress/components';
+import { SVG, Button } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
 
 interface CloseButtonProps extends Button.ButtonProps {
@@ -13,7 +13,7 @@ const CloseButton: React.FunctionComponent< CloseButtonProps > = ( { onClose, ..
 	const { __ } = useI18n();
 	return (
 		<Button onClick={ onClose } label={ __( 'Close dialog' ) } { ...buttonProps }>
-			<svg
+			<SVG
 				width="12"
 				height="12"
 				viewBox="0 0 16 16"
@@ -21,7 +21,7 @@ const CloseButton: React.FunctionComponent< CloseButtonProps > = ( { onClose, ..
 				xmlns="http://www.w3.org/2000/svg"
 			>
 				<path d="M1.40456 1L15 15M1 15L14.5954 1" stroke="#1E1E1E" strokeWidth="1.5" />
-			</svg>
+			</SVG>
 		</Button>
 	);
 };
