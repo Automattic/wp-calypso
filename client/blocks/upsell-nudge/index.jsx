@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Banner from 'components/banner';
-import { FEATURE_NO_ADS } from 'lib/plans/constants';
+import { FEATURE_NO_ADS, PLAN_BUSINESS, PLAN_ECOMMERCE } from 'lib/plans/constants';
 import { addQueryArgs } from 'lib/url';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { isFreePlan } from 'lib/products-values';
@@ -56,7 +56,7 @@ export const UpsellNudge = ( {
 		return null;
 	}
 
-	const customerType = plan === 'business-bundle' ? 'business' : 'personal';
+	const customerType = plan === PLAN_BUSINESS || PLAN_ECOMMERCE ? 'business' : 'personal';
 
 	const link =
 		href && site
