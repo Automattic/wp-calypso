@@ -17,13 +17,13 @@ export let socket = null;
 const debug = createDebug( 'lasagna:socket' );
 const url = config( 'lasagna_url' );
 
-export const socketConnect = ( store, jwt, userId ) => {
+export const socketConnect = ( store, jwt ) => {
 	if ( socket !== null ) {
 		return;
 	}
 
 	import( /* webpackChunkName: "phoenix" */ 'phoenix' ).then( ( { Socket } ) => {
-		socket = new Socket( url, { params: { jwt, user_id: userId } } );
+		socket = new Socket( url, { params: { jwt } } );
 
 		socket.onOpen( () => {
 			debug( 'socket opened' );
