@@ -3,8 +3,12 @@
  */
 import React, { createRef, FunctionComponent, useState } from 'react';
 import { Button, Popover, Dashicon } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
+
+// Core package needs to add this to the type definitions.
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { useViewportMatch } from '@wordpress/compose';
 
 /**
  * Internal dependencies
