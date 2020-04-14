@@ -133,7 +133,7 @@ class CreditCardPaymentBox extends React.Component {
 	progressBar = () => {
 		return (
 			<div className="checkout__credit-card-payment-box-progress-bar">
-				{ this.props.translate( 'Processing payment…' ) }
+				{ this.props.translate( 'Processing payment... TEST' ) }
 				<ProgressBar value={ Math.round( this.state.progress ) } isPulsing />
 			</div>
 		);
