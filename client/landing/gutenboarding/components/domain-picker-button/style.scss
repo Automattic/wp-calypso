@@ -17,6 +17,12 @@
 		box-shadow: 0 4px 10px rgba( 0, 0, 0, 0.12 );
 		border-radius: 4px;
 	}
+	.components-popover.is-expanded {
+		.components-popover__content {
+			position: initial;
+			left: 0;
+		}
+	}
 }
 
 .domain-picker-button__popover-container {
@@ -25,6 +31,8 @@
 	}
 
 	.components-popover.is-expanded .components-popover__content {
+		position: initial;
+		left: 0;
 		height: 100%;
 	}
 
@@ -32,5 +40,26 @@
 		position: fixed;
 		left: 72px;
 		top: 54px;
+	}
+}
+
+.domain-picker-button__popover-container.is-expanded {
+	@include break-small {
+		position: fixed;
+		left: 0;
+		top: 0;
+
+		.components-popover.is-expanded {
+			transition: 0.1s;
+			overflow-y: scroll;
+			background: white;
+
+			.components-popover__content {
+				border: none;
+				box-shadow: none;
+				border-radius: 0;
+				margin-left: 0;
+			}
+		}
 	}
 }

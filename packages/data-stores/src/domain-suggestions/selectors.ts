@@ -76,7 +76,7 @@ function normalizeDomainSuggestionQuery(
 		include_wordpressdotcom: queryOptions.only_wordpressdotcom || false,
 		include_dotblogsubdomain: false,
 		only_wordpressdotcom: false,
-		quantity: 5,
+		quantity: 29,
 		vendor: 'variation2_front',
 
 		// Merge options

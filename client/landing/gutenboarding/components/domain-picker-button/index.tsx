@@ -32,6 +32,10 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 	const buttonRef = createRef< HTMLButtonElement >();
 
 	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState( false );
+	const [ isExpanded, setIsExpanded ] = useState( false );
+	const toggleIsExpanded = () => {
+		setIsExpanded( ! isExpanded );
+	};
 
 	const handleClose = ( e?: React.FocusEvent ) => {
 		// Don't collide with button toggling
@@ -58,9 +62,15 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				<Dashicon icon="arrow-down-alt2" size={ 16 } />
 			</Button>
 			{ isDomainPopoverVisible && (
-				<div className="domain-picker-button__popover-container">
+				<div
+					className={ classnames( 'domain-picker-button__popover-container', {
+						'is-expanded': isExpanded,
+					} ) }
+				>
 					<Popover
-						className="domain-picker-button__popover"
+						className={ classnames( 'domain-picker-button', {
+							'is-expanded': isExpanded,
+						} ) }
 						focusOnMount={ false }
 						noArrow
 						onClickOutside={ handleClose } // TODO: investigate why clicking outside is ignored
@@ -71,8 +81,10 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 					>
 						<DomainPicker
 							currentDomain={ currentDomain }
+							isExpanded={ isExpanded }
 							onClose={ handleClose }
 							onDomainSelect={ onDomainSelect }
+							onMoreOptions={ toggleIsExpanded }
 						/>
 					</Popover>
 				</div>

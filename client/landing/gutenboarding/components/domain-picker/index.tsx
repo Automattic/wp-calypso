@@ -45,11 +45,18 @@ export interface Props {
 	onClose: () => void;
 
 	/**
+	 * Callback that will be invoked when a more options button is clicked
+	 */
+	onMoreOptions: () => void;
+
+	/**
 	 * Additional parameters for the domain suggestions query.
 	 */
 	queryParameters?: Partial< DomainSuggestions.DomainSuggestionQuery >;
 
 	currentDomain?: DomainSuggestion;
+
+	isExpanded: boolean;
 }
 
 const SearchIcon = () => (
@@ -69,7 +76,13 @@ const SearchIcon = () => (
 	/>
 );
 
-const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, currentDomain } ) => {
+const DomainPicker: FunctionComponent< Props > = ( {
+	currentDomain,
+	isExpanded,
+	onClose,
+	onDomainSelect,
+	onMoreOptions,
+} ) => {
 	const { __ } = useI18n();
 	const label = __( 'Search for a domain' );
 
@@ -78,10 +91,12 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 
 	const allSuggestions = useDomainSuggestions();
 	const freeSuggestions = getFreeDomainSuggestions( allSuggestions );
-	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice(
-		0,
-		PAID_DOMAINS_TO_SHOW
-	);
+	let paidSuggestions = getPaidDomainSuggestions( allSuggestions );
+
+	paidSuggestions = isExpanded
+		? paidSuggestions
+		: paidSuggestions?.slice( 0, PAID_DOMAINS_TO_SHOW );
+
 	const recommendedSuggestion = getRecommendedDomainSuggestion( paidSuggestions );
 
 	return (
@@ -143,7 +158,11 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 
 				<PanelRow className="domain-picker__panel-row">
 					<div className="domain-picker__footer">
-						<div className="domain-picker__footer-options"></div>
+						<div className="domain-picker__footer-options">
+							<Button isLink onClick={ onMoreOptions }>
+								{ isExpanded ? __( 'Fewer options' ) : __( 'More options' ) }
+							</Button>
+						</div>
 						<Button
 							className="domain-picker__footer-button"
 							disabled={ ! freeSuggestions?.length && ! paidSuggestions?.length }
