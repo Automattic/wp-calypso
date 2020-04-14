@@ -3,34 +3,73 @@
  */
 import React from 'react';
 import styled from '@emotion/styled';
-import { useTotal, renderDisplayValueMarkdown } from '@automattic/composite-checkout';
+import { useTax, useTotal, renderDisplayValueMarkdown } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 export default function WPCheckoutOrderSummary() {
+	const translate = useTranslate();
+	const tax = useTax();
+	const total = useTotal();
+
 	return (
-		<React.Fragment>
+		<CheckoutSummaryWrapper className="components__checkout-order-summary">
 			<WPCheckoutOrderSummaryTitle />
-		</React.Fragment>
+			<CheckoutSummaryAmountWrapper>
+				{ tax && (
+					<>
+						<CheckoutSummaryLabel>{ translate( 'Taxes' ) }</CheckoutSummaryLabel>
+						<CheckoutSummaryAmount>
+							{ renderDisplayValueMarkdown( tax.amount.displayValue ) }
+						</CheckoutSummaryAmount>
+					</>
+				) }
+				<CheckoutSummaryTotal>
+					<CheckoutSummaryLabel>{ translate( 'Total' ) }</CheckoutSummaryLabel>
+					<CheckoutSummaryAmount>
+						{ renderDisplayValueMarkdown( total.amount.displayValue ) }
+					</CheckoutSummaryAmount>
+				</CheckoutSummaryTotal>
+			</CheckoutSummaryAmountWrapper>
+		</CheckoutSummaryWrapper>
 	);
 }
 
 function WPCheckoutOrderSummaryTitle() {
 	const translate = useTranslate();
-	const total = useTotal();
 	return (
 		<CheckoutSummaryTitle>
 			<span>{ translate( 'Purchase Details' ) }</span>
-			<CheckoutSummaryTotal>
-				{ renderDisplayValueMarkdown( total.amount.displayValue ) }
-			</CheckoutSummaryTotal>
 		</CheckoutSummaryTitle>
 	);
 }
+
+const CheckoutSummaryWrapper = styled.div`
+	background: ${props => props.theme.colors.surface};
+	border: 1px solid ${props => props.theme.colors.borderColorLight};
+
+	@media ( ${props => props.theme.breakpoints.desktopUp} ) {
+		float: right;
+		margin-left: 16px;
+		width: 326px;
+	}
+`;
 
 const CheckoutSummaryTitle = styled.span`
 	display: flex;
 	justify-content: space-between;
 `;
+
+const CheckoutSummaryAmountWrapper = styled.div`
+	border-top: 1px solid ${props => props.theme.colors.borderColorLight};
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	padding: 16px;
+`;
+
+const CheckoutSummaryLabel = styled.span``;
+
+const CheckoutSummaryAmount = styled.span``;
 
 const CheckoutSummaryTotal = styled.span`
 	font-weight: ${( props ) => props.theme.weights.bold};
