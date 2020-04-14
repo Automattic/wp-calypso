@@ -12,6 +12,7 @@ import Gridicon from 'components/gridicon';
  */
 import ExternalLink from 'components/external-link';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -64,6 +65,7 @@ class InlineSupportLink extends Component {
 		}
 
 		const LinkComponent = supportPostId ? 'a' : ExternalLink;
+		const url = supportPostId ? localizeUrl( supportLink ) : supportLink;
 		const externalLinkProps = ! supportPostId && {
 			icon: showIcon,
 			iconSize,
@@ -72,7 +74,7 @@ class InlineSupportLink extends Component {
 		return (
 			<LinkComponent
 				className="inline-support-link"
-				href={ supportLink }
+				href={ url }
 				onClick={ this.handleClick }
 				target="_blank"
 				rel="noopener noreferrer"

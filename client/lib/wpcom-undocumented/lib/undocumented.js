@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { camelCase, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
+import { camelCase, isPlainObject, omit, pick, reject, snakeCase, set } from 'lodash';
 import { stringify } from 'qs';
 
 /**
@@ -671,11 +671,13 @@ function mapKeysRecursively( object, fn ) {
  * @param {object} contactInformation - user's contact information
  * @param {string[]} domainNames - list of domain names
  * @param {Function} fn The callback function
+ * @param {object} query Query object for the call to wpcom.req.post
  */
 Undocumented.prototype.validateDomainContactInformation = function(
 	contactInformation,
 	domainNames,
-	fn
+	fn,
+	query
 ) {
 	let data = {
 		contactInformation: contactInformation,
@@ -685,20 +687,30 @@ Undocumented.prototype.validateDomainContactInformation = function(
 	debug( '/me/domain-contact-information/validate query' );
 	data = mapKeysRecursively( data, snakeCase );
 
-	return this.wpcom.req.post( { path: '/me/domain-contact-information/validate' }, data, function(
-		error,
-		successData
-	) {
-		if ( error ) {
-			return fn( error );
+	return this.wpcom.req.post(
+		{ path: '/me/domain-contact-information/validate' },
+		query,
+		data,
+		function( error, successData ) {
+			if ( error ) {
+				return fn( error );
+			}
+
+			// Reshape the error messages to a nested object
+			if ( successData.messages && query?.apiVersion === '1.2' ) {
+				successData.messages = Object.keys( successData.messages ).reduce( ( obj, key ) => {
+					set( obj, key, successData.messages[ key ] );
+					return obj;
+				}, {} );
+			}
+
+			const newData = mapKeysRecursively( successData, function( key ) {
+				return key === '_headers' ? key : camelCase( key );
+			} );
+
+			fn( null, newData );
 		}
-
-		const newData = mapKeysRecursively( successData, function( key ) {
-			return key === '_headers' ? key : camelCase( key );
-		} );
-
-		fn( null, newData );
-	} );
+	);
 };
 
 /**

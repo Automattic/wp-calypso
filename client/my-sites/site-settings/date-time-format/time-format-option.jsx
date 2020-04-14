@@ -16,6 +16,7 @@ import FormRadio from 'components/forms/form-radio';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { defaultTimeFormats } from './default-formats';
 import { phpToMomentDatetimeFormat } from './utils';
+import { localizeUrl } from 'lib/i18n-utils';
 
 export const TimeFormatOption = ( {
 	disabled,
@@ -68,7 +69,7 @@ export const TimeFormatOption = ( {
 			</span>
 			<FormSettingExplanation>
 				<ExternalLink
-					href="https://support.wordpress.com/settings/time-settings/"
+					href={ localizeUrl( 'https://wordpress.com/support/settings/time-settings/' ) }
 					icon
 					target="_blank"
 				>

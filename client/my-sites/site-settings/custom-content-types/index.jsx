@@ -21,6 +21,7 @@ import { activateModule } from 'state/jetpack/modules/actions';
 import { isJetpackSite } from 'state/sites/selectors';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import SupportInfo from 'components/support-info';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -143,7 +144,7 @@ class CustomContentTypes extends Component {
 				'you can display them using the shortcode [testimonials].',
 			{
 				components: {
-					link: <a href="https://support.wordpress.com/testimonials/" />,
+					link: <a href={ localizeUrl( 'https://wordpress.com/support/testimonials/' ) } />,
 				},
 			}
 		);
@@ -159,7 +160,7 @@ class CustomContentTypes extends Component {
 				'you can display them using the shortcode [portfolio].',
 			{
 				components: {
-					link: <a href="https://support.wordpress.com/portfolios/" />,
+					link: <a href={ localizeUrl( 'https://wordpress.com/support/portfolios/' ) } />,
 				},
 			}
 		);

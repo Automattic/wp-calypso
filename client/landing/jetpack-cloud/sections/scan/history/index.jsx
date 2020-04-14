@@ -10,6 +10,7 @@ import page from 'page';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
+import QueryJetpackScanHistory from 'components/data/query-jetpack-scan-history';
 import ScanHistoryItem from '../../../components/scan-history-item';
 import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
@@ -141,6 +142,7 @@ class ScanHistoryPage extends Component {
 		const { value: filter } = this.getCurrentFilter();
 		return (
 			<Main wideLayout className="history">
+				<QueryJetpackScanHistory siteId={ this.props.siteId } />
 				<DocumentHead title={ translate( 'History' ) } />
 				<SidebarNavigation />
 				<h1 className="history__header">{ translate( 'History' ) }</h1>

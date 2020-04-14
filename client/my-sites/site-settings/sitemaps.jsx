@@ -102,7 +102,7 @@ class Sitemaps extends Component {
 
 		return (
 			<div>
-				{ this.renderInfoLink( 'https://support.wordpress.com/sitemaps/', false ) }
+				{ this.renderInfoLink( 'https://wordpress.com/support/sitemaps/', false ) }
 
 				{ this.isSitePublic() ? (
 					<div>

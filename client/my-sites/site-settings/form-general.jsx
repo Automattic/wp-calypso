@@ -32,6 +32,7 @@ import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { isJetpackSite, isCurrentPlanPaid } from 'state/sites/selectors';
+import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import guessTimezone from 'lib/i18n-utils/guess-timezone';
 import { preventWidows } from 'lib/formatting';
@@ -43,6 +44,7 @@ import { launchSite } from 'state/sites/launch/actions';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import FormInputCheckbox from 'components/forms/form-checkbox';
+import { hasLocalizedText } from 'blocks/eligibility-warnings/has-localized-text';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentDidMount() {
@@ -214,7 +216,7 @@ export class SiteSettingsFormGeneral extends Component {
 		const errors = {
 			error_cap: {
 				text: translate( 'The Site Language setting is disabled due to insufficient permissions.' ),
-				link: 'https://support.wordpress.com/user-roles/',
+				link: 'https://wordpress.com/support/user-roles/',
 				linkText: translate( 'More info' ),
 			},
 			error_const: {
@@ -387,7 +389,13 @@ export class SiteSettingsFormGeneral extends Component {
 							<span>{ translate( 'Coming Soon' ) }</span>
 						</FormLabel>
 						<FormSettingExplanation isIndented>
-							{ translate( "Your site is hidden from visitors until it's ready for viewing." ) }
+							{ hasLocalizedText(
+								'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
+							)
+								? translate(
+										'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
+								  )
+								: translate( "Your site is hidden from visitors until it's ready for viewing." ) }
 						</FormSettingExplanation>
 					</>
 				) }
@@ -447,7 +455,15 @@ export class SiteSettingsFormGeneral extends Component {
 							<span>{ translate( 'Private' ) }</span>
 						</FormLabel>
 						<FormSettingExplanation isIndented>
-							{ translate( 'Your site is only visible to you and logged-in members you approve.' ) }
+							{ hasLocalizedText(
+								'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
+							)
+								? translate(
+										'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
+								  )
+								: translate(
+										'Your site is only visible to you and logged-in members you approve.'
+								  ) }
 						</FormSettingExplanation>
 					</>
 				) }
@@ -504,7 +520,7 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	renderLaunchSite() {
-		const { translate, siteDomains, siteSlug, siteId, isPaidPlan } = this.props;
+		const { translate, siteDomains, siteSlug, siteId, isPaidPlan, isComingSoon } = this.props;
 
 		const launchSiteClasses = classNames( 'site-settings__general-settings-launch-site-button', {
 			'site-settings__disable-privacy-settings': ! siteDomains.length,
@@ -531,9 +547,16 @@ export class SiteSettingsFormGeneral extends Component {
 				<Card className="site-settings__general-settings-launch-site">
 					<div className="site-settings__general-settings-launch-site-text">
 						<p>
-							{ translate(
-								"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
-							) }
+							{ isComingSoon &&
+							hasLocalizedText(
+								'Your site hasn\'t been launched yet. It is hidden from visitors behind a "Coming Soon" notice until it is launched.'
+							)
+								? translate(
+										'Your site hasn\'t been launched yet. It is hidden from visitors behind a "Coming Soon" notice until it is launched.'
+								  )
+								: translate(
+										"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
+								  ) }
 						</p>
 					</div>
 					<div className={ launchSiteClasses }>{ btnComponent }</div>
@@ -703,6 +726,7 @@ const connectComponent = connect(
 				? ownProps.withComingSoonOption
 				: 'variant' === abtest( 'ATPrivacy' ),
 			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
+			isComingSoon: isSiteComingSoon( state, siteId ),
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			siteIsJetpack,
 			siteIsVip: isVipSite( state, siteId ),
@@ -738,9 +762,12 @@ const getFormSettings = settings => {
 
 		lang_id: settings.lang_id,
 		blog_public: settings.blog_public,
-		wpcom_coming_soon: settings.wpcom_coming_soon,
 		timezone_string: settings.timezone_string,
 	};
+
+	if ( 'variant' === abtest( 'ATPrivacy' ) ) {
+		formSettings.wpcom_coming_soon = settings.wpcom_coming_soon;
+	}
 
 	// handling `gmt_offset` and `timezone_string` values
 	const gmt_offset = settings.gmt_offset;

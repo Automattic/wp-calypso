@@ -35,11 +35,18 @@ type WpcomStoreAction =
 			payload: PossiblyCompleteDomainContactDetails;
 	  };
 
+type ReactStandardAction = { type: string; payload?: any }; // eslint-disable-line @typescript-eslint/no-explicit-any
+type WordPressDataStore = {
+	getState: () => object;
+	subscribe: ( listener: Function ) => void;
+	dispatch: ( action: object ) => void;
+};
+
 export function useWpcomStore(
-	registerStore,
-	onEvent,
+	registerStore: ( key: string, storeOptions: object ) => WordPressDataStore,
+	onEvent: ( action: ReactStandardAction ) => void,
 	managedContactDetails: ManagedContactDetails,
-	updateContactDetailsCache: ( DomainContactDetails ) => void
+	updateContactDetailsCache: ( _: DomainContactDetails ) => void
 ) {
 	// Only register once
 	const registerIsComplete = useRef< boolean >( false );
@@ -144,20 +151,6 @@ export function useWpcomStore(
 
 			touchContactFields(): WpcomStoreAction {
 				return { type: 'TOUCH_CONTACT_DETAILS' };
-			},
-
-			// TODO: type this; need to use error messages from contact form
-			setContactField( key, field ) {
-				if ( ! field.isValid ) {
-					onEvent( {
-						type: 'a8c_checkout_error',
-						payload: {
-							type: 'Field error',
-							field: key,
-						},
-					} );
-				}
-				return { type: 'CONTACT_SET_FIELD', payload: { key, field } };
 			},
 
 			updateVatId( payload: string ): WpcomStoreAction {

@@ -25,23 +25,18 @@ export default class LoginPage extends AsyncBaseContainer {
 		const userNameSelector = By.css( '#usernameOrEmail' );
 		const passwordSelector = By.css( '#password' );
 		const changeAccountSelector = By.css( '#loginAsAnotherUser' );
+		const alreadyLoggedInSelector = By.css( '.continue-as-user' );
 
-		const setUsername = async () => {
-			await driverHelper.waitTillPresentAndDisplayed( driver, userNameSelector );
-			await driverHelper.waitTillFocused( driver, userNameSelector );
-			await driverHelper.setWhenSettable( driver, userNameSelector, username );
-		};
-
-		try {
-			await setUsername();
-		} catch ( error ) {
-			console.error( error );
-			// If setting the username failed the first time, we might be on the
-			// "existing user" login page. So to display the actual login form,
-			// we click the link to login with another account. Then try again.
+		const isDisplayed = await driverHelper.isEventuallyPresentAndDisplayed(
+			driver,
+			alreadyLoggedInSelector,
+			2000
+		);
+		if ( isDisplayed ) {
 			await driverHelper.clickWhenClickable( driver, changeAccountSelector );
-			await setUsername();
 		}
+		await driverHelper.waitTillPresentAndDisplayed( driver, userNameSelector );
+		await driverHelper.setWhenSettable( driver, userNameSelector, username );
 		await this.driver.sleep( 1000 );
 		await driver.findElement( userNameSelector ).sendKeys( Key.ENTER );
 

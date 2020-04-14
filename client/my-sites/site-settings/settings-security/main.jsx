@@ -19,14 +19,17 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import JetpackMonitor from 'my-sites/site-settings/form-jetpack-monitor';
 import Main from 'components/main';
 import QueryRewindState from 'components/data/query-rewind-state';
+import QuerySitePurchases from 'components/data/query-site-purchases';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import FormattedHeader from 'components/formatted-header';
 import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
+import { getSitePurchases } from 'state/purchases/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
 const SiteSettingsSecurity = ( {
-	showRewindCredentials,
+	rewindState,
+	sitePurchases,
 	site,
 	siteId,
 	siteIsJetpack,
@@ -46,9 +49,20 @@ const SiteSettingsSecurity = ( {
 		);
 	}
 
+	const credentials = find( rewindState.credentials, { role: 'main' } );
+	const isManaged = credentials && credentials.type && 'managed' === credentials.type;
+
+	const isRewindActive = [ 'awaitingCredentials', 'provisioning', 'active' ].includes(
+		rewindState.state
+	);
+	const hasScanProduct = sitePurchases.some( p => p.productSlug.includes( 'jetpack_scan' ) );
+
+	const showCredentials = ! isManaged && ( isRewindActive || hasScanProduct );
+
 	return (
 		<Main className="settings-security site-settings">
 			<QueryRewindState siteId={ siteId } />
+			<QuerySitePurchases siteId={ siteId } />
 			<DocumentHead title={ translate( 'Site Settings' ) } />
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
@@ -58,7 +72,7 @@ const SiteSettingsSecurity = ( {
 				align="left"
 			/>
 			<SiteSettingsNavigation site={ site } section="security" />
-			{ showRewindCredentials && <JetpackCredentials /> }
+			{ showCredentials && <JetpackCredentials /> }
 			<JetpackMonitor />
 			<FormSecurity />
 		</Main>
@@ -66,7 +80,8 @@ const SiteSettingsSecurity = ( {
 };
 
 SiteSettingsSecurity.propTypes = {
-	showRewindCredentials: PropTypes.bool,
+	rewindState: PropTypes.bool,
+	sitePurchases: PropTypes.array,
 	site: PropTypes.object,
 	siteId: PropTypes.number,
 	siteIsJetpack: PropTypes.bool,
@@ -75,15 +90,12 @@ SiteSettingsSecurity.propTypes = {
 export default connect( state => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const rewind = getRewindState( state, siteId );
-	const credentials = find( rewind.credentials, { role: 'main' } );
-	const isManaged = credentials && credentials.type && 'managed' === credentials.type;
+	const rewindState = getRewindState( state, siteId );
+	const sitePurchases = getSitePurchases( state, siteId );
 
 	return {
-		showRewindCredentials:
-			rewind.state === 'awaitingCredentials' ||
-			rewind.state === 'provisioning' ||
-			( rewind.state === 'active' && ! isManaged ),
+		rewindState,
+		sitePurchases,
 		site,
 		siteId,
 		siteIsJetpack: isJetpackSite( state, siteId ),

@@ -14,7 +14,7 @@ export default class extends React.PureComponent {
 	render() {
 		const inlineSupportProps = {
 			supportPostId: 38147,
-			supportLink: 'https://en.support.wordpress.com/audio/podcasting/',
+			supportLink: 'https://wordpress.com/support/audio/podcasting/',
 		};
 		return <InlineSupportLink { ...inlineSupportProps } />;
 	}

@@ -90,7 +90,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 */
 	const getSimplePaymentsCard = () => {
 		const supportLink =
-			'https://en.support.wordpress.com/wordpress-editor/blocks/simple-payments-block/';
+			'https://wordpress.com/support/wordpress-editor/blocks/simple-payments-block/';
 		const cta = hasSimplePayments
 			? {
 					text: translate( 'Collect one-time payments' ),
@@ -164,7 +164,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			  );
 		const learnMoreLink = isFreePlan
 			? {
-					url: 'https://en.support.wordpress.com/recurring-payments/',
+					url: 'https://wordpress.com/support/recurring-payments/',
 					onClick: () => trackLearnLink( 'recurring-payments' ),
 			  }
 			: null;

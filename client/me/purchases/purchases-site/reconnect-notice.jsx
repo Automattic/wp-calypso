@@ -23,12 +23,14 @@ class PurchaseReconnectNotice extends Component {
 		const { translate, name, isJetpack } = this.props;
 
 		const text = isJetpack
-			? translate( '%(site)s has been disconnected from WordPress.com.', {
+			? // translators: site is the site name. Eg "domain.com"
+			  translate( '%(site)s has been disconnected from WordPress.com.', {
 					args: {
 						site: name,
 					},
 			  } )
-			: translate( 'You are no longer a user on %(site)s and cannot manage this purchase.', {
+			: // translators: site is the site name. Eg "domain.com"
+			  translate( 'You are no longer a user on %(site)s and cannot manage this purchase.', {
 					args: {
 						site: name,
 					},

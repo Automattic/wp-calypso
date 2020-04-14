@@ -1,3 +1,22 @@
 .backups__page .filterbar .filterbar__wrap.card {
-    display: inline-block;
+    display: flex;
+}
+
+.backups__search {
+    padding: 0 1rem;
+}
+
+.backups__search-header {
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.backups__search-description {
+    margin-bottom: 2rem;
+}
+
+.backups__page .main {
+	margin-left: auto;
 }

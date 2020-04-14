@@ -3,6 +3,8 @@
 @import 'assets/stylesheets/shared/animation'; // Needed for the placeholder
 @import '../../mixins';
 
+$domain-picker__suggestion-item-height: 24px;
+
 .domain-picker.components-panel {
 	border: none;
 
@@ -31,7 +33,7 @@
 
 .domain-picker__search {
 	position: relative;
-	margin-bottom: -7px;
+	margin-bottom: -4px; // Reducing the spacing added by .components-panel__row
 
 	input[type='text'].components-text-control__input {
 		padding: 6px 40px 6px 16px;
@@ -108,15 +110,16 @@
 }
 
 .domain-picker__suggestion-none {
+	@include onboarding-medium-text;
+	line-height: 20px; // matching design
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
+	align-items: flex-start;
 	width: 100%;
-	height: 46px;
 	border-radius: 0;
-	padding: 0;
-	margin-bottom: 10px;
-	font-size: 14px;
+	padding: 10px 0;
+	margin-bottom: 7px;
+	cursor: pointer;
 }
 
 .domain-picker__suggestion-item {
@@ -124,8 +127,6 @@
 	// See https://github.com/Automattic/wp-calypso/pull/38554/commits/e1f9673bcfd9eaa6469a0cfecda9b915a520961a
 	// See https://github.com/WordPress/gutenberg/pull/19535
 	@extend .domain-picker__suggestion-none;
-	cursor: pointer;
-	margin-bottom: 7px;
 
 	&.components-button {
 		&.is-tertiary {
@@ -137,15 +138,12 @@
 			}
 		}
 	}
-}
-
-.domain-picker__suggestion-item-name {
-	letter-spacing: 0.4px;
 
 	input[type='radio'].domain-picker__suggestion-radio-button {
 		width: 16px;
 		height: 16px;
-		margin: 0 12px 0 0;
+		margin: 3px 12px 0 0; // 3px cosmetic alignment
+		min-width: 16px; // prevents long domain from squishing the radio button
 		padding: 0;
 		vertical-align: middle;
 		position: relative;
@@ -177,13 +175,31 @@
 			box-shadow: 0 0 0 1px var( --studio-blue-30 );
 		}
 	}
+}
+
+.domain-picker__suggestion-item-name {
+	flex-grow: 1;
+	margin-right: 24px;
+	letter-spacing: 0.4px;
+	min-height: $domain-picker__suggestion-item-height;
+
+	.domain-picker__domain-name {
+		word-break: break-word; // use hyphens if any to break domain name
+	}
 
 	&.placeholder {
 		@include placeholder();
-		min-width: 30%;
-		background-position: 30px;
-		background-repeat: no-repeat;
+		max-width: 30%;
+		margin-right: auto; // position the placeholder to the left overriding justify-content: space-between
 	}
+}
+
+.domain-picker__domain-tld {
+	color: var( --studio-blue-40 );
+	// margin for recommended badge. this margin shouldn't
+	// be placed on the badge because if the badge falls
+	// on a newline, it will have whitespace on the left.
+	margin-right: 10px;
 }
 
 .domain-picker__has-domain {
@@ -202,7 +218,6 @@
 	height: 20px;
 	align-items: center;
 	font-size: 10px;
-	margin-left: 10px;
 	text-transform: uppercase;
 
 	background-color: var( --studio-blue-50 );
@@ -217,6 +232,7 @@
 .domain-picker__price {
 	color: var( --studio-gray-40 );
 	white-space: nowrap;
+	min-height: $domain-picker__suggestion-item-height;
 
 	&.placeholder {
 		@include placeholder();

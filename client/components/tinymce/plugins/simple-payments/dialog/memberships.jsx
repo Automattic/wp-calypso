@@ -36,6 +36,7 @@ import UpgradeNudge from 'blocks/upgrade-nudge';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
+import { localizeUrl } from 'lib/i18n-utils';
 
 // Utility function for checking the state of the Payment Buttons list
 const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
@@ -445,7 +446,7 @@ class MembershipsDialog extends Component {
 					secondaryAction={
 						<a
 							className="empty-content__action button"
-							href="https://support.wordpress.com/simple-payments/"
+							href={ localizeUrl( 'https://wordpress.com/support/simple-payments/' ) }
 						>
 							{ translate( 'Learn more about Simple Payments' ) }
 						</a>

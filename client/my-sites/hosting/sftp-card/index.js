@@ -150,7 +150,7 @@ export const SftpCard = ( {
 											<ExternalLink
 												icon
 												target="_blank"
-												href={ localizeUrl( 'https://en.support.wordpress.com/sftp/' ) }
+												href={ localizeUrl( 'https://wordpress.com/support/sftp/' ) }
 											/>
 										),
 									},
@@ -174,7 +174,7 @@ export const SftpCard = ( {
 										<ExternalLink
 											icon
 											target="_blank"
-											href={ localizeUrl( 'https://en.support.wordpress.com/sftp/' ) }
+											href={ localizeUrl( 'https://wordpress.com/support/sftp/' ) }
 										/>
 									),
 								},

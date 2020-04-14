@@ -28,8 +28,8 @@
 		"i18n-calypso": "file:../i18n-calypso"
 	},
 	"scripts": {
-		"clean": "npx rimraf dist",
-		"prepublish": "npm run clean",
-		"prepare": "transpile"
+		"clean": "check-npm-client && npx rimraf dist",
+		"prepublish": "check-npm-client && npm run clean",
+		"prepare": "check-npm-client && transpile"
 	}
 }

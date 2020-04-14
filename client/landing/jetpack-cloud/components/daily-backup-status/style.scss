@@ -16,12 +16,25 @@
 	fill: rgb( 214, 54, 56 );
 }
 
+.daily-backup-status__gridicon-no-backup {
+	width: 3rem;
+	height: 3rem;
+	color: var( --studio-yellow-20 );
+}
+
+.daily-backup-status__gridicon-backup-scheduled {
+	width: 3rem;
+	height: 3rem;
+	color: var( --studio-gray-40 );
+}
+
 .daily-backup-status__label {
 	color: var( --studio-gray-80 );
 	text-align: left;
 }
 
-.daily-backup-status__date {
+.daily-backup-status__date,
+.daily-backup-status__static-title {
 	font-size: 1.4rem;
 	font-weight: 500;
 	margin-bottom: 1rem;
@@ -33,6 +46,11 @@
 	color: rgb( 214, 54, 56 );
 	margin-bottom: 0.5rem;
 	margin-top: -0.5rem;
+}
+
+.daily-backup-status__no-backup-last-backup {
+	margin-top: 1rem;
+	font-style: italic;
 }
 
 .form-button.daily-backup-status__restore-button,

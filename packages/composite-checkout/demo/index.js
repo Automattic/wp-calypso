@@ -26,7 +26,6 @@ import {
 	useDispatch,
 	useMessages,
 	useFormStatus,
-	usePaymentMethod,
 } from '../src/public-api';
 import { StripeHookProvider, useStripe } from '../src/lib/stripe';
 
@@ -391,7 +390,6 @@ function MyCheckout() {
 function MyCheckoutBody() {
 	const country = useSelect( storeSelect => storeSelect( 'demo' )?.getCountry() ?? '' );
 	const { showErrorMessage: showError } = useMessages();
-	const activePaymentMethod = usePaymentMethod();
 
 	return (
 		<Checkout>
@@ -408,13 +406,11 @@ function MyCheckoutBody() {
 			/>
 			<CheckoutSteps>
 				<CheckoutStep
-					stepId="payment-method-step"
-					isCompleteCallback={ () =>
-						paymentMethodStep.isCompleteCallback( { activePaymentMethod } )
-					}
-					activeStepContent={ paymentMethodStep.activeStepContent }
-					completeStepContent={ paymentMethodStep.completeStepContent }
-					titleContent={ paymentMethodStep.titleContent }
+					stepId="review-order-step"
+					isCompleteCallback={ () => true }
+					activeStepContent={ reviewOrderStep.activeStepContent }
+					completeStepContent={ reviewOrderStep.completeStepContent }
+					titleContent={ reviewOrderStep.titleContent }
 				/>
 				<CheckoutStep
 					stepId={ contactFormStep.id }
@@ -435,11 +431,10 @@ function MyCheckoutBody() {
 					titleContent={ contactFormStep.titleContent }
 				/>
 				<CheckoutStep
-					stepId="review-order-step"
-					isCompleteCallback={ () => true }
-					activeStepContent={ reviewOrderStep.activeStepContent }
-					completeStepContent={ reviewOrderStep.completeStepContent }
-					titleContent={ reviewOrderStep.titleContent }
+					stepId="payment-method-step"
+					activeStepContent={ paymentMethodStep.activeStepContent }
+					completeStepContent={ paymentMethodStep.completeStepContent }
+					titleContent={ paymentMethodStep.titleContent }
 				/>
 			</CheckoutSteps>
 		</Checkout>

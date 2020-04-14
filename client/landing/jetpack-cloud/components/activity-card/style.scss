@@ -1,8 +1,94 @@
 .activity-card .activity-log-item__actor {
     margin-left: 0;
+    display: flex;
+    align-items: center;
 }
 
 .activity-card .button.is-borderless.is-primary {
     float: none;
     display: inline-block;
+}
+
+.activity-card__time {
+	margin: 1.5rem 0 0.5rem;
+}
+
+.activity-card__time-icon {
+	width: 1.1rem;
+	height: 1.1rem;
+}
+
+.activity-card__time-text {
+	position: relative;
+	display: inline-block;
+	top: -0.2rem;
+	left: 0.2rem;
+	color: #a7aaad;
+	font-size: 0.7rem;
+	margin-left: 0.2rem;
+}
+
+.activity-log-item__actor-info {
+	margin-left: 1rem;
+}
+
+.activity-card .activity-log-item__actor-info .activity-log-item__actor-name,
+.activity-card .activity-log-item__actor-info .activity-log-item__actor-role,
+.activity-card__activity-title {
+	font-size: 0.8rem;
+	color: rgb( 100, 105, 112 );
+}
+
+.activity-card__activity-title {
+	font-style: italic;
+}
+
+.activity-card__activity-description {
+	margin: 0.5rem 0;
+}
+
+.activity-card__activity-actions {
+	position: relative;
+	top: 0.5rem;
+	border-top: 1px solid #e4e4e6;
+	padding-top: 0.7rem;
+	display: flex;
+	justify-content: space-between;
+}
+
+.activity-card__detail-button.button.is-borderless.is-primary {
+	color: #3d444a;
+	font-size: 0.9rem;
+	font-weight: normal;
+	margin-left: 0;
+}
+
+.backup-delta__realtime .activity-card__actions-button.button.is-borderless.is-primary {
+	float: right;
+	font-size: 0.9rem;
+	font-weight: 400;
+}
+
+.activity-card__restore-button {
+	margin: 0.8rem;
+	margin-bottom: 0;
+}
+
+.activity-card__download-button.is-borderless {
+	margin: 0.8rem;
+	border-radius: 0;
+	border-top: 1px solid #e4e4e6;
+	margin-bottom: 0.5rem;
+	padding-top: 0.8rem;
+	display: flex;
+	justify-content: left;
+	font-size: 0.9rem;
+}
+
+.activity-card__download-icon {
+	margin-right: 0.6rem;
+}
+
+.activity-card__actions-icon {
+	margin-left: 0.3rem;
 }

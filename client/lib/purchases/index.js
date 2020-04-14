@@ -125,7 +125,11 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
 		notices.error( 'Could not find product slug for renewal.' );
 		throw new Error( 'Could not find product slug for renewal.' );
 	}
-	const productList = meta ? `${ product_slug }:${ meta }` : product_slug;
+	// There is a product with this weird slug, but left to itself the slug will
+	// cause a routing error since it contains a slash, so we encode it here and
+	// then decode it in the checkout code before adding to the cart.
+	const productSlug = product_slug === 'no-adverts/no-adverts.php' ? 'no-ads' : product_slug;
+	const productList = meta ? `${ productSlug }:${ meta }` : productSlug;
 	const renewalUrl = `/checkout/${ productList }/renew/${ purchaseId }/${ siteSlug ||
 		purchaseDomain ||
 		'' }`;

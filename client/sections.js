@@ -197,13 +197,6 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'checklist',
-		paths: [ '/checklist' ],
-		module: 'my-sites/checklist',
-		secondary: true,
-		group: 'checklist',
-	},
-	{
 		name: 'google-my-business',
 		paths: [ '/google-my-business' ],
 		module: 'my-sites/google-my-business',

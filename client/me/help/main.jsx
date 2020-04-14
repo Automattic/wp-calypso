@@ -46,36 +46,35 @@ class Help extends React.PureComponent {
 	getHelpfulArticles = () => {
 		const helpfulResults = [
 			{
-				link:
-					'https://en.support.wordpress.com/do-i-need-a-website-a-blog-or-a-website-with-a-blog/',
+				link: 'https://wordpress.com/support/do-i-need-a-website-a-blog-or-a-website-with-a-blog/',
 				title: this.props.translate( 'Do I Need a Website, a Blog, or a Website with a Blog?' ),
 				description: this.props.translate(
 					'If you’re building a brand new site, you might be wondering if you need a website, a blog, or a website with a blog. At WordPress.com, you can create all of these options easily, right in your dashboard.'
 				),
 			},
 			{
-				link: 'https://en.support.wordpress.com/business-plan/',
+				link: 'https://wordpress.com/support/business-plan/',
 				title: this.props.translate( 'Uploading custom plugins and themes' ),
 				description: this.props.translate(
 					'Learn more about installing a custom theme or plugin using the Business plan.'
 				),
 			},
 			{
-				link: 'https://en.support.wordpress.com/all-about-domains/',
+				link: 'https://wordpress.com/support/all-about-domains/',
 				title: this.props.translate( 'All About Domains' ),
 				description: this.props.translate(
 					'Set up your domain whether it’s registered with WordPress.com or elsewhere.'
 				),
 			},
 			{
-				link: 'https://en.support.wordpress.com/start/',
+				link: 'https://wordpress.com/support/start/',
 				title: this.props.translate( 'Get Started' ),
 				description: this.props.translate(
 					'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.'
 				),
 			},
 			{
-				link: 'https://en.support.wordpress.com/settings/privacy-settings/',
+				link: 'https://wordpress.com/support/settings/privacy-settings/',
 				title: this.props.translate( 'Privacy Settings' ),
 				description: this.props.translate(
 					'Limit your site’s visibility or make it completely private.'
@@ -113,7 +112,7 @@ class Help extends React.PureComponent {
 			<div className="help__support-links">
 				<CompactCard
 					className="help__support-link"
-					href={ localizeUrl( 'https://en.support.wordpress.com/' ) }
+					href={ localizeUrl( 'https://wordpress.com/support/' ) }
 					target="__blank"
 				>
 					<div className="help__support-link-section">
@@ -129,7 +128,7 @@ class Help extends React.PureComponent {
 				</CompactCard>
 				<CompactCard
 					className="help__support-link"
-					href={ localizeUrl( 'https://en.support.wordpress.com/video-tutorials/' ) }
+					href={ localizeUrl( 'https://wordpress.com/support/video-tutorials/' ) }
 					target="__blank"
 				>
 					<div className="help__support-link-section">

@@ -90,7 +90,7 @@ class ThemeEnhancements extends Component {
 				<FormLegend>{ translate( 'Infinite Scroll' ) }</FormLegend>
 				<SupportInfo
 					text={ translate( 'Control how additional posts are loaded.' ) }
-					link="https://support.wordpress.com/infinite-scroll/"
+					link="https://wordpress.com/support/infinite-scroll/"
 					privacyLink={ false }
 				/>
 				{ this.renderToggle(

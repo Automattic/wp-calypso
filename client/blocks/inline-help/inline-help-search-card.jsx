@@ -82,7 +82,6 @@ class InlineHelpSearchCard extends Component {
 				onSearch={ this.onSearch }
 				onKeyDown={ this.onKeyDown }
 				placeholder={ this.props.translate( 'Search for help…' ) }
-				autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 				delaySearch={ true }
 			/>
 		);

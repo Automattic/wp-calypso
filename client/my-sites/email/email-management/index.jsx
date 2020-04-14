@@ -40,6 +40,7 @@ import { getSelectedDomain, isMappedDomain, isMappedDomainWithWpcomNameservers }
 import DocumentHead from 'components/data/document-head';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import QuerySiteDomains from 'components/data/query-site-domains';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -188,8 +189,9 @@ class EmailManagement extends React.Component {
 					{ args: { domain: selectedDomainName } }
 				),
 				action: translate( 'How to change your name servers' ),
-				actionURL:
-					'https://support.wordpress.com/domains/map-existing-domain/#change-your-domains-name-servers',
+				actionURL: localizeUrl(
+					'https://wordpress.com/support/domains/map-existing-domain/#change-your-domains-name-servers'
+				),
 				actionTarget: '_blank',
 				...emailForwardingAction,
 			};

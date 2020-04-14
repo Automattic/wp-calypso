@@ -21,20 +21,12 @@ import { useHasDomainsInCart, isLineItemADomain } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
 
 export function WPOrderReviewSection( { children, className } ) {
-	return (
-		<OrderReviewSectionArea className={ joinClasses( [ className, 'order-review-section' ] ) }>
-			{ children }
-		</OrderReviewSectionArea>
-	);
+	return <div className={ joinClasses( [ className, 'order-review-section' ] ) }>{ children }</div>;
 }
 
 WPOrderReviewSection.propTypes = {
 	className: PropTypes.string,
 };
-
-const OrderReviewSectionArea = styled.div`
-	margin-bottom: 16px;
-`;
 
 function WPLineItem( {
 	item,
@@ -179,18 +171,19 @@ function LineItemPrice( { lineItem } ) {
 	);
 }
 
-const LineItemUI = styled( WPLineItem )`
+export const LineItemUI = styled( WPLineItem )`
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
 	font-weight: ${( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal )};
 	color: ${( { theme, total } ) => ( total ? theme.colors.textColorDark : theme.colors.textColor )};
 	font-size: ${( { total } ) => ( total ? '1.2em' : '1em' )};
-	padding: ${( { total, isSummaryVisible } ) => ( isSummaryVisible || total ? 0 : '24px 0' )};
+	padding: ${( { total, isSummaryVisible, tax, subtotal } ) =>
+		isSummaryVisible || total || subtotal || tax ? '10px 0' : '24px 0'};
 	border-bottom: ${( { theme, total, isSummaryVisible } ) =>
 		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight};
 	position: relative;
-	margin-right: 30px;
+	margin-right: ${( { total, tax, subtotal } ) => ( subtotal || total || tax ? '0' : '30px' )};
 `;
 
 const LineItemTitleUI = styled.div`
@@ -317,7 +310,7 @@ WPOrderReviewLineItems.propTypes = {
 };
 
 const WPOrderReviewList = styled.ul`
-	margin: -10px 0 0;
+	margin: -10px 0 10px 0;
 	padding: 0;
 `;
 

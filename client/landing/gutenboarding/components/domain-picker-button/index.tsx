@@ -61,9 +61,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				<div className="domain-picker-button__popover-container">
 					<Popover
 						className="domain-picker-button__popover"
-						focusOnMount={ false }
 						noArrow
-						onClickOutside={ handleClose } // TODO: investigate why clicking outside is ignored
 						onClose={ handleClose }
 						onFocusOutside={ handleClose }
 						position={ 'bottom center' }

@@ -5,6 +5,7 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isMobile } from '@automattic/viewport';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -40,8 +41,8 @@ class BackupDetailPage extends Component {
 
 		const backups = logs.filter( event => event.rewindId === backupId );
 		const thisBackup = backups[ 0 ];
+		const meta = get( thisBackup, 'activityDescription[2].children[0]', '' );
 
-		const meta = thisBackup && thisBackup.activityDescription[ 2 ].children[ 0 ];
 		const metaList =
 			meta &&
 			meta.split( ', ' ).map( item => {

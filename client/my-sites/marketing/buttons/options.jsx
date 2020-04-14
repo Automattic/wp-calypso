@@ -212,7 +212,7 @@ class SharingButtonsOptions extends Component {
 						text={ translate(
 							"Encourage your community by giving readers the ability to show appreciation for one another's comments."
 						) }
-						link="https://support.wordpress.com/comment-likes/"
+						link="https://wordpress.com/support/comment-likes/"
 						privacyLink={ false }
 						position={ 'bottom left' }
 					/>

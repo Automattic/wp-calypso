@@ -10,6 +10,7 @@ import { SiteOffsetProvider } from 'landing/jetpack-cloud/components/site-offset
 import BackupDetailPage from './detail';
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 import BackupsPage from './main';
+import BackupActivityLogPage from './backup-activity-log';
 
 export function wrapInSiteOffsetProvider( context, next ) {
 	context.primary = (
@@ -20,7 +21,15 @@ export function wrapInSiteOffsetProvider( context, next ) {
 
 /* handles /backups/:site, see `backupMainPath` */
 export function backups( context, next ) {
-	context.primary = <BackupsPage />;
+	const { date } = context.query;
+
+	context.primary = <BackupsPage queryDate={ date } />;
+	next();
+}
+
+/* handles /backups/activity/:site, see `backupsActivityPath` */
+export function backupActivity( context, next ) {
+	context.primary = <BackupActivityLogPage />;
 	next();
 }
 

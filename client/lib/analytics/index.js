@@ -6,7 +6,6 @@ import debug from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import emitter from 'lib/mixins/emitter';
 import { costToUSD, urlParseAmpCompatible, saveCouponQueryArgument } from 'lib/analytics/utils';
 
@@ -17,11 +16,9 @@ import {
 	recordOrder,
 } from 'lib/analytics/ad-tracking';
 import { updateQueryParamsTracking } from 'lib/analytics/sem';
-import { statsdTimingUrl, statsdCountingUrl } from 'lib/analytics/statsd';
 import { trackAffiliateReferral } from './refer';
-import { getFeatureSlugFromPageUrl } from './feature-slug';
 import { recordSignupComplete } from './signup';
-import { gaRecordEvent, gaRecordPageView, gaRecordTiming } from './ga';
+import { gaRecordEvent, gaRecordPageView } from './ga';
 import {
 	recordTracksEvent,
 	analyticsEvents,
@@ -31,7 +28,6 @@ import {
 	recordTracksPageView,
 	getCurrentUser,
 	recordTracksPageViewWithPageParams,
-	getMostRecentUrlPath,
 	pushEventToTracksQueue,
 } from '@automattic/calypso-analytics';
 
@@ -40,7 +36,6 @@ import {
  */
 const identifyUserDebug = debug( 'calypso:analytics:identifyUser' );
 const queueDebug = debug( 'calypso:analytics:queue' );
-const statsdDebug = debug( 'calypso:analytics:statsd' );
 
 const analytics = {
 	initialize: function( currentUser, superProps ) {
@@ -177,14 +172,6 @@ const analytics = {
 		}
 	},
 
-	timing: {
-		record: function( eventType, duration, triggerName ) {
-			const urlPath = getMostRecentUrlPath() || 'unknown';
-			gaRecordTiming( urlPath, eventType, duration, triggerName );
-			analytics.statsd.recordTiming( urlPath, eventType, duration, triggerName );
-		},
-	},
-
 	tracks: {
 		recordEvent: function( eventName, eventProperties ) {
 			analyticsEvents.once( 'record-event', ( _eventName, _eventProperties ) => {
@@ -200,34 +187,6 @@ const analytics = {
 
 		setOptOut: function( isOptingOut ) {
 			pushEventToTracksQueue( [ 'setOptOut', isOptingOut ] );
-		},
-	},
-
-	statsd: {
-		recordTiming: function( pageUrl, eventType, duration ) {
-			if ( config( 'boom_analytics_enabled' ) ) {
-				const featureSlug = getFeatureSlugFromPageUrl( pageUrl );
-
-				statsdDebug(
-					`Recording timing: path=${ featureSlug } event=${ eventType } duration=${ duration }ms`
-				);
-
-				const imgUrl = statsdTimingUrl( featureSlug, eventType, duration );
-				new window.Image().src = imgUrl;
-			}
-		},
-
-		recordCounting: function( pageUrl, eventType, increment = 1 ) {
-			if ( config( 'boom_analytics_enabled' ) ) {
-				const featureSlug = getFeatureSlugFromPageUrl( pageUrl );
-
-				statsdDebug(
-					`Recording counting: path=${ featureSlug } event=${ eventType } increment=${ increment }`
-				);
-
-				const imgUrl = statsdCountingUrl( featureSlug, eventType, increment );
-				new window.Image().src = imgUrl;
-			}
 		},
 	},
 

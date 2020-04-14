@@ -9,7 +9,7 @@ import React from 'react';
  * Internal dependencies
  */
 import CardHeading from 'components/card-heading';
-import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
+import WpcomChecklist from './wpcom-checklist';
 
 /**
  * Style dependencies

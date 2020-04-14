@@ -24,7 +24,7 @@
 		"access": "public"
 	},
 	"scripts": {
-		"clean": "npx rimraf dist src/__color-studio",
-		"prepare": "node bin/prepare-sass-assets.js && node bin/build-css.js"
+		"clean": "check-npm-client && npx rimraf dist src/__color-studio",
+		"prepare": "check-npm-client && node bin/prepare-sass-assets.js && node bin/build-css.js"
 	}
 }

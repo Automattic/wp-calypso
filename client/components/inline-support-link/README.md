@@ -10,7 +10,7 @@ import InlineSupportLink from 'components/inline-support-link';
 
 render() {
 	const inlineSupportProps = {
-		supportLink: 'https://en.support.wordpress.com/audio/podcasting/',
+		supportLink: 'https://wordpress.com/support/audio/podcasting/',
 		supportPostId: 38147,
 	};
 	return (

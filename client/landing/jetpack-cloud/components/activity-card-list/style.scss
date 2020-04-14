@@ -1,0 +1,18 @@
+.activity-card-list .filterbar {
+    margin-bottom: 2rem;
+}
+
+.activity-card-list__pagination-bottom {
+	margin-bottom: 1rem;
+}
+
+@include breakpoint( '<660px' ) {
+    .activity-card-list .filterbar__wrap.card {
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .activity-card-list .filterbar__label {
+        margin-left: 0;
+    }
+}
