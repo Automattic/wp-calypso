@@ -24,7 +24,6 @@
 .backups__is-loading {
 	margin: 2rem 1rem;
 	height: 245px;
-	background-color: var( --color-neutral-10 );
-	animation: loading-fade 1.6s ease-in-out infinite;
+	@include placeholder( --color-neutral-10 );
 }
 
