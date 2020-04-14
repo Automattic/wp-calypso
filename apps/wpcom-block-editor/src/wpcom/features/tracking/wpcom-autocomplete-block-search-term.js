@@ -91,7 +91,7 @@ function selectorHandler() {
 
 	const blockClassName = blockDOMElement.className;
 
-	// Skip is the block is not selected through class attribute.
+	// Skip if the block is not marked as "selected" via a class attribute.
 	if ( ! blockClassName || ! /is-selected/.test( blockClassName ) ) {
 		return;
 	}
