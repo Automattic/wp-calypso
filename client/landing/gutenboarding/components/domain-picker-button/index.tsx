@@ -34,7 +34,8 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 
 	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState( false );
 
-	const isMobile = useViewportMatch( 'mobile', '<' );
+	// Popover expands at medium viewport width
+	const isMobile = useViewportMatch( 'medium', '<' );
 
 	const handleClose = ( e?: React.FocusEvent ) => {
 		// Don't collide with button toggling
