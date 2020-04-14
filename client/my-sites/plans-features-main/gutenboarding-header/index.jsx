@@ -21,7 +21,6 @@ const GutenboardingHeader = ( { headerText, subHeaderText, onFreePlanSelect, tra
 			<FormattedHeader
 				headerText={ headerText }
 				subHeaderText={ subHeaderText }
-				compactOnMobile
 				isSecondary
 				align="left"
 			/>
