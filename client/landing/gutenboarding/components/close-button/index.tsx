@@ -20,7 +20,7 @@ const CloseButton: React.FunctionComponent< CloseButtonProps > = ( { onClose, ..
 				fill="none"
 				xmlns="http://www.w3.org/2000/svg"
 			>
-				<path d="M1.40456 1L15 15M1 15L14.5954 1" stroke="#1E1E1E" strokeWidth="1.5" />
+				<Path d="M1.40456 1L15 15M1 15L14.5954 1" stroke="#1E1E1E" strokeWidth="1.5" />
 			</SVG>
 		</Button>
 	);
