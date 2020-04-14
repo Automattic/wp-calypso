@@ -18,7 +18,7 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/viewport-react#readme",
 	"dependencies": {
 		"@babel/runtime": "^7.8.4",
-		"@automattic/viewport": "file:../viewport",
+		"@automattic/viewport": "^1.0.0",
 		"@wordpress/compose": "^3.7.0"
 	},
 	"peerDependencies": {
@@ -26,7 +26,7 @@
 	},
 	"scripts": {
 		"clean": "check-npm-client && npx rimraf dist",
-		"prepublish": "check-npm-client && npm run clean",
+		"prepublish": "check-npm-client && yarn run clean",
 		"prepare": "check-npm-client && transpile"
 	},
 	"publishConfig": {
