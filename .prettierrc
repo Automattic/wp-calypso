@@ -6,4 +6,3 @@ bracketSpacing: true
 parenSpacing: true
 jsxBracketSameLine: false
 semi: true
-arrowParens: avoid
