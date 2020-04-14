@@ -32,7 +32,7 @@ const trackAutocompleteBlockTerm = () => {
 		context,
 	} );
 
-	// Check if there are results, inspecting the DOM Tree.
+	// Check if there are results by looking for the popover autocomplete in the DOM which will only be present if there are blocks that match the search term.
 	const hasResults = !! document.querySelectorAll( '.components-autocomplete__popover' ).length;
 	if ( hasResults ) {
 		return;
