@@ -18,7 +18,7 @@ const debug = createDebug( 'lasagna:socket' );
 const url = config( 'lasagna_url' );
 
 export const socketConnect = ( store, jwt ) => {
-	if ( socket !== null ) {
+	if ( socket !== null || ! jwt ) {
 		return;
 	}
 
