@@ -4,6 +4,10 @@
 	margin: 0 20px;
 
 	@include break-small {
+		margin: 0 44px;
+	}
+
+	@include break-medium {
 		margin: 0 88px;
 	}
 }
