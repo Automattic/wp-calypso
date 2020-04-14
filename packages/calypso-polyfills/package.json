@@ -26,7 +26,7 @@
 	"dependencies": {
 		"core-js": "3.6.3",
 		"isomorphic-fetch": "2.2.1",
-		"regenerator-runtime": "0.13.3",
+		"regenerator-runtime": "0.13.5",
 		"svg4everybody": "2.1.9"
 	}
 }

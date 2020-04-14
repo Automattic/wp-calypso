@@ -151,7 +151,7 @@
 		"@automattic/webpack-inline-constant-exports-plugin": "file:./packages/webpack-inline-constant-exports-plugin",
 		"@automattic/wpcom-block-editor": "file:apps/wpcom-block-editor",
 		"@babel/cli": "7.8.4",
-		"@babel/core": "7.8.4",
+		"@babel/core": "7.9.0",
 		"@storybook/addon-actions": "5.3.14",
 		"@storybook/preset-scss": "1.0.2",
 		"@storybook/preset-typescript": "1.2.0",
