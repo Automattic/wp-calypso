@@ -161,15 +161,15 @@ class DailyBackupStatus extends Component {
 		return (
 			<>
 				<Gridicon icon="cloud-upload" className="daily-backup-status__gridicon-no-backup" />
-				<div className="daily-backup-status__title">{ translate( 'No backup' ) }</div>
 
-				<div className="daily-backup-status__label">
-					<p>{ translate( 'No backups are available yet.' ) }</p>
-					<p>
-						{ translate(
-							'But don’t worry, one should become available in the next 24 hours. Contact support if you still need help.'
-						) }
-					</p>
+				<div className="daily-backup-status__date">
+					{ translate( 'No backups are available yet.' ) }
+				</div>
+
+				<div className="daily-backup-status__unavailable">
+					{ translate(
+						'But don’t worry, one should become available in the next 24 hours. Contact support if you still need help.'
+					) }
 				</div>
 
 				<Button
