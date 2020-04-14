@@ -1,0 +1,26 @@
+.dot-pager__controls {
+	margin: 0;
+	display: flex;
+	justify-content: center;
+
+	li {
+		display: inline-block;
+		margin: 0 4px;
+	}
+
+	button {
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		cursor: pointer;
+		background-color: var( --color-neutral-10 );
+
+		&:hover {
+			background-color: var( --color-neutral-light );
+		}
+	}
+
+	li[aria-current] button {
+		background-color: var( --color-primary );
+	}
+}
