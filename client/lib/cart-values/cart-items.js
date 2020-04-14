@@ -412,6 +412,10 @@ export function hasDomainRegistration( cart ) {
 	return some( getAllCartItems( cart ), isDomainRegistration );
 }
 
+export function hasDomainTransfer( cart ) {
+	return some( getAllCartItems( cart ), isDomainTransfer );
+}
+
 export function hasAllDomainProductsWithPrivacySupport( cart ) {
 	return every(
 		concat( getDomainTransfers( cart ), getDomainRegistrations( cart ) ),
