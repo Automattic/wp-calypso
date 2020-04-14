@@ -67,9 +67,10 @@ const BackupDetailPage: FunctionComponent< Props > = ( { rewindId } ) => {
 	const backups = logs && logs.filter( event => event.rewindId === rewindId );
 	const thisBackup = backups && backups[ 0 ];
 
-	const render = ( loadedBackup, loadedLogs ) => (
+	const render = loadedLogs => (
 		<>
-			<BackupDetailSummary thisBackup={ loadedBackup } />
+			{ /* backup summary is hidden when filtered out  */ }
+			{ thisBackup && <BackupDetailSummary thisBackup={ thisBackup } /> }
 			{ loadedLogs.length > 1 ? (
 				<ActivityCardList
 					showDateRangeSelector={ false }
@@ -82,7 +83,7 @@ const BackupDetailPage: FunctionComponent< Props > = ( { rewindId } ) => {
 		</>
 	);
 
-	const loading = ! ( backupMoment && thisBackup && logs );
+	const loading = ! ( backupMoment && logs );
 
 	return (
 		<Main>
@@ -108,7 +109,7 @@ const BackupDetailPage: FunctionComponent< Props > = ( { rewindId } ) => {
 					{ translate( 'Restore to this point' ) }
 				</Button>
 			</div>
-			{ loading ? <Spinner /> : render( thisBackup, logs ) }
+			{ loading ? <Spinner /> : render( logs ) }
 		</Main>
 	);
 };
