@@ -550,18 +550,18 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 			// Checks to see if the iFrame has loaded every 200ms. If it has
 			// loaded, then resolve the promise.
-			let cancelPolling = false;
+			let pendingIsLoadedInterval;
 			const pollForLoadedFlag = new Promise( resolve => {
-				const pendingIsLoadedFlag = setInterval( () => {
-					cancelPolling && clearInterval( pendingIsLoadedFlag );
-					this.successfulIframeLoad && resolve( 'iframe-loaded' );
-				}, 200 );
+				pendingIsLoadedInterval = setInterval(
+					() => this.successfulIframeLoad && resolve( 'iframe-loaded' ),
+					200
+				);
 			} );
 
 			const fiveSeconds = new Promise( resolve => setTimeout( resolve, 5000, 'timeout' ) );
 
 			const finishCondition = await Promise.race( [ pollForLoadedFlag, fiveSeconds ] );
-			cancelPolling = true;
+			clearInterval( pendingIsLoadedInterval );
 
 			if ( finishCondition === 'timeout' ) {
 				window.location.replace( iframeUrl );
