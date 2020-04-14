@@ -64,9 +64,13 @@ function WpcomNux() {
 		>
 			<NuxPage
 				heading={ welcomeHeading }
-				description={ __(
-					'Edit your homepage and add the pages you need, change the look and feel of everything.'
-				) }
+				description={
+					isGutenboarding
+						? __(
+								'Edit your homepage and add the pages you need, change the look and feel of everything.'
+						  )
+						: __( 'Create and edit site pages, and customize the look and feel of each page.' )
+				}
 				imgSrc={ editorImage }
 				alignBottom
 			/>
