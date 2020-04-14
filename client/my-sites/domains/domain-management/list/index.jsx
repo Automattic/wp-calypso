@@ -387,7 +387,7 @@ export class List extends React.Component {
 		return (
 			hasNonPrimaryDomainsFlag &&
 			isOnFreePlan &&
-			domain.type === type.REGISTERED &&
+			( domain.type === type.REGISTERED || domain.type === type.MAPPED ) &&
 			! isDomainOnly &&
 			! domain.isPrimary &&
 			! domain.isWPCOMDomain &&
