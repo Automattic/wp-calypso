@@ -33,7 +33,7 @@ class InlineSupportLink extends Component {
 		text: PropTypes.string,
 		showIcon: PropTypes.bool,
 		iconSize: PropTypes.number,
-		trackEvent: PropTypes.string,
+		tracksEvent: PropTypes.string,
 		tracksOptions: PropTypes.object,
 		statsGroup: PropTypes.string,
 		statsName: PropTypes.string,
