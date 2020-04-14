@@ -13,7 +13,7 @@ import { deleteStoredCard } from 'state/stored-cards/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { isDeletingStoredCard } from 'state/stored-cards/selectors';
 import { Button } from '@automattic/components';
-import { isPaymentAgreement } from 'lib/checkout/payment-methods';
+import { isPaymentAgreement, getPaymentMethodSummary } from 'lib/checkout/payment-methods';
 import StoredCard from 'components/credit-card/stored-card';
 import PaymentMethodDeleteDialog from './payment-method-delete-dialog';
 
@@ -79,6 +79,12 @@ const CreditCardDelete: FunctionComponent< Props > = props => {
 	return (
 		<div className="credit-cards__credit-card-delete">
 			<PaymentMethodDeleteDialog
+				paymentMethodSummary={ getPaymentMethodSummary( {
+					translate,
+					type: props.card.card_type || props.card.payment_partner,
+					digits: props.card.card,
+					email: props.card.email,
+				} ) }
 				isVisible={ isDialogVisible }
 				onClose={ closeDialog }
 				onConfirm={ handleDelete }
