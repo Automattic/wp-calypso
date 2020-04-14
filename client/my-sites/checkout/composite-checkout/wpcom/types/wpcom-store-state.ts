@@ -379,7 +379,6 @@ export function prepareDomainContactDetailsErrors(
 		postalCode: details.postalCode.errors[ 0 ],
 		countryCode: details.countryCode.errors[ 0 ],
 		fax: details.fax.errors[ 0 ],
-		extra: prepareTldExtraContactDetailsErrors( details ),
 	};
 }
 
