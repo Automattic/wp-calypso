@@ -90,7 +90,7 @@ function WpcomNux() {
 			<NuxPage
 				heading={ __( 'Add anything you want' ) }
 				description={ __(
-					'Insert text, photos, forms, Yelp reviews, testimonials, maps, and more. Rearrange the blocks on your page til it’s just right.'
+					'Insert text, photos, forms, Yelp reviews, testimonials, maps, and more. Rearrange the blocks on your page till it’s just right.'
 				) }
 				imgSrc={ blockPickerImage }
 			/>
