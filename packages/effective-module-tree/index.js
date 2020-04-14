@@ -109,13 +109,43 @@ const findTree = ( packageJson, packagePath, parents, cache ) => {
  *
  * @param {string} root Path to package.json
  */
-const effectiveTree = async root => {
+const generateEffectiveTree = root => {
 	const packagePath = path.resolve( root );
 	const packageJson = require( path.join( packagePath ) );
 	const { tree } = findTree( packageJson, path.dirname( packagePath ), [], new Map() );
+	return tree;
+};
+
+const getEffectiveTreeAsTree = root => {
+	const tree = generateEffectiveTree( root );
 	return treeify( tree, {
 		sortFn: ( a, b ) => a.localeCompare( b ),
 	} );
 };
 
-module.exports = { effectiveTree, candidates };
+const getEffectiveTreeAsList = root => {
+	const tree = generateEffectiveTree( root );
+
+	function print( branch, prefix = [] ) {
+		return (
+			Object.entries( branch )
+				// Ensure deps are listed in alphabetical order
+				.sort( ( a, b ) => a[ 0 ].localeCompare( b[ 0 ] ) )
+				// For each dep, create a new array with the dep name + all its deps recursively
+				.map( ( [ depName, nestedDependencies ] ) => {
+					const newPrefix = [ ...prefix, depName ];
+					if ( nestedDependencies === '[Circular]' ) {
+						return [ [ ...newPrefix, nestedDependencies ] ];
+					}
+					return [ newPrefix, ...print( nestedDependencies, newPrefix ) ];
+				} )
+				.flat()
+		);
+	}
+
+	return print( tree )
+		.map( line => line.join( ' ' ) )
+		.join( '\n' );
+};
+
+module.exports = { getEffectiveTreeAsTree, getEffectiveTreeAsList, candidates };
