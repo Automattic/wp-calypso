@@ -64,7 +64,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				<div className="domain-picker-button__popover-container">
 					<Popover
 						className="domain-picker-button__popover"
-						focusOnMount={ ! isMobile }
+						focusOnMount={ isMobile ? 'container' : 'firstElement' }
 						noArrow
 						onClose={ handleClose }
 						onFocusOutside={ handleClose }
