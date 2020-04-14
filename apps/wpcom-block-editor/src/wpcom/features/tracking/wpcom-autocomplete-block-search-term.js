@@ -69,8 +69,8 @@ function selectorHandler() {
 
 	/*
 	 * Skip if content doesn't start with the slash `/`.
-	 * Also, check if the block name can only contain
-	 * lowercase alphanumeric characters and dashes,
+	 * Also, check if the block search term is a valid block name
+	 * ie: only lowercase alphanumeric characters and dashes,
 	 * and must begin with a letter.
 	 */
 	const { content } = attributes;
