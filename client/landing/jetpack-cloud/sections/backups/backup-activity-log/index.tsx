@@ -14,7 +14,10 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestActivityLogs, getRequestActivityLogsId } from 'state/data-getters';
 import { setFilter } from 'state/activity-log/actions';
 import ActivityCardList from 'landing/jetpack-cloud/components/activity-card-list';
+import DocumentHead from 'components/data/document-head';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
+import Main from 'components/main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 interface Props {
 	after?: string;
@@ -51,15 +54,19 @@ const BackupActivityLogPage: FunctionComponent< Props > = ( { after, before, gro
 	}, [ filter, siteId ] );
 
 	return (
-		<div>
-			<h3>{ translate( 'Find a backup or restore point' ) }</h3>
-			<p>
-				{ translate(
-					'This is the complete event history for your site. Filter by date range and/or activity type.'
-				) }
-			</p>
-			{ logs && <ActivityCardList logs={ logs } pageSize={ 10 } /> }
-		</div>
+		<Main className="backup-activity-log">
+			<DocumentHead title="Activity log" />
+			<SidebarNavigation />
+			<div>
+				<h3>{ translate( 'Find a backup or restore point' ) }</h3>
+				<p>
+					{ translate(
+						'This is the complete event history for your site. Filter by date range and/or activity type.'
+					) }
+				</p>
+				{ logs && <ActivityCardList logs={ logs } pageSize={ 10 } /> }
+			</div>
+		</Main>
 	);
 };
 
