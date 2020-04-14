@@ -70,13 +70,13 @@ const SearchIcon = () => (
 );
 
 const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, currentDomain } ) => {
-	const { __ } = useI18n();
+	const { __, i18nLocale } = useI18n();
 	const label = __( 'Search for a domain' );
 
 	const { domainSearch } = useSelect( select => select( STORE_KEY ).getState() );
 	const { setDomainSearch } = useDispatch( STORE_KEY );
 
-	const allSuggestions = useDomainSuggestions();
+	const allSuggestions = useDomainSuggestions( { locale: i18nLocale } );
 	const freeSuggestions = getFreeDomainSuggestions( allSuggestions );
 	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice(
 		0,

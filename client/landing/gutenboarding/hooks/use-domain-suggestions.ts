@@ -11,7 +11,7 @@ import { DOMAIN_SUGGESTIONS_STORE } from '../stores/domain-suggestions';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { selectorDebounce } from '../constants';
 
-export function useDomainSuggestions( searchOverride = '' ) {
+export function useDomainSuggestions( { searchOverride = '', locale = 'en' } ) {
 	const { siteTitle, siteVertical, domainSearch } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
@@ -30,6 +30,7 @@ export function useDomainSuggestions( searchOverride = '' ) {
 				// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
 				include_wordpressdotcom: true,
 				include_dotblogsubdomain: false,
+				locale,
 				...{ vertical: siteVertical?.id },
 			} );
 		},
