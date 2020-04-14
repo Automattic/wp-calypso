@@ -11,9 +11,8 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import { getSavedVariations } from 'lib/abtest';
-import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
-import { recordPasswordlessRegistration } from 'lib/analytics/signup';
+import { recordRegistration } from 'lib/analytics/signup';
 import { recordGoogleRecaptchaAction } from 'lib/analytics/recaptcha';
 import { Button } from '@automattic/components';
 import FormLabel from 'components/forms/form-label';
@@ -141,8 +140,17 @@ class PasswordlessSignupForm extends Component {
 		const userId =
 			( response && response.signup_sandbox_user_id ) || ( response && response.user_id );
 
-		recordPasswordlessRegistration( this.props.flowName );
-		analytics.identifyUser( { ID: userId, username, email: this.state.email } );
+		const userData = {
+			ID: userId,
+			username: username,
+			email: this.state.email,
+		};
+
+		recordRegistration( {
+			userData,
+			flow: this.props.flowName,
+			type: 'passwordless',
+		} );
 
 		this.submitStep( {
 			username,
