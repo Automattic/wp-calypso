@@ -87,7 +87,7 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 	return (
 		<Panel className="domain-picker">
 			<PanelBody>
-				<PanelRow className="domain-picker__panel-row">
+				<PanelRow className="domain-picker__panel-row-main">
 					<div className="domain-picker__header">
 						<div className="domain-picker__header-group">
 							<div className="domain-picker__header-title">{ __( 'Choose a domain' ) }</div>
@@ -113,9 +113,6 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 							value={ domainSearch }
 						/>
 					</div>
-				</PanelRow>
-
-				<PanelRow className="domain-picker__panel-row">
 					<div className="domain-picker__suggestion-item-group">
 						{ ! freeSuggestions && <SuggestionItemPlaceholder /> }
 						{ freeSuggestions &&
@@ -146,8 +143,7 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 							) ) }
 					</div>
 				</PanelRow>
-
-				<PanelRow className="domain-picker__panel-row">
+				<PanelRow className="domain-picker__panel-row-footer">
 					<div className="domain-picker__footer">
 						<div className="domain-picker__footer-options"></div>
 						<Button

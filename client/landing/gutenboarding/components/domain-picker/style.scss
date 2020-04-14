@@ -8,13 +8,38 @@ $domain-picker__suggestion-item-height: 24px;
 .domain-picker.components-panel {
 	border: none;
 
-	.components-panel__body.is-opened {
-		padding: 36px;
+	.components-panel__body {
+		display: flex;
+		flex-direction: column;
+		padding: 0;
+		width: 100%;
+		height: 100%;
+	}
+
+	.components-panel__row {
+		flex-direction: column;
+		align-items: stretch;
+		margin: 0;
+
+		label {
+			max-width: 100%;
+		}
 	}
 
 	@include break-small {
 		min-width: 520px;
 	}
+}
+
+.domain-picker__panel-row-main {
+	overflow-y: auto;
+	flex-grow: 1;
+	padding: 36px;
+}
+
+.domain-picker__panel-row-footer {
+	padding: 24px 36px;
+	border-top: 1px solid #f0f0f0;
 }
 
 .domain-picker__header {
@@ -33,7 +58,7 @@ $domain-picker__suggestion-item-height: 24px;
 
 .domain-picker__search {
 	position: relative;
-	margin-bottom: -4px; // Reducing the spacing added by .components-panel__row
+	margin-bottom: 20px;
 
 	input[type='text'].components-text-control__input {
 		padding: 6px 40px 6px 16px;
@@ -66,9 +91,6 @@ $domain-picker__suggestion-item-height: 24px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin: 0 -36px -36px;
-	padding: 24px 36px;
-	border-top: 1px solid #f0f0f0;
 }
 
 .domain-picker__footer-options.components-button {
@@ -94,19 +116,8 @@ $domain-picker__suggestion-item-height: 24px;
 	}
 }
 
-.domain-picker__panel-row {
-
-	// Increasing specificity because @wordpress/components stylesheets are loaded after gutenboarding stylesheets.
-	// See https://github.com/Automattic/wp-calypso/pull/38554/commits/e1f9673bcfd9eaa6469a0cfecda9b915a520961a
-	// See https://github.com/WordPress/gutenberg/pull/19535
-	&.components-panel__row {
-		flex-direction: column;
-		align-items: stretch;
-
-		label {
-			max-width: 100%;
-		}
-	}
+.domain-picker__suggestion-item-group {
+	flex-grow: 1;
 }
 
 .domain-picker__suggestion-none {
@@ -226,6 +237,10 @@ $domain-picker__suggestion-item-height: 24px;
 	&.is-selected {
 		color: var( --color-text-inverted );
 		background-color: var( --color-success );
+	}
+
+	.components-popover.is-expanded & {
+		display: none;
 	}
 }
 
