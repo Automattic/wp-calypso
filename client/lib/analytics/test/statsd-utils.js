@@ -6,9 +6,9 @@ import url from 'url';
 /**
  * Internal dependencies
  */
-import { statsdTimingUrl, statsdCountingUrl } from '../statsd';
+import { statsdTimingUrl, statsdCountingUrl } from '../statsd-utils';
 
-describe( 'StatsD Analytics', () => {
+describe( 'StatsD Analytics Utils', () => {
 	describe( 'statsdTimingUrl', () => {
 		test( 'returns a URL for recording timing data to statsd', () => {
 			const sdUrl = url.parse( statsdTimingUrl( 'post-mysite.com', 'page-load', 150 ), true, true );
