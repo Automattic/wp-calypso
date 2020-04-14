@@ -1,3 +1,15 @@
+.rewind-flow .button {
+	width: 100%;
+
+	@include breakpoint( '>660px' ) {
+		width: auto;
+	}
+}
+
+.rewind-flow__content {
+	margin: 16px;
+}
+
 .rewind-flow__header {
 	display: flex;
 	justify-content: center;
