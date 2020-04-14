@@ -34,17 +34,24 @@ const QuickStartCard = ( {
 	nextSession,
 	bookASession,
 	viewDetails,
+	reschedule,
 } ) => {
 	return nextSession ? (
 		<Card className="quick-start next-session">
 			<HappinessEngineersTray />
 			<CardHeading>{ translate( 'Your scheduled Quick Start support session' ) }</CardHeading>
-			<p>
-				{ translate(
-					'Need help with your site? Set up a video call to get hands-on 1-on-1 support.'
-				) }
-			</p>
+			<div className="quick-start__date">
+				{ translate( 'Date' ) }
+				{ nextSession.beginTimestamp }
+			</div>
+			<div className="quick-start__time">
+				{ translate( 'Time' ) }
+				{ nextSession.beginTimestamp }
+			</div>
 			<Button onClick={ () => viewDetails( siteSlug ) }>{ translate( 'View details' ) }</Button>
+			<Button onClick={ () => reschedule( siteSlug, nextSession.id ) }>
+				{ translate( 'Reschedule' ) }
+			</Button>
 		</Card>
 	) : (
 		<>
@@ -96,7 +103,7 @@ export default connect(
 					navigate( `/me/concierge/${ siteSlug }/book` )
 				)
 			),
-		reschedule: siteSlug =>
+		reschedule: ( siteSlug, sessionId ) =>
 			dispatch(
 				withAnalytics(
 					composeAnalytics(
@@ -105,7 +112,7 @@ export default connect(
 						} ),
 						bumpStat( 'calypso_customer_home', 'reschedule_quick_start_session' )
 					),
-					navigate( `/me/concierge/${ siteSlug }/cancel` )
+					navigate( `/me/concierge/${ siteSlug }/${ sessionId }/cancel` )
 				)
 			),
 	} )
