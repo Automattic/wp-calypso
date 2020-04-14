@@ -68,11 +68,11 @@ class BackupsPage extends Component {
 	}
 
 	onDateChange = date => {
-		const { siteSlug, oldestDateAvailable, moment, timezone, gmtOffset } = this.props;
+		const { siteSlug, moment, timezone, gmtOffset } = this.props;
 
 		const today = applySiteOffset( moment(), { timezone, gmtOffset } );
 
-		if ( date && date.isValid() && date <= today && date >= oldestDateAvailable ) {
+		if ( date && date.isValid() && date <= today ) {
 			// Valid dates
 			page(
 				backupMainPath( siteSlug, {
