@@ -24,7 +24,6 @@ import {
 import { requestActivityLogs } from 'state/data-getters';
 import { updateFilter } from 'state/activity-log/actions';
 import { withLocalizedMoment } from 'components/localized-moment';
-import ActivityCard from '../../components/activity-card';
 import ActivityCardList from 'landing/jetpack-cloud/components/activity-card-list';
 import BackupDelta from '../../components/backup-delta';
 import BackupUpsell from './components/upsell';
