@@ -30,7 +30,7 @@ const trackInserterInlineSearchTerm = () => {
 		'content',
 	] );
 
-	if ( search_term.length < 3 ) {
+	if ( search_term.length < 4 ) {
 		return;
 	}
 
