@@ -28,7 +28,7 @@ const CreateSite: FunctionComponent< {} > = () => {
 	];
 
 	return (
-		<div className="create-site__background">
+		<div className="gutenboarding-page create-site__background">
 			{ shouldTriggerCreate && shouldCreateAndRedirect && <CreateAndRedirect /> }
 			<div className="create-site__layout">
 				<div className="create-site__header">
