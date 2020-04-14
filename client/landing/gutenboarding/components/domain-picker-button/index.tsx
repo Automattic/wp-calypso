@@ -3,6 +3,7 @@
  */
 import React, { createRef, FunctionComponent, useState } from 'react';
 import { Button, Popover, Dashicon } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
 
 /**
@@ -33,6 +34,8 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 
 	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState( false );
 
+	const isMobile = useViewportMatch( 'mobile', '<' );
+
 	const handleClose = ( e?: React.FocusEvent ) => {
 		// Don't collide with button toggling
 		if ( e?.relatedTarget === buttonRef.current ) {
@@ -61,6 +64,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				<div className="domain-picker-button__popover-container">
 					<Popover
 						className="domain-picker-button__popover"
+						focusOnMount={ ! isMobile }
 						noArrow
 						onClose={ handleClose }
 						onFocusOutside={ handleClose }
