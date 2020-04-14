@@ -1,6 +1,6 @@
 .scan-threats {
 	&__threats {
-		margin: 40px 0;
+		margin: 16px 0;
 	}
 
 	&__buttons {
@@ -16,9 +16,6 @@
 	&__fix-all-threats-button {
 		flex: 1 1 75%;
 		padding: 10px 30px;
-		background: var( --color-primary-40 );
-		color: #fff;
-		border-color: var( --color-primary-40 );
 
 		@include breakpoint( '>800px' ) {
 			flex: 0 0 170px;
@@ -29,8 +26,5 @@
 		flex: 0 0 50px;
 		padding: 10px 0;
 		margin-left: 16px;
-		color: var( --color-primary-40 );
-		background: #fff;
-		border-color: var( --color-primary-40 );
 	}
 }

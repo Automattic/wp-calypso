@@ -104,6 +104,7 @@ const ScanThreats = ( { site, threats }: Props ) => {
 			<div className="scan-threats__threats">
 				<div className="scan-threats__buttons">
 					<Button
+						primary
 						className="scan-threats__fix-all-threats-button"
 						onClick={ openFixAllThreatsDialog }
 						disabled={ fixingThreats.length === threats.length }
