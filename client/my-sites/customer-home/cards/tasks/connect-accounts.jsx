@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { Button } from '@automattic/components';
@@ -27,7 +27,11 @@ import './style.scss';
 
 const ConnectAccountsTask = ( { skipTask, siteSlug } ) => {
 	const translate = useTranslate();
+	const [ isVisible, setIsVisible ] = useState( true );
 
+	if ( ! isVisible ) {
+		return null;
+	}
 	return (
 		<ActionPanel className="tasks connect-accounts">
 			<QueryPublicizeConnections selectedSite />
@@ -59,7 +63,13 @@ const ConnectAccountsTask = ( { skipTask, siteSlug } ) => {
 					>
 						{ translate( 'Connect accounts' ) }
 					</Button>
-					<Button className="tasks__action-skip is-link" onClick={ skipTask }>
+					<Button
+						className="tasks__action-skip is-link"
+						onClick={ () => {
+							setIsVisible( false );
+							skipTask();
+						} }
+					>
 						{ translate( 'Skip for now' ) }
 					</Button>
 				</ActionPanelCta>
