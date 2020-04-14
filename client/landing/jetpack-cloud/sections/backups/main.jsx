@@ -58,17 +58,10 @@ const backupStatusNames = [
 ];
 
 class BackupsPage extends Component {
-	state = this.getDefaultState();
-
-	getDefaultState() {
-		return {
-			selectedDate: null,
-		};
-	}
-
 	componentDidMount() {
 		const { queryDate, moment, timezone, gmtOffset } = this.props;
 
+		// On first load, check if we have a selected date from the URL
 		if ( queryDate ) {
 			const today = applySiteOffset( moment(), { timezone, gmtOffset } );
 
@@ -83,21 +76,8 @@ class BackupsPage extends Component {
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.siteId !== this.props.siteId ) {
-			//If we switch the site, reset the current state to default
-			this.resetState();
-		}
-	}
-
-	resetState() {
-		this.setState( this.getDefaultState() );
-	}
-
 	onDateChange = date => {
 		const { siteSlug } = this.props;
-
-		this.setState( { selectedDate: date } );
 
 		if ( date && date.isValid() ) {
 			page(
@@ -111,14 +91,16 @@ class BackupsPage extends Component {
 	};
 
 	getSelectedDate() {
-		const { timezone, gmtOffset, moment } = this.props;
+		const { timezone, gmtOffset, moment, queryDate } = this.props;
 
 		const today = applySiteOffset( moment(), {
 			timezone: timezone,
 			gmtOffset: gmtOffset,
 		} );
 
-		return this.state.selectedDate || today;
+		const selectedDate = moment( queryDate, INDEX_FORMAT );
+
+		return ( selectedDate.isValid() && selectedDate ) || today;
 	}
 
 	/**
@@ -168,8 +150,8 @@ class BackupsPage extends Component {
 
 	TO_REMOVE_getSelectedDateString = () => {
 		const { moment } = this.props;
-		const { selectedDate } = this.state;
-		return moment.parseZone( selectedDate ).toISOString( true );
+
+		return moment.parseZone( this.getSelectedDate() ).toISOString( true );
 	};
 
 	renderMain() {
