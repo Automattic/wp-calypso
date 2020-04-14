@@ -367,13 +367,14 @@ export class List extends React.Component {
 					{ duration: 10000, isPersistent: true }
 				);
 			},
-			() => {
+			error => {
 				this.setState( {
 					settingPrimaryDomain: false,
 					primaryDomainIndex: currentPrimaryIndex,
 				} );
 				this.props.errorNotice(
-					translate( "Something went wrong and we couldn't change your primary domain." ),
+					error.message ||
+						translate( "Something went wrong and we couldn't change your primary domain." ),
 					{ duration: 10000, isPersistent: true }
 				);
 			}
