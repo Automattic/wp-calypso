@@ -136,7 +136,7 @@ interface Props {
 	name: string;
 	expiry?: string;
 	email?: string;
-	paymentPartner: string;
+	paymentPartner?: string;
 	selected?: boolean;
 }
 
@@ -157,15 +157,17 @@ const StoredCard: FunctionComponent< Props > = ( {
 	const displayExpirationDate =
 		expirationDate && expirationDate.isValid() ? expirationDate.format( 'MM/YY' ) : null;
 
-	const type = cardType && cardType.toLocaleLowerCase();
-	const typeStyle = { backgroundImage: getCreditCardImageURL( type || paymentPartner, selected ) };
+	const type = cardType ? cardType.toLocaleLowerCase() : paymentPartner || '';
+	const typeStyle = {
+		backgroundImage: getCreditCardImageURL( type, selected ),
+	};
 
 	return (
 		<div className="credit-card__stored-card" style={ typeStyle }>
 			<span className="credit-card__stored-card-number">
 				{ getCreditCardSummary( {
 					translate,
-					type: type || paymentPartner,
+					type,
 					digits: lastDigits,
 					email,
 				} ) }
