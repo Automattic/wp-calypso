@@ -29,7 +29,8 @@ import { PAID_DOMAINS_TO_SHOW } from '../../constants';
 import { usePath, useCurrentStep, Step } from '../../path';
 import wp from '../../../../lib/wp';
 
-type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
+// TODO: remove once @wordpress/compose types land in core
+/*#__PURE__*/ import '../../gutenberg-types-patch';
 
 const wpcom = wp.undocumented();
 

@@ -21,14 +21,8 @@ import GUTENBOARDING_BASE_NAME from '../../basename.json';
 
 import { localizeUrl } from '../../../../lib/i18n-utils';
 
-// TODO: deploy this change to @types/wordpress__element
-declare module '@wordpress/element' {
-	// eslint-disable-next-line no-shadow
-	export function createInterpolateElement(
-		interpolatedString: string,
-		conversionMap: Record< string, ReactElement >
-	): ReactNode;
-}
+// TODO: remove after @types/wordpress__element update
+/*#__PURE__*/ import '../../gutenberg-types-patch';
 
 interface Props {
 	onRequestClose: () => void;
