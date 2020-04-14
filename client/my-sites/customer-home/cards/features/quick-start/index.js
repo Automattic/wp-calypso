@@ -18,41 +18,95 @@ import {
 	bumpStat,
 } from 'state/analytics/actions';
 import { navigate } from 'state/ui/actions';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import QueryConciergeInitial from 'components/data/query-concierge-initial';
+import getConciergeNextAppointment from 'state/selectors/get-concierge-next-appointment';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const QuickStartCard = ( { translate, siteSlug, bookASession } ) => {
-	return (
-		<Card className="quick-start">
+const QuickStartCard = ( {
+	translate,
+	siteId,
+	siteSlug,
+	nextSession,
+	bookASession,
+	viewDetails,
+} ) => {
+	return nextSession ? (
+		<Card className="quick-start next-session">
 			<HappinessEngineersTray />
-			<CardHeading>{ translate( 'Schedule time with an expert' ) }</CardHeading>
+			<CardHeading>{ translate( 'Your scheduled Quick Start support session' ) }</CardHeading>
 			<p>
 				{ translate(
 					'Need help with your site? Set up a video call to get hands-on 1-on-1 support.'
 				) }
 			</p>
-			<Button onClick={ () => bookASession( siteSlug ) }>{ translate( 'Book a session' ) }</Button>
+			<Button onClick={ () => viewDetails( siteSlug ) }>{ translate( 'View details' ) }</Button>
 		</Card>
-	);
-};
-
-const bookASession = siteSlug => {
-	return withAnalytics(
-		composeAnalytics(
-			recordTracksEvent( 'calypso_customer_home_book_a_session_click' ),
-			bumpStat( 'calypso_customer_home', 'book_a_session' )
-		),
-		navigate( `/me/concierge/${ siteSlug }/book` )
+	) : (
+		<>
+			{ siteId && <QueryConciergeInitial siteId={ siteId } /> }
+			<Card className="quick-start book-session">
+				<HappinessEngineersTray />
+				<CardHeading>{ translate( 'Schedule time with an expert' ) }</CardHeading>
+				<p>
+					{ translate(
+						'Need help with your site? Set up a video call to get hands-on 1-on-1 support.'
+					) }
+				</p>
+				<Button onClick={ () => bookASession( siteSlug ) }>
+					{ translate( 'Book a session' ) }
+				</Button>
+			</Card>
+		</>
 	);
 };
 
 export default connect(
 	state => ( {
+		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state ),
+		nextSession: getConciergeNextAppointment( state ),
 	} ),
-	{ bookASession }
+	dispatch => ( {
+		bookASession: siteSlug =>
+			dispatch(
+				withAnalytics(
+					composeAnalytics(
+						recordTracksEvent( 'calypso_customer_home_quick_start_book_a_session_click', {
+							siteSlug: siteSlug,
+						} ),
+						bumpStat( 'calypso_customer_home', 'book_quick_start_session' )
+					),
+					navigate( `/me/concierge/${ siteSlug }/book` )
+				)
+			),
+		viewDetails: siteSlug =>
+			dispatch(
+				withAnalytics(
+					composeAnalytics(
+						recordTracksEvent( 'calypso_customer_home_quick_start_view_details_click', {
+							siteSlug: siteSlug,
+						} ),
+						bumpStat( 'calypso_customer_home', 'view_quick_start_session_details' )
+					),
+					navigate( `/me/concierge/${ siteSlug }/book` )
+				)
+			),
+		reschedule: siteSlug =>
+			dispatch(
+				withAnalytics(
+					composeAnalytics(
+						recordTracksEvent( 'calypso_customer_home_quick_start_reschedule_click', {
+							siteSlug: siteSlug,
+						} ),
+						bumpStat( 'calypso_customer_home', 'reschedule_quick_start_session' )
+					),
+					navigate( `/me/concierge/${ siteSlug }/cancel` )
+				)
+			),
+	} )
 )( localize( QuickStartCard ) );
