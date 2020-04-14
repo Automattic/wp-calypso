@@ -5,8 +5,7 @@
 
 @mixin placeholder( $color-property: --color-neutral-5 ) {
 	animation: loading-fade 1.6s ease-in-out infinite;
-	// this is just a solid color, but gives background-position and background-size capabilities ;)
-	background-image: linear-gradient( var( $color-property ), var( $color-property ) );
+	background: var( $color-property );
 	color: transparent;
 
 	&::after {

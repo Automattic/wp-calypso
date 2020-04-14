@@ -30,15 +30,15 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 
 	return (
 		<label className="domain-picker__suggestion-item">
+			<input
+				className="domain-picker__suggestion-radio-button"
+				type="radio"
+				name="domain-picker-suggestion-option"
+				onChange={ () => void onSelect( suggestion ) }
+				checked={ isSelected }
+			/>
 			<div className="domain-picker__suggestion-item-name">
-				<input
-					className="domain-picker__suggestion-radio-button"
-					type="radio"
-					name="domain-picker-suggestion-option"
-					onChange={ () => void onSelect( suggestion ) }
-					checked={ isSelected }
-				/>
-				<span>{ domainName }</span>
+				<span className="domain-picker__domain-name">{ domainName }</span>
 				<span className="domain-picker__domain-tld">{ domainTld }</span>
 				{ isRecommended && (
 					<div className="domain-picker__badge is-recommended">{ __( 'Recommended' ) }</div>
