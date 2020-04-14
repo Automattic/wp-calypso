@@ -13,6 +13,7 @@ import { deleteStoredCard } from 'state/stored-cards/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { isDeletingStoredCard } from 'state/stored-cards/selectors';
 import { Button } from '@automattic/components';
+import { isPaymentAgreement } from 'lib/checkout/payment-methods';
 import StoredCard from 'components/credit-card/stored-card';
 
 /**
@@ -25,7 +26,11 @@ class CreditCardDelete extends React.Component {
 		this.props
 			.deleteStoredCard( this.props.card )
 			.then( () => {
-				this.props.successNotice( this.props.translate( 'Card deleted successfully' ) );
+				if ( isPaymentAgreement( this.props.card ) ) {
+					this.props.successNotice( this.props.translate( 'Payment method deleted successfully' ) );
+				} else {
+					this.props.successNotice( this.props.translate( 'Card deleted successfully' ) );
+				}
 			} )
 			.catch( ( error ) => {
 				this.props.errorNotice( error.message );
@@ -53,7 +58,9 @@ class CreditCardDelete extends React.Component {
 			<div className="credit-cards__credit-card-delete">
 				<StoredCard
 					lastDigits={ card.card }
+					email={ card.email }
 					cardType={ card.card_type }
+					paymentPartner={ card.payment_partner }
 					name={ card.name }
 					expiry={ card.expiry }
 				/>

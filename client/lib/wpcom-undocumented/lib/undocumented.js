@@ -855,6 +855,17 @@ Undocumented.prototype.getStoredCards = function ( fn ) {
 };
 
 /**
+ * Get a list of the user's stored payment methods
+ *
+ * @param {object} query The query parameters
+ * @param {Function} fn The callback function
+ */
+Undocumented.prototype.getPaymentMethods = function( query, fn ) {
+	debug( '/me/payment-methods query', { query } );
+	return this.wpcom.req.get( '/me/payment-methods', query, fn );
+};
+
+/**
  * Return a list of third-party services that WordPress.com can integrate with
  *
  * @param {Function} fn The callback function

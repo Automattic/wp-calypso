@@ -2,12 +2,13 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { useLocalizedMoment } from 'components/localized-moment';
+import { PARTNER_PAYPAL_EXPRESS } from 'lib/checkout/payment-methods';
 
 /**
  * Style dependencies
@@ -32,8 +33,14 @@ import creditCardUnionPayImage from 'assets/images/upgrades/cc-unionpay.svg';
 import creditCardUnionPayDisabledImage from 'assets/images/upgrades/cc-unionpay-disabled.svg';
 import creditCardVisaImage from 'assets/images/upgrades/cc-visa.svg';
 import creditCardVisaDisabledImage from 'assets/images/upgrades/cc-visa-disabled.svg';
+import payPalDisabledImage from 'assets/images/upgrades/paypal-disabled.svg';
+import payPalImage from 'assets/images/upgrades/paypal.svg';
 
-const CREDIT_CARD_SELECTED_PATHS = {
+interface ImagePathsMap {
+	[ key: string ]: string;
+}
+
+const CREDIT_CARD_SELECTED_PATHS: ImagePathsMap = {
 	amex: creditCardAmexImage,
 	diners: creditCardDinersImage,
 	discover: creditCardDiscoverImage,
@@ -41,9 +48,11 @@ const CREDIT_CARD_SELECTED_PATHS = {
 	mastercard: creditCardMasterCardImage,
 	unionpay: creditCardUnionPayImage,
 	visa: creditCardVisaImage,
+	paypal_express: payPalImage,
+	paypal: payPalImage,
 };
 
-const CREDIT_CARD_DISABLED_PATHS = {
+const CREDIT_CARD_DISABLED_PATHS: ImagePathsMap = {
 	amex: creditCardAmexDisabledImage,
 	diners: creditCardDinersDisabledImage,
 	discover: creditCardDiscoverDisabledImage,
@@ -51,22 +60,33 @@ const CREDIT_CARD_DISABLED_PATHS = {
 	mastercard: creditCardMasterCardDisabledImage,
 	unionpay: creditCardUnionPayDisabledImage,
 	visa: creditCardVisaDisabledImage,
+	paypal_express: payPalDisabledImage,
+	paypal: payPalDisabledImage,
 };
 
 const CREDIT_CARD_DEFAULT_PATH = creditCardPlaceholderImage;
 
-const getCreditCardImageURL = ( type, selected ) => {
+const getCreditCardImageURL = ( type: string, selected?: boolean ): string => {
 	const paths = selected ? CREDIT_CARD_SELECTED_PATHS : CREDIT_CARD_DISABLED_PATHS;
-	const imagePath = paths[ type ] || CREDIT_CARD_DEFAULT_PATH;
+	const imagePath: string = paths[ type ] || CREDIT_CARD_DEFAULT_PATH;
 	return `url(${ imagePath })`;
 };
 
-const getCreditCardSummary = (
-	translate: ReturnType< typeof useTranslate >,
-	type: string,
-	digits?: Props[ 'lastDigits' ]
-) => {
-	let displayType: string;
+const getCreditCardSummary = ( {
+	translate,
+	type,
+	digits,
+	email,
+}: {
+	translate: ReturnType< typeof useTranslate >;
+	type: string;
+	digits?: Props[ 'lastDigits' ];
+	email?: Props[ 'email' ];
+} ): TranslateResult => {
+	if ( type === PARTNER_PAYPAL_EXPRESS ) {
+		return email || '';
+	}
+	let displayType: TranslateResult;
 	switch ( type && type.toLocaleLowerCase() ) {
 		case 'american express':
 		case 'amex':
@@ -115,6 +135,9 @@ interface Props {
 	cardType: string;
 	name: string;
 	expiry?: string;
+	email?: string;
+	paymentPartner: string;
+	selected?: boolean;
 }
 
 const StoredCard: FunctionComponent< Props > = ( {
@@ -123,26 +146,35 @@ const StoredCard: FunctionComponent< Props > = ( {
 	lastDigits,
 	name,
 	selected,
+	email,
+	paymentPartner,
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
 	// The use of `MM/YY` should not be localized as it is an ISO standard across credit card forms: https://en.wikipedia.org/wiki/ISO/IEC_7813
-	const expirationDate = expiry ? moment( expiry, moment.ISO_8601, true ).format( 'MM/YY' ) : null;
+	const expirationDate = expiry ? moment( expiry, moment.ISO_8601, true ) : null;
+	const displayExpirationDate =
+		expirationDate && expirationDate.isValid() ? expirationDate.format( 'MM/YY' ) : null;
 
 	const type = cardType && cardType.toLocaleLowerCase();
-	const typeStyle = { backgroundImage: getCreditCardImageURL( type, selected ) };
+	const typeStyle = { backgroundImage: getCreditCardImageURL( type || paymentPartner, selected ) };
 
 	return (
 		<div className="credit-card__stored-card" style={ typeStyle }>
 			<span className="credit-card__stored-card-number">
-				{ getCreditCardSummary( translate, cardType, lastDigits ) }
+				{ getCreditCardSummary( {
+					translate,
+					type: type || paymentPartner,
+					digits: lastDigits,
+					email,
+				} ) }
 			</span>
 			<span className="credit-card__stored-card-name">{ name }</span>
 			<span className="credit-card__stored-card-expiration-date">
-				{ expirationDate &&
+				{ displayExpirationDate &&
 					translate( 'Expires %(date)s', {
-						args: { date: expirationDate },
+						args: { date: displayExpirationDate },
 						context: 'date is of the form MM/YY',
 					} ) }
 			</span>

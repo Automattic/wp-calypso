@@ -36,9 +36,12 @@ export const fetchStoredCards = () => ( dispatch ) => {
 	} );
 
 	return new Promise( ( resolve, reject ) => {
-		wp.undocumented().getStoredCards( ( error, data ) => {
-			error ? reject( error ) : resolve( data );
-		} );
+		wp.undocumented().getPaymentMethods(
+			{ type: 'all', status: 'stored', expired: 'exclude' },
+			( error, data ) => {
+				error ? reject( error ) : resolve( data );
+			}
+		);
 	} )
 		.then( ( data ) => {
 			dispatch( {
@@ -60,13 +63,18 @@ export const deleteStoredCard = ( card ) => ( dispatch ) => {
 		card,
 	} );
 
-	return new Promise( ( resolve, reject ) => {
-		wp.undocumented()
-			.me()
-			.storedCardDelete( card, ( error, data ) => {
-				error ? reject( error ) : resolve( data );
-			} );
-	} )
+	return Promise.all(
+		card.allStoredDetailsIds.map(
+			storedDetailsId =>
+				new Promise( ( resolve, reject ) => {
+					wp.undocumented()
+						.me()
+						.storedCardDelete( { stored_details_id: storedDetailsId }, ( error, data ) => {
+							error ? reject( error ) : resolve( data );
+						} );
+				} )
+		)
+	)
 		.then( () => {
 			dispatch( {
 				type: STORED_CARDS_DELETE_COMPLETED,
