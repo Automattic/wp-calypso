@@ -16,12 +16,12 @@ export default function WPCheckoutOrderSummary() {
 			<WPCheckoutOrderSummaryTitle />
 			<CheckoutSummaryAmountWrapper>
 				{ tax && (
-					<>
+					<CheckoutSummaryLineItem>
 						<CheckoutSummaryLabel>{ translate( 'Taxes' ) }</CheckoutSummaryLabel>
 						<CheckoutSummaryAmount>
 							{ renderDisplayValueMarkdown( tax.amount.displayValue ) }
 						</CheckoutSummaryAmount>
-					</>
+					</CheckoutSummaryLineItem>
 				) }
 				<CheckoutSummaryTotal>
 					<CheckoutSummaryLabel>{ translate( 'Total' ) }</CheckoutSummaryLabel>
@@ -61,9 +61,6 @@ const CheckoutSummaryTitle = styled.span`
 
 const CheckoutSummaryAmountWrapper = styled.div`
 	border-top: 1px solid ${props => props.theme.colors.borderColorLight};
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
 	padding: 16px;
 `;
 
@@ -71,6 +68,12 @@ const CheckoutSummaryLabel = styled.span``;
 
 const CheckoutSummaryAmount = styled.span``;
 
-const CheckoutSummaryTotal = styled.span`
-	font-weight: ${( props ) => props.theme.weights.bold};
+const CheckoutSummaryLineItem = styled.div`
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+`;
+
+const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
+	font-weight: ${props => props.theme.weights.bold};
 `;
