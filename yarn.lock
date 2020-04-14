@@ -16,15 +16,6 @@
   resolved "https://registry.yarnpkg.com/@automattic/color-studio/-/color-studio-2.2.1.tgz#e920af382a4db624ebca1591adace289912bf37b"
   integrity sha512-doMeOR5ly+qviYgWhWStByZHnnv3AFBC4Tj6aZLTrw8voulIu9AUv3Z9eit8a68uzCI77VkN7fUFadOiYIYBWg==
 
-"@automattic/effective-module-tree@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@automattic/effective-module-tree/-/effective-module-tree-0.0.1.tgz#f642c8034b42f10dedd645a7c78b533a1a965609"
-  integrity sha512-p/3p1vCve2egb1t9z+PUP8QtHimjHcvWFIjH1fDKoDgRvNU8Pdd4iEiOhnb8MjyqLd/O3dzvmK1t76YLxfHHJQ==
-  dependencies:
-    debug "^4.1.1"
-    object-treeify "^1.1.23"
-    yargs "^15.1.0"
-
 "@automattic/mini-css-extract-plugin-with-rtl@0.8.0":
   version "0.8.0"
   resolved "https://registry.yarnpkg.com/@automattic/mini-css-extract-plugin-with-rtl/-/mini-css-extract-plugin-with-rtl-0.8.0.tgz#0e0dc9afc43a2d6a82c199aef211565e1211fcac"
