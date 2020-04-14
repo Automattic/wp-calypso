@@ -7,13 +7,13 @@
 
 const formatMessage = require( '../format-message.js' );
 
-describe( 'test utils', function() {
-	describe( 'formatMessage', function() {
-		test( 'should not change the string without a matching placeholder', function() {
+describe( 'test utils', function () {
+	describe( 'formatMessage', function () {
+		test( 'should not change the string without a matching placeholder', function () {
 			expect( formatMessage( 'An unchanged {{message}}', {} ) ).toBe( 'An unchanged {{message}}' );
 		} );
 
-		test( 'should replace the placeholder with the property with the same name', function() {
+		test( 'should replace the placeholder with the property with the same name', function () {
 			expect(
 				formatMessage( 'A{{adjective}} {{noun}}', { adjective: ' substituted', noun: 'string' } )
 			).toBe( 'A substituted string' );

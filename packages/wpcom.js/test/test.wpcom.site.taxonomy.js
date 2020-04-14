@@ -15,7 +15,8 @@ describe( 'wpcom.site.taxonomy', () => {
 
 	describe( 'wpcom.site.taxonomy.termsList', () => {
 		it( 'should return a list of terms', done => {
-			taxonomy.termsList()
+			taxonomy
+				.termsList()
 				.then( data => {
 					let foundTerm = data.terms[ 0 ];
 					assert.ok( data );

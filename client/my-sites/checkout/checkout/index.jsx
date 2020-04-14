@@ -638,13 +638,13 @@ export class Checkout extends React.Component {
 			// group all purchases into an array
 			purchasedProducts = reduce(
 				( receipt && receipt.purchases ) || {},
-				function( result, value ) {
+				function ( result, value ) {
 					return result.concat( value );
 				},
 				[]
 			);
 			// and take the first product which matches the product id of the renewalItem
-			product = find( purchasedProducts, function( item ) {
+			product = find( purchasedProducts, function ( item ) {
 				return item.product_id === renewalItem.product_id;
 			} );
 

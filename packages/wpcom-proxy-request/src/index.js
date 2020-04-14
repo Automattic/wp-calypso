@@ -35,7 +35,7 @@ const postStrings = ( () => {
 	try {
 		window.postMessage(
 			{
-				toString: function() {
+				toString: function () {
 					r = true;
 				},
 			},

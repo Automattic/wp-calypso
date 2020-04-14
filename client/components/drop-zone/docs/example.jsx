@@ -30,7 +30,7 @@ const DropZoneExample = localize(
 
 			if ( this.state.lastDroppedFiles ) {
 				fileNames = this.state.lastDroppedFiles
-					.map( function( file ) {
+					.map( function ( file ) {
 						return file.name;
 					} )
 					.join( ', ' );

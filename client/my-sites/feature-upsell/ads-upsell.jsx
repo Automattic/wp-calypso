@@ -251,7 +251,7 @@ class WordAdsUpsellComponent extends Component {
 			cta_name: 'upsell-page-ads',
 		} );
 
-		page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( PLAN_PREMIUM ) || '' }` );
+		page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( PLAN_PREMIUM ) || ''}` );
 	};
 
 	renderPrice() {

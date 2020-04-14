@@ -44,13 +44,13 @@ export default class extends React.Component {
 		return {
 			action1: {
 				label: 'Menu Item 1',
-				action: function() {
+				action: function () {
 					console.log( `Menu Item 1 for theme ${ themeId } selected` );
 				},
 			},
 			action2: {
 				label: 'Menu Item 2',
-				action: function() {
+				action: function () {
 					console.log( `Menu Item 2 for theme ${ themeId } selected` );
 				},
 			},

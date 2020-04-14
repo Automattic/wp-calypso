@@ -9,7 +9,7 @@ var assert = require( 'assert' );
  */
 var fixture = require( './fixture' );
 
-describe( 'wpcom.site', function() {
+describe( 'wpcom.site', function () {
 	// Global instances
 	var wpcom = util.wpcom();
 	var site = wpcom.site( util.site() );
@@ -19,7 +19,8 @@ describe( 'wpcom.site', function() {
 
 	// Create a testing_post before to start tests
 	before( done => {
-		site.addPost( fixture.post )
+		site
+			.addPost( fixture.post )
 			.then( data_post => {
 				testing_post = data_post;
 
@@ -35,15 +36,17 @@ describe( 'wpcom.site', function() {
 
 	// Delete testing post
 	after( done => {
-		site.deletePost( testing_post.ID )
+		site
+			.deletePost( testing_post.ID )
 			.then( () => done() )
 			.catch( done );
 	} );
 
-	describe( 'wpcom.site.lists', function() {
-		describe( 'wpcom.site.categoriesList', function() {
+	describe( 'wpcom.site.lists', function () {
+		describe( 'wpcom.site.categoriesList', function () {
 			it( 'should request categories list', done => {
-				site.categoriesList()
+				site
+					.categoriesList()
 					.then( list => {
 						// list object data testing
 						assert.equal( 'object', typeof list );
@@ -56,9 +59,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.commentsList', function() {
+		describe( 'wpcom.site.commentsList', function () {
 			it( 'should request comments list', done => {
-				site.commentsList()
+				site
+					.commentsList()
 					.then( list => {
 						// list object data testing
 						assert.equal( 'object', typeof list );
@@ -71,9 +75,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.domainsList', function() {
+		describe( 'wpcom.site.domainsList', function () {
 			it( 'should request domains list', done => {
-				site.domainsList()
+				site
+					.domainsList()
 					.then( list => {
 						// list object data testing
 						assert.equal( 'object', typeof list );
@@ -85,9 +90,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.embedsList', function() {
+		describe( 'wpcom.site.embedsList', function () {
 			it( 'should request embeds list', done => {
-				site.embedsList()
+				site
+					.embedsList()
 					.then( list => {
 						// list object data testing
 						assert.equal( 'object', typeof list );
@@ -99,9 +105,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.followsList', function() {
+		describe( 'wpcom.site.followsList', function () {
 			it( 'should request follows list', done => {
-				site.followsList()
+				site
+					.followsList()
 					.then( list => {
 						// list object data testing
 						assert.equal( 'object', typeof list );
@@ -114,9 +121,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.mediaList', function() {
+		describe( 'wpcom.site.mediaList', function () {
 			it( 'should request media library list', done => {
-				site.mediaList()
+				site
+					.mediaList()
 					.then( list => {
 						// list object data testing
 						assert.equal( 'object', typeof list );
@@ -129,9 +137,9 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.postCounts', function() {
-			it( 'should get post counts with `post` type', function( done ) {
-				site.postCounts( 'post', function( err, data ) {
+		describe( 'wpcom.site.postCounts', function () {
+			it( 'should get post counts with `post` type', function ( done ) {
+				site.postCounts( 'post', function ( err, data ) {
 					if ( err ) throw err;
 
 					assert.ok( data.counts instanceof Object );
@@ -141,8 +149,8 @@ describe( 'wpcom.site', function() {
 				} );
 			} );
 
-			it( 'should get post counts with `page` status', function( done ) {
-				site.postCounts( 'page', function( err, data ) {
+			it( 'should get post counts with `page` status', function ( done ) {
+				site.postCounts( 'page', function ( err, data ) {
 					if ( err ) throw err;
 
 					assert.ok( data.counts instanceof Object );
@@ -152,18 +160,19 @@ describe( 'wpcom.site', function() {
 				} );
 			} );
 
-			it( 'should return 404 by unknown type', function( done ) {
+			it( 'should return 404 by unknown type', function ( done ) {
 				var rnd = String( Math.random() ).substr( 2 );
-				site.postCounts( rnd, function( err ) {
+				site.postCounts( rnd, function ( err ) {
 					assert.ok( 'Unknown post type requested', err.message );
 					done();
 				} );
 			} );
 		} );
 
-		describe( 'wpcom.site.postsList', function() {
+		describe( 'wpcom.site.postsList', function () {
 			it( 'should request posts list', done => {
-				site.postsList()
+				site
+					.postsList()
 					.then( list => {
 						// list object data testing
 						assert.equal( 'object', typeof list );
@@ -180,7 +189,8 @@ describe( 'wpcom.site', function() {
 			} );
 
 			it( 'should request only one post', done => {
-				site.postsList( { number: 1 } )
+				site
+					.postsList( { number: 1 } )
 					.then( list => {
 						// list object data testing
 						assert.equal( 'object', typeof list );
@@ -194,9 +204,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.postTypesList', function() {
-			it( 'should get post types list of the site', function( done ) {
-				site.postTypesList()
+		describe( 'wpcom.site.postTypesList', function () {
+			it( 'should get post types list of the site', function ( done ) {
+				site
+					.postTypesList()
 					.then( data => {
 						assert.ok( data.found >= 1 );
 						assert.ok( data.post_types instanceof Array );
@@ -206,9 +217,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.shortcodesList', function() {
+		describe( 'wpcom.site.shortcodesList', function () {
 			it( 'should request shortcodes list', done => {
-				site.shortcodesList()
+				site
+					.shortcodesList()
 					.then( list => {
 						// list object data testing
 						assert.equal( 'object', typeof list );
@@ -220,9 +232,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.stats', function() {
+		describe( 'wpcom.site.stats', function () {
 			it( 'should request stats data', done => {
-				site.stats()
+				site
+					.stats()
 					.then( data => {
 						assert.equal( 'string', typeof Date( data.day ) );
 						assert.equal( 'object', typeof data.stats );
@@ -236,9 +249,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.statsClicks', function() {
+		describe( 'wpcom.site.statsClicks', function () {
 			it( 'should request clicks stats', done => {
-				site.statsClicks()
+				site
+					.statsClicks()
 					.then( data => {
 						assert.equal( 'string', typeof Date( data.date ) );
 						assert.equal( 'object', typeof data.days );
@@ -249,9 +263,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.statsCommentFollowers', function() {
+		describe( 'wpcom.site.statsCommentFollowers', function () {
 			it( 'should request comment follower data', done => {
-				site.statsCommentFollowers()
+				site
+					.statsCommentFollowers()
 					.then( data => {
 						assert.equal( 'string', typeof Date( data.day ) );
 						assert.ok( data.posts instanceof Array );
@@ -264,9 +279,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.statsComments', function() {
+		describe( 'wpcom.site.statsComments', function () {
 			it( 'should request comments data', done => {
-				site.statsComments()
+				site
+					.statsComments()
 					.then( data => {
 						assert.equal( 'string', typeof Date( data.day ) );
 						assert.ok( data.authors instanceof Array );
@@ -282,9 +298,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.statsCountryViews', function() {
+		describe( 'wpcom.site.statsCountryViews', function () {
 			it( 'should request country views stats', done => {
-				site.statsCountryViews()
+				site
+					.statsCountryViews()
 					.then( data => {
 						assert.equal( 'string', typeof Date( data.date ) );
 						assert.equal( 'object', typeof data.days );
@@ -295,9 +312,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.statsFollowers', function() {
+		describe( 'wpcom.site.statsFollowers', function () {
 			it( 'should request follower data', done => {
-				site.statsFollowers()
+				site
+					.statsFollowers()
 					.then( data => {
 						assert.equal( 'string', typeof Date( data.day ) );
 						assert.ok( data.subscribers instanceof Array );
@@ -312,9 +330,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.statsInsights', function() {
+		describe( 'wpcom.site.statsInsights', function () {
 			it( 'should request insight data', done => {
-				site.statsInsights()
+				site
+					.statsInsights()
 					.then( data => {
 						assert.equal( 'number', typeof data.highest_hour );
 						assert.equal( 'number', typeof data.highest_hour_percent );
@@ -326,9 +345,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.statsPublicize', function() {
+		describe( 'wpcom.site.statsPublicize', function () {
 			it( 'should request publicize data', done => {
-				site.statsPublicize()
+				site
+					.statsPublicize()
 					.then( data => {
 						assert.equal( 'string', typeof Date( data.day ) );
 						assert.ok( data.services instanceof Array );
@@ -338,9 +358,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.statsReferrers', function() {
+		describe( 'wpcom.site.statsReferrers', function () {
 			it( 'should request referrers stats', done => {
-				site.statsReferrers()
+				site
+					.statsReferrers()
 					.then( data => {
 						assert.equal( 'string', typeof Date( data.date ) );
 						assert.equal( 'object', typeof data.days );
@@ -351,9 +372,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.statsSearchTerms', function() {
+		describe( 'wpcom.site.statsSearchTerms', function () {
 			it( 'should request search terms stats', done => {
-				site.statsSearchTerms()
+				site
+					.statsSearchTerms()
 					.then( data => {
 						assert.equal( 'string', typeof Date( data.date ) );
 						assert.equal( 'object', typeof data.days );
@@ -364,9 +386,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.statsStreak', function() {
+		describe( 'wpcom.site.statsStreak', function () {
 			it( 'should request streak data', done => {
-				site.statsStreak()
+				site
+					.statsStreak()
 					.then( data => {
 						assert.equal( 'string', typeof Date( data.day ) );
 						assert.ok( data.streak instanceof Object );
@@ -376,9 +399,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.statsSummary', function() {
+		describe( 'wpcom.site.statsSummary', function () {
 			it( 'should request summary data', done => {
-				site.statsSummary()
+				site
+					.statsSummary()
 					.then( data => {
 						assert.equal( 'string', typeof Date( data.day ) );
 						assert.equal( 'string', typeof data.period );
@@ -394,9 +418,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.statsTags', function() {
+		describe( 'wpcom.site.statsTags', function () {
 			it( 'should request tag data', done => {
-				site.statsTags()
+				site
+					.statsTags()
 					.then( data => {
 						assert.equal( 'string', typeof Date( data.day ) );
 						assert.ok( data.tags instanceof Array );
@@ -406,9 +431,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.statsTopAuthors', function() {
+		describe( 'wpcom.site.statsTopAuthors', function () {
 			it( 'should request author data', done => {
-				site.statsTopAuthors()
+				site
+					.statsTopAuthors()
 					.then( data => {
 						assert.equal( 'string', typeof Date( data.day ) );
 						assert.equal( 'string', typeof data.period );
@@ -419,9 +445,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.statsTopPosts', function() {
+		describe( 'wpcom.site.statsTopPosts', function () {
 			it( 'should request top posts stats', done => {
-				site.statsTopPosts()
+				site
+					.statsTopPosts()
 					.then( data => {
 						assert.equal( 'string', typeof Date( data.date ) );
 						assert.equal( 'object', typeof data.days );
@@ -432,9 +459,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.statsVideoPlays', function() {
+		describe( 'wpcom.site.statsVideoPlays', function () {
 			it( 'should request video play data', done => {
-				site.statsVideoPlays()
+				site
+					.statsVideoPlays()
 					.then( data => {
 						assert.equal( 'string', typeof Date( data.day ) );
 						assert.equal( 'string', typeof data.period );
@@ -445,9 +473,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.statsVisits', function() {
+		describe( 'wpcom.site.statsVisits', function () {
 			it( 'should request visits stats', done => {
-				site.statsVisits()
+				site
+					.statsVisits()
 					.then( data => {
 						assert.equal( 'string', typeof Date( data.unit ) );
 
@@ -462,9 +491,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.tagsList', function() {
+		describe( 'wpcom.site.tagsList', function () {
 			it( 'should request tags list', done => {
-				site.tagsList()
+				site
+					.tagsList()
 					.then( list => {
 						// list object data testing
 						assert.equal( 'object', typeof list );
@@ -477,9 +507,10 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.usersList', function() {
+		describe( 'wpcom.site.usersList', function () {
 			it( 'should request users list', done => {
-				site.usersList()
+				site
+					.usersList()
 					.then( list => {
 						assert.equal( 'number', typeof list.found );
 						assert.ok( list.users instanceof Array );
@@ -489,11 +520,11 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe.skip( 'wpcom.site.wpcomPluginsList', function() {
+		describe.skip( 'wpcom.site.wpcomPluginsList', function () {
 			it( 'should request wpcom plugins list', done => {
 				wpcom
-				.site( fixture.site_business )
-				.wpcomPluginsList()
+					.site( fixture.site_business )
+					.wpcomPluginsList()
 					.then( list => {
 						assert.ok( list.plugins instanceof Array );
 						done();
@@ -503,9 +534,10 @@ describe( 'wpcom.site', function() {
 		} );
 	} );
 
-	describe( 'wpcom.site.get', function() {
+	describe( 'wpcom.site.get', function () {
 		it( 'should require site data', done => {
-			site.get()
+			site
+				.get()
 				.then( data => {
 					assert.equal( 'number', typeof data.ID );
 					assert.equal( 'string', typeof data.name );
@@ -515,9 +547,10 @@ describe( 'wpcom.site', function() {
 		} );
 	} );
 
-	describe( 'wpcom.site.addPost', function() {
+	describe( 'wpcom.site.addPost', function () {
 		it( 'should create a new blog post', done => {
-			site.addPost( fixture.post )
+			site
+				.addPost( fixture.post )
 				.then( data => {
 					// store in post ID global var
 					new_post_ID = data.ID;
@@ -530,9 +563,10 @@ describe( 'wpcom.site', function() {
 		} );
 	} );
 
-	describe( 'wpcom.site.deletePost', function() {
+	describe( 'wpcom.site.deletePost', function () {
 		it( 'should delete post added', done => {
-			site.deletePost( new_post_ID )
+			site
+				.deletePost( new_post_ID )
 				.then( data => {
 					assert.equal( 'object', typeof data );
 					assert.equal( new_post_ID, data.ID );
@@ -542,9 +576,10 @@ describe( 'wpcom.site', function() {
 		} );
 	} );
 
-	describe( 'wpcom.site.addMediaFiles', function() {
+	describe( 'wpcom.site.addMediaFiles', function () {
 		it( 'should create a new media from a file', done => {
-			site.addMediaFiles( fixture.media.files )
+			site
+				.addMediaFiles( fixture.media.files )
 				.then( data => {
 					assert.ok( data );
 					assert.ok( data.media instanceof Array );
@@ -555,9 +590,10 @@ describe( 'wpcom.site', function() {
 		} );
 	} );
 
-	describe( 'wpcom.site.addMediaUrls', function() {
+	describe( 'wpcom.site.addMediaUrls', function () {
 		it( 'should create a new site media', done => {
-			site.addMediaUrls( fixture.media.urls )
+			site
+				.addMediaUrls( fixture.media.urls )
 				.then( data => {
 					assert.ok( data );
 					assert.ok( data.media instanceof Array );
@@ -568,11 +604,12 @@ describe( 'wpcom.site', function() {
 		} );
 	} );
 
-	describe( 'wpcom.site.statsReferrersSpamNew', function() {
+	describe( 'wpcom.site.statsReferrersSpamNew', function () {
 		var d = new Date();
-		var domain = ( d.getTime() / 1000 ) + 'wordpress.com';
+		var domain = d.getTime() / 1000 + 'wordpress.com';
 		it( 'should mark a domain as spam', done => {
-			site.statsReferrersSpamNew( domain )
+			site
+				.statsReferrersSpamNew( domain )
 				.then( data => {
 					assert.ok( data );
 					done();
@@ -581,11 +618,12 @@ describe( 'wpcom.site', function() {
 		} );
 	} );
 
-	describe( 'wpcom.site.statsReferrersSpamDelete', function() {
+	describe( 'wpcom.site.statsReferrersSpamDelete', function () {
 		var d = new Date();
-		var domain = ( d.getTime() / 1000 ) + 'wordpress.com';
+		var domain = d.getTime() / 1000 + 'wordpress.com';
 		it( 'should remove a domain from spam refferer list', done => {
-			site.statsReferrersSpamDelete( domain )
+			site
+				.statsReferrersSpamDelete( domain )
 				.then( data => {
 					assert.ok( data );
 					done();
@@ -594,9 +632,10 @@ describe( 'wpcom.site', function() {
 		} );
 	} );
 
-	describe( 'wpcom.site.statsPostViews', function() {
+	describe( 'wpcom.site.statsPostViews', function () {
 		it( 'should request post stat details', done => {
-			site.statsPostViews( testing_post.ID )
+			site
+				.statsPostViews( testing_post.ID )
 				.then( data => {
 					assert.ok( data );
 					assert.equal( 'string', typeof Date( data.date ) );
@@ -616,9 +655,10 @@ describe( 'wpcom.site', function() {
 		} );
 	} );
 
-	describe( 'wpcom.site.statsVideo', function() {
+	describe( 'wpcom.site.statsVideo', function () {
 		it( 'should request video stats', done => {
-			site.statsVideo( testing_post.ID )
+			site
+				.statsVideo( testing_post.ID )
 				.then( data => {
 					assert.ok( data );
 					assert( data.fields instanceof Array );
@@ -630,9 +670,10 @@ describe( 'wpcom.site', function() {
 		} );
 	} );
 
-	describe( 'wpcom.site.pageTemplates', function() {
+	describe( 'wpcom.site.pageTemplates', function () {
 		it( 'should request page templates', done => {
-			site.pageTemplates()
+			site
+				.pageTemplates()
 				.then( data => {
 					assert.ok( data );
 					assert( data.templates instanceof Array );

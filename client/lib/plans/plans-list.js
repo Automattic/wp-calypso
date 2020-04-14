@@ -1064,11 +1064,7 @@ export const getPlanObject = planName => {
 	const plan = PLANS_LIST[ planName ];
 	const objectPlan = {};
 	Object.keys( plan ).forEach( key => {
-		const objectKey =
-			key
-				.substr( 3 )
-				.charAt( 0 )
-				.toLowerCase() + key.slice( 4 );
+		const objectKey = key.substr( 3 ).charAt( 0 ).toLowerCase() + key.slice( 4 );
 		objectPlan[ objectKey ] = plan[ key ]();
 	} );
 

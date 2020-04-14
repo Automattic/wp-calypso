@@ -36,7 +36,7 @@ class TokenField extends PureComponent {
 		placeholder: PropTypes.string,
 		id: PropTypes.string,
 		isExpanded: PropTypes.bool,
-		value: function( props ) {
+		value: function ( props ) {
 			const value = props.value;
 			if ( ! Array.isArray( value ) ) {
 				return new Error( 'Value prop is expected to be an array.' );
@@ -60,10 +60,10 @@ class TokenField extends PureComponent {
 		value: Object.freeze( [] ),
 		placeholder: '',
 		displayTransform: identity,
-		saveTransform: function( token ) {
+		saveTransform: function ( token ) {
 			return token.trim();
 		},
-		onChange: function() {},
+		onChange: function () {},
 		isBorderless: false,
 		disabled: false,
 		tokenizeOnSpace: false,
@@ -346,7 +346,7 @@ class TokenField extends PureComponent {
 
 			each(
 				suggestions,
-				function( suggestion ) {
+				function ( suggestion ) {
 					const index = suggestion.toLocaleLowerCase().indexOf( match );
 					if ( this.props.value.indexOf( suggestion ) === -1 ) {
 						if ( index === 0 ) {

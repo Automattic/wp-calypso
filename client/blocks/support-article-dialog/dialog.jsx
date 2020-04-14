@@ -71,7 +71,7 @@ export const SupportArticleDialog = ( {
 						href={ actionUrl }
 						target={ actionIsExternal ? '_blank' : undefined }
 						primary
-						onClick={ () => ( actionIsExternal ? noop() : closeSupportArticleDialog() ) }
+						onClick={ () => ( actionIsExternal ? noop() : closeSupportArticleDialog())  }
 					>
 						{ actionLabel } { actionIsExternal && <Gridicon icon="external" size={ 12 } /> }
 					</Button>

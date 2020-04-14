@@ -38,7 +38,7 @@ function editorButtonAnalytics( editor ) {
 	Object.keys( editor.buttons ).forEach( buttonName => {
 		const button = editor.buttons[ buttonName ];
 		const onPostRender = button.onPostRender;
-		button.onPostRender = function() {
+		button.onPostRender = function () {
 			this.on( 'click', event => {
 				let eventName = buttonName.replace( /^(wp|wpcom)_/, '' );
 
@@ -109,6 +109,6 @@ function editorButtonAnalytics( editor ) {
 	} );
 }
 
-export default function() {
+export default function () {
 	tinymce.PluginManager.add( 'wpcom/editorbuttonanalytics', editorButtonAnalytics );
 }

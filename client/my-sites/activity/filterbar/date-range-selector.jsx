@@ -44,17 +44,8 @@ export class DateRangeSelector extends Component {
 		} );
 
 		const formattedFromDate =
-			fromDate &&
-			moment( fromDate )
-				.startOf( 'day' )
-				.utc()
-				.format( DATE_FORMAT );
-		const formattedToDate =
-			toDate &&
-			moment( toDate )
-				.endOf( 'day' )
-				.utc()
-				.format( DATE_FORMAT );
+			fromDate && moment( fromDate ).startOf( 'day' ).utc().format( DATE_FORMAT );
+		const formattedToDate = toDate && moment( toDate ).endOf( 'day' ).utc().format( DATE_FORMAT );
 		if ( formattedFromDate && formattedToDate && formattedFromDate !== formattedToDate ) {
 			selectDateRange( siteId, formattedFromDate, formattedToDate );
 			onClose();
@@ -71,16 +62,10 @@ export class DateRangeSelector extends Component {
 	handleDateRangeCommit = ( startDate, endDate ) => {
 		const { moment, selectDateRange } = this.props;
 		const formattedStartDate = startDate
-			? moment( startDate )
-					.startOf( 'day' )
-					.utc()
-					.format( DATE_FORMAT )
+			? moment( startDate ).startOf( 'day' ).utc().format( DATE_FORMAT )
 			: null;
 		const formattedEndDate = endDate
-			? moment( endDate )
-					.endOf( 'day' )
-					.utc()
-					.format( DATE_FORMAT )
+			? moment( endDate ).endOf( 'day' ).utc().format( DATE_FORMAT )
 			: null;
 
 		selectDateRange( this.props.siteId, formattedStartDate, formattedEndDate ); // enough?

@@ -333,10 +333,7 @@ describe( 'LanguagePickerModal', () => {
 			test( 'should switch country lists when user clicks a language group tab', () => {
 				const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
 				expect( wrapper.state().filter ).toEqual( DEFAULT_LANGUAGE_GROUP );
-				wrapper
-					.find( 'NavItem' )
-					.at( 1 )
-					.simulate( 'click' );
+				wrapper.find( 'NavItem' ).at( 1 ).simulate( 'click' );
 				expect( wrapper.state().filter ).toEqual( LANGUAGE_GROUPS[ 1 ].id );
 			} );
 		} );

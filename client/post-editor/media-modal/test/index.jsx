@@ -38,11 +38,7 @@ jest.mock( 'post-editor/media-modal/markup', () => ( {
 jest.mock( 'post-editor/media-modal/secondary-actions', () =>
 	require( 'components/empty-component' )
 );
-jest.mock( 'lib/accept', () =>
-	require( 'sinon' )
-		.stub()
-		.callsArgWithAsync( 1, true )
-);
+jest.mock( 'lib/accept', () => require( 'sinon' ).stub().callsArgWithAsync( 1, true ) );
 jest.mock( 'lib/media/actions', () => ( {
 	delete: () => {},
 	setLibrarySelectedItems: () => {},
@@ -106,7 +102,7 @@ describe( 'EditorMediaModal', () => {
 				'This cannot be undone.'
 		);
 		return new Promise( resolve => {
-			process.nextTick( function() {
+			process.nextTick( function () {
 				expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, media );
 				resolve();
 			} );
@@ -130,7 +126,7 @@ describe( 'EditorMediaModal', () => {
 		);
 
 		return new Promise( resolve => {
-			process.nextTick( function() {
+			process.nextTick( function () {
 				expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, DUMMY_MEDIA );
 				resolve();
 			} );
@@ -155,7 +151,7 @@ describe( 'EditorMediaModal', () => {
 				'This cannot be undone.'
 		);
 		return new Promise( resolve => {
-			process.nextTick( function() {
+			process.nextTick( function () {
 				expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, media );
 				resolve();
 			} );
@@ -179,7 +175,7 @@ describe( 'EditorMediaModal', () => {
 		);
 
 		return new Promise( resolve => {
-			process.nextTick( function() {
+			process.nextTick( function () {
 				expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, DUMMY_MEDIA[ 0 ] );
 				resolve();
 			} );
@@ -199,7 +195,7 @@ describe( 'EditorMediaModal', () => {
 		tree.deleteMedia();
 
 		return new Promise( resolve => {
-			process.nextTick( function() {
+			process.nextTick( function () {
 				expect( spy ).to.have.been.calledWith( ModalViews.LIST );
 				resolve();
 			} );
@@ -219,7 +215,7 @@ describe( 'EditorMediaModal', () => {
 		tree.deleteMedia();
 
 		return new Promise( resolve => {
-			process.nextTick( function() {
+			process.nextTick( function () {
 				expect( spy ).to.not.have.been.called;
 				expect( tree.state.detailSelectedIndex ).to.equal( 0 );
 				resolve();

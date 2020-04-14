@@ -38,7 +38,7 @@ export default class AllSitesIcon extends React.Component {
 
 	render() {
 		const icons = this.getIcons();
-		const classes = `all-sites-icon has-${ this.getMaxSites().length }-icons`;
+		const classes = `all-sites-icon has-${ this.getMaxSites().length}-icons`;
 
 		return <div className={ classes }>{ icons }</div>;
 	}

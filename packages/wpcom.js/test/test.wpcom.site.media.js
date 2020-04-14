@@ -9,7 +9,7 @@ const assert = require( 'assert' );
  */
 const fixture = require( './fixture' );
 
-describe( 'wpcom.site.media', function() {
+describe( 'wpcom.site.media', function () {
 	// Global instances
 	const wpcom = util.wpcom();
 	const site = wpcom.site( util.site() );
@@ -20,7 +20,8 @@ describe( 'wpcom.site.media', function() {
 
 	let testing_media;
 	before( done => {
-		site.addMediaFiles( fixture.media.files[ 1 ] )
+		site
+			.addMediaFiles( fixture.media.files[ 1 ] )
 			.then( data => {
 				testing_media = data ? data.media[ 0 ] : {};
 				done();
@@ -34,7 +35,8 @@ describe( 'wpcom.site.media', function() {
 		}
 
 		// clean media added through of array by urls
-		site.deleteMedia( add_urls_array.media[ 0 ].ID )
+		site
+			.deleteMedia( add_urls_array.media[ 0 ].ID )
 			.then( () => site.deleteMedia( add_urls_array.media[ 1 ].ID ) )
 			.then( () => site.deleteMedia( add_urls_array.media[ 2 ].ID ) )
 			.then( () => site.deleteMedia( add_urls_object.media[ 0 ].ID ) )
@@ -42,10 +44,11 @@ describe( 'wpcom.site.media', function() {
 			.catch( done );
 	} );
 
-	describe( 'wpcom.site.media.get', function() {
+	describe( 'wpcom.site.media.get', function () {
 		it( 'should get added media', done => {
 			const media = site.media( testing_media.ID );
-			media.get()
+			media
+				.get()
 				.then( data => {
 					assert.equal( testing_media.ID, data.ID );
 					done();
@@ -54,7 +57,7 @@ describe( 'wpcom.site.media', function() {
 		} );
 	} );
 
-	describe( 'wpcom.site.media.update', function() {
+	describe( 'wpcom.site.media.update', function () {
 		it( 'should edit the media title', done => {
 			const edited_title = 'This is the new title';
 
@@ -71,9 +74,11 @@ describe( 'wpcom.site.media', function() {
 		} );
 	} );
 
-	describe( 'wpcom.site.media.addFiles', function() {
+	describe( 'wpcom.site.media.addFiles', function () {
 		it( 'should create a new media from a file', done => {
-			site.media().addFiles( fixture.media.files )
+			site
+				.media()
+				.addFiles( fixture.media.files )
 				.then( data => {
 					assert.ok( data );
 					assert.ok( data.media instanceof Array );
@@ -84,11 +89,13 @@ describe( 'wpcom.site.media', function() {
 		} );
 	} );
 
-	describe( 'wpcom.site.media.addUrls', function() {
+	describe( 'wpcom.site.media.addUrls', function () {
 		it( 'should create a new media from an object', done => {
 			const media_object = fixture.media.urls[ 1 ];
 
-			site.media().addUrls( media_object )
+			site
+				.media()
+				.addUrls( media_object )
 				.then( data => {
 					assert.ok( data );
 					add_urls_object = data;
@@ -98,9 +105,11 @@ describe( 'wpcom.site.media', function() {
 		} );
 	} );
 
-	describe( 'wpcom.site.media.addUrls', function() {
+	describe( 'wpcom.site.media.addUrls', function () {
 		it( 'should create a new media', done => {
-			site.media().addUrls( fixture.media.urls )
+			site
+				.media()
+				.addUrls( fixture.media.urls )
 				.then( data => {
 					assert.ok( data );
 					assert.ok( data.media instanceof Array );
@@ -114,9 +123,11 @@ describe( 'wpcom.site.media', function() {
 		} );
 	} );
 
-	describe( 'wpcom.site.media.delete', function() {
+	describe( 'wpcom.site.media.delete', function () {
 		it( 'should delete a media', done => {
-			site.media( testing_media.ID ).del()
+			site
+				.media( testing_media.ID )
+				.del()
 				.then( data => {
 					assert.equal( testing_media.ID, data.ID );
 					done();

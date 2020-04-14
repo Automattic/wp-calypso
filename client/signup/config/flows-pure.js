@@ -58,7 +58,7 @@ export function generateFlows( {
 
 		'rebrand-cities': {
 			steps: [ 'rebrand-cities-welcome', 'user' ],
-			destination: function( dependencies ) {
+			destination: function ( dependencies ) {
 				return '/plans/select/business/' + dependencies.siteSlug;
 			},
 			description: 'Create an account for REBRAND cities partnership',

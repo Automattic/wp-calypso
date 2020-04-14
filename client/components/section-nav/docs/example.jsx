@@ -76,10 +76,10 @@ class SectionNavigation extends PureComponent {
 
 		forEach(
 			omit( this.props, 'isolated', 'uniqueInstance', 'readmeFilePath' ),
-			function( prop, key ) {
+			function ( prop, key ) {
 				demoSections[ key ] = [];
 
-				prop.forEach( function( item, index ) {
+				prop.forEach( function ( item, index ) {
 					demoSections[ key ].push(
 						<NavItem
 							key={ key + '-' + index }
@@ -159,7 +159,7 @@ class SectionNavigation extends PureComponent {
 	};
 
 	handleNavItemClick = ( section, index ) => {
-		return function() {
+		return function () {
 			var stateUpdate = {};
 
 			stateUpdate[ section + 'SelectedIndex' ] = index;

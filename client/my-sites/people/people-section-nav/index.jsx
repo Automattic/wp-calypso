@@ -20,7 +20,7 @@ class PeopleNavTabs extends React.Component {
 	render() {
 		return (
 			<NavTabs selectedText={ this.props.selectedText }>
-				{ this.props.filters.map( function( filterItem ) {
+				{ this.props.filters.map( function ( filterItem ) {
 					return (
 						<NavItem
 							key={ filterItem.id }

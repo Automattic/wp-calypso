@@ -17,7 +17,7 @@ function registerMultiPage( { paths: givenPaths, handlers } ) {
 
 const commonHandlers = [ siteSelection, navigation ];
 
-export default function() {
+export default function () {
 	page( paths.emailManagement(), siteSelection, sites, makeLayout, clientRender );
 
 	registerMultiPage( {

@@ -75,7 +75,7 @@ export class LocaleSuggestions extends Component {
 			return <QueryLocaleSuggestions />;
 		}
 
-		const usersOtherLocales = localeSuggestions.filter( function( locale ) {
+		const usersOtherLocales = localeSuggestions.filter( function ( locale ) {
 			return ! startsWith( getLocaleSlug(), locale.locale );
 		} );
 

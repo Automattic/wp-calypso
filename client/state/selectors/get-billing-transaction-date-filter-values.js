@@ -28,9 +28,7 @@ export default createSelector(
 		const result = times( 6, n => {
 			const month = moment().subtract( n, 'months' );
 			return {
-				dateString: moment( month )
-					.startOf( 'month' )
-					.format( 'YYYY-MM-DD' ),
+				dateString: moment( month ).startOf( 'month' ).format( 'YYYY-MM-DD' ),
 				value: { month: month.format( 'YYYY-MM' ), operator: 'equal' },
 				count: 0,
 			};

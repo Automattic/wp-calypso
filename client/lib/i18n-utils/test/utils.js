@@ -600,12 +600,12 @@ describe( 'utils', () => {
 		} );
 	} );
 
-	describe( 'translationExists()', function() {
-		it( 'should return true for a simple translation', function() {
+	describe( 'translationExists()', function () {
+		it( 'should return true for a simple translation', function () {
 			expect( translationExists( 'test1' ) ).toBe( true );
 		} );
 
-		it( 'should return false for a string without translation', function() {
+		it( 'should return false for a string without translation', function () {
 			getLocaleSlug.mockImplementationOnce( () => 'fr' );
 			expect(
 				translationExists(
@@ -614,11 +614,11 @@ describe( 'utils', () => {
 			).toBe( false );
 		} );
 
-		it( 'should return true for a simple translation when using default locale', function() {
+		it( 'should return true for a simple translation when using default locale', function () {
 			expect( translationExists( 'test1' ) ).toBe( true );
 		} );
 
-		it( 'should return true for a string without translation when using default locale', function() {
+		it( 'should return true for a string without translation when using default locale', function () {
 			expect(
 				translationExists(
 					'It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness…'

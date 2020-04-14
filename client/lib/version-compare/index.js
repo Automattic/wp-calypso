@@ -56,7 +56,7 @@ function version_compare( v1, v2, operator ) {
 		// even less than an unexisting value in vm (-7), hence [-8].
 		// It's also important to not strip spaces because of this.
 		//   version_compare('', ' ') == 1
-		prepVersion = function( v ) {
+		prepVersion = function ( v ) {
 			v = ( '' + v ).replace( /[_\-+]/g, '.' );
 			v = v.replace( /([^.\d]+)/g, '.$1.' ).replace( /\.{2,}/g, '.' );
 			return ! v.length ? [ -8 ] : v.split( '.' );
@@ -65,7 +65,7 @@ function version_compare( v1, v2, operator ) {
 	// Empty component becomes 0.
 	// Non-numerical component becomes a negative number.
 	// Numerical component becomes itself as an integer.
-	const numVersion = function( v ) {
+	const numVersion = function ( v ) {
 		return ! v ? 0 : isNaN( v ) ? vm[ v ] || -7 : parseInt( v, 10 );
 	};
 	v1 = prepVersion( v1 );

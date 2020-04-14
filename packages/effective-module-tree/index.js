@@ -13,7 +13,7 @@ const treeify = require( 'object-treeify' );
  *
  * @param {string} packagePath Package path used as seed for the traversal
  */
-const candidates = function*( packagePath ) {
+const candidates = function* ( packagePath ) {
 	const parts = packagePath.split( path.sep );
 	for ( let i = parts.length; i >= 0; i-- ) {
 		// This avoids generating .../node_modules/node_modules/...

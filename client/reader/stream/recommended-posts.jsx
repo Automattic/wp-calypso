@@ -69,7 +69,7 @@ export class RecommendedPosts extends React.PureComponent {
 						return (
 							<li
 								className="reader-stream__recommended-posts-list-item"
-								key={ `${ index }-${ post && post.global_ID }` }
+								key={ `${ index }-${ post && post.global_ID}` }
 							>
 								<div className="reader-stream__recommended-post-dismiss">
 									<Button

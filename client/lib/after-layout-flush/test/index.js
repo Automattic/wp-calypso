@@ -46,7 +46,7 @@ class PreserveThisTest {
 // Wrap this in a method so we can call it at the right time and pick up
 // the current state of `requestAnimationFrame` existence.
 function setupPreserveThisTest() {
-	PreserveThisTest.prototype.wrappedFunction = afterLayoutFlush( function() {
+	PreserveThisTest.prototype.wrappedFunction = afterLayoutFlush( function () {
 		return this.callback( this.foo );
 	} );
 }

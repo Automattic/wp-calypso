@@ -36,10 +36,7 @@ export function trashPost( siteId, postId ) {
 			post,
 		} );
 
-		const trashResult = wpcom
-			.site( siteId )
-			.post( postId )
-			.delete();
+		const trashResult = wpcom.site( siteId ).post( postId ).delete();
 
 		trashResult.then(
 			savedPost => {

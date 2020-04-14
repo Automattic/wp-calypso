@@ -93,8 +93,8 @@ class WPSuperCache extends Component {
 				/>
 				<QueryStatus siteId={ siteId } />
 				<PageViewTracker
-					path={ `/extensions/wp-super-cache/${ tab ? tab + '/' : '' }:site` }
-					title={ `WP Super Cache > ${ tab ? titlecase( tab ) : 'Easy' }` }
+					path={ `/extensions/wp-super-cache/${ tab ? tab + '/' : ''}:site` }
+					title={ `WP Super Cache > ${ tab ? titlecase( tab ) : 'Easy'}` }
 				/>
 
 				{ cacheDisabled && (

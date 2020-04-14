@@ -223,11 +223,11 @@ const deprecated = [
 			},
 		},
 
-		save: function() {
+		save: function () {
 			return [];
 		},
 
-		migrate: function( attributes ) {
+		migrate: function ( attributes ) {
 			const o2list = decodeURIComponent( atob( attributes.items ) );
 			const o2Items = o2list.split( '\n' );
 			const items = [];

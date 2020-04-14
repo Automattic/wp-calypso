@@ -58,11 +58,7 @@ const NotificationSubscriptions = createReactClass( {
 		return this.props.translate( '%(fromHour)s - %(toHour)s', {
 			context: 'Hour range between which subscriptions are delivered',
 			args: {
-				fromHour: this.props
-					.moment()
-					.hour( hour )
-					.minute( 0 )
-					.format( 'LT' ),
+				fromHour: this.props.moment().hour( hour ).minute( 0 ).format( 'LT' ),
 				toHour: this.props
 					.moment()
 					.hour( hour + 2 )

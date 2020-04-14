@@ -39,7 +39,7 @@ function main() {
 }
 
 function writeSearchIndex( documents, searchIndexPath ) {
-	const idx = lunr( function() {
+	const idx = lunr( function () {
 		this.field( 'title', { boost: 10 } );
 		this.field( 'body' );
 

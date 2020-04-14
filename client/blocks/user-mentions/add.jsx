@@ -26,8 +26,9 @@ export default WrappedComponent =>
 	class AddUserMentions extends React.Component {
 		matchingSuggestions = [];
 
-		static displayName = `withUserMentions( ${ WrappedComponent.displayName ||
-			WrappedComponent.name } )`;
+		static displayName = `withUserMentions( ${
+			WrappedComponent.displayName || WrappedComponent.name
+		} )`;
 		static propTypes = {};
 
 		state = {

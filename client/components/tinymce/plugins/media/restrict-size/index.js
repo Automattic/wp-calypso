@@ -65,7 +65,7 @@ export function setImages( content ) {
 	return content.replace( REGEXP_ORIGINAL_IMG, setImageSrc );
 }
 
-export default function( editor ) {
+export default function ( editor ) {
 	editor.on( 'BeforeSetContent BeforeSetWpcomMedia', event => {
 		if ( ! event.content || 'html' === event.mode ) {
 			return;

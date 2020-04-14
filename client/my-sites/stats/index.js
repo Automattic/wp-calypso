@@ -18,7 +18,7 @@ import { makeLayout, render as clientRender } from 'controller';
  */
 import './style.scss';
 
-export default function() {
+export default function () {
 	const validPeriods = [ 'day', 'week', 'month', 'year' ];
 
 	if ( config.isEnabled( 'manage/stats' ) ) {

@@ -99,7 +99,7 @@ function throttleAndDebounce( fn, throttleMs, debounceMs ) {
 	const throttled = throttle( fn, throttleMs );
 	const debounced = debounce( throttled, debounceMs );
 
-	const throttledAndDebounced = function() {
+	const throttledAndDebounced = function () {
 		return debounced.apply( this, arguments );
 	};
 

@@ -5,7 +5,7 @@ import { forEach } from 'lodash';
 import url from 'url';
 
 function stripAutoPlays( query ) {
-	const keys = Object.keys( query ).filter( function( k ) {
+	const keys = Object.keys( query ).filter( function ( k ) {
 		return /^auto_?play$/i.test( k );
 	} );
 	forEach( keys, key => {

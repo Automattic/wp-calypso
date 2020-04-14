@@ -41,13 +41,13 @@ const MarketingToolsGoogleMyBusinessFeature: FunctionComponent< Props > = ( {
 	const handleConnectToGoogleMyBusinessClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_connect_to_google_my_business_button_click' );
 
-		page( `/google-my-business/${ selectedSiteSlug || '' }` );
+		page( `/google-my-business/${ selectedSiteSlug || ''}` );
 	};
 
 	const handleGoToGoogleMyBusinessClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_go_to_google_my_business_button_click' );
 
-		page( `/google-my-business/stats/${ selectedSiteSlug || '' }` );
+		page( `/google-my-business/stats/${ selectedSiteSlug || ''}` );
 	};
 
 	const handleUpgradeToBusinessPlanClick = () => {

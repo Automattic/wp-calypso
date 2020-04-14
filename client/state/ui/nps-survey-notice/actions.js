@@ -18,7 +18,7 @@ export function setNpsSurveyDialogShowing( isShowing ) {
 export function setupNpsSurveyDevTrigger() {
 	return dispatch => {
 		if ( config.isEnabled( 'nps-survey/dev-trigger' ) ) {
-			window.npsSurvey = function( isAvailableForSupportSession = false ) {
+			window.npsSurvey = function ( isAvailableForSupportSession = false ) {
 				dispatch( setNpsSurveyEligibility( true ) );
 				dispatch( setNpsConciergeSessionAvailaibility( isAvailableForSupportSession ) );
 			};

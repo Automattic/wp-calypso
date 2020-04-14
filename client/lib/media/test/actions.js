@@ -58,7 +58,7 @@ jest.mock( 'lib/redux-bridge', () => ( {
 describe( 'MediaActions', () => {
 	let MediaActions, sandbox, Dispatcher, MediaListStore, savedCreateObjectURL;
 
-	beforeAll( function() {
+	beforeAll( function () {
 		Dispatcher = require( 'dispatcher' );
 		MediaListStore = require( '../list-store' );
 		MediaActions = require( '../actions' );
@@ -77,7 +77,7 @@ describe( 'MediaActions', () => {
 		sandbox.stub( stubs, 'mediaUpdate' ).callsArgWithAsync( 1, null, DUMMY_API_RESPONSE );
 		sandbox.stub( stubs, 'mediaDelete' ).callsArgWithAsync( 0, null, DUMMY_API_RESPONSE );
 		MediaActions._fetching = {};
-		window.FileList = function() {};
+		window.FileList = function () {};
 		window.FileList.prototype[ Symbol.iterator ] = Array.prototype[ Symbol.iterator ];
 		savedCreateObjectURL = window.URL.createObjectURL;
 		window.URL.createObjectURL = sandbox.stub();
@@ -106,7 +106,7 @@ describe( 'MediaActions', () => {
 		test( 'should call to the WordPress.com REST API', () => {
 			return new Promise( done => {
 				Dispatcher.handleViewAction.restore();
-				sandbox.stub( Dispatcher, 'handleViewAction' ).callsFake( function() {
+				sandbox.stub( Dispatcher, 'handleViewAction' ).callsFake( function () {
 					expect( MediaActions._fetching ).to.have.all.keys( [
 						[ DUMMY_SITE_ID, DUMMY_ITEM.ID ].join(),
 					] );
@@ -116,7 +116,7 @@ describe( 'MediaActions', () => {
 
 				expect( Dispatcher.handleViewAction ).to.have.been.calledOnce;
 				expect( stubs.mediaGet ).to.have.been.calledOn( [ DUMMY_SITE_ID, DUMMY_ITEM.ID ].join() );
-				process.nextTick( function() {
+				process.nextTick( function () {
 					expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
 						type: 'RECEIVE_MEDIA_ITEM',
 						error: null,
@@ -152,7 +152,7 @@ describe( 'MediaActions', () => {
 				MediaActions.fetchNextPage( DUMMY_SITE_ID );
 
 				expect( stubs.mediaList ).to.have.been.calledOn( DUMMY_SITE_ID );
-				process.nextTick( function() {
+				process.nextTick( function () {
 					expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
 						type: 'RECEIVE_MEDIA_ITEMS',
 						error: null,
@@ -176,7 +176,7 @@ describe( 'MediaActions', () => {
 
 				expect( stubs.mediaListExternal ).to.have.been.calledWithMatch( { source: 'external' } );
 
-				process.nextTick( function() {
+				process.nextTick( function () {
 					expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
 						type: 'RECEIVE_MEDIA_ITEMS',
 						error: null,
@@ -369,7 +369,7 @@ describe( 'MediaActions', () => {
 
 				expect( stubs.mediaUpdate ).to.have.been.calledWithMatch( item );
 
-				process.nextTick( function() {
+				process.nextTick( function () {
 					expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
 						type: 'RECEIVE_MEDIA_ITEM',
 						error: null,
@@ -401,7 +401,7 @@ describe( 'MediaActions', () => {
 				MediaActions.delete( DUMMY_SITE_ID, item );
 
 				expect( stubs.mediaDelete ).to.have.been.calledOn( [ DUMMY_SITE_ID, item.ID ].join() );
-				process.nextTick( function() {
+				process.nextTick( function () {
 					expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
 						type: 'REMOVE_MEDIA_ITEM',
 						error: null,

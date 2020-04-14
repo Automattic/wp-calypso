@@ -36,9 +36,7 @@ describe( '#queueRequest', () => {
 
 	test( 'should call `onSuccess` when a response returns with data', done => {
 		const data = { value: 1 };
-		nock( 'https://public-api.wordpress.com:443' )
-			.get( '/rest/v1.1/me' )
-			.reply( 200, data );
+		nock( 'https://public-api.wordpress.com:443' ).get( '/rest/v1.1/me' ).reply( 200, data );
 
 		const dispatch = action => {
 			expect( action ).to.be.eql( extendAction( succeeder, successMeta( data ) ) );
@@ -50,9 +48,7 @@ describe( '#queueRequest', () => {
 
 	test( 'should call `onFailure` when a response returns with an error', done => {
 		const error = { error: 'bad' };
-		nock( 'https://public-api.wordpress.com:443' )
-			.get( '/rest/v1.1/me' )
-			.replyWithError( error );
+		nock( 'https://public-api.wordpress.com:443' ).get( '/rest/v1.1/me' ).replyWithError( error );
 
 		const dispatch = action => {
 			expect( action ).to.be.eql( extendAction( failer, failureMeta( error ) ) );

@@ -12,7 +12,7 @@ const DISCOVER_BLOG_ID = 53424024;
  * @param  {object} post - the post to extend
  * @returns {object}      - the post with discover properties
  */
-export default function( post ) {
+export default function ( post ) {
 	const isDiscover = !! (
 		get( post, 'discover_metadata' ) || DISCOVER_BLOG_ID === get( post, 'site_ID' )
 	);

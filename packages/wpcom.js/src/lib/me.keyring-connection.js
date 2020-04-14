@@ -1,7 +1,6 @@
 const root = '/me/keyring-connections/';
 
 export default class KeyringConnection {
-
 	/**
 	 * `KeyringConnection` constructor.
 	 *

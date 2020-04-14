@@ -27,14 +27,14 @@ const DUMMY_SITE_ID = 1,
 describe( 'MediaLibrarySelectedStore', () => {
 	let Dispatcher, sandbox, MediaLibrarySelectedStore, handler, MediaStore;
 
-	beforeAll( function() {
+	beforeAll( function () {
 		sandbox = sinon.createSandbox();
 		Dispatcher = require( 'dispatcher' );
 		sandbox.spy( Dispatcher, 'register' );
 		sandbox.stub( Dispatcher, 'waitFor' ).returns( true );
 
 		MediaStore = require( '../store' );
-		sandbox.stub( MediaStore, 'get' ).callsFake( function( siteId, itemId ) {
+		sandbox.stub( MediaStore, 'get' ).callsFake( function ( siteId, itemId ) {
 			if ( siteId === DUMMY_SITE_ID ) {
 				return DUMMY_OBJECTS[ itemId ];
 			}
@@ -48,7 +48,7 @@ describe( 'MediaLibrarySelectedStore', () => {
 		MediaLibrarySelectedStore._media = {};
 	} );
 
-	afterAll( function() {
+	afterAll( function () {
 		sandbox.restore();
 	} );
 

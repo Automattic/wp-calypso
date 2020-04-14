@@ -197,9 +197,7 @@ const getFilesForEntrypoint = ( target, name ) => {
 
 function getCurrentBranchName() {
 	try {
-		return execSync( 'git rev-parse --abbrev-ref HEAD' )
-			.toString()
-			.replace( /\s/gm, '' );
+		return execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().replace( /\s/gm, '' );
 	} catch ( err ) {
 		return undefined;
 	}
@@ -207,9 +205,7 @@ function getCurrentBranchName() {
 
 function getCurrentCommitShortChecksum() {
 	try {
-		return execSync( 'git rev-parse --short HEAD' )
-			.toString()
-			.replace( /\s/gm, '' );
+		return execSync( 'git rev-parse --short HEAD' ).toString().replace( /\s/gm, '' );
 	} catch ( err ) {
 		return undefined;
 	}
@@ -699,7 +695,7 @@ function handleLocaleSubdomains( req, res, next ) {
 	next();
 }
 
-module.exports = function() {
+module.exports = function () {
 	const app = express();
 
 	app.set( 'views', __dirname );
@@ -710,7 +706,7 @@ module.exports = function() {
 	app.use( handleLocaleSubdomains );
 
 	// Temporarily redirect cloud.jetpack.com to jetpack.com in the production enviroment
-	app.use( function( req, res, next ) {
+	app.use( function ( req, res, next ) {
 		if ( 'jetpack-cloud-production' === calypsoEnv ) {
 			res.redirect( 'https://jetpack.com/' );
 		}
@@ -718,7 +714,7 @@ module.exports = function() {
 	} );
 
 	// redirect homepage if the Reader is disabled
-	app.get( '/', function( request, response, next ) {
+	app.get( '/', function ( request, response, next ) {
 		if ( ! config.isEnabled( 'reader' ) && config.isEnabled( 'stats' ) ) {
 			response.redirect( '/stats' );
 		} else {
@@ -727,7 +723,7 @@ module.exports = function() {
 	} );
 
 	// redirects to handle old newdash formats
-	app.use( '/sites/:site/:section', function( req, res, next ) {
+	app.use( '/sites/:site/:section', function ( req, res, next ) {
 		const redirectedSections = [
 			'posts',
 			'pages',
@@ -754,7 +750,7 @@ module.exports = function() {
 	} );
 
 	if ( process.env.NODE_ENV !== 'development' ) {
-		app.get( '/discover', function( req, res, next ) {
+		app.get( '/discover', function ( req, res, next ) {
 			if ( ! req.context.isLoggedIn ) {
 				res.redirect( config( 'discover_logged_out_redirect_url' ) );
 			} else {
@@ -763,7 +759,7 @@ module.exports = function() {
 		} );
 
 		// redirect logged-out searches to en.search.wordpress.com
-		app.get( '/read/search', function( req, res, next ) {
+		app.get( '/read/search', function ( req, res, next ) {
 			if ( ! req.context.isLoggedIn ) {
 				res.redirect( 'https://en.search.wordpress.com/?q=' + encodeURIComponent( req.query.q ) );
 			} else {
@@ -771,7 +767,7 @@ module.exports = function() {
 			}
 		} );
 
-		app.get( '/plans', function( req, res, next ) {
+		app.get( '/plans', function ( req, res, next ) {
 			if ( ! req.context.isLoggedIn ) {
 				const queryFor = req.query && req.query.for;
 				if ( queryFor && 'jetpack' === queryFor ) {
@@ -795,7 +791,7 @@ module.exports = function() {
 		res.redirect( 301, newRoute );
 	} );
 
-	app.get( [ '/domains', '/start/domain-first' ], function( req, res ) {
+	app.get( [ '/domains', '/start/domain-first' ], function ( req, res ) {
 		let redirectUrl = '/start/domain';
 		const domain = get( req, 'query.new', false );
 		if ( domain ) {
@@ -829,7 +825,7 @@ module.exports = function() {
 	function handleSectionPath( section, sectionPath, entrypoint ) {
 		const pathRegex = pathToRegExp( sectionPath );
 
-		app.get( pathRegex, setupDefaultContext( entrypoint ), function( req, res, next ) {
+		app.get( pathRegex, setupDefaultContext( entrypoint ), function ( req, res, next ) {
 			req.context.sectionName = section.name;
 
 			if ( ! entrypoint && config.isEnabled( 'code-splitting' ) ) {
@@ -888,7 +884,7 @@ module.exports = function() {
 	app.post(
 		'/cspreport',
 		bodyParser.json( { type: [ 'json', 'application/csp-report' ] } ),
-		function( req, res ) {
+		function ( req, res ) {
 			const cspReport = req.body[ 'csp-report' ] || {};
 			const cspReportSnakeCase = Object.keys( cspReport ).reduce( ( report, key ) => {
 				report[ snakeCase( key ) ] = cspReport[ key ];
@@ -902,12 +898,12 @@ module.exports = function() {
 			res.status( 200 ).send( 'Got it!' );
 		},
 		// eslint-disable-next-line no-unused-vars
-		function( err, req, res, next ) {
+		function ( err, req, res, next ) {
 			res.status( 500 ).send( 'Bad report!' );
 		}
 	);
 
-	app.get( '/browsehappy', setupDefaultContext(), setUpRoute, function( req, res ) {
+	app.get( '/browsehappy', setupDefaultContext(), setUpRoute, function ( req, res ) {
 		const wpcomRe = /^https?:\/\/[A-z0-9_-]+\.wordpress\.com$/;
 		const primaryBlogUrl = get( req, 'context.user.primary_blog_url', '' );
 		const isWpcom = wpcomRe.test( primaryBlogUrl );
@@ -919,7 +915,7 @@ module.exports = function() {
 		res.send( renderJsx( 'browsehappy', req.context ) );
 	} );
 
-	app.get( '/support-user', function( req, res ) {
+	app.get( '/support-user', function ( req, res ) {
 		// Do not iframe
 		res.set( {
 			'X-Frame-Options': 'DENY',

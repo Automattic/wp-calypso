@@ -12,7 +12,7 @@ import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { podcasting, taxonomies, writing } from './controller';
 import { setScroll, siteSettings } from 'my-sites/site-settings/settings-controller';
 
-export default function() {
+export default function () {
 	page(
 		'/settings/writing/:site_id',
 		siteSelection,

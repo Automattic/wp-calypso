@@ -15,28 +15,28 @@ import {
 } from 'state/sites/selectors';
 
 const _filters = {
-	none: function() {
+	none: function () {
 		return false;
 	},
-	all: function() {
+	all: function () {
 		return true;
 	},
-	active: function( plugin ) {
-		return some( plugin.sites, function( site ) {
+	active: function ( plugin ) {
+		return some( plugin.sites, function ( site ) {
 			return site.active;
 		} );
 	},
-	inactive: function( plugin ) {
-		return some( plugin.sites, function( site ) {
+	inactive: function ( plugin ) {
+		return some( plugin.sites, function ( site ) {
 			return ! site.active;
 		} );
 	},
-	updates: function( plugin ) {
-		return some( plugin.sites, function( site ) {
+	updates: function ( plugin ) {
+		return some( plugin.sites, function ( site ) {
 			return site.update;
 		} );
 	},
-	isEqual: function( pluginSlug, plugin ) {
+	isEqual: function ( pluginSlug, plugin ) {
 		return plugin.slug === pluginSlug;
 	},
 };
@@ -114,7 +114,7 @@ export function getSitesWithPlugin( state, siteIds, pluginSlug ) {
 
 export function getSitesWithoutPlugin( state, siteIds, pluginSlug ) {
 	const installedOnSiteIds = getSitesWithPlugin( state, siteIds, pluginSlug ) || [];
-	return filter( siteIds, function( siteId ) {
+	return filter( siteIds, function ( siteId ) {
 		if ( ! get( getSite( state, siteId ), 'visible' ) || ! isJetpackSite( state, siteId ) ) {
 			return false;
 		}
@@ -123,7 +123,7 @@ export function getSitesWithoutPlugin( state, siteIds, pluginSlug ) {
 			return false;
 		}
 
-		return every( installedOnSiteIds, function( installedOnSiteId ) {
+		return every( installedOnSiteIds, function ( installedOnSiteId ) {
 			return installedOnSiteId !== siteId;
 		} );
 	} );

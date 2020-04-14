@@ -144,7 +144,7 @@ class StatsListItem extends React.Component {
 		if ( data.actions ) {
 			const actionItems = [];
 
-			data.actions.forEach( function( action ) {
+			data.actions.forEach( function ( action ) {
 				let actionItem;
 
 				switch ( action.type ) {
@@ -203,7 +203,7 @@ class StatsListItem extends React.Component {
 			'module-content-list-item-label-section': labelData.length > 1,
 		} );
 
-		const label = labelData.map( function( labelItem, i ) {
+		const label = labelData.map( function ( labelItem, i ) {
 			const iconClassSetOptions = { avatar: true };
 			let icon, gridiconSpan, itemLabel;
 

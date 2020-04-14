@@ -83,14 +83,14 @@ class ProductVariationTypesForm extends Component {
 		const { siteId, product, editProductAttribute } = this.props;
 		const attribute =
 			product.attributes &&
-			find( product.attributes, function( a ) {
+			find( product.attributes, function ( a ) {
 				return a.uid === attributeId;
 			} );
 
 		// Ensure we don't have an existing variation type with the same name.
 		const existingAttribute =
 			product.attributes &&
-			find( product.attributes, function( a ) {
+			find( product.attributes, function ( a ) {
 				return a.uid !== attributeId && a.name.trim().toLowerCase() === name.trim().toLowerCase();
 			} );
 

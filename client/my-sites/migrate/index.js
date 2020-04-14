@@ -15,7 +15,7 @@ import {
 import { makeLayout, render as clientRender } from 'controller';
 import { navigation, redirectWithoutSite, sites, siteSelection } from 'my-sites/controller';
 
-export default function() {
+export default function () {
 	page(
 		'/migrate',
 		ensureFeatureFlag,

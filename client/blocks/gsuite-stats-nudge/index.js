@@ -102,7 +102,7 @@ class GSuiteStatsNudge extends Component {
 					<div className="gsuite-stats-nudge__info">
 						<h1 className="gsuite-stats-nudge__title">
 							{ translate( 'Get custom email addresses with %(domain)s', {
-								args: { domain: domainSlug }
+								args: { domain: domainSlug },
 							} ) }
 						</h1>
 

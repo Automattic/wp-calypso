@@ -6,7 +6,7 @@ import i18n from 'i18n-calypso';
 import emailValidator from 'email-validator';
 
 export function filter( { users, fields } ) {
-	return users.filter( function( user, index ) {
+	return users.filter( function ( user, index ) {
 		const isFirst = index === 0;
 		const hasInput = some( Object.keys( fields ), name => user[ name ].value );
 
@@ -16,8 +16,8 @@ export function filter( { users, fields } ) {
 
 export function validate( { users, fields }, existingUsers = null ) {
 	users = filter( { users, fields } );
-	users = users.map( function( user ) {
-		return mapValues( user, function( field, key ) {
+	users = users.map( function ( user ) {
+		return mapValues( user, function ( field, key ) {
 			let error = null;
 
 			if ( isEmpty( field.value ) && key !== 'wasUserEdited' ) {
@@ -38,7 +38,7 @@ export function validate( { users, fields }, existingUsers = null ) {
 				} else if ( null !== existingUsers ) {
 					if (
 						includes(
-							mapValues( existingUsers, function( existingUser ) {
+							mapValues( existingUsers, function ( existingUser ) {
 								return existingUser.email;
 							} ),
 							newEmail

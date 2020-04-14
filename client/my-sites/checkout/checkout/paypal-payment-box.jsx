@@ -96,7 +96,7 @@ export class PaypalPaymentBox extends React.Component {
 		debug( 'submitting paypalExpress request', dataForApi );
 		wpcom.paypalExpressUrl(
 			dataForApi,
-			function( error, paypalExpressURL ) {
+			function ( error, paypalExpressURL ) {
 				debug( 'paypalExpress request complete' );
 				if ( error ) {
 					debug( 'paypalExpress request had an error', error );

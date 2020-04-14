@@ -81,7 +81,7 @@ const getDB = once( () => {
 					// Add a general error handler for any future requests made against this db handle.
 					// See https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB#Handling_Errors for
 					// more information on how error events bubble with IndexedDB
-					db.onerror = function( errorEvent: any ) {
+					db.onerror = function ( errorEvent: any ) {
 						debug( 'IDB Error', errorEvent );
 						if ( errorEvent.target?.error?.name ) {
 							bumpStat( 'calypso-browser-storage', kebabCase( errorEvent.target.error.name ) );

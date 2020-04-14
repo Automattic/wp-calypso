@@ -10,7 +10,7 @@ import { navigation, siteSelection, sites } from 'my-sites/controller';
 import peopleController from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
+export default function () {
 	page(
 		'/people/:filter(team|followers|email-followers|viewers)',
 		siteSelection,

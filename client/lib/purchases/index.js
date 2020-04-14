@@ -63,7 +63,7 @@ function getPurchasesBySite( purchases, sites ) {
 
 			return result;
 		}, [] )
-		.sort( ( a, b ) => ( a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1 ) );
+		.sort( ( a, b ) => ( a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1)  );
 }
 
 function getName( purchase ) {
@@ -92,9 +92,7 @@ function getPartnerName( purchase ) {
 // TODO: refactor to avoid returning a localized string.
 function getSubscriptionEndDate( purchase ) {
 	const localeSlug = i18n.getLocaleSlug();
-	return moment( purchase.expiryDate )
-		.locale( localeSlug )
-		.format( 'LL' );
+	return moment( purchase.expiryDate ).locale( localeSlug ).format( 'LL' );
 }
 
 /**
@@ -130,9 +128,9 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
 	// then decode it in the checkout code before adding to the cart.
 	const productSlug = product_slug === 'no-adverts/no-adverts.php' ? 'no-ads' : product_slug;
 	const productList = meta ? `${ productSlug }:${ meta }` : productSlug;
-	const renewalUrl = `/checkout/${ productList }/renew/${ purchaseId }/${ siteSlug ||
-		purchaseDomain ||
-		'' }`;
+	const renewalUrl = `/checkout/${ productList }/renew/${ purchaseId }/${
+		siteSlug || purchaseDomain || ''
+	}`;
 	debug( 'handling renewal click', purchase, siteSlug, renewItem, renewalUrl );
 
 	page( renewalUrl );

@@ -40,8 +40,8 @@ class SharingButtonsPreview extends React.Component {
 		buttons: [],
 		showLike: true,
 		showReblog: true,
-		onLabelChange: function() {},
-		onButtonsChange: function() {},
+		onLabelChange: function () {},
+		onButtonsChange: function () {},
 	};
 
 	state = {

@@ -37,8 +37,9 @@ const OVERFLOW_BUFFER = 4; // fairly arbitrary. feel free to tweak
  */
 export default EnhancedComponent =>
 	class WithWidth extends React.Component {
-		static displayName = `WithDimensions( ${ EnhancedComponent.displayName ||
-			EnhancedComponent.name } )`;
+		static displayName = `WithDimensions( ${
+			EnhancedComponent.displayName || EnhancedComponent.name
+		} )`;
 		static propTypes = { domTarget: PropTypes.object };
 
 		state = {

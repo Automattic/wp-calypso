@@ -88,7 +88,7 @@ const parseDateStamp = datestamp => {
 const languageSlugs = getLanguageSlugs();
 const langSlugIsValid = slug => languageSlugs.indexOf( slug ) !== -1;
 
-ABTest.prototype.init = function( name, geoLocation ) {
+ABTest.prototype.init = function ( name, geoLocation ) {
 	if ( ! /^[A-Za-z\d]+$/.test( name ) ) {
 		throw new Error( 'The test name "' + name + '" should be camel case' );
 	}
@@ -170,7 +170,7 @@ ABTest.prototype.init = function( name, geoLocation ) {
 	this.allowExistingUsers = testConfig.allowExistingUsers === true;
 };
 
-ABTest.prototype.getVariationAndSetAsNeeded = function() {
+ABTest.prototype.getVariationAndSetAsNeeded = function () {
 	if ( 'test' === process.env.NODE_ENV ) {
 		return this.defaultVariation;
 	}
@@ -198,7 +198,7 @@ ABTest.prototype.getVariationAndSetAsNeeded = function() {
 	return newVariation;
 };
 
-ABTest.prototype.getVariation = function() {
+ABTest.prototype.getVariation = function () {
 	return this.getSavedVariation( this.experimentId );
 };
 
@@ -238,7 +238,7 @@ export const isUsingGivenLocales = ( localeTargets, experimentId = null ) => {
 	return true;
 };
 
-ABTest.prototype.isEligibleForAbTest = function() {
+ABTest.prototype.isEligibleForAbTest = function () {
 	if ( ! store.enabled ) {
 		debug( '%s: Local storage is not enabled', this.experimentId );
 		return false;
@@ -279,17 +279,17 @@ ABTest.prototype.isEligibleForAbTest = function() {
 	return true;
 };
 
-ABTest.prototype.hasTestStartedYet = function() {
+ABTest.prototype.hasTestStartedYet = function () {
 	return new Date() > new Date( this.startDate );
 };
 
-ABTest.prototype.hasBeenInPreviousSeriesTest = function() {
+ABTest.prototype.hasBeenInPreviousSeriesTest = function () {
 	const previousExperimentIds = keys( getSavedVariations() );
 	let previousName;
 
 	return some(
 		previousExperimentIds,
-		function( previousExperimentId ) {
+		function ( previousExperimentId ) {
 			previousName = previousExperimentId.substring(
 				0,
 				previousExperimentId.length - '_YYYYMMDD'.length
@@ -299,15 +299,15 @@ ABTest.prototype.hasBeenInPreviousSeriesTest = function() {
 	);
 };
 
-ABTest.prototype.hasRegisteredBeforeTestBegan = function() {
+ABTest.prototype.hasRegisteredBeforeTestBegan = function () {
 	return user && user.get() && new Date( user.get().date ) < new Date( this.startDate );
 };
 
-ABTest.prototype.getSavedVariation = function() {
+ABTest.prototype.getSavedVariation = function () {
 	return getSavedVariations()[ this.experimentId ] || null;
 };
 
-ABTest.prototype.assignVariation = function() {
+ABTest.prototype.assignVariation = function () {
 	let variationName, randomAllocationAmount;
 	let sum = 0;
 
@@ -334,14 +334,14 @@ ABTest.prototype.assignVariation = function() {
 	}
 };
 
-ABTest.prototype.recordVariation = function( variation ) {
+ABTest.prototype.recordVariation = function ( variation ) {
 	analytics.tracks.recordEvent( 'calypso_abtest_start', {
 		abtest_name: this.experimentId,
 		abtest_variation: variation,
 	} );
 };
 
-ABTest.prototype.saveVariation = function( variation ) {
+ABTest.prototype.saveVariation = function ( variation ) {
 	if ( isUserSignedIn() ) {
 		// Note that for logged-in users, we fire the Tracks event from the API abtest endpoint
 		// to ensure that the numbers match up exactly with the user attributes data
@@ -352,11 +352,11 @@ ABTest.prototype.saveVariation = function( variation ) {
 	this.saveVariationInLocalStorage( variation );
 };
 
-ABTest.prototype.saveVariationOnBackend = function( variation ) {
+ABTest.prototype.saveVariationOnBackend = function ( variation ) {
 	wpcom.undocumented().saveABTestData(
 		this.experimentId,
 		variation,
-		function( error ) {
+		function ( error ) {
 			if ( error ) {
 				debug( '%s: Error saving variation %s: %s', this.experimentId, variation, error );
 			} else {
@@ -366,7 +366,7 @@ ABTest.prototype.saveVariationOnBackend = function( variation ) {
 	);
 };
 
-ABTest.prototype.saveVariationInLocalStorage = function( variation ) {
+ABTest.prototype.saveVariationInLocalStorage = function ( variation ) {
 	const savedVariations = getSavedVariations();
 	savedVariations[ this.experimentId ] = variation;
 	store.set( ABTEST_LOCALSTORAGE_KEY, savedVariations );

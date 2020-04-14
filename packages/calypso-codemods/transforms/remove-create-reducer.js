@@ -46,7 +46,8 @@ function getCases( j, handlerMap ) {
 		if (
 			fn.type === 'ArrowFunctionExpression' &&
 			fn.params[ 0 ].name === 'state' &&
-			( fn.params.length === 2 && fn.params[ 1 ].type === 'ObjectPattern' )
+			fn.params.length === 2 &&
+			fn.params[ 1 ].type === 'ObjectPattern'
 		) {
 			const declaration = j.variableDeclaration( 'const', [
 				j.variableDeclarator( fn.params[ 1 ], j.identifier( 'action' ) ),

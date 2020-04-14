@@ -1,15 +1,15 @@
 {
-  "name": "wpcom-testing-app",
-  "description": "An application to test wpcom.js",
-  "version": "0.0.1",
-  "private": true,
-  "author": {
-    "name": "Damian Suarez",
-    "email": "rdsuarez@gmail.com"
-  },
-  "main": "index.js",
-  "dependencies": {
-    "express": "3.5.0",
-    "jade": "1.3.0"
-  }
+	"name": "wpcom-testing-app",
+	"description": "An application to test wpcom.js",
+	"version": "0.0.1",
+	"private": true,
+	"author": {
+		"name": "Damian Suarez",
+		"email": "rdsuarez@gmail.com"
+	},
+	"main": "index.js",
+	"dependencies": {
+		"express": "3.5.0",
+		"jade": "1.3.0"
+	}
 }

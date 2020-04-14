@@ -84,7 +84,7 @@ export default {
 		next();
 	},
 
-	domainManagementPrimaryDomain: function( pageContext, next ) {
+	domainManagementPrimaryDomain: function ( pageContext, next ) {
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementPrimaryDomain( ':site', ':domain' ) }

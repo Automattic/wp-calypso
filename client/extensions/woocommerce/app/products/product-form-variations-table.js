@@ -49,7 +49,7 @@ class ProductFormVariationsTable extends React.Component {
 	editAllVariations( field, value ) {
 		const { siteId, product, variations, editProductVariation } = this.props;
 		this.setState( { [ field ]: value } );
-		variations.map( function( variation ) {
+		variations.map( function ( variation ) {
 			editProductVariation( siteId, product, variation, { [ field ]: value } );
 		} );
 	}

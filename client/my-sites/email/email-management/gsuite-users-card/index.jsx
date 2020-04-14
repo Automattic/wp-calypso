@@ -44,10 +44,7 @@ class GSuiteUsersCard extends React.Component {
 	}
 
 	isNewUser( user, subscribedDate ) {
-		return this.props
-			.moment()
-			.subtract( 1, 'day' )
-			.isBefore( subscribedDate );
+		return this.props.moment().subtract( 1, 'day' ).isBefore( subscribedDate );
 	}
 
 	generateClickHandler( user ) {

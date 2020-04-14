@@ -49,7 +49,7 @@ const newAction = action => ( {
 	timestamp: Date.now(),
 } );
 
-const maybeAdd = ( state, action ) => ( action ? takeRight( [ ...state, action ], 50 ) : state );
+const maybeAdd = ( state, action ) => ( action ? takeRight( [ ...state, action ], 50 ) : state) ;
 
 export default ( state = [], action ) =>
 	isRelevantAction( action ) ? maybeAdd( state, newAction( action ) ) : state;

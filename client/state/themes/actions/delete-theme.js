@@ -2,7 +2,11 @@
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import { THEME_DELETE_FAILURE, THEME_DELETE_SUCCESS, THEME_DELETE } from 'state/themes/action-types';
+import {
+	THEME_DELETE_FAILURE,
+	THEME_DELETE_SUCCESS,
+	THEME_DELETE,
+} from 'state/themes/action-types';
 
 import 'state/themes/init';
 

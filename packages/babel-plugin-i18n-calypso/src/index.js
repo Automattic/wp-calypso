@@ -183,7 +183,7 @@ function isValidTranslationKey( key ) {
 	return Object.values( DEFAULT_FUNCTIONS_ARGUMENTS_ORDER ).some( args => args.includes( key ) );
 }
 
-module.exports = function() {
+module.exports = function () {
 	let strings = {},
 		nplurals = 2,
 		baseData,
@@ -269,9 +269,7 @@ module.exports = function() {
 
 				const { filename } = this.file.opts;
 				const base = state.opts.base || '.';
-				const pathname = relative( base, filename )
-					.split( sep )
-					.join( '/' );
+				const pathname = relative( base, filename ).split( sep ).join( '/' );
 				translation.comments.reference = pathname + ':' + path.node.loc.start.line;
 
 				const functionKeys = state.opts.functions || functions[ name ];
@@ -340,9 +338,7 @@ module.exports = function() {
 
 					const { filename } = this.file.opts;
 					const base = state.opts.base || '.';
-					const pathname = relative( base, filename )
-						.split( sep )
-						.join( '-' );
+					const pathname = relative( base, filename ).split( sep ).join( '-' );
 					writeFileSync( dir + pathname + '.pot', compiled );
 				},
 			},

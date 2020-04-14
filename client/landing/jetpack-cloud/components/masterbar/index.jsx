@@ -20,7 +20,7 @@ import { getDocumentHeadTitle } from 'state/document-head/selectors';
  */
 import './style.scss';
 
-export default function() {
+export default function () {
 	const translate = useTranslate();
 	const user = useSelector( state => getCurrentUser( state ) );
 	const headerTitle = useSelector( state => getDocumentHeadTitle( state ) );

@@ -54,9 +54,7 @@ describe( 'ticket-support/configuration actions', () => {
 
 	describe( '#ticketSupportConfigurationRequest success', () => {
 		useNock( nock => {
-			nock( apiUrl )
-				.get( endpoint )
-				.reply( 200, dummyConfiguration );
+			nock( apiUrl ).get( endpoint ).reply( 200, dummyConfiguration );
 		} );
 
 		test( 'should be successful.', () => {
@@ -77,9 +75,7 @@ describe( 'ticket-support/configuration actions', () => {
 
 	describe( '#ticketSupportConfigurationRequest failed', () => {
 		useNock( nock => {
-			nock( apiUrl )
-				.get( endpoint )
-				.reply( dummyError.status, dummyError );
+			nock( apiUrl ).get( endpoint ).reply( dummyError.status, dummyError );
 		} );
 
 		test( 'should be failed.', () => {

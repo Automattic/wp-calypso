@@ -168,7 +168,7 @@ export async function recordOrder( cart, orderId ) {
 
 function splitWpcomJetpackCartInfo( cart ) {
 	const jetpackCost = cart.products
-		.map( product => ( productsValues.isJetpackPlan( product ) ? product.cost : 0 ) )
+		.map( product => ( productsValues.isJetpackPlan( product ) ? product.cost : 0)  )
 		.reduce( ( accumulator, cost ) => accumulator + cost, 0 );
 	const wpcomCost = cart.total_cost - jetpackCost;
 	const wpcomProducts = cart.products.filter(

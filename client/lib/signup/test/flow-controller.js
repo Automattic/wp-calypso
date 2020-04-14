@@ -92,7 +92,7 @@ describe( 'flow-controller', () => {
 
 			signupFlowController = new SignupFlowController( {
 				flowName: 'simple_flow',
-				onComplete: function( dependencies, destination ) {
+				onComplete: function ( dependencies, destination ) {
 					expect( destination ).toEqual( '/' );
 					done();
 				},
@@ -134,7 +134,7 @@ describe( 'flow-controller', () => {
 			const store = createSignupStore();
 			signupFlowController = new SignupFlowController( {
 				flowName: 'flow_with_dependencies',
-				onComplete: function( dependencies, destination ) {
+				onComplete: function ( dependencies, destination ) {
 					expect( destination ).toEqual( '/checkout/testsite.wordpress.com' );
 					done();
 				},
@@ -144,7 +144,7 @@ describe( 'flow-controller', () => {
 			store.dispatch(
 				submitSignupStep( {
 					stepName: 'siteCreation',
-					stepCallback: function( dependencies ) {
+					stepCallback: function ( dependencies ) {
 						expect( dependencies ).toEqual( { bearer_token: 'TOKEN' } );
 					},
 				} )
@@ -157,7 +157,7 @@ describe( 'flow-controller', () => {
 			const store = createSignupStore();
 			signupFlowController = new SignupFlowController( {
 				flowName: 'invalid_flow_with_dependencies',
-				onComplete: function() {},
+				onComplete: function () {},
 				reduxStore: store,
 			} );
 
@@ -180,7 +180,7 @@ describe( 'flow-controller', () => {
 			store.dispatch(
 				submitSignupStep( {
 					stepName: 'delayedStep',
-					stepCallback: function() {
+					stepCallback: function () {
 						const progress = getSignupProgress( store.getState() );
 						expect( size( progress ) ).toBe( 2 );
 					},
@@ -201,7 +201,7 @@ describe( 'flow-controller', () => {
 			store.dispatch(
 				submitSignupStep( {
 					stepName: 'delayedStep',
-					stepCallback: function() {
+					stepCallback: function () {
 						const progress = getSignupProgress( store.getState() );
 						const step = progress.stepA;
 						expect( step.status ).toBe( 'completed' );

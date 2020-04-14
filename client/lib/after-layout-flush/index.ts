@@ -30,8 +30,8 @@ export default function afterLayoutFlush< T extends ( ...args: any[] ) => any >(
 	let lastThis: any;
 	let lastArgs: any[] | undefined;
 
-	const scheduleRAF = function( rafFunc: T ) {
-		return function( this: any, ...args: any[] ) {
+	const scheduleRAF = function ( rafFunc: T ) {
+		return function ( this: any, ...args: any[] ) {
 			lastThis = this;
 			lastArgs = args;
 
@@ -48,8 +48,8 @@ export default function afterLayoutFlush< T extends ( ...args: any[] ) => any >(
 		} as T;
 	};
 
-	const scheduleTimeout = function( timeoutFunc: T ) {
-		return function( this: any, ...args: any[] ) {
+	const scheduleTimeout = function ( timeoutFunc: T ) {
+		return function ( this: any, ...args: any[] ) {
 			if ( ! hasRAF ) {
 				lastThis = this;
 				lastArgs = args;

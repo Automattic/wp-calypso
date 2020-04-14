@@ -163,7 +163,7 @@ class InlineConstantExportsPlugin {
 									 * Then we need to expand the shorthand into `{ BLOGGER: __inline_value__ }`
 									 */
 									if ( dep.shorthand ) {
-										inlinedCode = `${ dep.name }: ${ dep.module.constantExports[ dep.id ] }`;
+										inlinedCode = `${ dep.name}: ${ dep.module.constantExports[ dep.id ]}`;
 									} else {
 										/* Every other usage is just inlined as is */
 										inlinedCode = dep.module.constantExports[ dep.id ];

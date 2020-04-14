@@ -71,7 +71,7 @@ describe( 'index', () => {
 		);
 		result = renderer.getRenderOutput();
 
-		React.Children.forEach( result.props.children, function( child, i ) {
+		React.Children.forEach( result.props.children, function ( child, i ) {
 			expect( child.type ).to.equal( 'div' );
 			expect( child.props ).to.eql( DUMMY_PROPS );
 

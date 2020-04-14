@@ -54,7 +54,7 @@ export default class extends React.Component {
 		this.delayLoadingMessage();
 		DocService.fetch(
 			this.props.path,
-			function( error, body ) {
+			function ( error, body ) {
 				this.setState( {
 					body,
 					error,
@@ -76,7 +76,7 @@ export default class extends React.Component {
 	delayLoadingMessage = () => {
 		this.clearLoadingMessage();
 		this.timeoutID = setTimeout(
-			function() {
+			function () {
 				if ( ! this.state.body ) {
 					this.setState( {
 						body: 'Loading…',

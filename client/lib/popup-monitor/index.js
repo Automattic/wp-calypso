@@ -38,7 +38,7 @@ Emitter( PopupMonitor.prototype );
  * @param (string) specs An optional parameter listing the features of the new window as a string
  * @public
  */
-PopupMonitor.prototype.open = function( url, name, specs ) {
+PopupMonitor.prototype.open = function ( url, name, specs ) {
 	name = name || Date.now();
 
 	this.windowInstance = window.open( url, name, specs );
@@ -58,7 +58,7 @@ PopupMonitor.prototype.open = function( url, name, specs ) {
  * @returns {string} Popup window specificatino string fragment
  * @public
  */
-PopupMonitor.prototype.getScreenCenterSpecs = function( width, height ) {
+PopupMonitor.prototype.getScreenCenterSpecs = function ( width, height ) {
 	let screenTop = typeof window.screenTop !== 'undefined' ? window.screenTop : window.screenY,
 		screenLeft = typeof window.screenLeft !== 'undefined' ? window.screenLeft : window.screenX;
 
@@ -77,7 +77,7 @@ PopupMonitor.prototype.getScreenCenterSpecs = function( width, height ) {
  * @param (string) name The name of the popup window to check
  * @public
  */
-PopupMonitor.prototype.isOpen = function( name ) {
+PopupMonitor.prototype.isOpen = function ( name ) {
 	let isClosed = false;
 
 	try {
@@ -92,7 +92,7 @@ PopupMonitor.prototype.isOpen = function( name ) {
  * triggers a close event for any closed windows. If no popup windows remain
  * open, then the interval is stopped.
  */
-PopupMonitor.prototype.checkStatus = function() {
+PopupMonitor.prototype.checkStatus = function () {
 	for ( const name in this.intervals ) {
 		if ( this.intervals.hasOwnProperty( name ) && ! this.isOpen( name ) ) {
 			this.emit( 'close', name );
@@ -114,7 +114,7 @@ PopupMonitor.prototype.checkStatus = function() {
  * @param (string) name The name of hte popup window to monitor
  * @param (window) windowInstance The popup window instance
  */
-PopupMonitor.prototype.startMonitoring = function( name, windowInstance ) {
+PopupMonitor.prototype.startMonitoring = function ( name, windowInstance ) {
 	if ( ! this.monitorInterval ) {
 		this.monitorInterval = setInterval( this.checkStatus.bind( this ), 100 );
 	}

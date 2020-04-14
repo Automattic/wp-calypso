@@ -25,7 +25,7 @@ class DomainConnectDnsRecord extends Component {
 		const isRoot = name === `${ domain }.`;
 
 		if ( 'SRV' === type ) {
-			return `${ service }.${ protocol }.${ isRoot ? '' : name + '.' }${ domain }`;
+			return `${ service }.${ protocol }.${ isRoot ? '' : name + '.'}${ domain }`;
 		}
 
 		if ( endsWith( name, '.' ) ) {

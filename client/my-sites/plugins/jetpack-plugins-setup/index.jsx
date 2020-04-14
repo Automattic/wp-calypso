@@ -116,7 +116,7 @@ class PlansSetup extends React.Component {
 			} else {
 				// save off the current path just in case context changes after this call
 				const currentPath = context.canonicalPath;
-				setTimeout( function() {
+				setTimeout( function () {
 					page.replace( currentPath, null, false, false );
 				}, 0 );
 			}
@@ -164,7 +164,7 @@ class PlansSetup extends React.Component {
 		// Merge wporg info into the plugin object
 		plugin = Object.assign( {}, plugin, getPlugin( this.props.wporg, plugin.slug ) );
 
-		const getPluginFromStore = function() {
+		const getPluginFromStore = function () {
 			const sitePlugin = PluginsStore.getSitePlugin( site, plugin.slug );
 			if ( ! sitePlugin && PluginsStore.isFetchingSite( site ) ) {
 				// if the Plugins are still being fetched, we wait. We are not using flux

@@ -25,15 +25,15 @@ const jetpackUser = process.env.JETPACKUSER;
 const user = dataHelper.getAccountConfig( jetpackUser );
 let driver;
 
-before( async function() {
+before( async function () {
 	this.timeout( startBrowserTimeoutMS );
 	driver = await driverManager.startBrowser();
 } );
 
-describe( 'Disconnect wporg site', function() {
+describe( 'Disconnect wporg site', function () {
 	this.timeout( mochaTimeOut );
 
-	step( 'Can disconnect wporg site', async function() {
+	step( 'Can disconnect wporg site', async function () {
 		await driverManager.clearCookiesAndDeleteLocalStorage( driver, user[ 2 ] );
 		await new JetpackConnectFlow( driver, 'jetpackConnectUser' ).disconnectFromWPAdmin(
 			jetpackUser
@@ -42,40 +42,40 @@ describe( 'Disconnect wporg site', function() {
 	} );
 } );
 
-describe( `Jetpack Connect and Disconnect: (${ screenSize })`, function() {
+describe( `Jetpack Connect and Disconnect: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 
-	before( async function() {
+	before( async function () {
 		return await driverManager.ensureNotLoggedIn( driver );
 	} );
 
-	describe( 'Connect Jetpack and see if post page is loading correctly', function() {
-		step( 'Can login into WordPress.com', async function() {
+	describe( 'Connect Jetpack and see if post page is loading correctly', function () {
+		step( 'Can login into WordPress.com', async function () {
 			const loginFlow = new LoginFlow( driver, 'jetpackConnectUser' );
 			return await loginFlow.login();
 		} );
 
-		step( 'Login into wporg site', async function() {
+		step( 'Login into wporg site', async function () {
 			const loginPage = await WPAdminLogonPage.Visit( driver, user[ 2 ] );
 			await loginPage.login( user[ 0 ], user[ 1 ] );
 		} );
 
-		step( 'Can navigate to the Jetpack dashboard', async function() {
+		step( 'Can navigate to the Jetpack dashboard', async function () {
 			const wpAdminSidebar = await WPAdminSidebar.Expect( driver );
 			return await wpAdminSidebar.selectJetpack();
 		} );
 
-		step( 'Can click the Connect Jetpack button', async function() {
+		step( 'Can click the Connect Jetpack button', async function () {
 			const wpAdminJetpack = await WPAdminJetpackPage.Expect( driver );
 			return await wpAdminJetpack.connectWordPressCom();
 		} );
 
-		step( 'Can approve connection on the authorization page', async function() {
+		step( 'Can approve connection on the authorization page', async function () {
 			const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( driver );
 			return await jetpackAuthorizePage.approveConnection();
 		} );
 
-		step( 'Can click the free plan button', async function() {
+		step( 'Can click the free plan button', async function () {
 			// Some of the users are not the plan owners, so skipping this step for them
 			if (
 				[ 'siteGroundJetpackUser', 'bluehostJetpackUserSub', 'goDaddyJetpackUserSub' ].includes(
@@ -88,31 +88,31 @@ describe( `Jetpack Connect and Disconnect: (${ screenSize })`, function() {
 			return await pickAPlanPage.selectFreePlanJetpack();
 		} );
 
-		step( 'Can navigate to the Posts page', async function() {
+		step( 'Can navigate to the Posts page', async function () {
 			const wpAdminSidebar = await WPAdminSidebar.Expect( driver );
 			return await wpAdminSidebar.selectAllPosts();
 		} );
 
-		step( 'Can load a post and make sure it is loaded correctly', async function() {
+		step( 'Can load a post and make sure it is loaded correctly', async function () {
 			const postsPage = await WPAdminPostsPage.Expect( driver );
 			return await postsPage.viewFirstPost();
 		} );
 	} );
 
-	describe( 'Disconnect from Jetpack and load a post page', function() {
-		step( 'Can disconnect Jetpack connection in wp-admin', async function() {
+	describe( 'Disconnect from Jetpack and load a post page', function () {
+		step( 'Can disconnect Jetpack connection in wp-admin', async function () {
 			await driverManager.clearCookiesAndDeleteLocalStorage( driver, user[ 2 ] );
 			await new JetpackConnectFlow( driver, 'jetpackConnectUser' ).disconnectFromWPAdmin(
 				jetpackUser
 			);
 		} );
 
-		step( 'Can navigate to the Posts page', async function() {
+		step( 'Can navigate to the Posts page', async function () {
 			const wpAdminSidebar = await WPAdminSidebar.Expect( driver );
 			return await wpAdminSidebar.selectAllPosts();
 		} );
 
-		step( 'Can load a post and make sure it is loaded correctly', async function() {
+		step( 'Can load a post and make sure it is loaded correctly', async function () {
 			const postsPage = await WPAdminPostsPage.Expect( driver );
 			return await postsPage.viewFirstPost();
 		} );

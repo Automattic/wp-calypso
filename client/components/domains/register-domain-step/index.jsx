@@ -1076,14 +1076,14 @@ class RegisterDomainStep extends React.Component {
 		let domainSkipPurchase;
 
 		if ( this.isLoadingSuggestions() || isEmpty( this.props.products ) ) {
-			domainRegistrationSuggestions = times( INITIAL_SUGGESTION_QUANTITY + 1, function( n ) {
+			domainRegistrationSuggestions = times( INITIAL_SUGGESTION_QUANTITY + 1, function ( n ) {
 				return <DomainSuggestion.Placeholder key={ 'suggestion-' + n } />;
 			} );
 		} else {
 			// only display two suggestions initially
 			suggestions = ( this.props.defaultSuggestions || [] ).slice( 0, INITIAL_SUGGESTION_QUANTITY );
 
-			domainRegistrationSuggestions = suggestions.map( function( suggestion ) {
+			domainRegistrationSuggestions = suggestions.map( function ( suggestion ) {
 				return (
 					<DomainRegistrationSuggestion
 						isSignupStep={ this.props.isSignupStep }

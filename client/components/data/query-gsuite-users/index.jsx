@@ -25,7 +25,7 @@ export default function QueryGSuiteUsers( { siteId } ) {
 	}, [ dispatch, siteId ] );
 
 	return null;
-};
+}
 
 QueryGSuiteUsers.propTypes = {
 	siteId: PropTypes.number.isRequired,

@@ -34,14 +34,14 @@ export default class extends React.Component {
 	};
 
 	getSelectedElementsNumber = () => {
-		return this.state.elements.filter( function( element ) {
+		return this.state.elements.filter( function ( element ) {
 			return element.selected;
 		} ).length;
 	};
 
 	renderElements = () => {
 		return this.state.elements.map( ( element, index ) => {
-			const onClick = function() {
+			const onClick = function () {
 				element.selected = ! element.selected;
 				this.forceUpdate();
 			}.bind( this );

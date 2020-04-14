@@ -117,7 +117,7 @@ class ThemesSiteSelectorModal extends React.Component {
 					<SiteSelectorModal
 						className="themes__site-selector-modal"
 						isVisible={ true }
-						filter={ function( siteId ) {
+						filter={ function ( siteId ) {
 							return ! (
 								selectedOption.hideForTheme &&
 								selectedOption.hideForTheme( selectedThemeId, siteId )
@@ -128,7 +128,7 @@ class ThemesSiteSelectorModal extends React.Component {
 						mainActionLabel={ selectedOption.label }
 						getMainUrl={
 							selectedOption.getUrl
-								? function( siteId ) {
+								? function ( siteId ) {
 										return selectedOption.getUrl( selectedThemeId, siteId );
 								  }
 								: null

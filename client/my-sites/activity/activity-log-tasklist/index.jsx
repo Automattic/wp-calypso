@@ -384,17 +384,19 @@ class ActivityLogTasklist extends Component {
 			<Card className="activity-log-tasklist" highlight="warning">
 				<TrackComponentView eventName={ 'calypso_activitylog_tasklist_update_impression' } />
 				<div className="activity-log-tasklist__heading">
-					{ // Not using count method since we want a "one" string.
-					1 < numberOfUpdates
-						? translate(
-								'You have %(updates)s update available',
-								'You have %(updates)s updates available',
-								{
-									count: numberOfUpdates,
-									args: { updates: numberOfUpdates },
-								}
-						  )
-						: translate( 'You have one update available' ) }
+					{
+						// Not using count method since we want a "one" string.
+						1 < numberOfUpdates
+							? translate(
+									'You have %(updates)s update available',
+									'You have %(updates)s updates available',
+									{
+										count: numberOfUpdates,
+										args: { updates: numberOfUpdates },
+									}
+							  )
+							: translate( 'You have one update available' )
+					}
 					{ 1 < numberOfUpdates && (
 						<SplitButton
 							compact

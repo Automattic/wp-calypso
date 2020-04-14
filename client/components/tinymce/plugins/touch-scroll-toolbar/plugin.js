@@ -91,13 +91,13 @@ function touchScrollToolbar( editor ) {
 		} );
 	}
 
-	editor.on( 'init', function() {
+	editor.on( 'init', function () {
 		disableToolbarTouchEvents();
 		hideToolbarFadeOnFullScroll();
 		toggleToolbarsScrollableOnResize();
 	} );
 }
 
-export default function() {
+export default function () {
 	tinymce.PluginManager.add( 'wpcom/touchscrolltoolbar', touchScrollToolbar );
 }

@@ -4,12 +4,13 @@
 var util = require( './util' );
 var assert = require( 'assert' );
 
-describe( 'wpcom', function() {
-	describe( 'wpcom.freshlyPressed', function() {
-		it( 'should require freshly pressed', function( done ) {
+describe( 'wpcom', function () {
+	describe( 'wpcom.freshlyPressed', function () {
+		it( 'should require freshly pressed', function ( done ) {
 			var wpcom = util.wpcomPublic();
 
-			wpcom.freshlyPressed()
+			wpcom
+				.freshlyPressed()
 				.then( data => {
 					// testing object
 					assert.ok( data );

@@ -71,7 +71,7 @@ class StatsPostPerformance extends Component {
 			},
 		];
 
-		return tabs.map( function( tabOptions ) {
+		return tabs.map( function ( tabOptions ) {
 			return <StatsTab { ...tabOptions } key={ tabOptions.gridicon } />;
 		} );
 	}

@@ -196,9 +196,7 @@ function isAppImagePath( imagePath ) {
 }
 
 function getFileContents( filePath ) {
-	return readFileSync( path.join( ROOT_PATH, filePath ) )
-		.toString()
-		.trim();
+	return readFileSync( path.join( ROOT_PATH, filePath ) ).toString().trim();
 }
 
 function matchColorValues( content ) {
@@ -270,7 +268,7 @@ function printReplacementRules( replacementObjects ) {
 
 		replacementObjects.forEach( replacementObject => {
 			const replacementRules = formatReplacementRules( replacementObject.rules );
-			console.log( `\n${ replacementObject.file }\n${ replacementRules.join( '\n' ) }` );
+			console.log( `\n${ replacementObject.file}\n${ replacementRules.join( '\n' ) }` );
 		} );
 	}
 }

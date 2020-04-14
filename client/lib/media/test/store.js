@@ -21,7 +21,7 @@ const DUMMY_SITE_ID = 1,
 describe( 'MediaStore', () => {
 	let Dispatcher, sandbox, MediaStore, handler;
 
-	beforeAll( function() {
+	beforeAll( function () {
 		Dispatcher = require( 'dispatcher' );
 
 		sandbox = sinon.createSandbox();
@@ -37,7 +37,7 @@ describe( 'MediaStore', () => {
 		MediaStore._pointers = {};
 	} );
 
-	afterAll( function() {
+	afterAll( function () {
 		sandbox.restore();
 	} );
 

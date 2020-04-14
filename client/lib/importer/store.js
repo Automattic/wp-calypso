@@ -44,7 +44,7 @@ const initialState = Object.freeze( {
 
 const getImporterItemById = ( state, id ) => get( state, [ 'importers', id ], {} );
 
-const ImporterStore = createReducerStore( function( state, payload ) {
+const ImporterStore = createReducerStore( function ( state, payload ) {
 	const { action } = payload;
 
 	switch ( action.type ) {

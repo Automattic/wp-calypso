@@ -266,18 +266,14 @@ describe( 'index', () => {
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: true,
 						isPendingIcannVerification: true,
-						registrationDate: moment()
-							.subtract( 1, 'days' )
-							.toISOString(),
+						registrationDate: moment().subtract( 1, 'days' ).toISOString(),
 					},
 					{
 						name: 'mygroovysite.com',
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: true,
 						isPendingIcannVerification: true,
-						registrationDate: moment()
-							.subtract( 1, 'days' )
-							.toISOString(),
+						registrationDate: moment().subtract( 1, 'days' ).toISOString(),
 					},
 				],
 				selectedSite: { domain: 'blog.example.com', slug: 'blog.example.com' },
@@ -312,18 +308,14 @@ describe( 'index', () => {
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: true,
 						isPendingIcannVerification: true,
-						registrationDate: moment()
-							.subtract( 1, 'days' )
-							.toISOString(),
+						registrationDate: moment().subtract( 1, 'days' ).toISOString(),
 					},
 					{
 						name: 'mygroovysite.com',
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: true,
 						isPendingIcannVerification: true,
-						registrationDate: moment()
-							.subtract( 1, 'days' )
-							.toISOString(),
+						registrationDate: moment().subtract( 1, 'days' ).toISOString(),
 					},
 				],
 				selectedSite: { domain: 'blog.example.com', slug: 'blog.example.com' },
@@ -357,18 +349,14 @@ describe( 'index', () => {
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: true,
 						isPendingIcannVerification: true,
-						registrationDate: moment()
-							.subtract( 3, 'days' )
-							.toISOString(),
+						registrationDate: moment().subtract( 3, 'days' ).toISOString(),
 					},
 					{
 						name: 'mygroovysite.com',
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: true,
 						isPendingIcannVerification: true,
-						registrationDate: moment()
-							.subtract( 3, 'days' )
-							.toISOString(),
+						registrationDate: moment().subtract( 3, 'days' ).toISOString(),
 					},
 				],
 				selectedSite: { domain: 'blog.example.com', slug: 'blog.example.com' },
@@ -404,18 +392,14 @@ describe( 'index', () => {
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: false,
 						isPendingIcannVerification: true,
-						registrationDate: moment()
-							.subtract( 1, 'days' )
-							.toISOString(),
+						registrationDate: moment().subtract( 1, 'days' ).toISOString(),
 					},
 					{
 						name: 'mygroovysite.com',
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: false,
 						isPendingIcannVerification: true,
-						registrationDate: moment()
-							.subtract( 1, 'days' )
-							.toISOString(),
+						registrationDate: moment().subtract( 1, 'days' ).toISOString(),
 					},
 				],
 				selectedSite: { domain: 'blog.example.com', slug: 'blog.example.com' },

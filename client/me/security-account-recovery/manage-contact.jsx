@@ -99,26 +99,26 @@ class ManageContact extends Component {
 	}
 
 	onEdit = () => {
-		this.setState( { currentView: views.EDITING }, function() {
+		this.setState( { currentView: views.EDITING }, function () {
 			this.recordEvent( this.props.hasValue ? 'edit' : 'add' );
 		} );
 	};
 
 	onCancel = () => {
-		this.setState( { currentView: views.VIEWING }, function() {
+		this.setState( { currentView: views.VIEWING }, function () {
 			this.recordEvent( 'cancel' );
 		} );
 	};
 
 	onSave = data => {
-		this.setState( { currentView: views.VIEWING }, function() {
+		this.setState( { currentView: views.VIEWING }, function () {
 			this.props.onSave( data );
 			this.recordEvent( 'save' );
 		} );
 	};
 
 	onDelete = () => {
-		this.setState( { currentView: views.VIEWING }, function() {
+		this.setState( { currentView: views.VIEWING }, function () {
 			this.props.onDelete();
 			this.recordEvent( 'delete' );
 		} );

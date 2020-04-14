@@ -77,7 +77,7 @@ export default function injectTestHelper( element ) {
 	ReactDom.render(
 		React.createElement( TestList, {
 			tests: getAllTests(),
-			onChangeVariant: function( test, variation ) {
+			onChangeVariant: function ( test, variation ) {
 				debug( 'Switching test variant', test.experimentId, variation );
 				saveABTestVariation( test.name, variation );
 				window.location.reload();

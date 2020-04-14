@@ -71,7 +71,7 @@ class StatsNavigation extends Component {
 							.filter( this.isValidItem )
 							.map( item => {
 								const navItem = navItems[ item ];
-								const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
+								const intervalPath = navItem.showIntervals ? `/${ interval || 'day'}` : '';
 								const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
 								const className = 'stats-navigation__' + item;
 								return (

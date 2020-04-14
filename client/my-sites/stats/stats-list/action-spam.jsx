@@ -38,7 +38,7 @@ class StatsActionSpam extends React.Component {
 		}
 
 		const wpcomSite = wpcom.site( this.props.data.siteID );
-		wpcomSite[ spamType ].call( wpcomSite, this.props.data.domain, function() {} );
+		wpcomSite[ spamType ].call( wpcomSite, this.props.data.domain, function () {} );
 		gaRecordEvent( 'Stats', gaEvent + ' in ' + this.props.moduleName + ' List' );
 	};
 

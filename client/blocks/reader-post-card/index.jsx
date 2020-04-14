@@ -81,7 +81,7 @@ class ReaderPostCard extends React.Component {
 		}
 
 		if ( closest( event.target, '.should-scroll', rootNode ) ) {
-			setTimeout( function() {
+			setTimeout( function () {
 				window.scrollTo( 0, 0 );
 			}, 100 );
 		}

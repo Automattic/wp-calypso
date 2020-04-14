@@ -105,10 +105,7 @@ export default function resizeImageUrl( imageUrl, resize, height, makeSafe = tru
 	// Map sizing parameters, multiplying their values by the scale factor
 	const mapped = mapValues( resize, ( value, key ) => {
 		if ( 'resize' === key || 'fit' === key ) {
-			return value
-				.split( ',' )
-				.map( scaleByFactor )
-				.join( ',' );
+			return value.split( ',' ).map( scaleByFactor ).join( ',' );
 		} else if ( SIZE_PARAMS.includes( key ) ) {
 			return scaleByFactor( value );
 		}

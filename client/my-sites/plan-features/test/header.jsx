@@ -13,7 +13,7 @@ jest.mock( 'i18n-calypso', () => ( {
 	localize: Comp => props => (
 		<Comp
 			{ ...props }
-			translate={ function( x ) {
+			translate={ function ( x ) {
 				return x;
 			} }
 		/>
@@ -388,11 +388,7 @@ describe( 'PlanFeaturesHeader.renderPriceGroup()', () => {
 		expect( wrapper.find( PlanPrice ).length ).toBe( 1 );
 
 		// We need the dive() here to pick up defaultProps
-		const myProps = wrapper
-			.find( PlanPrice )
-			.first()
-			.dive()
-			.props();
+		const myProps = wrapper.find( PlanPrice ).first().dive().props();
 		expect( myProps.rawPrice ).toBe( 15 );
 		expect( myProps.discounted ).toBe( false );
 		expect( myProps.original ).toBe( false );
@@ -405,11 +401,7 @@ describe( 'PlanFeaturesHeader.renderPriceGroup()', () => {
 		expect( wrapper.find( PlanPrice ).length ).toBe( 2 );
 
 		// We need the dive() here to pick up defaultProps
-		const props1 = wrapper
-			.find( PlanPrice )
-			.at( 0 )
-			.dive()
-			.props();
+		const props1 = wrapper.find( PlanPrice ).at( 0 ).dive().props();
 		expect( props1.rawPrice ).toBe( 15 );
 		expect( props1.discounted ).toBe( false );
 		expect( props1.original ).toBe( true );
@@ -417,11 +409,7 @@ describe( 'PlanFeaturesHeader.renderPriceGroup()', () => {
 		expect( props1.isInSignup ).toBe( false );
 
 		// We need the dive() here to pick up defaultProps
-		const props2 = wrapper
-			.find( PlanPrice )
-			.at( 1 )
-			.dive()
-			.props();
+		const props2 = wrapper.find( PlanPrice ).at( 1 ).dive().props();
 		expect( props2.rawPrice ).toBe( 13 );
 		expect( props2.discounted ).toBe( true );
 		expect( props2.original ).toBe( false );

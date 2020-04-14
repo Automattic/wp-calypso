@@ -19,7 +19,7 @@ import 'state/jetpack-connect/init';
  * @param  {object}  state Global state tree
  * @returns {boolean}       True if there's an xmlrpc error otherwise false
  */
-export const hasXmlrpcError = function( state ) {
+export const hasXmlrpcError = function ( state ) {
 	const authorizeData = getAuthorizationData( state );
 
 	return (

@@ -100,7 +100,7 @@ const Label = styled.label`
 	margin-bottom: 8px;
 
 	:hover {
-		cursor: ${props => ( props.disabled ? 'default' : 'pointer' )};
+		cursor: ${props => ( props.disabled ? 'default' : 'pointer') };
 	}
 `;
 
@@ -114,13 +114,13 @@ const Input = styled.input`
 	&[type='text'],
 	&[type='number'] {
 		border: 1px solid
-			${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor )};
-		padding: 13px ${props => ( props.icon ? '60px' : '10px' )} 11px 10px;
+			${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor) };
+		padding: 13px ${props => ( props.icon ? '60px' : '10px') } 11px 10px;
 		line-height: 1.2;
 	}
 
 	:focus {
-		outline: ${props => ( props.isError ? props.theme.colors.error : props.theme.colors.outline )}
+		outline: ${props => ( props.isError ? props.theme.colors.error : props.theme.colors.outline) }
 			solid 2px !important;
 	}
 
@@ -142,7 +142,7 @@ const Input = styled.input`
 	&[type='text']:disabled,
 	&[type='number']:disabled {
 		border: 1px solid
-			${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor )};
+			${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor) };
 		background: ${props => props.theme.colors.disabledField};
 	}
 `;

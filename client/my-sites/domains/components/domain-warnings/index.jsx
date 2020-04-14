@@ -441,9 +441,7 @@ export class DomainWarnings extends React.PureComponent {
 		const newTransfers = this.getDomains().filter(
 			domain =>
 				domain.registrationDate &&
-				moment( domain.registrationDate )
-					.add( 3, 'days' )
-					.isAfter( moment() ) &&
+				moment( domain.registrationDate ).add( 3, 'days' ).isAfter( moment() ) &&
 				domain.transferStatus === transferStatus.COMPLETED &&
 				! domain.hasWpcomNameservers
 		);
@@ -527,9 +525,7 @@ export class DomainWarnings extends React.PureComponent {
 		const newDomains = this.getDomains().filter(
 			domain =>
 				domain.registrationDate &&
-				moment( domain.registrationDate )
-					.add( 30, 'minutes' )
-					.isAfter( moment() ) &&
+				moment( domain.registrationDate ).add( 30, 'minutes' ).isAfter( moment() ) &&
 				domain.type === domainTypes.REGISTERED
 		);
 
@@ -627,10 +623,7 @@ export class DomainWarnings extends React.PureComponent {
 
 		const isWithinTwoDays = domains.some(
 			( { registrationDate } ) =>
-				registrationDate &&
-				moment( registrationDate )
-					.add( 2, 'days' )
-					.isAfter()
+				registrationDate && moment( registrationDate ).add( 2, 'days' ).isAfter()
 		);
 		if ( this.props.isSiteEligibleForFSE && this.props.siteIsUnlaunched && isWithinTwoDays ) {
 			// Customer Home nudges this on unlaunched sites.

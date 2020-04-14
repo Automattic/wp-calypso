@@ -107,16 +107,18 @@ class JetpackSyncPanel extends React.Component {
 					{ syncRequestError.message
 						? syncRequestError.message
 						: translate( 'There was an error scheduling a full sync.' ) }
-					{ // We show a Try again action for a generic error on the assumption
-					// that the error was a network issue.
-					//
-					// If an error message was returned from the API, then there's likely
-					// a good reason the request failed, such as an unauthorized user.
-					! syncRequestError.message && (
-						<NoticeAction onClick={ this.onTryAgainClick }>
-							{ translate( 'Try again' ) }
-						</NoticeAction>
-					) }
+					{
+						// We show a Try again action for a generic error on the assumption
+						// that the error was a network issue.
+						//
+						// If an error message was returned from the API, then there's likely
+						// a good reason the request failed, such as an unauthorized user.
+						! syncRequestError.message && (
+							<NoticeAction onClick={ this.onTryAgainClick }>
+								{ translate( 'Try again' ) }
+							</NoticeAction>
+						)
+					}
 				</Notice>
 			);
 		}

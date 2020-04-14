@@ -206,19 +206,19 @@ function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 		};
 		dispatch( { ...defaultAction, type: PLUGIN_INSTALL_REQUEST } );
 
-		const doInstall = function( pluginData ) {
+		const doInstall = function ( pluginData ) {
 			return getPluginHandler( siteId, pluginData.slug ).install();
 		};
 
-		const doActivate = function( pluginData ) {
+		const doActivate = function ( pluginData ) {
 			return getPluginHandler( siteId, pluginData.id ).activate();
 		};
 
-		const doUpdate = function( pluginData ) {
+		const doUpdate = function ( pluginData ) {
 			return getPluginHandler( siteId, pluginData.id ).updateVersion();
 		};
 
-		const doAutoupdates = function( pluginData ) {
+		const doAutoupdates = function ( pluginData ) {
 			return getPluginHandler( siteId, pluginData.id ).enableAutoupdate();
 		};
 
@@ -283,21 +283,21 @@ export function removePlugin( siteId, plugin ) {
 		};
 		dispatch( { ...defaultAction, type: PLUGIN_REMOVE_REQUEST } );
 
-		const doDeactivate = function( pluginData ) {
+		const doDeactivate = function ( pluginData ) {
 			if ( pluginData.active ) {
 				return getPluginHandler( siteId, pluginData.id ).deactivate();
 			}
 			return Promise.resolve( pluginData );
 		};
 
-		const doDisableAutoupdate = function( pluginData ) {
+		const doDisableAutoupdate = function ( pluginData ) {
 			if ( pluginData.autoupdate ) {
 				return getPluginHandler( siteId, pluginData.id ).disableAutoupdate();
 			}
 			return Promise.resolve( pluginData );
 		};
 
-		const doRemove = function( pluginData ) {
+		const doRemove = function ( pluginData ) {
 			return getPluginHandler( siteId, pluginData.id ).delete();
 		};
 

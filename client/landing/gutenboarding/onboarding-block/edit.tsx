@@ -48,15 +48,17 @@ const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => 
 				</Route>
 
 				<Route path={ makePath( Step.Style ) }>
-					{ // Disable reason: Leave me alone, my nested ternaries are amazing ✨
-					// eslint-disable-next-line no-nested-ternary
-					! selectedDesign ? (
-						<Redirect to={ makePath( Step.DesignSelection ) } />
-					) : isEnabled( 'gutenboarding/style-preview' ) ? (
-						<StylePreview />
-					) : (
-						<Redirect to={ makePath( Step.DesignSelection ) } />
-					) }
+					{
+						// Disable reason: Leave me alone, my nested ternaries are amazing ✨
+						// eslint-disable-next-line no-nested-ternary
+						! selectedDesign ? (
+							<Redirect to={ makePath( Step.DesignSelection ) } />
+						) : isEnabled( 'gutenboarding/style-preview' ) ? (
+							<StylePreview />
+						) : (
+							<Redirect to={ makePath( Step.DesignSelection ) } />
+						)
+					}
 				</Route>
 
 				<Route path={ makePath( Step.CreateSite ) }>

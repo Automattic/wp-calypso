@@ -9,9 +9,7 @@ console.log(
 		'GPLv2 compatible licenses — see docs/CONTRIBUTING.md for details.\n\n'
 );
 
-const currentBranch = execSync( 'git rev-parse --abbrev-ref HEAD' )
-	.toString()
-	.trim();
+const currentBranch = execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().trim();
 
 if ( 'master' === currentBranch ) {
 	if ( ! readline.keyInYN( "You're about to push !!![ master ]!!!, is that what you intended?" ) ) {

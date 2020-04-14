@@ -20,8 +20,8 @@ class SuggestionsList extends React.PureComponent {
 	static defaultProps = {
 		isExpanded: false,
 		match: '',
-		onHover: function() {},
-		onSelect: function() {},
+		onHover: function () {},
+		onSelect: function () {},
 		suggestions: Object.freeze( [] ),
 	};
 
@@ -48,7 +48,7 @@ class SuggestionsList extends React.PureComponent {
 			}
 
 			setTimeout(
-				function() {
+				function () {
 					this._scrollingIntoView = false;
 				}.bind( this ),
 				100
@@ -92,7 +92,7 @@ class SuggestionsList extends React.PureComponent {
 	_renderSuggestions = () => {
 		return map(
 			this.props.suggestions,
-			function( suggestion, index ) {
+			function ( suggestion, index ) {
 				const match = this._computeSuggestionMatch( suggestion );
 				const classes = classNames( 'token-field__suggestion', {
 					'is-selected': index === this.props.selectedIndex,
@@ -123,7 +123,7 @@ class SuggestionsList extends React.PureComponent {
 	};
 
 	_handleHover = suggestion => {
-		return function() {
+		return function () {
 			if ( ! this._scrollingIntoView ) {
 				this.props.onHover( suggestion );
 			}
@@ -131,7 +131,7 @@ class SuggestionsList extends React.PureComponent {
 	};
 
 	_handleClick = suggestion => {
-		return function() {
+		return function () {
 			this.props.onSelect( suggestion );
 		}.bind( this );
 	};

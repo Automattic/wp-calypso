@@ -16,7 +16,7 @@ jest.mock( 'i18n-calypso', () => ( {
 	localize: Comp => props => (
 		<Comp
 			{ ...props }
-			translate={ function( x ) {
+			translate={ function ( x ) {
 				return x;
 			} }
 		/>
@@ -137,18 +137,8 @@ describe( 'Banner basic tests', () => {
 		const comp = shallow( <Banner { ...props } list={ [ 'test1', 'test2' ] } /> );
 		expect( comp.find( '.banner__list' ) ).toHaveLength( 1 );
 		expect( comp.find( '.banner__list li' ) ).toHaveLength( 2 );
-		expect(
-			comp
-				.find( '.banner__list li' )
-				.at( 0 )
-				.text()
-		).toContain( 'test1' );
-		expect(
-			comp
-				.find( '.banner__list li' )
-				.at( 1 )
-				.text()
-		).toContain( 'test2' );
+		expect( comp.find( '.banner__list li' ).at( 0 ).text() ).toContain( 'test1' );
+		expect( comp.find( '.banner__list li' ).at( 1 ).text() ).toContain( 'test2' );
 	} );
 
 	test( 'should not render a .banner__list when description is not specified', () => {

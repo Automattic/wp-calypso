@@ -12,7 +12,7 @@ import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-use
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import { getSiteSlug } from 'state/sites/selectors';
 
-export default function() {
+export default function () {
 	const user = userFactory();
 	const isLoggedOut = ! user.get();
 	if ( isLoggedOut ) {

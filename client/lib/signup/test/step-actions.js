@@ -39,7 +39,7 @@ describe( 'createSiteWithCart()', () => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.persist()
 			.post( '/rest/v1.1/sites/new' )
-			.reply( 400, function( uri, requestBody ) {
+			.reply( 400, function ( uri, requestBody ) {
 				return {
 					error: 'error',
 					message: 'something goes wrong!',

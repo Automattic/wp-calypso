@@ -189,7 +189,7 @@ class TransactionsHeader extends React.Component {
 			>
 				<SelectDropdown.Label>{ translate( 'App Name' ) }</SelectDropdown.Label>
 				{ this.renderAppPicker( translate( 'All Apps' ), 'all' ) }
-				{ appFilters.map( function( { title, value, count } ) {
+				{ appFilters.map( function ( { title, value, count } ) {
 					return this.renderAppPicker( title, value, count, 'Specific App' );
 				}, this ) }
 			</SelectDropdown>

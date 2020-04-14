@@ -15,7 +15,7 @@ beforeAll( () => {
 	};
 	jest
 		.spyOn( document, 'getElementById' )
-		.mockImplementation( id => ( id === 'header' ? header : null ) );
+		.mockImplementation( id => ( id === 'header' ? header : null)  );
 	jest.spyOn( ReactDom, 'findDOMNode' ).mockImplementation( node => node );
 } );
 

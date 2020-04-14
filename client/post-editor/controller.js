@@ -200,7 +200,7 @@ async function redirectIfBlockEditor( context, next ) {
 }
 
 export default {
-	post: function( context, next ) {
+	post: function ( context, next ) {
 		const postType = determinePostType( context );
 		const postId = getPostID( context );
 		const postToCopyId = context.query[ 'jetpack-copy' ];
@@ -285,7 +285,7 @@ export default {
 		next();
 	},
 
-	exitPost: function( context, next ) {
+	exitPost: function ( context, next ) {
 		const postId = getPostID( context );
 		const siteId = getSelectedSiteId( context.store.getState() );
 		if ( siteId ) {
@@ -294,7 +294,7 @@ export default {
 		next();
 	},
 
-	pressThis: function( context, next ) {
+	pressThis: function ( context, next ) {
 		if ( ! context.query.url ) {
 			// not pressThis, early return
 			return next();

@@ -134,8 +134,8 @@ const aliases = {
 };
 
 function getLibPhoneNumberData() {
-	return new Promise( function( resolve, reject ) {
-		request.get( LIBPHONENUMBER_METADATA_URL, function( error, response, body ) {
+	return new Promise( function ( resolve, reject ) {
+		request.get( LIBPHONENUMBER_METADATA_URL, function ( error, response, body ) {
 			if ( error || response.statusCode >= 400 ) {
 				throw error || response.statusCode;
 			}
@@ -261,7 +261,7 @@ function processLibPhoneNumberMetadata( libPhoneNumberData ) {
 	}
 
 	const noPattern = _.filter( data, _.conforms( { patterns: patterns => patterns.length === 0 } ) );
-	_.forIn( noPattern, function( country ) {
+	_.forIn( noPattern, function ( country ) {
 		country.patternRegion = (
 			_.maxBy( _.values( _.filter( data, { dialCode: country.dialCode } ) ), 'priority' ) || {}
 		).isoCode;
@@ -376,7 +376,7 @@ function generateDialCodeMap( metadata ) {
 			res[ key ].push( value );
 		}
 	}
-	_.forIn( metadata, function( country ) {
+	_.forIn( metadata, function ( country ) {
 		addValue( country.dialCode, country.isoCode );
 		( country.areaCodes || [] ).forEach( areaCode =>
 			addValue( country.dialCode + areaCode, country.isoCode )
@@ -405,7 +405,7 @@ getLibPhoneNumberData()
 	.then( generateFullDataset )
 	.then( deepRemoveUndefinedKeysFromObject )
 	.then( saveToFile )
-	.catch( function( error ) {
+	.catch( function ( error ) {
 		console.error( error.stack );
 		process.exit( -1 );
 	} );

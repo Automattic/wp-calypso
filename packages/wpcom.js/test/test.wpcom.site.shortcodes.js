@@ -12,7 +12,7 @@ var fixture = require( './fixture' );
 /**
  * Module dependencies
  */
-describe( 'wpcom.site.shortcodes', function() {
+describe( 'wpcom.site.shortcodes', function () {
 	// Global instances
 	var wpcom = util.wpcom();
 	var site = wpcom.site( util.site() );
@@ -20,9 +20,10 @@ describe( 'wpcom.site.shortcodes', function() {
 
 	// add media testing
 	before( done => {
-		site.addMediaFiles( fixture.media.files[0] )
+		site
+			.addMediaFiles( fixture.media.files[ 0 ] )
 			.then( data => {
-				testing_media = data ? data.media[0] : {};
+				testing_media = data ? data.media[ 0 ] : {};
 				done();
 			} )
 			.catch( done );
@@ -30,15 +31,17 @@ describe( 'wpcom.site.shortcodes', function() {
 
 	after( done => {
 		// delete media testing
-		site.deleteMedia( testing_media.ID )
+		site
+			.deleteMedia( testing_media.ID )
 			.then( () => done() )
 			.catch( done );
 	} );
 
-	describe( 'wpcom.site.renderShortcode(\'gallery\' )', function() {
+	describe( "wpcom.site.renderShortcode('gallery' )", function () {
 		it( 'should render [gallery] shortcode', done => {
 			var shortcode = '[gallery ids="' + testing_media.ID + '"]';
-			site.renderShortcode( shortcode )
+			site
+				.renderShortcode( shortcode )
 				.then( data => {
 					assert.equal( data.shortcode, shortcode );
 					assert.ok( data.result );

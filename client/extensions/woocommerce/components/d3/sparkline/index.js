@@ -28,10 +28,7 @@ const Sparkline = ( {
 		const sparkline = d3Line()
 			.x( ( d, i ) => xScale( i ) )
 			.y( d => yScale( d ) );
-		return svg
-			.append( 'path' )
-			.attr( 'class', 'sparkline__line' )
-			.attr( 'd', sparkline( data ) );
+		return svg.append( 'path' ).attr( 'class', 'sparkline__line' ).attr( 'd', sparkline( data ) );
 	}
 
 	function drawHighlight( svg, params ) {

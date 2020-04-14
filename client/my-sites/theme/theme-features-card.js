@@ -31,7 +31,7 @@ const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate } ) =>
 							{ ! isWpcomTheme ? (
 								<a>{ name }</a>
 							) : (
-								<a href={ `/themes/filter/${ term }/${ siteSlug || '' }` }>{ name }</a>
+								<a href={ `/themes/filter/${ term }/${ siteSlug || ''}` }>{ name }</a>
 							) }
 						</li>
 					) ) }

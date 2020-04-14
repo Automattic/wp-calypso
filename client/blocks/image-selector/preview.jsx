@@ -94,7 +94,7 @@ export class ImageSelectorPreview extends Component {
 				.map( id => {
 					return MediaStore.get( siteId, id );
 				} )
-				.filter( function( e ) {
+				.filter( function ( e ) {
 					return e;
 				} )
 		);

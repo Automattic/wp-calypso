@@ -190,7 +190,7 @@ export default class PlanFeaturesScroller extends PureComponent {
 
 			paneWidth = SIDE_PANE_RATIO * vpw;
 			scrollerWidth = ( cellWidth + borderSpacing ) * planCount + borderSpacing;
-			scrollerPadding = `0 ${ paneWidth - borderSpacing / 2 }px`;
+			scrollerPadding = `0 ${ paneWidth - borderSpacing / 2}px`;
 			visibleIndex = round( scrollPos / ( cellWidth + borderSpacing ) );
 
 			styleWeights = range( 0, planCount ).map( index => {
@@ -231,7 +231,7 @@ export default class PlanFeaturesScroller extends PureComponent {
 		return (
 			<>
 				{ styleWeights.map( ( weight, index ) => {
-					const selector = `${ cellSelector }:nth-child(${ index + 1 })`;
+					const selector = `${ cellSelector }:nth-child(${ index + 1})`;
 					const opacity = round( weight * ( 1 - MIN_PLAN_OPACITY ) + MIN_PLAN_OPACITY, 2 );
 					let translateX = inRange( weight, 0, 1 ) ? ( 1 - weight ) * 5 : 0;
 
@@ -311,7 +311,7 @@ export default class PlanFeaturesScroller extends PureComponent {
 				</div>
 				<div
 					className="plan-features__scroller-wrapper"
-					style={ { scrollPadding: `0 ${ vars.paneWidth + vars.borderSpacing / 2 }px` } }
+					style={ { scrollPadding: `0 ${ vars.paneWidth + vars.borderSpacing / 2}px` } }
 					ref={ this.setWrapperRef }
 				>
 					<div

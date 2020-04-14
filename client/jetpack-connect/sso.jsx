@@ -422,13 +422,15 @@ class JetpackSsoForm extends Component {
 							<div className="jetpack-connect__sso-user-profile">
 								<Gravatar user={ currentUser } size={ 120 } imgSize={ 400 } />
 								<h3 className="jetpack-connect__sso-log-in-as">
-									{ // translators: %s is the user's display name. Eg: Login in as "John Doe"
-									translate( 'Log in as {{strong}}%s{{/strong}}', {
-										args: currentUser.display_name,
-										components: {
-											strong: <strong className="jetpack-connect__sso-display-name" />,
-										},
-									} ) }
+									{
+										// translators: %s is the user's display name. Eg: Login in as "John Doe"
+										translate( 'Log in as {{strong}}%s{{/strong}}', {
+											args: currentUser.display_name,
+											components: {
+												strong: <strong className="jetpack-connect__sso-display-name" />,
+											},
+										} )
+									}
 								</h3>
 								<div className="jetpack-connect__sso-user-email">{ currentUser.email }</div>
 							</div>

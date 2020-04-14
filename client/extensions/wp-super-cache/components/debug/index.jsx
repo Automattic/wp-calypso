@@ -139,9 +139,7 @@ class DebugTab extends Component {
 												'<!-- super cache -->',
 											{
 												args: {
-													date: moment()
-														.utc()
-														.format( 'YYYY-MM-DD HH:mm:ss' ),
+													date: moment().utc().format( 'YYYY-MM-DD HH:mm:ss' ),
 												},
 											}
 										) }

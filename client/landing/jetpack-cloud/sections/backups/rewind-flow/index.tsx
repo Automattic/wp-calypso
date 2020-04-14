@@ -37,7 +37,7 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( state => ( siteId !== null ? getSiteSlug( state, siteId ) : '' ) );
+	const siteSlug = useSelector( state => ( siteId !== null ? getSiteSlug( state, siteId ) : '')  );
 
 	const backupDisplayDate = applySiteOffset( moment( parseFloat( rewindId ) * 1000 ) )?.format(
 		'LLL'

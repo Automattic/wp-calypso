@@ -62,12 +62,12 @@ const site_at = {
 
 describe( 'isATEnabled basic tests', () => {
 	let beforeWindow;
-	beforeAll( function() {
+	beforeAll( function () {
 		beforeWindow = global.window;
 		global.window = {};
 	} );
 
-	afterAll( function() {
+	afterAll( function () {
 		global.window = beforeWindow;
 	} );
 

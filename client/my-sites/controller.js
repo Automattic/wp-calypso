@@ -421,7 +421,7 @@ export function siteSelection( context, next ) {
 }
 
 export function jetpackModuleActive( moduleId, redirect ) {
-	return function( context, next ) {
+	return function ( context, next ) {
 		const { getState } = getStore( context );
 		const siteId = getSelectedSiteId( getState() );
 		const isJetpack = isJetpackSite( getState(), siteId );

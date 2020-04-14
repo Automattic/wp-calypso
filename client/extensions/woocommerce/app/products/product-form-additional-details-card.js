@@ -48,7 +48,7 @@ class ProductFormAdditionalDetailsCard extends Component {
 	getAttribute( { attributes }, attributeId ) {
 		return (
 			attributes &&
-			find( attributes, function( a ) {
+			find( attributes, function ( a ) {
 				return a.uid === attributeId;
 			} )
 		);

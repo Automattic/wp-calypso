@@ -42,7 +42,7 @@ class LineChartLegend extends Component {
 						<LegendItem
 							key={ dataSeries.name }
 							name={ dataSeries.name }
-							circleClassName={ `line-chart__legend-sample-${ index % NUM_SERIES }-fill` }
+							circleClassName={ `line-chart__legend-sample-${ index % NUM_SERIES}-fill` }
 							description={ dataSeries.description }
 							seriesIndex={ index }
 							onMouseOver={ this.handleMouseOver }

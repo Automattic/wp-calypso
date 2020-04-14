@@ -29,12 +29,7 @@ const toOption = font => {
 const isNotNull = option => option.value !== null && option.label !== null;
 
 const toOptions = ( options, filterProperty ) =>
-	! options
-		? []
-		: options
-				.map( toOption )
-				.filter( isNotNull )
-				.filter( isFor( filterProperty ) );
+	! options ? [] : options.map( toOption ).filter( isNotNull ).filter( isFor( filterProperty ) );
 
 const PanelActionButtons = ( {
 	hasLocalChanges,
@@ -88,8 +83,10 @@ export default ( {
 			>
 				<PanelBody>
 					<p>
-						{ /* translators: %s: Name of site. */
-						sprintf( __( 'You are customizing %s.' ), siteName ) }
+						{
+							/* translators: %s: Name of site. */
+							sprintf( __( 'You are customizing %s.' ), siteName )
+						}
 					</p>
 					<p>{ __( 'Any change you make here will apply to the entire website.' ) }</p>
 					{ hasLocalChanges ? (

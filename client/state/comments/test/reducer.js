@@ -51,7 +51,7 @@ describe( 'reducer', () => {
 				type: COMMENTS_RECEIVE,
 				siteId: 1,
 				postId: 1,
-				comments: [ ...commentsNestedTree ].sort( () => ( ( Math.random() * 2 ) % 2 ? -1 : 1 ) ),
+				comments: [ ...commentsNestedTree ].sort( () => ( ( Math.random() * 2 ) % 2 ? -1 : 1)  ),
 			} );
 			const ids = map( response[ '1-1' ], 'ID' );
 
@@ -208,7 +208,7 @@ describe( 'reducer', () => {
 				type: COMMENTS_UPDATES_RECEIVE,
 				siteId: 1,
 				postId: 1,
-				comments: [ ...commentsNestedTree ].sort( () => ( ( Math.random() * 2 ) % 2 ? -1 : 1 ) ),
+				comments: [ ...commentsNestedTree ].sort( () => ( ( Math.random() * 2 ) % 2 ? -1 : 1)  ),
 			} );
 			const ids = map( response[ '1-1' ], 'ID' );
 

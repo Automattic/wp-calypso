@@ -170,10 +170,7 @@ const ExpiryTime = ( {
 			return;
 		}
 
-		return moment
-			.unix( timestamp )
-			.utc()
-			.format( 'YYYY-MM-DD H:mm:ss' );
+		return moment.unix( timestamp ).utc().format( 'YYYY-MM-DD H:mm:ss' );
 	};
 
 	return (
@@ -185,10 +182,7 @@ const ExpiryTime = ( {
 			</SectionHeader>
 			<Card>
 				<p>
-					{ translate( 'UTC time is ' ) +
-						moment()
-							.utc()
-							.format( 'YYYY-MM-DD H:mm:ss' ) }
+					{ translate( 'UTC time is ' ) + moment().utc().format( 'YYYY-MM-DD H:mm:ss' ) }
 					<br />
 					{ translate( 'Local time is ' ) + moment().format( 'YYYY-MM-DD H:mm:ss' ) }
 				</p>

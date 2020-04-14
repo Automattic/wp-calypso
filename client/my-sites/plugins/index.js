@@ -22,7 +22,7 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
+export default function () {
 	if ( config.isEnabled( 'manage/plugins/setup' ) ) {
 		page(
 			'/plugins/setup',

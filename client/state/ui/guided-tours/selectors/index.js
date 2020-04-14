@@ -39,7 +39,7 @@ const BLACKLISTED_SECTIONS = [
 
 const debug = debugFactory( 'calypso:guided-tours' );
 
-const mappable = x => ( ! Array.isArray( x ) ? [ x ] : x );
+const mappable = x => ( ! Array.isArray( x ) ? [ x ] : x) ;
 
 const relevantFeatures = flatMap( GuidedToursConfig, ( tourMeta, key ) =>
 	mappable( tourMeta.path ).map( path => ( {

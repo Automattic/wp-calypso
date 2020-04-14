@@ -208,7 +208,7 @@ export const getNewOrders = ( state, siteId = getSelectedSiteId( state ) ) => {
 		[ 'extensions', 'woocommerce', 'sites', siteId, 'orders', 'items' ],
 		{}
 	);
-	return filter( orders, function( order ) {
+	return filter( orders, function ( order ) {
 		const { status } = order;
 		return 'pending' === status || 'processing' === status || 'on-hold' === status;
 	} );
@@ -222,7 +222,7 @@ export const getNewOrders = ( state, siteId = getSelectedSiteId( state ) ) => {
 export const getNewOrdersWithoutPayPalPending = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const orders = getNewOrders( state, siteId );
 
-	return filter( orders, function( order ) {
+	return filter( orders, function ( order ) {
 		const { status, payment_method } = order;
 		return ! ( 'pending' === status && 'paypal' === payment_method );
 	} );

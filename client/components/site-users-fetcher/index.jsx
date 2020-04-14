@@ -85,7 +85,7 @@ export default class extends React.Component {
 			// users[1] will be a list of the excluded users.
 			users = partition(
 				users,
-				function( user ) {
+				function ( user ) {
 					if ( 'function' === typeof this.props.exclude ) {
 						return ! this.props.exclude( user );
 					}
@@ -113,7 +113,7 @@ export default class extends React.Component {
 			return;
 		}
 		// defer fetch requests to avoid dispatcher conflicts
-		setTimeout( function() {
+		setTimeout( function () {
 			const paginationData = UsersStore.getPaginationData( fetchOptions );
 			if ( paginationData.fetchingUsers ) {
 				return;

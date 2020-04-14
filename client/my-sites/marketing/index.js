@@ -19,7 +19,7 @@ import {
 } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
+export default function () {
 	const paths = [
 		'/marketing',
 		'/marketing/connections',

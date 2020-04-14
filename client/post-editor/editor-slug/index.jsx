@@ -65,7 +65,7 @@ class PostEditorSlug extends Component {
 	onSlugKeyDown( event ) {
 		if ( event.key === 'Enter' || event.key === 'Escape' ) {
 			const { onEscEnter, isEditable } = this.props;
-			this.setState( { isSlugFocused: false }, function() {
+			this.setState( { isSlugFocused: false }, function () {
 				onEscEnter();
 
 				if ( isEditable ) {

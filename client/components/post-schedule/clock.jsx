@@ -159,7 +159,7 @@ class PostScheduleClock extends Component {
 			{
 				args: { timezoneText },
 				components: {
-					a: <a href={ `/settings/general/${ siteSlug || siteId }` } />,
+					a: <a href={ `/settings/general/${ siteSlug || siteId}` } />,
 				},
 			}
 		);

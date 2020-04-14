@@ -115,7 +115,7 @@ async function updateCreditCard( {
 			);
 			noticeOptions = {
 				button: translate( 'Renew Now' ),
-				onClick: function( event, closeFunction ) {
+				onClick: function ( event, closeFunction ) {
 					handleRenewNowClick( purchase, siteSlug );
 					closeFunction();
 				},

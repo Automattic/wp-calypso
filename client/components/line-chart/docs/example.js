@@ -37,7 +37,7 @@ export default class LineChartExample extends Component {
 
 	static createLegendInfo() {
 		return range( NUM_DATA_SERIES ).map( index => ( {
-			name: `Line #${ index + 1 }`,
+			name: `Line #${ index + 1}`,
 		} ) );
 	}
 

@@ -35,7 +35,7 @@ describe( 'section-nav', () => {
 	describe( 'rendering', () => {
 		let headerElem, headerTextElem, panelElem, sectionNav, text;
 
-		beforeAll( function() {
+		beforeAll( function () {
 			const selectedText = 'test';
 			const children = <p>mmyellow</p>;
 
@@ -65,7 +65,7 @@ describe( 'section-nav', () => {
 
 		test( 'should render children', done => {
 			//React.Children.only should work here but gives an error about not being the only child
-			React.Children.map( panelElem.props.children, function( obj ) {
+			React.Children.map( panelElem.props.children, function ( obj ) {
 				if ( obj.type === 'p' ) {
 					assert.equal( obj.props.children, 'mmyellow' );
 					done();
@@ -96,7 +96,7 @@ describe( 'section-nav', () => {
 				SectionNav,
 				{
 					selectedText: 'placeholder',
-					onMobileNavPanelOpen: function() {
+					onMobileNavPanelOpen: function () {
 						done();
 					},
 				},

@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies
  */
@@ -10,7 +9,7 @@ var assert = require( 'assert' );
  */
 var fixture = require( './fixture' );
 
-describe.skip( 'wpcom.site.wpcomPlugin', function() {
+describe.skip( 'wpcom.site.wpcomPlugin', function () {
 	// Global instances
 	var wpcom = util.wpcom();
 	var site = wpcom.site( fixture.site_business );
@@ -18,18 +17,20 @@ describe.skip( 'wpcom.site.wpcomPlugin', function() {
 	// Create a testing_wpcomPlugin before to start tests
 	var testingWPComPlugin;
 	before( done => {
-		site.wpcomPluginsList()
-		.then( res => {
-			var pluginId = res.plugins[0].slug;
-			testingWPComPlugin = site.wpcomPlugin( pluginId );
-			done();
-		} )
-		.catch( done );
+		site
+			.wpcomPluginsList()
+			.then( res => {
+				var pluginId = res.plugins[ 0 ].slug;
+				testingWPComPlugin = site.wpcomPlugin( pluginId );
+				done();
+			} )
+			.catch( done );
 	} );
 
-	describe( 'wpcom.site.wpcomPlugin.activate', function() {
+	describe( 'wpcom.site.wpcomPlugin.activate', function () {
 		it( 'should activate the wpcom plugin', done => {
-			testingWPComPlugin.activate()
+			testingWPComPlugin
+				.activate()
 				.then( data => {
 					assert.ok( data );
 					assert.ok( data instanceof Object, 'data is not an object' );
@@ -40,9 +41,10 @@ describe.skip( 'wpcom.site.wpcomPlugin', function() {
 		} );
 	} );
 
-	describe( 'wpcom.site.wpcomPlugin.deactivate', function() {
+	describe( 'wpcom.site.wpcomPlugin.deactivate', function () {
 		it( 'should deactivate the wpcom plugin', done => {
-			testingWPComPlugin.deactivate()
+			testingWPComPlugin
+				.deactivate()
 				.then( data => {
 					assert.ok( data );
 					assert.ok( data instanceof Object, 'data is not an object' );

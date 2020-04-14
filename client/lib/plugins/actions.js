@@ -256,10 +256,7 @@ const PluginsActions = {
 		const manageError = error => {
 			if ( error.name === 'PluginAlreadyInstalledError' ) {
 				if ( site.isMainNetworkSite ) {
-					return update( plugin )
-						.then( autoupdate )
-						.then( manageSuccess )
-						.catch( manageError );
+					return update( plugin ).then( autoupdate ).then( manageSuccess ).catch( manageError );
 				}
 
 				return update( plugin )
@@ -269,10 +266,7 @@ const PluginsActions = {
 					.catch( manageError );
 			}
 			if ( error.name === 'ActivationErrorError' ) {
-				return update( plugin )
-					.then( autoupdate )
-					.then( manageSuccess )
-					.catch( manageError );
+				return update( plugin ).then( autoupdate ).then( manageSuccess ).catch( manageError );
 			}
 
 			dispatchMessage( 'RECEIVE_INSTALLED_PLUGIN', null, error );
@@ -281,17 +275,10 @@ const PluginsActions = {
 
 		dispatchMessage( 'INSTALL_PLUGIN' );
 		if ( site.isMainNetworkSite ) {
-			return install()
-				.then( autoupdate )
-				.then( manageSuccess )
-				.catch( manageError );
+			return install().then( autoupdate ).then( manageSuccess ).catch( manageError );
 		}
 
-		return install()
-			.then( activate )
-			.then( autoupdate )
-			.then( manageSuccess )
-			.catch( manageError );
+		return install().then( activate ).then( autoupdate ).then( manageSuccess ).catch( manageError );
 	},
 
 	removePlugin: ( site, plugin ) => {

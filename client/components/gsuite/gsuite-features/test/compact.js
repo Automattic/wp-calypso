@@ -13,7 +13,9 @@ import GSuiteCompactFeatures from '../compact';
 describe( 'GSuiteCompactFeatures', () => {
 	test( 'it renders GSuiteCompactFeatures with basic plan', () => {
 		const tree = renderer
-			.create( <GSuiteCompactFeatures domainName={ 'testing123.com' } productSlug={ GSUITE_BASIC_SLUG } /> )
+			.create(
+				<GSuiteCompactFeatures domainName={ 'testing123.com' } productSlug={ GSUITE_BASIC_SLUG } />
+			)
 			.toJSON();
 
 		expect( tree ).toMatchSnapshot();
@@ -22,7 +24,10 @@ describe( 'GSuiteCompactFeatures', () => {
 	test( 'it renders GSuiteCompactFeatures with business plan', () => {
 		const tree = renderer
 			.create(
-				<GSuiteCompactFeatures domainName={ 'testing123.com' } productSlug={ GSUITE_BUSINESS_SLUG } />
+				<GSuiteCompactFeatures
+					domainName={ 'testing123.com' }
+					productSlug={ GSUITE_BUSINESS_SLUG }
+				/>
 			)
 			.toJSON();
 

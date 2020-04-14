@@ -12,7 +12,7 @@ import { makeLayout, render as clientRender } from 'controller';
 import { navigation, redirectWithoutSite, siteSelection, sites } from 'my-sites/controller';
 import { exportSite, guidedTransfer } from 'my-sites/exporter/controller';
 
-export default function() {
+export default function () {
 	page( '/export', siteSelection, navigation, sites, makeLayout, clientRender );
 
 	page(

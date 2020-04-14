@@ -117,9 +117,7 @@ export class CartItem extends React.Component {
 			args: {
 				months,
 				currency,
-				monthlyPrice: `${ price.integer }${
-					monthlyPrice - price.integer > 0 ? price.fraction : ''
-				}`,
+				monthlyPrice: `${ price.integer}${ monthlyPrice - price.integer > 0 ? price.fraction : ''}`,
 			},
 		} );
 	}

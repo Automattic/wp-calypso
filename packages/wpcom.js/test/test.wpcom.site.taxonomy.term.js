@@ -18,7 +18,9 @@ describe( 'wpcom.site.taxonomy.term', () => {
 
 	// Create a testTerm
 	before( done => {
-		taxonomy.term().add( testTermAttributes )
+		taxonomy
+			.term()
+			.add( testTermAttributes )
 			.then( term => {
 				testTerm = term;
 				done();
@@ -28,14 +30,18 @@ describe( 'wpcom.site.taxonomy.term', () => {
 
 	after( done => {
 		// delete testTerm
-		taxonomy.term( testTerm.slug ).delete()
+		taxonomy
+			.term( testTerm.slug )
+			.delete()
 			.then( () => done() )
 			.catch( done );
 	} );
 
 	describe( 'wpcom.site.taxonomy.term.get', () => {
 		it( 'should return term details', done => {
-			taxonomy.term( testTerm.slug ).get()
+			taxonomy
+				.term( testTerm.slug )
+				.get()
 				.then( data => {
 					assert.ok( data );
 					assert.ok( 'string', typeof data.name );
@@ -52,7 +58,9 @@ describe( 'wpcom.site.taxonomy.term', () => {
 		} );
 
 		it( 'should not return an error for unknown_taxonomy', done => {
-			taxonomy.term( 'i-ate-all-the-chicken-and-ribs' ).get()
+			taxonomy
+				.term( 'i-ate-all-the-chicken-and-ribs' )
+				.get()
 				.catch( data => {
 					assert.ok( data );
 					assert.equal( data.error, 'unknown_taxonomy' );
@@ -63,7 +71,9 @@ describe( 'wpcom.site.taxonomy.term', () => {
 
 	describe( 'wpcom.site.taxonomy.term.add', () => {
 		it( 'should create a new term', done => {
-			taxonomy.term().add( { name: 'chunky bacon', parent: testTerm.ID, description: 'I LOVE BACON MOAR' } )
+			taxonomy
+				.term()
+				.add( { name: 'chunky bacon', parent: testTerm.ID, description: 'I LOVE BACON MOAR' } )
 				.then( data => {
 					testTermTwo = data;
 					assert.ok( data );
@@ -78,7 +88,9 @@ describe( 'wpcom.site.taxonomy.term', () => {
 
 	describe( 'wpcom.site.taxonomy.term.update', () => {
 		it( 'should update the term', done => {
-			taxonomy.term( testTermTwo.slug ).update( { parent: 0, description: 'I LOVE RIBS AND BACON' } )
+			taxonomy
+				.term( testTermTwo.slug )
+				.update( { parent: 0, description: 'I LOVE RIBS AND BACON' } )
 				.then( data => {
 					assert.ok( data );
 					assert.equal( data.slug, testTermTwo.slug );
@@ -92,7 +104,9 @@ describe( 'wpcom.site.taxonomy.term', () => {
 
 	describe( 'wpcom.site.taxonomy.term.delete', () => {
 		it( 'should update the term', done => {
-			taxonomy.term( testTermTwo.slug ).delete()
+			taxonomy
+				.term( testTermTwo.slug )
+				.delete()
 				.then( data => {
 					assert.ok( data );
 					done();

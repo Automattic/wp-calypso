@@ -125,13 +125,9 @@ class StatsGeochart extends Component {
 		// support switching color schemes in IE11 thus applying the
 		// defaults as raw hex values here.
 		const chartColorLight =
-			getComputedStyle( document.body )
-				.getPropertyValue( '--color-accent-5' )
-				.trim() || '#ffdff3';
+			getComputedStyle( document.body ).getPropertyValue( '--color-accent-5' ).trim() || '#ffdff3';
 		const chartColorDark =
-			getComputedStyle( document.body )
-				.getPropertyValue( '--color-accent' )
-				.trim() || '#d52c82';
+			getComputedStyle( document.body ).getPropertyValue( '--color-accent' ).trim() || '#d52c82';
 
 		const options = {
 			width: 100 + '%',

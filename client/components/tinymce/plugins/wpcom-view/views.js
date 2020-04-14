@@ -48,11 +48,11 @@ export default {
 		let pieces = [ { content: content } ],
 			current;
 
-		forEach( views, function( view, type ) {
+		forEach( views, function ( view, type ) {
 			current = pieces.slice();
 			pieces = [];
 
-			forEach( current, function( piece ) {
+			forEach( current, function ( piece ) {
 				let remaining = piece.content,
 					result;
 

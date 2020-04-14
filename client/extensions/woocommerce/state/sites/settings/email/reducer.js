@@ -29,7 +29,7 @@ const process_data = data => {
 		id: 'woocommerce_email_from_address',
 	} );
 	const defaultEmail = isEmpty( fromAddress ) ? '' : fromAddress[ 0 ].default;
-	data.forEach( function( option ) {
+	data.forEach( function ( option ) {
 		setWith(
 			options,
 			[ option.group_id, option.id ],

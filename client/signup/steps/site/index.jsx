@@ -107,7 +107,7 @@ class Site extends React.Component {
 				blog_title: fields.site,
 				validate: true,
 			},
-			function( error, response ) {
+			function ( error, response ) {
 				let messages = {};
 
 				debug( error, response );
@@ -150,7 +150,7 @@ class Site extends React.Component {
 		this.setState( { submitting: true } );
 
 		this.formStateController.handleSubmit(
-			function( hasErrors ) {
+			function ( hasErrors ) {
 				const site = formState.getFieldValue( this.state.form, 'site' );
 
 				this.setState( { submitting: false } );
@@ -216,7 +216,7 @@ class Site extends React.Component {
 
 		return map(
 			messages,
-			function( message, error_code ) {
+			function ( message, error_code ) {
 				if ( error_code === 'blog_name_reserved' ) {
 					return (
 						<span>

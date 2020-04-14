@@ -114,7 +114,7 @@ export class EditTeamMemberForm extends Component {
 		}
 
 		const removeUserInProgress = PeopleLogStore.getInProgress(
-			function( log ) {
+			function ( log ) {
 				return (
 					'DELETE_SITE_USER' === log.action &&
 					this.props.siteId === log.siteId &&

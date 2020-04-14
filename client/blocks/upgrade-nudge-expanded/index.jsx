@@ -48,7 +48,7 @@ class UpgradeNudgeExpanded extends Component {
 		if ( this.props.upgrade ) {
 			this.props.upgrade();
 		} else if ( this.props.planConstants.getPathSlug && this.props.siteSlug ) {
-			page( `/checkout/${ this.props.siteSlug }/${ this.props.planConstants.getPathSlug() }` );
+			page( `/checkout/${ this.props.siteSlug}/${ this.props.planConstants.getPathSlug() }` );
 		}
 	}
 

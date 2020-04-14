@@ -167,10 +167,7 @@ class ThemeShowcase extends React.Component {
 		const url = this.constructUrl( {
 			filter: compact( validFilters ).join( '+' ),
 			// Strip filters and excess whitespace
-			searchString: searchBoxContent
-				.replace( filterRegex, '' )
-				.replace( /\s+/g, ' ' )
-				.trim(),
+			searchString: searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim(),
 		} );
 		page( url );
 		this.scrollToSearchInput();
@@ -318,22 +315,22 @@ class ThemeShowcase extends React.Component {
 								defaultOption={ this.props.defaultOption }
 								secondaryOption={ this.props.secondaryOption }
 								placeholderCount={ this.props.placeholderCount }
-								getScreenshotUrl={ function( theme ) {
+								getScreenshotUrl={ function ( theme ) {
 									if ( ! getScreenshotOption( theme ).getUrl ) {
 										return null;
 									}
 									return getScreenshotOption( theme ).getUrl( theme );
 								} }
-								onScreenshotClick={ function( themeId ) {
+								onScreenshotClick={ function ( themeId ) {
 									if ( ! getScreenshotOption( themeId ).action ) {
 										return;
 									}
 									getScreenshotOption( themeId ).action( themeId );
 								} }
-								getActionLabel={ function( theme ) {
+								getActionLabel={ function ( theme ) {
 									return getScreenshotOption( theme ).label;
 								} }
-								getOptions={ function( theme ) {
+								getOptions={ function ( theme ) {
 									return pickBy(
 										addTracking( options ),
 										option => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
@@ -404,22 +401,22 @@ class ThemeShowcase extends React.Component {
 							defaultOption={ this.props.defaultOption }
 							secondaryOption={ this.props.secondaryOption }
 							placeholderCount={ this.props.placeholderCount }
-							getScreenshotUrl={ function( theme ) {
+							getScreenshotUrl={ function ( theme ) {
 								if ( ! getScreenshotOption( theme ).getUrl ) {
 									return null;
 								}
 								return getScreenshotOption( theme ).getUrl( theme );
 							} }
-							onScreenshotClick={ function( themeId ) {
+							onScreenshotClick={ function ( themeId ) {
 								if ( ! getScreenshotOption( themeId ).action ) {
 									return;
 								}
 								getScreenshotOption( themeId ).action( themeId );
 							} }
-							getActionLabel={ function( theme ) {
+							getActionLabel={ function ( theme ) {
 								return getScreenshotOption( theme ).label;
 							} }
-							getOptions={ function( theme ) {
+							getOptions={ function ( theme ) {
 								return pickBy(
 									addTracking( options ),
 									option => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )

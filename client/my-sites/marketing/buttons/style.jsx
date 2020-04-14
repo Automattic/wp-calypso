@@ -24,7 +24,7 @@ class SharingButtonsStyle extends React.Component {
 	};
 
 	static defaultProps = {
-		onChange: function() {},
+		onChange: function () {},
 		disabled: false,
 	};
 
@@ -65,7 +65,7 @@ class SharingButtonsStyle extends React.Component {
 					context: 'Sharing: Sharing button option label',
 				} ),
 			},
-		].map( function( option ) {
+		].map( function ( option ) {
 			return (
 				<label key={ option.value }>
 					<input

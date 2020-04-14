@@ -7,16 +7,17 @@ var assert = require( 'assert' );
 /**
  * site.settings
  */
-describe( '[whitelist] wpcom.site.settings', function() {
+describe( '[whitelist] wpcom.site.settings', function () {
 	// Global instances
 	var wpcom = util.wpcom();
 	var site = wpcom.site( util.site() );
 	var settings = site.settings();
 	var current_settings;
 
-	describe( 'wpcom.site.get', function() {
+	describe( 'wpcom.site.get', function () {
 		it( 'should get site settings data', done => {
-			settings.get()
+			settings
+				.get()
 				.then( data => {
 					assert.ok( data );
 					assert.ok( data.settings );
@@ -27,7 +28,8 @@ describe( '[whitelist] wpcom.site.settings', function() {
 		} );
 
 		it( 'should get `gmt_offset` option of site settings', done => {
-			settings.getOption( 'gmt_offset' )
+			settings
+				.getOption( 'gmt_offset' )
 				.then( value => {
 					assert.ok( typeof value !== 'undefined' );
 					done();
@@ -36,7 +38,8 @@ describe( '[whitelist] wpcom.site.settings', function() {
 		} );
 
 		it( 'should update site settings', done => {
-			settings.update( { blogname: current_settings.name + ' (Updated)' } )
+			settings
+				.update( { blogname: current_settings.name + ' (Updated)' } )
 				.then( data => {
 					assert.ok( data );
 					done();
@@ -45,7 +48,8 @@ describe( '[whitelist] wpcom.site.settings', function() {
 		} );
 
 		it( 'should set `blogname` option', done => {
-			settings.setOption( 'blogname', current_settings.name )
+			settings
+				.setOption( 'blogname', current_settings.name )
 				.then( res => {
 					assert.ok( typeof res !== 'undefined' );
 					assert.ok( res.updated.blogname === current_settings.name );

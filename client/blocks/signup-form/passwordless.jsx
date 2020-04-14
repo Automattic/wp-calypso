@@ -173,7 +173,7 @@ class PasswordlessSignupForm extends Component {
 							components: {
 								a: (
 									<a
-										href={ `${ this.props.logInUrl }&email_address=${ encodeURIComponent(
+										href={ `${ this.props.logInUrl}&email_address=${ encodeURIComponent(
 											this.state.email
 										) }` }
 									/>

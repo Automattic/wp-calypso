@@ -59,7 +59,7 @@ class LocationSearch extends Component {
 				`//maps.googleapis.com/maps/api/js?key=${ config(
 					'google_maps_and_places_api_key'
 				) }&libraries=places`,
-				function() {
+				function () {
 					// eslint-disable-next-line no-undef
 					autocompleteService = new google.maps.places.AutocompleteService();
 				}

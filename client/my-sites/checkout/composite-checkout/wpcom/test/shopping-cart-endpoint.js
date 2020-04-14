@@ -3,7 +3,7 @@
  */
 import { removeItemFromResponseCart, addCouponToResponseCart } from '../types';
 
-describe( 'removeItemFromResponseCart', function() {
+describe( 'removeItemFromResponseCart', function () {
 	const baseResponseCart = {
 		total_tax_integer: 0,
 		total_tax_display: '$0',
@@ -23,7 +23,7 @@ describe( 'removeItemFromResponseCart', function() {
 		},
 	};
 
-	describe( 'cart with two items and item present', function() {
+	describe( 'cart with two items and item present', function () {
 		const responseCart = {
 			...baseResponseCart,
 			products: [
@@ -58,12 +58,12 @@ describe( 'removeItemFromResponseCart', function() {
 
 		const result = removeItemFromResponseCart( responseCart, '0' );
 
-		it( 'has expected array of uuids', function() {
+		it( 'has expected array of uuids', function () {
 			expect( result.products.map( product => product.uuid ) ).toEqual( [ '1' ] );
 		} );
 	} );
 
-	describe( 'cart with two items and item not present', function() {
+	describe( 'cart with two items and item not present', function () {
 		const responseCart = {
 			...baseResponseCart,
 			products: [
@@ -98,13 +98,13 @@ describe( 'removeItemFromResponseCart', function() {
 
 		const result = removeItemFromResponseCart( responseCart, '2' );
 
-		it( 'has expected array of uuids', function() {
+		it( 'has expected array of uuids', function () {
 			expect( result.products.map( product => product.uuid ) ).toEqual( [ '0', '1' ] );
 		} );
 	} );
 } );
 
-describe( 'addCouponToResponseCart', function() {
+describe( 'addCouponToResponseCart', function () {
 	const responseCart = {
 		products: [],
 		total_tax_integer: 0,
@@ -127,10 +127,10 @@ describe( 'addCouponToResponseCart', function() {
 
 	const result = addCouponToResponseCart( responseCart, 'fakecoupon' );
 
-	it( 'has the expected coupon', function() {
+	it( 'has the expected coupon', function () {
 		expect( result.coupon ).toEqual( 'fakecoupon' );
 	} );
-	it( 'does not have the coupon applied', function() {
+	it( 'does not have the coupon applied', function () {
 		expect( result.is_coupon_applied ).toEqual( false );
 	} );
 } );

@@ -50,9 +50,7 @@ const HorizontalBar = ( { className, data, extent, currency, height, width } ) =
 		return {
 			width: calculatedWidth,
 			height: height || node.offsetHeight,
-			scale: d3ScaleLinear()
-				.domain( extent )
-				.range( [ 0, calculatedWidth ] ),
+			scale: d3ScaleLinear().domain( extent ).range( [ 0, calculatedWidth ] ),
 		};
 	};
 

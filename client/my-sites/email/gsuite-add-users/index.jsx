@@ -77,7 +77,11 @@ class GSuiteAddUsers extends React.Component {
 
 		if ( canContinue ) {
 			addItems(
-				getItemsForCart( domains, 'business' === planType ? GSUITE_BUSINESS_SLUG : GSUITE_BASIC_SLUG, users )
+				getItemsForCart(
+					domains,
+					'business' === planType ? GSUITE_BUSINESS_SLUG : GSUITE_BASIC_SLUG,
+					users
+				)
 			);
 			page( '/checkout/' + selectedSite.slug );
 		}

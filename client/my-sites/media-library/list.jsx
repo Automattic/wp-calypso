@@ -194,7 +194,7 @@ export class MediaLibraryList extends React.Component {
 		const placeholders = itemsPerRow - ( itemsVisible % itemsPerRow );
 
 		// We render enough placeholders to occupy the remainder of the row
-		return Array.apply( null, new Array( placeholders ) ).map( function( value, i ) {
+		return Array.apply( null, new Array( placeholders ) ).map( function ( value, i ) {
 			return (
 				<ListItem
 					key={ 'placeholder-' + i }
@@ -227,7 +227,7 @@ export class MediaLibraryList extends React.Component {
 			} );
 		}
 
-		const onFetchNextPage = function() {
+		const onFetchNextPage = function () {
 			// InfiniteList passes its own parameter which would interfere
 			// with the optional parameters expected by mediaOnFetchNextPage
 			this.props.mediaOnFetchNextPage();

@@ -23,9 +23,7 @@ const PAGE_SIZE = 5;
  */
 function formatDate( date ) {
 	const localeSlug = getLocaleSlug();
-	return moment( date )
-		.locale( localeSlug )
-		.format( 'll' );
+	return moment( date ).locale( localeSlug ).format( 'll' );
 }
 
 /**

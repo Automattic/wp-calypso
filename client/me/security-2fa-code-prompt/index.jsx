@@ -206,7 +206,7 @@ class Security2faCodePrompt extends React.Component {
 						disabled={ this.state.submittingForm }
 						method={ method }
 						name="verificationCode"
-						onFocus={ function() {
+						onFocus={ function () {
 							gaRecordEvent( 'Me', 'Focused On 2fa Disable Code Verification Input' );
 						} }
 						value={ this.state.verificationCode }
@@ -226,7 +226,7 @@ class Security2faCodePrompt extends React.Component {
 					<FormButton
 						className="security-2fa-code-prompt__verify-code"
 						disabled={ this.getFormDisabled() }
-						onClick={ function() {
+						onClick={ function () {
 							gaRecordEvent( 'Me', 'Clicked On 2fa Code Prompt Verify Button' );
 						} }
 					>
@@ -238,7 +238,7 @@ class Security2faCodePrompt extends React.Component {
 							className="security-2fa-code-prompt__send-code"
 							disabled={ ! this.state.codeRequestsAllowed }
 							isPrimary={ false }
-							onClick={ function( event ) {
+							onClick={ function ( event ) {
 								gaRecordEvent( 'Me', 'Clicked On 2fa Code Prompt Send Code Via SMS Button' );
 								this.onRequestCode( event );
 							}.bind( this ) }
@@ -253,7 +253,7 @@ class Security2faCodePrompt extends React.Component {
 						<FormButton
 							className="security-2fa-code-prompt__cancel"
 							isPrimary={ false }
-							onClick={ function( event ) {
+							onClick={ function ( event ) {
 								gaRecordEvent( 'Me', 'Clicked On Disable 2fa Cancel Button' );
 								this.onCancel( event );
 							}.bind( this ) }

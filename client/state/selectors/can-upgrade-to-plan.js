@@ -21,7 +21,7 @@ import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
  * @param  {string}   planKey    The plan we want to upgrade to
  * @returns {boolean}             True if the site can be upgraded
  */
-export default function( state, siteId, planKey ) {
+export default function ( state, siteId, planKey ) {
 	// Which "free plan" should we use to test
 	const freePlan =
 		isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )

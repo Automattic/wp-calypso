@@ -16,7 +16,7 @@ describe( '#accept()', () => {
 	test( 'should render a dialog to the document body', () => {
 		const message = 'Are you sure?';
 
-		accept( message, function() {} );
+		accept( message, function () {} );
 
 		const dialog = document.querySelector( '.accept__dialog' );
 		expect( dialog ).toBeInstanceOf( window.Element );
@@ -24,7 +24,7 @@ describe( '#accept()', () => {
 	} );
 
 	test( 'should trigger the callback with an accepted prompt', done => {
-		accept( 'Are you sure?', function( accepted ) {
+		accept( 'Are you sure?', function ( accepted ) {
 			expect( accepted ).toBe( true );
 			done();
 		} );
@@ -33,7 +33,7 @@ describe( '#accept()', () => {
 	} );
 
 	test( 'should trigger the callback with a denied prompt', done => {
-		accept( 'Are you sure?', function( accepted ) {
+		accept( 'Are you sure?', function ( accepted ) {
 			expect( accepted ).toBe( false );
 			done();
 		} );

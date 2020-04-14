@@ -475,10 +475,7 @@ describe( 'TokenField', () => {
 
 	describe( 'removing tokens', () => {
 		test( 'should remove tokens when X icon clicked', () => {
-			tokenFieldNode
-				.find( '.token-field__remove-token' )
-				.first()
-				.simulate( 'click' );
+			tokenFieldNode.find( '.token-field__remove-token' ).first().simulate( 'click' );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'bar' ] );
 		} );
 

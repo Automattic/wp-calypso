@@ -135,7 +135,7 @@ export function filterPlansBySiteAndProps(
 	const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 	const hasPersonalPlan = site && site.plan.product_slug === PLAN_PERSONAL;
 
-	return plans.filter( function( plan ) {
+	return plans.filter( function ( plan ) {
 		if ( site && site.jetpack ) {
 			if ( 'monthly' === intervalType ) {
 				if ( showJetpackFreePlan ) {

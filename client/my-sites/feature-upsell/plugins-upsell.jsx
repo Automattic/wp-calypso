@@ -48,7 +48,7 @@ class PluginsUpsellComponent extends Component {
 			cta_name: 'upsell-page-plugins',
 		} );
 
-		page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( PLAN_BUSINESS ) || '' }` );
+		page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( PLAN_BUSINESS ) || ''}` );
 	};
 
 	formatPrice( price ) {

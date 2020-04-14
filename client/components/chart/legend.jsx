@@ -34,7 +34,7 @@ export default class ChartLegend extends React.Component {
 		const legendColors = [ 'chart__legend-color is-dark-blue' ],
 			activeTab = this.props.activeTab;
 
-		const legendItems = this.props.availableCharts.map( function( legendItem, index ) {
+		const legendItems = this.props.availableCharts.map( function ( legendItem, index ) {
 			const colorClass = legendColors[ index ],
 				checked = -1 !== this.props.activeCharts.indexOf( legendItem ),
 				tab = find( this.props.tabs, { attr: legendItem } );

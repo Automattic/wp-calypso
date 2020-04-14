@@ -44,7 +44,7 @@ function createGetStateFn( newProps = { origin: {}, destination: {} } ) {
 	const origin = Object.assign( {}, defaultProps, newProps.origin );
 	const destination = Object.assign( {}, defaultProps, newProps.destination );
 
-	return function() {
+	return function () {
 		return {
 			extensions: {
 				woocommerce: {

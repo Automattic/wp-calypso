@@ -272,9 +272,7 @@ export class TitleFormatEditor extends Component {
 const mapStateToProps = ( state, ownProps ) => {
 	const site = getSelectedSite( state );
 	const { translate } = ownProps;
-	const formattedDate = moment()
-		.locale( get( site, 'lang', '' ) )
-		.format( 'MMMM YYYY' );
+	const formattedDate = moment().locale( get( site, 'lang', '' ) ).format( 'MMMM YYYY' );
 
 	// Add example content for post/page title, tag name and archive dates
 	return {

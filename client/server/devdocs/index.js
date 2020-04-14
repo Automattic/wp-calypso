@@ -31,7 +31,7 @@ Prism.languages.es6 = Prism.languages.javascript;
 
 // Configure marked to use Prism for code-block highlighting.
 marked.setOptions( {
-	highlight: function( code, language ) {
+	highlight: function ( code, language ) {
 		const syntax = Prism.languages[ language ];
 		return syntax ? Prism.highlight( code, syntax ) : code;
 	},
@@ -133,7 +133,7 @@ function defaultSnippet( doc ) {
 	return escapeHTML( content ) + '…';
 }
 
-module.exports = function() {
+module.exports = function () {
 	const app = express();
 
 	// this middleware enforces access control
@@ -207,7 +207,7 @@ module.exports = function() {
 
 	// In environments where enabled, prime the selectors search cache whenever
 	// a request is made for DevDocs
-	app.use( '/devdocs', function( request, response, next ) {
+	app.use( '/devdocs', function ( request, response, next ) {
 		selectors.prime();
 		next();
 	} );

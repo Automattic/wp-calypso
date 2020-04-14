@@ -21,7 +21,7 @@ describe( 'Server-Side Analytics', () => {
 	describe( 'tracks.recordEvent', () => {} );
 
 	describe( 'statsd.recordTiming', () => {
-		beforeAll( function() {
+		beforeAll( function () {
 			sinon.stub( superagent, 'get' ).returns( { end: () => {} } );
 		} );
 
@@ -56,7 +56,7 @@ describe( 'Server-Side Analytics', () => {
 	} );
 
 	describe( 'statsd.recordCounting', () => {
-		beforeAll( function() {
+		beforeAll( function () {
 			sinon.stub( superagent, 'get' ).returns( { end: () => {} } );
 		} );
 

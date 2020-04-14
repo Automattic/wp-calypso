@@ -132,7 +132,7 @@ function receiveErrorForPostKey( error, postKey ) {
 }
 
 export function reloadPost( post ) {
-	return function( dispatch ) {
+	return function ( dispatch ) {
 		// keep track of any railcars we might have
 		const railcar = post.railcar;
 		const postKey = keyForPost( post );

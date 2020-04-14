@@ -59,7 +59,7 @@ export function translateWpcomCartToCheckoutCart(
 		.filter( Boolean )
 		.reduce( ( accum, current ) => accum + current, 0 );
 	const couponValue = Math.round( couponValueRaw );
-	const couponDisplayValue = `-$${ couponValueRaw / 100 }`;
+	const couponDisplayValue = `-$${ couponValueRaw / 100}`;
 
 	const couponLineItem: WPCOMCartCouponItem = {
 		id: 'coupon-line-item',

@@ -23,10 +23,7 @@ export function deletePost( siteId, postId ) {
 			postId,
 		} );
 
-		const deleteResult = wpcom
-			.site( siteId )
-			.post( postId )
-			.delete();
+		const deleteResult = wpcom.site( siteId ).post( postId ).delete();
 
 		deleteResult.then(
 			() => {

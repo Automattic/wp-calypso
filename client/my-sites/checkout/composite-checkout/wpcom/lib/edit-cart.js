@@ -8,5 +8,5 @@ export function formatValueForCurrency( currency, value ) {
 		throw new Error( 'Non-USD currency is not yet supported' );
 	}
 
-	return `${ value / 100 } ${ currency }`;
+	return `${ value / 100} ${ currency }`;
 }

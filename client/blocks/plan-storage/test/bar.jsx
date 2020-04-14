@@ -7,7 +7,7 @@ jest.mock( 'i18n-calypso', () => ( {
 	localize: Comp => props => (
 		<Comp
 			{ ...props }
-			translate={ function( x ) {
+			translate={ function ( x ) {
 				return x;
 			} }
 		/>

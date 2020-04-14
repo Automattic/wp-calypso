@@ -301,7 +301,7 @@ class TranslatorLauncher extends React.Component {
 
 		const { left, top, width, height } = target.getBoundingClientRect();
 		const style = {
-			transform: `translate(${ left }px, ${ top + scrollTop }px)`,
+			transform: `translate(${ left }px, ${ top + scrollTop}px)`,
 			width: `${ width }px`,
 			height: `${ height }px`,
 		};

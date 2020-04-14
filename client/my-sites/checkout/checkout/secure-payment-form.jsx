@@ -126,7 +126,7 @@ export class SecurePaymentForm extends Component {
 			// is called.
 			// Note: If this defer() is ever able to be removed, the corresponding
 			// defer() in NewCardForm::handleFieldChange() can likely be removed too.
-			defer( function() {
+			defer( function () {
 				setPayment( newPayment );
 			} );
 		}

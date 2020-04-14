@@ -29,7 +29,7 @@ class SharingButtonsPreviewButton extends React.Component {
 	static defaultProps = {
 		style: 'icon',
 		enabled: true,
-		onClick: function() {},
+		onClick: function () {},
 	};
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */

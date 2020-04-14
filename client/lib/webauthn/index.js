@@ -14,8 +14,8 @@ function wpcomApiRequest( path, _data, method ) {
 		data.hostname = window.location.hostname;
 	}
 
-	return new Promise( function( resolve, reject ) {
-		const promise = function( err, result ) {
+	return new Promise( function ( resolve, reject ) {
+		const promise = function ( err, result ) {
 			if ( err ) {
 				reject( err );
 				return;

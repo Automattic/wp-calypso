@@ -32,7 +32,7 @@ class SharingButtonsPreviewButtons extends React.Component {
 	static defaultProps = {
 		buttons: Object.freeze( [] ),
 		style: 'icon',
-		onButtonClick: function() {},
+		onButtonClick: function () {},
 		showMore: false,
 		forceMorePreviewVisible: false,
 	};
@@ -188,7 +188,7 @@ class SharingButtonsPreviewButtons extends React.Component {
 	};
 
 	getCustomPreviewElement = () => {
-		const buttons = this.props.buttons.map( function( button ) {
+		const buttons = this.props.buttons.map( function ( button ) {
 			return (
 				<ButtonsPreviewButton
 					key={ button.ID }

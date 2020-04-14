@@ -14,7 +14,7 @@ import CommentView from 'my-sites/comment/main';
 import { removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
 
-const mapPendingStatusToUnapproved = status => ( 'pending' === status ? 'unapproved' : status );
+const mapPendingStatusToUnapproved = status => ( 'pending' === status ? 'unapproved' : status) ;
 
 const sanitizeInt = number => {
 	const integer = parseInt( number, 10 );

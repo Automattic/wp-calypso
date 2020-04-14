@@ -72,7 +72,7 @@ function filterSectionsInDevelopment( sections ) {
 	} );
 }
 
-const loader = function() {
+const loader = function () {
 	const options = getOptions( this ) || {};
 	const { forceRequire, onlyIsomorphic } = options;
 	let { include } = options;

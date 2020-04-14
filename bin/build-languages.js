@@ -151,7 +151,7 @@ function downloadLanguagesRevions() {
 	return new Promise( resolve => {
 		function log( status ) {
 			logUpdate(
-				`Downloading ${ LANGUAGES_REVISIONS_FILENAME }${ status ? ` ${ status }.` : '...' }`
+				`Downloading ${ LANGUAGES_REVISIONS_FILENAME }${ status ? ` ${ status }.` : '...'}`
 			);
 		}
 
@@ -181,7 +181,7 @@ async function downloadLanguages() {
 
 	function log( status ) {
 		logUpdate(
-			`Downloading languages${ status ? ` ${ status }.` : '...' } ` +
+			`Downloading languages${ status ? ` ${ status }.` : '...'} ` +
 				`(${ downloadedLanguagesCount }/${ languages.length })`
 		);
 	}

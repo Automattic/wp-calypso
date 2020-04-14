@@ -233,7 +233,7 @@ class ActivityLog extends Component {
 		} = actionProgress;
 		return (
 			<ProgressBanner
-				key={ `progress-${ restoreId || downloadId }` }
+				key={ `progress-${ restoreId || downloadId}` }
 				applySiteOffset={ this.applySiteOffset }
 				percent={ percent || progress }
 				restoreId={ restoreId }
@@ -270,10 +270,10 @@ class ActivityLog extends Component {
 		} = progress;
 		const requestedRestoreId = this.props.requestedRestoreId || rewindId;
 		return (
-			<div key={ `end-banner-${ restoreId || downloadId }` }>
+			<div key={ `end-banner-${ restoreId || downloadId}` }>
 				{ errorCode || backupError ? (
 					<ErrorBanner
-						key={ `error-${ restoreId || downloadId }` }
+						key={ `error-${ restoreId || downloadId}` }
 						errorCode={ errorCode || backupError }
 						downloadId={ downloadId }
 						requestedRestoreId={ requestedRestoreId }
@@ -288,7 +288,7 @@ class ActivityLog extends Component {
 					/>
 				) : (
 					<SuccessBanner
-						key={ `success-${ restoreId || downloadId }` }
+						key={ `success-${ restoreId || downloadId}` }
 						applySiteOffset={ this.applySiteOffset }
 						siteId={ siteId }
 						timestamp={ rewindId }

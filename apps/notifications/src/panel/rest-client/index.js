@@ -55,7 +55,7 @@ function main() {
 			const sub_retry_ms = 120000;
 			debug( 'main: polling until next subscribe attempt', 'sub_retry_ms =', sub_retry_ms );
 			setTimeout(
-				function() {
+				function () {
 					this.subscribeTry = 0;
 				}.bind( this ),
 				sub_retry_ms

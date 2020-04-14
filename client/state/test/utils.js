@@ -357,7 +357,7 @@ describe( 'utils', () => {
 			minimum: 0,
 		};
 
-		const age = ( state = 0, action ) => ( 'GROW' === action.type ? state + 1 : state );
+		const age = ( state = 0, action ) => ( 'GROW' === action.type ? state + 1 : state) ;
 
 		const date = ( state = new Date( 0 ), action ) => {
 			switch ( action.type ) {
@@ -412,8 +412,8 @@ describe( 'utils', () => {
 		const age = withSchemaValidation( schema, ( state = 0, action ) =>
 			'GROW' === action.type ? state + 1 : state
 		);
-		const height = ( state = 160, action ) => ( 'GROW' === action.type ? state + 1 : state );
-		const count = ( state = 1, action ) => ( 'GROW' === action.type ? state + 1 : state );
+		const height = ( state = 160, action ) => ( 'GROW' === action.type ? state + 1 : state) ;
+		const count = ( state = 1, action ) => ( 'GROW' === action.type ? state + 1 : state) ;
 
 		const date = ( state = new Date( 0 ), action ) => {
 			switch ( action.type ) {

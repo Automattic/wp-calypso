@@ -151,7 +151,7 @@ const Label = styled.label`
 `;
 
 const RadioButtonChildren = styled.div`
-	display: ${props => ( props.checked ? 'block' : 'none' )};
+	display: ${props => ( props.checked ? 'block' : 'none') };
 `;
 
 function getBorderColor( { checked, theme } ) {

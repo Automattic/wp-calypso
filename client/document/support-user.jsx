@@ -39,9 +39,9 @@ function SupportUser( { supportUser, supportToken, supportPath, authorized = fal
 						const supportUserFn = ${ supportUserFn.toString() };
 
 						supportUserFn( {
-							user: ${ supportUser && `"${ encodeURIComponent( supportUser ) }"` },
-							token: ${ supportToken && `"${ encodeURIComponent( supportToken ) }"` },
-							path: ${ supportPath && `"${ encodeURIComponent( supportPath ) }"` },
+							user: ${ supportUser && `"${ encodeURIComponent( supportUser ) }"`},
+							token: ${ supportToken && `"${ encodeURIComponent( supportToken ) }"`},
+							path: ${ supportPath && `"${ encodeURIComponent( supportPath ) }"`},
 							authorized: ${ authorized }
 						} );
 						`,

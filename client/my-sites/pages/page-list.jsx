@@ -121,7 +121,7 @@ class Pages extends Component {
 		lastPage: false,
 		page: 0,
 		pages: [],
-		trackScrollPage: function() {},
+		trackScrollPage: function () {},
 		query: {},
 		showPublishedStatus: false,
 	};
@@ -304,7 +304,7 @@ class Pages extends Component {
 
 	renderHierarchical( { pages, site, showPublishedStatus } ) {
 		pages = sortPagesHierarchically( pages );
-		const rows = pages.map( function( page ) {
+		const rows = pages.map( function ( page ) {
 			return (
 				<Page
 					key={ 'page-' + page.global_ID }

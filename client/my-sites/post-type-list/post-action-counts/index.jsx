@@ -75,11 +75,13 @@ class PostActionCounts extends PureComponent {
 					href={ `/comments/all/${ siteSlug }/${ postId }` }
 					onClick={ this.onActionClick( 'comments' ) }
 				>
-					{ // translators: count is the number of comments, eg 5 Comments
-					translate( '%(count)s Comment', '%(count)s Comments', {
-						count,
-						args: { count: numberFormat( count ) },
-					} ) }
+					{
+						// translators: count is the number of comments, eg 5 Comments
+						translate( '%(count)s Comment', '%(count)s Comments', {
+							count,
+							args: { count: numberFormat( count ) },
+						} )
+					}
 				</a>
 			</li>
 		);
@@ -148,11 +150,13 @@ class PostActionCounts extends PureComponent {
 		return (
 			<li ref={ this.setLikesPopoverContext }>
 				<a href={ `/stats/post/${ postId }/${ siteSlug }` } onClick={ this.onLikesClick }>
-					{ // translators: count is the number of likes
-					translate( '%(count)s Like', '%(count)s Likes', {
-						count,
-						args: { count: numberFormat( count ) },
-					} ) }
+					{
+						// translators: count is the number of likes
+						translate( '%(count)s Like', '%(count)s Likes', {
+							count,
+							args: { count: numberFormat( count ) },
+						} )
+					}
 				</a>
 				{ isCurrentLikesPopoverOpen && (
 					<PostLikesPopover

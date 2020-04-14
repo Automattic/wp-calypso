@@ -122,8 +122,9 @@ class Referrers extends Component {
 		const { siteId, query, selectedDate, unit, slug, translate, queryParams } = this.props;
 		const { filter, filteredSortedData, selectedReferrer, selectedReferrerIndex } = this.state;
 		const endSelectedDate = getEndPeriod( selectedDate, unit );
-		const title = `${ translate( 'Store Referrers' ) }: ${ queryParams.referrer ||
-			translate( 'All' ) }`;
+		const title = `${ translate( 'Store Referrers' ) }: ${
+			queryParams.referrer || translate( 'All' )
+		}`;
 		const chartFormat = UNITS[ unit ].chartFormat;
 		const periodNavQueryParams = Object.assign(
 			{ referrer: selectedReferrer.referrer },

@@ -23,7 +23,7 @@ import { makeLayout, render as clientRender } from 'controller';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { setScroll, siteSettings } from 'my-sites/site-settings/settings-controller';
 
-export default function() {
+export default function () {
 	page( '/settings', '/settings/general' );
 
 	page(

@@ -60,7 +60,7 @@ export default class ChartBar extends React.PureComponent {
 	};
 
 	getTooltipData() {
-		return this.props.data.tooltipData.map( function( options, i ) {
+		return this.props.data.tooltipData.map( function ( options, i ) {
 			return <ChartBarTooltip key={ i } { ...options } />;
 		} );
 	}
@@ -101,7 +101,7 @@ export default class ChartBar extends React.PureComponent {
 				ref={ this.setRef }
 				key="value"
 				className="chart__bar-section is-bar"
-				style={ { transform: `scaleY( ${ percentage / 100 } )` } }
+				style={ { transform: `scaleY( ${ percentage / 100} )` } }
 			>
 				{ this.renderNestedBar() }
 			</div>

@@ -178,7 +178,7 @@ class Security2faEnable extends React.Component {
 		return (
 			<a
 				className="security-2fa-enable__toggle"
-				onClick={ function( event ) {
+				onClick={ function ( event ) {
 					this.toggleMethod( event );
 					gaRecordEvent(
 						'Me',
@@ -282,7 +282,7 @@ class Security2faEnable extends React.Component {
 										href="https://www.authy.com/download/"
 										target="_blank"
 										rel="noopener noreferrer"
-										onClick={ function() {
+										onClick={ function () {
 											gaRecordEvent( 'Me', 'Clicked On 2fa Download Authy App Link' );
 										} }
 									/>
@@ -292,7 +292,7 @@ class Security2faEnable extends React.Component {
 										href="https://support.google.com/accounts/answer/1066447?hl=en"
 										target="_blank"
 										rel="noopener noreferrer"
-										onClick={ function() {
+										onClick={ function () {
 											gaRecordEvent( 'Me', 'Clicked On 2fa Download Google Authenticator Link' );
 										} }
 									/>
@@ -333,7 +333,7 @@ class Security2faEnable extends React.Component {
 					disabled={ this.state.submittingForm }
 					name="verificationCode"
 					method={ this.state.method }
-					onFocus={ function() {
+					onFocus={ function () {
 						gaRecordEvent( 'Me', 'Focused On 2fa Enable Verification Code Input' );
 					} }
 					value={ this.state.verificationCode }
@@ -362,7 +362,7 @@ class Security2faEnable extends React.Component {
 				<FormButton
 					className="security-2fa-enable__verify"
 					disabled={ this.getFormDisabled() }
-					onClick={ function() {
+					onClick={ function () {
 						gaRecordEvent( 'Me', 'Clicked On Enable 2fa Button', 'method', this.state.method );
 					}.bind( this ) }
 				>
@@ -378,7 +378,7 @@ class Security2faEnable extends React.Component {
 				<FormButton
 					className="security-2fa-enable__cancel"
 					isPrimary={ false }
-					onClick={ function( event ) {
+					onClick={ function ( event ) {
 						gaRecordEvent(
 							'Me',
 							'Clicked On Step 2 Cancel 2fa Button',
@@ -395,7 +395,7 @@ class Security2faEnable extends React.Component {
 					<FormButton
 						disabled={ ! this.state.smsRequestsAllowed }
 						isPrimary={ false }
-						onClick={ function( event ) {
+						onClick={ function ( event ) {
 							gaRecordEvent( 'Me', 'Clicked On Resend SMS Button' );
 							this.onResendCode( event );
 						}.bind( this ) }
@@ -407,7 +407,7 @@ class Security2faEnable extends React.Component {
 				) : (
 					<FormButton
 						isPrimary={ false }
-						onClick={ function( event ) {
+						onClick={ function ( event ) {
 							gaRecordEvent( 'Me', 'Clicked On Enable SMS Use SMS Button' );
 							this.onVerifyBySMS( event );
 						}.bind( this ) }

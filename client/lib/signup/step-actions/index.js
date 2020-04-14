@@ -222,7 +222,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		newSiteParams.options.in_page_builder = true;
 	}
 
-	wpcom.undocumented().sitesNew( newSiteParams, function( error, response ) {
+	wpcom.undocumented().sitesNew( newSiteParams, function ( error, response ) {
 		if ( error ) {
 			callback( error );
 
@@ -266,7 +266,7 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 
 	wpcom
 		.undocumented()
-		.changeTheme( siteSlug, { theme: themeSlugWithRepo.split( '/' )[ 1 ] }, function( errors ) {
+		.changeTheme( siteSlug, { theme: themeSlugWithRepo.split( '/' )[ 1 ] }, function ( errors ) {
 			callback( isEmpty( errors ) ? undefined : [ errors ] );
 		} );
 }
@@ -313,7 +313,7 @@ function processItemCart(
 		);
 
 		if ( newCartItemsToAdd.length ) {
-			SignupCart.addToCart( siteSlug, newCartItemsToAdd, function( cartError ) {
+			SignupCart.addToCart( siteSlug, newCartItemsToAdd, function ( cartError ) {
 				callback( cartError, providedDependencies );
 			} );
 		} else {
@@ -349,7 +349,7 @@ function addPrivacyProtectionIfSupported( item, reduxStore ) {
 export function launchSiteApi( callback, dependencies ) {
 	const { siteSlug } = dependencies;
 
-	wpcom.undocumented().launchSite( siteSlug, function( error ) {
+	wpcom.undocumented().launchSite( siteSlug, function ( error ) {
 		if ( error ) {
 			callback( error );
 
@@ -542,7 +542,7 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 		data.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
 	}
 
-	wpcom.undocumented().sitesNew( data, function( errors, response ) {
+	wpcom.undocumented().sitesNew( data, function ( errors, response ) {
 		let providedDependencies, siteSlug;
 
 		if ( response && response.blog_details ) {
@@ -579,7 +579,7 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 		validate: false,
 	};
 
-	wpcom.undocumented().sitesNew( data, function( errors, response ) {
+	wpcom.undocumented().sitesNew( data, function ( errors, response ) {
 		let providedDependencies, siteSlug;
 
 		if ( response && response.blog_details ) {

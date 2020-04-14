@@ -34,8 +34,8 @@ const myContext = React.createContext();
 const usePaymentData = () => useContext( myContext );
 
 describe( 'Checkout', () => {
-	describe( 'using the default steps', function() {
-		describe( 'using the default registry', function() {
+	describe( 'using the default steps', function () {
+		describe( 'using the default registry', function () {
 			let MyCheckout;
 			const mockMethod = createMockMethod();
 			const { items, total } = createMockItems();
@@ -99,7 +99,7 @@ describe( 'Checkout', () => {
 			} );
 		} );
 
-		describe( 'using a custom registry', function() {
+		describe( 'using a custom registry', function () {
 			let MyCheckout;
 			const mockMethod = createMockMethod();
 			const { items, total } = createMockItems();
@@ -165,7 +165,7 @@ describe( 'Checkout', () => {
 			} );
 		} );
 
-		describe( 'before clicking a button', function() {
+		describe( 'before clicking a button', function () {
 			let container;
 
 			beforeEach( () => {
@@ -209,7 +209,7 @@ describe( 'Checkout', () => {
 			} );
 		} );
 
-		describe( 'when clicking continue from the first step', function() {
+		describe( 'when clicking continue from the first step', function () {
 			let container;
 
 			beforeEach( () => {
@@ -249,7 +249,7 @@ describe( 'Checkout', () => {
 		} );
 	} );
 
-	describe( 'with custom steps', function() {
+	describe( 'with custom steps', function () {
 		let MyCheckout;
 		const mockMethod = createMockMethod();
 		const { items, total } = createMockItems();
@@ -755,7 +755,7 @@ function createMockStepObjects() {
 
 function PossiblyCompleteTitle() {
 	const isComplete = useIsStepComplete();
-	const text = `Possibly Complete isComplete ${ isComplete ? 'true' : 'false' }`;
+	const text = `Possibly Complete isComplete ${ isComplete ? 'true' : 'false'}`;
 	return (
 		<div>
 			<span>Custom Step - Possibly Complete Title</span>

@@ -48,7 +48,7 @@ const redirectUnauthorized = ( context, next ) => {
 	next();
 };
 
-export default function( router ) {
+export default function ( router ) {
 	if ( ! config.isEnabled( 'google-my-business' ) ) {
 		return;
 	}

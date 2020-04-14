@@ -60,9 +60,7 @@ const ShippingServiceGroups = ( {
 			<FormLegend dangerouslySetInnerHTML={ sanitizeHTML( title ) } />
 			<FieldDescription text={ description } />
 			<div className={ classNames( 'shipping-services__inner', { 'is-error': generalError } ) }>
-				{ Object.keys( serviceGroups )
-					.sort()
-					.map( renderServiceGroup ) }
+				{ Object.keys( serviceGroups ).sort().map( renderServiceGroup ) }
 			</div>
 			{ generalError ? <FieldError text={ generalError } /> : null }
 		</div>

@@ -15,7 +15,8 @@ describe( 'wpcom.site.settings', () => {
 
 	describe( 'wpcom.site.get', () => {
 		it( 'should get site settings data', done => {
-			settings.get()
+			settings
+				.get()
 				.then( data => {
 					assert.ok( data );
 					assert.ok( data.settings );
@@ -25,7 +26,8 @@ describe( 'wpcom.site.settings', () => {
 		} );
 
 		it( 'should get `gmt_offset` option of site settings', done => {
-			settings.getOption( 'gmt_offset' )
+			settings
+				.getOption( 'gmt_offset' )
 				.then( value => {
 					assert.ok( typeof value !== 'undefined' );
 					done();

@@ -36,7 +36,7 @@ describe( 'EditGravatar', () => {
 		};
 	} );
 
-	beforeAll( function() {
+	beforeAll( function () {
 		EditGravatar = require( 'blocks/edit-gravatar' ).EditGravatar;
 		FilePicker = require( 'components/file-picker' );
 		Gravatar = require( 'components/gravatar' ).default;

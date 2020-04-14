@@ -122,7 +122,7 @@ class LineChart extends Component {
 		svg
 			.append( 'g' )
 			.attr( 'class', 'line-chart__x-axis' )
-			.attr( 'transform', `translate(0,${ height - margin.bottom })` )
+			.attr( 'transform', `translate(0,${ height - margin.bottom})` )
 			.call( axis );
 	};
 
@@ -215,7 +215,7 @@ class LineChart extends Component {
 
 	bindEvents = ( svg, params ) => {
 		const updateMouseMove = throttle( this.handleMouseMove, 100, { trailing: false } );
-		svg.on( 'mousemove', function() {
+		svg.on( 'mousemove', function () {
 			const coordinates = d3Mouse( this );
 			updateMouseMove( ...coordinates, params );
 		} );
@@ -412,10 +412,10 @@ class LineChart extends Component {
 
 			if ( selected ) {
 				// bring to front
-				lineSelection.each( function() {
+				lineSelection.each( function () {
 					this.parentNode.appendChild( this );
 				} );
-				areaSelection.each( function() {
+				areaSelection.each( function () {
 					this.parentNode.appendChild( this );
 				} );
 				const selectedPoints = svg.selectAll(

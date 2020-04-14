@@ -169,7 +169,7 @@ const exported = {
 						return page.redirect( `/read/feeds/${ feed.feed_ID }` );
 					}
 				} )
-				.catch( function() {
+				.catch( function () {
 					renderFeedError( context, next );
 				} );
 		} else {

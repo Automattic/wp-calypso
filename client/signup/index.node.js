@@ -3,7 +3,7 @@
  */
 import { getLanguage, getLanguageRouteParam } from 'lib/i18n-utils';
 
-export default function( router ) {
+export default function ( router ) {
 	const lang = getLanguageRouteParam();
 
 	router(

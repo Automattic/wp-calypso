@@ -143,7 +143,7 @@ class EarningsMain extends Component {
 	 *
 	 * @returns {string} Path to Earn home. Has site slug append if it exists.
 	 */
-	goBack = () => ( this.props.siteSlug ? '/earn/' + this.props.siteSlug : '' );
+	goBack = () => ( this.props.siteSlug ? '/earn/' + this.props.siteSlug : '') ;
 
 	getHeaderCake = () => {
 		const headerText = this.getHeaderText();

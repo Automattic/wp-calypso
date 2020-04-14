@@ -43,7 +43,7 @@ export class PaymentBox extends PureComponent {
 
 	handlePaymentMethodChange = paymentMethod => {
 		const onSelectPaymentMethod = this.props.onSelectPaymentMethod;
-		return function() {
+		return function () {
 			gaRecordEvent( 'Upgrades', 'Switch Payment Method' );
 			analytics.tracks.recordEvent( 'calypso_checkout_switch_to_' + snakeCase( paymentMethod ) );
 			onSelectPaymentMethod( paymentMethod );

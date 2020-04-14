@@ -31,8 +31,8 @@ class SharingButtonsLabelEditor extends React.Component {
 	static defaultProps = {
 		active: false,
 		value: '',
-		onChange: function() {},
-		onClose: function() {},
+		onChange: function () {},
+		onClose: function () {},
 		hasEnabledButtons: true,
 	};
 

@@ -9,7 +9,7 @@
  * @returns {Function} the callback to fire on a keydown event
  */
 
-export default function( callback ) {
+export default function ( callback ) {
 	return event => {
 		if ( event.key === 'Enter' || event.key === ' ' ) {
 			event.preventDefault();

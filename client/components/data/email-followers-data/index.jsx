@@ -83,7 +83,7 @@ export default class EmailFollowersData extends Component {
 		}
 
 		// defer fetch requests to avoid dispatcher conflicts
-		const defer = function() {
+		const defer = function () {
 			const paginationData = EmailFollowersStore.getPaginationData( fetchOptions );
 			if ( paginationData.fetchingFollowers ) {
 				return;

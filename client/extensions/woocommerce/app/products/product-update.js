@@ -129,7 +129,7 @@ class ProductUpdate extends React.Component {
 		const areYouSure = translate( "Are you sure you want to permanently delete '%(name)s'?", {
 			args: { name: product.name },
 		} );
-		accept( areYouSure, function( accepted ) {
+		accept( areYouSure, function ( accepted ) {
 			if ( ! accepted ) {
 				return;
 			}

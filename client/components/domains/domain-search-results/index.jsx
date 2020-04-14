@@ -212,7 +212,7 @@ class DomainSearchResults extends React.Component {
 	};
 
 	renderPlaceholders() {
-		return times( this.props.placeholderQuantity, function( n ) {
+		return times( this.props.placeholderQuantity, function ( n ) {
 			return <DomainSuggestion.Placeholder key={ 'suggestion-' + n } />;
 		} );
 	}

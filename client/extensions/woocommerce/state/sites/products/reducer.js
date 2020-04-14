@@ -100,7 +100,7 @@ export function productUpdated( state, action ) {
  */
 export function productsRequestSuccess( state = {}, action ) {
 	let products = get( state, 'products', [] );
-	action.products.forEach( function( product ) {
+	action.products.forEach( function ( product ) {
 		products = updateCachedProduct( products, product );
 	} );
 

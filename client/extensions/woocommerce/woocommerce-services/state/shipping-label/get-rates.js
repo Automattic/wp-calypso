@@ -28,7 +28,7 @@ export default ( orderId, siteId, dispatch, origin, destination, packages ) => {
 		const setSuccess = json => {
 			dispatch( {
 				type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RATES,
-				rates: mapValues( json.rates, pckg => ( 'rates' in pckg ? pckg : pckg.default ) ),
+				rates: mapValues( json.rates, pckg => ( 'rates' in pckg ? pckg : pckg.default)  ),
 				requestData,
 				siteId,
 				orderId,

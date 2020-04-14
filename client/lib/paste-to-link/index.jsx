@@ -20,8 +20,9 @@ import { resemblesUrl } from 'lib/url';
  */
 export default WrappedComponent => {
 	class WithPasteToLink extends React.Component {
-		static displayName = `withPasteToLink( ${ WrappedComponent.displayName ||
-			WrappedComponent.name } )`;
+		static displayName = `withPasteToLink( ${
+			WrappedComponent.displayName || WrappedComponent.name
+		} )`;
 		static propTypes = {};
 
 		constructor( props ) {

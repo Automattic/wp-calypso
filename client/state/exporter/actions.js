@@ -157,11 +157,7 @@ export function exportStatusFetch( siteId ) {
 			return failure( response );
 		};
 
-		return wpcom
-			.undocumented()
-			.getExport( siteId, 0 )
-			.then( success )
-			.catch( failure );
+		return wpcom.undocumented().getExport( siteId, 0 ).then( success ).catch( failure );
 	};
 }
 

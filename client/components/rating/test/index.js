@@ -50,7 +50,7 @@ describe( '<Rating />', () => {
 		} );
 
 		test( 'should render rating clipping mask properly', () => {
-			each( [ 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 ], function( ratingValue ) {
+			each( [ 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 ], function ( ratingValue ) {
 				const size = 24; // use default size
 				const wrapper = shallow( <Rating rating={ ratingValue } size={ size } /> );
 

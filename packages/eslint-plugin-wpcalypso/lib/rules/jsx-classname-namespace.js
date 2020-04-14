@@ -15,7 +15,7 @@ const path = require( 'path' );
 // Rule Definition
 //------------------------------------------------------------------------------
 
-const rule = ( module.exports = function( context ) {
+const rule = ( module.exports = function ( context ) {
 	const rootFiles = ( context.options[ 0 ] || {} ).rootFiles || rule.DEFAULT_ROOT_FILES;
 
 	function isRenderCallExpression( node ) {
@@ -48,7 +48,7 @@ const rule = ( module.exports = function( context ) {
 	}
 
 	return {
-		JSXAttribute: function( node ) {
+		JSXAttribute: function ( node ) {
 			if ( 'className' !== node.name.name ) {
 				return;
 			}

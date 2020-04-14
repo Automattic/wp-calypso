@@ -101,7 +101,7 @@ class PluginItem extends Component {
 	doing() {
 		const { translate, progress } = this.props;
 		const log = progress[ 0 ];
-		const uniqLogs = uniqBy( progress, function( uniqLog ) {
+		const uniqLogs = uniqBy( progress, function ( uniqLog ) {
 			return uniqLog.site.ID;
 		} );
 		const translationArgs = {
@@ -175,7 +175,7 @@ class PluginItem extends Component {
 
 	renderUpdateFlag() {
 		const { sites, translate } = this.props;
-		const recentlyUpdated = sites.some( function( site ) {
+		const recentlyUpdated = sites.some( function ( site ) {
 			return site.plugin && site.plugin.update && site.plugin.update.recentlyUpdated;
 		} );
 

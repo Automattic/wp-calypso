@@ -1,7 +1,6 @@
 const root = '/me/two-step/sms/';
 
 export default class MeTwoStepSMS {
-
 	/**
 	 * `MeTwoStepSMS` constructor.
 	 *

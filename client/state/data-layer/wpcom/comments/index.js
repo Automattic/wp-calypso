@@ -116,14 +116,7 @@ export const addComments = ( action, { comments, found } ) => {
 
 export const announceFailure = ( { siteId, postId } ) => ( dispatch, getState ) => {
 	const post = getSitePost( getState(), siteId, postId );
-	const postTitle =
-		post &&
-		post.title &&
-		post.title
-			.trim()
-			.slice( 0, 20 )
-			.trim()
-			.concat( '…' );
+	const postTitle = post && post.title && post.title.trim().slice( 0, 20 ).trim().concat( '…' );
 	const error = postTitle
 		? translate( 'Could not retrieve comments for “%(postTitle)s”', { args: { postTitle } } )
 		: translate( 'Could not retrieve comments for requested post' );

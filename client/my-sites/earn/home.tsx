@@ -254,7 +254,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 						action: () => {
 							trackCtaButton( 'ads' );
 							page(
-								`/earn/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ selectedSiteSlug }`
+								`/earn/${ hasSetupAds ? 'ads-earnings' : 'ads-settings'}/${ selectedSiteSlug }`
 							);
 						},
 				  }

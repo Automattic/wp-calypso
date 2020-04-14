@@ -74,7 +74,7 @@ export default class FollowersData extends Component {
 			return;
 		}
 		// defer fetch requests to avoid dispatcher conflicts
-		const defer = function() {
+		const defer = function () {
 			const paginationData = FollowersStore.getPaginationData( fetchOptions );
 			if ( paginationData.fetchingFollowers ) {
 				return;

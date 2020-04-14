@@ -58,7 +58,7 @@ export default function waitForImagesToLoad( post ) {
 			post.images = map( images, convertImageToObject );
 
 			post.content_images = filter(
-				map( post.content_images, function( image ) {
+				map( post.content_images, function ( image ) {
 					return find( post.images, { src: image.src } );
 				} ),
 				Boolean

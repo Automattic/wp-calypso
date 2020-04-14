@@ -31,6 +31,6 @@ export default function SiteWordAdsEarnings( sid, wpcom ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-SiteWordAdsEarnings.prototype.get = function( query, fn ) {
+SiteWordAdsEarnings.prototype.get = function ( query, fn ) {
 	return this.wpcom.req.get( '/sites/' + this._sid + '/wordads/earnings', query, fn );
 };

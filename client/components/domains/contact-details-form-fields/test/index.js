@@ -149,10 +149,7 @@ describe( 'ContactDetailsFormFields', () => {
 			);
 
 			expect(
-				wrapper
-					.find( '.contact-details-form-fields__submit-button' )
-					.render()
-					.text()
+				wrapper.find( '.contact-details-form-fields__submit-button' ).render().text()
 			).toEqual( 'Click it yo!' );
 		} );
 

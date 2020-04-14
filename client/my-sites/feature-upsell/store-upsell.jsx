@@ -180,7 +180,7 @@ class StoreUpsellComponent extends Component {
 			cta_name: 'upsell-page-store',
 		} );
 
-		page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( PLAN_BUSINESS ) || '' }` );
+		page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( PLAN_BUSINESS ) || ''}` );
 	};
 
 	renderPrice() {

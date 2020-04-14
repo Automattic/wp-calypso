@@ -61,10 +61,7 @@ export class EditGravatar extends Component {
 			translate,
 			recordReceiveImageEvent,
 		} = this.props;
-		const extension = path
-			.extname( files[ 0 ].name )
-			.toLowerCase()
-			.substring( 1 );
+		const extension = path.extname( files[ 0 ].name ).toLowerCase().substring( 1 );
 
 		recordReceiveImageEvent();
 
@@ -168,7 +165,7 @@ export class EditGravatar extends Component {
 
 	render() {
 		const { isUploading, translate, user } = this.props;
-		const gravatarLink = `https://gravatar.com/${ user.username || '' }`;
+		const gravatarLink = `https://gravatar.com/${ user.username || ''}`;
 		// use imgSize = 400 for caching
 		// it's the popular value for large Gravatars in Calypso
 		const GRAVATAR_IMG_SIZE = 400;

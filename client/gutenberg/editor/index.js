@@ -11,7 +11,7 @@ import { authenticate, post, redirect, siteEditor } from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
+export default function () {
 	page( '/block-editor', '/block-editor/post' );
 
 	page(

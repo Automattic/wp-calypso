@@ -26,7 +26,7 @@ function checkAuthCode( domainName, authCode, onComplete ) {
 		return;
 	}
 
-	wpcom.undocumented().checkAuthCode( domainName, authCode, function( serverError, result ) {
+	wpcom.undocumented().checkAuthCode( domainName, authCode, function ( serverError, result ) {
 		if ( serverError ) {
 			onComplete( { error: serverError.error, message: serverError.message } );
 			return;
@@ -46,7 +46,7 @@ function checkDomainAvailability( params, onComplete ) {
 
 	wpcom
 		.undocumented()
-		.isDomainAvailable( domainName, blogId, isCartPreCheck, function( serverError, result ) {
+		.isDomainAvailable( domainName, blogId, isCartPreCheck, function ( serverError, result ) {
 			if ( serverError ) {
 				onComplete( serverError.error );
 				return;
@@ -62,7 +62,7 @@ function checkInboundTransferStatus( domainName, onComplete ) {
 		return;
 	}
 
-	wpcom.undocumented().getInboundTransferStatus( domainName, function( serverError, result ) {
+	wpcom.undocumented().getInboundTransferStatus( domainName, function ( serverError, result ) {
 		if ( serverError ) {
 			onComplete( serverError.error );
 			return;
@@ -80,7 +80,7 @@ function startInboundTransfer( siteId, domainName, authCode, onComplete ) {
 
 	wpcom
 		.undocumented()
-		.startInboundTransfer( siteId, domainName, authCode, function( serverError, result ) {
+		.startInboundTransfer( siteId, domainName, authCode, function ( serverError, result ) {
 			if ( serverError ) {
 				onComplete( serverError.error );
 				return;
@@ -96,7 +96,7 @@ function resendInboundTransferEmail( domainName, onComplete ) {
 		return;
 	}
 
-	wpcom.undocumented().resendInboundTransferEmail( domainName, function( serverError, result ) {
+	wpcom.undocumented().resendInboundTransferEmail( domainName, function ( serverError, result ) {
 		if ( serverError ) {
 			onComplete( serverError );
 			return;
@@ -121,7 +121,7 @@ function canRedirect( siteId, domainName, onComplete ) {
 		return;
 	}
 
-	wpcom.undocumented().canRedirect( siteId, domainName, function( serverError, data ) {
+	wpcom.undocumented().canRedirect( siteId, domainName, function ( serverError, data ) {
 		if ( serverError ) {
 			onComplete( new ValidationError( serverError.error ) );
 		} else if ( ! data.can_redirect ) {
@@ -136,7 +136,7 @@ function getPrimaryDomain( siteId, onComplete ) {
 	wpcom
 		.site( siteId )
 		.domain()
-		.getPrimary( function( serverError, data ) {
+		.getPrimary( function ( serverError, data ) {
 			onComplete( serverError, data );
 		} );
 }

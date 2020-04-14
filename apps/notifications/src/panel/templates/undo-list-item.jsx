@@ -91,7 +91,7 @@ export class UndoListItem extends React.Component {
 			.comment( this.props.note.meta.ids.comment );
 		var component = this;
 
-		var updateSpamStatus = function( error, data ) {
+		var updateSpamStatus = function ( error, data ) {
 			if ( error ) throw error;
 
 			if ( 'spam' != data.status ) {
@@ -99,7 +99,7 @@ export class UndoListItem extends React.Component {
 			}
 		};
 
-		comment.get( function( error, data ) {
+		comment.get( function ( error, data ) {
 			if ( error ) throw error;
 
 			data.status = 'spam';

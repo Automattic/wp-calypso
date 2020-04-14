@@ -318,7 +318,7 @@ class Customize extends React.Component {
 			return this.renderErrorPage( {
 				title: this.props.translate( 'Sorry, the customizing tools did not load correctly' ),
 				action: this.props.translate( 'Try again' ),
-				actionCallback: function() {
+				actionCallback: function () {
 					window.location.reload();
 				},
 			} );
@@ -373,7 +373,7 @@ class Customize extends React.Component {
 		return this.renderErrorPage( {
 			title: this.props.translate( 'Sorry, the customizing tools did not load correctly' ),
 			action: this.props.translate( 'Try again' ),
-			actionCallback: function() {
+			actionCallback: function () {
 				window.location.reload();
 			},
 		} );

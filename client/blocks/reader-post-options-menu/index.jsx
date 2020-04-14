@@ -126,7 +126,7 @@ class ReaderPostOptionsMenu extends React.Component {
 		stats.recordGaEvent( 'Clicked Edit Post', 'post_options' );
 		stats.recordTrackForPost( 'calypso_reader_edit_post_clicked', this.props.post );
 
-		setTimeout( function() {
+		setTimeout( function () {
 			// give the analytics a chance to escape
 			if ( editUrl.indexOf( '//' ) === 0 ) {
 				window.location.href = editUrl;

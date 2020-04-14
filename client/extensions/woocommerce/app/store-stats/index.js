@@ -86,9 +86,7 @@ class StoreStats extends Component {
 						// this is needed to counter the +1d adjustment made in DatePicker for weeks
 						date={
 							unit === 'week'
-								? moment( selectedDate, 'YYYY-MM-DD' )
-										.subtract( 1, 'days' )
-										.format( 'YYYY-MM-DD' )
+								? moment( selectedDate, 'YYYY-MM-DD' ).subtract( 1, 'days' ).format( 'YYYY-MM-DD' )
 								: selectedDate
 						}
 						query={ orderQuery }

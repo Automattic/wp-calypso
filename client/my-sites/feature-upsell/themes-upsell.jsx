@@ -48,7 +48,7 @@ class ThemesUpsellComponent extends Component {
 			cta_name: 'upsell-page-themes',
 		} );
 
-		page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( PLAN_BUSINESS ) || '' }` );
+		page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( PLAN_BUSINESS ) || ''}` );
 	};
 
 	formatPrice( price ) {

@@ -10,7 +10,7 @@ jest.mock( 'i18n-calypso', () => ( {
 	localize: Comp => props => (
 		<Comp
 			{ ...props }
-			translate={ function( x ) {
+			translate={ function ( x ) {
 				return x;
 			} }
 		/>
@@ -189,10 +189,7 @@ describe( 'calculatePlanCredits', () => {
 			.mockReturnValueOnce( 60 )
 			.mockReturnValueOnce( 70 );
 
-		getPlanRawPrice
-			.mockReturnValueOnce( 100 )
-			.mockReturnValueOnce( 90 )
-			.mockReturnValueOnce( 130 );
+		getPlanRawPrice.mockReturnValueOnce( 100 ).mockReturnValueOnce( 90 ).mockReturnValueOnce( 130 );
 		const credits = calculatePlanCredits( {}, 1, [
 			{ ...baseProps, availableForPurchase: true },
 			{ ...baseProps, availableForPurchase: true },
@@ -206,10 +203,7 @@ describe( 'calculatePlanCredits', () => {
 			.mockReturnValueOnce( 60 )
 			.mockReturnValueOnce( 70 );
 
-		getPlanRawPrice
-			.mockReturnValueOnce( 100 )
-			.mockReturnValueOnce( 90 )
-			.mockReturnValueOnce( 130 );
+		getPlanRawPrice.mockReturnValueOnce( 100 ).mockReturnValueOnce( 90 ).mockReturnValueOnce( 130 );
 		const credits = calculatePlanCredits( {}, 1, [
 			{ ...baseProps, availableForPurchase: true },
 			{ ...baseProps, availableForPurchase: false },
@@ -231,10 +225,7 @@ describe( 'calculatePlanCredits', () => {
 			.mockReturnValueOnce( 90 )
 			.mockReturnValueOnce( 130 );
 
-		getPlanRawPrice
-			.mockReturnValueOnce( 80 )
-			.mockReturnValueOnce( 60 )
-			.mockReturnValueOnce( 70 );
+		getPlanRawPrice.mockReturnValueOnce( 80 ).mockReturnValueOnce( 60 ).mockReturnValueOnce( 70 );
 
 		const credits = calculatePlanCredits( {}, 1, [
 			{ ...baseProps, availableForPurchase: true },

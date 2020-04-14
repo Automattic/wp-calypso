@@ -59,7 +59,7 @@ async function calculateSizes( section ) {
 	console.log( `${ section.name }:` );
 
 	section.filesToLoad.forEach( f => {
-		console.log( `   ${ f }: (${ filesWithSizes[ f ] / 1000 }kb)` );
+		console.log( `   ${ f }: (${ filesWithSizes[ f ] / 1000}kb)` );
 	} );
 
 	const totalSize = section.filesToLoad.reduce( ( size, f ) => size + filesWithSizes[ f ], 0 );

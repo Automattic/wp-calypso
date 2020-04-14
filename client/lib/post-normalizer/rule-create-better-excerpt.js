@@ -77,7 +77,7 @@ export function formatExcerpt( content ) {
 	stripLeadingBreaklines( dom );
 
 	// now limit it to the first three elements
-	forEach( dom.querySelectorAll( '#__better_excerpt__ > p, #__better_excerpt__ > br' ), function(
+	forEach( dom.querySelectorAll( '#__better_excerpt__ > p, #__better_excerpt__ > br' ), function (
 		element,
 		index
 	) {

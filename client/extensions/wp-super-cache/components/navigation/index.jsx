@@ -37,7 +37,7 @@ const Navigation = ( { activeTab, pluginVersion, siteSlug, translate } ) => (
 
 					return (
 						<SectionNavTabItem
-							key={ `wp-super-cache-${ tabSlug || 'easy' }` }
+							key={ `wp-super-cache-${ tabSlug || 'easy'}` }
 							path={
 								siteSlug && addSiteFragment( '/extensions/wp-super-cache/' + tabSlug, siteSlug )
 							}

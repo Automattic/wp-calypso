@@ -56,7 +56,7 @@ class Checklist extends PureComponent {
 		const { children } = this.props;
 		const childrenArray = Children.toArray( children ).filter( Boolean );
 		const completedCount = childrenArray.reduce(
-			( count, task ) => ( true === task.props.completed ? count + 1 : count ),
+			( count, task ) => ( true === task.props.completed ? count + 1 : count) ,
 			0
 		);
 		const total = childrenArray.length;

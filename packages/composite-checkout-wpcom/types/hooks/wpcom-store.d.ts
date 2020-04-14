@@ -1,1 +1,1 @@
-export declare function useWpcomStore(registerStore: any, onEvent: any): void;
+export declare function useWpcomStore( registerStore: any, onEvent: any ): void;

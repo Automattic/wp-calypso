@@ -324,7 +324,7 @@ class Layout extends React.Component {
 			return;
 		}
 
-		const stopEvent = function() {
+		const stopEvent = function () {
 			event.stopPropagation();
 			event.preventDefault();
 		};

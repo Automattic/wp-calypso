@@ -5,7 +5,7 @@ const LODASH_MODULE_NAMES = require( './module-names' );
 
 function createError( message, error = null ) {
 	return new Error(
-		`[ExtensiveLodashReplacementPlugin] ${ message }${ error ? ` Error: ${ error }` : '' }`
+		`[ExtensiveLodashReplacementPlugin] ${ message }${ error ? ` Error: ${ error }` : ''}`
 	);
 }
 

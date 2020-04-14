@@ -23,7 +23,7 @@ describe( 'loadScript', () => {
 		const url = '/';
 		const callback = jest.fn();
 
-		beforeAll( function() {
+		beforeAll( function () {
 			removeAllScriptCallbacks();
 			loadScript( url, callback );
 		} );
@@ -50,7 +50,7 @@ describe( 'loadScript', () => {
 	describe( 'loadjQueryDependentScript( scriptURL, callback )', () => {
 		const url = '/';
 
-		beforeAll( function() {
+		beforeAll( function () {
 			removeAllScriptCallbacks();
 		} );
 

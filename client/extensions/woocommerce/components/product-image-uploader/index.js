@@ -95,7 +95,7 @@ class ProductImageUploader extends Component {
 		const displayableFileSize = this.displayableFileSize( maxUploadSize );
 		const filesToUpload = [];
 
-		images.forEach( function( image ) {
+		images.forEach( function ( image ) {
 			if ( maxUploadSize && image.size > maxUploadSize ) {
 				errorNotice(
 					translate( '%(name)s exceeds the maximum upload size (%(size)s) for this site.', {
@@ -218,7 +218,7 @@ class ProductImageUploader extends Component {
 	}
 
 	renderChildren() {
-		return React.Children.map( this.props.children, function( child ) {
+		return React.Children.map( this.props.children, function ( child ) {
 			return <div>{ child }</div>;
 		} );
 	}

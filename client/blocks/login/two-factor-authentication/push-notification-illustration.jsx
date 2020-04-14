@@ -71,7 +71,7 @@ export default function PushNotificationIllustration() {
 	// By not loading them externally, we’re making sure the animation will
 	// get fired right away with all of its elements in place.
 	const now = new Date();
-	const time = `${ now.getHours() % 12 || 12 }:${ String( now.getMinutes() ).padStart( 2, '0' ) }`;
+	const time = `${ now.getHours() % 12 || 12}:${ String( now.getMinutes() ).padStart( 2, '0' ) }`;
 
 	return (
 		<div className="two-factor-authentication__illustration" aria-hidden="true">

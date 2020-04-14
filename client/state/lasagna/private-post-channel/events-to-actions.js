@@ -10,7 +10,7 @@ import { receiveComments } from 'state/comments/actions';
 
 const debug = debugFactory( 'lasagna:channel:private:push:wp_post' );
 
-export default function( channel, store ) {
+export default function ( channel, store ) {
 	channel.on( 'new_comment', ( { payload: comment } ) => {
 		debug( 'New comment', comment );
 

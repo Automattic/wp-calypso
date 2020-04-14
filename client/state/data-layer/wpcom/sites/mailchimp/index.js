@@ -28,7 +28,7 @@ export const handleMailchimpListsList = dispatchRequest( {
 			},
 			action
 		),
-	fromApi: function( endpointResponse ) {
+	fromApi: function ( endpointResponse ) {
 		return endpointResponse;
 	},
 	onSuccess: ( { siteId }, lists ) => ( {
@@ -48,7 +48,7 @@ export const handleMailchimpSettingsList = dispatchRequest( {
 			},
 			action
 		),
-	fromApi: function( endpointResponse ) {
+	fromApi: function ( endpointResponse ) {
 		return endpointResponse;
 	},
 	onSuccess: ( { siteId }, settings ) => ( {

@@ -19,7 +19,7 @@ export default props => (
 			{ ...props }
 			origin="wpcom"
 			defaultOption="signup"
-			getScreenshotOption={ function() {
+			getScreenshotOption={ function () {
 				return 'info';
 			} }
 			source="showcase"

@@ -177,16 +177,17 @@ class Document extends React.Component {
 						} }
 					/>
 
-					{ // Use <script nomodule> to redirect browsers with no ES module
-					// support to the fallback build. ES module support is a convenient
-					// test to determine that a browser is modern enough to handle
-					// the evergreen bundle.
-					addEvergreenCheck && (
-						<script
-							nonce={ inlineScriptNonce }
-							noModule
-							dangerouslySetInnerHTML={ {
-								__html: `
+					{
+						// Use <script nomodule> to redirect browsers with no ES module
+						// support to the fallback build. ES module support is a convenient
+						// test to determine that a browser is modern enough to handle
+						// the evergreen bundle.
+						addEvergreenCheck && (
+							<script
+								nonce={ inlineScriptNonce }
+								noModule
+								dangerouslySetInnerHTML={ {
+									__html: `
 							(function() {
 								var url = window.location.href;
 
@@ -197,9 +198,10 @@ class Document extends React.Component {
 								}
 							})();
 							`,
-							} }
-						/>
-					) }
+								} }
+							/>
+						)
+					}
 
 					{ i18nLocaleScript && ! useTranslationChunks && <script src={ i18nLocaleScript } /> }
 					{ /*

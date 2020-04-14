@@ -149,7 +149,7 @@ function recordPlaceholders( mutation ) {
 		return;
 	}
 
-	each( nodes, function( node ) {
+	each( nodes, function ( node ) {
 		if ( isPlaceholder( node ) ) {
 			recordPlaceholderNode( node );
 		}
@@ -188,14 +188,14 @@ export function installPerfmonPageHandlers() {
 		return;
 	}
 
-	page( function( context, next ) {
+	page( function ( context, next ) {
 		navigationCount++;
 		navigationStartTime = window.performance.now();
 		debug( 'entering page navigation', context.path );
 		next();
 	} );
 
-	page.exit( function( context, next ) {
+	page.exit( function ( context, next ) {
 		debug( 'exiting page navigation', context.path );
 		stopMutationObserver();
 		next();

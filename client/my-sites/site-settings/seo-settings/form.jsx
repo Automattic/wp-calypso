@@ -230,7 +230,7 @@ export class SeoForm extends React.Component {
 		// We will pass an empty string in this case.
 		updatedOptions.advanced_seo_title_formats = mapValues(
 			updatedOptions.advanced_seo_title_formats,
-			format => ( isArray( format ) && 0 === format.length ? '' : format )
+			format => ( isArray( format ) && 0 === format.length ? '' : format)
 		);
 
 		this.props.saveSiteSettings( siteId, updatedOptions );
@@ -328,7 +328,7 @@ export class SeoForm extends React.Component {
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
-						text={ ( function() {
+						text={ ( function () {
 							if ( isSitePrivate ) {
 								if ( siteIsComingSoon ) {
 									return translate(

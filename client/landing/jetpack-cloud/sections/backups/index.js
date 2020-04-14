@@ -26,7 +26,7 @@ import {
 	backupDetailPath,
 } from './paths';
 
-export default function() {
+export default function () {
 	if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {
 		/* handles /backups/activity, see `backupActivityPath` */
 		page( backupActivityPath(), siteSelection, sites, makeLayout, clientRender );

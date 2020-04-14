@@ -55,7 +55,7 @@ export default class ViewersData extends Component {
 		}
 
 		// defer fetch requests to avoid dispatcher conflicts
-		const defer = function() {
+		const defer = function () {
 			const paginationData = ViewersStore.getPaginationData( siteId );
 			if ( paginationData.fetchingViewers ) {
 				return;

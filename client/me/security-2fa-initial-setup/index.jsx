@@ -42,7 +42,7 @@ class Security2faInitialSetup extends React.Component {
 				</p>
 
 				<FormButton
-					onClick={ function( event ) {
+					onClick={ function ( event ) {
 						gaRecordEvent( 'Me', 'Clicked On 2fa Get Started Button' );
 						this.props.onSuccess( event );
 					}.bind( this ) }

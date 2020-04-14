@@ -377,7 +377,7 @@ const StripeFields = styled.div`
 const CreditCardFieldsWrapper = styled.div`
 	padding: 16px;
 	position: relative;
-	display: ${props => ( props.isLoaded ? 'block' : 'none' )};
+	display: ${props => ( props.isLoaded ? 'block' : 'none') };
 	position: relative;
 
 	:after {
@@ -436,7 +436,7 @@ const StripeFieldWrapper = styled.span`
 		font-size: 16px;
 		box-sizing: border-box;
 		border: 1px solid
-			${props => ( props.hasError ? props.theme.colors.error : props.theme.colors.borderColor )};
+			${props => ( props.hasError ? props.theme.colors.error : props.theme.colors.borderColor) };
 		padding: 12px 10px;
 		line-height: 1.2;
 	}

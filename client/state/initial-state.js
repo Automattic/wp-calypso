@@ -202,7 +202,7 @@ export function persistOnChange( reduxStore ) {
 	let prevState = null;
 
 	const throttledSaveState = throttle(
-		function() {
+		function () {
 			const state = reduxStore.getState();
 			if ( state === prevState ) {
 				return;

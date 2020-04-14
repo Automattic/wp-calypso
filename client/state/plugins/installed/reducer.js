@@ -42,7 +42,7 @@ export function isRequesting( state = {}, action ) {
  * Helper function to update a plugin's state after a successful plugin action
  * (multiple action-types are possible)
  */
-const updatePlugin = function( state, action ) {
+const updatePlugin = function ( state, action ) {
 	if ( typeof state[ action.siteId ] !== 'undefined' ) {
 		return Object.assign( {}, state, {
 			[ action.siteId ]: pluginsForSite( state[ action.siteId ], action ),

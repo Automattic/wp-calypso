@@ -34,7 +34,7 @@ function TwoStepAuthorization() {
 	this.initialized = false;
 	this.smsResendThrottled = false;
 
-	this.bumpMCStat = function( eventAction ) {
+	this.bumpMCStat = function ( eventAction ) {
 		bumpStat( '2fa', eventAction );
 		analytics.tracks.recordEvent( 'calypso_login_twostep_authorize', {
 			event_action: eventAction,
@@ -47,9 +47,9 @@ function TwoStepAuthorization() {
 /*
  * fetch data about users two step configuration from /me/two-step
  */
-TwoStepAuthorization.prototype.fetch = function( callback ) {
+TwoStepAuthorization.prototype.fetch = function ( callback ) {
 	wpcom.me().getTwoStep(
-		function( error, data ) {
+		function ( error, data ) {
 			if ( ! error ) {
 				this.data = data;
 
@@ -68,7 +68,7 @@ TwoStepAuthorization.prototype.fetch = function( callback ) {
 	);
 };
 
-TwoStepAuthorization.prototype.postLoginRequest = function( endpoint, data ) {
+TwoStepAuthorization.prototype.postLoginRequest = function ( endpoint, data ) {
 	if ( ! this.getTwoStepWebauthnNonce() ) {
 		return Promise.reject( 'Invalid nonce' );
 	}
@@ -96,7 +96,7 @@ TwoStepAuthorization.prototype.postLoginRequest = function( endpoint, data ) {
 		.then( response => response.json() );
 };
 
-TwoStepAuthorization.prototype.refreshDataOnSuccessfulAuth = function() {
+TwoStepAuthorization.prototype.refreshDataOnSuccessfulAuth = function () {
 	// If the validation was successful AND re-auth was required, fetch
 	// data from the following modules.
 	if ( this.isReauthRequired() ) {
@@ -111,7 +111,7 @@ TwoStepAuthorization.prototype.refreshDataOnSuccessfulAuth = function() {
 	this.emit( 'change' );
 };
 
-TwoStepAuthorization.prototype.loginUserWithSecurityKey = function( args ) {
+TwoStepAuthorization.prototype.loginUserWithSecurityKey = function ( args ) {
 	return this.postLoginRequest( 'webauthn-challenge-endpoint', {
 		user_id: args.user_id,
 	} )
@@ -142,13 +142,13 @@ TwoStepAuthorization.prototype.loginUserWithSecurityKey = function( args ) {
 /*
  * Given a code, validate the code which will update a user's twostep_auth cookie
  */
-TwoStepAuthorization.prototype.validateCode = function( args, callback ) {
+TwoStepAuthorization.prototype.validateCode = function ( args, callback ) {
 	wpcom.me().validateTwoStepCode(
 		{
 			...args,
 			code: replace( args.code, /\s/g, '' ),
 		},
-		function( error, data ) {
+		function ( error, data ) {
 			if ( ! error && data.success ) {
 				if ( args.action ) {
 					this.bumpMCStat(
@@ -185,9 +185,9 @@ TwoStepAuthorization.prototype.validateCode = function( args, callback ) {
  * Send an SMS authentication code to a user's SMS phone number by calling
  * /me/two-step/sms/new
  */
-TwoStepAuthorization.prototype.sendSMSCode = function( callback ) {
+TwoStepAuthorization.prototype.sendSMSCode = function ( callback ) {
 	wpcom.me().sendSMSValidationCode(
-		function( error, data ) {
+		function ( error, data ) {
 			if ( error ) {
 				debug( 'Sending SMS code failed: ' + JSON.stringify( error ) );
 
@@ -213,9 +213,9 @@ TwoStepAuthorization.prototype.sendSMSCode = function( callback ) {
 /*
  * Fetches a new set of backup codes by calling /me/two-step/backup-codes/new
  */
-TwoStepAuthorization.prototype.backupCodes = function( callback ) {
+TwoStepAuthorization.prototype.backupCodes = function ( callback ) {
 	wpcom.me().backupCodes(
-		function( error, data ) {
+		function ( error, data ) {
 			if ( error ) {
 				debug( 'Fetching Backup Codes failed: ' + JSON.stringify( error ) );
 			} else {
@@ -234,7 +234,7 @@ TwoStepAuthorization.prototype.backupCodes = function( callback ) {
  * TwoStepAuthorization objects, so that the caller can delay state
  * transition until it is ready
  */
-TwoStepAuthorization.prototype.validateBackupCode = function( code, callback ) {
+TwoStepAuthorization.prototype.validateBackupCode = function ( code, callback ) {
 	const args = {
 		code: replace( code, /\s/g, '' ),
 		action: 'create-backup-receipt',
@@ -242,7 +242,7 @@ TwoStepAuthorization.prototype.validateBackupCode = function( code, callback ) {
 
 	wpcom.me().validateTwoStepCode(
 		args,
-		function( error, data ) {
+		function ( error, data ) {
 			if ( error ) {
 				debug( 'Validating Two Step Code failed: ' + JSON.stringify( error ) );
 			}
@@ -264,8 +264,8 @@ TwoStepAuthorization.prototype.validateBackupCode = function( code, callback ) {
  * Requests the authentication app QR code URL and time code
  * from me/two-step/app-auth-setup
  */
-TwoStepAuthorization.prototype.getAppAuthCodes = function( callback ) {
-	wpcom.me().getAppAuthCodes( function( error, data ) {
+TwoStepAuthorization.prototype.getAppAuthCodes = function ( callback ) {
+	wpcom.me().getAppAuthCodes( function ( error, data ) {
 		if ( error ) {
 			debug( 'Getting App Auth Codes failed: ' + JSON.stringify( error ) );
 		}
@@ -276,35 +276,35 @@ TwoStepAuthorization.prototype.getAppAuthCodes = function( callback ) {
 	} );
 };
 
-TwoStepAuthorization.prototype.codeValidationFailed = function() {
+TwoStepAuthorization.prototype.codeValidationFailed = function () {
 	return this.invalidCode;
 };
 
-TwoStepAuthorization.prototype.isSMSResendThrottled = function() {
+TwoStepAuthorization.prototype.isSMSResendThrottled = function () {
 	return this.smsResendThrottled;
 };
 
-TwoStepAuthorization.prototype.isReauthRequired = function() {
+TwoStepAuthorization.prototype.isReauthRequired = function () {
 	return this.data.two_step_reauthorization_required ?? false;
 };
 
-TwoStepAuthorization.prototype.authExpiresSoon = function() {
+TwoStepAuthorization.prototype.authExpiresSoon = function () {
 	return this.data.two_step_authorization_expires_soon ?? false;
 };
 
-TwoStepAuthorization.prototype.isTwoStepSMSEnabled = function() {
+TwoStepAuthorization.prototype.isTwoStepSMSEnabled = function () {
 	return this.data.two_step_sms_enabled ?? false;
 };
 
-TwoStepAuthorization.prototype.isSecurityKeyEnabled = function() {
+TwoStepAuthorization.prototype.isSecurityKeyEnabled = function () {
 	return this.data.two_step_webauthn_enabled ?? false;
 };
 
-TwoStepAuthorization.prototype.getTwoStepWebauthnNonce = function() {
+TwoStepAuthorization.prototype.getTwoStepWebauthnNonce = function () {
 	return this.data.two_step_webauthn_nonce ?? false;
 };
 
-TwoStepAuthorization.prototype.getSMSLastFour = function() {
+TwoStepAuthorization.prototype.getSMSLastFour = function () {
 	return this.data.two_step_sms_last_four ?? null;
 };
 

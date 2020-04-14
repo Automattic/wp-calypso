@@ -118,7 +118,7 @@ class WpForTeamsSite extends React.Component {
 				blog_title: fields.siteTitle,
 				validate: true,
 			},
-			function( error, response ) {
+			function ( error, response ) {
 				debug( error, response );
 
 				if ( error && error.message ) {

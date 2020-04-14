@@ -499,14 +499,14 @@ describe( 'index', () => {
 				loadingImage = {
 					complete: false,
 					src: 'http://example.com/two',
-					load: function() {
+					load: function () {
 						this.onload();
 					},
 				},
 				erroringImage = {
 					complete: false,
 					src: 'http://example.com/three',
-					error: function() {
+					error: function () {
 						this.onerror();
 					},
 				};

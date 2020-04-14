@@ -8,11 +8,11 @@ const fs = require( 'fs-extra' );
 const XunitViewerParser = require( 'xunit-viewer/parser' );
 const pngitxt = require( 'png-itxt' );
 
-const Reporter = function() {};
+const Reporter = function () {};
 
 util.inherits( Reporter, BaseReporter );
 
-Reporter.prototype.listenTo = function( testRun, test, source ) {
+Reporter.prototype.listenTo = function ( testRun, test, source ) {
 	// Print STDOUT/ERR to the screen for extra debugging
 	if ( process.env.MAGELLANDEBUG ) {
 		source.stdout.pipe( process.stdout );

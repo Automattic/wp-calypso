@@ -8,7 +8,7 @@ import page from 'page';
  */
 import config from 'config';
 
-export default function() {
+export default function () {
 	page( '/', context => {
 		let redirectPath = '/error';
 

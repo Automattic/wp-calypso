@@ -485,7 +485,7 @@ export class PlansFeaturesMain extends Component {
 
 	filterDotBlogDomains() {
 		const domains = get( this.props, 'domains', [] );
-		return domains.filter( function( domainInfo ) {
+		return domains.filter( function ( domainInfo ) {
 			if ( domainInfo.type === 'WPCOM' ) {
 				return false;
 			}

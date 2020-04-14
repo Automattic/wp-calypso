@@ -70,7 +70,7 @@ function filterList( listName, filterBy ) {
 }
 
 PeopleLogStore = {
-	hasUnauthorizedError: function( siteId ) {
+	hasUnauthorizedError: function ( siteId ) {
 		return Boolean( find( _errors, log => log.siteId === siteId && log.error === 'unauthorized' ) );
 	},
 
@@ -80,18 +80,18 @@ PeopleLogStore = {
 
 	getCompleted: filterList.bind( this, 'completed' ),
 
-	clear: function() {
+	clear: function () {
 		_errors = [];
 		_inProgress = [];
 		_completed = [];
 	},
 
-	emitChange: function() {
+	emitChange: function () {
 		this.emit( 'change' );
 	},
 };
 
-PeopleLogStore.dispatchToken = Dispatcher.register( function( payload ) {
+PeopleLogStore.dispatchToken = Dispatcher.register( function ( payload ) {
 	const action = payload.action;
 
 	switch ( action.type ) {

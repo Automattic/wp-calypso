@@ -5,7 +5,7 @@ import addQueryArgs from '../add-query-args';
 
 describe( '#addQueryArgs()', () => {
 	test( 'should error when args is not an object', () => {
-		const types = [ undefined, 1, true, [], 'test', function() {} ];
+		const types = [ undefined, 1, true, [], 'test', function () {} ];
 
 		types.forEach( type => {
 			expect( () => {
@@ -15,7 +15,7 @@ describe( '#addQueryArgs()', () => {
 	} );
 
 	test( 'should error when url is not a string', () => {
-		const types = [ {}, undefined, 1, true, [], function() {} ];
+		const types = [ {}, undefined, 1, true, [], function () {} ];
 
 		types.forEach( type => {
 			expect( () => {

@@ -246,7 +246,7 @@ const communityTranslatorJumpstart = {
 				return false;
 			}
 			debug( 'loading community translator' );
-			loadjQueryDependentScriptDesktopWrapper( injectUrl, function( error ) {
+			loadjQueryDependentScriptDesktopWrapper( injectUrl, function ( error ) {
 				if ( error ) {
 					debug( 'Script ' + error.src + ' failed to load.' );
 					return;

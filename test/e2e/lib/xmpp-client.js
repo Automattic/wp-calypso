@@ -5,7 +5,7 @@ import xmpp from 'xmpp.js';
 
 const domain = 'im.wordpress.com';
 
-export const listenForSMS = function( user ) {
+export const listenForSMS = function ( user ) {
 	const jabberId = user.username + '@' + domain;
 	const password = user.applicationPassword;
 	const client = new xmpp.Client( { jid: jabberId } );

@@ -299,7 +299,7 @@ class ThemeSheet extends React.Component {
 				{ this.getValidSections().map( section => (
 					<NavItem
 						key={ section }
-						path={ `/theme/${ id }${ section ? '/' + section : '' }${ sitePart }` }
+						path={ `/theme/${ id }${ section ? '/' + section : ''}${ sitePart }` }
 						selected={ section === currentSection }
 					>
 						{ filterStrings[ section ] }
@@ -617,12 +617,12 @@ class ThemeSheet extends React.Component {
 			previousRoute,
 		} = this.props;
 
-		const analyticsPath = `/theme/${ id }${ section ? '/' + section : '' }${
+		const analyticsPath = `/theme/${ id }${ section ? '/' + section : ''}${
 			siteId ? '/:site' : ''
 		}`;
 		const analyticsPageTitle = `Themes > Details Sheet${
 			section ? ' > ' + titlecase( section ) : ''
-		}${ siteId ? ' > Site' : '' }`;
+		}${ siteId ? ' > Site' : ''}`;
 
 		const plansUrl = siteSlug ? `/plans/${ siteSlug }/?plan=value_bundle` : '/plans';
 
@@ -687,9 +687,11 @@ class ThemeSheet extends React.Component {
 			<Main className={ className }>
 				<QueryCanonicalTheme themeId={ this.props.id } siteId={ siteId } />
 				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
-				{ siteId && (
-					<QuerySitePurchases siteId={ siteId } />
-				) /* TODO: Make QuerySitePurchases handle falsey siteId */ }
+				{
+					siteId && (
+						<QuerySitePurchases siteId={ siteId } />
+					) /* TODO: Make QuerySitePurchases handle falsey siteId */
+				}
 				<QuerySitePlans siteId={ siteId } />
 				<DocumentHead title={ title } meta={ metas } link={ links } />
 				<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />

@@ -70,7 +70,7 @@ export class ReaderSidebar extends React.Component {
 	highlightNewTag( tagSlug ) {
 		const tagStreamUrl = getTagStreamUrl( tagSlug );
 		if ( tagStreamUrl !== page.current ) {
-			defer( function() {
+			defer( function () {
 				page( tagStreamUrl );
 				window.scrollTo( 0, 0 );
 			} );

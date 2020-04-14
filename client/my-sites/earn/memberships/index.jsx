@@ -194,7 +194,7 @@ class MembershipsSection extends Component {
 						row.renew_interval,
 						row.all_time_total,
 					]
-						.map( field => ( field ? '"' + field + '"' : '""' ) )
+						.map( field => ( field ? '"' + field + '"' : '""')  )
 						.join( ',' )
 				)
 			)

@@ -18,9 +18,7 @@ export const generateSuccessAndFailedTestsForThunk = ( {
 
 	describe( testBaseName + ' success', () => {
 		useNock( nock => {
-			nock( apiUrl )
-				[ method ]( endpoint )
-				.reply( 200, successResponse );
+			nock( apiUrl )[ method ]( endpoint ).reply( 200, successResponse );
 		} );
 
 		test( 'should be successful.', () => {
@@ -34,9 +32,7 @@ export const generateSuccessAndFailedTestsForThunk = ( {
 
 	describe( testBaseName + ' fail', () => {
 		useNock( nock => {
-			nock( apiUrl )
-				[ method ]( endpoint )
-				.reply( errorResponse.status, errorResponse );
+			nock( apiUrl )[ method ]( endpoint ).reply( errorResponse.status, errorResponse );
 		} );
 
 		test( 'should be failed', () => {

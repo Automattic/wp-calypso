@@ -155,7 +155,7 @@ const StatsViewsMonths = props => {
 			}
 			return (
 				<Month
-					href={ `/stats/month/${ siteSlug }?startDate=${ year }-${ month + 1 }-1` }
+					href={ `/stats/month/${ siteSlug }?startDate=${ year }-${ month + 1}-1` }
 					className={ className }
 					key={ `month-${ month }` }
 					value={ numberFormat( value ) }

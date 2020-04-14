@@ -131,7 +131,7 @@ class Security2faBackupCodesPrompt extends React.Component {
 						disabled={ this.state.submittingCode }
 						name="backupCodeEntry"
 						method="backup"
-						onFocus={ function() {
+						onFocus={ function () {
 							gaRecordEvent(
 								'Me',
 								'Focused On 2fa Backup Codes Confirm Printed Backup Codes Input'
@@ -149,7 +149,7 @@ class Security2faBackupCodesPrompt extends React.Component {
 				<FormButton
 					className="security-2fa-backup-codes-prompt__verify"
 					disabled={ this.state.submittingCode }
-					onClick={ function() {
+					onClick={ function () {
 						gaRecordEvent( 'Me', 'Clicked On 2fa Backup Codes Verify Button' );
 					} }
 				>

@@ -44,7 +44,7 @@ export const handleMembershipProductsList = dispatchRequest( {
 			},
 			action
 		),
-	fromApi: function( endpointResponse ) {
+	fromApi: function ( endpointResponse ) {
 		const products = endpointResponse.products.map( membershipProductFromApi );
 		return products;
 	},

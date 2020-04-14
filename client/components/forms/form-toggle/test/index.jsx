@@ -38,7 +38,7 @@ describe( 'FormToggle', () => {
 		} );
 
 		test( 'should be checked when checked is true', () => {
-			[ true, false ].forEach( function( bool ) {
+			[ true, false ].forEach( function ( bool ) {
 				const toggle = shallow( <FormToggle checked={ bool } onChange={ noop } /> );
 				const toggleInput = toggle.find( '.form-toggle' );
 
@@ -51,7 +51,7 @@ describe( 'FormToggle', () => {
 			const toggle = shallow(
 				<FormToggle
 					checked={ false }
-					onChange={ function( checked ) {
+					onChange={ function ( checked ) {
 						assert( checked, 'onChange handler was called with a value param' );
 						done();
 					} }

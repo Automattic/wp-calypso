@@ -20,7 +20,7 @@ import { SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER } from './utils';
 import 'state/reader/init';
 
 export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
-	return function( dispatch ) {
+	return function ( dispatch ) {
 		dispatch( {
 			type: READER_RELATED_POSTS_REQUEST,
 			payload: {

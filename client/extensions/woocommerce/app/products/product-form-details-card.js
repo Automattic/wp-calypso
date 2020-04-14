@@ -52,9 +52,7 @@ class ProductFormDetailsCard extends Component {
 		editProduct( siteId, product, { name } );
 
 		if ( this.state.updateSkuOnNameChange ) {
-			const sku = trim( name )
-				.toLowerCase()
-				.replace( /\s+/g, '-' );
+			const sku = trim( name ).toLowerCase().replace( /\s+/g, '-' );
 			editProduct( siteId, product, { sku } );
 		}
 	}

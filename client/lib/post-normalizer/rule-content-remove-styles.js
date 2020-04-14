@@ -28,14 +28,14 @@ export default function removeContentStyles( post, dom ) {
 
 	// remove most style attributes
 	const styled = dom.querySelectorAll( '[style]' );
-	forEach( styled, function( element ) {
+	forEach( styled, function ( element ) {
 		if ( ! matches( element, whitelistSelector ) ) {
 			element.removeAttribute( 'style' );
 		}
 	} );
 
 	// remove all style elements outside of galleries and embeds
-	forEach( dom.querySelectorAll( 'style' ), function( element ) {
+	forEach( dom.querySelectorAll( 'style' ), function ( element ) {
 		if ( ! matches( element, whitelistSelector ) ) {
 			element.parentNode && element.parentNode.removeChild( element );
 		}

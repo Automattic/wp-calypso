@@ -75,7 +75,7 @@ function cleanupRepliesCache() {
 		debug( 'couldnt cleanup cache' );
 	}
 
-	keysToRemove.forEach( function( key ) {
+	keysToRemove.forEach( function ( key ) {
 		removeItem( key );
 	} );
 }

@@ -54,7 +54,7 @@ export default class extends React.PureComponent {
 		const { colorBg, colorFg, labelSize, lineWidth, metric, percentage, size } = this.props;
 		const labelStyles = {
 			fontSize: labelSize + 'px',
-			top: `-${ size / 2 + labelSize }px`,
+			top: `-${ size / 2 + labelSize}px`,
 		};
 
 		return (

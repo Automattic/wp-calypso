@@ -648,19 +648,21 @@ const Account = createReactClass( {
 		return (
 			<FormFieldset>
 				<FormLegend>{ translate( 'Would you like a matching blog address too?' ) }</FormLegend>
-				{ // message is translated in the API
-				map( actions, ( message, key ) => (
-					<FormLabel key={ key }>
-						<FormRadio
-							name="usernameAction"
-							onChange={ this.handleRadioChange }
-							onClick={ this.handleUsernameChangeBlogRadio }
-							value={ key }
-							checked={ key === this.state.usernameAction }
-						/>
-						<span>{ message }</span>
-					</FormLabel>
-				) ) }
+				{
+					// message is translated in the API
+					map( actions, ( message, key ) => (
+						<FormLabel key={ key }>
+							<FormRadio
+								name="usernameAction"
+								onChange={ this.handleRadioChange }
+								onClick={ this.handleUsernameChangeBlogRadio }
+								value={ key }
+								checked={ key === this.state.usernameAction }
+							/>
+							<span>{ message }</span>
+						</FormLabel>
+					) )
+				}
 			</FormFieldset>
 		);
 	},

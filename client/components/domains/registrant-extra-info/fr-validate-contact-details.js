@@ -68,9 +68,7 @@ export default function validateContactDetails( contactDetails ) {
 		validate.errors,
 		( accumulatedErrors, { field, message } ) => {
 			// Drop 'data.' prefix
-			const path = String( field )
-				.split( '.' )
-				.slice( 1 );
+			const path = String( field ).split( '.' ).slice( 1 );
 
 			// In order to capture the relationship between the organization
 			// and extra.fr.individualType fields, the rule ends up in the root

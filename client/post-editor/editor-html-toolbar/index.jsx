@@ -279,7 +279,7 @@ export class EditorHtmlToolbar extends Component {
 
 	insertHtmlTagSelfClosed( tag ) {
 		const { before, inner, after } = this.splitEditorContent();
-		const selfClosedTag = `<${ tag.name }${ this.attributesToString( tag.attributes ) } />`;
+		const selfClosedTag = `<${ tag.name}${ this.attributesToString( tag.attributes ) } />`;
 		const content =
 			tag.options && tag.options.paragraph ? '\n' + selfClosedTag + '\n\n' : selfClosedTag;
 		this.updateEditorContent( before, inner + content, after );

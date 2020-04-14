@@ -38,12 +38,8 @@ class ActivityLogAggregatedItem extends Component {
 			timezone,
 		} = this.props;
 		const newFilter = Object.assign( {}, omit( filter, [ 'dateRange', 'on' ] ), {
-			before: applySiteOffset( firstPublishedDate, { timezone } )
-				.add( 1, 'second' )
-				.format(),
-			after: applySiteOffset( lastPublishedDate, { timezone } )
-				.subtract( 1, 'second' )
-				.format(),
+			before: applySiteOffset( firstPublishedDate, { timezone } ).add( 1, 'second' ).format(),
+			after: applySiteOffset( lastPublishedDate, { timezone } ).subtract( 1, 'second' ).format(),
 			aggregate: false,
 			backButton: true,
 		} );

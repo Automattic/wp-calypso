@@ -78,14 +78,14 @@ export function addCartItem( newCartItem ) {
 	function appendItem( products ) {
 		products = products || [];
 
-		const isDuplicate = products.some( function( existingCartItem ) {
+		const isDuplicate = products.some( function ( existingCartItem ) {
 			return isEqual( newCartItem, existingCartItem );
 		} );
 
 		return isDuplicate ? products : products.concat( [ newCartItem ] );
 	}
 
-	return function( cart ) {
+	return function ( cart ) {
 		if ( cartItemShouldReplaceCart( newCartItem, cart ) ) {
 			return update( cart, { products: { $set: [ newCartItem ] } } );
 		}
@@ -95,7 +95,7 @@ export function addCartItem( newCartItem ) {
 }
 
 export function clearCart() {
-	return function( cart ) {
+	return function ( cart ) {
 		return update( cart, { products: { $set: [] } } );
 	};
 }
@@ -110,14 +110,14 @@ export function addCartItemWithoutReplace( newCartItem ) {
 	function appendItem( products ) {
 		products = products || [];
 
-		const isDuplicate = products.some( function( existingCartItem ) {
+		const isDuplicate = products.some( function ( existingCartItem ) {
 			return isEqual( newCartItem, existingCartItem );
 		} );
 
 		return isDuplicate ? products : products.concat( [ newCartItem ] );
 	}
 
-	return function( cart ) {
+	return function ( cart ) {
 		return update( cart, { products: { $apply: appendItem } } );
 	};
 }
@@ -170,7 +170,7 @@ export function cartItemShouldReplaceCart( cartItem, cart ) {
  */
 export function remove( cartItemToRemove ) {
 	function rejectItem( products ) {
-		const productsLeft = reject( products, function( existingCartItem ) {
+		const productsLeft = reject( products, function ( existingCartItem ) {
 			return (
 				cartItemToRemove.product_slug === existingCartItem.product_slug &&
 				cartItemToRemove.meta === existingCartItem.meta
@@ -192,7 +192,7 @@ export function remove( cartItemToRemove ) {
 		} );
 	}
 
-	return function( cart ) {
+	return function ( cart ) {
 		return update( cart, { products: { $apply: rejectItem } } );
 	};
 }
@@ -220,7 +220,7 @@ export function removeItemAndDependencies( cartItemToRemove, cart, domainsWithPl
  * @returns {Function} the function that removes the items from a shopping cart
  */
 export function replaceItem( oldItem, newItem ) {
-	return function( cart ) {
+	return function ( cart ) {
 		return flow( [ remove( oldItem ), addCartItem( newItem ) ] )( cart );
 	};
 }
@@ -234,7 +234,7 @@ export function replaceItem( oldItem, newItem ) {
  * @returns {object[]} the list of dependency items in the shopping cart
  */
 export function getDependentProducts( cartItem, cart, domainsWithPlansOnly ) {
-	const dependentProducts = getAllCartItems( cart ).filter( function( existingCartItem ) {
+	const dependentProducts = getAllCartItems( cart ).filter( function ( existingCartItem ) {
 		return isDependentProduct( cartItem, existingCartItem, domainsWithPlansOnly );
 	} );
 
@@ -385,7 +385,7 @@ export function hasOnlyFreeTrial( cart ) {
  * @returns {boolean} true if there is at least one item of the specified product type, false otherwise
  */
 export function hasProduct( cart, productSlug ) {
-	return getAllCartItems( cart ).some( function( cartItem ) {
+	return getAllCartItems( cart ).some( function ( cartItem ) {
 		return cartItem.product_slug === productSlug;
 	} );
 }
@@ -690,7 +690,7 @@ export function fillGoogleAppsRegistrationData( cart, registrationData ) {
 	const googleAppsItems = filter( getAllCartItems( cart ), isGoogleApps );
 	return flow.apply(
 		null,
-		googleAppsItems.map( function( item ) {
+		googleAppsItems.map( function ( item ) {
 			item.extra = assign( item.extra, { google_apps_registration_data: registrationData } );
 			return addCartItem( item );
 		} )
@@ -955,7 +955,7 @@ export function hasDomainInCart( cart, domain ) {
  * @returns {object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 export function getDomainRegistrationsWithoutPrivacy( cart ) {
-	return getDomainRegistrations( cart ).filter( function( cartItem ) {
+	return getDomainRegistrations( cart ).filter( function ( cartItem ) {
 		return ! some( cart.products, {
 			meta: cartItem.meta,
 			extra: { privacy: true },
@@ -971,7 +971,7 @@ export function getDomainRegistrationsWithoutPrivacy( cart ) {
  * @returns {object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 export function getDomainTransfersWithoutPrivacy( cart ) {
-	return getDomainTransfers( cart ).filter( function( cartItem ) {
+	return getDomainTransfers( cart ).filter( function ( cartItem ) {
 		return ! some( cart.products, {
 			meta: cartItem.meta,
 			extra: { privacy: true },
@@ -992,7 +992,7 @@ export function getDomainTransfersWithoutPrivacy( cart ) {
 export function changePrivacyForDomains( cart, domainItems, changeFunction, value ) {
 	return flow.apply(
 		null,
-		domainItems.map( function( item ) {
+		domainItems.map( function ( item ) {
 			return changeFunction( item, updatePrivacyForDomain( item, value ) );
 		} )
 	);
@@ -1228,7 +1228,7 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
  * @returns {boolean} true if there is at least one cart item added more than X time ago, false otherwise
  */
 export function hasStaleItem( cart ) {
-	return some( getAllCartItems( cart ), function( cartItem ) {
+	return some( getAllCartItems( cart ), function ( cartItem ) {
 		// time_added_to_cart is in seconds, Date.now() returns milliseconds
 		return (
 			cartItem.time_added_to_cart &&

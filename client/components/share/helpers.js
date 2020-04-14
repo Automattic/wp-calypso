@@ -6,7 +6,7 @@ import { find } from 'lodash';
 
 //Mostly copied from Seo Preview
 
-export const shortEnough = limit => title => ( title.length <= limit ? title : false );
+export const shortEnough = limit => title => ( title.length <= limit ? title : false) ;
 
 export const truncatedAtSpace = ( lower, upper ) => fullTitle => {
 	const title = fullTitle.slice( 0, upper );

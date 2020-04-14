@@ -23,10 +23,7 @@ export function restorePost( siteId, postId ) {
 			postId,
 		} );
 
-		const restoreResult = wpcom
-			.site( siteId )
-			.post( postId )
-			.restore();
+		const restoreResult = wpcom.site( siteId ).post( postId ).restore();
 
 		restoreResult.then(
 			restoredPost => {

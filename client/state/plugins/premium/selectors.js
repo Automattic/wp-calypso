@@ -8,7 +8,7 @@ import { every, filter, find, get, includes, some } from 'lodash';
  */
 import createSelector from 'lib/create-selector';
 
-export const isRequesting = function( state, siteId ) {
+export const isRequesting = function ( state, siteId ) {
 	// if the `isRequesting` attribute doesn't exist yet,
 	// we assume we are still launching the fetch action, so it's true
 	if ( typeof state.plugins.premium.isRequesting[ siteId ] === 'undefined' ) {
@@ -17,14 +17,14 @@ export const isRequesting = function( state, siteId ) {
 	return state.plugins.premium.isRequesting[ siteId ];
 };
 
-export const hasRequested = function( state, siteId ) {
+export const hasRequested = function ( state, siteId ) {
 	if ( typeof state.plugins.premium.hasRequested[ siteId ] === 'undefined' ) {
 		return false;
 	}
 	return state.plugins.premium.hasRequested[ siteId ];
 };
 
-export const getPluginsForSite = function( state, siteId, whitelist = false ) {
+export const getPluginsForSite = function ( state, siteId, whitelist = false ) {
 	const pluginList = state.plugins.premium.plugins[ siteId ];
 	if ( typeof pluginList === 'undefined' ) {
 		return [];
@@ -44,14 +44,14 @@ export const getPluginsForSite = function( state, siteId, whitelist = false ) {
 	} );
 };
 
-export const isStarted = function( state, siteId, whitelist = false ) {
+export const isStarted = function ( state, siteId, whitelist = false ) {
 	const pluginList = getPluginsForSite( state, siteId, whitelist );
 	return ! every( pluginList, item => {
 		return 'wait' === item.status;
 	} );
 };
 
-export const isFinished = function( state, siteId, whitelist = false ) {
+export const isFinished = function ( state, siteId, whitelist = false ) {
 	const pluginList = getPluginsForSite( state, siteId, whitelist );
 	if ( pluginList.length === 0 ) {
 		return true;
@@ -62,7 +62,7 @@ export const isFinished = function( state, siteId, whitelist = false ) {
 	} );
 };
 
-export const isInstalling = function( state, siteId, whitelist = false ) {
+export const isInstalling = function ( state, siteId, whitelist = false ) {
 	const pluginList = getPluginsForSite( state, siteId, whitelist );
 	if ( pluginList.length === 0 ) {
 		return false;
@@ -74,7 +74,7 @@ export const isInstalling = function( state, siteId, whitelist = false ) {
 	} );
 };
 
-export const getActivePlugin = function( state, siteId, whitelist = false ) {
+export const getActivePlugin = function ( state, siteId, whitelist = false ) {
 	const pluginList = getPluginsForSite( state, siteId, whitelist );
 	const plugin = find( pluginList, item => {
 		return ! includes( [ 'done', 'wait' ], item.status ) && item.error === null;
@@ -85,7 +85,7 @@ export const getActivePlugin = function( state, siteId, whitelist = false ) {
 	return plugin;
 };
 
-export const getNextPlugin = function( state, siteId, whitelist = false ) {
+export const getNextPlugin = function ( state, siteId, whitelist = false ) {
 	const pluginList = getPluginsForSite( state, siteId, whitelist );
 	const plugin = find( pluginList, item => {
 		return 'wait' === item.status && item.error === null;

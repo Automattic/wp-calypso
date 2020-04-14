@@ -50,7 +50,7 @@ export const errors = ( state = {}, action ) => {
 			const items = Array.isArray( action.transientMedia )
 				? action.transientMedia
 				: [ action.transientMedia ];
-			const mediaErrors = items.reduce( function( memo, item ) {
+			const mediaErrors = items.reduce( function ( memo, item ) {
 				const itemErrors = validateMediaItem( action.site, item );
 				if ( itemErrors.length ) {
 					memo[ item.ID ] = itemErrors;

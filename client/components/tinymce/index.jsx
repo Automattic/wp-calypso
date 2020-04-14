@@ -371,7 +371,7 @@ export default class TinyMCE extends React.Component {
 	destroyEditor = () => {
 		forEach(
 			EVENTS,
-			function( eventHandler, eventName ) {
+			function ( eventHandler, eventName ) {
 				if ( this.props[ eventHandler ] ) {
 					this._editor.off( eventName, this.props[ eventHandler ] );
 				}
@@ -392,7 +392,7 @@ export default class TinyMCE extends React.Component {
 
 		forEach(
 			EVENTS,
-			function( eventHandler, eventName ) {
+			function ( eventHandler, eventName ) {
 				if ( prevProps[ eventHandler ] !== this.props[ eventHandler ] ) {
 					if ( this.props[ eventHandler ] ) {
 						this._editor.on( eventName, this.props[ eventHandler ] );

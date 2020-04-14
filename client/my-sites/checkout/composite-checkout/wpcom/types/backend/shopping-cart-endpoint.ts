@@ -261,7 +261,7 @@ export function addItemToResponseCart(
 function getFreshCartItemUUID( responseCart: ResponseCart ): string {
 	const maxUUID = responseCart.products
 		.map( product => product.uuid )
-		.reduce( ( accum, current ) => ( accum > current ? accum : current ), '' );
+		.reduce( ( accum, current ) => ( accum > current ? accum : current) , '' );
 	return maxUUID + '1';
 }
 

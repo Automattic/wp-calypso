@@ -85,6 +85,6 @@ function toolbarPin( editor ) {
 	window.addEventListener( 'resize', maybeBindScroll );
 }
 
-export default function() {
+export default function () {
 	tinymce.PluginManager.add( 'wpcom/toolbarpin', toolbarPin );
 }

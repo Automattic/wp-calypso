@@ -43,7 +43,7 @@ const WIDE_DISPLAY_CUTOFF = 660;
 const updateQueryArg = params =>
 	page.replace( addQueryArgs( params, window.location.pathname + window.location.search ) );
 
-const pickSort = sort => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
+const pickSort = sort => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE) ;
 
 const SpacerDiv = withDimensions( ( { width, height } ) => (
 	<div

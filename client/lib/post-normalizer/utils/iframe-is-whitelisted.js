@@ -47,7 +47,7 @@ export function iframeIsWhitelisted( iframe ) {
 	];
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();
-	return some( iframeWhitelist, function( whitelistedSuffix ) {
+	return some( iframeWhitelist, function ( whitelistedSuffix ) {
 		return endsWith( '.' + iframeSrc, '.' + whitelistedSuffix );
 	} );
 }

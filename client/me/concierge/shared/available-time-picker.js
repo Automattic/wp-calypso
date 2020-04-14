@@ -16,10 +16,7 @@ const groupAvailableTimesByDate = ( availableTimes, timezone ) => {
 
 	// Go through all available times and bundle them into each date object
 	availableTimes.forEach( beginTimestamp => {
-		const startOfDay = moment( beginTimestamp )
-			.tz( timezone )
-			.startOf( 'day' )
-			.valueOf();
+		const startOfDay = moment( beginTimestamp ).tz( timezone ).startOf( 'day' ).valueOf();
 		if ( dates.hasOwnProperty( startOfDay ) ) {
 			dates[ startOfDay ].times.push( beginTimestamp );
 		} else {

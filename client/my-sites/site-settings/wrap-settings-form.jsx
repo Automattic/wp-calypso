@@ -127,7 +127,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				event.preventDefault();
 			}
 
-			dirtyFields.map( function( value ) {
+			dirtyFields.map( function ( value ) {
 				switch ( value ) {
 					case 'blogdescription':
 						trackTracksEvent( 'calypso_settings_site_tagline_updated', { path } );

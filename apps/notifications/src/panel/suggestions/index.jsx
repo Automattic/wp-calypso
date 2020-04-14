@@ -38,14 +38,14 @@ const getOffsetTop = element => {
 	return element.offsetParent ? offset + getOffsetTop( element.offsetParent ) : offset;
 };
 
-const stopEvent = function( event ) {
+const stopEvent = function ( event ) {
 	if ( this.state.suggestionsVisible ) {
 		event.stopPropagation();
 		event.preventDefault();
 	}
 };
 
-const getSuggestionIndexBySelectedId = function( suggestions ) {
+const getSuggestionIndexBySelectedId = function ( suggestions ) {
 	if ( ! this.state.selectedSuggestionId ) {
 		return 0;
 	}
@@ -55,7 +55,7 @@ const getSuggestionIndexBySelectedId = function( suggestions ) {
 	return index > -1 ? index : null;
 };
 
-const getSuggestionById = function() {
+const getSuggestionById = function () {
 	if ( ! this.state.selectedSuggestionId && this.props.suggestions.length > 0 ) {
 		return this.props.suggestions[ 0 ];
 	}
@@ -281,7 +281,7 @@ export const SuggestionsMixin = {
 								} )
 							}
 							onClick={ this.handleSuggestionClick.bind( this, suggestion ) }
-							onMouseEnter={ function( suggestion ) {
+							onMouseEnter={ function ( suggestion ) {
 								this.setState( {
 									selectedSuggestionId: suggestion.ID,
 								} );

@@ -274,7 +274,7 @@ class SortableList extends React.Component {
 		this.itemShadowRefs.clear();
 		return React.Children.map(
 			this.props.children,
-			function( child, index ) {
+			function ( child, index ) {
 				const isActive = this.state.activeIndex === index;
 				const isDraggable = this.props.allowDrag && ! hasTouch();
 				let events = isDraggable ? [ 'onMouseDown', 'onMouseUp' ] : [ 'onClick' ];
@@ -286,7 +286,7 @@ class SortableList extends React.Component {
 				} );
 
 				events = fromPairs(
-					events.map( function( event ) {
+					events.map( function ( event ) {
 						return [ event, this[ event ].bind( null, index ) ];
 					}, this )
 				);

@@ -136,8 +136,9 @@ export function receivedProducts( { dispatch }, action, { data } ) {
 
 	if ( undefined !== params.offset ) {
 		debug(
-			`Products ${ params.offset + 1 }-${ params.offset +
-				body.length } out of ${ totalProducts } received.`
+			`Products ${ params.offset + 1}-${
+				params.offset + body.length
+			} out of ${ totalProducts } received.`
 		);
 
 		const remainder = totalProducts - params.offset - body.length;

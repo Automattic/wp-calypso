@@ -16,11 +16,11 @@ function AssetsWriter( options ) {
 }
 
 Object.assign( AssetsWriter.prototype, {
-	createOutputStream: function() {
+	createOutputStream: function () {
 		this.outputPath = path.join( this.options.path, this.options.filename );
 		this.outputStream = fs.createWriteStream( this.outputPath );
 	},
-	apply: function( compiler ) {
+	apply: function ( compiler ) {
 		const self = this;
 
 		compiler.hooks.afterEmit.tapAsync( 'AssetsWriter', ( compilation, callback ) => {

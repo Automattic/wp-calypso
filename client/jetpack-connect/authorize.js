@@ -616,10 +616,12 @@ export class JetpackAuthorize extends Component {
 		const backToWpAdminLink = (
 			<LoggedOutFormLinkItem href={ redirectAfterAuth }>
 				<Gridicon size={ 18 } icon="arrow-left" />{ ' ' }
-				{ // translators: eg: Return to The WordPress.com Blog
-				translate( 'Return to %(sitename)s', {
-					args: { sitename: decodeEntities( blogname ) },
-				} ) }
+				{
+					// translators: eg: Return to The WordPress.com Blog
+					translate( 'Return to %(sitename)s', {
+						args: { sitename: decodeEntities( blogname ) },
+					} )
+				}
 			</LoggedOutFormLinkItem>
 		);
 

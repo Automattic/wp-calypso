@@ -42,7 +42,7 @@ export class CartPlanDiscountAd extends Component {
 		}
 
 		const cartPlan = getAllCartItems( cart ).find( isPlan );
-		const plan = sitePlans.data.filter( function( sitePlan ) {
+		const plan = sitePlans.data.filter( function ( sitePlan ) {
 			return sitePlan.productSlug === this.product_slug;
 		}, cartPlan )[ 0 ];
 

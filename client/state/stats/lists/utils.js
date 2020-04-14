@@ -186,7 +186,7 @@ export function getChartLabels( unit, date, localizedDate ) {
 	if ( validDate && validLocalizedDate && unit ) {
 		const dayOfWeek = date.toDate().getDay();
 		const isWeekend = 'day' === unit && ( 6 === dayOfWeek || 0 === dayOfWeek );
-		const labelName = `label${ unit.charAt( 0 ).toUpperCase() + unit.slice( 1 ) }`;
+		const labelName = `label${ unit.charAt( 0 ).toUpperCase() + unit.slice( 1 )}`;
 		const formats = {
 			day: translate( 'MMM D', {
 				context: 'momentjs format string (day)',
@@ -219,12 +219,12 @@ export function parseOrdersChartData( payload ) {
 		return [];
 	}
 
-	return payload.data.map( function( record ) {
+	return payload.data.map( function ( record ) {
 		// Initialize data
 		const dataRecord = {};
 
 		// Fill Field Values
-		record.forEach( function( value, i ) {
+		record.forEach( function ( value, i ) {
 			dataRecord[ payload.fields[ i ] ] = value;
 		} );
 
@@ -253,7 +253,7 @@ export function parseChartData( payload, nullAttributes = [] ) {
 		return [];
 	}
 
-	return payload.data.map( function( record ) {
+	return payload.data.map( function ( record ) {
 		// Initialize data
 		const dataRecord = nullAttributes.reduce( ( memo, attribute ) => {
 			memo[ attribute ] = null;
@@ -261,7 +261,7 @@ export function parseChartData( payload, nullAttributes = [] ) {
 		}, {} );
 
 		// Fill Field Values
-		record.forEach( function( value, i ) {
+		record.forEach( function ( value, i ) {
 			// Remove W from weeks
 			if ( 'period' === payload.fields[ i ] ) {
 				value = value.replace( /W/g, '-' );
@@ -299,13 +299,9 @@ export function parseUnitPeriods( unit, period ) {
 				.isoWeek( splitYearWeek[ 1 ] )
 				.endOf( 'isoWeek' );
 		case 'month':
-			return moment( period, 'YYYY-MM' )
-				.locale( localeSlug )
-				.endOf( 'month' );
+			return moment( period, 'YYYY-MM' ).locale( localeSlug ).endOf( 'month' );
 		case 'year':
-			return moment( period, 'YYYY' )
-				.locale( localeSlug )
-				.endOf( 'year' );
+			return moment( period, 'YYYY' ).locale( localeSlug ).endOf( 'year' );
 		case 'day':
 		default:
 			return moment( period, 'YYYY-MM-DD' ).locale( localeSlug );
@@ -380,16 +376,9 @@ export const normalizers = {
 		const localeSlug = getLocaleSlug();
 
 		return {
-			day: moment()
-				.locale( localeSlug )
-				.day( dayOfWeek )
-				.format( 'dddd' ),
+			day: moment().locale( localeSlug ).day( dayOfWeek ).format( 'dddd' ),
 			percent: Math.round( highest_day_percent ),
-			hour: moment()
-				.locale( localeSlug )
-				.hour( highest_hour )
-				.startOf( 'hour' )
-				.format( 'LT' ),
+			hour: moment().locale( localeSlug ).hour( highest_hour ).startOf( 'hour' ).format( 'LT' ),
 			hourPercent: Math.round( highest_hour_percent ),
 			hourlyViews: hourly_views,
 			years,

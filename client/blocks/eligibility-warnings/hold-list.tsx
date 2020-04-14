@@ -24,7 +24,7 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
 			title: hasLocalizedText( 'Upgrade to a Business plan' )
 				? translate( 'Upgrade to a Business plan' )
 				: translate( 'Upgrade to Business' ),
-			description: ( function() {
+			description: ( function () {
 				if ( context === 'themes' ) {
 					return hasLocalizedText(
 						"You'll also get to install custom plugins, have more storage, and access live support."

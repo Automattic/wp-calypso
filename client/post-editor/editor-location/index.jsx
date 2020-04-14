@@ -40,7 +40,7 @@ const GOOGLE_MAPS_BASE_URL = 'https://maps.google.com/maps/api/staticmap?';
 // that formats float metadata values exactly this way.
 const toGeoString = coord => String( Number( coord ).toFixed( 7 ) );
 
-const coordinatePropType = function( props, propName ) {
+const coordinatePropType = function ( props, propName ) {
 	const prop = props[ propName ];
 	if (
 		prop &&

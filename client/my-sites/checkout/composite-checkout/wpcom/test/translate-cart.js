@@ -3,8 +3,8 @@
  */
 import { translateWpcomCartToCheckoutCart } from '../lib/translate-cart';
 
-describe( 'translateWpcomCartToCheckoutCart', function() {
-	describe( 'Cart with one plan only (BRL)', function() {
+describe( 'translateWpcomCartToCheckoutCart', function () {
+	describe( 'Cart with one plan only (BRL)', function () {
 		const serverResponse = {
 			blog_id: 123,
 			products: [
@@ -66,80 +66,80 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 
 		const clientCart = translateWpcomCartToCheckoutCart( x => x, serverResponse );
 
-		it( 'has a total property', function() {
+		it( 'has a total property', function () {
 			expect( clientCart.total.amount ).toBeDefined();
 		} );
-		it( 'has the expected total value', function() {
+		it( 'has the expected total value', function () {
 			expect( clientCart.total.amount.value ).toBe( 14900 );
 		} );
-		it( 'has the expected currency', function() {
+		it( 'has the expected currency', function () {
 			expect( clientCart.total.amount.currency ).toBe( 'BRL' );
 		} );
-		it( 'has the expected total display value', function() {
+		it( 'has the expected total display value', function () {
 			expect( clientCart.total.amount.displayValue ).toBe( 'R$149' );
 		} );
-		it( 'has an array of items', function() {
+		it( 'has an array of items', function () {
 			expect( clientCart.items ).toBeDefined();
 		} );
-		it( 'has the expected number of line items', function() {
+		it( 'has the expected number of line items', function () {
 			expect( clientCart.items.length ).toBe( 1 );
 		} );
-		it( 'has an array of allowed payment methods', function() {
+		it( 'has an array of allowed payment methods', function () {
 			expect( clientCart.allowedPaymentMethods ).toBeDefined();
 		} );
-		it( 'has the expected credits', function() {
+		it( 'has the expected credits', function () {
 			expect( clientCart.credits.amount.value ).toBe( 10000 );
 			expect( clientCart.credits.amount.currency ).toBe( 'BRL' );
 			expect( clientCart.credits.amount.displayValue ).toBe( 'R$100' );
 		} );
-		it( 'has the expected coupon', function() {
+		it( 'has the expected coupon', function () {
 			expect( clientCart.couponCode ).toBe( 'fakecoupon' );
 		} );
 
-		describe( 'first cart item (plan)', function() {
-			it( 'has an id', function() {
+		describe( 'first cart item (plan)', function () {
+			it( 'has an id', function () {
 				expect( clientCart.items[ 0 ].id ).toBeDefined();
 			} );
-			it( 'has the expected label', function() {
+			it( 'has the expected label', function () {
 				expect( clientCart.items[ 0 ].label ).toBe( 'WordPress.com Personal' );
 			} );
-			it( 'has the expected type', function() {
+			it( 'has the expected type', function () {
 				expect( clientCart.items[ 0 ].type ).toBe( 'personal-bundle' );
 			} );
-			it( 'has the expected currency', function() {
+			it( 'has the expected currency', function () {
 				expect( clientCart.items[ 0 ].amount.currency ).toBe( 'BRL' );
 			} );
-			it( 'has the expected value', function() {
+			it( 'has the expected value', function () {
 				expect( clientCart.items[ 0 ].amount.value ).toBe( 14400 );
 			} );
-			it( 'has the expected display value', function() {
+			it( 'has the expected display value', function () {
 				expect( clientCart.items[ 0 ].amount.displayValue ).toBe( 'R$144' );
 			} );
 		} );
 
-		describe( 'taxes', function() {
-			it( 'has an id', function() {
+		describe( 'taxes', function () {
+			it( 'has an id', function () {
 				expect( clientCart.tax.id ).toBeDefined();
 			} );
-			it( 'has the expected label', function() {
+			it( 'has the expected label', function () {
 				expect( clientCart.tax.label ).toBe( 'Tax' );
 			} );
-			it( 'has the expected type', function() {
+			it( 'has the expected type', function () {
 				expect( clientCart.tax.type ).toBe( 'tax' );
 			} );
-			it( 'has the expected currency', function() {
+			it( 'has the expected currency', function () {
 				expect( clientCart.tax.amount.currency ).toBe( 'BRL' );
 			} );
-			it( 'has the expected value', function() {
+			it( 'has the expected value', function () {
 				expect( clientCart.tax.amount.value ).toBe( 500 );
 			} );
-			it( 'has the expected display value', function() {
+			it( 'has the expected display value', function () {
 				expect( clientCart.tax.amount.displayValue ).toBe( 'R$5' );
 			} );
 		} );
 
-		describe( 'allowed payment methods', function() {
-			it( 'contains the expected slugs', function() {
+		describe( 'allowed payment methods', function () {
+			it( 'contains the expected slugs', function () {
 				expect( clientCart.allowedPaymentMethods ).toStrictEqual( [
 					'card',
 					'ebanx',
@@ -149,7 +149,7 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 		} );
 	} );
 
-	describe( 'Cart with one plan and one bundled domain (BRL)', function() {
+	describe( 'Cart with one plan and one bundled domain (BRL)', function () {
 		const serverResponse = {
 			blog_id: 123,
 			products: [
@@ -240,102 +240,102 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 
 		const clientCart = translateWpcomCartToCheckoutCart( x => x, serverResponse );
 
-		it( 'has a total property', function() {
+		it( 'has a total property', function () {
 			expect( clientCart.total.amount ).toBeDefined();
 		} );
-		it( 'has the expected total value', function() {
+		it( 'has the expected total value', function () {
 			expect( clientCart.total.amount.value ).toBe( 14900 );
 		} );
-		it( 'has the expected currency', function() {
+		it( 'has the expected currency', function () {
 			expect( clientCart.total.amount.currency ).toBe( 'BRL' );
 		} );
-		it( 'has the expected total display value', function() {
+		it( 'has the expected total display value', function () {
 			expect( clientCart.total.amount.displayValue ).toBe( 'R$149' );
 		} );
-		it( 'has a list of items', function() {
+		it( 'has a list of items', function () {
 			expect( clientCart.items ).toBeDefined();
 		} );
-		it( 'has the expected number of line items', function() {
+		it( 'has the expected number of line items', function () {
 			expect( clientCart.items.length ).toBe( 2 );
 		} );
-		it( 'has an array of allowed payment methods', function() {
+		it( 'has an array of allowed payment methods', function () {
 			expect( clientCart.allowedPaymentMethods ).toBeDefined();
 		} );
 
-		describe( 'first cart item (plan)', function() {
-			it( 'has an id', function() {
+		describe( 'first cart item (plan)', function () {
+			it( 'has an id', function () {
 				expect( clientCart.items[ 0 ].id ).toBeDefined();
 			} );
-			it( 'has the expected label', function() {
+			it( 'has the expected label', function () {
 				expect( clientCart.items[ 0 ].label ).toBe( 'WordPress.com Personal' );
 			} );
-			it( 'has the expected type', function() {
+			it( 'has the expected type', function () {
 				expect( clientCart.items[ 0 ].type ).toBe( 'personal-bundle' );
 			} );
-			it( 'has the expected currency', function() {
+			it( 'has the expected currency', function () {
 				expect( clientCart.items[ 0 ].amount.currency ).toBe( 'BRL' );
 			} );
-			it( 'has the expected value', function() {
+			it( 'has the expected value', function () {
 				expect( clientCart.items[ 0 ].amount.value ).toBe( 14400 );
 			} );
-			it( 'has the expected display value', function() {
+			it( 'has the expected display value', function () {
 				expect( clientCart.items[ 0 ].amount.displayValue ).toBe( 'R$144' );
 			} );
 		} );
 
-		describe( 'second cart item (domain)', function() {
-			it( 'has an id', function() {
+		describe( 'second cart item (domain)', function () {
+			it( 'has an id', function () {
 				expect( clientCart.items[ 1 ].id ).toBeDefined();
 			} );
-			it( 'has the expected label', function() {
+			it( 'has the expected label', function () {
 				expect( clientCart.items[ 1 ].label ).toBe( '.cash Domain Registration' );
 			} );
-			it( 'has the expected sublabel (the domain name)', function() {
+			it( 'has the expected sublabel (the domain name)', function () {
 				expect( clientCart.items[ 1 ].sublabel ).toBe( 'foo.cash' );
 			} );
-			it( 'has the expected meta (the domain name)', function() {
+			it( 'has the expected meta (the domain name)', function () {
 				expect( clientCart.items[ 1 ].wpcom_meta?.meta ).toBe( 'foo.cash' );
 			} );
-			it( 'has the expected type', function() {
+			it( 'has the expected type', function () {
 				expect( clientCart.items[ 1 ].type ).toBe( 'dotcash_domain' );
 			} );
-			it( 'has the expected currency', function() {
+			it( 'has the expected currency', function () {
 				expect( clientCart.items[ 1 ].amount.currency ).toBe( 'BRL' );
 			} );
-			it( 'has the expected value', function() {
+			it( 'has the expected value', function () {
 				expect( clientCart.items[ 1 ].amount.value ).toBe( 0 );
 			} );
-			it( 'has the expected display value', function() {
+			it( 'has the expected display value', function () {
 				expect( clientCart.items[ 1 ].amount.displayValue ).toBe( 'R$0' );
 			} );
-			it( 'has the expected volume', function() {
+			it( 'has the expected volume', function () {
 				expect( clientCart.items[ 1 ].wpcom_meta?.volume ).toBe( 1 );
 			} );
 		} );
 
-		describe( 'taxes', function() {
-			it( 'has an id', function() {
+		describe( 'taxes', function () {
+			it( 'has an id', function () {
 				expect( clientCart.tax.id ).toBeDefined();
 			} );
-			it( 'has the expected label', function() {
+			it( 'has the expected label', function () {
 				expect( clientCart.tax.label ).toBe( 'Tax' );
 			} );
-			it( 'has the expected type', function() {
+			it( 'has the expected type', function () {
 				expect( clientCart.tax.type ).toBe( 'tax' );
 			} );
-			it( 'has the expected currency', function() {
+			it( 'has the expected currency', function () {
 				expect( clientCart.tax.amount.currency ).toBe( 'BRL' );
 			} );
-			it( 'has the expected value', function() {
+			it( 'has the expected value', function () {
 				expect( clientCart.tax.amount.value ).toBe( 500 );
 			} );
-			it( 'has the expected display value', function() {
+			it( 'has the expected display value', function () {
 				expect( clientCart.tax.amount.displayValue ).toBe( 'R$5' );
 			} );
 		} );
 
-		describe( 'allowed payment methods', function() {
-			it( 'contains the expected slugs', function() {
+		describe( 'allowed payment methods', function () {
+			it( 'contains the expected slugs', function () {
 				expect( clientCart.allowedPaymentMethods ).toStrictEqual( [
 					'card',
 					'ebanx',
@@ -345,7 +345,7 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 		} );
 	} );
 
-	describe( 'Cart with plan, domain, and GSuite', function() {
+	describe( 'Cart with plan, domain, and GSuite', function () {
 		const serverResponse = {
 			blog_id: 123,
 			products: [
@@ -476,39 +476,39 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 
 		const clientCart = translateWpcomCartToCheckoutCart( x => x, serverResponse );
 
-		it( 'has a total property', function() {
+		it( 'has a total property', function () {
 			expect( clientCart.total.amount ).toBeDefined();
 		} );
-		it( 'has the expected total value', function() {
+		it( 'has the expected total value', function () {
 			expect( clientCart.total.amount.value ).toBe( 22100 );
 		} );
-		it( 'has the expected currency', function() {
+		it( 'has the expected currency', function () {
 			expect( clientCart.total.amount.currency ).toBe( 'USD' );
 		} );
-		it( 'has the expected total display value', function() {
+		it( 'has the expected total display value', function () {
 			expect( clientCart.total.amount.displayValue ).toBe( '$221' );
 		} );
-		it( 'has a list of items', function() {
+		it( 'has a list of items', function () {
 			expect( clientCart.items ).toBeDefined();
 		} );
-		it( 'has the expected number of line items', function() {
+		it( 'has the expected number of line items', function () {
 			expect( clientCart.items.length ).toBe( 3 );
 		} );
-		it( 'has an array of allowed payment methods', function() {
+		it( 'has an array of allowed payment methods', function () {
 			expect( clientCart.allowedPaymentMethods ).toBeDefined();
 		} );
 
-		describe( 'third cart item (GSuite)', function() {
-			it( 'has an id', function() {
+		describe( 'third cart item (GSuite)', function () {
+			it( 'has an id', function () {
 				expect( clientCart.items[ 2 ].id ).toBeDefined();
 			} );
-			it( 'has the expected label', function() {
+			it( 'has the expected label', function () {
 				expect( clientCart.items[ 2 ].label ).toBe( 'G Suite' );
 			} );
-			it( 'has the expected product_id', function() {
+			it( 'has the expected product_id', function () {
 				expect( clientCart.items[ 2 ].wpcom_meta?.product_id ).toBe( 69 );
 			} );
-			it( 'has the expected google_apps_users', function() {
+			it( 'has the expected google_apps_users', function () {
 				expect( clientCart.items[ 2 ].wpcom_meta?.extra?.google_apps_users?.[ 0 ] ).toEqual( {
 					email: 'foo@foo.cash',
 					firstname: 'First',
@@ -520,49 +520,49 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 					lastname: 'User',
 				} );
 			} );
-			it( 'has the expected volume', function() {
+			it( 'has the expected volume', function () {
 				expect( clientCart.items[ 2 ].wpcom_meta?.volume ).toBe( 2 );
 			} );
-			it( 'has the expected type', function() {
+			it( 'has the expected type', function () {
 				expect( clientCart.items[ 2 ].type ).toBe( 'gapps' );
 			} );
-			it( 'has the expected currency', function() {
+			it( 'has the expected currency', function () {
 				expect( clientCart.items[ 2 ].amount.currency ).toBe( 'USD' );
 			} );
-			it( 'has the expected value', function() {
+			it( 'has the expected value', function () {
 				expect( clientCart.items[ 2 ].amount.value ).toBe( 7200 );
 			} );
-			it( 'has the expected display value', function() {
+			it( 'has the expected display value', function () {
 				expect( clientCart.items[ 2 ].amount.displayValue ).toBe( '$72' );
 			} );
-			it( 'has the expected meta (the domain name)', function() {
+			it( 'has the expected meta (the domain name)', function () {
 				expect( clientCart.items[ 2 ].wpcom_meta?.meta ).toBe( 'foo.cash' );
 			} );
 		} );
 
-		describe( 'taxes', function() {
-			it( 'has an id', function() {
+		describe( 'taxes', function () {
+			it( 'has an id', function () {
 				expect( clientCart.tax.id ).toBeDefined();
 			} );
-			it( 'has the expected label', function() {
+			it( 'has the expected label', function () {
 				expect( clientCart.tax.label ).toBe( 'Tax' );
 			} );
-			it( 'has the expected type', function() {
+			it( 'has the expected type', function () {
 				expect( clientCart.tax.type ).toBe( 'tax' );
 			} );
-			it( 'has the expected currency', function() {
+			it( 'has the expected currency', function () {
 				expect( clientCart.tax.amount.currency ).toBe( 'USD' );
 			} );
-			it( 'has the expected value', function() {
+			it( 'has the expected value', function () {
 				expect( clientCart.tax.amount.value ).toBe( 500 );
 			} );
-			it( 'has the expected display value', function() {
+			it( 'has the expected display value', function () {
 				expect( clientCart.tax.amount.displayValue ).toBe( '$5' );
 			} );
 		} );
 
-		describe( 'allowed payment methods', function() {
-			it( 'contains the expected slugs', function() {
+		describe( 'allowed payment methods', function () {
+			it( 'contains the expected slugs', function () {
 				expect( clientCart.allowedPaymentMethods ).toStrictEqual( [
 					'card',
 					'ebanx',
@@ -572,7 +572,7 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 		} );
 	} );
 
-	describe( 'Cart with one plan only plus a coupon (USD)', function() {
+	describe( 'Cart with one plan only plus a coupon (USD)', function () {
 		const serverResponse = {
 			blog_id: 123,
 			products: [
@@ -637,101 +637,101 @@ describe( 'translateWpcomCartToCheckoutCart', function() {
 			return substitution ? string.replace( '%s', substitution.args ) : string;
 		}, serverResponse );
 
-		it( 'has a total property', function() {
+		it( 'has a total property', function () {
 			expect( clientCart.total.amount ).toBeDefined();
 		} );
-		it( 'has the expected total value', function() {
+		it( 'has the expected total value', function () {
 			expect( clientCart.total.amount.value ).toBe( 13200 );
 		} );
-		it( 'has the expected currency', function() {
+		it( 'has the expected currency', function () {
 			expect( clientCart.total.amount.currency ).toBe( 'USD' );
 		} );
-		it( 'has the expected total display value', function() {
+		it( 'has the expected total display value', function () {
 			expect( clientCart.total.amount.displayValue ).toBe( '$132' );
 		} );
-		it( 'has an array of items', function() {
+		it( 'has an array of items', function () {
 			expect( clientCart.items ).toBeDefined();
 		} );
-		it( 'has the expected number of line items', function() {
+		it( 'has the expected number of line items', function () {
 			expect( clientCart.items.length ).toBe( 1 );
 		} );
-		it( 'has an array of allowed payment methods', function() {
+		it( 'has an array of allowed payment methods', function () {
 			expect( clientCart.allowedPaymentMethods ).toBeDefined();
 		} );
-		it( 'has the expected credits', function() {
+		it( 'has the expected credits', function () {
 			expect( clientCart.credits.amount.value ).toBe( 10000 );
 			expect( clientCart.credits.amount.currency ).toBe( 'USD' );
 			expect( clientCart.credits.amount.displayValue ).toBe( '$100' );
 		} );
-		it( 'has the expected coupon', function() {
+		it( 'has the expected coupon', function () {
 			expect( clientCart.couponCode ).toBe( 'fakecoupon' );
 		} );
 
-		describe( 'first cart item (plan)', function() {
-			it( 'has an id', function() {
+		describe( 'first cart item (plan)', function () {
+			it( 'has an id', function () {
 				expect( clientCart.items[ 0 ].id ).toBeDefined();
 			} );
-			it( 'has the expected label', function() {
+			it( 'has the expected label', function () {
 				expect( clientCart.items[ 0 ].label ).toBe( 'WordPress.com Personal' );
 			} );
-			it( 'has the expected type', function() {
+			it( 'has the expected type', function () {
 				expect( clientCart.items[ 0 ].type ).toBe( 'personal-bundle' );
 			} );
-			it( 'has the expected currency', function() {
+			it( 'has the expected currency', function () {
 				expect( clientCart.items[ 0 ].amount.currency ).toBe( 'USD' );
 			} );
-			it( 'has the expected value', function() {
+			it( 'has the expected value', function () {
 				expect( clientCart.items[ 0 ].amount.value ).toBe( 14400 );
 			} );
-			it( 'has the expected display value', function() {
+			it( 'has the expected display value', function () {
 				expect( clientCart.items[ 0 ].amount.displayValue ).toBe( '$144' );
 			} );
 		} );
 
-		describe( 'taxes', function() {
-			it( 'has an id', function() {
+		describe( 'taxes', function () {
+			it( 'has an id', function () {
 				expect( clientCart.tax.id ).toBeDefined();
 			} );
-			it( 'has the expected label', function() {
+			it( 'has the expected label', function () {
 				expect( clientCart.tax.label ).toBe( 'Tax' );
 			} );
-			it( 'has the expected type', function() {
+			it( 'has the expected type', function () {
 				expect( clientCart.tax.type ).toBe( 'tax' );
 			} );
-			it( 'has the expected currency', function() {
+			it( 'has the expected currency', function () {
 				expect( clientCart.tax.amount.currency ).toBe( 'USD' );
 			} );
-			it( 'has the expected value', function() {
+			it( 'has the expected value', function () {
 				expect( clientCart.tax.amount.value ).toBe( 500 );
 			} );
-			it( 'has the expected display value', function() {
+			it( 'has the expected display value', function () {
 				expect( clientCart.tax.amount.displayValue ).toBe( '$5' );
 			} );
 		} );
 
-		describe( 'coupon', function() {
-			it( 'has an id', function() {
+		describe( 'coupon', function () {
+			it( 'has an id', function () {
 				expect( clientCart.coupon.id ).toBeDefined();
 			} );
-			it( 'has the expected label', function() {
+			it( 'has the expected label', function () {
 				expect( clientCart.coupon.label ).toBe( 'Coupon: fakecoupon' );
 			} );
-			it( 'has the expected type', function() {
+			it( 'has the expected type', function () {
 				expect( clientCart.coupon.type ).toBe( 'coupon' );
 			} );
-			it( 'has the expected currency', function() {
+			it( 'has the expected currency', function () {
 				expect( clientCart.coupon.amount.currency ).toBe( 'USD' );
 			} );
-			it( 'has the expected value', function() {
+			it( 'has the expected value', function () {
 				expect( clientCart.coupon.amount.value ).toBe( 1700 );
 			} );
-			it( 'has the expected display value', function() {
+			it( 'has the expected display value', function () {
 				expect( clientCart.coupon.amount.displayValue ).toBe( '-$17' );
 			} );
 		} );
 
-		describe( 'allowed payment methods', function() {
-			it( 'contains the expected slugs', function() {
+		describe( 'allowed payment methods', function () {
+			it( 'contains the expected slugs', function () {
 				expect( clientCart.allowedPaymentMethods ).toStrictEqual( [
 					'card',
 					'ebanx',

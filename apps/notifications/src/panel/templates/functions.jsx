@@ -67,7 +67,7 @@ const toBlocks = text =>
 			// Not! This is fun. This: again; isn't emphasized.
 			// May detect false positive if colon found in first sentence.
 			const defined = /^[\w\s-_]+:/.test( raw )
-				? `<strong>${ raw.split( ':' )[ 0 ] }:</strong>${ raw.replace( /^[^:]+:/, '' ) }`
+				? `<strong>${ raw.split( ':' )[ 0 ]}:</strong>${ raw.replace( /^[^:]+:/, '' ) }`
 				: raw;
 
 			// inline `code` snippets
@@ -130,7 +130,7 @@ const toBlocks = text =>
 
 export function internalP( html ) {
 	return html.split( '\n\n' ).map( ( chunk, i ) => {
-		const key = `block-text-${ i }-${ chunk.length }-${ chunk.slice( 0, 3 ) }-${ chunk.slice(
+		const key = `block-text-${ i }-${ chunk.length}-${ chunk.slice( 0, 3 ) }-${ chunk.slice(
 			-3
 		) }`;
 		const blocks = toBlocks( chunk );
@@ -151,7 +151,7 @@ export function p( html, className ) {
 		className = 'wpnc__paragraph';
 	}
 	return html.split( '\n\n' ).map( ( chunk, i ) => {
-		const key = `block-text-${ i }-${ chunk.length }-${ chunk.slice( 0, 3 ) }-${ chunk.slice(
+		const key = `block-text-${ i }-${ chunk.length}-${ chunk.slice( 0, 3 ) }-${ chunk.slice(
 			-3
 		) }`;
 		const blocks = toBlocks( chunk );
@@ -175,7 +175,7 @@ export function getSignature( blocks, note ) {
 		return [];
 	}
 
-	return blocks.map( function( block ) {
+	return blocks.map( function ( block ) {
 		var type = 'text';
 		var id = null;
 
@@ -221,7 +221,7 @@ export function formatString() {
 	var args = [].slice.apply( arguments );
 	var str = args.shift();
 
-	return str.replace( /{(\d+)}/g, function( match, number ) {
+	return str.replace( /{(\d+)}/g, function ( match, number ) {
 		return typeof args[ number ] != 'undefined' ? args[ number ] : match;
 	} );
 }
@@ -229,7 +229,7 @@ export function formatString() {
 export function zipWithSignature( blocks, note ) {
 	var signature = getSignature( blocks, note );
 
-	return blocks.map( function( block, i ) {
+	return blocks.map( function ( block, i ) {
 		return {
 			block: block,
 			signature: signature[ i ],

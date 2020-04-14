@@ -16,7 +16,7 @@ const timestamped = query => ( {
 
 const isEqualQuery = ( a, b ) => isEqual( omit( a, '_timestamp' ), omit( b, '_timestamp' ) );
 
-const initialReducer = ( state, query ) => ( state === false ? timestamped( query ) : state );
+const initialReducer = ( state, query ) => ( state === false ? timestamped( query ) : state) ;
 const currentReducer = ( state, query ) =>
 	! isEqualQuery( state, query ) ? timestamped( query ) : state;
 

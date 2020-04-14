@@ -125,7 +125,7 @@ export function recordShowMoreResults( searchQuery, pageNumber, section ) {
 
 function processFiltersForAnalytics( filters ) {
 	const convertArraysToCSV = input =>
-		mapValues( input, value => ( Array.isArray( value ) ? value.join( ',' ) : value ) );
+		mapValues( input, value => ( Array.isArray( value ) ? value.join( ',' ) : value)  );
 	const prepareKeys = input => mapKeys( input, ( value, key ) => `filters_${ snakeCase( key ) }` );
 	const transformation = flow( prepareKeys, convertArraysToCSV );
 	return transformation( filters );

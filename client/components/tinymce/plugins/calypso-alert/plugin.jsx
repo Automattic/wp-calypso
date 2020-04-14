@@ -14,7 +14,7 @@ import Alert from './alert';
 function calypsoAlert( editor ) {
 	let node;
 
-	editor.on( 'init', function() {
+	editor.on( 'init', function () {
 		node = document.createElement( 'div' );
 		node.setAttribute( 'class', 'alert-container' );
 		editor.getContainer().appendChild( node );
@@ -52,7 +52,7 @@ function calypsoAlert( editor ) {
 		};
 	} );
 
-	editor.on( 'remove', function() {
+	editor.on( 'remove', function () {
 		ReactDom.unmountComponentAtNode( node );
 		node.parentNode.removeChild( node );
 		node = null;

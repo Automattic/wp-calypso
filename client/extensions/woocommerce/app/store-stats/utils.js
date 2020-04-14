@@ -54,7 +54,7 @@ export function calculateDelta( item, previousItem, attr, unit ) {
 		'is-favorable': value !== 0 && isIncreaseFavorable,
 		'is-unfavorable': value !== 0 && ! isIncreaseFavorable,
 	} );
-	const since = previousItem ? `since ${ previousItem[ sinceLabels[ unit ] ] }` : null;
+	const since = previousItem ? `since ${ previousItem[ sinceLabels[ unit ] ]}` : null;
 	return {
 		classes: classes.split( ' ' ),
 		since,
@@ -114,12 +114,8 @@ export function getUnitPeriod( date, unit ) {
  */
 export function getEndPeriod( date, unit ) {
 	return unit === 'week'
-		? moment( date )
-				.endOf( 'isoWeek' )
-				.format( 'YYYY-MM-DD' )
-		: moment( date )
-				.endOf( unit )
-				.format( 'YYYY-MM-DD' );
+		? moment( date ).endOf( 'isoWeek' ).format( 'YYYY-MM-DD' )
+		: moment( date ).endOf( unit ).format( 'YYYY-MM-DD' );
 }
 
 /**
@@ -132,12 +128,8 @@ export function getEndPeriod( date, unit ) {
  */
 export function getStartPeriod( date, unit ) {
 	return unit === 'week'
-		? moment( date )
-				.startOf( 'isoWeek' )
-				.format( 'YYYY-MM-DD' )
-		: moment( date )
-				.startOf( unit )
-				.format( 'YYYY-MM-DD' );
+		? moment( date ).startOf( 'isoWeek' ).format( 'YYYY-MM-DD' )
+		: moment( date ).startOf( unit ).format( 'YYYY-MM-DD' );
 }
 
 /**
@@ -192,7 +184,7 @@ export function getDeltaFromData( data, selectedDate, stat, unit ) {
 	let delta = {};
 	let previousItem = false;
 
-	forEach( data, function( item ) {
+	forEach( data, function ( item ) {
 		if ( previousItem ) {
 			if ( item.period === selectedDate ) {
 				delta = calculateDelta( item, previousItem, stat, unit );

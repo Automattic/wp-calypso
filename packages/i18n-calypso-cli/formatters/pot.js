@@ -46,7 +46,7 @@ module.exports = function pot( matches, options ) {
 	output += '\n';
 
 	matches = matches
-		.map( function( match ) {
+		.map( function ( match ) {
 			const matchId = uniqueMatchId( match );
 			const firstMatch = uniqueMatchesMap[ matchId ];
 
@@ -76,23 +76,23 @@ module.exports = function pot( matches, options ) {
 
 			return match;
 		} )
-		.filter( function( match ) {
+		.filter( function ( match ) {
 			// removes undefined
 			return match;
 		} );
 
 	output += matches
-		.map( function( match ) {
+		.map( function ( match ) {
 			let matchPotStr = '';
 
 			matchPotStr += Object.keys( match.lines )
-				.map( function( line ) {
+				.map( function ( line ) {
 					return '#: ' + line + '\n';
 				} )
 				.join( '' );
 
 			matchPotStr += Object.keys( match.comments )
-				.map( function( commentLine ) {
+				.map( function ( commentLine ) {
 					return '#. ' + commentLine + '\n';
 				} )
 				.join( '' );

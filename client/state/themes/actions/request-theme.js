@@ -8,7 +8,11 @@ import { map } from 'lodash';
  */
 import wpcom from 'lib/wp';
 import { fetchThemeInformation as fetchWporgThemeInformation } from 'lib/wporg';
-import { THEME_REQUEST, THEME_REQUEST_SUCCESS, THEME_REQUEST_FAILURE } from 'state/themes/action-types';
+import {
+	THEME_REQUEST,
+	THEME_REQUEST_SUCCESS,
+	THEME_REQUEST_FAILURE,
+} from 'state/themes/action-types';
 import { receiveTheme } from 'state/themes/actions/receive-theme';
 import { receiveThemes } from 'state/themes/actions/receive-themes';
 import { themeRequestFailure } from 'state/themes/actions/theme-request-failure';

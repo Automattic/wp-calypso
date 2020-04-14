@@ -109,7 +109,7 @@ class SiteRedirectStep extends React.Component {
 		canRedirect(
 			this.props.selectedSite.ID,
 			domain,
-			function( error ) {
+			function ( error ) {
 				if ( error ) {
 					this.props.errorNotice( this.getValidationErrorMessage( domain, error ) );
 					return;

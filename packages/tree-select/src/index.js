@@ -32,7 +32,7 @@ export default function treeSelect( getDependents, selector, options = {} ) {
 
 	const { getCacheKey = defaultGetCacheKey } = options;
 
-	const cachedSelector = function( state, ...args ) {
+	const cachedSelector = function ( state, ...args ) {
 		const dependents = getDependents( state, ...args );
 
 		if ( process.env.NODE_ENV !== 'production' ) {

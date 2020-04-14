@@ -9,7 +9,7 @@
  import { baz, combineReducersWithPersistence as bar, createReducer } from 'state/utils';
  */
 
-module.exports = function( file, api ) {
+module.exports = function ( file, api ) {
 	// alias the jscodeshift API
 	const j = api.jscodeshift;
 	// parse JS code into an AST

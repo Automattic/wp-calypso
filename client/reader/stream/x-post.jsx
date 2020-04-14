@@ -49,7 +49,7 @@ class CrossPost extends PureComponent {
 		const rootNode = ReactDom.findDOMNode( this );
 
 		if ( closest( event.target, '.should-scroll', rootNode ) ) {
-			setTimeout( function() {
+			setTimeout( function () {
 				window.scrollTo( 0, 0 );
 			}, 100 );
 		}
@@ -80,7 +80,7 @@ class CrossPost extends PureComponent {
 	};
 
 	getSiteNameFromURL = siteURL => {
-		return siteURL && `+${ url.parse( siteURL ).hostname.split( '.' )[ 0 ] }`;
+		return siteURL && `+${ url.parse( siteURL ).hostname.split( '.' )[ 0 ]}`;
 	};
 
 	getDescription = authorFirstName => {

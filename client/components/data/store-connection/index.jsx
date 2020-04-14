@@ -36,13 +36,13 @@ class StoreConnection extends React.Component {
 	}
 
 	addStoreListeners = stores => {
-		stores.forEach( function( store ) {
+		stores.forEach( function ( store ) {
 			store.on( 'change', this.handleStoresChanged );
 		}, this );
 	};
 
 	removeStoreListeners = stores => {
-		stores.forEach( function( store ) {
+		stores.forEach( function ( store ) {
 			store.off( 'change', this.handleStoresChanged );
 		}, this );
 	};

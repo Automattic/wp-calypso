@@ -73,14 +73,8 @@ class StatsWidget extends Component {
 					context: 'Date range for which stats are being displayed',
 					args: {
 						// LL is a date localized by momentjs
-						startDate: localizedDate
-							.startOf( 'week' )
-							.add( 1, 'd' )
-							.format( 'LL' ),
-						endDate: localizedDate
-							.endOf( 'week' )
-							.add( 1, 'd' )
-							.format( 'LL' ),
+						startDate: localizedDate.startOf( 'week' ).add( 1, 'd' ).format( 'LL' ),
+						endDate: localizedDate.endOf( 'week' ).add( 1, 'd' ).format( 'LL' ),
 					},
 				} );
 				break;

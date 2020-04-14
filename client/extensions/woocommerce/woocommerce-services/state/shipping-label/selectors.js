@@ -220,13 +220,7 @@ const getRawAddressErrors = ( appState, addressData, siteId, shouldValidatePhone
 				'Please enter a phone number for your origin address. ' +
 					"It's required because this shipment requires a customs form."
 			);
-		} else if (
-			10 !==
-			phone
-				.split( /\D+/g )
-				.join( '' )
-				.replace( /^1/, '' ).length
-		) {
+		} else if ( 10 !== phone.split( /\D+/g ).join( '' ).replace( /^1/, '' ).length ) {
 			errors.phone = translate(
 				'Customs forms require a 10-digit phone number. ' +
 					'Please edit your phone number so it has at most 10 digits.'

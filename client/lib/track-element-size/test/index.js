@@ -22,7 +22,7 @@ describe( 'useWindowResizeCallback', () => {
 
 	// Auxiliary function to create a test component.
 	function createTestComponent( cb, mock ) {
-		return function() {
+		return function () {
 			const resizeCallback = useCallback( cb, [] );
 			const resizeRef = useWindowResizeCallback( resizeCallback );
 			const ref = node => {
@@ -54,7 +54,7 @@ describe( 'useWindowResizeCallback', () => {
 	} );
 
 	it( 'does not throw an error there is no callback', () => {
-		const TestComponent = function() {
+		const TestComponent = function () {
 			const ref = useWindowResizeCallback();
 			return <div ref={ ref } />;
 		};
@@ -143,7 +143,7 @@ describe( 'useWindowResizeRect', () => {
 
 	// Auxiliary function to create a test component.
 	function createTestComponent( mock ) {
-		return function() {
+		return function () {
 			renderTracker();
 
 			const [ resizeRef, rect ] = useWindowResizeRect();

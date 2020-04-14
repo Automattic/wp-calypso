@@ -37,7 +37,7 @@ class AuthorSelector extends React.Component {
 
 	static defaultProps = {
 		showAuthorMenu: false,
-		onClose: function() {},
+		onClose: function () {},
 		allowSingleUser: false,
 		popoverPosition: 'bottom left',
 	};

@@ -159,7 +159,7 @@ class AboutStep extends Component {
 	}
 
 	handleSegmentClick( value ) {
-		return function() {
+		return function () {
 			this.setState( {
 				userExperience: value,
 			} );

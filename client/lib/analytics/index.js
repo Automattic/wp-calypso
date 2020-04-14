@@ -38,7 +38,7 @@ const identifyUserDebug = debug( 'calypso:analytics:identifyUser' );
 const queueDebug = debug( 'calypso:analytics:queue' );
 
 const analytics = {
-	initialize: function( currentUser, superProps ) {
+	initialize: function ( currentUser, superProps ) {
 		return initializeAnalytics( currentUser, superProps ).then( () => {
 			const user = getCurrentUser();
 
@@ -52,7 +52,7 @@ const analytics = {
 
 	// pageView is a wrapper for pageview events across Tracks and GA.
 	pageView: {
-		record: function( urlPath, pageTitle, params = {} ) {
+		record: function ( urlPath, pageTitle, params = {} ) {
 			// Add delay to avoid stale `_dl` in recorded calypso_page_view event details.
 			// `_dl` (browserdocumentlocation) is read from the current URL by external JavaScript.
 			setTimeout( () => {
@@ -77,11 +77,11 @@ const analytics = {
 
 	// This is `localStorage` queue for delayed event triggers.
 	queue: {
-		lsKey: function() {
+		lsKey: function () {
 			return 'analyticsQueue';
 		},
 
-		clear: function() {
+		clear: function () {
 			if ( ! window.localStorage ) {
 				return; // Not possible.
 			}
@@ -89,7 +89,7 @@ const analytics = {
 			window.localStorage.removeItem( analytics.queue.lsKey() );
 		},
 
-		get: function() {
+		get: function () {
 			if ( ! window.localStorage ) {
 				return []; // Not possible.
 			}
@@ -102,7 +102,7 @@ const analytics = {
 			return items;
 		},
 
-		add: function( trigger, ...args ) {
+		add: function ( trigger, ...args ) {
 			if ( ! window.localStorage ) {
 				// If unable to queue, trigger it now.
 				if ( 'string' === typeof trigger && 'function' === typeof analytics[ trigger ] ) {
@@ -121,7 +121,7 @@ const analytics = {
 			window.localStorage.setItem( analytics.queue.lsKey(), JSON.stringify( items ) );
 		},
 
-		process: function() {
+		process: function () {
 			if ( ! window.localStorage ) {
 				return; // Not possible.
 			}
@@ -148,7 +148,7 @@ const analytics = {
 	// the method after page navigation.
 	recordSignupComplete,
 
-	recordAddToCart: function( { cartItem } ) {
+	recordAddToCart: function ( { cartItem } ) {
 		// TODO: move Tracks event here?
 		// Google Analytics
 		const usdValue = costToUSD( cartItem.cost, cartItem.currency );
@@ -157,7 +157,7 @@ const analytics = {
 		recordAddToCart( cartItem );
 	},
 
-	recordPurchase: function( { cart, orderId } ) {
+	recordPurchase: function ( { cart, orderId } ) {
 		if ( cart.total_cost >= 0.01 ) {
 			// Google Analytics
 			const usdValue = costToUSD( cart.total_cost, cart.currency );
@@ -173,7 +173,7 @@ const analytics = {
 	},
 
 	tracks: {
-		recordEvent: function( eventName, eventProperties ) {
+		recordEvent: function ( eventName, eventProperties ) {
 			analyticsEvents.once( 'record-event', ( _eventName, _eventProperties ) => {
 				analytics.emit( 'record-event', _eventName, _eventProperties );
 			} );
@@ -181,18 +181,18 @@ const analytics = {
 			recordTracksEvent( eventName, eventProperties );
 		},
 
-		recordPageView: function( urlPath, params ) {
+		recordPageView: function ( urlPath, params ) {
 			recordTracksPageView( urlPath, params );
 		},
 
-		setOptOut: function( isOptingOut ) {
+		setOptOut: function ( isOptingOut ) {
 			pushEventToTracksQueue( [ 'setOptOut', isOptingOut ] );
 		},
 	},
 
 	// Refer platform tracking.
 	refer: {
-		recordPageView: function() {
+		recordPageView: function () {
 			if ( ! window || ! window.location ) {
 				return; // Not possible.
 			}
@@ -214,7 +214,7 @@ const analytics = {
 		},
 	},
 
-	identifyUser: function( userData ) {
+	identifyUser: function ( userData ) {
 		identifyUser( userData );
 
 		// neccessary because calypso-analytics/initializeAnalytics no longer calls out to ad-tracking
@@ -225,11 +225,11 @@ const analytics = {
 		}
 	},
 
-	setProperties: function( properties ) {
+	setProperties: function ( properties ) {
 		pushEventToTracksQueue( [ 'setProperties', properties ] );
 	},
 
-	clearedIdentity: function() {
+	clearedIdentity: function () {
 		pushEventToTracksQueue( [ 'clearIdentity' ] );
 	},
 };

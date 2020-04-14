@@ -75,7 +75,7 @@ const Label = styled.label< LabelProps >`
 	margin-bottom: 8px;
 
 	:hover {
-		cursor: ${props => ( props.isDisabled ? 'default' : 'pointer' )};
+		cursor: ${props => ( props.isDisabled ? 'default' : 'pointer') };
 	}
 `;
 

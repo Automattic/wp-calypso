@@ -38,9 +38,7 @@ export function findCountryFromNumber( inputNumber ) {
 	let lastExactMatch;
 
 	for ( let i = 1; i <= 6; i++ ) {
-		const query = stripNonDigits( inputNumber )
-			.replace( /^0+/, '' )
-			.substr( 0, i );
+		const query = stripNonDigits( inputNumber ).replace( /^0+/, '' ).substr( 0, i );
 		if ( Object.prototype.hasOwnProperty.call( dialCodeMap, query ) ) {
 			const exactMatch = dialCodeMap[ query ];
 			if ( exactMatch.length === 1 ) {

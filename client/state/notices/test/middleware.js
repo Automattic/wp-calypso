@@ -41,7 +41,7 @@ describe( 'middleware', () => {
 
 		beforeAll( () => {
 			handlers.DUMMY_TYPE = action => ( dispatch, getState ) =>
-				dispatch( successNotice( `${ getState() } ${ action.target }` ) );
+				dispatch( successNotice( `${ getState() } ${ action.target}` ) );
 		} );
 
 		afterAll( () => {

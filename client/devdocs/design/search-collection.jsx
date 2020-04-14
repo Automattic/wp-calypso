@@ -42,7 +42,7 @@ const getReadmeFilePath = ( section, example ) => {
 	}
 
 	if ( ! path.startsWith( '/' ) ) {
-		path = `/client/${ section === 'design' ? 'components' : section }/${ path }`;
+		path = `/client/${ section === 'design' ? 'components' : section}/${ path }`;
 	}
 
 	if ( ! path.endsWith( 'README.md' ) ) {

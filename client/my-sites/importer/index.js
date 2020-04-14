@@ -11,7 +11,7 @@ import { importSite } from 'my-sites/importer/controller';
 import { makeLayout, render as clientRender } from 'controller';
 import { navigation, redirectWithoutSite, sites, siteSelection } from 'my-sites/controller';
 
-export default function() {
+export default function () {
 	page( '/import', siteSelection, navigation, sites, makeLayout, clientRender );
 
 	page(

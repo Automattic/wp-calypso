@@ -28,7 +28,7 @@ function findPkgJson( target ) {
 /**
  * Gather all of the external deps and throw them in a set
  */
-const getPackageJsonDeps = ( function() {
+const getPackageJsonDeps = ( function () {
 	let packageJsonDeps;
 
 	return root => {
@@ -102,7 +102,7 @@ const addNewlineBeforeDocBlock = str => str.replace( /(import.*\n)(\/\*\*)/, '$1
  */
 const sortImports = importNodes => _.sortBy( importNodes, node => node.source.value );
 
-module.exports = function( file, api ) {
+module.exports = function ( file, api ) {
 	const j = api.jscodeshift;
 	const src = j( file.source );
 	const includeFormatBlock = shouldFormat( src.toSource().toString() );

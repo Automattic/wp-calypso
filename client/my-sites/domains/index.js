@@ -35,7 +35,7 @@ function getCommonHandlers( {
 	return handlers;
 }
 
-export default function() {
+export default function () {
 	SiftScience.recordUser();
 
 	// These redirects are work-around in response to an issue where navigating back after a

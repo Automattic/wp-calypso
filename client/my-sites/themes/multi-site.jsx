@@ -28,7 +28,7 @@ export default props => (
 		origin="wpcom"
 		defaultOption="activate"
 		secondaryOption="tryandcustomize"
-		getScreenshotOption={ function() {
+		getScreenshotOption={ function () {
 			return 'info';
 		} }
 	/>

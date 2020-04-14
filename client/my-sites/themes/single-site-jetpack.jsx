@@ -40,7 +40,7 @@ const ConnectedThemesSelection = connectOptions( props => {
 	return (
 		<ThemesSelection
 			{ ...props }
-			getOptions={ function( theme ) {
+			getOptions={ function ( theme ) {
 				return pickBy(
 					addTracking( props.options ),
 					option => ! ( option.hideForTheme && option.hideForTheme( theme, props.siteId ) )
@@ -127,19 +127,19 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 							filter={ filter }
 							vertical={ vertical }
 							siteId={ siteId /* This is for the options in the '...' menu only */ }
-							getScreenshotUrl={ function( theme ) {
+							getScreenshotUrl={ function ( theme ) {
 								if ( ! getScreenshotOption( theme ).getUrl ) {
 									return null;
 								}
 								return getScreenshotOption( theme ).getUrl( theme );
 							} }
-							onScreenshotClick={ function( themeId ) {
+							onScreenshotClick={ function ( themeId ) {
 								if ( ! getScreenshotOption( themeId ).action ) {
 									return;
 								}
 								getScreenshotOption( themeId ).action( themeId );
 							} }
-							getActionLabel={ function( theme ) {
+							getActionLabel={ function ( theme ) {
 								return getScreenshotOption( theme ).label;
 							} }
 							trackScrollPage={ props.trackScrollPage }

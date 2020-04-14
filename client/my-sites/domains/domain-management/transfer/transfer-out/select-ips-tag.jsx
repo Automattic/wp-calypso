@@ -192,12 +192,14 @@ class SelectIpsTag extends Component {
 			>
 				<h1>{ translate( 'Transfer Confirmation' ) }</h1>
 				<p>
-					{ // translators: %s is a domain name. eg newDomain.com
-					translate(
-						'Please verify you wish to set the registrar for ' +
-							'{{strong}}%(selectedDomainName)s{{/strong}} to the following:',
-						{ args: { selectedDomainName }, components: { strong: <strong /> } }
-					) }
+					{
+						// translators: %s is a domain name. eg newDomain.com
+						translate(
+							'Please verify you wish to set the registrar for ' +
+								'{{strong}}%(selectedDomainName)s{{/strong}} to the following:',
+							{ args: { selectedDomainName }, components: { strong: <strong /> } }
+						)
+					}
 				</p>
 				<p>
 					<strong>{ selectedRegistrar.tag }</strong>

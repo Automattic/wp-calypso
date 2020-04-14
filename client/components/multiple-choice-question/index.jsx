@@ -20,7 +20,7 @@ import './style.scss';
 const shuffleAnswers = memoize(
 	answers => {
 		const shuffles = shuffle( answers.filter( ( { doNotShuffle } ) => ! doNotShuffle ) );
-		return answers.map( answer => ( answer.doNotShuffle ? answer : shuffles.pop() ) );
+		return answers.map( answer => ( answer.doNotShuffle ? answer : shuffles.pop())  );
 	},
 	answers =>
 		answers.map( answer => values( pick( answer, 'id', 'doNotShuffle' ) ).join( '_' ) ).join( '-' )

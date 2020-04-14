@@ -11,15 +11,15 @@ import { FunctionComponent } from 'react';
  * child component, of which there should be exactly one.
  */
 declare type FormFieldAnnotationProps = {
-    labelText: string;
-    normalDescription?: string;
-    errorDescription: string;
-    isError?: boolean;
-    isDisabled?: boolean;
-    className?: string;
-    labelId: string;
-    descriptionId: string;
-    formFieldId: string;
+	labelText: string;
+	normalDescription?: string;
+	errorDescription: string;
+	isError?: boolean;
+	isDisabled?: boolean;
+	className?: string;
+	labelId: string;
+	descriptionId: string;
+	formFieldId: string;
 };
-declare const FormFieldAnnotation: FunctionComponent<FormFieldAnnotationProps>;
+declare const FormFieldAnnotation: FunctionComponent< FormFieldAnnotationProps >;
 export default FormFieldAnnotation;

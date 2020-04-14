@@ -182,14 +182,11 @@ export const editorAutosave = post => dispatch => {
 
 	dispatch( { type: EDITOR_AUTOSAVE } );
 
-	const autosaveResult = wpcom
-		.undocumented()
-		.site( post.site_ID )
-		.postAutosave( post.ID, {
-			content: post.content,
-			title: post.title,
-			excerpt: post.excerpt,
-		} );
+	const autosaveResult = wpcom.undocumented().site( post.site_ID ).postAutosave( post.ID, {
+		content: post.content,
+		title: post.title,
+		excerpt: post.excerpt,
+	} );
 
 	autosaveResult
 		.then( autosave => dispatch( editorAutosaveSuccess( autosave ) ) )

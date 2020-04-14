@@ -11,7 +11,8 @@ describe( 'wpcom.plans', () => {
 
 	describe( 'wpcom.plans.list', () => {
 		it( 'should request current WordPress plans list', done => {
-			plans.list()
+			plans
+				.list()
 				.then( data => {
 					assert.equal( 'object', typeof data );
 					assert.ok( data instanceof Array );
@@ -23,7 +24,8 @@ describe( 'wpcom.plans', () => {
 
 	describe( 'wpcom.plans.features', () => {
 		it( 'should request list of features of active WordPress.com plans', done => {
-			plans.features()
+			plans
+				.features()
 				.then( data => {
 					assert.equal( 'object', typeof data );
 					assert.ok( data instanceof Array );
