@@ -1,4 +1,5 @@
 .vscode
+.yarn
 /assets/
 /build/
 /docs/
