@@ -74,6 +74,17 @@ export function recordSignupInvalidStep( flow, step ) {
 	analytics.tracks.recordEvent( 'calypso_signup_goto_invalid_step', { flow, step } );
 }
 
+/**
+ * Records registration event.
+ *
+ * @param {object} param {}
+ * @param {object} param.userData User data
+ * @param {string} param.userData.ID User id
+ * @param {string} param.userData.username Username
+ * @param {string} param.userData.email Email
+ * @param {string} param.flow Registration flow
+ * @param {string} param.type Registration type
+ */
 export function recordRegistration( { userData, flow, type } ) {
 	signupDebug( 'recordRegistration:', { userData, flow, type } );
 
