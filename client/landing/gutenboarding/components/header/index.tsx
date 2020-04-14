@@ -2,8 +2,8 @@
  * External dependencies
  */
 import { sprintf } from '@wordpress/i18n';
+import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@automattic/react-i18n';
-import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { FunctionComponent, useEffect, useCallback, useState } from 'react';
@@ -118,7 +118,7 @@ const Header: FunctionComponent = () => {
 		}
 	}, [ pathname, setShowSignupDialog ] );
 
-	const isMobile = useMobileBreakpoint();
+	const isMobile = useViewportMatch( 'mobile', '<' );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	const domainElement = domain ? (
