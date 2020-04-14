@@ -30,12 +30,12 @@ import { isBusinessPlan, isPremiumPlan } from 'lib/plans';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { Button, Card } from '@automattic/components';
 import JetpackProductInstall from 'my-sites/plans/current-plan/jetpack-product-install';
+import { getTaskList } from 'lib/checklist';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import { getTaskList } from 'my-sites/checklist/wpcom-checklist/wpcom-task-list';
 
 interface Props {
 	isPremium: boolean;

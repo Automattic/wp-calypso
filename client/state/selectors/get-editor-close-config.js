@@ -38,14 +38,6 @@ export default function getEditorCloseConfig( state, siteId, postType, fseParent
 
 	const doesRouteMatch = matcher => lastNonEditorRoute.match( matcher );
 
-	// Back to the checklist.
-	if ( doesRouteMatch( /^\/checklist\/?/ ) ) {
-		return {
-			url: `/checklist/${ getSiteSlug( state, siteId ) }`,
-			label: translate( 'Checklist' ),
-		};
-	}
-
 	// Back to the themes list.
 	if ( doesRouteMatch( /^\/themes\/?/ ) ) {
 		return {
