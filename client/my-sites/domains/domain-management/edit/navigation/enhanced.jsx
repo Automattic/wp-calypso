@@ -27,6 +27,8 @@ import { type as domainTypes, transferStatus } from 'lib/domains/constants';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import { isCancelable } from 'lib/purchases';
 import { cancelPurchase } from 'me/purchases/paths';
+import { getUnmappedUrl } from 'lib/site/utils';
+import { withoutHttp } from 'lib/url';
 import RemovePurchase from 'me/purchases/remove-purchase';
 
 import './style.scss';
@@ -101,7 +103,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 			return null;
 		}
 
-		const { wpcom_url: wpcomUrl } = selectedSite;
+		const wpcomUrl = withoutHttp( getUnmappedUrl( selectedSite ) );
 		const { pointsToWpcom, isPrimary } = domain;
 
 		let description;
