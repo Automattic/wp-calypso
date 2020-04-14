@@ -16,11 +16,9 @@ import { select } from '@wordpress/data';
 import tracksRecordEvent from './track-record-event';
 
 /**
- * Handler function which takes over tracking blocks-searching events
- * from the "Autocomplete / Block" component.
- * It worths mentioning that the running of it
- * will be conditioned by a valid target,
- * which is previously handled by the `selectorHandler()` function.
+ * Handles search tracking from "Autocomplete / Block" component.
+ *
+ * Depends on a valid target, which was previously handled by the `selectorHandler()` function.
  * The most important checks are performed there.
  */
 const trackInserterInlineSearchTerm = () => {
