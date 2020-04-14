@@ -66,7 +66,7 @@
 
 - Breaking: Required Node version increased from >=0.10.x to >=4.x ([see ESLint 3.0.0 migration guide](http://eslint.org/docs/user-guide/migrating-to-3.0.0))
 - Fix: `jsx-classname-namespace` can accurately validate elements assigned to variables within render ([#21](https://github.com/Automattic/eslint-plugin-wpcalypso/pull/21))
-- Fix: `npm test` is now run synchronously so it exits with a non-zero code on failure
+- Fix: `yarn test` is now run synchronously so it exits with a non-zero code on failure
 - Fix: Replace ES2015 variable (`let`) declarations to accommodate older Node versions
 - Fix: Remove unintended debugging statement from i18n-no-newlines rule
 - Fix: jsx-classname-namespace will now correctly identify index components in Windows environments ([#18](https://github.com/Automattic/eslint-plugin-wpcalypso/pull/18))
@@ -91,7 +91,7 @@
 
 - Fix: jsx-classname-namespace: Skip validation on render call expressions (ReactDOM.render)
 - General: Upgrade ESLint (^1.10.3 to ^2.13.1) and babel-eslint (^5.0.0-beta6 to ^6.1.0)
-- General: Add `npm run lint` npm script, included in `npm test`
+- General: Add `yarn run lint` npm script, included in `yarn test`
 
 #### v1.3.1 (2016-06-17)
 

@@ -40,15 +40,15 @@ fi
 # print usage is no mode matched
 if [ -z "$MODE" ]
 then
-	echo "Usage: npm run sync:blog-posts-block [arguments]"
-	echo
-	echo Possible arguments:
-	echo --branch=master
-	echo --release=1.0.0-alpha.17
-	echo
-	echo You can find the latest release ID on https://github.com/Automattic/newspack-blocks/releases/latest
-	echo
-	exit 1
+    echo "Usage: yarn run sync:blog-posts-block [arguments]"
+    echo
+    echo Possible arguments:
+    echo --branch=master
+    echo --release=1.0.0-alpha.17
+    echo
+    echo You can find the latest release ID on https://github.com/Automattic/newspack-blocks/releases/latest
+    echo
+    exit 1
 fi
 
 TARGET=./full-site-editing-plugin/blog-posts-block/newspack-homepage-articles
@@ -98,7 +98,7 @@ elif [ "$MODE" = "path" ] ; then
 	CODE="${npm_config_path}"
 elif [ "$MODE" = "npm" ] ; then
 	# Way back to wp-calypso root:
-	CODE="../../node_modules/newspack-blocks" 
+	CODE="../../node_modules/newspack-blocks"
 fi
 
 if [ ! -d "$CODE" ] ; then
