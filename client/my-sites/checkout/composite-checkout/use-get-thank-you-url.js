@@ -6,6 +6,7 @@ import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { defaultRegistry } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
+import { isEmpty } from 'lodash';
 
 const { select } = defaultRegistry;
 const debug = debugFactory( 'calypso:composite-checkout-thank-you' );
@@ -50,6 +51,7 @@ export function getThankYouPageUrl( {
 	isEligibleForSignupDestinationResult,
 	hideNudge,
 	didPurchaseFail,
+	isTransactionResultEmpty,
 } ) {
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
 	// (i.e. on WordPress.com), or a Jetpack or WP.com site's block editor (in wp-admin).
@@ -121,6 +123,7 @@ export function getThankYouPageUrl( {
 		siteSlug,
 		hideNudge,
 		didPurchaseFail,
+		isTransactionResultEmpty,
 	} );
 	if ( redirectPathForConciergeUpsell ) {
 		return redirectPathForConciergeUpsell;
@@ -186,8 +189,9 @@ function maybeShowPlanBumpOfferConcierge( {
 	cart,
 	siteSlug,
 	didPurchaseFail,
+	isTransactionResultEmpty,
 } ) {
-	if ( hasPersonalPlan( cart ) && ! didPurchaseFail ) {
+	if ( hasPersonalPlan( cart ) && ! isTransactionResultEmpty && ! didPurchaseFail ) {
 		if ( 'variantShowPlanBump' === abtest( 'showPremiumPlanBump' ) ) {
 			return `/checkout/${ siteSlug }/offer-plan-upgrade/premium/${ pendingOrReceiptId }`;
 		}
@@ -202,6 +206,7 @@ function getRedirectUrlForConciergeNudge( {
 	siteSlug,
 	hideNudge,
 	didPurchaseFail,
+	isTransactionResultEmpty,
 } ) {
 	if ( hideNudge ) {
 		return;
@@ -223,6 +228,7 @@ function getRedirectUrlForConciergeNudge( {
 			cart,
 			siteSlug,
 			didPurchaseFail,
+			isTransactionResultEmpty,
 		} );
 		if ( upgradePath ) {
 			return upgradePath;
@@ -317,6 +323,7 @@ export function useGetThankYouUrl( {
 		const didPurchaseFail = Object.keys( transactionResult.failed_purchases ?? {} ).length > 0;
 		const receiptId = transactionResult.receipt_id;
 		const orderId = transactionResult.order_id;
+		const isTransactionResultEmpty = isEmpty( transactionResult );
 
 		debug( 'getThankYouUrl called with', {
 			siteSlug,
@@ -332,6 +339,7 @@ export function useGetThankYouUrl( {
 			isEligibleForSignupDestinationResult,
 			hideNudge,
 			didPurchaseFail,
+			isTransactionResultEmpty,
 		} );
 		const url = getThankYouPageUrl( {
 			siteSlug,
@@ -347,6 +355,7 @@ export function useGetThankYouUrl( {
 			isEligibleForSignupDestinationResult,
 			hideNudge,
 			didPurchaseFail,
+			isTransactionResultEmpty,
 		} );
 		debug( 'getThankYouUrl returned', url );
 		return url;
