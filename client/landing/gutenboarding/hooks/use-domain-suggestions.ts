@@ -10,16 +10,23 @@ import { useDebounce } from 'use-debounce';
 import { DOMAIN_SUGGESTIONS_STORE } from '../stores/domain-suggestions';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { selectorDebounce } from '../constants';
+import { useCurrentStep } from '../path';
 
 export function useDomainSuggestions( searchOverride = '' ) {
 	const { siteTitle, siteVertical, domainSearch } = useSelect( select =>
 		select( ONBOARD_STORE ).getState()
 	);
+	const currentStep = useCurrentStep();
+	const prioritisedSearch = searchOverride.trim() || domainSearch.trim() || siteTitle;
+	let searchVal;
 
-	const [ searchTerm ] = useDebounce(
-		searchOverride.trim() || domainSearch.trim() || siteTitle || siteVertical?.label.trim() || '',
-		selectorDebounce
-	);
+	if ( currentStep !== 'IntentGathering' ) {
+		searchVal = prioritisedSearch || siteVertical?.label.trim() || '';
+	} else {
+		searchVal = prioritisedSearch || '';
+	}
+
+	const [ searchTerm ] = useDebounce( searchVal, selectorDebounce );
 
 	return useSelect(
 		select => {
