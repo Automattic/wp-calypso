@@ -25,12 +25,13 @@ import tracksRecordEvent from './track-record-event';
  */
 const trackInserterInlineSearchTerm = () => {
 	// Pick up the search term from the `content` block attributes.
-	const search_term = get( select( 'core/block-editor' ).getSelectedBlock(), [
-		'attributes',
-		'content',
-	] );
+	const search_term = get(
+		select( 'core/block-editor' ).getSelectedBlock(),
+		[ 'attributes', 'content' ],
+		''
+	).substr( 1 );
 
-	if ( search_term.length < 4 ) {
+	if ( search_term.length < 3 ) {
 		return;
 	}
 
