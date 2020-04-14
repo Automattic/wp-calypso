@@ -9,7 +9,7 @@ interface CloseButtonProps extends Button.ButtonProps {
 	onClose: () => void;
 }
 
-const CloseButton = ( { onClose, ...buttonProps }: CloseButtonProps ) => {
+const CloseButton: React.FunctionComponent< CloseButtonProps > = ( { onClose, ...buttonProps } ) => {
 	const { __ } = useI18n();
 	return (
 		<Button onClick={ onClose } label={ __( 'Close dialog' ) } { ...buttonProps }>
