@@ -68,7 +68,7 @@ function selectorHandler() {
 	}
 
 	/*
-	 * Skip if content doesn't start with the slash `/`.
+	 * Skip if content doesn't start with the slash `/` (as this is the shortcut used to trigger the block inserter).
 	 * Also, check if the block search term is a valid block name
 	 * ie: only lowercase alphanumeric characters and dashes,
 	 * and must begin with a letter.
