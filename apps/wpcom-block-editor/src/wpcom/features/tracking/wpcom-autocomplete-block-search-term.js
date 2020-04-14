@@ -101,7 +101,7 @@ function selectorHandler() {
 /**
  * Return the event definition object to track `wpcom_block_picker_search_term`,
  * adding the context event property with the `autocompleter` value.
- * Also, it tracks `wpcom_block_picker_no_results` is the searcher doesn't return any result.
+ * It also tracks `wpcom_block_picker_no_results` if the search term doesn't return any results.
  *
  * @returns {{handler: Function, selector: string|Function, type: string}} event object definition.
  */
