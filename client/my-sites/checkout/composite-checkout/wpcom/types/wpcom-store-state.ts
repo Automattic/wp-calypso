@@ -5,12 +5,6 @@ import {
 	DomainContactDetails,
 	PossiblyCompleteDomainContactDetails,
 	DomainContactDetailsErrors,
-	CaDomainContactExtraDetails, // eslint-disable-line @typescript-eslint/no-unused-vars
-	CaDomainContactExtraDetailsErrors, // eslint-disable-line @typescript-eslint/no-unused-vars
-	UkDomainContactExtraDetails, // eslint-disable-line @typescript-eslint/no-unused-vars
-	UkDomainContactExtraDetailsErrors, // eslint-disable-line @typescript-eslint/no-unused-vars
-	FrDomainContactExtraDetails, // eslint-disable-line @typescript-eslint/no-unused-vars
-	FrDomainContactExtraDetailsErrors, // eslint-disable-line @typescript-eslint/no-unused-vars
 } from './backend/domain-contact-details-components';
 
 /*
