@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { SVG, Button } from '@wordpress/components';
+import { Button, Path, SVG } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
 
 interface CloseButtonProps extends Button.ButtonProps {
