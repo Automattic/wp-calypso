@@ -315,7 +315,7 @@ export class PlansFeaturesMain extends Component {
 		if (
 			customerType !== 'personal' &&
 			currentQueryArgs &&
-			'business-bundle' in currentQueryArgs
+			( 'business-bundle' in currentQueryArgs || 'ecommerce-bundle' in currentQueryArgs )
 		) {
 			return plans.filter( plan => isPlanOneOfType( plan, [ TYPE_BUSINESS, TYPE_ECOMMERCE ] ) );
 		}
