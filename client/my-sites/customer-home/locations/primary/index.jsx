@@ -17,7 +17,7 @@ const cardComponents = {
 	'home-primary-checklist-site-setup': ChecklistSiteSetup,
 	'home-primary-quick-links': QuickLinks,
 	'home-education-mastering-gutenberg': MasteringGutenberg,
-	'home-action-wp-for-teams': WpForTeamsQuickLinks,
+	'home-action-wp-for-teams-quick-links': WpForTeamsQuickLinks,
 };
 
 const Primary = ( { checklistMode, cards } ) => {
