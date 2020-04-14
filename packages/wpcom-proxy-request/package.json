@@ -36,9 +36,9 @@
 	],
 	"types": "types",
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist",
-		"prepublish": "check-npm-client && npm run clean",
-		"prepare": "check-npm-client && transpile"
+		"clean": "node ../../bin/check-package-manager.js && npx rimraf dist",
+		"prepublish": "node ../../bin/check-package-manager.js && npm run clean",
+		"prepare": "node ../../bin/check-package-manager.js && transpile"
 	},
 	"dependencies": {
 		"@babel/runtime": "^7.8.4",

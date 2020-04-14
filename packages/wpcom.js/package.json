@@ -7,11 +7,11 @@
 	"author": "Automattic, Inc.",
 	"private": true,
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist",
-		"prepublish": "check-npm-client && yarn run clean",
-		"prepare": "check-npm-client && run-s build:modules build:bundle",
-		"build:modules": "check-npm-client && transpile",
-		"build:bundle": "check-npm-client && webpack --display errors-only"
+		"clean": "node ../../bin/check-package-manager.js && npx rimraf dist",
+		"prepublish": "node ../../bin/check-package-manager.js && yarn run clean",
+		"prepare": "node ../../bin/check-package-manager.js && run-s build:modules build:bundle",
+		"build:modules": "node ../../bin/check-package-manager.js && transpile",
+		"build:bundle": "node ../../bin/check-package-manager.js && webpack --display errors-only"
 	},
 	"keywords": [
 		"wordpress",

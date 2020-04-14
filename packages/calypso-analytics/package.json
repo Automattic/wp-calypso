@@ -25,10 +25,10 @@
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist \"../../.tsc-cache/packages__calypso-analytics*\"",
-		"prepublish": "check-npm-client && yarn run clean",
-		"prepare": "check-npm-client && tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
-		"watch": "check-npm-client && tsc --project ./tsconfig.json --watch"
+		"clean": "node ../../bin/check-package-manager.js && npx rimraf dist \"../../.tsc-cache/packages__calypso-analytics*\"",
+		"prepublish": "node ../../bin/check-package-manager.js && yarn run clean",
+		"prepare": "node ../../bin/check-package-manager.js && tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
+		"watch": "node ../../bin/check-package-manager.js && tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"@automattic/load-script": "^1.0.0",

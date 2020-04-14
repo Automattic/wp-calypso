@@ -25,10 +25,10 @@
 	],
 	"types": "dist/types",
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist ../../.tsc-cache/packages__react-i18n*",
-		"prepare": "check-npm-client && tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
-		"prepublish": "check-npm-client && yarn run clean",
-		"watch": "check-npm-client && tsc --project ./tsconfig.json --watch"
+		"clean": "node ../../bin/check-package-manager.js && npx rimraf dist ../../.tsc-cache/packages__react-i18n*",
+		"prepare": "node ../../bin/check-package-manager.js && tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
+		"prepublish": "node ../../bin/check-package-manager.js && yarn run clean",
+		"watch": "node ../../bin/check-package-manager.js && tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"tslib": "^1.10.0",

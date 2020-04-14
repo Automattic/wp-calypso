@@ -7,7 +7,7 @@
 		"calypso-codemods": "./index.js"
 	},
 	"scripts": {
-		"test": "check-npm-client && jest"
+		"test": "node ../../bin/check-package-manager.js && jest"
 	},
 	"repository": {
 		"type": "git",
