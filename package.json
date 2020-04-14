@@ -310,5 +310,8 @@
 			"pre-commit": "npm run -s install-if-no-packages && node bin/pre-commit-hook.js",
 			"pre-push": "npm run -s install-if-no-packages && node bin/pre-push-hook.js"
 		}
+	},
+	"devDependencies": {
+		"wp-prettier": "2.0.4"
 	}
 }
