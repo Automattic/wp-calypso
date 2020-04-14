@@ -25,3 +25,8 @@ export function useTotal() {
 	const [ , total ] = useLineItems();
 	return total;
 }
+
+export function useTax() {
+	const [ items ] = useLineItems();
+	return items.find( item => item.type === 'tax' );
+}
