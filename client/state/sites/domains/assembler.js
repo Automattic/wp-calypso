@@ -77,6 +77,7 @@ export const createSiteDomainObject = domain => {
 		subscriptionId: domain.subscription_id,
 		supportsDomainConnect: Boolean( domain.supports_domain_connect ),
 		supportsGdprConsentManagement: Boolean( domain.supports_gdpr_consent_management ),
+		supportsTransferApproval: Boolean( domain.supports_transfer_approval ),
 		tldMaintenanceEndTime: domain.tld_maintenance_end_time,
 		transferAwayEligibleAt: ! domain.transfer_away_eligible_at
 			? null

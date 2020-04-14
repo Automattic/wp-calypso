@@ -117,12 +117,34 @@ class OutboundTransferConfirmation extends React.PureComponent {
 		}
 	}
 
-	render() {
-		const { domain, translate } = this.props;
+	renderAcceptButton() {
+		return (
+			<Button
+				primary
+				busy={ this.state.isAccepting }
+				disabled={ this.isRequesting() }
+				className="outbound-transfer-confirmation__accept-transfer"
+				onClick={ this.onAcceptTransferClick }
+			>
+				{ this.props.translate( 'Accept transfer' ) }
+			</Button>
+		);
+	}
 
-		if ( ! domain.pendingTransfer ) {
-			return null;
-		}
+	renderCancelButton() {
+		return (
+			<Button
+				busy={ this.state.isCanceling }
+				disabled={ this.isRequesting() }
+				onClick={ this.onCancelTransferClick }
+			>
+				{ this.props.translate( 'Cancel transfer' ) }
+			</Button>
+		);
+	}
+
+	renderWithCancelButtonOnly() {
+		const { domain, translate } = this.props;
 
 		if ( domain.currentUserCanManage ) {
 			return (
@@ -130,28 +152,53 @@ class OutboundTransferConfirmation extends React.PureComponent {
 					<p>
 						{ translate(
 							'We received a notification that you would like to transfer this domain to another registrar. ' +
+								'You can cancel the transfer if you want to keep your domain with ' +
+								'WordPress.com. If you take no action, the transfer will automatically process 7 days ' +
+								'from when it was started at your new provider.'
+						) }
+					</p>
+
+					<p>{ this.renderCancelButton() }</p>
+				</>
+			);
+		}
+
+		return (
+			<>
+				<p>
+					{ translate(
+						'We received a notification that you would like to transfer this domain to another registrar. ' +
+							'Please contact the owner, %(owner)s, if you want to cancel it. ' +
+							'If you take no action, the transfer will automatically process 7 days from when it was ' +
+							'started at your new provider.',
+						{
+							args: {
+								owner: domain.owner,
+							},
+						}
+					) }
+				</p>
+			</>
+		);
+	}
+
+	renderWithAcceptButton() {
+		const { domain, translate } = this.props;
+		if ( domain.currentUserCanManage ) {
+			return (
+				<>
+					<p>
+						{ translate(
+							'We received a notification that you would like to transfer this domain to another registrar. ' +
 								'Accept the transfer to complete the process or cancel it to keep your domain with ' +
-								'WordPress.com.'
+								'WordPress.com. If you take no action, the transfer will automatically process 7 days ' +
+								'from when it was started at your new provider.'
 						) }
 					</p>
 
 					<p>
-						<Button
-							primary
-							busy={ this.state.isAccepting }
-							disabled={ this.isRequesting() }
-							className="outbound-transfer-confirmation__accept-transfer"
-							onClick={ this.onAcceptTransferClick }
-						>
-							{ translate( 'Accept transfer' ) }
-						</Button>
-						<Button
-							busy={ this.state.isCanceling }
-							disabled={ this.isRequesting() }
-							onClick={ this.onCancelTransferClick }
-						>
-							{ translate( 'Cancel transfer' ) }
-						</Button>
+						{ this.renderAcceptButton() }
+						{ this.renderCancelButton() }
 					</p>
 				</>
 			);
@@ -162,7 +209,9 @@ class OutboundTransferConfirmation extends React.PureComponent {
 				<p>
 					{ translate(
 						'We received a notification that you would like to transfer this domain to another registrar. ' +
-							'Please contact the owner, %(owner)s, to complete the process or cancel it.',
+							'Please contact the owner, %(owner)s, to complete the process or cancel it. ' +
+							'If you take no action, the transfer will automatically process 7 days from when it was ' +
+							'started at your new provider.',
 						{
 							args: {
 								owner: domain.owner,
@@ -172,6 +221,20 @@ class OutboundTransferConfirmation extends React.PureComponent {
 				</p>
 			</>
 		);
+	}
+
+	render() {
+		const { domain } = this.props;
+
+		if ( ! domain.pendingTransfer ) {
+			return null;
+		}
+
+		if ( domain.supportsTransferApproval ) {
+			return this.renderWithAcceptButton();
+		}
+
+		return this.renderWithCancelButtonOnly();
 	}
 }
 
