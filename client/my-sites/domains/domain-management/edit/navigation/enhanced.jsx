@@ -85,20 +85,22 @@ class DomainManagementNavigationEnhanced extends React.Component {
 			return null;
 		}
 
-		let navigationText;
 		let navigationDescription;
 
-		navigationText = translate( 'Manage your email accounts' );
+		let navigationText = translate( 'Manage your email accounts' );
+
 		if ( hasGSuiteWithUs( domain ) ) {
-			const gsuiteMailboxCount = getGSuiteMailboxCount( domain );
+			const gSuiteMailboxCount = getGSuiteMailboxCount( domain );
+
 			navigationDescription = translate(
 				'%(gSuiteMailboxCount)d mailbox',
 				'%(gSuiteMailboxCount)d mailboxes',
 				{
-					count: gsuiteMailboxCount,
+					count: gSuiteMailboxCount,
 					args: {
-						gSuiteMailboxCount: gsuiteMailboxCount,
+						gSuiteMailboxCount,
 					},
+					comment: 'The number of GSuite mailboxes active for the current domain',
 				}
 			);
 		} else if ( emailForwardsCount > 0 ) {
@@ -108,13 +110,16 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				{
 					count: emailForwardsCount,
 					args: {
-						emailForwardsCount: emailForwardsCount,
+						emailForwardsCount,
 					},
+					comment: 'The number of email forwards active for the current domain',
 				}
 			);
 		} else {
 			navigationText = translate( 'Set up your email' );
-			navigationDescription = translate( 'Not connected' );
+			navigationDescription = translate( 'Not connected', {
+				comment: 'The domain is not using any of the WordPress.com email solutions',
+			} );
 		}
 
 		return (
