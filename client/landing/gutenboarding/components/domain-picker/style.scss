@@ -197,7 +197,7 @@ $domain-picker__suggestion-item-height: 24px;
 .domain-picker__domain-tld {
 	color: var( --studio-blue-40 );
 	// margin for recommended badge. this margin shouldn't
-	// be place on the badge because if the badge falls
+	// be placed on the badge because if the badge falls
 	// on a newline, it will have whitespace on the left.
 	margin-right: 10px;
 }
