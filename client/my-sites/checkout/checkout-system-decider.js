@@ -66,7 +66,7 @@ export default function CheckoutSystemDecider( {
 		return null; // TODO: replace with loading page
 	}
 
-	if ( shouldShowCompositeCheckout( cart, countryCode, locale, product, isJetpack ) ) {
+	if ( shouldShowCompositeCheckout( cart, countryCode, locale, product, purchaseId, isJetpack ) ) {
 		return (
 			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
 				<CompositeCheckout
@@ -103,7 +103,14 @@ export default function CheckoutSystemDecider( {
 	);
 }
 
-function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, isJetpack ) {
+function shouldShowCompositeCheckout(
+	cart,
+	countryCode,
+	locale,
+	productSlug,
+	purchaseId,
+	isJetpack
+) {
 	if ( config.isEnabled( 'composite-checkout-force' ) ) {
 		debug( 'shouldShowCompositeCheckout true because force config is enabled' );
 		return true;
@@ -147,12 +154,17 @@ function shouldShowCompositeCheckout( cart, countryCode, locale, productSlug, is
 		return false;
 	}
 
-	// If the URL is adding a product, only allow things already supported
-	const slugsToAllow = [ 'personal', 'premium', 'blogger', 'ecommerce', 'business' ];
+	// If the URL is adding a product, only allow things already supported.
+	// Calypso uses special slugs that aren't real product slugs when adding
+	// products via URL, so we list those slugs here. Renewals use actual slugs,
+	// so they do not need to go through this check.
+	const isRenewal = !! purchaseId;
+	const pseudoSlugsToAllow = [ 'personal', 'premium', 'blogger', 'ecommerce', 'business' ];
 	const slugPrefixesToAllow = [ 'domain-mapping:' ];
 	if (
+		! isRenewal &&
 		productSlug &&
-		! slugsToAllow.find( slug => productSlug === slug ) &&
+		! pseudoSlugsToAllow.find( slug => productSlug === slug ) &&
 		! slugPrefixesToAllow.find( slugPrefix => productSlug.startsWith( slugPrefix ) )
 	) {
 		debug(

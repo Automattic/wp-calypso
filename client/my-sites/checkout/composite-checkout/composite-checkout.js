@@ -31,7 +31,7 @@ import {
 	useIsApplePayAvailable,
 	filterAppropriatePaymentMethods,
 } from './payment-method-helpers';
-import usePrepareProductForCart from './use-prepare-product-for-cart';
+import usePrepareProductsForCart from './use-prepare-product-for-cart';
 import notices from 'notices';
 import { isJetpackSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
@@ -157,11 +157,12 @@ export default function CompositeCheckout( {
 
 	const countriesList = useCountryList( overrideCountryList || [] );
 
-	const { productForCart, canInitializeCart } = usePrepareProductForCart(
+	const { productsForCart, canInitializeCart } = usePrepareProductsForCart( {
 		siteId,
 		product,
-		isJetpackNotAtomic
-	);
+		purchaseId,
+		isJetpackNotAtomic,
+	} );
 
 	const {
 		items,
@@ -185,7 +186,7 @@ export default function CompositeCheckout( {
 	} = useShoppingCart(
 		siteSlug,
 		canInitializeCart && ! isLoadingCartSynchronizer,
-		productForCart,
+		productsForCart,
 		couponCodeFromUrl,
 		setCart || wpcomSetCart,
 		getCart || wpcomGetCart,
