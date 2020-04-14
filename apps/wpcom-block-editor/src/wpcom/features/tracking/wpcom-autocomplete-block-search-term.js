@@ -15,7 +15,16 @@ import { select } from '@wordpress/data';
  */
 import tracksRecordEvent from './track-record-event';
 
+/**
+ * Handler function which takes over tracking blocks-searching events
+ * from the "Autocomplete / Block" component.
+ * It worths mentioning that the running of it
+ * will be conditioned by a valid target,
+ * which is previously handled by the `selectorHandler()` function.
+ * The most important checks are performed there.
+ */
 const trackAutocompleteBlockTerm = () => {
+	// Pick up the search term from the `content` block attributes.
 	const search_term = get( select( 'core/block-editor' ).getSelectedBlock(), [
 		'attributes',
 		'content',
@@ -32,7 +41,13 @@ const trackAutocompleteBlockTerm = () => {
 		context,
 	} );
 
-	// Check if there are results by looking for the popover autocomplete in the DOM which will only be present if there are blocks that match the search term.
+	/*
+	 * Check if there are results by looking for the popover autocomplete in the DOM
+	 * which will only be present
+	 * if there are blocks that match the search term.
+	 * Also, there is only a single popover Slot
+	 * and so only 1 popover can render at a time.
+	 */
 	const hasResults = !! document.querySelectorAll( '.components-autocomplete__popover' ).length;
 	if ( hasResults ) {
 		return;
