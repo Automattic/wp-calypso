@@ -34,7 +34,13 @@ When you add a new item to the queue, it is held in `localStorage` under the key
 
 ### Example of adding an item to the Queue
 
-`analytics.queue.add( trigger, arg1, arg2, ... );`
+```
+import { add } from 'lib/analytics/queue';
 
+add( moduleName, trigger, arg1, arg2, ... );
+```
+
+- `moduleName` This is the name of the module where the queued method exists, e.g. `signup`.
+  Available modules are configured in the `modules` constant in `queue.js`.
 - `trigger` This can be any function in the `analytics` object; e.g., `recordSignupComplete`.
 - `arg1, arg2, ...` Optional. These are the arguments ultimately passed to the `trigger` function.
