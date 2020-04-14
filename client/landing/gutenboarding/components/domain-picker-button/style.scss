@@ -1,6 +1,11 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
+@import '../../mixins.scss';
 
 .domain-picker-button {
+	&.components-button {
+		@include onboarding-medium-text;
+		color: var( --studio-gray-90 );
+	}
 	.dashicon {
 		margin-left: 0.5em;
 		margin-top: 2px;

@@ -3,6 +3,7 @@
  */
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import React, { FunctionComponent, useEffect, useCallback, useState } from 'react';
@@ -117,6 +118,8 @@ const Header: FunctionComponent = () => {
 		}
 	}, [ pathname, setShowSignupDialog ] );
 
+	const isMobile = useMobileBreakpoint();
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	const domainElement = domain ? (
 		domain.domain_name
@@ -126,10 +129,12 @@ const Header: FunctionComponent = () => {
 				placeholder: ! recommendedDomainSuggestion,
 			} ) }
 		>
-			{ recommendedDomainSuggestion
-				? /* translators: domain name is available, eg: "yourname.com is available" */
-				  sprintf( __( '%s is available' ), recommendedDomainSuggestion.domain_name )
-				: 'example.wordpress.com' }
+			{ isMobile && __( 'Domain available' ) }
+			{ ! isMobile &&
+				( recommendedDomainSuggestion
+					? /* translators: domain name is available, eg: "yourname.com is available" */
+					  sprintf( __( '%s is available' ), recommendedDomainSuggestion.domain_name )
+					: 'example.wordpress.com' ) }
 		</span>
 	);
 
