@@ -118,7 +118,6 @@ export class DomainWarnings extends React.PureComponent {
 			this.expiringDomainsCannotManage,
 			this.wrongNSMappedDomains,
 			this.newDomains,
-			this.pendingTransfer,
 			this.transferStatus,
 			this.newTransfersWrongNS,
 			this.pendingConsent,
@@ -830,40 +829,6 @@ export class DomainWarnings extends React.PureComponent {
 					section="domain-management"
 				/>
 			)
-		);
-	};
-
-	pendingTransfer = () => {
-		const domain = find( this.getDomains(), 'pendingTransfer' );
-		if ( ! domain ) {
-			return null;
-		}
-
-		const { translate } = this.props;
-		const compactNotice = translate( '{{strong}}%(domain)s{{/strong}} is pending transfer.', {
-				components: { strong: <strong /> },
-				args: { domain: domain.name },
-			} ),
-			fullNotice = translate(
-				'{{strong}}%(domain)s{{/strong}} is pending transfer. ' +
-					'You must wait for the transfer to finish, and then update the settings at the new registrar.',
-				{
-					components: { strong: <strong /> },
-					args: { domain: domain.name },
-				}
-			);
-
-		return (
-			<Notice
-				isCompact={ this.props.isCompact }
-				status="is-warning"
-				showDismiss={ false }
-				className="domain-warnings__notice"
-				key="pending-transfer"
-				text={ this.props.isCompact && compactNotice }
-			>
-				{ ! this.props.isCompact && fullNotice }
-			</Notice>
 		);
 	};
 
