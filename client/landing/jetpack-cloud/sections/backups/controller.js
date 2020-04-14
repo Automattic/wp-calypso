@@ -7,10 +7,10 @@ import React from 'react';
  * Internal dependencies
  */
 import { SiteOffsetProvider } from 'landing/jetpack-cloud/components/site-offset/context';
+import BackupActivityLogPage from './backup-activity-log';
 import BackupDetailPage from './detail';
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 import BackupsPage from './main';
-import BackupActivityLogPage from './backup-activity-log';
 
 export function wrapInSiteOffsetProvider( context, next ) {
 	context.primary = (
@@ -29,7 +29,13 @@ export function backups( context, next ) {
 
 /* handles /backups/activity/:site, see `backupsActivityPath` */
 export function backupActivity( context, next ) {
-	context.primary = <BackupActivityLogPage />;
+	context.primary = (
+		<BackupActivityLogPage
+			after={ context.query.after }
+			before={ context.query.before }
+			group={ context.query.group }
+		/>
+	);
 	next();
 }
 
