@@ -30,23 +30,17 @@ import {
 	recordTracksEvent,
 	withAnalytics,
 } from 'state/analytics/actions';
-import ActionBox from './action-box';
-
-/**
- * Image dependencies
- */
-import logoIcon from 'assets/images/customer-home/looka-logo-60.svg';
+import ActionBox from 'my-sites/customer-home/cards/primary/quick-links/action-box';
 
 /**
  * Style dependencies
  */
-import './style.scss';
+import 'my-sites/customer-home/cards/primary/quick-links/style.scss';
 
 export const QuickLinks = ( {
 	customizeUrl,
 	isStaticHomePage,
 	showCustomizer,
-	hasCustomDomain,
 	menusUrl,
 	editHomepageAction,
 	writePostAction,
@@ -54,14 +48,11 @@ export const QuickLinks = ( {
 	manageCommentsAction,
 	trackEditMenusAction,
 	trackCustomizeThemeAction,
-	changeThemeAction,
-	trackDesignLogoAction,
-	addEmailAction,
-	addDomainAction,
 } ) => {
 	const translate = useTranslate();
 
 	const quickLinks = (
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<div className="quick-links__boxes">
 			{ isStaticHomePage ? (
 				<ActionBox
@@ -118,32 +109,6 @@ export const QuickLinks = ( {
 					materialIcon="palette"
 				/>
 			) }
-			<ActionBox
-				onClick={ changeThemeAction }
-				label={ translate( 'Change theme' ) }
-				materialIcon="view_quilt"
-			/>
-			{ hasCustomDomain ? (
-				<ActionBox
-					onClick={ addEmailAction }
-					label={ translate( 'Add email' ) }
-					materialIcon="email"
-				/>
-			) : (
-				<ActionBox
-					onClick={ addDomainAction }
-					label={ translate( 'Add a domain' ) }
-					gridicon="domains"
-				/>
-			) }
-			<ActionBox
-				href="https://wp.me/logo-maker"
-				onClick={ trackDesignLogoAction }
-				target="_blank"
-				label={ translate( 'Create a logo with Looka' ) }
-				external
-				iconSrc={ logoIcon }
-			/>
 		</div>
 	);
 
@@ -226,47 +191,6 @@ const trackCustomizeThemeAction = isStaticHomePage =>
 		bumpStat( 'calypso_customer_home', 'my_site_customize_theme' )
 	);
 
-const changeThemeAction = ( siteSlug, isStaticHomePage ) =>
-	withAnalytics(
-		composeAnalytics(
-			recordTracksEvent( 'calypso_customer_home_my_site_change_theme_click', {
-				is_static_home_page: isStaticHomePage,
-			} ),
-			bumpStat( 'calypso_customer_home', 'my_site_change_theme' )
-		),
-		navigate( `/themes/${ siteSlug }` )
-	);
-
-const trackDesignLogoAction = isStaticHomePage =>
-	composeAnalytics(
-		recordTracksEvent( 'calypso_customer_home_my_site_design_logo_click', {
-			is_static_home_page: isStaticHomePage,
-		} ),
-		bumpStat( 'calypso_customer_home', 'my_site_design_logo' )
-	);
-
-const addEmailAction = ( siteSlug, isStaticHomePage ) =>
-	withAnalytics(
-		composeAnalytics(
-			recordTracksEvent( 'calypso_customer_home_my_site_add_email_click', {
-				is_static_home_page: isStaticHomePage,
-			} ),
-			bumpStat( 'calypso_customer_home', 'my_site_add_email' )
-		),
-		navigate( `/email/${ siteSlug }` )
-	);
-
-const addDomainAction = ( siteSlug, isStaticHomePage ) =>
-	withAnalytics(
-		composeAnalytics(
-			recordTracksEvent( 'calypso_customer_home_my_site_add_domain_click', {
-				is_static_home_page: isStaticHomePage,
-			} ),
-			bumpStat( 'calypso_customer_home', 'my_site_add_domain' )
-		),
-		navigate( `/domains/add/${ siteSlug }` )
-	);
-
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
@@ -297,10 +221,6 @@ const mapDispatchToProps = {
 	manageCommentsAction,
 	trackEditMenusAction,
 	trackCustomizeThemeAction,
-	changeThemeAction,
-	trackDesignLogoAction,
-	addEmailAction,
-	addDomainAction,
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
@@ -313,10 +233,6 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		manageCommentsAction: () => dispatchProps.manageCommentsAction( siteSlug, isStaticHomePage ),
 		trackEditMenusAction: () => dispatchProps.trackEditMenusAction( isStaticHomePage ),
 		trackCustomizeThemeAction: () => dispatchProps.trackCustomizeThemeAction( isStaticHomePage ),
-		changeThemeAction: () => dispatchProps.changeThemeAction( siteSlug, isStaticHomePage ),
-		trackDesignLogoAction: () => dispatchProps.trackDesignLogoAction( isStaticHomePage ),
-		addEmailAction: () => dispatchProps.addEmailAction( siteSlug, isStaticHomePage ),
-		addDomainAction: () => dispatchProps.addDomainAction( siteSlug, isStaticHomePage ),
 		...ownProps,
 	};
 };
