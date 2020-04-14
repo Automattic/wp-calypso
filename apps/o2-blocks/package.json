@@ -18,7 +18,7 @@
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
 		"clean": "check-npm-client && npx rimraf dist",
-		"prebuild": "check-npm-client && npm run clean",
+		"prebuild": "check-npm-client && yarn run clean",
 		"build": "check-npm-client && calypso-build editor='./src/editor.js' --env.WP"
 	},
 	"dependencies": {
