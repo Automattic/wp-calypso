@@ -762,9 +762,12 @@ const getFormSettings = settings => {
 
 		lang_id: settings.lang_id,
 		blog_public: settings.blog_public,
-		wpcom_coming_soon: settings.wpcom_coming_soon,
 		timezone_string: settings.timezone_string,
 	};
+
+	if ( 'variant' === abtest( 'ATPrivacy' ) ) {
+		formSettings.wpcom_coming_soon = settings.wpcom_coming_soon;
+	}
 
 	// handling `gmt_offset` and `timezone_string` values
 	const gmt_offset = settings.gmt_offset;
