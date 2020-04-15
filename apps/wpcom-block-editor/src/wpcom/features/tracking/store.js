@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import { get } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -69,7 +70,9 @@ const actions = {
 /*
  * Tracking selectors.
  */
-const selectors = {};
+const selectors = {
+	getSearchTerm: ( state, context ) => get( state, [ 'searcher', context, 'value' ] ),
+};
 
 registerStore( storeName, {
 	reducer,
