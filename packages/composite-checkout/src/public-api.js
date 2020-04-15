@@ -19,7 +19,7 @@ import {
 import CheckoutModal from './components/checkout-modal';
 import { renderDisplayValueMarkdown } from './lib/render';
 import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
-import { useLineItems, useTotal, useTax } from './lib/line-items';
+import { useLineItems, useTotal, useFirstLineItemOfType } from './lib/line-items';
 import {
 	createRegistry,
 	defaultRegistry,
@@ -89,6 +89,6 @@ export {
 	useRegisterStore,
 	useRegistry,
 	useSelect,
-	useTax,
+	useFirstLineItemOfType,
 	useTotal,
 };

@@ -26,7 +26,10 @@ export function useTotal() {
 	return total;
 }
 
-export function useTax() {
+export function useFirstLineItemOfType( itemType = null ) {
+	if ( ! itemType ) {
+		throw new Error( 'missing itemType for useFirstLineItemOfType' );
+	}
 	const [ items ] = useLineItems();
-	return items.find( item => item.type === 'tax' );
+	return items.find( item => item.type === itemType );
 }
