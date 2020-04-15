@@ -7,6 +7,247 @@ import {
 	DomainContactDetailsErrors,
 } from './backend/domain-contact-details-components';
 
+export type ManagedContactDetailsShape< T > = {
+	firstName: T;
+	lastName: T;
+	organization: T;
+	email: T;
+	alternateEmail: T;
+	phone: T;
+	phoneNumberCountry: T;
+	address1: T;
+	address2: T;
+	city: T;
+	state: T;
+	postalCode: T;
+	countryCode: T;
+	fax: T;
+	vatId: T;
+	tldExtraFields: ManagedContactDetailsTldExtraFieldsShape< T >;
+};
+
+type ManagedContactDetailsTldExtraFieldsShape< T > = {
+	ca?: {
+		lang: T;
+		legalType: T;
+		ciraAgreementAccepted: T;
+	};
+	uk?: {
+		registrantType: T;
+		registrationNumber: T;
+		tradingName: T;
+	};
+	fr?: {
+		registrantType: T;
+		trademarkNumber: T;
+		sirenSirat: T;
+	};
+};
+
+/*
+ * Asymmetrically combine two ManagedContactDetailsShape<T> objects 'update' and 'data'
+ * using two helper functions.
+ *
+ *   merge: (A,B) => B merges fields which exist in both update and data
+ *   construct: (A) => B constructs new fields which exist in update but not data
+ *
+ * Fields which exist in data but not update are copied, and fields which do not
+ * exist in either data or update do not exist in the result.
+ *
+ * More precisely, this function should satisfy the following property for all accessors A:
+ *
+ *   _.get( updateManagedContactDetailsShape( merge, construct, update, data ), A )
+ *     === merge( _.get( update, A ), _.get( data, A ) ) if update.A and data.A are defined;
+ *     === construct( _.get( update, A ) )               if update.A is defined and data.A is undefined;
+ *     === _.get( data, A )                              if data.A is defined and update.A is undefined;
+ *     === undefined                                     if data.A and update.A are undefined.
+ */
+export function updateManagedContactDetailsShape< A, B >(
+	merge: ( arg0: A, arg1: B ) => B,
+	construct: ( arg0: A ) => B,
+	update: ManagedContactDetailsShape< A >,
+	data: ManagedContactDetailsShape< B >
+): ManagedContactDetailsShape< B > {
+	const tldExtraFields: ManagedContactDetailsTldExtraFieldsShape< B > = {};
+
+	const combine = ( u, v ) => {
+		if ( typeof u !== 'undefined' && typeof v !== 'undefined' ) {
+			return merge( u, v );
+		} else if ( typeof u !== 'undefined' && typeof v === 'undefined' ) {
+			return construct( u );
+		} else if ( typeof u === 'undefined' && typeof v !== 'undefined' ) {
+			return v;
+		}
+		return undefined;
+	};
+
+	if ( data.tldExtraFields?.ca ) {
+		if ( update.tldExtraFields?.ca ) {
+			tldExtraFields.ca = {
+				lang: combine( update.tldExtraFields.ca.lang, data.tldExtraFields.ca.lang ),
+				legalType: combine( update.tldExtraFields.ca.legalType, data.tldExtraFields.ca.legalType ),
+				ciraAgreementAccepted: combine(
+					update.tldExtraFields.ca.ciraAgreementAccepted,
+					data.tldExtraFields.ca.ciraAgreementAccepted
+				),
+			};
+		} else {
+			tldExtraFields.ca = data.tldExtraFields.ca;
+		}
+	} else if ( update.tldExtraFields?.ca ) {
+		tldExtraFields.ca = {
+			lang: construct( update.tldExtraFields.ca.lang ),
+			legalType: construct( update.tldExtraFields.ca.legalType ),
+			ciraAgreementAccepted: construct( update.tldExtraFields.ca.ciraAgreementAccepted ),
+		};
+	}
+
+	if ( data.tldExtraFields?.uk ) {
+		if ( update.tldExtraFields?.uk ) {
+			tldExtraFields.uk = {
+				registrantType: combine(
+					update.tldExtraFields.uk.registrantType,
+					data.tldExtraFields.uk.registrantType
+				),
+				registrationNumber: combine(
+					update.tldExtraFields.uk.registrationNumber,
+					data.tldExtraFields.uk.registrationNumber
+				),
+				tradingName: combine(
+					update.tldExtraFields.uk.tradingName,
+					data.tldExtraFields.uk.tradingName
+				),
+			};
+		} else {
+			tldExtraFields.uk = data.tldExtraFields.uk;
+		}
+	} else if ( update.tldExtraFields?.uk ) {
+		tldExtraFields.uk = {
+			registrantType: construct( update.tldExtraFields.uk.registrantType ),
+			registrationNumber: construct( update.tldExtraFields.uk.registrationNumber ),
+			tradingName: construct( update.tldExtraFields.uk.tradingName ),
+		};
+	}
+
+	if ( data.tldExtraFields?.fr ) {
+		if ( update.tldExtraFields?.fr ) {
+			tldExtraFields.fr = {
+				registrantType: combine(
+					update.tldExtraFields.fr.registrantType,
+					data.tldExtraFields.fr.registrantType
+				),
+				trademarkNumber: combine(
+					update.tldExtraFields.fr.trademarkNumber,
+					data.tldExtraFields.fr.trademarkNumber
+				),
+				sirenSirat: combine(
+					update.tldExtraFields.fr.sirenSirat,
+					data.tldExtraFields.fr.sirenSirat
+				),
+			};
+		} else {
+			tldExtraFields.fr = data.tldExtraFields.fr;
+		}
+	} else if ( update.tldExtraFields?.fr ) {
+		tldExtraFields.fr = {
+			registrantType: construct( update.tldExtraFields.fr.registrantType ),
+			trademarkNumber: construct( update.tldExtraFields.fr.trademarkNumber ),
+			sirenSirat: construct( update.tldExtraFields.fr.sirenSirat ),
+		};
+	}
+
+	return {
+		firstName: combine( update.firstName, data.firstName ),
+		lastName: combine( update.lastName, data.lastName ),
+		organization: combine( update.organization, data.organization ),
+		email: combine( update.email, data.email ),
+		alternateEmail: combine( update.alternateEmail, data.alternateEmail ),
+		phone: combine( update.phone, data.phone ),
+		phoneNumberCountry: combine( update.phoneNumberCountry, data.phoneNumberCountry ),
+		address1: combine( update.address1, data.address1 ),
+		address2: combine( update.address2, data.address2 ),
+		city: combine( update.city, data.city ),
+		state: combine( update.state, data.state ),
+		postalCode: combine( update.postalCode, data.postalCode ),
+		countryCode: combine( update.countryCode, data.countryCode ),
+		fax: combine( update.fax, data.fax ),
+		vatId: combine( update.vatId, data.vatId ),
+		tldExtraFields,
+	};
+}
+
+export function flattenManagedContactDetailsShape< A, B >(
+	f: ( A ) => B,
+	x: ManagedContactDetailsShape< A >
+): Array< B > {
+	const values = [
+		f( x.firstName ),
+		f( x.lastName ),
+		f( x.organization ),
+		f( x.email ),
+		f( x.alternateEmail ),
+		f( x.phone ),
+		f( x.phoneNumberCountry ),
+		f( x.address1 ),
+		f( x.address2 ),
+		f( x.city ),
+		f( x.state ),
+		f( x.postalCode ),
+		f( x.countryCode ),
+		f( x.fax ),
+		f( x.vatId ),
+	];
+
+	const caValues =
+		x.tldExtraFields && x.tldExtraFields.ca
+			? [
+					f( x.tldExtraFields.ca.lang ),
+					f( x.tldExtraFields.ca.legalType ),
+					f( x.tldExtraFields.ca.ciraAgreementAccepted ),
+			  ]
+			: [];
+
+	const ukValues =
+		x.tldExtraFields && x.tldExtraFields.uk
+			? [
+					f( x.tldExtraFields.uk.registrantType ),
+					f( x.tldExtraFields.uk.registrationNumber ),
+					f( x.tldExtraFields.uk.tradingName ),
+			  ]
+			: [];
+
+	const frValues =
+		x.tldExtraFields && x.tldExtraFields.fr
+			? [
+					f( x.tldExtraFields.fr.registrantType ),
+					f( x.tldExtraFields.fr.trademarkNumber ),
+					f( x.tldExtraFields.fr.sirenSirat ),
+			  ]
+			: [];
+
+	return values.concat( caValues, ukValues, frValues );
+}
+
+/*
+ * The wpcom store hook stores an object with all the contact info
+ * which is used to share state across fields where appropriate.
+ * Each value keeps track of whether it has been edited and validated.
+ */
+export type ManagedContactDetails = ManagedContactDetailsShape< ManagedValue >;
+
+export type ManagedContactDetailsErrors = ManagedContactDetailsShape< undefined | string[] >;
+
+/*
+ * Intermediate type used to represent update payloads
+ */
+type ManagedContactDetailsUpdate = ManagedContactDetailsShape< undefined | string >;
+
+/*
+ * Different subsets of the details are mandatory depending on what is
+ * in the cart. This type lets us define these subsets declaratively.
+ */
+type ManagedContactDetailsRequiredMask = ManagedContactDetailsShape< boolean >;
+
 /*
  * All child components in composite checkout are controlled -- they accept
  * data from their parents and evaluate callbacks when edited, rather than
@@ -58,89 +299,37 @@ function setErrors( errors: string[] | undefined, oldData: ManagedValue ): Manag
 	return undefined === errors ? { ...oldData, errors: [] } : { ...oldData, errors };
 }
 
-/*
- * The wpcom store hook stores an object with all the contact info
- * which is used to share state across fields where appropriate.
- * Each value keeps track of whether it has been edited and validated.
- */
-export type ManagedContactDetails = {
-	firstName: ManagedValue;
-	lastName: ManagedValue;
-	organization: ManagedValue;
-	email: ManagedValue;
-	alternateEmail: ManagedValue;
-	phone: ManagedValue;
-	phoneNumberCountry: ManagedValue;
-	address1: ManagedValue;
-	address2: ManagedValue;
-	city: ManagedValue;
-	state: ManagedValue;
-	postalCode: ManagedValue;
-	countryCode: ManagedValue;
-	fax: ManagedValue;
-	vatId: ManagedValue;
-};
+function getManagedValuesList( details: ManagedContactDetails ): ManagedValue[] {
+	return flattenManagedContactDetailsShape( x => x, details );
+}
 
 export function isCompleteAndValid( details: ManagedContactDetails ): boolean {
-	const values = Object.values( details );
-	const result = values.length > 0 && values.every( isValid );
-	return result;
+	const values = getManagedValuesList( details );
+	return values.length > 0 && values.every( isValid );
 }
 
 export function isTouched( details: ManagedContactDetails ): boolean {
-	const values = Object.values( details );
+	const values = getManagedValuesList( details );
 	return values.length > 0 && values.every( value => value.isTouched );
 }
 
 export function areRequiredFieldsNotEmpty( details: ManagedContactDetails ): boolean {
-	const values = Object.values( details );
+	const values = getManagedValuesList( details );
 	return (
 		values.length > 0 && values.every( value => value.value?.length > 0 || ! value.isRequired )
 	);
 }
 
-/*
- * List of error messages for each field.
- */
-export type ManagedContactDetailsErrors = {
-	firstName?: string[];
-	lastName?: string[];
-	organization?: string[];
-	email?: string[];
-	alternateEmail?: string[];
-	phone?: string[];
-	phoneNumberCountry?: string[];
-	address1?: string[];
-	address2?: string[];
-	city?: string[];
-	state?: string[];
-	postalCode?: string[];
-	countryCode?: string[];
-	fax?: string[];
-	vatId?: string[];
-};
-
 function setManagedContactDetailsErrors(
 	errors: ManagedContactDetailsErrors,
 	details: ManagedContactDetails
 ): ManagedContactDetails {
-	return {
-		firstName: setErrors( errors.firstName, details.firstName ),
-		lastName: setErrors( errors.lastName, details.lastName ),
-		organization: setErrors( errors.organization, details.organization ),
-		email: setErrors( errors.email, details.email ),
-		alternateEmail: setErrors( errors.alternateEmail, details.alternateEmail ),
-		phone: setErrors( errors.phone, details.phone ),
-		phoneNumberCountry: setErrors( errors.phoneNumberCountry, details.phoneNumberCountry ),
-		address1: setErrors( errors.address1, details.address1 ),
-		address2: setErrors( errors.address2, details.address2 ),
-		city: setErrors( errors.city, details.city ),
-		state: setErrors( errors.state, details.state ),
-		postalCode: setErrors( errors.postalCode, details.postalCode ),
-		countryCode: setErrors( errors.countryCode, details.countryCode ),
-		fax: setErrors( errors.fax, details.fax ),
-		vatId: setErrors( errors.vatId, details.vatId ),
-	};
+	return updateManagedContactDetailsShape(
+		( error, detail ) => setErrors( error, detail ),
+		error => getInitialManagedValue( { errors: error } ),
+		errors,
+		details
+	);
 }
 
 /*
@@ -317,25 +506,7 @@ export type WpcomStoreState = {
 	contactDetails: ManagedContactDetails;
 };
 
-export const domainManagedContactDetails: ManagedContactDetails = {
-	firstName: getInitialManagedValue( { isRequired: true } ),
-	lastName: getInitialManagedValue( { isRequired: true } ),
-	organization: getInitialManagedValue( { isRequired: true } ),
-	email: getInitialManagedValue( { isRequired: true } ),
-	alternateEmail: getInitialManagedValue( { isRequired: true } ),
-	phone: getInitialManagedValue( { isRequired: true } ),
-	phoneNumberCountry: getInitialManagedValue( { isRequired: true } ),
-	address1: getInitialManagedValue( { isRequired: true } ),
-	address2: getInitialManagedValue( { isRequired: true } ),
-	city: getInitialManagedValue( { isRequired: true } ),
-	state: getInitialManagedValue( { isRequired: true } ),
-	postalCode: getInitialManagedValue( { isRequired: true } ),
-	countryCode: getInitialManagedValue( { isRequired: true } ),
-	fax: getInitialManagedValue( { isRequired: true } ),
-	vatId: getInitialManagedValue( { isRequired: true } ),
-};
-
-export const taxManagedContactDetails: ManagedContactDetails = {
+export const emptyManagedContactDetails: ManagedContactDetails = {
 	firstName: getInitialManagedValue(),
 	lastName: getInitialManagedValue(),
 	organization: getInitialManagedValue(),
@@ -347,10 +518,63 @@ export const taxManagedContactDetails: ManagedContactDetails = {
 	address2: getInitialManagedValue(),
 	city: getInitialManagedValue(),
 	state: getInitialManagedValue(),
-	postalCode: getInitialManagedValue( { isRequired: true } ),
-	countryCode: getInitialManagedValue( { isRequired: true } ),
+	postalCode: getInitialManagedValue(),
+	countryCode: getInitialManagedValue(),
 	fax: getInitialManagedValue(),
 	vatId: getInitialManagedValue(),
+	tldExtraFields: {},
+};
+
+export function applyContactDetailsRequiredMask(
+	details: ManagedContactDetails,
+	requiredMask: ManagedContactDetailsRequiredMask
+): ManagedContactDetails {
+	return updateManagedContactDetailsShape(
+		( isRequired, managedValue ) => {
+			return { ...managedValue, isRequired };
+		},
+		isRequired => getInitialManagedValue( { isRequired } ),
+		requiredMask,
+		details
+	);
+}
+
+export const domainRequiredContactDetails: ManagedContactDetailsRequiredMask = {
+	firstName: true,
+	lastName: true,
+	organization: false,
+	email: true,
+	alternateEmail: false,
+	phone: true,
+	phoneNumberCountry: false,
+	address1: true,
+	address2: false,
+	city: true,
+	state: true,
+	postalCode: true,
+	countryCode: true,
+	fax: false,
+	vatId: false,
+	tldExtraFields: {},
+};
+
+export const taxRequiredContactDetails: ManagedContactDetailsRequiredMask = {
+	firstName: false,
+	lastName: false,
+	organization: false,
+	email: false,
+	alternateEmail: false,
+	phone: false,
+	phoneNumberCountry: false,
+	address1: false,
+	address2: false,
+	city: false,
+	state: false,
+	postalCode: true,
+	countryCode: true,
+	fax: false,
+	vatId: false,
+	tldExtraFields: {},
 };
 
 export function getInitialWpcomStoreState(

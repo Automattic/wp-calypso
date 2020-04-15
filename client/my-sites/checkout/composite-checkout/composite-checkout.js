@@ -16,8 +16,10 @@ import {
 	useShoppingCart,
 	FormFieldAnnotation,
 	areDomainsInLineItems,
-	domainManagedContactDetails,
-	taxManagedContactDetails,
+	emptyManagedContactDetails,
+	applyContactDetailsRequiredMask,
+	domainRequiredContactDetails,
+	taxRequiredContactDetails,
 } from 'my-sites/checkout/composite-checkout/wpcom';
 import { CheckoutProvider, defaultRegistry } from '@automattic/composite-checkout';
 
@@ -214,7 +216,10 @@ export default function CompositeCheckout( {
 	useWpcomStore(
 		registerStore,
 		recordEvent,
-		areDomainsInLineItems( items ) ? domainManagedContactDetails : taxManagedContactDetails,
+		applyContactDetailsRequiredMask(
+			emptyManagedContactDetails,
+			areDomainsInLineItems( items ) ? domainRequiredContactDetails : taxRequiredContactDetails
+		),
 		updateContactDetailsCache
 	);
 
