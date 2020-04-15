@@ -39,7 +39,7 @@ class WpcomChecklist extends Component {
 		// Asynchronously load and render component with passed props.
 		return (
 			<AsyncLoad
-				require="my-sites/customer-home/cards/primary/checklist-site-setup/wpcom-checklist/component.jsx"
+				require="my-sites/customer-home/cards/tasks/checklist-site-setup/wpcom-checklist/component.jsx"
 				{ ...ownProps }
 			/>
 		);
