@@ -21,8 +21,7 @@ export default function createContactValidationCallback( {
 		paymentMethodId,
 		contactDetails,
 		domainNames,
-		applyDomainContactValidationResults,
-		decoratedContactDetails
+		applyDomainContactValidationResults
 	) {
 		return new Promise( resolve => {
 			const { contact_information, domain_names } = prepareDomainContactValidationRequest(
@@ -65,9 +64,7 @@ export default function createContactValidationCallback( {
 					applyDomainContactValidationResults(
 						formatDomainContactValidationResponse( data ?? {} )
 					);
-					resolve(
-						! ( data && data.success && areRequiredFieldsNotEmpty( decoratedContactDetails ) )
-					);
+					resolve( ! ( data && data.success && areRequiredFieldsNotEmpty( contactDetails ) ) );
 				},
 				{ apiVersion: '1.2' }
 			);
