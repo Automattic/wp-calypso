@@ -27,7 +27,7 @@ import getConciergeNextAppointment from 'state/selectors/get-concierge-next-appo
  */
 import './style.scss';
 
-const QuickStartCard = ( {
+const QuickStart = ( {
 	translate,
 	siteId,
 	siteSlug,
@@ -116,4 +116,4 @@ export default connect(
 				)
 			),
 	} )
-)( localize( QuickStartCard ) );
+)( localize( QuickStart ) );
