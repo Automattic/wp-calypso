@@ -26,10 +26,10 @@ export function useTotal() {
 	return total;
 }
 
-export function useFirstLineItemOfType( itemType = null ) {
+export function useLineItemsOfType( itemType = null ) {
 	if ( ! itemType ) {
-		throw new Error( 'missing itemType for useFirstLineItemOfType' );
+		throw new Error( 'missing itemType for useLineItemsOfType' );
 	}
 	const [ items ] = useLineItems();
-	return items.find( item => item.type === itemType );
+	return items.filter( item => item.type === itemType );
 }

@@ -4,7 +4,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import {
-	useFirstLineItemOfType,
+	useLineItemsOfType,
 	useTotal,
 	renderDisplayValueMarkdown,
 } from '@automattic/composite-checkout';
@@ -12,21 +12,21 @@ import { useTranslate } from 'i18n-calypso';
 
 export default function WPCheckoutOrderSummary() {
 	const translate = useTranslate();
-	const tax = useFirstLineItemOfType( 'tax' );
+	const taxes = useLineItemsOfType( 'tax' );
 	const total = useTotal();
 
 	return (
 		<CheckoutSummaryWrapper className="components__checkout-order-summary">
 			<CheckoutSummaryTitle>{ translate( 'Purchase Details' ) }</CheckoutSummaryTitle>
 			<CheckoutSummaryAmountWrapper>
-				{ tax && (
-					<CheckoutSummaryLineItem>
-						<CheckoutSummaryLabel>{ translate( 'Tax' ) }</CheckoutSummaryLabel>
+				{ taxes.map( tax => (
+					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + tax.id }>
+						<CheckoutSummaryLabel>{ tax.label }</CheckoutSummaryLabel>
 						<CheckoutSummaryAmount>
 							{ renderDisplayValueMarkdown( tax.amount.displayValue ) }
 						</CheckoutSummaryAmount>
 					</CheckoutSummaryLineItem>
-				) }
+				) ) }
 				<CheckoutSummaryTotal>
 					<CheckoutSummaryLabel>{ translate( 'Total' ) }</CheckoutSummaryLabel>
 					<CheckoutSummaryAmount>
