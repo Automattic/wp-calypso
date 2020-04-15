@@ -12,10 +12,11 @@ import FreePhotoLibrary from 'my-sites/customer-home/cards/education/free-photo-
 import MasteringGutenberg from 'my-sites/customer-home/cards/education/mastering-gutenberg';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getHomeLayout } from 'state/selectors/get-home-layout';
+import DotPager from 'components/dot-pager';
 
 const cardComponents = {
 	'home-education-free-photo-library': FreePhotoLibrary,
-	'home-education-mastering-gutenberg': MasteringGutenberg,
+	'home-education-gutenberg': MasteringGutenberg,
 };
 
 const LearnGrow = ( { cards } ) => {
@@ -26,14 +27,16 @@ const LearnGrow = ( { cards } ) => {
 			<h2 className="learn-grow__heading customer-home__section-heading">
 				{ translate( 'Learn and grow' ) }
 			</h2>
-			{ cards &&
-				cards.map(
-					( card, index ) =>
-						cardComponents[ card ] &&
-						React.createElement( cardComponents[ card ], {
-							key: index,
-						} )
-				) }
+			<DotPager>
+				{ cards &&
+					cards.map(
+						( card, index ) =>
+							cardComponents[ card ] &&
+							React.createElement( cardComponents[ card ], {
+								key: index,
+							} )
+					) }
+			</DotPager>
 		</>
 	);
 };

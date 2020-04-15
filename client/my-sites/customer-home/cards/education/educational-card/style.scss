@@ -1,0 +1,22 @@
+.educational-card {
+	display: flex;
+
+	.educational-card__content {
+		flex: 60%;
+	}
+
+	.educational-card__illustration {
+		flex: 40%;
+		margin-left: 16px;
+	}
+
+	h3 {
+		font-weight: 700;
+		margin-bottom: 16px;
+	}
+
+	.inline-support-link {
+		display: block;
+		margin-bottom: 2px;
+	}
+}

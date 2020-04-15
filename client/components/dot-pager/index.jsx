@@ -18,6 +18,7 @@ import './style.scss';
 
 export const DotPagerControls = ( { currentPage, numberOfPages, setCurrentPage } ) => {
 	const translate = useTranslate();
+
 	const canGoBack = currentPage > 0;
 	const canGoForward = currentPage < numberOfPages - 1;
 	return (
