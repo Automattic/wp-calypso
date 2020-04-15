@@ -2,6 +2,17 @@
 	// Override the error color to a slightly different red.
 	--color-error-20: var( --color-threat-found );
 
+	.card-heading {
+		font-size: 18px;
+		line-height: 24px;
+	}
+
+	.log-item__subheader {
+		color: var( --studio-gray-60 );
+		font-size: 14px;
+		margin-top: 2px;
+	}
+
 	&__buttons {
 		display: flex;
 		justify-content: space-evenly;
@@ -36,13 +47,12 @@
 		}
 	}
 
-	&__ignore-button {
-		color: var( --color-threat-ignored );
-		border-color: var( --color-threat-ignored );
-	}
-
 	.foldable-card__action.foldable-card__expand {
 		border: none;
+	}
+
+	.foldable-card__header {
+		border-bottom: 1px solid var( --studio-gray-5 );
 	}
 }
 

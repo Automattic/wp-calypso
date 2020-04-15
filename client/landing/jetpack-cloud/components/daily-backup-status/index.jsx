@@ -155,7 +155,37 @@ class DailyBackupStatus extends Component {
 		);
 	}
 
-	renderNoBackup() {
+	renderNoBackupEver() {
+		const { translate } = this.props;
+
+		return (
+			<>
+				<Gridicon icon="cloud-upload" className="daily-backup-status__gridicon-no-backup" />
+
+				<div className="daily-backup-status__date">
+					{ translate( 'No backups are available yet.' ) }
+				</div>
+
+				<div className="daily-backup-status__unavailable">
+					{ translate(
+						'But don’t worry, one should become available in the next 24 hours. Contact support if you still need help.'
+					) }
+				</div>
+
+				<Button
+					className="daily-backup-status__support-button"
+					href="https://jetpack.com/contact-support/"
+					target="_blank"
+					rel="noopener noreferrer"
+					isPrimary={ false }
+				>
+					{ translate( 'Contact support' ) }
+				</Button>
+			</>
+		);
+	}
+
+	renderNoBackupOnDate() {
 		const { translate, selectedDate, onDateChange } = this.props;
 
 		const displayDate = selectedDate.format( 'll' );
@@ -265,22 +295,27 @@ class DailyBackupStatus extends Component {
 	renderBackupStatus( backup ) {
 		const { selectedDate, lastDateAvailable, moment, timezone, gmtOffset } = this.props;
 
+		if ( backup ) {
+			return isSuccessfulBackup( backup )
+				? this.renderGoodBackup( backup )
+				: this.renderFailedBackup( backup );
+		}
+
+		if ( ! lastDateAvailable ) {
+			return this.renderNoBackupEver();
+		}
+
 		const today = applySiteOffset( moment(), {
 			timezone: timezone,
 			gmtOffset: gmtOffset,
 		} );
 
 		const isToday = today.isSame( selectedDate, 'day' );
-
-		if ( ! backup && isToday ) {
+		if ( isToday ) {
 			return this.renderNoBackupToday( lastDateAvailable );
-		} else if ( ! backup ) {
-			return this.renderNoBackup();
-		} else if ( isSuccessfulBackup( backup ) ) {
-			return this.renderGoodBackup( backup );
 		}
 
-		return this.renderFailedBackup( backup );
+		return this.renderNoBackupOnDate();
 	}
 
 	render() {

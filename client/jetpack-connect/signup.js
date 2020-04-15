@@ -156,7 +156,8 @@ export class JetpackSignup extends Component {
 		if ( error && 'user_exists' === error.code ) {
 			const text =
 				error.data && error.data.email
-					? translate(
+					? // translators: email is an email address. eg you@name.com
+					  translate(
 							'The email address "%(email)s" is associated with a WordPress.com account. ' +
 								'Log in to connect it to your Google profile, or choose a different Google profile.',
 							{ args: { email: error.data.email } }

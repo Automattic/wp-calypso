@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import debug from 'debug';
+
+/**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
@@ -8,6 +13,8 @@ import {
 	adTrackSignupComplete,
 	adTrackRegistration,
 } from 'lib/analytics/ad-tracking';
+
+const signupDebug = debug( 'calypso:analytics:signup' );
 
 export function recordSignupStart( flow, ref ) {
 	// Tracks
@@ -67,29 +74,26 @@ export function recordSignupInvalidStep( flow, step ) {
 	analytics.tracks.recordEvent( 'calypso_signup_goto_invalid_step', { flow, step } );
 }
 
-export function recordRegistration( flow ) {
+/**
+ * Records registration event.
+ *
+ * @param {object} param {}
+ * @param {object} param.userData User data
+ * @param {string} param.userData.ID User id
+ * @param {string} param.userData.username Username
+ * @param {string} param.userData.email Email
+ * @param {string} param.flow Registration flow
+ * @param {string} param.type Registration type
+ */
+export function recordRegistration( { userData, flow, type } ) {
+	signupDebug( 'recordRegistration:', { userData, flow, type } );
+
+	// Tracks user identification
+	analytics.identifyUser( userData );
 	// Tracks
-	analytics.tracks.recordEvent( 'calypso_user_registration_complete', { flow } );
+	analytics.tracks.recordEvent( 'calypso_user_registration_complete', { flow, type } );
 	// Google Analytics
 	gaRecordEvent( 'Signup', 'calypso_user_registration_complete' );
-	// Marketing
-	adTrackRegistration();
-}
-
-export function recordPasswordlessRegistration( flow ) {
-	// Tracks
-	analytics.tracks.recordEvent( 'calypso_user_registration_passwordless_complete', { flow } );
-	// Google Analytics
-	gaRecordEvent( 'Signup', 'calypso_user_registration_passwordless_complete' );
-	// Marketing
-	adTrackRegistration();
-}
-
-export function recordSocialRegistration() {
-	// Tracks
-	analytics.tracks.recordEvent( 'calypso_user_registration_social_complete' );
-	// Google Analytics
-	gaRecordEvent( 'Signup', 'calypso_user_registration_social_complete' );
 	// Marketing
 	adTrackRegistration();
 }

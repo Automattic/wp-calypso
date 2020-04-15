@@ -5,7 +5,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getTaskList } from 'my-sites/checklist/wpcom-checklist/wpcom-task-list';
+import { getTaskList } from 'lib/checklist';
 import getSiteChecklist from './get-site-checklist';
 import getChecklistTaskUrls from './get-checklist-task-urls';
 

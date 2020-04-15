@@ -372,8 +372,8 @@ type ReactStandardAction = { type: string; payload?: any }; // eslint-disable-li
  *     If false, the cart will not be initialized until it changes to true. Can
  *     be used along with productToAdd to delay initializing the cart until the
  *     product is ready to be added.
- * @param productToAdd
- *     The product object to add to the cart immediately when the cart is
+ * @param productsToAdd
+ *     The product objects to add to the cart immediately when the cart is
  *     initialized. Has no effect if it changes after initializing.
  * @param couponToAdd
  *     The coupon code to add to the cart immediately when the cart is
@@ -398,7 +398,7 @@ type ReactStandardAction = { type: string; payload?: any }; // eslint-disable-li
 export function useShoppingCart(
 	cartKey: string | null,
 	canInitializeCart: boolean,
-	productToAdd: ResponseCartProduct | null,
+	productsToAdd: ResponseCartProduct[] | null,
 	couponToAdd: string | null,
 	setCart: ( string, RequestCart ) => Promise< ResponseCart >,
 	getCart: ( string ) => Promise< ResponseCart >,
@@ -429,7 +429,7 @@ export function useShoppingCart(
 	useInitializeCartFromServer(
 		cacheStatus,
 		canInitializeCart,
-		productToAdd,
+		productsToAdd,
 		couponToAdd,
 		getServerCart,
 		setServerCart,
@@ -508,7 +508,7 @@ export function useShoppingCart(
 function useInitializeCartFromServer(
 	cacheStatus: CacheStatus,
 	canInitializeCart: boolean,
-	productToAdd: ResponseCartProduct | null,
+	productsToAdd: ResponseCartProduct[] | null,
 	couponToAdd: string | null,
 	getServerCart: () => Promise< ResponseCart >,
 	setServerCart: ( RequestCart ) => Promise< ResponseCart >,
@@ -535,18 +535,21 @@ function useInitializeCartFromServer(
 
 		getServerCart()
 			.then( response => {
-				if ( productToAdd || couponToAdd ) {
+				if ( productsToAdd?.length || couponToAdd ) {
 					debug(
 						'initialized cart is',
 						response,
-						'; proceeding to add either initial product',
-						productToAdd,
-						' or coupon',
+						'; proceeding to add initial products',
+						productsToAdd,
+						' and coupons',
 						couponToAdd
 					);
 					let updatedResponseCart = processRawResponse( response );
-					if ( productToAdd ) {
-						updatedResponseCart = addItemToResponseCart( updatedResponseCart, productToAdd );
+					if ( productsToAdd?.length ) {
+						updatedResponseCart = productsToAdd.reduce(
+							( updatedCart, productToAdd ) => addItemToResponseCart( updatedCart, productToAdd ),
+							updatedResponseCart
+						);
 					}
 					if ( couponToAdd ) {
 						updatedResponseCart = addCouponToResponseCart( updatedResponseCart, couponToAdd );
@@ -582,7 +585,7 @@ function useInitializeCartFromServer(
 		hookDispatch,
 		onEvent,
 		getServerCart,
-		productToAdd,
+		productsToAdd,
 		couponToAdd,
 		setServerCart,
 	] );

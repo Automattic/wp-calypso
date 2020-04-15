@@ -109,7 +109,7 @@ const getPlanPersonalDetails = () => ( {
 	getSignupFeatures: () => [
 		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
 		constants.FEATURE_FREE_DOMAIN,
-		constants.FEATURE_ALL_FREE_FEATURES,
+		constants.FEATURE_FREE_THEMES,
 	],
 	getBlogSignupFeatures: () => [
 		constants.FEATURE_FREE_DOMAIN,

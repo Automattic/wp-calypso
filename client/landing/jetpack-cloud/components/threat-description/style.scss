@@ -1,0 +1,12 @@
+.scan-history-item .threat-description,
+.threat-item .threat-description {
+	&__section-title {
+		margin-bottom: 20px;
+	}
+
+	&__section-text {
+		color: var( --studio-gray-60 );
+		font-size: 14px;
+		line-height: 21px;
+	}
+}

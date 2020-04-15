@@ -28,7 +28,7 @@ const CreateSite: FunctionComponent< {} > = () => {
 	];
 
 	return (
-		<div className="create-site__background">
+		<div className="gutenboarding-page create-site__background">
 			{ shouldTriggerCreate && shouldCreateAndRedirect && <CreateAndRedirect /> }
 			<div className="create-site__layout">
 				<div className="create-site__header">
@@ -53,7 +53,8 @@ const CreateSite: FunctionComponent< {} > = () => {
 					<div className="create-site__progress-numbered-steps">
 						{ progressSteps.map( ( _, index ) => (
 							<p>
-								{ sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
+								{ // translators: these are progress steps. Eg: step 1 of 4.
+								sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
 									currentStep: index + 1,
 									totalSteps: progressSteps.length,
 								} ) }

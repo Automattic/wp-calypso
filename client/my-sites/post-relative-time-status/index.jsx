@@ -11,6 +11,7 @@ import { includes } from 'lodash';
  */
 import Gridicon from 'components/gridicon';
 import { withLocalizedMoment } from 'components/localized-moment';
+
 /**
  * Style dependencies
  */
@@ -96,12 +97,26 @@ class PostRelativeTime extends React.PureComponent {
 			statusText = this.props.translate( 'pending review' );
 			statusClassName += ' is-pending';
 		} else if ( status === 'future' ) {
-			const scheduledTime = this.props.moment( this.props.post.date ).fromNow();
+			const moment = this.props.moment;
+			const now = moment();
+			const scheduledDate = moment( this.props.post.date );
+			// If the content is scheduled to be release within a year, do not display the year at the end
+			const scheduledTime = scheduledDate.calendar( null, {
+				sameElse: this.props.translate( 'll [at] LT', {
+					comment:
+						'll refers to date (eg. 21 Apr) & LT refers to time (eg. 18:00) - "at" is translated',
+				} ),
+			} );
 
-			statusText = this.props.translate( 'scheduled %(scheduledTime)s', {
-				comment: '%(scheduledTime)s is a future human time, for example "in 3 days"',
+			const displayScheduleTime =
+				scheduledDate.diff( now, 'years' ) > 0
+					? scheduledTime
+					: scheduledTime.replace( scheduledDate.format( 'Y' ), '' );
+
+			statusText = this.props.translate( 'scheduled for %(displayScheduleTime)s', {
+				comment: '%(displayScheduleTime)s is when a scheduled post is set to be published',
 				args: {
-					scheduledTime,
+					displayScheduleTime,
 				},
 			} );
 			statusClassName += ' is-scheduled';

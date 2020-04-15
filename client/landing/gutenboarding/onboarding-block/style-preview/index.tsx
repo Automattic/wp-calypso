@@ -56,7 +56,7 @@ const StylePreview: React.FunctionComponent = () => {
 	);
 
 	return (
-		<div className="style-preview">
+		<div className="gutenboarding-page style-preview">
 			<div className="style-preview__header">
 				<div className="style-preview__titles">
 					<Title>{ __( 'Select your fonts' ) }</Title>
@@ -84,6 +84,23 @@ const StylePreview: React.FunctionComponent = () => {
 			<div className="style-preview__content">
 				<FontSelect />
 				<Preview viewport={ selectedViewport } />
+				<div className="style-preview__actions-mobile">
+					{ hasSelectedDesign && (
+						<Button
+							className="style-preview__actions-mobile-continue-button"
+							isPrimary
+							isLarge
+							onClick={ () =>
+								currentUser ? handleCreateSite( currentUser.username ) : handleSignup()
+							}
+						>
+							{ __( 'Continue' ) }
+						</Button>
+					) }
+					<Link isLink to={ makePath( Step.DesignSelection ) }>
+						{ __( 'Choose another design' ) }
+					</Link>
+				</div>
 			</div>
 			{ showSignupDialog && <SignupForm onRequestClose={ closeAuthDialog } /> }
 		</div>

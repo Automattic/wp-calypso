@@ -4,6 +4,7 @@
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import momentDate from 'moment';
+import page from 'page';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 
@@ -41,6 +42,7 @@ import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import { applySiteOffset } from 'lib/site/timezone';
 import QuerySiteSettings from 'components/data/query-site-settings'; // Required to get site time offset
 import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
+import { backupMainPath } from './paths';
 
 /**
  * Style dependencies
@@ -64,6 +66,23 @@ class BackupsPage extends Component {
 		};
 	}
 
+	componentDidMount() {
+		const { queryDate, moment, timezone, gmtOffset } = this.props;
+
+		if ( queryDate ) {
+			const today = applySiteOffset( moment(), { timezone, gmtOffset } );
+
+			const dateToSelect = moment( queryDate, INDEX_FORMAT );
+
+			// If we don't have dateToSelect or it's greater than today, force null
+			if ( ! dateToSelect.isValid() || dateToSelect > today ) {
+				this.onDateChange( null );
+			} else {
+				this.onDateChange( dateToSelect );
+			}
+		}
+	}
+
 	componentDidUpdate( prevProps ) {
 		if ( prevProps.siteId !== this.props.siteId ) {
 			//If we switch the site, reset the current state to default
@@ -76,7 +95,19 @@ class BackupsPage extends Component {
 	}
 
 	onDateChange = date => {
+		const { siteSlug } = this.props;
+
 		this.setState( { selectedDate: date } );
+
+		if ( date && date.isValid() ) {
+			page(
+				backupMainPath( siteSlug, {
+					date: date.format( INDEX_FORMAT ),
+				} )
+			);
+		} else {
+			page( backupMainPath( siteSlug ) );
+		}
 	};
 
 	getSelectedDate() {
@@ -171,6 +202,7 @@ class BackupsPage extends Component {
 			<Main>
 				<DocumentHead title={ translate( 'Backups' ) } />
 				<SidebarNavigation />
+
 				<QueryRewindState siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />
 				<QuerySiteSettings siteId={ siteId } />
@@ -185,7 +217,7 @@ class BackupsPage extends Component {
 					siteSlug={ siteSlug }
 				/>
 
-				<div>{ isLoadingBackups && translate( 'Loading backups…' ) }</div>
+				{ isLoadingBackups && <div className="backups__is-loading" /> }
 
 				{ ! isLoadingBackups && (
 					<>

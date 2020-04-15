@@ -119,7 +119,8 @@ export class LoginLinks extends React.Component {
 
 				const { hostname } = parseUrl( redirectToQuery.site_url );
 				const linkText = hostname
-					? this.props.translate( 'Back to %(hostname)s', { args: { hostname } } )
+					? // translators: hostname is a the hostname part of the URL. eg "google.com"
+					  this.props.translate( 'Back to %(hostname)s', { args: { hostname } } )
 					: this.props.translate( 'Back' );
 
 				return (
@@ -211,7 +212,7 @@ export class LoginLinks extends React.Component {
 		if ( this.props.currentRoute === '/log-in/jetpack' ) {
 			loginParameters.twoFactorAuthType = 'jetpack/link';
 		} else if ( this.props.isGutenboarding ) {
-			loginParameters.twoFactorAuthType = 'gutenboarding/link';
+			loginParameters.twoFactorAuthType = `${ GUTENBOARDING_BASE_NAME }/link`;
 		}
 
 		return (
@@ -311,7 +312,7 @@ export class LoginLinks extends React.Component {
 
 		if ( isGutenboarding ) {
 			const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
-			signupUrl = this.props.signupUrl || '/gutenboarding' + langFragment;
+			signupUrl = this.props.signupUrl || `/${ GUTENBOARDING_BASE_NAME }` + langFragment;
 		}
 
 		return (
