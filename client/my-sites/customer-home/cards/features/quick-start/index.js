@@ -5,6 +5,7 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 import { Button, Card } from '@automattic/components';
 import { connect } from 'react-redux';
+import 'moment-timezone';
 
 /**
  * Internal dependencies
@@ -21,6 +22,7 @@ import { navigate } from 'state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryConciergeInitial from 'components/data/query-concierge-initial';
 import getConciergeNextAppointment from 'state/selectors/get-concierge-next-appointment';
+import { withLocalizedMoment } from 'components/localized-moment';
 
 /**
  * Style dependencies
@@ -28,13 +30,14 @@ import getConciergeNextAppointment from 'state/selectors/get-concierge-next-appo
 import './style.scss';
 
 const QuickStart = ( {
-	translate,
+	bookASession,
+	moment,
+	nextSession,
+	reschedule,
 	siteId,
 	siteSlug,
-	nextSession,
-	bookASession,
+	translate,
 	viewDetails,
-	reschedule,
 } ) => {
 	return nextSession ? (
 		<Card className="quick-start next-session">
@@ -42,11 +45,11 @@ const QuickStart = ( {
 			<CardHeading>{ translate( 'Your scheduled Quick Start support session' ) }</CardHeading>
 			<div className="quick-start__date">
 				{ translate( 'Date' ) }
-				{ nextSession.beginTimestamp }
+				{ moment( nextSession.beginTimestamp ).format( 'llll' ) }
 			</div>
 			<div className="quick-start__time">
 				{ translate( 'Time' ) }
-				{ nextSession.beginTimestamp }
+				{ moment.tz( nextSession.beginTimestamp, moment.tz.guess() ).format( 'LT z' ) }
 			</div>
 			<Button onClick={ () => viewDetails( siteSlug ) }>{ translate( 'View details' ) }</Button>
 			<a
@@ -118,4 +121,4 @@ export default connect(
 				)
 			),
 	} )
-)( localize( QuickStart ) );
+)( localize( withLocalizedMoment( QuickStart ) ) );
