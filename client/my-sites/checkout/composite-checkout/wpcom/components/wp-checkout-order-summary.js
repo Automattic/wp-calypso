@@ -13,7 +13,9 @@ export default function WPCheckoutOrderSummary() {
 
 	return (
 		<CheckoutSummaryWrapper className="components__checkout-order-summary">
-			<WPCheckoutOrderSummaryTitle />
+			<CheckoutSummaryTitle>
+				<span>{ translate( 'Purchase Details' ) }</span>
+			</CheckoutSummaryTitle>
 			<CheckoutSummaryAmountWrapper>
 				{ tax && (
 					<CheckoutSummaryLineItem>
@@ -34,15 +36,6 @@ export default function WPCheckoutOrderSummary() {
 	);
 }
 
-function WPCheckoutOrderSummaryTitle() {
-	const translate = useTranslate();
-	return (
-		<CheckoutSummaryTitle>
-			<span>{ translate( 'Purchase Details' ) }</span>
-		</CheckoutSummaryTitle>
-	);
-}
-
 const CheckoutSummaryWrapper = styled.div`
 	background: ${props => props.theme.colors.surface};
 	border: 1px solid ${props => props.theme.colors.borderColorLight};
@@ -54,9 +47,10 @@ const CheckoutSummaryWrapper = styled.div`
 	}
 `;
 
-const CheckoutSummaryTitle = styled.span`
-	display: flex;
-	justify-content: space-between;
+const CheckoutSummaryTitle = styled.h2`
+	color: ${props => props.theme.colors.textColor};
+	font-weight: ${props => props.theme.weights.bold};
+	padding: 16px;
 `;
 
 const CheckoutSummaryAmountWrapper = styled.div`
