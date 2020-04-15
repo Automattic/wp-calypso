@@ -25,6 +25,7 @@ import WordPressLogo from 'components/wordpress-logo';
 import { login } from 'lib/oauth-store/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { localizeUrl } from 'lib/i18n-utils';
+import JetpackLogo from 'components/jetpack-logo';
 
 export class Auth extends Component {
 	state = {
@@ -84,9 +85,9 @@ export class Auth extends Component {
 		const { requires2fa, inProgress, errorMessage, errorLevel, showInstructions } = this.state;
 
 		return (
-			<Main className="auth">
+			<Main className={ config.isEnabled( 'jetpack-cloud' ) ? 'auth__jetpack-cloud' : 'auth' }>
 				<div className="auth__content">
-					<WordPressLogo />
+					{ config.isEnabled( 'jetpack-cloud' ) ? <JetpackLogo size={ 72 } /> : <WordPressLogo /> }
 					<form className="auth__form" onSubmit={ this.submitForm }>
 						<FormFieldset>
 							<div className="auth__input-wrapper">

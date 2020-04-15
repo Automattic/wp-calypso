@@ -26,6 +26,17 @@
 	}
 }
 
+.auth__jetpack-cloud.main {
+	background: var( --color-studio-gray-10 );
+	float: none;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-content: center;
+	max-width: 100%;
+}
+
 .auth.main {
 	// Use WordPress.com’s brand color for the auth background
 	background: var( --color-wordpress-com );

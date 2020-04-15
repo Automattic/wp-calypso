@@ -129,7 +129,8 @@ const oauthTokenMiddleware = () => {
 			// Check we have an OAuth token, otherwise redirect to auth/login page
 			if ( getToken() === false && ! isValidSection ) {
 				const isDesktop = [ 'desktop', 'desktop-development' ].includes( config( 'env_id' ) );
-				const redirectPath = isDesktop ? config( 'login_url' ) : '/authorize';
+				const isJetpackCloud = config.isEnabled( 'jetpack-cloud' );
+				const redirectPath = isDesktop || isJetpackCloud ? config( 'login_url' ) : '/authorize';
 				page( redirectPath );
 				return;
 			}

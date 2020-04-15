@@ -23,7 +23,7 @@ export default function() {
 }
 
 function setupLoggedOut() {
-	if ( config.isEnabled( 'desktop' ) ) {
+	if ( config.isEnabled( 'desktop' ) || config.isEnabled( 'jetpack-cloud' ) ) {
 		page( '/', () => {
 			if ( config.isEnabled( 'oauth' ) ) {
 				page.redirect( '/authorize' );
