@@ -2,14 +2,14 @@
  * Internal dependencies
  */
 import {
-    DomainContactDetails,
-    PossiblyCompleteDomainContactDetails,
-    DomainContactDetailsErrors,
+	DomainContactDetails,
+	PossiblyCompleteDomainContactDetails,
+	DomainContactDetailsErrors,
 } from './backend/domain-contact-details-components';
 import {
-    DomainContactValidationRequest,
-    DomainContactValidationRequestExtraFields,
-    DomainContactValidationResponse,
+	DomainContactValidationRequest,
+	DomainContactValidationRequestExtraFields,
+	DomainContactValidationResponse,
 } from './backend/domain-contact-validation-endpoint';
 
 export type ManagedContactDetailsShape< T > = {
