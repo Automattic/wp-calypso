@@ -23,6 +23,9 @@ import Arrow from '../arrow';
  */
 import './style.scss';
 
+// TODO: remove after @types/wordpress__element update
+import '../../../gutenberg-types-patch';
+
 type Suggestion = SiteVertical & { category?: string };
 
 const VERTICALS_STORE = Verticals.register();

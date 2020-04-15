@@ -11,7 +11,7 @@ declare module '@wordpress/compose' {
 }
 
 declare module '@wordpress/element' {
-	export function __experimentalCreateInterpolateElement(
+	export function createInterpolateElement(
 		interpolatedString: string,
 		conversionMap: Record< string, ReactElement >
 	): ReactNode;
