@@ -35,11 +35,11 @@ function editorButtonAnalytics( editor ) {
 	 * foreground color button to apply the previously selected foreground
 	 * color.  These items are handled separately below.
 	 */
-	Object.keys( editor.buttons ).forEach( buttonName => {
+	Object.keys( editor.buttons ).forEach( ( buttonName ) => {
 		const button = editor.buttons[ buttonName ];
 		const onPostRender = button.onPostRender;
 		button.onPostRender = function () {
-			this.on( 'click', event => {
+			this.on( 'click', ( event ) => {
 				let eventName = buttonName.replace( /^(wp|wpcom)_/, '' );
 
 				if ( buttonName === 'forecolor' ) {

@@ -102,7 +102,7 @@ class StatsGeochart extends Component {
 			return;
 		}
 
-		const mapData = map( data, country => {
+		const mapData = map( data, ( country ) => {
 			return [
 				{
 					v: country.countryCode,

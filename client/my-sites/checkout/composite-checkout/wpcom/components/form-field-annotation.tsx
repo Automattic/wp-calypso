@@ -69,13 +69,13 @@ type LabelProps = {
 
 const Label = styled.label< LabelProps >`
 	display: block;
-	color: ${props => props.theme.colors.textColor};
-	font-weight: ${props => props.theme.weights.bold};
+	color: ${( props ) => props.theme.colors.textColor};
+	font-weight: ${( props ) => props.theme.weights.bold};
 	font-size: 14px;
 	margin-bottom: 8px;
 
 	:hover {
-		cursor: ${props => ( props.isDisabled ? 'default' : 'pointer') };
+		cursor: ${( props ) => ( props.isDisabled ? 'default' : 'pointer') };
 	}
 `;
 
@@ -108,7 +108,7 @@ type DescriptionProps = {
 
 const Description = styled.p< DescriptionProps >`
 	margin: 8px 0 0 0;
-	color: ${props =>
+	color: ${( props ) =>
 		props.isError ? props.theme.colors.error : props.theme.colors.textColorLight};
 	font-style: italic;
 	font-size: 14px;

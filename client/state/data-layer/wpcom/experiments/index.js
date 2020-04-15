@@ -16,7 +16,7 @@ import config from 'config';
  * @param data The result from the API
  * @returns {{variations: object, nextRefresh: number}} The transformed result
  */
-const transformApiRequest = data => ( {
+const transformApiRequest = ( data ) => ( {
 	variations: data.variations,
 	nextRefresh: Date.now() + data.ttl * 1000,
 } );
@@ -27,7 +27,7 @@ const transformApiRequest = data => ( {
  * @param action The EXPERIMENT_FETCH action
  * @returns object The http request action
  */
-export const fetchExperiments = action =>
+export const fetchExperiments = ( action ) =>
 	http(
 		{
 			apiNamespace: 'wpcom',

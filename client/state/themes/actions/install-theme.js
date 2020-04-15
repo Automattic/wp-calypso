@@ -37,7 +37,7 @@ export function installTheme( themeId, siteId ) {
 		return wpcom
 			.undocumented()
 			.installThemeOnJetpack( siteId, themeId )
-			.then( theme => {
+			.then( ( theme ) => {
 				dispatch( receiveTheme( theme, siteId ) );
 				dispatch( {
 					type: THEME_INSTALL_SUCCESS,
@@ -56,7 +56,7 @@ export function installTheme( themeId, siteId ) {
 					}
 				}
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: THEME_INSTALL_FAILURE,
 					siteId,

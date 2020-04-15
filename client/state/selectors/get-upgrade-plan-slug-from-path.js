@@ -21,7 +21,7 @@ import canUpgradeToPlan from 'state/selectors/can-upgrade-to-plan';
 export default function ( state, siteId, path ) {
 	return find(
 		Object.keys( PLANS_LIST ),
-		planKey =>
+		( planKey ) =>
 			( planKey === path || getPlanPath( planKey ) === path ) &&
 			canUpgradeToPlan( state, siteId, planKey )
 	);

@@ -46,14 +46,14 @@ export class GlobalNotices extends Component {
 		}
 	}
 
-	removeNoticeStoreNotice = notice => () => {
+	removeNoticeStoreNotice = ( notice ) => () => {
 		if ( notice ) {
 			notices.removeNotice( notice );
 		}
 	};
 
 	removeReduxNotice = ( noticeId, onDismissClick ) => {
-		return e => {
+		return ( e ) => {
 			if ( onDismissClick ) {
 				onDismissClick( e );
 			}
@@ -131,7 +131,7 @@ export class GlobalNotices extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		storeNotices: getNotices( state ),
 	} ),
 	{ removeNotice }

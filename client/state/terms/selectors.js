@@ -41,7 +41,7 @@ export function isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, 
 		return false;
 	}
 
-	return range( 1, lastPage + 1 ).some( page => {
+	return range( 1, lastPage + 1 ).some( ( page ) => {
 		const termsQuery = { ...query, page };
 		return isRequestingTermsForQuery( state, siteId, taxonomy, termsQuery );
 	} );

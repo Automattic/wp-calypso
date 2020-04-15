@@ -43,7 +43,7 @@ export const abtest = ( name, geoLocation = false ) =>
  * @param {string} name - The name of the A/B test
  * @returns {string} - The user's variation or null if the user is not a participant
  */
-export const getABTestVariation = name => new ABTest( name ).getVariation();
+export const getABTestVariation = ( name ) => new ABTest( name ).getVariation();
 
 /**
  * Returns a user's variations from localStorage.
@@ -66,7 +66,7 @@ export const getAllTests = () => keys( activeTests ).map( ABTest );
 
 const isUserSignedIn = () => user && user.get() !== false;
 
-const parseDateStamp = datestamp => {
+const parseDateStamp = ( datestamp ) => {
 	const format = 'YYYYMMDD';
 
 	if ( datestamp.length === format.length ) {
@@ -86,7 +86,7 @@ const parseDateStamp = datestamp => {
 };
 
 const languageSlugs = getLanguageSlugs();
-const langSlugIsValid = slug => languageSlugs.indexOf( slug ) !== -1;
+const langSlugIsValid = ( slug ) => languageSlugs.indexOf( slug ) !== -1;
 
 ABTest.prototype.init = function ( name, geoLocation ) {
 	if ( ! /^[A-Za-z\d]+$/.test( name ) ) {

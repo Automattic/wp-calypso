@@ -44,7 +44,7 @@ export default class ViewersData extends Component {
 		ViewersStore.removeListener( 'change', this.refreshViewers );
 	}
 
-	fetchIfEmpty = siteId => {
+	fetchIfEmpty = ( siteId ) => {
 		siteId = siteId || this.props.siteId;
 		if ( ! siteId ) {
 			return;
@@ -84,7 +84,7 @@ export default class ViewersData extends Component {
 		return false;
 	};
 
-	refreshViewers = siteId => {
+	refreshViewers = ( siteId ) => {
 		siteId = siteId || this.props.siteId;
 		this.setState( {
 			viewers: ViewersStore.getViewers( siteId ),

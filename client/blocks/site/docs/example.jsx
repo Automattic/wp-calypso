@@ -20,7 +20,7 @@ const SiteExample = ( { site } ) => (
 	</Card>
 );
 
-const ConnectedSiteExample = connect( state => ( {
+const ConnectedSiteExample = connect( ( state ) => ( {
 	site: getSite( state, get( getCurrentUser( state ), 'primary_blog', null ) ),
 } ) )( SiteExample );
 

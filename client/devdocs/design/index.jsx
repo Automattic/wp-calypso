@@ -131,7 +131,7 @@ export default class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';
 	state = { filter: '' };
 
-	onSearch = term => {
+	onSearch = ( term ) => {
 		this.setState( { filter: trim( term || '' ).toLowerCase() } );
 	};
 

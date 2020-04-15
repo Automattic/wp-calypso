@@ -13,7 +13,7 @@ import { shallow } from 'enzyme';
  */
 import { PendingPaymentBlocker } from '../pending-payment-blocker';
 
-const defaultProps = { translate: x => x };
+const defaultProps = { translate: ( x ) => x };
 
 describe( 'PendingPaymentBlocker', () => {
 	test( 'renders a PaymentBox', () => {

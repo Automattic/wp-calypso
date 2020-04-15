@@ -22,7 +22,7 @@ export default function createContactValidationCallback( {
 		applyDomainContactValidationResults,
 		decoratedContactDetails
 	) {
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			validateDomainContact( contactDetails, domainNames, ( httpErrors, data ) => {
 				recordEvent( {
 					type: 'VALIDATE_DOMAIN_CONTACT_INFO',

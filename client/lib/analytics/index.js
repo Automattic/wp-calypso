@@ -131,7 +131,7 @@ const analytics = {
 
 			queueDebug( 'Processing items in queue.', items );
 
-			items.forEach( item => {
+			items.forEach( ( item ) => {
 				if (
 					'object' === typeof item &&
 					'string' === typeof item.trigger &&

@@ -93,7 +93,7 @@ TwoStepAuthorization.prototype.postLoginRequest = function ( endpoint, data ) {
 			body: formData,
 			credentials: 'include',
 		} )
-		.then( response => response.json() );
+		.then( ( response ) => response.json() );
 };
 
 TwoStepAuthorization.prototype.refreshDataOnSuccessfulAuth = function () {
@@ -115,7 +115,7 @@ TwoStepAuthorization.prototype.loginUserWithSecurityKey = function ( args ) {
 	return this.postLoginRequest( 'webauthn-challenge-endpoint', {
 		user_id: args.user_id,
 	} )
-		.then( response => {
+		.then( ( response ) => {
 			const parameters = response.data || [];
 			this.data.two_step_webauthn_nonce = parameters.two_step_nonce;
 			if ( typeof this.data.two_step_webauthn_nonce === 'undefined' ) {
@@ -123,14 +123,14 @@ TwoStepAuthorization.prototype.loginUserWithSecurityKey = function ( args ) {
 			}
 			return webauthn_auth( { publicKey: parameters } );
 		} )
-		.then( assertion => {
+		.then( ( assertion ) => {
 			return this.postLoginRequest( 'webauthn-authentication-endpoint', {
 				user_id: args.user_id,
 				client_data: JSON.stringify( assertion ),
 				create_2fa_cookies_only: 1,
 			} );
 		} )
-		.then( response => {
+		.then( ( response ) => {
 			if ( typeof response.success === 'undefined' || ! response.success ) {
 				return Promise.reject( response );
 			}

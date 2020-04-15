@@ -76,7 +76,7 @@ export function CreditCardForm( {
 	);
 	const [ debouncedFieldErrors, setDebouncedFieldErrors ] = useDebounce( formFieldErrors, 1000 );
 
-	const onFieldChange = rawDetails => {
+	const onFieldChange = ( rawDetails ) => {
 		const newValues = { ...formFieldValues, ...camelCaseFormFields( rawDetails ) };
 		setFormFieldValues( newValues );
 		setTouchedFormFields( { ...touchedFormFields, ...camelCaseFormFields( rawDetails ) } );
@@ -94,7 +94,7 @@ export function CreditCardForm( {
 		);
 	};
 
-	const getErrorMessage = fieldName => {
+	const getErrorMessage = ( fieldName ) => {
 		const camelName = camelCase( fieldName );
 		if ( touchedFormFields[ camelName ] ) {
 			return debouncedFieldErrors[ camelName ];
@@ -102,7 +102,7 @@ export function CreditCardForm( {
 		return formFieldValues[ camelName ] && debouncedFieldErrors[ camelName ];
 	};
 
-	const onSubmit = async event => {
+	const onSubmit = async ( event ) => {
 		event.preventDefault();
 
 		if ( formSubmitting ) {
@@ -117,7 +117,7 @@ export function CreditCardForm( {
 			}
 			recordFormSubmitEvent();
 			const createCardTokenAsync = makeAsyncCreateCardToken( createCardToken );
-			const createStripeSetupIntentAsync = async paymentDetails => {
+			const createStripeSetupIntentAsync = async ( paymentDetails ) => {
 				const { name, country, 'postal-code': zip } = paymentDetails;
 				const paymentDetailsForStripe = {
 					name,
@@ -128,8 +128,8 @@ export function CreditCardForm( {
 				};
 				return createStripeSetupIntent( stripe, stripeConfiguration, paymentDetailsForStripe );
 			};
-			const parseStripeToken = response => response.payment_method;
-			const parsePaygateToken = response => response.token;
+			const parseStripeToken = ( response ) => response.payment_method;
+			const parsePaygateToken = ( response ) => response.token;
 			await saveOrUpdateCreditCard( {
 				createCardToken: stripe ? createStripeSetupIntentAsync : createCardTokenAsync,
 				saveStoredCard,
@@ -282,6 +282,6 @@ function displayError( { translate, error } ) {
 	notices.error( error.message );
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	countriesList: getCountries( state, 'payments' ),
 } ) )( localize( CreditCardForm ) );

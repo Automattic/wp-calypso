@@ -77,7 +77,7 @@ export default connect(
 			sitePlans: getPlansBySite( state, selectedSite ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return {
 			fetchSitePlans: ( sitePlans, site ) => {
 				if ( shouldFetchSitePlans( sitePlans, site ) ) {

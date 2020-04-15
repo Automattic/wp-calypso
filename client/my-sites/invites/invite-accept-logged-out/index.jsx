@@ -87,7 +87,7 @@ class InviteAcceptLoggedOut extends React.Component {
 	subscribeUserByEmailOnly = () => {
 		const { invite } = this.props;
 		this.setState( { submitting: true } );
-		this.props.acceptInvite( invite, error => {
+		this.props.acceptInvite( invite, ( error ) => {
 			if ( error ) {
 				this.setState( { error } );
 			} else {
@@ -171,6 +171,6 @@ class InviteAcceptLoggedOut extends React.Component {
 	}
 }
 
-export default connect( null, dispatch =>
+export default connect( null, ( dispatch ) =>
 	bindActionCreators( { createAccount, acceptInvite, errorNotice }, dispatch )
 )( localize( InviteAcceptLoggedOut ) );

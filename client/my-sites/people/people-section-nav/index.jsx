@@ -95,7 +95,7 @@ class PeopleSectionNav extends Component {
 		}
 
 		return this.getFilters().filter(
-			filter => this.props.filter === filter.id || includes( allowedFilterIds, filter.id )
+			( filter ) => this.props.filter === filter.id || includes( allowedFilterIds, filter.id )
 		);
 	}
 

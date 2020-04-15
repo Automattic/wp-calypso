@@ -105,7 +105,7 @@ class ReaderPostOptionsMenu extends React.Component {
 			: this.props.post.feed_URL || this.props.post.site_URL;
 	};
 
-	onMenuToggle = isMenuVisible => {
+	onMenuToggle = ( isMenuVisible ) => {
 		stats.recordAction( isMenuVisible ? 'open_post_options_menu' : 'close_post_options_menu' );
 		stats.recordGaEvent( isMenuVisible ? 'Open Post Options Menu' : 'Close Post Options Menu' );
 		stats.recordTrackForPost(

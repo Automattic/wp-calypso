@@ -187,7 +187,7 @@ export function isEventuallyPresentAndDisplayed( driver, selector, waitOverride 
 			);
 		}, timeoutWait )
 		.then(
-			shown => {
+			( shown ) => {
 				return shown;
 			},
 			() => {
@@ -240,11 +240,11 @@ export function waitForFieldClearable( driver, selector ) {
 	return driver.wait(
 		function () {
 			return driver.findElement( selector ).then(
-				async element => {
+				async ( element ) => {
 					await driver.executeScript( "arguments[0].value = '';", element );
 					return element.clear().then(
 						function () {
-							return element.getAttribute( 'value' ).then( value => {
+							return element.getAttribute( 'value' ).then( ( value ) => {
 								return value === '';
 							} );
 						},
@@ -295,8 +295,8 @@ export function setWhenSettable(
 }
 
 export function setCheckbox( driver, selector ) {
-	return driver.findElement( selector ).then( checkbox => {
-		checkbox.getAttribute( 'checked' ).then( checked => {
+	return driver.findElement( selector ).then( ( checkbox ) => {
+		checkbox.getAttribute( 'checked' ).then( ( checked ) => {
 			if ( checked !== 'true' ) {
 				return this.clickWhenClickable( driver, selector );
 			}
@@ -305,8 +305,8 @@ export function setCheckbox( driver, selector ) {
 }
 
 export function unsetCheckbox( driver, selector ) {
-	return driver.findElement( selector ).then( checkbox => {
-		checkbox.getAttribute( 'checked' ).then( checked => {
+	return driver.findElement( selector ).then( ( checkbox ) => {
+		checkbox.getAttribute( 'checked' ).then( ( checked ) => {
 			if ( checked === 'true' ) {
 				return this.clickWhenClickable( driver, selector );
 			}
@@ -351,7 +351,7 @@ export function checkForConsoleErrors( driver ) {
 			.get( 'browser' )
 			.then( function ( logs ) {
 				if ( logs.length > 0 ) {
-					forEach( logs, log => {
+					forEach( logs, ( log ) => {
 						// Ignore chrome cast errors in Chrome - http://stackoverflow.com/questions/24490323/google-chrome-cast-sender-error-if-chrome-cast-extension-is-not-installed-or-usi/26095117#26095117
 						// Also ignore post message errors - this is a known limitation at present
 						// Also ignore 404 errors for viewing sites or posts/pages that are private
@@ -360,7 +360,7 @@ export function checkForConsoleErrors( driver ) {
 							log.message.indexOf( '404' ) === -1 &&
 							log.message.indexOf( "Failed to execute 'postMessage' on 'DOMWindow'" ) === -1
 						) {
-							driver.getCurrentUrl().then( url => {
+							driver.getCurrentUrl().then( ( url ) => {
 								SlackNotifier.warn( `Found console error: "${ log.message }" on url '${ url }'`, {
 									suppressDuplicateMessages: true,
 								} );
@@ -378,8 +378,8 @@ export function logPerformance( driver ) {
 			.manage()
 			.logs()
 			.get( 'performance' )
-			.then( browserLogs => {
-				browserLogs.forEach( browserLog => {
+			.then( ( browserLogs ) => {
+				browserLogs.forEach( ( browserLog ) => {
 					const message = JSON.parse( browserLog.message ).message;
 					if (
 						message.method === 'Network.responseReceived' ||
@@ -399,12 +399,12 @@ export async function ensureMobileMenuOpen( driver ) {
 	return driver
 		.findElement( mobileHeaderSelector )
 		.isDisplayed()
-		.then( mobileDisplayed => {
+		.then( ( mobileDisplayed ) => {
 			if ( mobileDisplayed ) {
 				driver
 					.findElement( by.css( '.section-nav' ) )
 					.getAttribute( 'class' )
-					.then( classNames => {
+					.then( ( classNames ) => {
 						if ( classNames.includes( 'is-open' ) === false ) {
 							self.clickWhenClickable( driver, mobileHeaderSelector );
 						}
@@ -415,7 +415,7 @@ export async function ensureMobileMenuOpen( driver ) {
 
 export function waitForInfiniteListLoad( driver, elementSelector, { numElements = 10 } = {} ) {
 	return driver.wait( function () {
-		return driver.findElements( elementSelector ).then( elements => {
+		return driver.findElements( elementSelector ).then( ( elements ) => {
 			return elements.length >= numElements;
 		} );
 	} );
@@ -506,7 +506,10 @@ export async function scrollIntoView( driver, selector, position = 'center' ) {
 export async function selectElementByText( driver, selector, text ) {
 	const element = async () => {
 		const allElements = await driver.findElements( selector );
-		return await webdriver.promise.filter( allElements, async e => ( await e.getText() ) === text );
+		return await webdriver.promise.filter(
+			allElements,
+			async ( e ) => ( await e.getText() ) === text
+		);
 	};
 	return await this.clickWhenClickable( driver, element );
 }
@@ -514,7 +517,10 @@ export async function selectElementByText( driver, selector, text ) {
 export async function verifyTextPresent( driver, selector, text ) {
 	const element = async () => {
 		const allElements = await driver.findElements( selector );
-		return await webdriver.promise.filter( allElements, async e => ( await e.getText() ) === text );
+		return await webdriver.promise.filter(
+			allElements,
+			async ( e ) => ( await e.getText() ) === text
+		);
 	};
 	return await this.isElementPresent( driver, element );
 }
@@ -522,7 +528,10 @@ export async function verifyTextPresent( driver, selector, text ) {
 export function getElementByText( driver, selector, text ) {
 	return async () => {
 		const allElements = await driver.findElements( selector );
-		return await webdriver.promise.filter( allElements, async e => ( await e.getText() ) === text );
+		return await webdriver.promise.filter(
+			allElements,
+			async ( e ) => ( await e.getText() ) === text
+		);
 	};
 }
 

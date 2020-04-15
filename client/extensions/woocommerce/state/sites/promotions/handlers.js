@@ -72,7 +72,7 @@ export function productsReceived( { dispatch }, action ) {
 
 	// For each variable product, fetch its variations, too.
 	if ( isUndefined( params.offset ) && products ) {
-		products.forEach( product => {
+		products.forEach( ( product ) => {
 			if ( product.variations && product.variations.length > 0 ) {
 				dispatch( fetchProductVariations( siteId, product.id ) );
 			}

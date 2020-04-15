@@ -78,7 +78,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 		step( 'Can see an invitation email received for the invite', async function () {
 			const emails = await emailClient.pollEmailsByRecipient( newInviteEmailAddress );
 			const links = emails[ 0 ].html.links;
-			const link = links.find( l => l.href.includes( 'accept-invite' ) );
+			const link = links.find( ( l ) => l.href.includes( 'accept-invite' ) );
 			acceptInviteURL = dataHelper.adjustInviteLinkToCorrectEnvironment( link.href );
 			return assert.notEqual(
 				acceptInviteURL,
@@ -186,7 +186,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 		step( 'Can see an invitation email received for the invite', async function () {
 			const emails = await emailClient.pollEmailsByRecipient( newInviteEmailAddress );
 			const links = emails[ 0 ].html.links;
-			const link = links.find( l => l.href.includes( 'accept-invite' ) );
+			const link = links.find( ( l ) => l.href.includes( 'accept-invite' ) );
 			acceptInviteURL = dataHelper.adjustInviteLinkToCorrectEnvironment( link.href );
 			return assert.notEqual(
 				acceptInviteURL,
@@ -244,7 +244,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 		step( 'Can see an invitation email received for the invite', async function () {
 			const emails = await emailClient.pollEmailsByRecipient( newInviteEmailAddress );
 			const links = emails[ 0 ].html.links;
-			const link = links.find( l => l.href.includes( 'accept-invite' ) );
+			const link = links.find( ( l ) => l.href.includes( 'accept-invite' ) );
 			acceptInviteURL = dataHelper.adjustInviteLinkToCorrectEnvironment( link.href );
 			return assert.notEqual(
 				acceptInviteURL,
@@ -361,7 +361,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 		step( 'Can see an invitation email received for the invite', async function () {
 			const emails = await emailClient.pollEmailsByRecipient( newInviteEmailAddress );
 			const links = emails[ 0 ].html.links;
-			const link = links.find( l => l.href.includes( 'accept-invite' ) );
+			const link = links.find( ( l ) => l.href.includes( 'accept-invite' ) );
 			acceptInviteURL = dataHelper.adjustInviteLinkToCorrectEnvironment( link.href );
 			return assert.notEqual(
 				acceptInviteURL,
@@ -496,7 +496,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 		step( 'Can see an invitation email received for the invite', async function () {
 			const emails = await emailClient.pollEmailsByRecipient( newInviteEmailAddress );
 			const links = emails[ 0 ].html.links;
-			const link = links.find( l => l.href.includes( 'accept-invite' ) );
+			const link = links.find( ( l ) => l.href.includes( 'accept-invite' ) );
 			acceptInviteURL = dataHelper.adjustInviteLinkToCorrectEnvironment( link.href );
 			return assert.notStrictEqual(
 				acceptInviteURL,

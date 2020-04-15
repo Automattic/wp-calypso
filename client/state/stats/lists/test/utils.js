@@ -130,7 +130,7 @@ describe( 'utils', () => {
 		test( 'should return a well-formed array of objects', () => {
 			const actualOrders = parseOrdersChartData( orderPayload );
 			expect( actualOrders ).toBeInstanceOf( Array );
-			actualOrders.forEach( item => expect( typeof item ).toBe( 'object' ) );
+			actualOrders.forEach( ( item ) => expect( typeof item ).toBe( 'object' ) );
 		} );
 
 		test( 'should return an array of objects as expected', () => {
@@ -1901,7 +1901,7 @@ describe( 'utils', () => {
 				const firstRecord = parsedData[ 0 ];
 
 				// Make sure all fields are present
-				firstRecord.data.forEach( d => {
+				firstRecord.data.forEach( ( d ) => {
 					expect( d[ fields[ 0 ] ] ).toBeDefined();
 					expect( d[ fields[ 1 ] ] ).toBeDefined();
 				} );

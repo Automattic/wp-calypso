@@ -115,7 +115,7 @@ export function extractScreenshots( screenshotsHtml ) {
 		}
 	} );
 
-	screenshots = screenshots.filter( screenshot => screenshot );
+	screenshots = screenshots.filter( ( screenshot ) => screenshot );
 
 	return screenshots.length ? screenshots : null;
 }
@@ -205,7 +205,7 @@ export function normalizePluginsList( pluginsList ) {
 	if ( ! pluginsList ) {
 		return [];
 	}
-	return map( pluginsList, pluginData => normalizePluginData( pluginData ) );
+	return map( pluginsList, ( pluginData ) => normalizePluginData( pluginData ) );
 }
 
 /**

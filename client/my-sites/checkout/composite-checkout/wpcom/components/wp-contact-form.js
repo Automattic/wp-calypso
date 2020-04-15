@@ -35,7 +35,7 @@ export default function WPContactForm( {
 } ) {
 	const translate = useTranslate();
 	const isDomainFieldsVisible = useHasDomainsInCart();
-	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
+	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== 'ready';
@@ -103,7 +103,7 @@ function isEligibleForVat( country ) {
 
 function VatIdField() {
 	const translate = useTranslate();
-	const { vatId } = useSelect( select => select( 'wpcom' ).getContactInfo() );
+	const { vatId } = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
 	const { updateVatId } = useDispatch( 'wpcom' );
 
 	return (
@@ -140,7 +140,7 @@ function TaxFields( {
 					label={ translate( 'Postal code' ) }
 					value={ postalCode.value }
 					disabled={ isDisabled }
-					onChange={ value => {
+					onChange={ ( value ) => {
 						updatePostalCode( value );
 					} }
 					autoComplete={ section + ' postal-code' }
@@ -152,7 +152,7 @@ function TaxFields( {
 			<RightColumn>
 				<CountrySelectMenu
 					translate={ translate }
-					onChange={ event => {
+					onChange={ ( event ) => {
 						updateCountryCode( event.target.value );
 					} }
 					isError={ countryCode.isTouched && ! isValid( countryCode ) }
@@ -176,13 +176,13 @@ TaxFields.propTypes = {
 
 const DomainContactFieldsDescription = styled.p`
 	font-size: 14px;
-	color: ${props => props.theme.colors.textColor};
+	color: ${( props ) => props.theme.colors.textColor};
 	margin: 0 0 16px;
 `;
 
 function ContactFormSummary( { isDomainFieldsVisible } ) {
 	const translate = useTranslate();
-	const contactInfo = useSelect( select => select( 'wpcom' ).getContactInfo() );
+	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
 
 	const showDomainContactSummary = isDomainFieldsVisible;
 
@@ -258,7 +258,7 @@ function ContactFormSummary( { isDomainFieldsVisible } ) {
 }
 
 function joinNonEmptyValues( joinString, ...values ) {
-	return values.filter( value => value?.length > 0 ).join( joinString );
+	return values.filter( ( value ) => value?.length > 0 ).join( joinString );
 }
 
 function getContactDetailsFormat( isDomainFieldsVisible ) {

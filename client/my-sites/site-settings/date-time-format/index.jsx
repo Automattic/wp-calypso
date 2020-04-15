@@ -64,7 +64,7 @@ export class DateTimeFormat extends Component {
 		} );
 	}
 
-	setFormat = ( name, defaultFormats ) => event => {
+	setFormat = ( name, defaultFormats ) => ( event ) => {
 		const { value: format } = event.currentTarget;
 		this.props.updateFields( { [ `${ name }_format` ]: format } );
 		this.setState( {
@@ -76,7 +76,7 @@ export class DateTimeFormat extends Component {
 
 	setTimeFormat = this.setFormat( 'time', defaultTimeFormats );
 
-	setCustomFormat = name => event => {
+	setCustomFormat = ( name ) => ( event ) => {
 		const { value: format } = event.currentTarget;
 		this.props.updateFields( { [ `${ name }_format` ]: format } );
 		this.setState( {

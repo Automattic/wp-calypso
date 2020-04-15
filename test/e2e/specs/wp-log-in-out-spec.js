@@ -177,7 +177,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 			} );
 
 			step( "Approve push 2fa token and we're logged in", async function () {
-				await subscribeToPush( loginFlow.account.pushConfig, async pushToken => {
+				await subscribeToPush( loginFlow.account.pushConfig, async ( pushToken ) => {
 					await approvePushToken( pushToken, loginFlow.account.bearerToken );
 					const readerPage = new ReaderPage( driver );
 					const displayed = await readerPage.displayed();
@@ -240,7 +240,9 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 
 				step( 'Can find the magic link in the email received', async function () {
 					const emails = await emailClient.pollEmailsByRecipient( loginFlow.account.email );
-					magicLinkEmail = emails.find( email => email.subject.indexOf( 'WordPress.com' ) > -1 );
+					magicLinkEmail = emails.find(
+						( email ) => email.subject.indexOf( 'WordPress.com' ) > -1
+					);
 					assert( magicLinkEmail !== undefined, 'Could not find the magic login email' );
 					magicLoginLink = magicLinkEmail.html.links[ 0 ].href;
 					assert(
@@ -296,7 +298,9 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 
 				step( 'Can find the magic link in the email received', async function () {
 					const emails = await emailClient.pollEmailsByRecipient( loginFlow.account.email );
-					magicLinkEmail = emails.find( email => email.subject.indexOf( 'WordPress.com' ) > -1 );
+					magicLinkEmail = emails.find(
+						( email ) => email.subject.indexOf( 'WordPress.com' ) > -1
+					);
 					assert( magicLinkEmail !== undefined, 'Could not find the magic login email' );
 					magicLoginLink = magicLinkEmail.html.links[ 0 ].href;
 					assert(
@@ -383,7 +387,9 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 
 				step( 'Can find the magic link in the email received', async function () {
 					const emails = await emailClient.pollEmailsByRecipient( loginFlow.account.email );
-					magicLinkEmail = emails.find( email => email.subject.indexOf( 'WordPress.com' ) > -1 );
+					magicLinkEmail = emails.find(
+						( email ) => email.subject.indexOf( 'WordPress.com' ) > -1
+					);
 					assert( magicLinkEmail !== undefined, 'Could not find the magic login email' );
 					magicLoginLink = magicLinkEmail.html.links[ 0 ].href;
 					assert(

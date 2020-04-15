@@ -41,7 +41,7 @@ export class PaymentBox extends PureComponent {
 		}
 	}
 
-	handlePaymentMethodChange = paymentMethod => {
+	handlePaymentMethodChange = ( paymentMethod ) => {
 		const onSelectPaymentMethod = this.props.onSelectPaymentMethod;
 		return function () {
 			gaRecordEvent( 'Upgrades', 'Switch Payment Method' );
@@ -128,7 +128,7 @@ export class PaymentBox extends PureComponent {
 				href=""
 				onClick={ this.handlePaymentMethodChange( method ) }
 				selected={ this.props.currentPaymentMethod === method }
-				onKeyPress={ event => this.choosePaymentMethodWithKeyboard( event, method ) }
+				onKeyPress={ ( event ) => this.choosePaymentMethodWithKeyboard( event, method ) }
 			>
 				{ this.getPaymentProviderLabel( method ) }
 			</NavItem>
@@ -139,7 +139,7 @@ export class PaymentBox extends PureComponent {
 		if ( ! this.props.paymentMethods ) {
 			return null;
 		}
-		return this.props.paymentMethods.map( method => {
+		return this.props.paymentMethods.map( ( method ) => {
 			return this.paymentMethod( method );
 		} );
 	}

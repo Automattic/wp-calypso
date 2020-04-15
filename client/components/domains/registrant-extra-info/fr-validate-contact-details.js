@@ -78,7 +78,10 @@ export default function validateContactDetails( contactDetails ) {
 			// going to need to add a some magic to map schemas to fields
 			const correctedPath = isEmpty( path ) ? [ 'organization' ] : path;
 
-			const appendThisMessage = before => [ ...( before || [] ), ruleNameFromMessage( message ) ];
+			const appendThisMessage = ( before ) => [
+				...( before || [] ),
+				ruleNameFromMessage( message ),
+			];
 
 			return update( accumulatedErrors, correctedPath, appendThisMessage );
 		},

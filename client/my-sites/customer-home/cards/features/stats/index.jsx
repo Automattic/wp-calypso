@@ -93,7 +93,7 @@ export const Stats = ( {
 	);
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
 	const isJetpack = isJetpackSite( state, siteId );

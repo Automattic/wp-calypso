@@ -86,7 +86,7 @@ class Site extends React.Component {
 		this.save();
 	}
 
-	sanitizeSubdomain = domain => {
+	sanitizeSubdomain = ( domain ) => {
 		if ( ! domain ) {
 			return domain;
 		}
@@ -135,7 +135,7 @@ class Site extends React.Component {
 		);
 	};
 
-	setFormState = state => {
+	setFormState = ( state ) => {
 		this.setState( { form: state } );
 	};
 
@@ -144,7 +144,7 @@ class Site extends React.Component {
 		timesValidationFailed = 0;
 	};
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 
 		this.setState( { submitting: true } );
@@ -190,20 +190,20 @@ class Site extends React.Component {
 		} );
 	};
 
-	handleChangeEvent = event => {
+	handleChangeEvent = ( event ) => {
 		this.formStateController.handleFieldChange( {
 			name: event.target.name,
 			value: event.target.value,
 		} );
 	};
 
-	handleFormControllerError = error => {
+	handleFormControllerError = ( error ) => {
 		if ( error ) {
 			throw error;
 		}
 	};
 
-	getErrorMessagesWithLogin = fieldName => {
+	getErrorMessagesWithLogin = ( fieldName ) => {
 		const link = login( {
 				isNative: config.isEnabled( 'login/native-login-links' ),
 				redirectTo: window.location.href,

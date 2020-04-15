@@ -179,7 +179,7 @@ export function remove( cartItemToRemove ) {
 
 		const isRemovingDomainProduct =
 			isDomainMapping( cartItemToRemove ) || isDomainRegistration( cartItemToRemove );
-		return productsLeft.map( existingCartItem => {
+		return productsLeft.map( ( existingCartItem ) => {
 			if (
 				isPlan( existingCartItem ) &&
 				isRemovingDomainProduct &&
@@ -241,7 +241,9 @@ export function getDependentProducts( cartItem, cart, domainsWithPlansOnly ) {
 	return uniq(
 		flatten(
 			dependentProducts.concat(
-				dependentProducts.map( dependentProduct => getDependentProducts( dependentProduct, cart ) )
+				dependentProducts.map( ( dependentProduct ) =>
+					getDependentProducts( dependentProduct, cart )
+				)
 			)
 		)
 	);
@@ -357,13 +359,13 @@ export function hasDomainCredit( cart ) {
 export function hasTld( cart, tld ) {
 	const domains = concat( getDomainRegistrations( cart ), getDomainTransfers( cart ) );
 
-	return some( domains, cartItem => getTld( cartItem.meta ) === tld );
+	return some( domains, ( cartItem ) => getTld( cartItem.meta ) === tld );
 }
 
 export function getTlds( cart ) {
 	const domains = concat( getDomainRegistrations( cart ), getDomainTransfers( cart ) );
 
-	return uniq( map( domains, cartItem => getTld( cartItem.meta ) ) );
+	return uniq( map( domains, ( cartItem ) => getTld( cartItem.meta ) ) );
 }
 
 /**
@@ -431,7 +433,7 @@ export function hasDomainMapping( cart ) {
 }
 
 export function hasDomainBeingUsedForPlan( cart ) {
-	return some( getDomainRegistrations( cart ), registration =>
+	return some( getDomainRegistrations( cart ), ( registration ) =>
 		isDomainBeingUsedForPlan( cart, registration.meta )
 	);
 }
@@ -513,7 +515,7 @@ export function getCartItemBillPeriod( cartItem ) {
 export function hasRenewableSubscription( cart ) {
 	return (
 		cart.products &&
-		some( getAllCartItems( cart ), cartItem => getCartItemBillPeriod( cartItem ) > 0 )
+		some( getAllCartItems( cart ), ( cartItem ) => getCartItemBillPeriod( cartItem ) > 0 )
 	);
 }
 
@@ -703,7 +705,7 @@ export function fillGoogleAppsRegistrationData( cart, registrationData ) {
  * @param {string} emailAddress - a valid email address
  * @returns {string} the domain
  */
-const getDomainPartFromEmail = emailAddress =>
+const getDomainPartFromEmail = ( emailAddress ) =>
 	// Domain is any string after `@` character
 	'string' === typeof emailAddress || 0 < emailAddress.indexOf( '@' )
 		? emailAddress.replace( /.*@([^@>]+)>?$/, '$1' )
@@ -715,7 +717,7 @@ const getDomainPartFromEmail = emailAddress =>
  * @param {string} domain domain to compare.
  * @returns {Function(*=): (boolean)} true if the domain matches.
  */
-const isSameDomainAsProductMeta = domain => product =>
+const isSameDomainAsProductMeta = ( domain ) => ( product ) =>
 	product &&
 	product.meta &&
 	'string' === typeof domain &&

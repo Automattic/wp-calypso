@@ -28,8 +28,8 @@ class CrowdsignalOauthMasterbar extends Component {
 		];
 
 		if ( ! document.fonts.check( '12px Recoleta' ) ) {
-			map( crowdsignalFonts, font => {
-				font.load().then( loadedFont => document.fonts.add( loadedFont ) );
+			map( crowdsignalFonts, ( font ) => {
+				font.load().then( ( loadedFont ) => document.fonts.add( loadedFont ) );
 			} );
 		}
 	}

@@ -50,10 +50,10 @@ module.exports = function i18nCalypso( config ) {
 	} );
 
 	function getFileMatches( inputFiles ) {
-		return inputFiles.map( inputFile => {
+		return inputFiles.map( ( inputFile ) => {
 			debug( 'Parsing inputFile: ' + inputFile );
 			const relativeInputFilePath = path.relative( __dirname, inputFile ).replace( /^[/.]+/, '' );
-			return parser.getMatches( fs.readFileSync( inputFile, 'utf8' ) ).map( match => {
+			return parser.getMatches( fs.readFileSync( inputFile, 'utf8' ) ).map( ( match ) => {
 				match.line = relativeInputFilePath + ':' + match.line;
 				return match;
 			} );

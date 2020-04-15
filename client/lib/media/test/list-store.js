@@ -382,7 +382,7 @@ describe( 'MediaListStore', () => {
 			expect( MediaListStore.getAll( DUMMY_SITE_ID ) ).to.not.be.undefined;
 		} );
 
-		test( 'should emit a change event when receiving updates', done => {
+		test( 'should emit a change event when receiving updates', ( done ) => {
 			MediaListStore.once( 'change', done );
 
 			dispatchReceiveMediaItems();

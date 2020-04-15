@@ -40,7 +40,7 @@ describe( 'actions', () => {
 			item = { stored_details_id: 123 };
 		let sandbox;
 
-		useSandbox( newSandbox => ( sandbox = newSandbox ) );
+		useSandbox( ( newSandbox ) => ( sandbox = newSandbox ) );
 
 		test( 'should dispatch complete action when API returns card item', () => {
 			sandbox.stub( wp, 'undocumented' ).callsFake( () => ( {
@@ -64,7 +64,7 @@ describe( 'actions', () => {
 		const cards = [ { stored_details_id: 1 }, { stored_details_id: 2 } ];
 
 		describe( 'success', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.get( '/rest/v1.1/me/stored-cards' )
 					.reply( 200, cards );
@@ -87,7 +87,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'fail', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.get( '/rest/v1.1/me/stored-cards' )
 					.reply( 403, error );
@@ -116,7 +116,7 @@ describe( 'actions', () => {
 		};
 
 		describe( 'success', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.post( `/rest/v1.1/me/stored-cards/${ card.stored_details_id }/delete` )
 					.reply( 200, { success: true } );
@@ -140,7 +140,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'fail', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.post( `/rest/v1.1/me/stored-cards/${ card.stored_details_id }/delete` )
 					.reply( 403, error );

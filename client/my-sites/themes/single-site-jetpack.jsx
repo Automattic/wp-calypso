@@ -36,21 +36,21 @@ import {
 	isJetpackSiteMultiSite,
 } from 'state/sites/selectors';
 
-const ConnectedThemesSelection = connectOptions( props => {
+const ConnectedThemesSelection = connectOptions( ( props ) => {
 	return (
 		<ThemesSelection
 			{ ...props }
 			getOptions={ function ( theme ) {
 				return pickBy(
 					addTracking( props.options ),
-					option => ! ( option.hideForTheme && option.hideForTheme( theme, props.siteId ) )
+					( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, props.siteId ) )
 				);
 			} }
 		/>
 	);
 } );
 
-const ConnectedSingleSiteJetpack = connectOptions( props => {
+const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 	const {
 		analyticsPath,
 		analyticsPageTitle,

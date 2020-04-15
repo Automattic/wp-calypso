@@ -230,7 +230,7 @@ class DebugTab extends Component {
 	}
 }
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'cache_path',
 		'cache_path_url',

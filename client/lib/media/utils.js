@@ -430,7 +430,7 @@ export function generateGalleryShortcode( settings ) {
 	// in settings.items but we just need the IDs set to attrs.ids
 	attrs = Object.assign(
 		{
-			ids: settings.items.map( item => item.ID ).join(),
+			ids: settings.items.map( ( item ) => item.ID ).join(),
 		},
 		settings
 	);

@@ -71,7 +71,9 @@ function filterList( listName, filterBy ) {
 
 PeopleLogStore = {
 	hasUnauthorizedError: function ( siteId ) {
-		return Boolean( find( _errors, log => log.siteId === siteId && log.error === 'unauthorized' ) );
+		return Boolean(
+			find( _errors, ( log ) => log.siteId === siteId && log.error === 'unauthorized' )
+		);
 	},
 
 	getErrors: filterList.bind( this, 'error' ),

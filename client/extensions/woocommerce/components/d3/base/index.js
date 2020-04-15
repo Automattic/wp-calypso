@@ -62,7 +62,7 @@ export default class D3Base extends Component {
 		return newNode;
 	}
 
-	setNodeRef = node => {
+	setNodeRef = ( node ) => {
 		this.node = node;
 	};
 

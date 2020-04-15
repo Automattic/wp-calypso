@@ -316,7 +316,7 @@ export class EditorMediaModalDetailItem extends Component {
 	}
 }
 
-const connectComponent = connect( state => {
+const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const canUserUploadFiles = canCurrentUser( state, siteId, 'upload_files' );
 

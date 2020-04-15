@@ -272,7 +272,7 @@ export class MediaLibraryContent extends React.Component {
 		analytics.tracks.recordEvent( tracksEvent, tracksData );
 	}
 
-	goToSharing = ev => {
+	goToSharing = ( ev ) => {
 		ev.preventDefault();
 		page( `/marketing/connections/${ this.props.site.slug }` );
 	};
@@ -439,12 +439,12 @@ export default connect(
 		};
 	},
 	() => ( {
-		toggleGuidedTour: shouldPause => {
+		toggleGuidedTour: ( shouldPause ) => {
 			// We're using `reduxDispatch` to avoid dispatch clashes with the media data Flux implementation.
 			// The eventual Reduxification of the media store should prevent this. See: #26168
 			reduxDispatch( shouldPause ? pauseGuidedTour() : resumeGuidedTour() );
 		},
-		deleteKeyringConnection: connection => {
+		deleteKeyringConnection: ( connection ) => {
 			// We don't want this to trigger a global notice - a notice is shown inline
 			const deleteKeyring = withoutNotice( () => deleteKeyringConnection( connection ) );
 

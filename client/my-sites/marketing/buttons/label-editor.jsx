@@ -36,7 +36,7 @@ class SharingButtonsLabelEditor extends React.Component {
 		hasEnabledButtons: true,
 	};
 
-	onKeyDown = event => {
+	onKeyDown = ( event ) => {
 		if ( -1 !== closeKeyCodes.indexOf( event.keyCode ) ) {
 			event.target.blur();
 			event.preventDefault();
@@ -44,7 +44,7 @@ class SharingButtonsLabelEditor extends React.Component {
 		}
 	};
 
-	onInputChange = event => {
+	onInputChange = ( event ) => {
 		this.props.onChange( event.target.value );
 	};
 

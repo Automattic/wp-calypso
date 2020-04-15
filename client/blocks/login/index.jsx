@@ -492,7 +492,7 @@ class Login extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		currentUser: getCurrentUser( state ),
 		redirectTo: getRedirectToSanitized( state ),
 		requestNotice: getRequestNotice( state ),

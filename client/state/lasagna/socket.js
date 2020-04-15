@@ -44,7 +44,7 @@ export const socketConnect = ( store, jwt, userId ) => {
 	} );
 };
 
-export const socketDisconnect = store => {
+export const socketDisconnect = ( store ) => {
 	socket && socket.disconnect();
 	socket = null;
 	store.dispatch( socketDisconnected() );

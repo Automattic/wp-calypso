@@ -39,7 +39,7 @@ const ScanThreats = ( { site, threats }: Props ) => {
 	const [ showFixAllThreatsDialog, setShowFixAllThreatsDialog ] = React.useState( false );
 	const [ actionToPerform, setActionToPerform ] = React.useState< ThreatAction >( 'fix' );
 	const userHasCredentials = useSelector(
-		state => ! isEmpty( getJetpackCredentials( state, site.ID, 'main' ) )
+		( state ) => ! isEmpty( getJetpackCredentials( state, site.ID, 'main' ) )
 	);
 	const dispatch = useDispatch();
 
@@ -60,12 +60,12 @@ const ScanThreats = ( { site, threats }: Props ) => {
 	const confirmAction = React.useCallback( () => {
 		const actionCreator = actionToPerform === 'fix' ? fixThreatAlert : ignoreThreatAlert;
 		closeDialog();
-		setFixingThreats( stateThreats => [ ...stateThreats, selectedThreat ] );
+		setFixingThreats( ( stateThreats ) => [ ...stateThreats, selectedThreat ] );
 		dispatch( actionCreator( site.ID, selectedThreat.id ) );
 	}, [ actionToPerform, closeDialog, dispatch, selectedThreat, site ] );
 
 	const confirmFixAllThreats = React.useCallback( () => {
-		threats.forEach( threat => {
+		threats.forEach( ( threat ) => {
 			dispatch( fixThreatAlert( site.ID, threat.id ) );
 		} );
 		setShowFixAllThreatsDialog( false );
@@ -119,13 +119,13 @@ const ScanThreats = ( { site, threats }: Props ) => {
 						...
 					</Button>
 				</div>
-				{ threats.map( threat => (
+				{ threats.map( ( threat ) => (
 					<ThreatItem
 						key={ threat.id }
 						threat={ threat }
 						onFixThreat={ () => openDialog( 'fix', threat ) }
 						onIgnoreThreat={ () => openDialog( 'ignore', threat ) }
-						isFixing={ !! fixingThreats.find( t => t.id === threat.id ) }
+						isFixing={ !! fixingThreats.find( ( t ) => t.id === threat.id ) }
 					/>
 				) ) }
 			</div>

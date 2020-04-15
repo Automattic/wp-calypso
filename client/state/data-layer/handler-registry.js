@@ -30,7 +30,7 @@ export const registerHandlers = ( id, handlers ) => {
  * @param {string} actionType requested action type
  * @returns {?Array<Function>} list of handlers for type
  */
-export const getHandlers = actionType => registeredHandlers[ actionType ];
+export const getHandlers = ( actionType ) => registeredHandlers[ actionType ];
 
 /**
  * For testing only: reset handlers

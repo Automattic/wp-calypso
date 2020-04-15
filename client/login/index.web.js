@@ -41,7 +41,7 @@ const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => {
 
 const makeLoggedOutLayout = makeLayoutMiddleware( ReduxWrappedLayout );
 
-export default router => {
+export default ( router ) => {
 	const lang = getLanguageRouteParam();
 
 	if ( config.isEnabled( 'login/magic-login' ) ) {

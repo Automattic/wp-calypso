@@ -64,7 +64,7 @@ export default class FollowersData extends Component {
 		pollers.remove( this._poller );
 	}
 
-	fetchIfEmpty = fetchOptions => {
+	fetchIfEmpty = ( fetchOptions ) => {
 		fetchOptions = fetchOptions || this.props.fetchOptions;
 		if ( ! fetchOptions || ! fetchOptions.siteId ) {
 			return;
@@ -105,7 +105,7 @@ export default class FollowersData extends Component {
 		return false;
 	};
 
-	refreshFollowers = fetchOptions => {
+	refreshFollowers = ( fetchOptions ) => {
 		fetchOptions = fetchOptions || this.props.fetchOptions;
 		debug( 'Refreshing followers: ' + JSON.stringify( fetchOptions ) );
 		this.setState( {

@@ -140,7 +140,7 @@ class Pages extends Component {
 		}
 	}
 
-	fetchPages = options => {
+	fetchPages = ( options ) => {
 		if ( this.props.loading || this.props.lastPage ) {
 			return;
 		}
@@ -151,7 +151,7 @@ class Pages extends Component {
 	};
 
 	updateShadowStatus = ( globalID, shadowStatus ) =>
-		new Promise( resolve =>
+		new Promise( ( resolve ) =>
 			this.setState( ( state, props ) => {
 				if ( shadowStatus ) {
 					// add or update the `globalID` key in the `shadowItems` map
@@ -332,7 +332,7 @@ class Pages extends Component {
 	renderChronological( { pages, site, showPublishedStatus } ) {
 		const { search, status } = this.props.query;
 
-		const rows = pages.map( page => {
+		const rows = pages.map( ( page ) => {
 			if ( ! ( 'site_ID' in page ) ) {
 				return page;
 			}

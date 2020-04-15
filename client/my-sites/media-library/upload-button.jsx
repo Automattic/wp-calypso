@@ -46,7 +46,7 @@ export default class extends React.Component {
 		}
 	};
 
-	uploadFiles = event => {
+	uploadFiles = ( event ) => {
 		if ( event.target.files && this.props.site ) {
 			MediaActions.clearValidationErrors( this.props.site.ID );
 			MediaActions.add( this.props.site, event.target.files );
@@ -73,7 +73,7 @@ export default class extends React.Component {
 		const allowedFileTypesForSite = getAllowedFileTypesForSite( this.props.site );
 
 		return uniq( allowedFileTypesForSite.concat( VideoPressFileTypes ) )
-			.map( type => `.${ type }` )
+			.map( ( type ) => `.${ type }` )
 			.join();
 	};
 

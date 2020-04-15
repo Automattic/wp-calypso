@@ -28,11 +28,11 @@ function getOffsetItem( state, currentItem, offset ) {
 	}
 
 	const stream = state.reader.streams[ streamKey ];
-	let index = findIndex( stream.items, item => keysAreEqual( item, currentItem ) );
+	let index = findIndex( stream.items, ( item ) => keysAreEqual( item, currentItem ) );
 
 	// If we didn't find a match, check x-posts too
 	if ( index < 0 ) {
-		index = findIndex( stream.items, item => keysAreEqual( item.xPostMetadata, currentItem ) );
+		index = findIndex( stream.items, ( item ) => keysAreEqual( item.xPostMetadata, currentItem ) );
 	}
 
 	if ( index < 0 ) {

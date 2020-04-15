@@ -18,7 +18,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param 	{object} action The action to dispatch next
  * @returns {object} Redux action
  */
-export const requestEmailVerification = action =>
+export const requestEmailVerification = ( action ) =>
 	http(
 		{
 			apiVersion: '1.1',

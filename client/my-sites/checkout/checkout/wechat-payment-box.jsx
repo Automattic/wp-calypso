@@ -55,7 +55,7 @@ export class WechatPaymentBox extends Component {
 		this.props.reset();
 	}
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 
 		const { showInfoNotice, translate, createRedirect } = this.props;
@@ -71,7 +71,7 @@ export class WechatPaymentBox extends Component {
 		createRedirect( this.state.name );
 	};
 
-	handleChange = event => this.setState( { name: event.target.value, errorMessage: '' } );
+	handleChange = ( event ) => this.setState( { name: event.target.value, errorMessage: '' } );
 
 	componentDidUpdate( prevProps ) {
 		const {
@@ -214,7 +214,7 @@ export class WechatPaymentBox extends Component {
 	}
 }
 
-export const requestId = cart => `wechat-payment-box/${ get( cart, 'cart_key', '0' ) }`;
+export const requestId = ( cart ) => `wechat-payment-box/${ get( cart, 'cart_key', '0' ) }`;
 
 export const requestRedirect = ( cart, domain_details, payment ) => {
 	return requestHttpData(
@@ -251,7 +251,7 @@ export default connect(
 		};
 	},
 	( dispatch, { cart, transaction, selectedSite, redirectTo } ) => ( {
-		createRedirect: name => {
+		createRedirect: ( name ) => {
 			const origin = getLocationOrigin( window.location );
 
 			const slug = get( selectedSite, 'slug', 'no-site' );

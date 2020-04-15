@@ -14,9 +14,9 @@ describe( 'wpcom.me.connectedApp', function () {
 	var appId;
 
 	describe( 'wpcom.me.connectedApps', function () {
-		it( "should get current user' connected applications", done => {
+		it( "should get current user' connected applications", ( done ) => {
 			me.connectedApps()
-				.then( data => {
+				.then( ( data ) => {
 					assert.ok( data );
 					assert.ok( data.connected_applications instanceof Array );
 					done();

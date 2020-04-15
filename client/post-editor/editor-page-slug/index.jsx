@@ -48,7 +48,7 @@ function getPagePath( site, post ) {
 	return siteURL;
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const site = getSite( state, siteId );

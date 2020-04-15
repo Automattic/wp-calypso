@@ -32,13 +32,13 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'actions', () => {
 	const siteId = 12345678;
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	describe( '#requestJetpackConnectionStatus()', () => {
 		const status = ITEMS_FIXTURE[ siteId ];
 
 		describe( 'success', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/' )
@@ -80,7 +80,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'failure', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/' )
@@ -114,7 +114,7 @@ describe( 'actions', () => {
 		const data = DATA_ITEMS_FIXTURE[ siteId ];
 
 		describe( 'success', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/' )
@@ -160,7 +160,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'failure', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/jetpack-blogs/' + siteId + '/rest-api/' )
@@ -197,7 +197,7 @@ describe( 'actions', () => {
 		};
 
 		describe( 'success', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/mine/delete' )
@@ -237,7 +237,7 @@ describe( 'actions', () => {
 				message: 'Invalid request.',
 			};
 
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/mine/delete' )

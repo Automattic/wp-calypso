@@ -320,7 +320,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 };
 
 export default connect< ConnectedProps, {}, {} >(
-	state => {
+	( state ) => {
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const site = getSiteBySlug( state, selectedSiteSlug );
 		return {
@@ -339,7 +339,7 @@ export default connect< ConnectedProps, {}, {} >(
 			hasSetupAds: site.options.wordads || isRequestingWordAdsApprovalForSite( state, site ),
 		};
 	},
-	dispatch => ( {
+	( dispatch ) => ( {
 		trackUpgrade: ( plan: string, feature: string ) =>
 			dispatch(
 				composeAnalytics(

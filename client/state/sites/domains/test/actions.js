@@ -32,7 +32,7 @@ jest.mock( 'lib/user', () => () => {} );
 describe( 'actions', () => {
 	let sandbox, spy;
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		spy = sandbox.spy();
 	} );
@@ -61,7 +61,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#fetchSiteDomains() - success', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.2/sites/${ siteId }/domains` )
@@ -85,7 +85,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#fetchSiteDomains() - failure', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.2/sites/${ siteId }/domains` )

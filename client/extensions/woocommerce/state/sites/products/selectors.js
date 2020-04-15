@@ -46,7 +46,7 @@ export const getAllProductsWithVariations = ( state, siteId = getSelectedSiteId(
 	// Flatten variations from their productId mapping down into a single array
 	const variationsList = flatten(
 		map( variations, ( items, productId ) => {
-			return items.map( item => ( { ...item, productId: Number( productId ) } ) );
+			return items.map( ( item ) => ( { ...item, productId: Number( productId ) } ) );
 		} )
 	);
 
@@ -107,7 +107,7 @@ export const getProducts = ( state, params = {}, siteId = getSelectedSiteId( sta
 	);
 
 	if ( productIdsOnPage.length ) {
-		return productIdsOnPage.map( id => find( products, { id } ) );
+		return productIdsOnPage.map( ( id ) => find( products, { id } ) );
 	}
 	return false;
 };

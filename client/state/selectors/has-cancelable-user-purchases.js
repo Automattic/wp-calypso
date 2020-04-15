@@ -17,7 +17,7 @@ export const hasCancelableUserPurchases = ( state, userId ) => {
 		return false;
 	}
 
-	const purchases = getUserPurchases( state, userId ).filter( purchase => {
+	const purchases = getUserPurchases( state, userId ).filter( ( purchase ) => {
 		if ( purchase.isRefundable ) {
 			return true;
 		}

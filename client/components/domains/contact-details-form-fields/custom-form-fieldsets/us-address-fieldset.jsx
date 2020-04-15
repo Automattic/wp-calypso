@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 import { StateSelect, Input } from 'my-sites/domains/components/form';
 import { getStateLabelText, getPostCodeLabelText, STATE_SELECT_TEXT } from './utils.js';
 
-const UsAddressFieldset = props => {
+const UsAddressFieldset = ( props ) => {
 	const { getFieldProps, translate, countryCode, contactDetailsErrors } = props;
 	return (
 		<div className="custom-form-fieldsets__address-fields us-address-fieldset">

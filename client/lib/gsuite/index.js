@@ -92,7 +92,7 @@ function getEligibleGSuiteDomain( selectedDomainName, domains ) {
 	// Orders domains with the primary domain in first position, if any
 	const supportedDomains = sortBy(
 		getGSuiteSupportedDomains( domains ),
-		domain => ! domain.isPrimary
+		( domain ) => ! domain.isPrimary
 	);
 
 	return get( supportedDomains, '[0].name', '' );

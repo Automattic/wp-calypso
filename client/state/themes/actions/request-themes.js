@@ -85,7 +85,7 @@ export function requestThemes( siteId, query = {} ) {
 
 				dispatch( receiveThemes( themes, siteId, query, found ) );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: THEMES_REQUEST_FAILURE,
 					siteId,

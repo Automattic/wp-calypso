@@ -23,7 +23,7 @@ function setup( siteId ) {
 		{
 			jetpackScan: { requestStatus: siteId },
 		},
-		state => {
+		( state ) => {
 			return state;
 		}
 	);

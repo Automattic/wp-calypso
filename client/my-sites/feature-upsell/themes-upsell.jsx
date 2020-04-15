@@ -274,7 +274,7 @@ class ThemesUpsellComponent extends Component {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const price = getUpsellPlanPrice( state, PLAN_BUSINESS, selectedSiteId );
 
@@ -285,7 +285,7 @@ const mapStateToProps = state => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	trackTracksEvent: ( name, props ) => dispatch( recordTracksEvent( name, props ) ),
 } );
 

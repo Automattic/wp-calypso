@@ -36,11 +36,11 @@ const demoThemes = [
 export default class extends React.Component {
 	static displayName = 'ThemesListExample';
 
-	getActionLabel = theme => {
+	getActionLabel = ( theme ) => {
 		return theme.actionLabel;
 	};
 
-	getButtonOptions = themeId => {
+	getButtonOptions = ( themeId ) => {
 		return {
 			action1: {
 				label: 'Menu Item 1',

@@ -27,16 +27,16 @@ const EditorGutenbergDialogs: React.FC< {} > = () => {
 	const [ hasGutenbergBlocks, setHasGutenbergBlocks ] = useState< boolean | null >( null );
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const isAtomic = useSelector( state => isSiteAutomatedTransfer( state, siteId ) );
-	const isPrivate = useSelector( state => isPrivateSite( state, siteId ) );
+	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
+	const isPrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
 	const isPrivateAtomic = isAtomic && isPrivate;
 
 	const postContent = useSelector( getEditorRawContent );
 	const isLoading = useSelector( isEditorLoading );
 	const isPostContentLoaded = ! isLoading && postContent !== null;
 
-	const optInEnabled = useSelector( state => isGutenbergOptInEnabled( state, siteId ) );
-	const wpAdminRedirectionUrl = useSelector( state =>
+	const optInEnabled = useSelector( ( state ) => isGutenbergOptInEnabled( state, siteId ) );
+	const wpAdminRedirectionUrl = useSelector( ( state ) =>
 		getWpAdminClassicEditorRedirectionUrl( state, siteId )
 	);
 

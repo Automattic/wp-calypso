@@ -142,7 +142,7 @@ const themeNode = ( { site_slug, slug, version, uri, intent, section } ) => ( {
 	section,
 } );
 
-const inferNode = range => {
+const inferNode = ( range ) => {
 	const { type, url } = range;
 
 	if ( type ) {
@@ -166,7 +166,7 @@ const inferNode = range => {
  * @param {string} type type of node specified in range
  * @returns {Function(object): object} maps block to meta data
  */
-const nodeMappings = type => {
+const nodeMappings = ( type ) => {
 	switch ( type ) {
 		case 'comment':
 			return commentNode;
@@ -270,11 +270,11 @@ const parse = ( [ prev, text, offset ], nextRange ) => {
  * @param {object} block the block to parse
  * @returns {Array} list of text and node segments with children
  */
-export const parseBlock = block =>
+export const parseBlock = ( block ) =>
 	block.ranges // is it complex or unformatted text?
 		? joinResults(
 				block.ranges
-					.map( o => ( { ...o, children: [] } ) )
+					.map( ( o ) => ( { ...o, children: [] } ) )
 					.sort( rangeSort )
 					.reduce( addRange, [] )
 					.reduce( parse, [ [], block.text, 0 ] )

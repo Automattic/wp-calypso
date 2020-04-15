@@ -195,7 +195,7 @@ const getRawAddressErrors = ( appState, addressData, siteId, shouldValidatePhone
 	const { phone, postcode, state, country } = getAddressValues( addressData );
 	const requiredFields = [ 'name', 'address', 'city', 'postcode', 'country' ];
 	const errors = {};
-	requiredFields.forEach( field => {
+	requiredFields.forEach( ( field ) => {
 		if ( ! values[ field ] ) {
 			errors[ field ] = translate( 'This field is required' );
 		}
@@ -252,7 +252,7 @@ const getAddressErrors = ( addressData, appState, siteId, shouldValidatePhone = 
 	const errors = getRawAddressErrors( appState, addressData, siteId, shouldValidatePhone );
 
 	if ( ignoreValidation ) {
-		Object.keys( errors ).forEach( field => {
+		Object.keys( errors ).forEach( ( field ) => {
 			if ( ignoreValidation[ field ] ) {
 				delete errors[ field ];
 			}
@@ -262,15 +262,15 @@ const getAddressErrors = ( addressData, appState, siteId, shouldValidatePhone = 
 	return errors;
 };
 
-const getPackagesErrors = values =>
-	mapValues( values, pckg => {
+const getPackagesErrors = ( values ) =>
+	mapValues( values, ( pckg ) => {
 		const errors = {};
 
 		if ( 'not_selected' === pckg.box_id ) {
 			errors.box_id = translate( 'Please select a package' );
 		}
 
-		const isInvalidDimension = dimension => ! isFinite( dimension ) || 0 >= dimension;
+		const isInvalidDimension = ( dimension ) => ! isFinite( dimension ) || 0 >= dimension;
 
 		if ( isInvalidDimension( pckg.weight ) ) {
 			errors.weight = translate( 'Invalid weight' );
@@ -294,11 +294,11 @@ export const getCustomsErrors = (
 	destinationCountryName
 ) => {
 	const usedProductIds = uniq(
-		flatten( map( packages, pckg => map( pckg.items, 'product_id' ) ) )
+		flatten( map( packages, ( pckg ) => map( pckg.items, 'product_id' ) ) )
 	);
 
 	const valuesByProductId = zipObject( usedProductIds, fill( Array( usedProductIds.length ), 0 ) );
-	forEach( packages, pckg => {
+	forEach( packages, ( pckg ) => {
 		forEach(
 			pckg.items,
 			( { quantity, product_id } ) =>
@@ -317,7 +317,7 @@ export const getCustomsErrors = (
 	} );
 
 	return {
-		packages: mapValues( packages, pckg => {
+		packages: mapValues( packages, ( pckg ) => {
 			const errors = {};
 
 			if ( 'other' === pckg.contentsType && ! pckg.contentsExplanation ) {
@@ -398,7 +398,9 @@ export const getCustomsErrors = (
 export const getRatesErrors = ( { values: selectedRates, available: allRates } ) =>
 	mapValues( allRates, ( rate, boxId ) => {
 		if ( ! isEmpty( rate.errors ) ) {
-			const messages = rate.errors.map( err => err.userMessage || err.message ).filter( Boolean );
+			const messages = rate.errors
+				.map( ( err ) => err.userMessage || err.message )
+				.filter( Boolean );
 			return messages.length
 				? messages
 				: [ "We couldn't get a rate for this package, please try again." ];
@@ -416,7 +418,7 @@ export const getRatesErrors = ( { values: selectedRates, available: allRates } )
 		return [ translate( 'Please choose a rate' ) ];
 	} );
 
-const getSidebarErrors = paperSize => {
+const getSidebarErrors = ( paperSize ) => {
 	const errors = {};
 	if ( ! paperSize ) {
 		errors.paperSize = translate( 'This field is required' );
@@ -491,11 +493,11 @@ export const isCustomsFormStepSubmitted = (
 	}
 
 	const usedProductIds = uniq(
-		flatten( map( form.packages.selected, pckg => map( pckg.items, 'product_id' ) ) )
+		flatten( map( form.packages.selected, ( pckg ) => map( pckg.items, 'product_id' ) ) )
 	);
 	return ! some(
 		usedProductIds.map(
-			productId =>
+			( productId ) =>
 				isNil( form.customs.items[ productId ].tariffNumber ) ||
 				form.customs.ignoreWeightValidation[ productId ] ||
 				form.customs.ignoreValueValidation[ productId ]

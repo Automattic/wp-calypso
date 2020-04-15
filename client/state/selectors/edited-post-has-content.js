@@ -44,7 +44,7 @@ export default function editedPostHasContent( state, siteId, postId ) {
 		return false;
 	}
 
-	if ( some( [ 'title', 'excerpt' ], field => trim( editedPost[ field ] ) ) ) {
+	if ( some( [ 'title', 'excerpt' ], ( field ) => trim( editedPost[ field ] ) ) ) {
 		return true;
 	}
 

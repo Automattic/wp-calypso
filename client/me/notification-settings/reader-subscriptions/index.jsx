@@ -46,7 +46,7 @@ const NotificationSubscriptions = createReactClass( {
 	},
 
 	handleCheckboxEvent( action ) {
-		return event => {
+		return ( event ) => {
 			const eventAction = 'Clicked ' + action + ' checkbox';
 			const optionValue = event.target.checked ? 1 : 0;
 

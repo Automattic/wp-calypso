@@ -43,7 +43,7 @@ class ThemeSelectionStep extends Component {
 		translate: identity,
 	};
 
-	pickTheme = themeId => {
+	pickTheme = ( themeId ) => {
 		const { useHeadstart } = this.props;
 		const theme = find( themes, { slug: themeId } );
 		const repoSlug = `${ theme.repo }/${ theme.slug }`;

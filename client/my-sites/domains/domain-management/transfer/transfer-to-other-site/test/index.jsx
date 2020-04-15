@@ -6,7 +6,7 @@ jest.mock( 'lib/analytics/index', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 
 jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
+	localize: ( Comp ) => ( props ) => (
 		<Comp
 			{ ...props }
 			translate={ function ( x ) {
@@ -14,8 +14,8 @@ jest.mock( 'i18n-calypso', () => ( {
 			} }
 		/>
 	),
-	numberFormat: x => x,
-	translate: x => x,
+	numberFormat: ( x ) => x,
+	translate: ( x ) => x,
 } ) );
 
 /**
@@ -68,7 +68,7 @@ const props = {
 };
 
 describe( 'TransferToOtherSite.isSiteEligible()', () => {
-	[ PLAN_FREE ].forEach( plan => {
+	[ PLAN_FREE ].forEach( ( plan ) => {
 		test( `Should return false for plan ${ plan }`, () => {
 			const instance = new TransferToOtherSite( props );
 			expect( instance.isSiteEligible( { ...site, plan: { product_slug: plan } } ) ).toBe( false );
@@ -94,7 +94,7 @@ describe( 'TransferToOtherSite.isSiteEligible()', () => {
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_ECOMMERCE,
 		PLAN_ECOMMERCE_2_YEARS,
-	].forEach( plan => {
+	].forEach( ( plan ) => {
 		test( `Should return true for plan ${ plan }`, () => {
 			const instance = new TransferToOtherSite( props );
 			expect( instance.isSiteEligible( { ...site, plan: { product_slug: plan } } ) ).toBe( true );

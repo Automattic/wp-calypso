@@ -48,7 +48,7 @@ describe( 'requestStatus', () => {
 
 describe( 'receiveStatus', () => {
 	let clock;
-	useFakeTimers( fakeClock => ( clock = fakeClock ) );
+	useFakeTimers( ( fakeClock ) => ( clock = fakeClock ) );
 
 	test( 'should dispatch set status action', () => {
 		const dispatch = sinon.spy();

@@ -52,7 +52,7 @@ function plugin( editor ) {
 			settings.autofix = false;
 
 			this.throttledReposition = throttle( this.reposition.bind( this ), 200 );
-			this.on( 'autohide', event => event.preventDefault() );
+			this.on( 'autohide', ( event ) => event.preventDefault() );
 			this.boundHideIfNotMarked = this.hideIfNotMarked.bind( this );
 
 			this._super( settings );
@@ -220,7 +220,7 @@ function plugin( editor ) {
 		// Attempt to find a supported localized subdomain which matches the
 		// currently configured locale slug
 		const localeSlug = getLocaleSlug();
-		const subdomain = find( SERVICE_LOCALIZED_SUBDOMAINS, locale => {
+		const subdomain = find( SERVICE_LOCALIZED_SUBDOMAINS, ( locale ) => {
 			// Match on full localeSlug ("en") or with variant ("pt-BR")
 			return localeSlug === locale || 0 === localeSlug.indexOf( locale + '-' );
 		} );
@@ -492,7 +492,7 @@ function plugin( editor ) {
 		} );
 	} )();
 
-	editor.on( 'SpellcheckStart SpellcheckEnd', event => {
+	editor.on( 'SpellcheckStart SpellcheckEnd', ( event ) => {
 		editor.contentDocument.body.spellcheck = 'spellcheckend' === event.type;
 		if ( ! editor.contentDocument.body.spellcheck ) {
 			editor.contentDocument.body.focus();

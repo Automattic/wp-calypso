@@ -51,7 +51,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestList()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.2/read/lists/listowner/listslug' )
 				.reply( 200, {
@@ -72,7 +72,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSubscribedLists()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.2/read/lists' )
@@ -107,7 +107,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#followList()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.2/read/lists/restapitests/testlist/follow' )
 				.reply( 200, {
@@ -127,7 +127,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#unfollowList()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.2/read/lists/restapitests/testlist/unfollow' )
 				.reply( 200, {
@@ -147,7 +147,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#updateListDetails()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.2/read/lists/restapitests/testlist/update' )
 				.reply( 200, {

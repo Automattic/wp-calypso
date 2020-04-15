@@ -34,9 +34,9 @@ class StoreStatsWidgetList extends Component {
 	render() {
 		const { data, deltas, query, selectedDate, widgets, moment } = this.props;
 		const { unit } = query;
-		const selectedIndex = findIndex( data, d => d.period === selectedDate );
+		const selectedIndex = findIndex( data, ( d ) => d.period === selectedDate );
 		const firstRealKey = Object.keys( deltas[ selectedIndex ] ).filter(
-			key => key !== 'period'
+			( key ) => key !== 'period'
 		)[ 0 ];
 		const sincePeriod = getDelta( deltas, selectedDate, firstRealKey );
 		const periodFormat = getPeriodFormat( unit, sincePeriod.reference_period );
@@ -77,8 +77,8 @@ class StoreStatsWidgetList extends Component {
 			</TableRow>
 		);
 
-		const widgetData = widgets.map( widget => {
-			const timeSeries = data.map( row => +row[ widget.key ] );
+		const widgetData = widgets.map( ( widget ) => {
+			const timeSeries = data.map( ( row ) => +row[ widget.key ] );
 			const delta = getDelta( deltas, selectedDate, widget.key );
 			const deltaValue =
 				delta.direction === 'is-undefined-increase'

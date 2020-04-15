@@ -13,7 +13,7 @@ jest.mock( 'lib/analytics/track-component-view', () => {
 } );
 
 jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
+	localize: ( Comp ) => ( props ) => (
 		<Comp
 			{ ...props }
 			translate={ function ( x ) {
@@ -21,8 +21,8 @@ jest.mock( 'i18n-calypso', () => ( {
 			} }
 		/>
 	),
-	numberFormat: x => x,
-	translate: x => x,
+	numberFormat: ( x ) => x,
+	translate: ( x ) => x,
 } ) );
 
 /**
@@ -208,7 +208,7 @@ describe( 'Banner should have a class name corresponding to appropriate plan', (
 		PLAN_PERSONAL_2_YEARS,
 		PLAN_JETPACK_PERSONAL,
 		PLAN_JETPACK_PERSONAL_MONTHLY,
-	].forEach( plan => {
+	].forEach( ( plan ) => {
 		test( 'Personal', () => {
 			const comp = shallow( <Banner { ...props } plan={ plan } /> );
 			expect( comp.find( '.is-upgrade-personal' ) ).toHaveLength( 1 );
@@ -220,7 +220,7 @@ describe( 'Banner should have a class name corresponding to appropriate plan', (
 		PLAN_PREMIUM_2_YEARS,
 		PLAN_JETPACK_PREMIUM,
 		PLAN_JETPACK_PREMIUM_MONTHLY,
-	].forEach( plan => {
+	].forEach( ( plan ) => {
 		test( 'Premium', () => {
 			const comp = shallow( <Banner { ...props } plan={ plan } /> );
 			expect( comp.find( '.is-upgrade-premium' ) ).toHaveLength( 1 );
@@ -232,7 +232,7 @@ describe( 'Banner should have a class name corresponding to appropriate plan', (
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( plan => {
+	].forEach( ( plan ) => {
 		test( 'Business', () => {
 			const comp = shallow( <Banner { ...props } plan={ plan } /> );
 			expect( comp.find( '.is-upgrade-business' ) ).toHaveLength( 1 );

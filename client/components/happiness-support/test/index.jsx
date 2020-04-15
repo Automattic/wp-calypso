@@ -22,7 +22,7 @@ import {
 
 describe( 'HappinessSupport', () => {
 	let wrapper;
-	const translate = content => `Translated: ${ content }`;
+	const translate = ( content ) => `Translated: ${ content }`;
 
 	beforeEach( () => {
 		wrapper = shallow( <HappinessSupport translate={ translate } recordTracksEvent={ noop } /> );

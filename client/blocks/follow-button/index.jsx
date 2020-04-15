@@ -28,7 +28,7 @@ class FollowButtonContainer extends Component {
 		onFollowToggle: noop,
 	};
 
-	handleFollowToggle = following => {
+	handleFollowToggle = ( following ) => {
 		if ( following ) {
 			const followData = omitBy(
 				{

@@ -44,7 +44,7 @@ const getRouteSetMessage = ( state, path ) => {
 	return `Looking at https://wordpress.com${ path }`;
 };
 
-export const getEventMessageFromActionData = action => {
+export const getEventMessageFromActionData = ( action ) => {
 	// Below we've stubbed in the actions we think we'll care about, so that we can
 	// start incrementally adding messages for them.
 	switch ( action.type ) {
@@ -137,7 +137,7 @@ export const sendActionLogsAndEvents = ( { getState, dispatch }, action ) => {
 	}
 };
 
-export default store => next => action => {
+export default ( store ) => ( next ) => ( action ) => {
 	const state = store.getState();
 	const { dispatch } = store;
 

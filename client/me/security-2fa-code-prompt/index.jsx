@@ -80,12 +80,12 @@ class Security2faCodePrompt extends React.Component {
 		this.setState( { codeRequestsAllowed: true } );
 	};
 
-	onRequestCode = event => {
+	onRequestCode = ( event ) => {
 		event.preventDefault();
 		this.requestCode();
 	};
 
-	onCancel = event => {
+	onCancel = ( event ) => {
 		event.preventDefault();
 		if ( this.props.onCancel ) {
 			this.props.onCancel();
@@ -102,7 +102,7 @@ class Security2faCodePrompt extends React.Component {
 		this.codeRequestTimer = setTimeout( this.allowCodeRequests, 60000 );
 	};
 
-	onCodeRequestResponse = error => {
+	onCodeRequestResponse = ( error ) => {
 		if ( error ) {
 			this.setState( {
 				codeRequestPerformed: false,
@@ -114,7 +114,7 @@ class Security2faCodePrompt extends React.Component {
 		}
 	};
 
-	onSubmit = event => {
+	onSubmit = ( event ) => {
 		event.preventDefault();
 		this.setState( { submittingCode: true }, this.onBeginCodeValidation );
 	};
@@ -266,7 +266,7 @@ class Security2faCodePrompt extends React.Component {
 		);
 	}
 
-	handleChange = e => {
+	handleChange = ( e ) => {
 		const { name, value } = e.currentTarget;
 		this.setState( { [ name ]: value } );
 	};

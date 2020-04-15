@@ -7,7 +7,7 @@ jest.mock( 'lib/analytics/ad-tracking', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 
 jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
+	localize: ( Comp ) => ( props ) => (
 		<Comp
 			{ ...props }
 			translate={ function ( x ) {
@@ -15,8 +15,8 @@ jest.mock( 'i18n-calypso', () => ( {
 			} }
 		/>
 	),
-	numberFormat: x => x,
-	translate: x => x,
+	numberFormat: ( x ) => x,
+	translate: ( x ) => x,
 } ) );
 
 jest.mock( 'state/sites/plans/selectors', () => ( {
@@ -59,7 +59,7 @@ import { calculatePlanCredits, isPrimaryUpgradeByPlanDelta, PlanFeatures } from 
 import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
 import { getPlanRawPrice } from 'state/plans/selectors';
 
-const identity = x => x;
+const identity = ( x ) => x;
 
 describe( 'isPrimaryUpgradeByPlanDelta', () => {
 	test( 'Should return true when called with blogger and personal plan', () => {
@@ -126,14 +126,14 @@ describe( 'PlanFeatures.renderUpgradeDisabledNotice', () => {
 
 	const originalCreatePortal = ReactDOM.createPortal;
 	beforeAll( () => {
-		ReactDOM.createPortal = elem => elem;
+		ReactDOM.createPortal = ( elem ) => elem;
 	} );
 
 	afterAll( () => {
 		ReactDOM.createPortal = originalCreatePortal;
 	} );
 
-	const createInstance = props => {
+	const createInstance = ( props ) => {
 		const instance = new PlanFeatures( props );
 		instance.getBannerContainer = () => <div />;
 
@@ -250,7 +250,7 @@ describe( 'PlanFeatures.renderCreditNotice', () => {
 		isSiteAT: false,
 	};
 
-	const createInstance = props => {
+	const createInstance = ( props ) => {
 		const instance = new PlanFeatures( props );
 		instance.getBannerContainer = () => <div />;
 
@@ -259,7 +259,7 @@ describe( 'PlanFeatures.renderCreditNotice', () => {
 
 	const originalCreatePortal = ReactDOM.createPortal;
 	beforeAll( () => {
-		ReactDOM.createPortal = elem => elem;
+		ReactDOM.createPortal = ( elem ) => elem;
 	} );
 
 	afterAll( () => {

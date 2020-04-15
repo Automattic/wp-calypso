@@ -53,7 +53,7 @@ class CheckoutContainer extends React.Component {
 		return this.state.headerText && <FormattedHeader headerText={ this.state.headerText } />;
 	}
 
-	setHeaderText = headerText => this.setState( { headerText } );
+	setHeaderText = ( headerText ) => this.setState( { headerText } );
 
 	shouldDisplaySiteCreatedNotice() {
 		return (

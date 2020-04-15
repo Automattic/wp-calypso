@@ -136,7 +136,7 @@ class SiteMockups extends Component {
 		};
 	}
 
-	handlePreviewClick = size =>
+	handlePreviewClick = ( size ) =>
 		this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_clicked', {
 			size,
 			vertical_slug: this.props.verticalSlug,

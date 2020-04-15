@@ -40,10 +40,10 @@ const props = {
 		plan: PLAN_FREE,
 	},
 	selectedSite: {},
-	translate: x => x,
-	onChangeField: x => x,
-	eventTracker: x => x,
-	uniqueEventTracker: x => x,
+	translate: ( x ) => x,
+	onChangeField: ( x ) => x,
+	eventTracker: ( x ) => x,
+	uniqueEventTracker: ( x ) => x,
 	fields: {},
 };
 
@@ -64,7 +64,7 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 		showUpgradeNudge: true,
 	};
 
-	[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL ].forEach( product_slug => {
+	[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL ].forEach( ( product_slug ) => {
 		test( `Business 1 year for (${ product_slug })`, () => {
 			const comp = shallow(
 				<GoogleAnalyticsForm
@@ -80,7 +80,7 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 		} );
 	} );
 
-	[ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS ].forEach( product_slug => {
+	[ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS ].forEach( ( product_slug ) => {
 		test( `Business 2 year for (${ product_slug })`, () => {
 			const comp = shallow(
 				<GoogleAnalyticsForm
@@ -97,7 +97,7 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 	} );
 
 	[ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ].forEach(
-		product_slug => {
+		( product_slug ) => {
 			test( `Jetpack Premium for (${ product_slug })`, () => {
 				const comp = shallow(
 					<GoogleAnalyticsForm

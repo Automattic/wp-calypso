@@ -71,6 +71,6 @@ class PostTrendsWeek extends Component {
 	}
 }
 
-export default connect( state => ( { userLocale: getCurrentUserLocale( state ) } ) )(
+export default connect( ( state ) => ( { userLocale: getCurrentUserLocale( state ) } ) )(
 	localize( withLocalizedMoment( PostTrendsWeek ) )
 );

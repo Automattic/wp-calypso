@@ -11,7 +11,7 @@ import {
 	JETPACK_SCAN_REQUEST_FAILURE,
 } from 'state/action-types';
 
-const fetchStatus = action => {
+const fetchStatus = ( action ) => {
 	return http(
 		{
 			apiNamespace: 'wpcom/v2',

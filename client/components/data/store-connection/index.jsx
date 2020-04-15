@@ -35,13 +35,13 @@ class StoreConnection extends React.Component {
 		this.removeStoreListeners( this.props.stores );
 	}
 
-	addStoreListeners = stores => {
+	addStoreListeners = ( stores ) => {
 		stores.forEach( function ( store ) {
 			store.on( 'change', this.handleStoresChanged );
 		}, this );
 	};
 
-	removeStoreListeners = stores => {
+	removeStoreListeners = ( stores ) => {
 		stores.forEach( function ( store ) {
 			store.off( 'change', this.handleStoresChanged );
 		}, this );
@@ -68,7 +68,7 @@ class StoreConnection extends React.Component {
 			return React.createElement( this.props.component, this.state );
 		}
 
-		return React.Children.map( this.props.children, child => {
+		return React.Children.map( this.props.children, ( child ) => {
 			return React.cloneElement( child, this.state );
 		} );
 	}

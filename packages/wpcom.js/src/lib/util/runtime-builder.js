@@ -31,7 +31,7 @@ const methodBuilder = ( methodParams, buildPath ) => {
  * @param {Function} buildPath - function to build the method endpoint path
  */
 export default function ( Class, list, buildPath ) {
-	list.forEach( methodParams => {
+	list.forEach( ( methodParams ) => {
 		methodParams = 'object' === typeof methodParams ? methodParams : { name: methodParams };
 
 		debug( 'Adding %o', methodParams.name );

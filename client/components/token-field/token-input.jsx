@@ -47,11 +47,11 @@ class TokenInput extends React.PureComponent {
 		);
 	}
 
-	setTextInput = input => {
+	setTextInput = ( input ) => {
 		this.textInput = input;
 	};
 
-	onChange = event => {
+	onChange = ( event ) => {
 		this.props.onChange( {
 			value: event.target.value,
 		} );

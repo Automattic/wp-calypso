@@ -15,7 +15,7 @@ import { receiveApplicationPasswords } from 'state/application-passwords/actions
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const apiTransformer = data => data.application_passwords;
+export const apiTransformer = ( data ) => data.application_passwords;
 
 /**
  * Dispatches a request to fetch application passwords of the current user
@@ -23,7 +23,7 @@ export const apiTransformer = data => data.application_passwords;
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const requestApplicationPasswords = action =>
+export const requestApplicationPasswords = ( action ) =>
 	http(
 		{
 			apiVersion: '1.1',

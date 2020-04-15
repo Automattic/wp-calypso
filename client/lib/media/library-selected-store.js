@@ -87,8 +87,8 @@ MediaLibrarySelectedStore.getAll = function ( siteId ) {
 
 	// Avoid keeping invalid items in the selected list.
 	return MediaLibrarySelectedStore._media[ siteId ]
-		.map( itemId => MediaStore.get( siteId, itemId ) )
-		.filter( item => item && ( item.guid || item.transient ) );
+		.map( ( itemId ) => MediaStore.get( siteId, itemId ) )
+		.filter( ( item ) => item && ( item.guid || item.transient ) );
 };
 
 MediaLibrarySelectedStore.dispatchToken = Dispatcher.register( function ( payload ) {

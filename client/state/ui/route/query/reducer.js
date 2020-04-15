@@ -9,7 +9,7 @@ import { isEqual, omit } from 'lodash';
  */
 import { ROUTE_SET } from 'state/action-types';
 
-const timestamped = query => ( {
+const timestamped = ( query ) => ( {
 	...query,
 	_timestamp: Date.now(),
 } );

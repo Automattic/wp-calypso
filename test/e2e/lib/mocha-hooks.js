@@ -70,8 +70,8 @@ afterEach( async function () {
 		}
 
 		await driver.getCurrentUrl().then(
-			url => console.log( `FAILED: Taking screenshot of: '${ url }'` ),
-			err => {
+			( url ) => console.log( `FAILED: Taking screenshot of: '${ url }'` ),
+			( err ) => {
 				slackNotifier.warn( `Could not capture the URL when taking a screenshot: '${ err }'` );
 			}
 		);
@@ -85,12 +85,12 @@ afterEach( async function () {
 	}
 
 	return await driver.takeScreenshot().then(
-		async data => {
-			return await driver.getCurrentUrl().then( async url => {
+		async ( data ) => {
+			return await driver.getCurrentUrl().then( async ( url ) => {
 				return await mediaHelper.writeScreenshot( data, filenameCallback, { url } );
 			} );
 		},
-		err => {
+		( err ) => {
 			slackNotifier.warn( `Could not take screenshot due to error: '${ err }'`, {
 				suppressDuplicateMessages: true,
 			} );

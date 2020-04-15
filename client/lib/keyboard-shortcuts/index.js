@@ -61,7 +61,7 @@ function KeyboardShortcuts( keyBindings ) {
 
 KeyboardShortcuts.prototype.bindShortcuts = function ( keyBindings ) {
 	// bind keys from the key bindings to their named events
-	keyBindings.forEach( keyBinding => {
+	keyBindings.forEach( ( keyBinding ) => {
 		this.bindShortcut(
 			keyBinding.eventName,
 			keyBinding.keys,
@@ -86,7 +86,7 @@ KeyboardShortcuts.prototype.bindShortcut = function ( eventName, keys, type, che
 		keyCombinations = keys;
 	}
 
-	keyCombinations.forEach( combo => {
+	keyCombinations.forEach( ( combo ) => {
 		if ( 'sequence' === type ) {
 			keymaster( combo[ 1 ], ( event, handler ) => {
 				// if the notifications panel is open, do not handle any sequences

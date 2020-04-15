@@ -45,8 +45,8 @@ export function isWebAuthnSupported() {
 
 export function registerSecurityKey( keyName = null ) {
 	return wpcomApiRequest( '/me/two-step/security-key/registration_challenge' )
-		.then( options => create( { publicKey: options } ) )
-		.then( response => {
+		.then( ( options ) => create( { publicKey: options } ) )
+		.then( ( response ) => {
 			return wpcomApiRequest(
 				'/me/two-step/security-key/registration_validate',
 				{
@@ -56,7 +56,7 @@ export function registerSecurityKey( keyName = null ) {
 				POST
 			);
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			switch ( error.name ) {
 				case 'InvalidStateError':
 					return Promise.reject( {

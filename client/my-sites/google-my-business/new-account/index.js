@@ -53,7 +53,7 @@ class GoogleMyBusinessNewAccount extends Component {
 		);
 	};
 
-	handleConnect = keyringConnection => {
+	handleConnect = ( keyringConnection ) => {
 		const { siteId } = this.props;
 
 		this.props.connectGoogleMyBusinessAccount( siteId, keyringConnection.ID ).then( () => {
@@ -136,7 +136,7 @@ class GoogleMyBusinessNewAccount extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state ),
 	} ),

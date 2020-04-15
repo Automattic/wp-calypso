@@ -57,7 +57,7 @@ export default class PostScheduler extends PureComponent {
 		};
 	}
 
-	setCurrentMonth = date => {
+	setCurrentMonth = ( date ) => {
 		this.setState( this.getFirstAndLastDayOfTheMonth( date ) );
 	};
 

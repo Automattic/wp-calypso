@@ -41,7 +41,7 @@ class MasterbarItemNew extends React.Component {
 	postButtonRef = React.createRef();
 
 	toggleSitesPopover = () => {
-		this.setState( state => ( {
+		this.setState( ( state ) => ( {
 			isShowingPopover: ! state.isShowingPopover,
 		} ) );
 	};
@@ -50,7 +50,7 @@ class MasterbarItemNew extends React.Component {
 		this.setState( { isShowingPopover: false } );
 	};
 
-	onClick = event => {
+	onClick = ( event ) => {
 		// if the user has multiple sites and none is selected, show site selector
 		if ( this.props.shouldOpenSiteSelector ) {
 			this.toggleSitesPopover();
@@ -64,7 +64,7 @@ class MasterbarItemNew extends React.Component {
 		return isMobile() ? 'bottom' : 'bottom left';
 	}
 
-	onSiteSelect = siteId => {
+	onSiteSelect = ( siteId ) => {
 		const redirectUrl = getEditorUrl( reduxGetState(), siteId, null, 'post' );
 		this.props.openEditor( redirectUrl );
 		return true; // handledByHost = true, don't let the component nav
@@ -115,14 +115,14 @@ class MasterbarItemNew extends React.Component {
 	}
 }
 
-const openEditor = editorUrl =>
+const openEditor = ( editorUrl ) =>
 	withAnalytics(
 		recordTracksEvent( 'calypso_masterbar_write_button_clicked' ),
 		navigate( editorUrl )
 	);
 
 export default connect(
-	state => {
+	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 		const isSitesGroup = getSectionGroup( state ) === 'sites';
 		const hasMoreThanOneVisibleSite = getCurrentUserVisibleSiteCount( state ) > 1;

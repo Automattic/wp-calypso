@@ -61,11 +61,11 @@ const queueSitePluginActionAsPromise = ( action, siteId, pluginId, callback ) =>
 	} );
 };
 
-const getSolvedPromise = dataToPass => {
-	return new Promise( resolve => resolve( dataToPass ) );
+const getSolvedPromise = ( dataToPass ) => {
+	return new Promise( ( resolve ) => resolve( dataToPass ) );
 };
 
-const getRejectedPromise = errorToPass => {
+const getRejectedPromise = ( errorToPass ) => {
 	return new Promise( ( resolve, reject ) => reject( errorToPass ) );
 };
 
@@ -134,7 +134,7 @@ const PluginsActions = {
 		} );
 	},
 
-	fetchSitePlugins: site => {
+	fetchSitePlugins: ( site ) => {
 		if ( ! userCan( 'manage_options', site ) || ! site.jetpack ) {
 			defer( () => {
 				Dispatcher.handleViewAction( {
@@ -212,19 +212,19 @@ const PluginsActions = {
 			return queueSitePluginActionAsPromise( bound, site.ID, plugin.slug );
 		};
 
-		const update = pluginData => {
+		const update = ( pluginData ) => {
 			const { id } = pluginData;
 			const bound = getPluginBoundMethod( site, id, 'updateVersion' );
 			return queueSitePluginActionAsPromise( bound, site.ID, id );
 		};
 
-		const activate = pluginData => {
+		const activate = ( pluginData ) => {
 			const { id } = pluginData;
 			const bound = getPluginBoundMethod( site, id, 'activate' );
 			return queueSitePluginActionAsPromise( bound, site.ID, id );
 		};
 
-		const autoupdate = pluginData => {
+		const autoupdate = ( pluginData ) => {
 			const { id } = pluginData;
 			const bound = getPluginBoundMethod( site, id, 'enableAutoupdate' );
 			return queueSitePluginActionAsPromise( bound, site.ID, pluginData.id );
@@ -248,12 +248,12 @@ const PluginsActions = {
 			recordEvent( 'calypso_plugin_installed', plugin, site, error );
 		};
 
-		const manageSuccess = responseData => {
+		const manageSuccess = ( responseData ) => {
 			dispatchMessage( 'RECEIVE_INSTALLED_PLUGIN', responseData );
 			return responseData;
 		};
 
-		const manageError = error => {
+		const manageError = ( error ) => {
 			if ( error.name === 'PluginAlreadyInstalledError' ) {
 				if ( site.isMainNetworkSite ) {
 					return update( plugin ).then( autoupdate ).then( manageSuccess ).catch( manageError );
@@ -307,13 +307,13 @@ const PluginsActions = {
 			recordEvent( 'calypso_plugin_removed', plugin, site, error );
 		};
 
-		const remove = pluginData => {
+		const remove = ( pluginData ) => {
 			const { id } = pluginData;
 			const bound = getPluginBoundMethod( site, id, 'delete' );
 			return queueSitePluginActionAsPromise( bound, site.ID, id );
 		};
 
-		const deactivate = pluginData => {
+		const deactivate = ( pluginData ) => {
 			if ( pluginData.active ) {
 				const { id } = pluginData;
 				const bound = getPluginBoundMethod( site, id, 'deactivate' );
@@ -322,7 +322,7 @@ const PluginsActions = {
 			return getSolvedPromise( pluginData );
 		};
 
-		const disableAutoupdate = pluginData => {
+		const disableAutoupdate = ( pluginData ) => {
 			if ( pluginData.autoupdate ) {
 				const { id } = pluginData;
 				const bound = getPluginBoundMethod( site, id, 'disableAutoupdate' );
@@ -334,8 +334,8 @@ const PluginsActions = {
 		return deactivate( plugin )
 			.then( disableAutoupdate )
 			.then( remove )
-			.then( responseData => dispatchMessage( 'RECEIVE_REMOVE_PLUGIN', responseData ) )
-			.catch( error => dispatchMessage( 'RECEIVE_REMOVE_PLUGIN', null, error ) );
+			.then( ( responseData ) => dispatchMessage( 'RECEIVE_REMOVE_PLUGIN', responseData ) )
+			.catch( ( error ) => dispatchMessage( 'RECEIVE_REMOVE_PLUGIN', null, error ) );
 	},
 
 	activatePlugin: ( site, plugin ) => {

@@ -54,7 +54,7 @@ export default function wpcomSupport( wpcom ) {
 			if ( newUser !== supportUser || newToken !== supportToken ) {
 				supportUser = newUser;
 				supportToken = newToken;
-				interceptResponse = callback => {
+				interceptResponse = ( callback ) => {
 					return ( response, ...args ) => {
 						if (
 							response &&

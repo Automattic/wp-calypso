@@ -7,7 +7,7 @@ jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 jest.mock( 'components/banner', () => 'Banner' );
 
 jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
+	localize: ( Comp ) => ( props ) => (
 		<Comp
 			{ ...props }
 			translate={ function ( x ) {
@@ -15,8 +15,8 @@ jest.mock( 'i18n-calypso', () => ( {
 			} }
 		/>
 	),
-	numberFormat: x => x,
-	translate: x => x,
+	numberFormat: ( x ) => x,
+	translate: ( x ) => x,
 } ) );
 
 /**
@@ -52,7 +52,7 @@ import {
 } from 'lib/plans/constants';
 
 const props = {
-	translate: x => x,
+	translate: ( x ) => x,
 	canUserUpgrade: true,
 };
 
@@ -64,7 +64,7 @@ describe( 'UpgradeToPremiumNudgePure basic tests', () => {
 
 	test( 'hide when user cannot upgrade', () => {
 		const localProps = {
-			translate: x => x,
+			translate: ( x ) => x,
 			canUserUpgrade: false,
 		};
 		const comp = shallow( <UpgradeToPremiumNudgePure { ...localProps } /> );
@@ -93,7 +93,7 @@ describe( 'UpgradeToPremiumNudgePure.render()', () => {
 		PLAN_PREMIUM_2_YEARS,
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_ECOMMERCE_2_YEARS,
-	].forEach( plan => {
+	].forEach( ( plan ) => {
 		test( `Should pass 2-years wp.com premium plan for 2-years plans ${ plan }`, () => {
 			const comp = shallow(
 				<UpgradeToPremiumNudgePure { ...props } isJetpack={ false } planSlug={ plan } />

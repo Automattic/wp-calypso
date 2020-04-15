@@ -95,13 +95,13 @@ class FollowingIntro extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			isNewReader: getPreference( state, 'is_new_reader' ),
 			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS * 2 )( state ),
 		};
 	},
-	dispatch =>
+	( dispatch ) =>
 		bindActionCreators(
 			{
 				dismiss: () => {

@@ -43,7 +43,7 @@ FilterBarController.prototype.getFilteredNotes = function ( notes ) {
 		return [];
 	}
 
-	const filterFunction = note =>
+	const filterFunction = ( note ) =>
 		some( [
 			'unread' === filterName && noteHasFilteredRead( state, note.id ),
 			activeTab().filter( note ),

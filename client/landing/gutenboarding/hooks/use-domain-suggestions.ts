@@ -13,7 +13,7 @@ import { selectorDebounce } from '../constants';
 import { useCurrentStep } from '../path';
 
 export function useDomainSuggestions( { searchOverride = '', locale = 'en' } ) {
-	const { siteTitle, siteVertical, domainSearch } = useSelect( select =>
+	const { siteTitle, siteVertical, domainSearch } = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).getState()
 	);
 	const currentStep = useCurrentStep();
@@ -29,7 +29,7 @@ export function useDomainSuggestions( { searchOverride = '', locale = 'en' } ) {
 	const [ searchTerm ] = useDebounce( searchVal, selectorDebounce );
 
 	return useSelect(
-		select => {
+		( select ) => {
 			if ( ! searchTerm ) {
 				return;
 			}

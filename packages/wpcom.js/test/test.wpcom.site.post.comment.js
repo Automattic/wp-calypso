@@ -19,16 +19,16 @@ describe( 'wpcom.site.post.comment', function () {
 	var testing_post;
 	var testing_comment;
 
-	before( done => {
+	before( ( done ) => {
 		site
 			.addPost( fixture.post )
-			.then( data => {
+			.then( ( data ) => {
 				testing_post = site.post( data.ID );
 
 				// Add comment to post
 				return site.post( data.ID ).comment().add( fixture.post_comment );
 			} )
-			.then( data_comment => {
+			.then( ( data_comment ) => {
 				testing_comment = testing_post.comment( data_comment.ID );
 				done();
 			} )

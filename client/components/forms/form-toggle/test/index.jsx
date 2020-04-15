@@ -47,7 +47,7 @@ describe( 'FormToggle', () => {
 			} );
 		} );
 
-		test( 'should fire onChange event with value param when clicked', done => {
+		test( 'should fire onChange event with value param when clicked', ( done ) => {
 			const toggle = shallow(
 				<FormToggle
 					checked={ false }
@@ -94,7 +94,7 @@ describe( 'FormToggle', () => {
 				</div>
 			);
 			const toggleInputs = toggles.find( '.form-toggle' );
-			const ids = toggleInputs.map( input => input.props().id );
+			const ids = toggleInputs.map( ( input ) => input.props().id );
 
 			assert( ids.length === uniq( ids ).length );
 		} );

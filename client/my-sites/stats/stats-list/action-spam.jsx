@@ -23,7 +23,7 @@ class StatsActionSpam extends React.Component {
 		spammed: false,
 	};
 
-	clickHandler = event => {
+	clickHandler = ( event ) => {
 		const spamType = this.state.spammed ? 'statsReferrersSpamDelete' : 'statsReferrersSpamNew';
 		const gaEvent = this.state.spammed ? 'Undid Referrer Spam' : 'Marked Referrer as Spam';
 		event.stopPropagation();

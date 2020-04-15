@@ -31,7 +31,7 @@ export class RegionAddressFieldsets extends Component {
 		contactDetailsErrors: PropTypes.shape(
 			Object.assign(
 				{},
-				...CONTACT_DETAILS_FORM_FIELDS.map( field => ( { [ field ]: PropTypes.string } ) )
+				...CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => ( { [ field ]: PropTypes.string } ) )
 			)
 		),
 	};

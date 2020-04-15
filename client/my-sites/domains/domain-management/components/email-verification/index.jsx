@@ -51,7 +51,7 @@ class EmailVerificationCard extends React.Component {
 		this.setState( { emailSent: false } );
 	};
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		const {
 			errorMessage,
 			resendVerification,
@@ -65,7 +65,7 @@ class EmailVerificationCard extends React.Component {
 
 		this.setState( { submitting: true } );
 
-		resendVerification( selectedDomainName, error => {
+		resendVerification( selectedDomainName, ( error ) => {
 			if ( error ) {
 				const message = get( error, 'message', errorMessage );
 				this.props.errorNotice( message );

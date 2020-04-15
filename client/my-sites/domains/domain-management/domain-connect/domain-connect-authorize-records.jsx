@@ -39,7 +39,7 @@ class DomainConnectAuthorizeRecords extends Component {
 		);
 	};
 
-	renderDnsRecords = records => {
+	renderDnsRecords = ( records ) => {
 		return (
 			<DnsRecordsList>
 				{ records.map( ( record, index ) => (

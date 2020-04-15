@@ -16,7 +16,7 @@ import scrollIntoViewport from 'lib/scroll-into-viewport';
 export default class Input extends React.Component {
 	static defaultProps = { autoFocus: false, autoComplete: 'on' };
 
-	inputRef = element => {
+	inputRef = ( element ) => {
 		this.inputElement = element;
 
 		if ( ! this.props.inputRef ) {
@@ -47,7 +47,7 @@ export default class Input extends React.Component {
 			// http://stackoverflow.com/a/19998430/821706
 			inputElement.addEventListener( 'touchstart', () => ( inputElement.pattern = '\\d*' ) );
 
-			[ 'keydown', 'blur' ].forEach( eventName =>
+			[ 'keydown', 'blur' ].forEach( ( eventName ) =>
 				inputElement.addEventListener( eventName, () => ( inputElement.pattern = '.*' ) )
 			);
 		}

@@ -51,14 +51,14 @@ class JetpackSyncPanel extends React.Component {
 		return !! ( this.props.isFullSyncing || this.props.isPendingSyncStart );
 	};
 
-	onSyncRequestButtonClick = event => {
+	onSyncRequestButtonClick = ( event ) => {
 		event.preventDefault();
 		debug( 'Perform full sync button clicked' );
 		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_request_button_clicked' );
 		this.props.scheduleJetpackFullysync( this.props.siteId );
 	};
 
-	onTryAgainClick = event => {
+	onTryAgainClick = ( event ) => {
 		event.preventDefault();
 		debug( 'Try again button clicked' );
 		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_try_again_button_clicked', {
@@ -196,7 +196,7 @@ class JetpackSyncPanel extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSite( state ),
 			siteId = site.ID;
 		return {
@@ -209,5 +209,5 @@ export default connect(
 			syncProgress: syncSelectors.getSyncProgressPercentage( state, siteId ),
 		};
 	},
-	dispatch => bindActionCreators( { getSyncStatus, scheduleJetpackFullysync }, dispatch )
+	( dispatch ) => bindActionCreators( { getSyncStatus, scheduleJetpackFullysync }, dispatch )
 )( localize( withLocalizedMoment( JetpackSyncPanel ) ) );

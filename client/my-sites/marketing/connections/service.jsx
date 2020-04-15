@@ -57,7 +57,7 @@ import SocialLogo from 'components/social-logo';
  * @param {object} connection Publicize connection.
  * @returns {boolean} True if connection is broken or requires reauthentication.
  */
-const isConnectionInvalidOrMustReauth = connection =>
+const isConnectionInvalidOrMustReauth = ( connection ) =>
 	[ 'must_reauth', 'invalid' ].includes( connection.status );
 
 export class SharingService extends Component {
@@ -143,7 +143,7 @@ export class SharingService extends Component {
 	 *
 	 * @param {number} keyringConnectionId Keyring connection ID.
 	 */
-	externalAccessProvided = keyringConnectionId => {}; // eslint-disable-line no-unused-vars
+	externalAccessProvided = ( keyringConnectionId ) => {}; // eslint-disable-line no-unused-vars
 
 	/**
 	 * Establishes a new connection.
@@ -264,8 +264,8 @@ export class SharingService extends Component {
 	 *                            Default: All broken connections for this service.
 	 */
 	refresh = ( connections = this.props.brokenConnections ) => {
-		this.getConnections( connections ).map( connection => {
-			const keyringConnection = find( this.props.keyringConnections, token => {
+		this.getConnections( connections ).map( ( connection ) => {
+			const keyringConnection = find( this.props.keyringConnections, ( token ) => {
 				// Publicize connections store the token id as `keyring_connection_ID`
 				const tokenID =
 					'publicize' === token.type ? connection.keyring_connection_ID : connection.ID;
@@ -306,7 +306,8 @@ export class SharingService extends Component {
 	 * @param {object} connection Connection to update.
 	 * @returns {Function} Action thunk
 	 */
-	fetchConnection = connection => this.props.fetchConnection( this.props.siteId, connection.ID );
+	fetchConnection = ( connection ) =>
+		this.props.fetchConnection( this.props.siteId, connection.ID );
 
 	/**
 	 * Checks whether any connection can be removed.
@@ -570,7 +571,7 @@ export class SharingService extends Component {
 								connect={ this.connectAnother }
 								service={ this.props.service }
 							>
-								{ connections.map( connection => (
+								{ connections.map( ( connection ) => (
 									<Connection
 										key={ connection.keyring_connection_ID }
 										connection={ connection }

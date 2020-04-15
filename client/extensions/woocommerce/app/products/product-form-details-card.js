@@ -57,7 +57,7 @@ class ProductFormDetailsCard extends Component {
 		}
 	}
 
-	setSku = sku => {
+	setSku = ( sku ) => {
 		const { siteId, product, editProduct } = this.props;
 		editProduct( siteId, product, { sku } );
 
@@ -73,7 +73,7 @@ class ProductFormDetailsCard extends Component {
 		editProduct( siteId, product, { description } );
 	}
 
-	onImageUpload = image => {
+	onImageUpload = ( image ) => {
 		const { siteId, product, editProduct } = this.props;
 		const images = ( product.images && [ ...product.images ] ) || [];
 		images.push( {
@@ -83,9 +83,9 @@ class ProductFormDetailsCard extends Component {
 		editProduct( siteId, product, { images } );
 	};
 
-	onImageRemove = id => {
+	onImageRemove = ( id ) => {
 		const { siteId, product, editProduct } = this.props;
-		const images = ( product.images && [ ...product.images ].filter( i => i.id !== id ) ) || [];
+		const images = ( product.images && [ ...product.images ].filter( ( i ) => i.id !== id ) ) || [];
 		editProduct( siteId, product, { images } );
 	};
 

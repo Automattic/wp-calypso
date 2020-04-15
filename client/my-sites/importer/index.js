@@ -26,7 +26,7 @@ export default function () {
 
 	// Importing doesn't have any routes for subsections.
 	// Redirect to parent `/import`.
-	page( '/import/*/:site_id', context => {
+	page( '/import/*/:site_id', ( context ) => {
 		const site_id = get( context, 'params.site_id' );
 		return page.redirect( `/import/${ site_id }` );
 	} );

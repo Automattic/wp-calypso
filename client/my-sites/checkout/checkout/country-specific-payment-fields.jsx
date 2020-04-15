@@ -97,7 +97,8 @@ export class CountrySpecificPaymentFields extends Component {
 		);
 	};
 
-	onFieldChange = event => this.props.handleFieldChange( event.target.name, event.target.value );
+	onFieldChange = ( event ) =>
+		this.props.handleFieldChange( event.target.name, event.target.value );
 
 	render() {
 		const { translate, countriesList, countryCode } = this.props;

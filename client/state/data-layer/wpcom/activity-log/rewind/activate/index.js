@@ -20,7 +20,7 @@ import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transforme
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const fetch = action => {
+export const fetch = ( action ) => {
 	const notice = successNotice( i18n.translate( 'Obtaining your credentials…' ) );
 	const {
 		notice: { noticeId },

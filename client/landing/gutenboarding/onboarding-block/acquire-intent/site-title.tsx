@@ -21,7 +21,7 @@ interface Props {
 
 const SiteTitle: React.FunctionComponent< Props > = ( { isVisible } ) => {
 	const { __ } = useI18n();
-	const { siteTitle, siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
+	const { siteTitle, siteVertical } = useSelect( ( select ) => select( STORE_KEY ).getState() );
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 	const history = useHistory();
 	const makePath = usePath();

@@ -14,10 +14,10 @@ describe.skip( 'wpcom.site.follow', function () {
 	var follow = site.follow();
 
 	describe( 'wpcom.site.follow.follow', function () {
-		it( 'should follow site', done => {
+		it( 'should follow site', ( done ) => {
 			follow
 				.follow()
-				.then( data => {
+				.then( ( data ) => {
 					assert.ok( data );
 					assert.equal( true, data.is_following );
 
@@ -28,10 +28,10 @@ describe.skip( 'wpcom.site.follow', function () {
 	} );
 
 	describe( 'wpcom.site.follow.unfollow', function () {
-		it( 'should unfollow site', done => {
+		it( 'should unfollow site', ( done ) => {
 			follow
 				.unfollow()
-				.then( data => {
+				.then( ( data ) => {
 					assert.ok( data );
 					assert.equal( false, data.is_following );
 
@@ -42,10 +42,10 @@ describe.skip( 'wpcom.site.follow', function () {
 	} );
 
 	describe( 'wpcom.site.follow.mine', function () {
-		it( 'should get follow status', done => {
+		it( 'should get follow status', ( done ) => {
 			follow
 				.mine()
-				.then( data => {
+				.then( ( data ) => {
 					assert.ok( data );
 					assert.equal( false, data.is_following );
 

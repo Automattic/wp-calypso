@@ -27,7 +27,7 @@ function doesNotNeedSandbox( iframe ) {
 	const hostName = iframe.src && url.parse( iframe.src ).hostname;
 	const iframeHost = hostName && hostName.toLowerCase();
 
-	return some( trustedHosts, trustedHost => endsWith( '.' + iframeHost, '.' + trustedHost ) );
+	return some( trustedHosts, ( trustedHost ) => endsWith( '.' + iframeHost, '.' + trustedHost ) );
 }
 
 export default function makeEmbedsSafe( post, dom ) {

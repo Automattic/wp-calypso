@@ -73,7 +73,7 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 	const { __, i18nLocale } = useI18n();
 	const label = __( 'Search for a domain' );
 
-	const { domainSearch } = useSelect( select => select( STORE_KEY ).getState() );
+	const { domainSearch } = useSelect( ( select ) => select( STORE_KEY ).getState() );
 	const { setDomainSearch } = useDispatch( STORE_KEY );
 
 	const allSuggestions = useDomainSuggestions( { locale: i18nLocale } );
@@ -124,10 +124,10 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 								<SuggestionNone />
 							) ) }
 						{ ! paidSuggestions &&
-							times( PAID_DOMAINS_TO_SHOW - 1, i => <SuggestionItemPlaceholder key={ i } /> ) }
+							times( PAID_DOMAINS_TO_SHOW - 1, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
 						{ paidSuggestions &&
 							( paidSuggestions?.length ? (
-								paidSuggestions.map( suggestion => (
+								paidSuggestions.map( ( suggestion ) => (
 									<SuggestionItem
 										suggestion={ suggestion }
 										isRecommended={ suggestion === recommendedSuggestion }

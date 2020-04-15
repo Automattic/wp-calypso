@@ -179,7 +179,7 @@ function embedSlideshow( domNode ) {
 
 	// Remove no JS warning so user doesn't have to look at it while several scripts load
 	const warningElements = domNode.parentNode.getElementsByClassName( 'jetpack-slideshow-noscript' );
-	forEach( warningElements, el => {
+	forEach( warningElements, ( el ) => {
 		el.classList.add( 'hidden' );
 	} );
 

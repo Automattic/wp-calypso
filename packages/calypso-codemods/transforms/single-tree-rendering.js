@@ -57,7 +57,7 @@ export default function transformer( file, api ) {
 	 * @param  {object}  importNode Node object
 	 * @returns {boolean}            True if import is external
 	 */
-	const isExternal = importNode =>
+	const isExternal = ( importNode ) =>
 		externalDependenciesSet.has( importNode.source.value.split( '/' )[ 0 ] );
 
 	/**
@@ -82,7 +82,7 @@ export default function transformer( file, api ) {
 	 * @returns {boolean}            True if parameter is present
 	 */
 	function hasParam( params = [], paramValue ) {
-		return _.some( params, param => {
+		return _.some( params, ( param ) => {
 			return ( param.name || param ) === paramValue;
 		} );
 	}
@@ -108,12 +108,12 @@ export default function transformer( file, api ) {
 			// Find remaining external or internal dependencies and place comments above first one
 			root
 				.find( j.ImportDeclaration )
-				.filter( p => {
+				.filter( ( p ) => {
 					// Look for only imports that are same type as the removed import was
 					return isExternal( p.value ) === isRemovedExternal;
 				} )
 				.at( 0 )
-				.replaceWith( p => {
+				.replaceWith( ( p ) => {
 					p.value.comments = p.value.comments ? p.value.comments.concat( comments ) : comments;
 					return p.value;
 				} );
@@ -306,7 +306,7 @@ export default function transformer( file, api ) {
 			.find( j.CallExpression, {
 				callee: expressionCallee,
 			} )
-			.replaceWith( p => {
+			.replaceWith( ( p ) => {
 				const contextArg = path.value.params[ 0 ];
 				const target = getTarget( p.value.arguments[ 1 ] );
 				return j.assignmentExpression(
@@ -363,7 +363,7 @@ export default function transformer( file, api ) {
 				value: 'lib/react-helpers',
 			},
 		} )
-		.filter( p => ! p.value.specifiers.length );
+		.filter( ( p ) => ! p.value.specifiers.length );
 
 	if ( orphanImportHelpers.size() ) {
 		removeImport( orphanImportHelpers );
@@ -388,7 +388,7 @@ export default function transformer( file, api ) {
 			},
 		} )
 		// Ensures we remove only nodes containing `document.getElementById( 'secondary' )`
-		.filter( p => _.get( p, 'value.arguments[0].arguments[0].value' ) === 'secondary' )
+		.filter( ( p ) => _.get( p, 'value.arguments[0].arguments[0].value' ) === 'secondary' )
 		.remove();
 
 	// Find if `ReactDom` is used
@@ -425,7 +425,7 @@ export default function transformer( file, api ) {
 				name: 'page',
 			},
 		} )
-		.filter( p => {
+		.filter( ( p ) => {
 			const lastArgument = _.last( p.value.arguments );
 
 			return (
@@ -435,7 +435,7 @@ export default function transformer( file, api ) {
 				! isRedirectMiddleware( lastArgument )
 			);
 		} )
-		.forEach( p => {
+		.forEach( ( p ) => {
 			p.value.arguments.push( j.identifier( 'makeLayout' ) );
 			p.value.arguments.push( j.identifier( 'clientRender' ) );
 		} );

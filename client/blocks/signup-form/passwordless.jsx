@@ -49,7 +49,7 @@ class PasswordlessSignupForm extends Component {
 		} );
 	};
 
-	onFormSubmit = async event => {
+	onFormSubmit = async ( event ) => {
 		event.preventDefault();
 
 		if ( ! this.state.email || ! emailValidator.validate( this.state.email ) ) {
@@ -189,7 +189,7 @@ class PasswordlessSignupForm extends Component {
 		}
 	}
 
-	submitStep = data => {
+	submitStep = ( data ) => {
 		const { flowName, stepName, goToNextStep, submitCreateAccountStep } = this.props;
 		submitCreateAccountStep(
 			{

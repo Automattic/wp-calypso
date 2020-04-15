@@ -39,7 +39,7 @@ const CreateSite: FunctionComponent< {} > = () => {
 				<div className="create-site__content">
 					<div className="create-site__progress">
 						<div className="create-site__progress-steps">
-							{ progressSteps.map( step => (
+							{ progressSteps.map( ( step ) => (
 								<div key={ step } className="create-site__progress-step">
 									{ step }
 								</div>

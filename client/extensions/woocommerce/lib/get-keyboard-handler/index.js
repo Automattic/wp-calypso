@@ -10,7 +10,7 @@
  */
 
 export default function ( callback ) {
-	return event => {
+	return ( event ) => {
 		if ( event.key === 'Enter' || event.key === ' ' ) {
 			event.preventDefault();
 			callback( event );

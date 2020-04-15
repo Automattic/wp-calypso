@@ -76,7 +76,7 @@ class StoreSidebar extends Component {
 		this.props.fetchSetupChoices( siteId );
 	};
 
-	isItemLinkSelected = paths => {
+	isItemLinkSelected = ( paths ) => {
 		if ( ! Array.isArray( paths ) ) {
 			paths = [ paths ];
 		}

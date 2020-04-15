@@ -68,11 +68,11 @@ export class RedirectPaymentBox extends PureComponent {
 		};
 	}
 
-	handleChange = event => this.updateFieldValues( event.target.name, event.target.value );
+	handleChange = ( event ) => this.updateFieldValues( event.target.name, event.target.value );
 
-	getErrorMessage = fieldName => this.state.errorMessages[ fieldName ];
+	getErrorMessage = ( fieldName ) => this.state.errorMessages[ fieldName ];
 
-	getFieldValue = fieldName => this.state.paymentDetails[ fieldName ];
+	getFieldValue = ( fieldName ) => this.state.paymentDetails[ fieldName ];
 
 	updateFieldValues = ( name, value ) => {
 		this.setState( {
@@ -123,7 +123,7 @@ export class RedirectPaymentBox extends PureComponent {
 		return paymentMethodClassName( paymentType ) || 'WPCOM_Billing_Stripe_Source';
 	}
 
-	redirectToPayment = event => {
+	redirectToPayment = ( event ) => {
 		const origin = getLocationOrigin( window.location );
 		event.preventDefault();
 
@@ -178,7 +178,7 @@ export class RedirectPaymentBox extends PureComponent {
 		wpcom
 			.undocumented()
 			.transactions( dataForApi )
-			.then( result => {
+			.then( ( result ) => {
 				if ( result.redirect_url ) {
 					this.setSubmitState( {
 						info: this.props.translate(
@@ -193,7 +193,7 @@ export class RedirectPaymentBox extends PureComponent {
 					window.location.href = result.redirect_url;
 				}
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				let errorMessage;
 				if ( error.message ) {
 					errorMessage = error.message;

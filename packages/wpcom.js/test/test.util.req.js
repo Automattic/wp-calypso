@@ -22,7 +22,7 @@ describe( 'wpcom', function () {
 				wpcom.req
 					.post( path )
 					.then( () => done( 'No error returned' ) )
-					.catch( err => {
+					.catch( ( err ) => {
 						assert.ok( err );
 						assert.equal( 400, err.statusCode );
 						done();
@@ -35,7 +35,7 @@ describe( 'wpcom', function () {
 				var path = '/sites/' + site._id + '/posts/new';
 				wpcom.req
 					.post( path, null, fixture.post )
-					.then( data => {
+					.then( ( data ) => {
 						testing_post = data;
 						assert.ok( data );
 						done();
@@ -50,7 +50,7 @@ describe( 'wpcom', function () {
 			var path = '/sites/' + site._id + '/posts/' + testing_post.ID + '/delete';
 			wpcom.req
 				.post( path )
-				.then( data => {
+				.then( ( data ) => {
 					assert.ok( data.ID, testing_post.ID );
 					done();
 				} )

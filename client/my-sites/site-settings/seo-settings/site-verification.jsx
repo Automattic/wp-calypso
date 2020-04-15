@@ -162,7 +162,7 @@ class SiteVerification extends Component {
 	}
 
 	handleVerificationCodeChange( serviceCode ) {
-		return event => {
+		return ( event ) => {
 			if ( ! this.state.hasOwnProperty( serviceCode ) ) {
 				return;
 			}
@@ -203,7 +203,7 @@ class SiteVerification extends Component {
 		);
 	}
 
-	handleFormSubmit = event => {
+	handleFormSubmit = ( event ) => {
 		const { path, siteId, translate, trackSiteVerificationUpdated } = this.props;
 		const { dirtyFields } = this.state;
 
@@ -429,7 +429,7 @@ class SiteVerification extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
 

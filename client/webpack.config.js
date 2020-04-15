@@ -72,12 +72,12 @@ function filterEntrypoints( entrypoints ) {
 
 	console.warn( '[entrylimit] Limiting build to %s', allowedEntrypoints.join( ', ' ) );
 
-	const validEntrypoints = allowedEntrypoints.filter( ep => {
+	const validEntrypoints = allowedEntrypoints.filter( ( ep ) => {
 		if ( entrypoints.hasOwnProperty( ep ) ) {
 			return true;
 		}
 		console.warn( '[entrylimit] Invalid entrypoint: %s. Valid entries are:', ep );
-		Object.keys( entrypoints ).forEach( e => console.warn( '\t' + e ) );
+		Object.keys( entrypoints ).forEach( ( e ) => console.warn( '\t' + e ) );
 		return false;
 	} );
 

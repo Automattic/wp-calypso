@@ -20,8 +20,8 @@ export default {
 			};
 
 			const parsedLocations = [];
-			Object.keys( locations ).forEach( type => {
-				locations[ type ].forEach( code => {
+			Object.keys( locations ).forEach( ( type ) => {
+				locations[ type ].forEach( ( code ) => {
 					parsedLocations.push( { type, code } );
 				} );
 			} );

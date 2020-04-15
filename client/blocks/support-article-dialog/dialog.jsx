@@ -112,7 +112,7 @@ SupportArticleDialog.propTypes = {
 	postId: PropTypes.number,
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const postId = getInlineSupportArticlePostId( state );
 	const actionUrl = getInlineSupportArticleActionUrl( state );
 	const actionLabel = getInlineSupportArticleActionLabel( state );

@@ -36,7 +36,7 @@ class GSuiteUsersCard extends React.Component {
 
 	canAddUsers( domainName ) {
 		return this.getDomainsAsList().some(
-			domain =>
+			( domain ) =>
 				domain &&
 				domain.name === domainName &&
 				get( domain, 'googleAppsSubscription.ownedByUserId' ) === this.props.user.ID
@@ -147,14 +147,14 @@ class GSuiteUsersCard extends React.Component {
 				) }
 
 				{ Object.keys( usersByDomain )
-					.filter( domain => ! selectedDomainName || domain === selectedDomainName )
-					.map( domain => this.renderDomain( domain, usersByDomain[ domain ] ) ) }
+					.filter( ( domain ) => ! selectedDomainName || domain === selectedDomainName )
+					.map( ( domain ) => this.renderDomain( domain, usersByDomain[ domain ] ) ) }
 			</div>
 		);
 	}
 }
 
-const addGoogleAppsUserClick = domainName =>
+const addGoogleAppsUserClick = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -192,7 +192,7 @@ GSuiteUsersCard.propTypes = {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 		user: getCurrentUser( state ),
 	} ),

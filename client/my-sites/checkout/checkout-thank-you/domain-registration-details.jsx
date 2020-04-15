@@ -34,7 +34,7 @@ const DomainRegistrationDetails = ( {
 	onPickPlanUpsellClick,
 } ) => {
 	const googleAppsWasPurchased = purchases.some( isGoogleApps ),
-		domainContactEmailVerified = purchases.some( purchase => purchase.isEmailVerified ),
+		domainContactEmailVerified = purchases.some( ( purchase ) => purchase.isEmailVerified ),
 		hasOtherPrimaryDomain =
 			selectedSite.options &&
 			selectedSite.options.is_mapped_domain &&
@@ -156,7 +156,7 @@ DomainRegistrationDetails.propTypes = {
 	hasNonPrimaryDomainsFlag: PropTypes.bool,
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	return {
 		hasNonPrimaryDomainsFlag: getCurrentUser( state )
 			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
@@ -164,7 +164,7 @@ const mapStateToProps = state => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return {
 		onPickPlanUpsellClick: () =>
 			dispatch( recordTracksEvent( 'calypso_non_primary_domain_thank_you_plan_upsell_click', {} ) ),

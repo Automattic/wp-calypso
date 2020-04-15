@@ -48,7 +48,7 @@ const UsersStore = {
 		if ( ! _userIDsByNamespace[ namespace ] ) {
 			return users;
 		}
-		_userIDsByNamespace[ namespace ].forEach( userId => {
+		_userIDsByNamespace[ namespace ].forEach( ( userId ) => {
 			if ( _usersBySite[ siteId ][ userId ] ) {
 				users.push( _usersBySite[ siteId ][ userId ] );
 			}

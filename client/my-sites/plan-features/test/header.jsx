@@ -10,7 +10,7 @@ jest.mock( 'lib/analytics/index', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 
 jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
+	localize: ( Comp ) => ( props ) => (
 		<Comp
 			{ ...props }
 			translate={ function ( x ) {
@@ -18,8 +18,8 @@ jest.mock( 'i18n-calypso', () => ( {
 			} }
 		/>
 	),
-	numberFormat: x => x,
-	translate: x => x,
+	numberFormat: ( x ) => x,
+	translate: ( x ) => x,
 } ) );
 
 /**
@@ -56,7 +56,7 @@ import {
 import PlanPrice from 'my-sites/plan-price/';
 
 const props = {
-	translate: x => x,
+	translate: ( x ) => x,
 	planType: PLAN_FREE,
 	currentSitePlan: { productSlug: PLAN_FREE },
 	isJetpack: null,
@@ -70,7 +70,7 @@ describe( 'PlanFeaturesHeader basic tests', () => {
 } );
 
 describe( 'PlanFeaturesHeader.getDiscountTooltipMessage()', () => {
-	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( productSlug => {
+	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( ( productSlug ) => {
 		test( `Should return a particular message for free plans (${ productSlug })`, () => {
 			const comp = new PlanFeaturesHeader( { ...props, currentSitePlan: { productSlug } } );
 			expect( comp.getDiscountTooltipMessage() ).toBe( 'Price for the next 12 months' );
@@ -92,7 +92,7 @@ describe( 'PlanFeaturesHeader.getDiscountTooltipMessage()', () => {
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_ECOMMERCE,
 		PLAN_ECOMMERCE_2_YEARS,
-	].forEach( productSlug => {
+	].forEach( ( productSlug ) => {
 		test( `Should render different message for paid plans (${ productSlug })`, () => {
 			const comp = new PlanFeaturesHeader( { ...props, currentSitePlan: { productSlug } } );
 			expect( comp.getDiscountTooltipMessage() ).toBe(
@@ -103,7 +103,7 @@ describe( 'PlanFeaturesHeader.getDiscountTooltipMessage()', () => {
 } );
 
 describe( 'PlanFeaturesHeader.renderPlansHeaderNoTabs()', () => {
-	[ PLAN_PREMIUM, PLAN_PREMIUM_2_YEARS ].forEach( productSlug => {
+	[ PLAN_PREMIUM, PLAN_PREMIUM_2_YEARS ].forEach( ( productSlug ) => {
 		test( `Should not render "Your Plan" plan pill (${ productSlug })`, () => {
 			const myProps = {
 				...props,
@@ -139,7 +139,7 @@ describe( 'PlanFeaturesHeader.renderPlansHeaderNoTabs()', () => {
 } );
 
 describe( 'PlanFeaturesHeader.renderPlansHeader()', () => {
-	[ PLAN_PREMIUM, PLAN_PREMIUM_2_YEARS ].forEach( productSlug => {
+	[ PLAN_PREMIUM, PLAN_PREMIUM_2_YEARS ].forEach( ( productSlug ) => {
 		test( `Should render "Your Plan" plan pill and no other plan pills for a paid plan in /plans page (${ productSlug })`, () => {
 			const myProps = {
 				...props,
@@ -153,7 +153,7 @@ describe( 'PlanFeaturesHeader.renderPlansHeader()', () => {
 
 			expect( pfh.contains( <PlanPill>Your Plan</PlanPill> ) ).toBe( true );
 
-			[ 'New', 'Popular', 'Best Value' ].forEach( planPillLabel => {
+			[ 'New', 'Popular', 'Best Value' ].forEach( ( planPillLabel ) => {
 				expect( pfh.contains( <PlanPill>${ planPillLabel }</PlanPill> ) ).toBe( false );
 			} );
 		} );
@@ -171,7 +171,7 @@ describe( 'PlanFeaturesHeader.renderPlansHeader()', () => {
 
 			expect( pfh.contains( <PlanPill>Your Plan</PlanPill> ) ).toBe( true );
 
-			[ 'New', 'Popular', 'Best Value' ].forEach( planPillLabel => {
+			[ 'New', 'Popular', 'Best Value' ].forEach( ( planPillLabel ) => {
 				expect( pfh.contains( <PlanPill>${ planPillLabel }</PlanPill> ) ).toBe( false );
 			} );
 		} );
@@ -203,13 +203,13 @@ describe( 'PlanFeaturesHeader.renderPlansHeader()', () => {
 
 			expect( pfh.contains( <PlanPill>Popular</PlanPill> ) ).toBe( true );
 
-			[ 'New', 'Your Plan', 'Best Value' ].forEach( planPillLabel => {
+			[ 'New', 'Your Plan', 'Best Value' ].forEach( ( planPillLabel ) => {
 				expect( pfh.contains( <PlanPill>${ planPillLabel }</PlanPill> ) ).toBe( false );
 			} );
 		} );
 	} );
 
-	[ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ].forEach( productSlug => {
+	[ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ].forEach( ( productSlug ) => {
 		test( `Should render "Your Plan" plan pill only even if plan is Best Value in /plans page(${ productSlug })`, () => {
 			const myProps = {
 				...props,
@@ -226,7 +226,7 @@ describe( 'PlanFeaturesHeader.renderPlansHeader()', () => {
 
 			expect( pfh.contains( <PlanPill>Your Plan</PlanPill> ) ).toBe( true );
 
-			[ 'New', 'Popular', 'Best Value' ].forEach( planPillLabel => {
+			[ 'New', 'Popular', 'Best Value' ].forEach( ( planPillLabel ) => {
 				expect( pfh.contains( <PlanPill>${ planPillLabel }</PlanPill> ) ).toBe( false );
 			} );
 		} );
@@ -246,14 +246,14 @@ describe( 'PlanFeaturesHeader.renderPlansHeader()', () => {
 
 			expect( pfh.contains( <PlanPill>Best Value</PlanPill> ) ).toBe( true );
 
-			[ 'New', 'Popular', 'Your Plan' ].forEach( planPillLabel => {
+			[ 'New', 'Popular', 'Your Plan' ].forEach( ( planPillLabel ) => {
 				expect( pfh.contains( <PlanPill>${ planPillLabel }</PlanPill> ) ).toBe( false );
 			} );
 		} );
 	} );
 
 	[ PLAN_PERSONAL, PLAN_PREMIUM, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PREMIUM ].forEach(
-		productSlug => {
+		( productSlug ) => {
 			test( `Should not render "Your Plan" plan pill if currently on the free plan`, () => {
 				const myProps = { ...props, isInSignup: false, planType: productSlug };
 				const comp = new PlanFeaturesHeader( { ...myProps } );
@@ -273,7 +273,7 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 		currentSitePlan: { productSlug: PLAN_PREMIUM },
 	};
 
-	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( productSlug => {
+	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( ( productSlug ) => {
 		test( `Should render InfoPopover for free plans (${ productSlug })`, () => {
 			const comp = new PlanFeaturesHeader( {
 				...myProps,
@@ -285,7 +285,7 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 		} );
 	} );
 
-	[ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS ].forEach( productSlug => {
+	[ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS ].forEach( ( productSlug ) => {
 		test( `Should render InfoPopover for non-jetpack sites (${ productSlug })`, () => {
 			const comp = new PlanFeaturesHeader( {
 				...myProps,
@@ -332,7 +332,7 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 		PLAN_JETPACK_BUSINESS_MONTHLY,
 		PLAN_BUSINESS,
 		PLAN_BUSINESS_2_YEARS,
-	].forEach( productSlug => {
+	].forEach( ( productSlug ) => {
 		test( `Should not render InfoPopover for paid plans (${ productSlug })`, () => {
 			const comp = new PlanFeaturesHeader( {
 				...myProps,

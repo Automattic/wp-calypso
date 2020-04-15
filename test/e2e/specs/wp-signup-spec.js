@@ -150,7 +150,8 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 				return this.skip();
 			}
 			const emailClient = new EmailClient( signupInboxId );
-			const validator = emails => emails.find( email => email.subject.includes( 'WordPress.com' ) );
+			const validator = ( emails ) =>
+				emails.find( ( email ) => email.subject.includes( 'WordPress.com' ) );
 			const emails = await emailClient.pollEmailsByRecipient( emailAddress, validator );
 			assert.strictEqual(
 				emails.length,
@@ -888,7 +889,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 				const cancelDomainPage = await CancelDomainPage.Expect( driver );
 				await cancelDomainPage.completeSurveyAndConfirm();
 				return await new DeleteAccountFlow( driver ).deleteAccount( siteName );
-			} )().catch( err => {
+			} )().catch( ( err ) => {
 				SlackNotifier.warn(
 					`There was an error in the hooks that clean up the test account but since it is cleaning up we really don't care: '${ err }'`,
 					{ suppressDuplicateMessages: true }
@@ -1625,7 +1626,8 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 
 		step( 'Can activate my account from an email', async function () {
 			const emailClient = new EmailClient( signupInboxId );
-			const validator = emails => emails.find( email => email.subject.includes( 'Activate' ) );
+			const validator = ( emails ) =>
+				emails.find( ( email ) => email.subject.includes( 'Activate' ) );
 			const emails = await emailClient.pollEmailsByRecipient( emailAddress, validator );
 			assert.strictEqual(
 				emails.length,
@@ -1709,7 +1711,8 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			}
 
 			const emailClient = await new EmailClient( signupInboxId );
-			const validator = emails => emails.find( email => email.subject.includes( emailAddress ) );
+			const validator = ( emails ) =>
+				emails.find( ( email ) => email.subject.includes( emailAddress ) );
 			const emails = await emailClient.pollEmailsByRecipient( emailAddress, validator );
 
 			for ( const email of emails ) {

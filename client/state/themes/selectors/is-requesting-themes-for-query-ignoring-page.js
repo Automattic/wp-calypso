@@ -40,6 +40,6 @@ export const isRequestingThemesForQueryIgnoringPage = createSelector(
 			return isEqual( normalizedQueryWithoutPage, omit( queryDetails.query, 'page' ) );
 		} );
 	},
-	state => state.themes.queryRequests,
+	( state ) => state.themes.queryRequests,
 	( state, siteId, query ) => getSerializedThemesQuery( query, siteId )
 );

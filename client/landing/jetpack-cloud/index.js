@@ -9,7 +9,7 @@ import page from 'page';
 import config from 'config';
 
 export default function () {
-	page( '/', context => {
+	page( '/', ( context ) => {
 		let redirectPath = '/error';
 
 		if ( config.isEnabled( 'jetpack-cloud/backups' ) ) {

@@ -65,7 +65,7 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 			<>
 				<SectionHeader label={ translate( 'Active Recurring Payments plans' ) } />
 				{ subscriptions.map(
-					subscription => (
+					( subscription ) => (
 						<MembershipItem
 							key={ subscription.ID }
 							translate={ translate }
@@ -100,6 +100,6 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 	);
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	subscriptions: get( state, 'memberships.subscriptions.items', [] ),
 } ) )( localize( withLocalizedMoment( MembershipsHistory ) ) );

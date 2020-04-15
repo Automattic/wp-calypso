@@ -172,7 +172,7 @@ const GMClosureNotice = ( {
 	);
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const userId = getCurrentUserId( state );
 	return { purchases: getUserPurchases( state, userId ) };
 } )( GMClosureNotice );

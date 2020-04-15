@@ -234,11 +234,11 @@ class DomainSearchResults extends React.Component {
 			);
 
 			const regularSuggestions = suggestions.filter(
-				suggestion => ! suggestion.isRecommended && ! suggestion.isBestAlternative
+				( suggestion ) => ! suggestion.isRecommended && ! suggestion.isBestAlternative
 			);
-			const bestMatchSuggestions = suggestions.filter( suggestion => suggestion.isRecommended );
+			const bestMatchSuggestions = suggestions.filter( ( suggestion ) => suggestion.isRecommended );
 			const bestAlternativeSuggestions = suggestions.filter(
-				suggestion => suggestion.isBestAlternative
+				( suggestion ) => suggestion.isBestAlternative
 			);
 			featuredSuggestionElement = (
 				<FeaturedDomainSuggestions

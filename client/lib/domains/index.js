@@ -176,7 +176,7 @@ function isMappedDomainWithWpcomNameservers( domain ) {
 }
 
 function getSelectedDomain( { domains, selectedDomainName, isTransfer } ) {
-	return find( domains, domain => {
+	return find( domains, ( domain ) => {
 		if ( domain.name !== selectedDomainName ) {
 			return false;
 		}

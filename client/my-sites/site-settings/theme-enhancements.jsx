@@ -308,7 +308,7 @@ class ThemeEnhancements extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const selectedSiteId = get( site, 'ID' );
 

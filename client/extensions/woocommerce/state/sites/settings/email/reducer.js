@@ -22,7 +22,7 @@ import {
 	WOOCOMMERCE_EMAIL_SETTINGS_INVALID_VALUE,
 } from 'woocommerce/state/action-types';
 
-const process_data = data => {
+const process_data = ( data ) => {
 	const options = {};
 	const fromAddress = filter( data, {
 		group_id: 'email',
@@ -41,7 +41,7 @@ const process_data = data => {
 		);
 	} );
 
-	forEach( [ 'email_new_order', 'email_cancelled_order', 'email_failed_order' ], key => {
+	forEach( [ 'email_new_order', 'email_cancelled_order', 'email_failed_order' ], ( key ) => {
 		if ( get( options, [ key, 'enabled', 'value' ] ) !== 'yes' ) {
 			return;
 		}

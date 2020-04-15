@@ -25,7 +25,7 @@ describe( 'useWindowResizeCallback', () => {
 		return function () {
 			const resizeCallback = useCallback( cb, [] );
 			const resizeRef = useWindowResizeCallback( resizeCallback );
-			const ref = node => {
+			const ref = ( node ) => {
 				if ( node ) {
 					node.getBoundingClientRect = mock;
 				}
@@ -41,7 +41,7 @@ describe( 'useWindowResizeCallback', () => {
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
 
-		callback = jest.fn( boundingClientRect => {
+		callback = jest.fn( ( boundingClientRect ) => {
 			lastRect = boundingClientRect;
 		} );
 	} );
@@ -148,7 +148,7 @@ describe( 'useWindowResizeRect', () => {
 
 			const [ resizeRef, rect ] = useWindowResizeRect();
 
-			const ref = node => {
+			const ref = ( node ) => {
 				if ( node ) {
 					node.getBoundingClientRect = mock;
 				}

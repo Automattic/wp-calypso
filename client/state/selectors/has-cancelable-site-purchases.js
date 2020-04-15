@@ -17,7 +17,7 @@ export const hasCancelableSitePurchases = ( state, siteId ) => {
 		return false;
 	}
 
-	const purchases = getSitePurchases( state, siteId ).filter( purchase => {
+	const purchases = getSitePurchases( state, siteId ).filter( ( purchase ) => {
 		if ( ! purchase.active ) {
 			return false;
 		}

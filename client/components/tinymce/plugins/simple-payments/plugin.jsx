@@ -27,7 +27,7 @@ function simplePayments( editor ) {
 		node = null;
 	} );
 
-	editor.addCommand( 'simplePaymentsButton', content => {
+	editor.addCommand( 'simplePaymentsButton', ( content ) => {
 		let editPaymentId = null;
 		if ( content ) {
 			const shortCodeData = deserialize( content );

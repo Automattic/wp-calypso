@@ -150,7 +150,7 @@ class EarningsMain extends Component {
 		return headerText && <HeaderCake backHref={ this.goBack() }>{ headerText }</HeaderCake>;
 	};
 
-	getSectionNav = section => {
+	getSectionNav = ( section ) => {
 		const currentPath = this.getCurrentPath();
 
 		return (
@@ -158,7 +158,7 @@ class EarningsMain extends Component {
 			! section.startsWith( 'refer-a-friend' ) && (
 				<SectionNav selectedText={ this.getSelectedText() }>
 					<NavTabs>
-						{ this.getFilters().map( filterItem => {
+						{ this.getFilters().map( ( filterItem ) => {
 							return (
 								<NavItem
 									key={ filterItem.id }
@@ -208,7 +208,7 @@ class EarningsMain extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	site: getSelectedSite( state ),
 	siteId: getSelectedSiteId( state ),
 	siteSlug: getSelectedSiteSlug( state ),

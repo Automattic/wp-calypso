@@ -55,7 +55,7 @@ class InfiniteScrollWithIntersectionObserver extends React.Component {
 		}
 	}
 
-	handleIntersection = entries => {
+	handleIntersection = ( entries ) => {
 		if ( ! entries || ! entries[ 0 ] ) {
 			return;
 		}
@@ -93,7 +93,7 @@ class InfiniteScrollWithScrollEvent extends React.Component {
 		this.pendingLayoutFlush.cancel();
 	}
 
-	checkScrollPosition = triggeredByScroll => {
+	checkScrollPosition = ( triggeredByScroll ) => {
 		const scrollPosition = window.pageYOffset;
 		const documentHeight = document.body.scrollHeight;
 		const viewportHeight = window.innerHeight;

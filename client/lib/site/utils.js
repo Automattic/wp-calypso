@@ -35,7 +35,7 @@ export function getSiteFileModDisableReason( site, action = 'modifyFiles' ) {
 	}
 
 	return site.options.file_mod_disabled
-		.map( clue => {
+		.map( ( clue ) => {
 			if (
 				action === 'modifyFiles' ||
 				action === 'autoupdateFiles' ||
@@ -65,7 +65,7 @@ export function getSiteFileModDisableReason( site, action = 'modifyFiles' ) {
 			}
 			return null;
 		} )
-		.filter( reason => reason );
+		.filter( ( reason ) => reason );
 }
 
 export function canUpdateFiles( site ) {

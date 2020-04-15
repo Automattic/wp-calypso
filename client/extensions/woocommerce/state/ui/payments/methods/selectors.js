@@ -52,7 +52,7 @@ export const getPaymentMethodsWithEdits = ( state, siteId = getSelectedSiteId( s
 	// Overlay the current edits on top of (a copy of) the wc-api methods
 	const { creates, updates, deletes } = edits;
 	deletes.forEach( ( { id } ) => remove( methods, { id } ) );
-	updates.forEach( update => {
+	updates.forEach( ( update ) => {
 		const index = findIndex( methods, { id: update.id } );
 		if ( -1 === index ) {
 			return;

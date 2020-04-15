@@ -51,7 +51,7 @@ export function fetchInvite( siteId, inviteKey ) {
 export function createAccount( userData, invite, callback ) {
 	const send_verification_email = userData.email !== invite.sentTo;
 
-	return dispatch => {
+	return ( dispatch ) => {
 		wpcom
 			.undocumented()
 			.usersNew(
@@ -75,7 +75,7 @@ export function createAccount( userData, invite, callback ) {
 }
 
 export function acceptInvite( invite, callback ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		Dispatcher.handleViewAction( {
 			type: ActionTypes.INVITE_ACCEPTED,
 			invite,
@@ -116,7 +116,7 @@ export function acceptInvite( invite, callback ) {
 }
 
 export function sendInvites( siteId, usernamesOrEmails, role, message, formId, isExternal ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		Dispatcher.handleViewAction( {
 			type: ActionTypes.SENDING_INVITES,
 			siteId,

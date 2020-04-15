@@ -12,8 +12,8 @@ import { userCan } from 'lib/site/utils';
  * @param {object} state  Global state tree
  * @returns {Array}        Array of site objects
  */
-export default createSelector( state =>
+export default createSelector( ( state ) =>
 	getSites( state ).filter(
-		site => ! isJetpackSite( state, site.ID ) && userCan( 'manage_options', site )
+		( site ) => ! isJetpackSite( state, site.ID ) && userCan( 'manage_options', site )
 	)
 );

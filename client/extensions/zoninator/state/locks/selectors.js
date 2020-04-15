@@ -4,7 +4,7 @@
 
 import { get } from 'lodash';
 
-const getLocksState = state => get( state, 'extensions.zoninator.locks', {} );
+const getLocksState = ( state ) => get( state, 'extensions.zoninator.locks', {} );
 
 /**
  * Returns true if a zone is currently blocked by another user.

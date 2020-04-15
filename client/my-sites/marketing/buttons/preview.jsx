@@ -65,7 +65,7 @@ class SharingButtonsPreview extends React.Component {
 		}
 	};
 
-	showButtonsTray = visibility => {
+	showButtonsTray = ( visibility ) => {
 		const { path } = this.props;
 
 		this.setState( {
@@ -117,7 +117,7 @@ class SharingButtonsPreview extends React.Component {
 		} );
 	};
 
-	getButtonsTrayToggleButtonElement = visibility => {
+	getButtonsTrayToggleButtonElement = ( visibility ) => {
 		const enabledButtonsExist = some( this.props.buttons, {
 			visibility: visibility,
 			enabled: true,
@@ -246,6 +246,6 @@ class SharingButtonsPreview extends React.Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	return { path: getCurrentRouteParameterized( state, getSelectedSiteId( state ) ) };
 } )( localize( SharingButtonsPreview ) );

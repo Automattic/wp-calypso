@@ -37,5 +37,5 @@ export const plainNotice = createNotice.bind( null, 'is-plain' );
 
 // Higher-order action creator: modify the wrapped creator to return actions with the
 // `notices.skip` meta, so that it's ignored by the notices middleware.
-export const withoutNotice = actionCreator => ( ...args ) =>
+export const withoutNotice = ( actionCreator ) => ( ...args ) =>
 	extendAction( actionCreator( ...args ), { meta: { notices: { skip: true } } } );

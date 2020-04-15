@@ -19,7 +19,7 @@ import {
  */
 function addOrEditProduct( list = [], newProduct ) {
 	let found = 0;
-	const products = list.map( product => {
+	const products = list.map( ( product ) => {
 		if ( product.ID === newProduct.ID ) {
 			found = 1;
 			return newProduct;
@@ -62,7 +62,9 @@ export const items = withSchemaValidation( productListSchema, ( state = {}, acti
 
 			return {
 				...state,
-				[ siteId ]: state[ siteId ].filter( existingProduct => existingProduct.ID !== product.ID ),
+				[ siteId ]: state[ siteId ].filter(
+					( existingProduct ) => existingProduct.ID !== product.ID
+				),
 			};
 		}
 	}

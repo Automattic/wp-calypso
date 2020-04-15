@@ -11,7 +11,7 @@ describe( 'wpcom', function () {
 
 			wpcom
 				.freshlyPressed()
-				.then( data => {
+				.then( ( data ) => {
 					// testing object
 					assert.ok( data );
 					assert.equal( 'number', typeof data.number );

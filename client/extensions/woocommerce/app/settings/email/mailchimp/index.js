@@ -36,7 +36,7 @@ class MailChimp extends React.Component {
 		this.setState( { setupWizardStarted: true } );
 	};
 
-	closeWizard = status => {
+	closeWizard = ( status ) => {
 		this.setState( { setupWizardStarted: false, wizardCompleted: 'wizard-completed' === status } );
 	};
 

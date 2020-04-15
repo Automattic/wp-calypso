@@ -97,7 +97,7 @@ const PluginsDataActions = {
 		wpcom
 			.undocumented()
 			.getFeaturedPlugins()
-			.then( data => {
+			.then( ( data ) => {
 				Dispatcher.handleServerAction( {
 					type: 'RECEIVE_WPORG_PLUGINS_LIST',
 					action: 'FETCH_WPORG_PLUGINS_LIST',

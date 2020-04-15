@@ -13,7 +13,7 @@ import ThemesSiteSelectorModal from './themes-site-selector-modal';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
 
-const MultiSiteThemeShowcase = connectOptions( props => (
+const MultiSiteThemeShowcase = connectOptions( ( props ) => (
 	<Main className="themes">
 		<SidebarNavigation />
 		<ThemesSiteSelectorModal { ...props }>
@@ -22,7 +22,7 @@ const MultiSiteThemeShowcase = connectOptions( props => (
 	</Main>
 ) );
 
-export default props => (
+export default ( props ) => (
 	<MultiSiteThemeShowcase
 		{ ...props }
 		origin="wpcom"

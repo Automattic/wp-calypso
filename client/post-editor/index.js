@@ -38,7 +38,7 @@ export default function () {
 
 	if ( config.isEnabled( 'manage/custom-post-types' ) ) {
 		page( '/edit/:type', siteSelection, sites, makeLayout, clientRender );
-		page( '/edit/:type/new', context => page.redirect( `/edit/${ context.params.type }` ) );
+		page( '/edit/:type/new', ( context ) => page.redirect( `/edit/${ context.params.type }` ) );
 		page(
 			'/edit/:type/:site?/:post?',
 			siteSelection,

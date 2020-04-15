@@ -92,7 +92,7 @@ export default function CompositeCheckout( {
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic = useSelector(
-		state => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
+		( state ) => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
 	);
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const isLoadingCartSynchronizer =
@@ -119,7 +119,7 @@ export default function CompositeCheckout( {
 	}, [ recordEvent ] );
 
 	const showErrorMessage = useCallback(
-		error => {
+		( error ) => {
 			debug( 'error', error );
 			const message = error && error.toString ? error.toString() : error;
 			notices.error( message || translate( 'An error occurred during your purchase.' ) );
@@ -128,7 +128,7 @@ export default function CompositeCheckout( {
 	);
 
 	const showErrorMessageBriefly = useCallback(
-		error => {
+		( error ) => {
 			debug( 'error', error );
 			const message = error && error.toString ? error.toString() : error;
 			notices.error( message || translate( 'An error occurred during your purchase.' ), {
@@ -138,17 +138,17 @@ export default function CompositeCheckout( {
 		[ translate ]
 	);
 
-	const showInfoMessage = useCallback( message => {
+	const showInfoMessage = useCallback( ( message ) => {
 		debug( 'info', message );
 		notices.info( message );
 	}, [] );
 
-	const showSuccessMessage = useCallback( message => {
+	const showSuccessMessage = useCallback( ( message ) => {
 		debug( 'success', message );
 		notices.success( message );
 	}, [] );
 
-	const showAddCouponSuccessMessage = couponCode => {
+	const showAddCouponSuccessMessage = ( couponCode ) => {
 		showSuccessMessage(
 			translate( "The '%(couponCode)s' coupon was successfully applied to your shopping cart.", {
 				args: { couponCode },
@@ -376,7 +376,7 @@ CompositeCheckout.propTypes = {
 
 function useDisplayErrors( errors, displayError ) {
 	useEffect( () => {
-		errors.filter( isNotCouponError ).map( error => displayError( error.message ) );
+		errors.filter( isNotCouponError ).map( ( error ) => displayError( error.message ) );
 	}, [ errors, displayError ] );
 }
 
@@ -419,7 +419,7 @@ function useCountryList( overrideCountryList ) {
 	const [ countriesList, setCountriesList ] = useState( overrideCountryList );
 
 	const reduxDispatch = useDispatch();
-	const globalCountryList = useSelector( state => getCountries( state, 'payments' ) );
+	const globalCountryList = useSelector( ( state ) => getCountries( state, 'payments' ) );
 
 	// Has the global list been populated?
 	const isListFetched = globalCountryList?.length > 0;
@@ -504,7 +504,7 @@ function useWpcomProductVariants( { siteId, productSlug, credits, couponDiscount
 
 	const availableVariants = useVariantWpcomPlanProductSlugs( productSlug );
 
-	const productsWithPrices = useSelector( state => {
+	const productsWithPrices = useSelector( ( state ) => {
 		return computeProductsWithPrices(
 			state,
 			siteId,
@@ -528,25 +528,25 @@ function useWpcomProductVariants( { siteId, productSlug, credits, couponDiscount
 		}
 	}, [ shouldFetchProducts, haveFetchedProducts, reduxDispatch ] );
 
-	return anyProductSlug => {
+	return ( anyProductSlug ) => {
 		if ( anyProductSlug !== productSlug ) {
 			return [];
 		}
 
 		const highestMonthlyPrice = Math.max(
-			...productsWithPrices.map( variant => {
+			...productsWithPrices.map( ( variant ) => {
 				return variant.priceMonthly;
 			} )
 		);
 
-		const percentSavings = monthlyPrice => {
+		const percentSavings = ( monthlyPrice ) => {
 			const savings = Math.round( 100 * ( 1 - monthlyPrice / highestMonthlyPrice ) );
 			return savings > 0 ? <Discount>-{ savings.toString() }%</Discount> : null;
 		};
 
 		// What the customer would pay if using the
 		// most expensive schedule
-		const highestTermPrice = term => {
+		const highestTermPrice = ( term ) => {
 			if ( term !== TERM_BIENNIALLY ) {
 				return;
 			}
@@ -554,7 +554,7 @@ function useWpcomProductVariants( { siteId, productSlug, credits, couponDiscount
 			return <DoNotPayThis>{ localizeCurrency( annualPrice, 'USD' ) }</DoNotPayThis>;
 		};
 
-		return productsWithPrices.map( variant => {
+		return productsWithPrices.map( ( variant ) => {
 			const label = getTermText( variant.plan.term, translate );
 			const price = (
 				<React.Fragment>
@@ -632,14 +632,14 @@ function getPlanProductSlugs(
 	items // : WPCOMCart
 ) /* : WPCOMCartItem[] */ {
 	return items
-		.filter( item => {
+		.filter( ( item ) => {
 			return item.type !== 'tax' && getPlan( item.wpcom_meta.product_slug );
 		} )
-		.map( item => item.wpcom_meta.product_slug );
+		.map( ( item ) => item.wpcom_meta.product_slug );
 }
 
 const Discount = styled.span`
-	color: ${props => props.theme.colors.discount};
+	color: ${( props ) => props.theme.colors.discount};
 	margin-right: 8px;
 `;
 

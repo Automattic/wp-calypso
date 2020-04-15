@@ -14,10 +14,10 @@ describe( 'wpcom.site.domain', function () {
 	var domain = site.domain();
 
 	describe( 'wpcom.site.domain', function () {
-		it( 'should get primary domain of the site', done => {
+		it( 'should get primary domain of the site', ( done ) => {
 			domain
 				.getPrimary()
-				.then( data => {
+				.then( ( data ) => {
 					assert.ok( data );
 					done();
 				} )

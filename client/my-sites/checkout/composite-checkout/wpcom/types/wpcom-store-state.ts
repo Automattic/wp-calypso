@@ -80,13 +80,13 @@ export function isCompleteAndValid( details: ManagedContactDetails ): boolean {
 
 export function isTouched( details: ManagedContactDetails ): boolean {
 	const values = Object.values( details );
-	return values.length > 0 && values.every( value => value.isTouched );
+	return values.length > 0 && values.every( ( value ) => value.isTouched );
 }
 
 export function areRequiredFieldsNotEmpty( details: ManagedContactDetails ): boolean {
 	const values = Object.values( details );
 	return (
-		values.length > 0 && values.every( value => value.value?.length > 0 || ! value.isRequired )
+		values.length > 0 && values.every( ( value ) => value.value?.length > 0 || ! value.isRequired )
 	);
 }
 

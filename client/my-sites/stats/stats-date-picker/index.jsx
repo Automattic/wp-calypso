@@ -125,7 +125,7 @@ class StatsDatePicker extends Component {
 		);
 	}
 
-	bindStatusIndicator = ref => {
+	bindStatusIndicator = ( ref ) => {
 		this.statusIndicator = ref;
 	};
 

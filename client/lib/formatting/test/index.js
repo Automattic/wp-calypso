@@ -82,7 +82,7 @@ describe( 'formatting', () => {
 		test( 'should not modify input if type is not string', () => {
 			const types = [ {}, undefined, 1, true, [], function () {} ];
 
-			types.forEach( type => {
+			types.forEach( ( type ) => {
 				expect( preventWidows( type ) ).toBe( type );
 			} );
 		} );
@@ -90,7 +90,7 @@ describe( 'formatting', () => {
 		test( 'should return empty string when input is all whitespace', () => {
 			const inputs = [ ' ', '\t', '\n' ];
 
-			inputs.forEach( input => {
+			inputs.forEach( ( input ) => {
 				expect( preventWidows( input ) ).toBe( '' );
 			} );
 		} );

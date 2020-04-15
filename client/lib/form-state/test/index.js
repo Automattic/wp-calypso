@@ -56,7 +56,7 @@ describe( 'index', () => {
 			} );
 		} );
 
-		test( 'enables the fields on the first event', done => {
+		test( 'enables the fields on the first event', ( done ) => {
 			let onNewState;
 
 			onNewState = checkNthState( 0, function ( state ) {
@@ -71,7 +71,7 @@ describe( 'index', () => {
 		} );
 
 		describe( '#handleFieldChange', () => {
-			test( 'updates the field value', done => {
+			test( 'updates the field value', ( done ) => {
 				let onNewState, controller;
 
 				onNewState = checkNthState( 1, function ( state ) {
@@ -90,7 +90,7 @@ describe( 'index', () => {
 				} );
 			} );
 
-			test( 'validates the new value', done => {
+			test( 'validates the new value', ( done ) => {
 				let validatorFunction, onNewState, controller;
 
 				validatorFunction = function ( fieldValues, onComplete ) {
@@ -115,7 +115,7 @@ describe( 'index', () => {
 			} );
 
 			describe( 'when there are multiple changes at once', () => {
-				test( 'only shows errors for the latest values', done => {
+				test( 'only shows errors for the latest values', ( done ) => {
 					let validatorFunction, onNewState, controller;
 
 					validatorFunction = function ( fieldValues, onComplete ) {

@@ -117,7 +117,7 @@ class AmpWpcom extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		siteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{ recordTracksEvent }

@@ -13,7 +13,7 @@ import { receiveChartCounts } from 'state/stats/chart-tabs/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import fromApi from './from-api';
 
-export const fetch = action => {
+export const fetch = ( action ) => {
 	const { chartTab, date, period, quantity, siteId, statFields } = action;
 	const currentTabFields = chartTab === 'views' ? [ 'views', 'visitors' ] : [ chartTab ];
 	const otherTabFields = difference( statFields, currentTabFields );

@@ -104,7 +104,7 @@ export default class Devdocs extends React.Component {
 		);
 	};
 
-	onSearchChange = term => {
+	onSearchChange = ( term ) => {
 		this.setState( {
 			inputValue: term,
 			term: term,
@@ -112,7 +112,7 @@ export default class Devdocs extends React.Component {
 		} );
 	};
 
-	onSearch = term => {
+	onSearch = ( term ) => {
 		if ( ! term ) {
 			return;
 		}
@@ -160,7 +160,7 @@ export default class Devdocs extends React.Component {
 		}, this );
 	};
 
-	snippet = result => {
+	snippet = ( result ) => {
 		// split around <mark> tags to avoid setting unescaped inner HTML
 		const parts = result.snippet.split( /(<mark>.*?<\/mark>)/ );
 

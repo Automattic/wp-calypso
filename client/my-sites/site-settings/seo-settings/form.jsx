@@ -183,7 +183,7 @@ export class SeoForm extends React.Component {
 		);
 	};
 
-	updateTitleFormats = seoTitleFormats => {
+	updateTitleFormats = ( seoTitleFormats ) => {
 		const dirtyFields = new Set( this.state.dirtyFields );
 		dirtyFields.add( 'seoTitleFormats' );
 
@@ -193,7 +193,7 @@ export class SeoForm extends React.Component {
 		} );
 	};
 
-	submitSeoForm = event => {
+	submitSeoForm = ( event ) => {
 		const { siteId, storedTitleFormats, showAdvancedSeo, showWebsiteMeta } = this.props;
 
 		if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
@@ -230,7 +230,7 @@ export class SeoForm extends React.Component {
 		// We will pass an empty string in this case.
 		updatedOptions.advanced_seo_title_formats = mapValues(
 			updatedOptions.advanced_seo_title_formats,
-			format => ( isArray( format ) && 0 === format.length ? '' : format)
+			( format ) => ( isArray( format ) && 0 === format.length ? '' : format)
 		);
 
 		this.props.saveSiteSettings( siteId, updatedOptions );
@@ -479,7 +479,7 @@ export class SeoForm extends React.Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const selectedSite = getSelectedSite( state );
 	// SEO Tools are available with Business plan on WordPress.com, and with Premium plan on Jetpack sites
 	const isAdvancedSeoEligible = selectedSite.plan && hasSupportingPlan( selectedSite.plan );

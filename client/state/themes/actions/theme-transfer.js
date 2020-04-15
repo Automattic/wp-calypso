@@ -34,7 +34,7 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 		context = 'hosting';
 	}
 
-	return dispatch => {
+	return ( dispatch ) => {
 		const themeInitiateRequest = {
 			type: THEME_TRANSFER_INITIATE_REQUEST,
 			siteId,
@@ -48,7 +48,7 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 		);
 		return wpcom
 			.undocumented()
-			.initiateTransfer( siteId, plugin, file, event => {
+			.initiateTransfer( siteId, plugin, file, ( event ) => {
 				dispatch( {
 					type: THEME_TRANSFER_INITIATE_PROGRESS,
 					siteId,
@@ -75,7 +75,7 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 				);
 				dispatch( pollThemeTransferStatus( siteId, transfer_id, context ) );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( transferInitiateFailure( siteId, error, plugin, context ) );
 			} );
 	};
@@ -105,7 +105,7 @@ function transferStatusFailure( siteId, transferId, error ) {
 
 // receive a transfer initiation failure
 function transferInitiateFailure( siteId, error, plugin, context ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		const themeInitiateFailureAction = {
 			type: THEME_TRANSFER_INITIATE_FAILURE,
 			siteId,
@@ -142,7 +142,7 @@ export function pollThemeTransferStatus(
 	timeout = 180000
 ) {
 	const endTime = Date.now() + timeout;
-	return dispatch => {
+	return ( dispatch ) => {
 		const pollStatus = ( resolve, reject ) => {
 			if ( Date.now() > endTime ) {
 				// timed-out, stop polling
@@ -167,7 +167,7 @@ export function pollThemeTransferStatus(
 					// poll again
 					return delay( pollStatus, interval, resolve, reject );
 				} )
-				.catch( error => {
+				.catch( ( error ) => {
 					dispatch( transferStatusFailure( siteId, transferId, error ) );
 					// error, stop polling
 					return resolve();

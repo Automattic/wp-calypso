@@ -102,7 +102,7 @@ export default class PostQueryManager extends PaginatedQueryManager {
 						'any' === value ||
 						String( value )
 							.split( ',' )
-							.some( status => {
+							.some( ( status ) => {
 								return status === post[ key ];
 							} )
 					);

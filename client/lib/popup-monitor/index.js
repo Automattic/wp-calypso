@@ -16,7 +16,7 @@ function PopupMonitor() {
 	this.intervals = {};
 	this.monitorInterval = null;
 	this.windowInstance = null;
-	this.onMessage = messageEvent => {
+	this.onMessage = ( messageEvent ) => {
 		if ( messageEvent.source === this.windowInstance ) {
 			this.emit( 'message', messageEvent.data );
 		}

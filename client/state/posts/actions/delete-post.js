@@ -16,7 +16,7 @@ import 'state/posts/init';
  * @returns {Function}        Action thunk
  */
 export function deletePost( siteId, postId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: POST_DELETE,
 			siteId,
@@ -33,7 +33,7 @@ export function deletePost( siteId, postId ) {
 					postId,
 				} );
 			},
-			error => {
+			( error ) => {
 				dispatch( {
 					type: POST_DELETE_FAILURE,
 					siteId,

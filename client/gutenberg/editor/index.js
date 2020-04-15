@@ -69,7 +69,7 @@ export default function () {
 	}
 
 	page( '/block-editor/*/*', '/block-editor/post' );
-	page( '/block-editor/:site', context =>
+	page( '/block-editor/:site', ( context ) =>
 		page.redirect( `/block-editor/post/${ context.params.site }` )
 	);
 }

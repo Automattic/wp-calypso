@@ -39,11 +39,11 @@ export class PaypalPaymentBox extends React.Component {
 		formDisabled: false,
 	};
 
-	handlePostalCodeChange = event => {
+	handlePostalCodeChange = ( event ) => {
 		setTaxPostalCode( event.target.value );
 	};
 
-	handleChange = event => {
+	handleChange = ( event ) => {
 		this.updateLocalStateWithFieldValue( event.target.name, event.target.value );
 	};
 
@@ -53,7 +53,7 @@ export class PaypalPaymentBox extends React.Component {
 		this.setState( data );
 	};
 
-	setSubmitState = submitState => {
+	setSubmitState = ( submitState ) => {
 		if ( submitState.error ) {
 			notices.error( submitState.error );
 		}
@@ -66,7 +66,7 @@ export class PaypalPaymentBox extends React.Component {
 		} );
 	};
 
-	redirectToPayPal = event => {
+	redirectToPayPal = ( event ) => {
 		const { cart, transaction } = this.props;
 		const origin = getLocationOrigin( window.location );
 		event.preventDefault();

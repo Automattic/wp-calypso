@@ -17,7 +17,7 @@ function getContactPage( posts ) {
 	return get(
 		find(
 			posts,
-			post =>
+			( post ) =>
 				post.type === 'page' &&
 				( some( post.metadata, { key: '_headstart_post', value: '_hs_contact_page' } ) ||
 					post.slug === 'contact' )

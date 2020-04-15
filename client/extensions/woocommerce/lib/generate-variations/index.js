@@ -24,7 +24,7 @@ export default function generateVariations(
 	const variationAttributes =
 		( productAttributes &&
 			productAttributes.filter(
-				attribute => attribute.variation && attribute.name && attribute.options.length > 0
+				( attribute ) => attribute.variation && attribute.name && attribute.options.length > 0
 			) ) ||
 		[];
 
@@ -54,7 +54,7 @@ export default function generateVariations(
 }
 
 function findExistingVariation( existingVariations, combination ) {
-	return find( existingVariations, existingVariation => {
+	return find( existingVariations, ( existingVariation ) => {
 		return areAttributesMatching( existingVariation.attributes, combination )
 			? existingVariation
 			: undefined;

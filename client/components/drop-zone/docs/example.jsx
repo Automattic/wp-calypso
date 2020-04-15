@@ -15,7 +15,7 @@ const DropZoneExample = localize(
 	class extends React.PureComponent {
 		state = {};
 
-		onFilesDrop = files => {
+		onFilesDrop = ( files ) => {
 			this.setState( {
 				lastDroppedFiles: files,
 			} );

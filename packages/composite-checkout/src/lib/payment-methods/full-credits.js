@@ -86,7 +86,7 @@ export function createFullCreditsMethod( { registerStore, submitTransaction } ) 
 		label: <FullCreditsLabel />,
 		submitButton: <FullCreditsSubmitButton />,
 		inactiveContent: <FullCreditsSummary />,
-		getAriaLabel: localize => localize( 'Credits' ),
+		getAriaLabel: ( localize ) => localize( 'Credits' ),
 	};
 }
 
@@ -105,8 +105,12 @@ function FullCreditsSubmitButton( { disabled } ) {
 	const localize = useLocalize();
 	const { beginCreditsTransaction } = useDispatch( 'full-credits' );
 	const [ items, total ] = useLineItems();
-	const transactionStatus = useSelect( select => select( 'full-credits' ).getTransactionStatus() );
-	const transactionError = useSelect( select => select( 'full-credits' ).getTransactionError() );
+	const transactionStatus = useSelect( ( select ) =>
+		select( 'full-credits' ).getTransactionStatus()
+	);
+	const transactionError = useSelect( ( select ) =>
+		select( 'full-credits' ).getTransactionError()
+	);
 	const { showErrorMessage } = useMessages();
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 	const onEvent = useEvents();

@@ -45,7 +45,7 @@ class SiteBlockList extends Component {
 	};
 
 	renderPlaceholders() {
-		return times( 2, i => (
+		return times( 2, ( i ) => (
 			<SiteBlockListItemPlaceholder key={ 'site-block-list-item-placeholder-' + i } />
 		) );
 	}
@@ -54,7 +54,7 @@ class SiteBlockList extends Component {
 		return <SiteBlockListItem key={ 'site-block-list-item-' + siteId } siteId={ siteId } />;
 	}
 
-	getItemRef = siteId => {
+	getItemRef = ( siteId ) => {
 		return 'site-block-' + siteId;
 	};
 
@@ -101,7 +101,7 @@ class SiteBlockList extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			blockedSites: getBlockedSites( state ),
 			currentPage: getSiteBlocksCurrentPage( state ),

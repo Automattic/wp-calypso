@@ -32,7 +32,7 @@ import 'state/themes/init';
  * @returns {Function}         Action thunk
  */
 export function requestTheme( themeId, siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: THEME_REQUEST,
 			siteId,
@@ -41,7 +41,7 @@ export function requestTheme( themeId, siteId ) {
 
 		if ( siteId === 'wporg' ) {
 			return fetchWporgThemeInformation( themeId )
-				.then( theme => {
+				.then( ( theme ) => {
 					// Apparently, the WP.org REST API endpoint doesn't 404 but instead returns false
 					// if a theme can't be found.
 					if ( ! theme ) {
@@ -54,7 +54,7 @@ export function requestTheme( themeId, siteId ) {
 						themeId,
 					} );
 				} )
-				.catch( error => {
+				.catch( ( error ) => {
 					dispatch( {
 						type: THEME_REQUEST_FAILURE,
 						siteId,
@@ -68,7 +68,7 @@ export function requestTheme( themeId, siteId ) {
 			return wpcom
 				.undocumented()
 				.themeDetails( themeId )
-				.then( theme => {
+				.then( ( theme ) => {
 					dispatch( receiveTheme( normalizeWpcomTheme( theme ), siteId ) );
 					dispatch( {
 						type: THEME_REQUEST_SUCCESS,
@@ -76,7 +76,7 @@ export function requestTheme( themeId, siteId ) {
 						themeId,
 					} );
 				} )
-				.catch( error => {
+				.catch( ( error ) => {
 					dispatch( {
 						type: THEME_REQUEST_FAILURE,
 						siteId,
@@ -99,7 +99,7 @@ export function requestTheme( themeId, siteId ) {
 					themeId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( themeRequestFailure( siteId, themeId, error ) );
 			} );
 	};

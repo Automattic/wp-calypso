@@ -29,7 +29,7 @@ export const TimeFormatOption = ( {
 } ) => (
 	<FormFieldset>
 		<FormLabel>{ translate( 'Time Format' ) }</FormLabel>
-		{ defaultTimeFormats.map( format => (
+		{ defaultTimeFormats.map( ( format ) => (
 			<FormLabel key={ format }>
 				<FormRadio
 					checked={ ! isCustom && format === timeFormat }

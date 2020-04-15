@@ -30,7 +30,7 @@ class SiteLink extends Component {
 
 	static contextTypes = contextTypes;
 
-	onClick = event => {
+	onClick = ( event ) => {
 		this.props.onClick && this.props.onClick( event );
 		const { quit, tour, tourVersion, step, isLastStep } = this.context;
 		quit( { tour, tourVersion, step, isLastStep } );
@@ -62,7 +62,7 @@ class SiteLink extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );
 	return { siteId, siteSlug };

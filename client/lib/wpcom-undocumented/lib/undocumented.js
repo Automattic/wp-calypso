@@ -734,7 +734,7 @@ Undocumented.prototype.validateGoogleAppsContactInformation = function (
 				return callback( error );
 			}
 
-			const newData = mapKeysRecursively( successData, key => {
+			const newData = mapKeysRecursively( successData, ( key ) => {
 				return key === '_headers' ? key : camelCase( key );
 			} );
 
@@ -2553,10 +2553,10 @@ Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function (
 ) {
 	let retries = 0;
 	const request = () =>
-		this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, options ).catch( error => {
+		this.getAtomicSiteMediaViaProxy( siteIdOrSlug, mediaPath, options ).catch( ( error ) => {
 			// Retry three times with exponential backoff times
 			if ( retries < 3 ) {
-				return new Promise( resolve => {
+				return new Promise( ( resolve ) => {
 					++retries;
 					setTimeout( () => {
 						resolve( request() );

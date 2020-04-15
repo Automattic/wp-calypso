@@ -39,7 +39,7 @@ function setupLoggedOut() {
 }
 
 function setupLoggedIn() {
-	page( '/', context => {
+	page( '/', ( context ) => {
 		const state = context.store.getState();
 		const primarySiteId = getPrimarySiteId( state );
 		const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( state, primarySiteId );

@@ -11,10 +11,10 @@ import { __, setLocaleData, sprintf } from '@wordpress/i18n';
 import LocalizeContext from './localize-context';
 
 function useLocalizeFactory( locale ) {
-	const localize = useRef( text => text );
+	const localize = useRef( ( text ) => text );
 	useEffect( () => {
 		setLocaleData( getLocaleDataForLocale( locale ) );
-		localize.current = text => __( text, 'default' );
+		localize.current = ( text ) => __( text, 'default' );
 	}, [ locale ] );
 	return localize.current;
 }

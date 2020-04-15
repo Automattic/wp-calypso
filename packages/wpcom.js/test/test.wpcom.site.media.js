@@ -19,17 +19,17 @@ describe( 'wpcom.site.media', function () {
 	// Create a testing_media before to start tests
 
 	let testing_media;
-	before( done => {
+	before( ( done ) => {
 		site
 			.addMediaFiles( fixture.media.files[ 1 ] )
-			.then( data => {
+			.then( ( data ) => {
 				testing_media = data ? data.media[ 0 ] : {};
 				done();
 			} )
 			.catch( done );
 	} );
 
-	after( done => {
+	after( ( done ) => {
 		if ( ! add_urls_array || add_urls_array.length < 1 ) {
 			return done();
 		}
@@ -45,11 +45,11 @@ describe( 'wpcom.site.media', function () {
 	} );
 
 	describe( 'wpcom.site.media.get', function () {
-		it( 'should get added media', done => {
+		it( 'should get added media', ( done ) => {
 			const media = site.media( testing_media.ID );
 			media
 				.get()
-				.then( data => {
+				.then( ( data ) => {
 					assert.equal( testing_media.ID, data.ID );
 					done();
 				} )
@@ -58,13 +58,13 @@ describe( 'wpcom.site.media', function () {
 	} );
 
 	describe( 'wpcom.site.media.update', function () {
-		it( 'should edit the media title', done => {
+		it( 'should edit the media title', ( done ) => {
 			const edited_title = 'This is the new title';
 
 			site
 				.media( testing_media.ID )
 				.update( { apiVersion: '1.1' }, { title: edited_title } )
-				.then( data => {
+				.then( ( data ) => {
 					assert.ok( data );
 					assert.equal( edited_title, data.title );
 
@@ -75,11 +75,11 @@ describe( 'wpcom.site.media', function () {
 	} );
 
 	describe( 'wpcom.site.media.addFiles', function () {
-		it( 'should create a new media from a file', done => {
+		it( 'should create a new media from a file', ( done ) => {
 			site
 				.media()
 				.addFiles( fixture.media.files )
-				.then( data => {
+				.then( ( data ) => {
 					assert.ok( data );
 					assert.ok( data.media instanceof Array );
 					assert.equal( fixture.media.files.length, data.media.length );
@@ -90,13 +90,13 @@ describe( 'wpcom.site.media', function () {
 	} );
 
 	describe( 'wpcom.site.media.addUrls', function () {
-		it( 'should create a new media from an object', done => {
+		it( 'should create a new media from an object', ( done ) => {
 			const media_object = fixture.media.urls[ 1 ];
 
 			site
 				.media()
 				.addUrls( media_object )
-				.then( data => {
+				.then( ( data ) => {
 					assert.ok( data );
 					add_urls_object = data;
 					done();
@@ -106,11 +106,11 @@ describe( 'wpcom.site.media', function () {
 	} );
 
 	describe( 'wpcom.site.media.addUrls', function () {
-		it( 'should create a new media', done => {
+		it( 'should create a new media', ( done ) => {
 			site
 				.media()
 				.addUrls( fixture.media.urls )
-				.then( data => {
+				.then( ( data ) => {
 					assert.ok( data );
 					assert.ok( data.media instanceof Array );
 					assert.equal( fixture.media.urls.length, data.media.length );
@@ -124,11 +124,11 @@ describe( 'wpcom.site.media', function () {
 	} );
 
 	describe( 'wpcom.site.media.delete', function () {
-		it( 'should delete a media', done => {
+		it( 'should delete a media', ( done ) => {
 			site
 				.media( testing_media.ID )
 				.del()
-				.then( data => {
+				.then( ( data ) => {
 					assert.equal( testing_media.ID, data.ID );
 					done();
 				} )

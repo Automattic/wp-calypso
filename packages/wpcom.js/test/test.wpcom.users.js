@@ -14,10 +14,10 @@ describe( 'wpcom.users', function () {
 	var users = wpcom.users();
 
 	describe( 'wpcom.users.suggets', function () {
-		it( 'should get a list of possible users to suggest.', done => {
+		it( 'should get a list of possible users to suggest.', ( done ) => {
 			users
 				.suggest()
-				.then( data => {
+				.then( ( data ) => {
 					assert.ok( data );
 					assert.equal( 'object', typeof data.suggestions );
 					assert.ok( data.suggestions instanceof Array );

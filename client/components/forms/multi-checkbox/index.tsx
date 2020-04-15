@@ -41,10 +41,10 @@ export default function MultiCheckbox( props: Props & DivProps ) {
 	const defaultCheckedOnStart = useRef( defaultChecked );
 
 	const handleChange = useCallback(
-		event => {
+		( event ) => {
 			const target = event.target;
 			let changeEventValue = checked || defaultCheckedOnStart.current;
-			changeEventValue = changeEventValue.concat( [ target.value ] ).filter( currentValue => {
+			changeEventValue = changeEventValue.concat( [ target.value ] ).filter( ( currentValue ) => {
 				return currentValue !== target.value || target.checked;
 			} );
 
@@ -60,7 +60,7 @@ export default function MultiCheckbox( props: Props & DivProps ) {
 	const checkedItems = checked || defaultCheckedOnStart.current;
 	return (
 		<div className="multi-checkbox" { ...otherProps }>
-			{ options.map( option => (
+			{ options.map( ( option ) => (
 				<label key={ option.value }>
 					<input
 						name={ name + '[]' }

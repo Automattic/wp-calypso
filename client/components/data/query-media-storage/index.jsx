@@ -68,7 +68,7 @@ export default connect(
 			requestingMediaStorage: isRequestingMediaStorage( state, ownProps.siteId ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return bindActionCreators(
 			{
 				requestMediaStorage,

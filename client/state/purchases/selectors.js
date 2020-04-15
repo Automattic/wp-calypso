@@ -25,8 +25,8 @@ import { getPlanRawPrice } from 'state/plans/selectors';
  * @returns {Array} Purchases
  */
 export const getPurchases = createSelector(
-	state => createPurchasesArray( state.purchases.data ),
-	state => [ state.purchases.data ]
+	( state ) => createPurchasesArray( state.purchases.data ),
+	( state ) => [ state.purchases.data ]
 );
 
 /**
@@ -38,7 +38,7 @@ export const getPurchases = createSelector(
  */
 export const getUserPurchases = ( state, userId ) =>
 	state.purchases.hasLoadedUserPurchasesFromServer &&
-	getPurchases( state ).filter( purchase => purchase.userId === userId );
+	getPurchases( state ).filter( ( purchase ) => purchase.userId === userId );
 
 /**
  * Returns the server error for site or user purchases (if there is one)
@@ -46,7 +46,7 @@ export const getUserPurchases = ( state, userId ) =>
  * @param   {object} state - current state object
  * @returns {object} an error object from the server
  */
-export const getPurchasesError = state => get( state, 'purchases.error', '' );
+export const getPurchasesError = ( state ) => get( state, 'purchases.error', '' );
 
 /**
  * Returns a Purchase object from the state using its id
@@ -57,7 +57,7 @@ export const getPurchasesError = state => get( state, 'purchases.error', '' );
  */
 export const getByPurchaseId = ( state, purchaseId ) =>
 	getPurchases( state )
-		.filter( purchase => purchase.id === purchaseId )
+		.filter( ( purchase ) => purchase.id === purchaseId )
 		.shift();
 
 /**
@@ -68,7 +68,7 @@ export const getByPurchaseId = ( state, purchaseId ) =>
  * @returns {object} the matching purchases if there are some
  */
 export const getSitePurchases = ( state, siteId ) =>
-	getPurchases( state ).filter( purchase => purchase.siteId === siteId );
+	getPurchases( state ).filter( ( purchase ) => purchase.siteId === siteId );
 
 /**
  * Whether a site has an active Jetpack backup purchase.
@@ -80,7 +80,7 @@ export const getSitePurchases = ( state, siteId ) =>
 export const siteHasBackupProductPurchase = ( state, siteId ) => {
 	return some(
 		getSitePurchases( state, siteId ),
-		purchase => purchase.active && isJetpackBackup( purchase )
+		( purchase ) => purchase.active && isJetpackBackup( purchase )
 	);
 };
 
@@ -108,7 +108,7 @@ export const getIncludedDomainPurchase = ( state, subscriptionPurchase ) => {
 	const sitePurchases = getSitePurchases( state, subscriptionPurchase.siteId );
 	const domainPurchase = find(
 		sitePurchases,
-		purchase =>
+		( purchase ) =>
 			( isDomainMapping( purchase ) || isDomainRegistration( purchase ) ) &&
 			includedDomain === purchase.meta
 	);
@@ -116,7 +116,7 @@ export const getIncludedDomainPurchase = ( state, subscriptionPurchase ) => {
 	return domainPurchase;
 };
 
-export const getDowngradePlanFromPurchase = purchase => {
+export const getDowngradePlanFromPurchase = ( purchase ) => {
 	const plan = getPlan( purchase.productSlug );
 	if ( ! plan ) {
 		return null;
@@ -149,9 +149,9 @@ export const getDowngradePlanRawPrice = ( state, purchase ) => {
 export const isUserPaid = ( state, userId ) =>
 	state.purchases.hasLoadedUserPurchasesFromServer && 0 < getUserPurchases( state, userId ).length;
 
-export const isFetchingUserPurchases = state => state.purchases.isFetchingUserPurchases;
-export const isFetchingSitePurchases = state => state.purchases.isFetchingSitePurchases;
-export const hasLoadedUserPurchasesFromServer = state =>
+export const isFetchingUserPurchases = ( state ) => state.purchases.isFetchingUserPurchases;
+export const isFetchingSitePurchases = ( state ) => state.purchases.isFetchingSitePurchases;
+export const hasLoadedUserPurchasesFromServer = ( state ) =>
 	state.purchases.hasLoadedUserPurchasesFromServer;
-export const hasLoadedSitePurchasesFromServer = state =>
+export const hasLoadedSitePurchasesFromServer = ( state ) =>
 	state.purchases.hasLoadedSitePurchasesFromServer;

@@ -14,7 +14,7 @@ import { decodeEntities } from 'lib/formatting';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const requestRecommendedSites = action => {
+export const requestRecommendedSites = ( action ) => {
 	const { seed = 1, number = 10, offset = 0 } = action.payload;
 	return http( {
 		method: 'GET',
@@ -27,7 +27,7 @@ export const requestRecommendedSites = action => {
 };
 
 export const fromApi = ( { algorithm, sites } ) =>
-	sites.map( site => ( {
+	sites.map( ( site ) => ( {
 		feedId: site.feed_id,
 		blogId: site.blog_id,
 		title: decodeEntities( site.blog_title ),

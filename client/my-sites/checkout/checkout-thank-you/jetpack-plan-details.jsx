@@ -81,7 +81,7 @@ class EnhancedDetails extends Component {
 	}
 }
 
-const getTracksDataForAutoconfigHalt = selectedSite => {
+const getTracksDataForAutoconfigHalt = ( selectedSite ) => {
 	const reasons = getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
 
 	if ( reasons && reasons.length > 0 ) {

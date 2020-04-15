@@ -25,7 +25,7 @@ import {
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
-export const CheckoutProvider = props => {
+export const CheckoutProvider = ( props ) => {
 	const {
 		locale,
 		total,

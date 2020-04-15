@@ -119,7 +119,7 @@ describe( 'index', () => {
 		assert.equal( hasBeenCalled, true );
 	} );
 
-	test( 'should be call onToggle with the new state when there are no selected elements', done => {
+	test( 'should be call onToggle with the new state when there are no selected elements', ( done ) => {
 		const callback = function ( newState ) {
 			assert.equal( newState, true );
 			done();
@@ -135,7 +135,7 @@ describe( 'index', () => {
 		bulkSelect.find( 'input' ).simulate( 'change' );
 	} );
 
-	test( 'should be call onToggle with the new state when there are some selected elements', done => {
+	test( 'should be call onToggle with the new state when there are some selected elements', ( done ) => {
 		const callback = function ( newState ) {
 			assert.equal( newState, false );
 			done();
@@ -151,7 +151,7 @@ describe( 'index', () => {
 		bulkSelect.find( 'input' ).simulate( 'change' );
 	} );
 
-	test( 'should be call onToggle with the new state when there all elements are selected', done => {
+	test( 'should be call onToggle with the new state when there all elements are selected', ( done ) => {
 		const callback = function ( newState ) {
 			assert.equal( newState, false );
 			done();

@@ -48,11 +48,11 @@ function preloadEditor() {
 }
 
 class PostItem extends React.Component {
-	clickHandler = clickTarget => () => {
+	clickHandler = ( clickTarget ) => () => {
 		this.props.bumpStat( 'calypso_post_item_click', clickTarget );
 	};
 
-	toggleCurrentPostSelection = event => {
+	toggleCurrentPostSelection = ( event ) => {
 		this.props.togglePostSelection( this.props.globalId );
 		event.stopPropagation();
 	};

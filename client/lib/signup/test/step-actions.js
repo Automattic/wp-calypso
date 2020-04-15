@@ -35,7 +35,7 @@ describe( 'createSiteWithCart()', () => {
 	// createSiteWithCart() function is not designed to be easy for test at the moment.
 	// Thus we intentionally mock the failing case here so that the parts we want to test
 	// would be easier to write.
-	useNock( nock => {
+	useNock( ( nock ) => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.persist()
 			.post( '/rest/v1.1/sites/new' )
@@ -68,7 +68,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.options.site_vertical ).toBeUndefined();
 			},
 			[],
@@ -98,7 +98,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.options.site_vertical ).toEqual( verticalId );
 			},
 			[],
@@ -115,7 +115,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.find_available_url ).toBe( true );
 			},
 			[],
@@ -132,7 +132,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.find_available_url ).toBeFalsy();
 			},
 			[],
@@ -150,7 +150,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.blog_name ).toBe( 'alex' );
 			},
 			[],
@@ -169,7 +169,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.blog_name ).toBe( 'alex' );
 			},
 			[],
@@ -188,7 +188,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.blog_name ).toBe( 'mytitle' );
 			},
 			[],
@@ -207,7 +207,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.blog_name ).toBe( 'blog' );
 			},
 			[],
@@ -226,7 +226,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.blog_name ).toBe( 'art' );
 			},
 			[],

@@ -60,7 +60,7 @@ class Products extends Component {
 		}
 	}
 
-	switchPage = page => {
+	switchPage = ( page ) => {
 		const { site } = this.props;
 		if ( trim( this.state.query ) !== '' ) {
 			this.props.fetchProducts( site.ID, { page, search: this.state.query } );
@@ -69,7 +69,7 @@ class Products extends Component {
 		}
 	};
 
-	onSearch = query => {
+	onSearch = ( query ) => {
 		const { site } = this.props;
 
 		if ( trim( query ) === '' ) {

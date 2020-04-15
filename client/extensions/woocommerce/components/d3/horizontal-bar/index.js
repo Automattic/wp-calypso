@@ -45,7 +45,7 @@ const HorizontalBar = ( { className, data, extent, currency, height, width } ) =
 		return svg;
 	};
 
-	const getParams = node => {
+	const getParams = ( node ) => {
 		const calculatedWidth = width || node.offsetWidth;
 		return {
 			width: calculatedWidth,

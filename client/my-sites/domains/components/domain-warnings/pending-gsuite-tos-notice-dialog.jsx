@@ -65,14 +65,14 @@ function PendingGSuiteTosNoticeDialog( props ) {
 		);
 	};
 
-	const onPasswordClick = event => {
+	const onPasswordClick = ( event ) => {
 		event.preventDefault();
 
 		const wpcom = wp.undocumented();
 		const mailbox = props.user.split( '@' )[ 0 ];
 
 		wpcom.resetPasswordForMailbox( props.domainName, mailbox ).then(
-			data => {
+			( data ) => {
 				setPassword( data.password );
 			},
 			() => {

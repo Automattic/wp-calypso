@@ -2435,7 +2435,7 @@ describe( 'themes selectors', () => {
 		} );
 
 		test( 'given a site with the unlimited premium themes bundle, should return true', () => {
-			[ PLAN_BUSINESS, PLAN_ECOMMERCE ].forEach( plan => {
+			[ PLAN_BUSINESS, PLAN_ECOMMERCE ].forEach( ( plan ) => {
 				const isAvailable = isPremiumThemeAvailable(
 					{
 						sites: {

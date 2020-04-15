@@ -16,7 +16,7 @@ import { noop } from 'lodash';
 import D3Base from '../index';
 
 describe( 'D3base', () => {
-	const shallowWithoutLifecycle = arg => shallow( arg, { disableLifecycleMethods: true } );
+	const shallowWithoutLifecycle = ( arg ) => shallow( arg, { disableLifecycleMethods: true } );
 
 	test( 'should have d3Base class', () => {
 		const base = shallowWithoutLifecycle( <D3Base drawChart={ noop } getParams={ noop } /> );
@@ -29,7 +29,7 @@ describe( 'D3base', () => {
 	} );
 
 	test( 'should render a result of the drawChart prop', () => {
-		const drawChart = svg => {
+		const drawChart = ( svg ) => {
 			return svg.append( 'circle' );
 		};
 		const base = mount( <D3Base drawChart={ drawChart } getParams={ noop } /> );

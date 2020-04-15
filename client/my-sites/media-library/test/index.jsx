@@ -47,7 +47,7 @@ describe( 'MediaLibrary', () => {
 		requestStub.resetHistory();
 	} );
 
-	const getItem = source => mount( <MediaLibrary store={ store } source={ source } /> );
+	const getItem = ( source ) => mount( <MediaLibrary store={ store } source={ source } /> );
 
 	describe( 'keyring request', () => {
 		test( 'is issued when component mounted and viewing an external source', () => {

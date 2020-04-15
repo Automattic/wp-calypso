@@ -28,7 +28,7 @@ describe( 'EditGravatar', () => {
 		email_verified: false,
 	};
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		global.URL = {
 			revokeObjectURL: sandbox.stub(),

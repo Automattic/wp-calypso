@@ -12,7 +12,7 @@ import {
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const fetchStats = action => {
+export const fetchStats = ( action ) => {
 	const { siteId, statType, interval = 'week', aggregation = 'total' } = action;
 
 	return http(

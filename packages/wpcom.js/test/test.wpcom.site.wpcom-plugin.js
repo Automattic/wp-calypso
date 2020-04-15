@@ -16,10 +16,10 @@ describe.skip( 'wpcom.site.wpcomPlugin', function () {
 
 	// Create a testing_wpcomPlugin before to start tests
 	var testingWPComPlugin;
-	before( done => {
+	before( ( done ) => {
 		site
 			.wpcomPluginsList()
-			.then( res => {
+			.then( ( res ) => {
 				var pluginId = res.plugins[ 0 ].slug;
 				testingWPComPlugin = site.wpcomPlugin( pluginId );
 				done();
@@ -28,10 +28,10 @@ describe.skip( 'wpcom.site.wpcomPlugin', function () {
 	} );
 
 	describe( 'wpcom.site.wpcomPlugin.activate', function () {
-		it( 'should activate the wpcom plugin', done => {
+		it( 'should activate the wpcom plugin', ( done ) => {
 			testingWPComPlugin
 				.activate()
-				.then( data => {
+				.then( ( data ) => {
 					assert.ok( data );
 					assert.ok( data instanceof Object, 'data is not an object' );
 					assert.equal( data.active, true );
@@ -42,10 +42,10 @@ describe.skip( 'wpcom.site.wpcomPlugin', function () {
 	} );
 
 	describe( 'wpcom.site.wpcomPlugin.deactivate', function () {
-		it( 'should deactivate the wpcom plugin', done => {
+		it( 'should deactivate the wpcom plugin', ( done ) => {
 			testingWPComPlugin
 				.deactivate()
-				.then( data => {
+				.then( ( data ) => {
 					assert.ok( data );
 					assert.ok( data instanceof Object, 'data is not an object' );
 					assert.equal( data.active, false );

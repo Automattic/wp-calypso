@@ -164,7 +164,7 @@ export function formatValue( value, format, code, decimals ) {
  * @returns {Array} - array of delta objects matching selectedDate
  */
 export function getDelta( deltas, selectedDate, stat ) {
-	const selectedDeltas = find( deltas, item => item.period === selectedDate );
+	const selectedDeltas = find( deltas, ( item ) => item.period === selectedDate );
 	return ( selectedDeltas && selectedDeltas[ stat ] ) || [];
 }
 
@@ -207,10 +207,10 @@ export function getDeltaFromData( data, selectedDate, stat, unit ) {
  * @returns {object} - Object containing data from calculateDelta
  */
 export function getConversionRateData( visitorData, orderData, unit ) {
-	return visitorData.map( visitorRow => {
+	return visitorData.map( ( visitorRow ) => {
 		const datePeriod = getEndPeriod( visitorRow.period, unit );
 		const unitPeriod = getUnitPeriod( visitorRow.period, unit );
-		const index = findIndex( orderData, d => d.period === datePeriod );
+		const index = findIndex( orderData, ( d ) => d.period === datePeriod );
 		const orders = orderData[ index ] && orderData[ index ].orders;
 
 		if ( visitorRow.visitors > 0 && orderData[ index ] ) {

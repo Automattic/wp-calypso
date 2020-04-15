@@ -34,7 +34,7 @@ class UploadDropZone extends Component {
 		siteId: PropTypes.number,
 	};
 
-	onFileSelect = files => {
+	onFileSelect = ( files ) => {
 		const { translate, siteId, doUpload } = this.props;
 
 		if ( files.length !== 1 ) {
@@ -78,6 +78,6 @@ class UploadDropZone extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	siteId: getSelectedSiteId( state ),
 } ) )( localize( UploadDropZone ) );

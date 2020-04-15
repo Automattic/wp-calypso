@@ -135,7 +135,7 @@ class ScanPage extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const siteSlug = getSelectedSiteSlug( state );
 

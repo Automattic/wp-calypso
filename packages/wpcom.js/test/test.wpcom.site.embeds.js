@@ -15,10 +15,10 @@ describe( 'wpcom.site.embeds', function () {
 	var site = wpcom.site( util.site() );
 
 	describe( "wpcom.site.renderEmbed('embed' )", function () {
-		it( 'should render embed', done => {
+		it( 'should render embed', ( done ) => {
 			site
 				.renderEmbed( fixture.embed )
-				.then( data => {
+				.then( ( data ) => {
 					assert.equal( data.embed_url, fixture.embed );
 					assert.ok( data.result );
 					done();

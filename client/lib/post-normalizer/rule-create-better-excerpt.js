@@ -65,11 +65,11 @@ export function formatExcerpt( content ) {
 
 	// strip any p's that are empty
 	toArray( dom.querySelectorAll( 'p' ) )
-		.filter( element => trim( element.textContent ).length === 0 )
+		.filter( ( element ) => trim( element.textContent ).length === 0 )
 		.forEach( removeElement );
 
 	// remove styles for all p's that remain
-	toArray( dom.querySelectorAll( 'p' ) ).forEach( element => {
+	toArray( dom.querySelectorAll( 'p' ) ).forEach( ( element ) => {
 		element.removeAttribute( 'style' );
 		element.removeAttribute( 'align' );
 	} );

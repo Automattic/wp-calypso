@@ -106,11 +106,11 @@ export class EditorHtmlToolbar extends Component {
 		document.removeEventListener( 'click', this.clickOutsideInsertContentMenu );
 	}
 
-	bindButtonsRef = div => {
+	bindButtonsRef = ( div ) => {
 		this.buttons = div;
 	};
 
-	bindInsertContentButtonsRef = div => {
+	bindInsertContentButtonsRef = ( div ) => {
 		this.insertContentButtons = div;
 	};
 
@@ -147,7 +147,7 @@ export class EditorHtmlToolbar extends Component {
 		}
 	};
 
-	hideToolbarFadeOnFullScroll = event => {
+	hideToolbarFadeOnFullScroll = ( event ) => {
 		const { scrollLeft, scrollWidth, clientWidth } = event.target;
 		// 10 is bit of tolerance in case the scroll stops some pixels short of the toolbar width
 		const isScrolledFull = scrollLeft >= scrollWidth - clientWidth - 10;
@@ -157,7 +157,7 @@ export class EditorHtmlToolbar extends Component {
 		}
 	};
 
-	clickOutsideInsertContentMenu = event => {
+	clickOutsideInsertContentMenu = ( event ) => {
 		if (
 			this.state.showInsertContentMenu &&
 			! this.insertContentButtons.contains( event.target )
@@ -265,7 +265,7 @@ export class EditorHtmlToolbar extends Component {
 		const { openTags } = this.state;
 		const { before, after } = this.splitEditorContent();
 		this.updateEditorContent( before, this.closeHtmlTag( tag ), after );
-		this.setState( { openTags: openTags.filter( openTag => openTag !== tag.name ) } );
+		this.setState( { openTags: openTags.filter( ( openTag ) => openTag !== tag.name ) } );
 	}
 
 	insertHtmlTagOpenClose( tag ) {
@@ -343,7 +343,7 @@ export class EditorHtmlToolbar extends Component {
 		this.insertHtmlTag( { name: 'ins', attributes: { datetime } } );
 	};
 
-	onClickImage = attributes => {
+	onClickImage = ( attributes ) => {
 		this.insertHtmlTagSelfClosed( { name: 'img', attributes } );
 	};
 
@@ -377,7 +377,7 @@ export class EditorHtmlToolbar extends Component {
 		this.setState( { openTags: [] } );
 	};
 
-	onInsertMedia = media => {
+	onInsertMedia = ( media ) => {
 		this.insertCustomContent( media );
 	};
 
@@ -468,13 +468,13 @@ export class EditorHtmlToolbar extends Component {
 		this.setState( { showSimplePaymentsDialog: false } );
 	};
 
-	changeSimplePaymentsDialogTab = tab => {
+	changeSimplePaymentsDialogTab = ( tab ) => {
 		this.setState( {
 			simplePaymentsDialogTab: tab,
 		} );
 	};
 
-	insertSimplePayment = productData => {
+	insertSimplePayment = ( productData ) => {
 		this.insertCustomContent( serializeSimplePayment( productData ), { paragraph: true } );
 		this.closeSimplePaymentsDialog();
 	};
@@ -502,7 +502,7 @@ export class EditorHtmlToolbar extends Component {
 		}
 	};
 
-	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag );
+	isTagOpen = ( tag ) => -1 !== this.state.openTags.indexOf( tag );
 
 	renderAddEverythingDropdown = () => {
 		const { translate, canUserUploadFiles } = this.props;
@@ -707,7 +707,7 @@ export class EditorHtmlToolbar extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 
 	return {

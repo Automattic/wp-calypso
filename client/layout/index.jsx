@@ -243,7 +243,7 @@ class Layout extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const sectionGroup = getSectionGroup( state );
 	const sectionName = getSectionName( state );
 	const currentRoute = getCurrentRoute( state );

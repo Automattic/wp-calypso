@@ -42,21 +42,23 @@ export class Auth extends Component {
 		AuthStore.off( 'change', this.refreshData );
 	}
 
-	getClickHandler = action => () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+	getClickHandler = ( action ) => () =>
+		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 
-	getFocusHandler = action => () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
+	getFocusHandler = ( action ) => () =>
+		this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
 
 	refreshData = () => {
 		this.setState( AuthStore.get() );
 	};
 
-	focusInput = input => {
+	focusInput = ( input ) => {
 		if ( this.state.requires2fa && this.state.inProgress === false ) {
 			input.focus();
 		}
 	};
 
-	submitForm = event => {
+	submitForm = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -68,7 +70,7 @@ export class Auth extends Component {
 		this.setState( { showInstructions: isShowing } );
 	};
 
-	handleChange = event => {
+	handleChange = ( event ) => {
 		const { name, value } = event.currentTarget;
 
 		this.setState( { [ name ]: value } );

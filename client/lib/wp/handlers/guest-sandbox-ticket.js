@@ -29,7 +29,7 @@ export const deleteOldTicket = () => {
  *
  * @param {object} wpcom Original WPCOM instance
  */
-export const injectGuestSandboxTicketHandler = wpcom => {
+export const injectGuestSandboxTicketHandler = ( wpcom ) => {
 	const request = wpcom.request.bind( wpcom );
 
 	Object.assign( wpcom, {

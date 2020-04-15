@@ -123,7 +123,7 @@ Home.propTypes = {
 	isStaticHomePage: PropTypes.bool.isRequired,
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteChecklist = getSiteChecklist( state, siteId );
 	const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
@@ -146,7 +146,7 @@ const mapStateToProps = state => {
 	};
 };
 
-const trackViewSiteAction = isStaticHomePage =>
+const trackViewSiteAction = ( isStaticHomePage ) =>
 	composeAnalytics(
 		recordTracksEvent( 'calypso_customer_home_my_site_view_site_click', {
 			is_static_home_page: isStaticHomePage,

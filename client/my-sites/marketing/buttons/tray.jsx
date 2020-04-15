@@ -108,7 +108,7 @@ class SharingButtonsTray extends React.Component {
 		return filter( this.props.buttons, { visibility: this.props.visibility } );
 	};
 
-	onButtonsReordered = order => {
+	onButtonsReordered = ( order ) => {
 		let buttons = [];
 
 		this.getButtonsOfCurrentVisibility().forEach( function ( button, i ) {
@@ -124,7 +124,7 @@ class SharingButtonsTray extends React.Component {
 		this.props.onButtonsChange( buttons );
 	};
 
-	onButtonClick = button => {
+	onButtonClick = ( button ) => {
 		let buttons = this.props.buttons.slice( 0 ),
 			currentButton = find( buttons, { ID: button.ID } ),
 			isEnabled;

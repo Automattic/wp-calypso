@@ -311,9 +311,9 @@ export function useGetThankYouUrl( {
 	siteId,
 	hideNudge,
 } ) {
-	const selectedSiteData = useSelector( state => getSelectedSite( state ) );
+	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 	const adminUrl = selectedSiteData?.options?.admin_url;
-	const isEligibleForSignupDestinationResult = useSelector( state =>
+	const isEligibleForSignupDestinationResult = useSelector( ( state ) =>
 		isEligibleForSignupDestination( state, siteId, cart )
 	);
 

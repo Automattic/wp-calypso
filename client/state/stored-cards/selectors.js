@@ -6,7 +6,7 @@
  * @returns {Array} Stored Cards
  */
 
-export const getStoredCards = state => state.storedCards.items;
+export const getStoredCards = ( state ) => state.storedCards.items;
 
 /**
  * Returns a Stored Card
@@ -17,11 +17,11 @@ export const getStoredCards = state => state.storedCards.items;
  */
 export const getStoredCardById = ( state, cardId ) =>
 	getStoredCards( state )
-		.filter( card => card.stored_details_id === cardId )
+		.filter( ( card ) => card.stored_details_id === cardId )
 		.shift();
 
-export const hasLoadedStoredCardsFromServer = state => state.storedCards.hasLoadedFromServer;
+export const hasLoadedStoredCardsFromServer = ( state ) => state.storedCards.hasLoadedFromServer;
 
 export const isDeletingStoredCard = ( state, cardId ) =>
 	Boolean( state.storedCards.isDeleting[ cardId ] );
-export const isFetchingStoredCards = state => state.storedCards.isFetching;
+export const isFetchingStoredCards = ( state ) => state.storedCards.isFetching;

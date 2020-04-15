@@ -147,7 +147,7 @@ export const counts = ( () => {
 				return state;
 			}
 			case POSTS_RECEIVE: {
-				action.posts.forEach( post => {
+				action.posts.forEach( ( post ) => {
 					const postStatusKey = getPostStatusKey( post.site_ID, post.ID );
 					const postStatus = postStatuses[ postStatusKey ];
 

@@ -57,7 +57,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'account-recovery actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	const errorResponse = { status: 400, message: 'Something wrong!' };
 

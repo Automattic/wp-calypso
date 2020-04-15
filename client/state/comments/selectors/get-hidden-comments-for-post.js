@@ -20,6 +20,6 @@ export const getHiddenCommentsForPost = treeSelect(
 	( [ comments, expanded ] ) => {
 		const commentsById = keyBy( comments, 'ID' );
 
-		return pickBy( commentsById, comment => ! expanded?.[ comment.ID ] );
+		return pickBy( commentsById, ( comment ) => ! expanded?.[ comment.ID ] );
 	}
 );

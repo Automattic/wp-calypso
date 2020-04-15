@@ -24,7 +24,7 @@ export default class extends React.Component {
 		activeGroups: [],
 	};
 
-	isGroupActive = groupName => {
+	isGroupActive = ( groupName ) => {
 		return this.state.activeGroups.indexOf( groupName ) >= 0;
 	};
 

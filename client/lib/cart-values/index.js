@@ -131,11 +131,11 @@ export function removeCoupon() {
 	};
 }
 
-export const getTaxCountryCode = cart => get( cart, [ 'tax', 'location', 'country_code' ] );
+export const getTaxCountryCode = ( cart ) => get( cart, [ 'tax', 'location', 'country_code' ] );
 
-export const getTaxPostalCode = cart => get( cart, [ 'tax', 'location', 'postal_code' ] );
+export const getTaxPostalCode = ( cart ) => get( cart, [ 'tax', 'location', 'postal_code' ] );
 
-export const getTaxLocation = cart => get( cart, [ 'tax', 'location' ], {} );
+export const getTaxLocation = ( cart ) => get( cart, [ 'tax', 'location' ], {} );
 
 export function setTaxCountryCode( countryCode ) {
 	return function ( cart ) {

@@ -64,7 +64,7 @@ class StatsListItem extends React.Component {
 		} );
 	};
 
-	actionMenuClick = event => {
+	actionMenuClick = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
 
@@ -78,11 +78,11 @@ class StatsListItem extends React.Component {
 		}
 	};
 
-	preventDefaultOnClick = event => {
+	preventDefaultOnClick = ( event ) => {
 		event.preventDefault();
 	};
 
-	onClick = event => {
+	onClick = ( event ) => {
 		let gaEvent;
 		const moduleName = titlecase( this.props.moduleName );
 
@@ -125,7 +125,7 @@ class StatsListItem extends React.Component {
 		}
 	};
 
-	spamHandler = isSpammed => {
+	spamHandler = ( isSpammed ) => {
 		this.setState( {
 			disabled: isSpammed,
 		} );
@@ -241,7 +241,7 @@ class StatsListItem extends React.Component {
 				let onClickHandler = this.preventDefaultOnClick;
 				const siteId = this.getSiteIdForFollow();
 				if ( this.isFollowersModule && siteId ) {
-					onClickHandler = event => {
+					onClickHandler = ( event ) => {
 						const modifierPressed =
 							event.button > 0 ||
 							event.metaKey ||

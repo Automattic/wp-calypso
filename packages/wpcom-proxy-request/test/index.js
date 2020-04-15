@@ -28,11 +28,11 @@ runs.forEach( ( { shouldReloadProxy } ) => {
 		const postId = 35600;
 
 		// run the proxy
-		before( done => {
+		before( ( done ) => {
 			if ( shouldReloadProxy ) {
 				reloadProxy();
 			}
-			proxy( { metaAPI: { accessAllUsersBlogs: true } }, err => {
+			proxy( { metaAPI: { accessAllUsersBlogs: true } }, ( err ) => {
 				if ( err ) {
 					throw err;
 				}
@@ -50,7 +50,7 @@ runs.forEach( ( { shouldReloadProxy } ) => {
 
 			describe( 'v1', () => {
 				describe( 'successful requests', () => {
-					it( '[v1] should get `WordPress` blog post info', done => {
+					it( '[v1] should get `WordPress` blog post info', ( done ) => {
 						proxy(
 							{
 								path: `/sites/${ siteDomain }/posts/${ postId }`,
@@ -76,7 +76,7 @@ runs.forEach( ( { shouldReloadProxy } ) => {
 						);
 					} );
 
-					it( '[v1] should get `me` user', done => {
+					it( '[v1] should get `me` user', ( done ) => {
 						proxy(
 							{
 								path: '/me',
@@ -101,7 +101,7 @@ runs.forEach( ( { shouldReloadProxy } ) => {
 				} );
 
 				describe( 'wrong requests', () => {
-					it( '[v1] should get `404` for a non-exiting route', done => {
+					it( '[v1] should get `404` for a non-exiting route', ( done ) => {
 						proxy(
 							{
 								path: '/this-route-does-not-exists',
@@ -127,7 +127,7 @@ runs.forEach( ( { shouldReloadProxy } ) => {
 						);
 					} );
 
-					it( '[v1] should get `404` for a non-exiting site', done => {
+					it( '[v1] should get `404` for a non-exiting site', ( done ) => {
 						proxy(
 							{
 								path: '/sites/this-site-does-not-exit-i-hope',
@@ -152,7 +152,7 @@ runs.forEach( ( { shouldReloadProxy } ) => {
 						);
 					} );
 
-					it( '[v1] should get `404` for a non-exiting post', done => {
+					it( '[v1] should get `404` for a non-exiting post', ( done ) => {
 						proxy(
 							{
 								path: `/sites/${ siteDomain }/posts/0`,
@@ -185,7 +185,7 @@ runs.forEach( ( { shouldReloadProxy } ) => {
 				const namespace = 'wp/v2';
 
 				describe( 'successful requests', () => {
-					it( '[wp/v2] should get `me` user', done => {
+					it( '[wp/v2] should get `me` user', ( done ) => {
 						proxy(
 							{
 								path: `/sites/${ siteDomain }/users/me`,
@@ -209,7 +209,7 @@ runs.forEach( ( { shouldReloadProxy } ) => {
 				} );
 
 				describe( 'wrong requests', () => {
-					it( '[wp/v2] should get `404` for a non-exiting route', done => {
+					it( '[wp/v2] should get `404` for a non-exiting route', ( done ) => {
 						proxy(
 							{
 								path: '/this-route-does-not-exists',
@@ -236,7 +236,7 @@ runs.forEach( ( { shouldReloadProxy } ) => {
 						);
 					} );
 
-					it( '[wp/v2] should get `404` a non-existing post', done => {
+					it( '[wp/v2] should get `404` a non-existing post', ( done ) => {
 						proxy(
 							{
 								path: '/sites/retrofocs.wordpress.com/posts/0',
@@ -288,7 +288,7 @@ runs.forEach( ( { shouldReloadProxy } ) => {
 				} );
 
 				describe( 'wrong requests', () => {
-					it( '[wpcom/v2] should get `404` for a non-exiting route', done => {
+					it( '[wpcom/v2] should get `404` for a non-exiting route', ( done ) => {
 						proxy(
 							{
 								path: '/this-route-does-not-exists',

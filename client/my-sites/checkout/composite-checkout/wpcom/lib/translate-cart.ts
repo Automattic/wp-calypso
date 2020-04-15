@@ -55,7 +55,7 @@ export function translateWpcomCartToCheckoutCart(
 
 	// TODO: watch out for minimal currency units while localizing this
 	const couponValueRaw = products
-		.map( product => coupon_discounts_integer[ product.product_id ] )
+		.map( ( product ) => coupon_discounts_integer[ product.product_id ] )
 		.filter( Boolean )
 		.reduce( ( accum, current ) => accum + current, 0 );
 	const couponValue = Math.round( couponValueRaw );
@@ -126,7 +126,7 @@ export function translateWpcomCartToCheckoutCart(
 			amount: { value: credits_integer, displayValue: credits_display, currency },
 		},
 		allowedPaymentMethods: allowed_payment_methods
-			.filter( slug => {
+			.filter( ( slug ) => {
 				return slug !== 'WPCOM_Billing_MoneyPress_Paygate';
 			} ) // TODO: stop returning this from the server
 			.map( readWPCOMPaymentMethodClass )

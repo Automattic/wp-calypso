@@ -31,7 +31,7 @@ class ActivityCardList extends Component {
 		showPagination: true,
 	};
 
-	changePage = pageNumber => {
+	changePage = ( pageNumber ) => {
 		this.props.selectPage( this.props.siteId, pageNumber );
 		window.scrollTo( 0, 0 );
 	};
@@ -56,7 +56,7 @@ class ActivityCardList extends Component {
 		);
 		const theseLogs = logs.slice( ( actualPage - 1 ) * pageSize, actualPage * pageSize );
 
-		const cards = theseLogs.map( activity => (
+		const cards = theseLogs.map( ( activity ) => (
 			<ActivityCard
 				{ ...{
 					key: activity.activityId,
@@ -114,7 +114,7 @@ class ActivityCardList extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const filter = getActivityLogFilter( state, siteId );
 	const rewind = getRewindState( state, siteId );
@@ -133,7 +133,7 @@ const mapStateToProps = state => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	selectPage: ( siteId, pageNumber ) => dispatch( updateFilter( siteId, { page: pageNumber } ) ),
 } );
 

@@ -1,10 +1,10 @@
 const defaultGetCacheKey = ( ...args ) => args.join();
 
-const isFunction = fn => {
+const isFunction = ( fn ) => {
 	return fn && typeof fn === 'function';
 };
 
-const isObject = o => {
+const isObject = ( o ) => {
 	return o && typeof o === 'object';
 };
 

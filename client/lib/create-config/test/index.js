@@ -62,7 +62,7 @@ describe( 'index', () => {
 			test( "should not throw an error when given key doesn't exist (NODE_ENV != development)", () => {
 				const envs = [ 'client', 'desktop', 'horizon', 'production', 'stage', 'test', 'wpcalypso' ];
 
-				envs.forEach( env => {
+				envs.forEach( ( env ) => {
 					process.env.NODE_ENV = env;
 
 					expect( process.env.NODE_ENV ).to.equal( env );

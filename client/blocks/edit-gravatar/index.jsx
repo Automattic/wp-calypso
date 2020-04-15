@@ -55,7 +55,7 @@ export class EditGravatar extends Component {
 		recordReceiveImageEvent: PropTypes.func,
 	};
 
-	onReceiveFile = files => {
+	onReceiveFile = ( files ) => {
 		const {
 			receiveGravatarImageFailed: receiveGravatarImageFailedAction,
 			translate,
@@ -258,7 +258,7 @@ const recordClickButtonEvent = ( { isVerified } ) =>
 const recordReceiveImageEvent = () => recordTracksEvent( 'calypso_edit_gravatar_file_receive' );
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		user: getCurrentUser( state ) || {},
 		isUploading: isCurrentUserUploadingGravatar( state ),
 	} ),

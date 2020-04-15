@@ -123,7 +123,7 @@ MediaActions.fetchNextPage = function ( siteId ) {
 	}
 };
 
-const getExternalUploader = service => ( file, siteId ) => {
+const getExternalUploader = ( service ) => ( file, siteId ) => {
 	return wpcom.undocumented().site( siteId ).uploadExternalMedia( service, [ file.guid ] );
 };
 
@@ -201,7 +201,7 @@ function uploadFiles( uploader, files, site ) {
 			const action = { type: 'RECEIVE_MEDIA_ITEM', id: transientMedia.ID, siteId };
 
 			return uploader( file, siteId )
-				.then( data => {
+				.then( ( data ) => {
 					Dispatcher.handleServerAction(
 						Object.assign( action, {
 							data: data.media[ 0 ],
@@ -217,7 +217,7 @@ function uploadFiles( uploader, files, site ) {
 						siteId: siteId,
 					} );
 				} )
-				.catch( error => {
+				.catch( ( error ) => {
 					Dispatcher.handleServerAction( Object.assign( action, { error } ) );
 					reduxDispatch( failMediaItemRequest( siteId, transientMedia.ID, error ) );
 				} );

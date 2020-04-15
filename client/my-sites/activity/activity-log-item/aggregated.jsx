@@ -48,7 +48,7 @@ class ActivityLogAggregatedItem extends Component {
 		return addQueryArgs( query, window.location.pathname + window.location.hash );
 	}
 
-	trackClick = intent => {
+	trackClick = ( intent ) => {
 		const { activity } = this.props;
 		const section = activity.activityGroup;
 		analytics.tracks.recordEvent( 'calypso_activitylog_item_click', {
@@ -146,7 +146,7 @@ class ActivityLogAggregatedItem extends Component {
 					header={ this.renderHeader() }
 					onClick={ this.trackAggregateExpandToggle }
 				>
-					{ activity.streams.map( log => (
+					{ activity.streams.map( ( log ) => (
 						<Fragment key={ log.activityId }>
 							<ActivityLogItem
 								key={ log.activityId }

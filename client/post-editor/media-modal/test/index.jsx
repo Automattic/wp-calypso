@@ -33,7 +33,7 @@ jest.mock( 'post-editor/media-modal/detail', () => ( {
 } ) );
 jest.mock( 'post-editor/media-modal/gallery', () => require( 'components/empty-component' ) );
 jest.mock( 'post-editor/media-modal/markup', () => ( {
-	get: x => x,
+	get: ( x ) => x,
 } ) );
 jest.mock( 'post-editor/media-modal/secondary-actions', () =>
 	require( 'components/empty-component' )
@@ -60,7 +60,7 @@ const DUMMY_VIDEO_MEDIA = [
 describe( 'EditorMediaModal', () => {
 	let spy, deleteMedia, setLibrarySelectedItems, onClose;
 
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		spy = sandbox.spy();
 		setLibrarySelectedItems = sandbox.stub( mediaActions, 'setLibrarySelectedItems' );
 		deleteMedia = sandbox.stub( mediaActions, 'delete' );
@@ -101,7 +101,7 @@ describe( 'EditorMediaModal', () => {
 				'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
 				'This cannot be undone.'
 		);
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			process.nextTick( function () {
 				expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, media );
 				resolve();
@@ -125,7 +125,7 @@ describe( 'EditorMediaModal', () => {
 				'This cannot be undone.'
 		);
 
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			process.nextTick( function () {
 				expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, DUMMY_MEDIA );
 				resolve();
@@ -150,7 +150,7 @@ describe( 'EditorMediaModal', () => {
 				'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
 				'This cannot be undone.'
 		);
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			process.nextTick( function () {
 				expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, media );
 				resolve();
@@ -174,7 +174,7 @@ describe( 'EditorMediaModal', () => {
 				'This cannot be undone.'
 		);
 
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			process.nextTick( function () {
 				expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, DUMMY_MEDIA[ 0 ] );
 				resolve();
@@ -194,7 +194,7 @@ describe( 'EditorMediaModal', () => {
 
 		tree.deleteMedia();
 
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			process.nextTick( function () {
 				expect( spy ).to.have.been.calledWith( ModalViews.LIST );
 				resolve();
@@ -214,7 +214,7 @@ describe( 'EditorMediaModal', () => {
 		tree.setDetailSelectedIndex( 1 );
 		tree.deleteMedia();
 
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			process.nextTick( function () {
 				expect( spy ).to.not.have.been.called;
 				expect( tree.state.detailSelectedIndex ).to.equal( 0 );
@@ -356,7 +356,7 @@ describe( 'EditorMediaModal', () => {
 
 			tree.confirmSelection();
 
-			return new Promise( resolve => {
+			return new Promise( ( resolve ) => {
 				process.nextTick( () => {
 					expect( onClose ).to.have.been.calledWith( {
 						items: DUMMY_MEDIA,
@@ -390,7 +390,7 @@ describe( 'EditorMediaModal', () => {
 				Object.assign( {}, DUMMY_MEDIA[ 1 ], { ID: 'media-2', transient: true } ),
 			];
 
-			return new Promise( resolve => {
+			return new Promise( ( resolve ) => {
 				process.nextTick( () => {
 					expect( onClose ).to.have.been.calledWith( transientItems, 'external' );
 					resolve();
@@ -417,7 +417,7 @@ describe( 'EditorMediaModal', () => {
 			const transientItems = [
 				Object.assign( {}, DUMMY_VIDEO_MEDIA[ 0 ], { ID: 'media-3', transient: true } ),
 			];
-			return new Promise( resolve => {
+			return new Promise( ( resolve ) => {
 				process.nextTick( () => {
 					expect( onClose ).to.have.been.calledWith( transientItems, 'external' );
 					resolve();

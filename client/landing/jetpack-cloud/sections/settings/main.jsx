@@ -74,7 +74,7 @@ class SettingsPage extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const rewind = getRewindState( state, siteId );
 

@@ -56,7 +56,7 @@ class AcceptedFilenames extends Component {
 		);
 	};
 
-	handleToggle = fieldName => {
+	handleToggle = ( fieldName ) => {
 		return () => {
 			const { fields, setFieldValue } = this.props;
 			const groupName = 'pages';
@@ -174,7 +174,7 @@ class AcceptedFilenames extends Component {
 	}
 }
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'cache_acceptable_files', 'cache_rejected_uri', 'pages' ] );
 };
 

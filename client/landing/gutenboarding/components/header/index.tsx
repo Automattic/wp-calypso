@@ -68,11 +68,11 @@ const Header: FunctionComponent = () => {
 
 	const currentStep = useCurrentStep();
 
-	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
+	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 
-	const newSite = useSelect( select => select( SITE_STORE ).getNewSite() );
+	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 
-	const { domain, siteTitle } = useSelect( select => select( ONBOARD_STORE ).getState() );
+	const { domain, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
 	const makePath = usePath();
 

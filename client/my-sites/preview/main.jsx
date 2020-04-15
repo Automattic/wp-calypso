@@ -143,7 +143,7 @@ class PreviewMain extends React.Component {
 		}
 	}
 
-	updateSiteLocation = pathname => {
+	updateSiteLocation = ( pathname ) => {
 		const externalUrl = this.props.site.URL + ( pathname === '/' ? '' : pathname );
 		this.setState( { externalUrl } );
 		this.props.recordTracksEvent( 'calypso_view_site_page_view', {
@@ -207,7 +207,7 @@ class PreviewMain extends React.Component {
 	}
 }
 
-const mapState = state => {
+const mapState = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const site = getSelectedSite( state );
 	const homePagePostId = get( site, [ 'options', 'page_on_front' ] );

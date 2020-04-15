@@ -52,7 +52,7 @@ const EmailFollowersStore = {
 		if ( ! _followerIDsByNamespace[ namespace ] ) {
 			return false;
 		}
-		_followerIDsByNamespace[ namespace ].forEach( followerId => {
+		_followerIDsByNamespace[ namespace ].forEach( ( followerId ) => {
 			if ( _followersBySite[ siteId ][ followerId ] ) {
 				followers.push( _followersBySite[ siteId ][ followerId ] );
 			}

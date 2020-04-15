@@ -28,12 +28,12 @@ export default class AllSitesIcon extends React.Component {
 	}
 
 	getSitesWithIcons() {
-		return this.props.sites.filter( site => site.icon ).slice( 0, MAX_ICONS );
+		return this.props.sites.filter( ( site ) => site.icon ).slice( 0, MAX_ICONS );
 	}
 
 	getIcons() {
 		const sites = union( this.getSitesWithIcons(), this.getMaxSites() ).slice( 0, MAX_ICONS );
-		return sites.map( site => <SiteIcon site={ site } key={ site.ID } size={ 14 } /> );
+		return sites.map( ( site ) => <SiteIcon site={ site } key={ site.ID } size={ 14 } /> );
 	}
 
 	render() {

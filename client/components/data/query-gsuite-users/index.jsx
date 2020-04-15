@@ -11,7 +11,7 @@ import { useDispatch } from 'react-redux';
 import { getGSuiteUsers } from 'state/gsuite-users/actions';
 import isRequestingGSuiteUsers from 'state/selectors/is-requesting-gsuite-users';
 
-const request = siteId => ( dispatch, getState ) => {
+const request = ( siteId ) => ( dispatch, getState ) => {
 	if ( ! isRequestingGSuiteUsers( getState(), siteId ) ) {
 		dispatch( getGSuiteUsers( siteId ) );
 	}

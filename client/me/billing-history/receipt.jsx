@@ -37,7 +37,7 @@ class BillingReceipt extends React.Component {
 		this.redirectIfInvalidTransaction();
 	}
 
-	recordClickEvent = action => {
+	recordClickEvent = ( action ) => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	};
 
@@ -176,7 +176,7 @@ class BillingReceipt extends React.Component {
 		const { transaction, translate } = this.props;
 		const groupedTransactionItems = groupDomainProducts( transaction.items, translate );
 
-		const items = groupedTransactionItems.map( item => {
+		const items = groupedTransactionItems.map( ( item ) => {
 			const termLabel = getPlanTermLabel( item.wpcom_product_slug, translate );
 			return (
 				<tr key={ item.id }>

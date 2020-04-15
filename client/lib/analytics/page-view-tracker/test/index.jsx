@@ -19,7 +19,7 @@ import { useFakeTimers } from 'test/helpers/use-sinon';
 describe( 'PageViewTracker', () => {
 	let clock;
 
-	useFakeTimers( fakeClock => {
+	useFakeTimers( ( fakeClock ) => {
 		clock = fakeClock;
 	} );
 

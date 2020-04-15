@@ -115,7 +115,7 @@ describe( 'index', () => {
 		expect( tree.state.isDraggingOverElement ).to.not.be.ok;
 	} );
 
-	test( 'should start observing the body for mutations when dragging over', done => {
+	test( 'should start observing the body for mutations when dragging over', ( done ) => {
 		const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container ),
 			dragEnterEvent = new window.MouseEvent( 'dragenter' );
 
@@ -127,7 +127,7 @@ describe( 'index', () => {
 		} );
 	} );
 
-	test( 'should stop observing the body for mutations upon drag ending', done => {
+	test( 'should stop observing the body for mutations upon drag ending', ( done ) => {
 		const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container ),
 			dragEnterEvent = new window.MouseEvent( 'dragenter' ),
 			dragLeaveEvent = new window.MouseEvent( 'dragleave' );

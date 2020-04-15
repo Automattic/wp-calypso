@@ -36,7 +36,7 @@ function SiteCreditEdit( {
 			<BlockControls>
 				<AlignmentToolbar
 					value={ textAlign }
-					onChange={ nextAlign => {
+					onChange={ ( nextAlign ) => {
 						setAttributes( { textAlign: nextAlign } );
 					} }
 				/>

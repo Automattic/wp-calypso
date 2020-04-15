@@ -22,7 +22,7 @@ const debug = debugFactory( 'calypso:jetpack-connect:actions' );
 
 export function isUserConnected( siteId, siteIsOnSitesList ) {
 	let accessibleSite;
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_REQUEST,
 			siteId,
@@ -31,7 +31,7 @@ export function isUserConnected( siteId, siteIsOnSitesList ) {
 		return wpcom
 			.site( siteId )
 			.get()
-			.then( site => {
+			.then( ( site ) => {
 				accessibleSite = site;
 				debug( 'site is accessible! checking that user is connected', siteId );
 				return wpcom.undocumented().jetpackIsUserConnected( siteId );
@@ -52,7 +52,7 @@ export function isUserConnected( siteId, siteIsOnSitesList ) {
 					debug( 'site is already on sites list' );
 				}
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITE_REQUEST_FAILURE,
 					siteId,

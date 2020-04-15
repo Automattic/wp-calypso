@@ -27,7 +27,7 @@ class CreditCardDelete extends React.Component {
 			.then( () => {
 				this.props.successNotice( this.props.translate( 'Card deleted successfully' ) );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				this.props.errorNotice( error.message );
 			} );
 	};

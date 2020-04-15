@@ -79,7 +79,7 @@ class InlineHelpSearchResults extends Component {
 		this.props.setSearchResults( '', getContextResults( section ) );
 	}
 
-	onHelpLinkClick = selectionIndex => event => {
+	onHelpLinkClick = ( selectionIndex ) => ( event ) => {
 		this.props.selectResult( selectionIndex );
 		this.props.openResult( event );
 	};

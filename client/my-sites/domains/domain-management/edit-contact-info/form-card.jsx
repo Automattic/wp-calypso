@@ -250,11 +250,12 @@ class EditContactInfoFormCard extends React.Component {
 		return endsWith( this.props.selectedDomain.name, NETHERLANDS_TLD ) || !! fax;
 	}
 
-	onTransferLockOptOutChange = event => this.setState( { transferLock: ! event.target.checked } );
+	onTransferLockOptOutChange = ( event ) =>
+		this.setState( { transferLock: ! event.target.checked } );
 
 	showNonDaConfirmationDialog = () => this.setState( { showNonDaConfirmationDialog: true } );
 
-	handleContactDetailsChange = newContactDetails => {
+	handleContactDetailsChange = ( newContactDetails ) => {
 		const { email } = newContactDetails;
 		const registrantWhoisData = this.getContactFormFieldValues();
 
@@ -335,7 +336,7 @@ class EditContactInfoFormCard extends React.Component {
 		this.showNoticeAndGoBack( message );
 	};
 
-	showNoticeAndGoBack = message => {
+	showNoticeAndGoBack = ( message ) => {
 		this.props.successNotice( message, {
 			showDismiss: true,
 			isPersistent: true,
@@ -360,7 +361,7 @@ class EditContactInfoFormCard extends React.Component {
 		notices.error( message );
 	};
 
-	handleSubmitButtonClick = newContactDetails => {
+	handleSubmitButtonClick = ( newContactDetails ) => {
 		this.setState(
 			{
 				requiresConfirmation: this.requiresConfirmation( newContactDetails ),
@@ -378,7 +379,7 @@ class EditContactInfoFormCard extends React.Component {
 		);
 	};
 
-	getIsFieldDisabled = name => {
+	getIsFieldDisabled = ( name ) => {
 		const unmodifiableFields = get(
 			this.props,
 			[ 'selectedDomain', 'whoisUpdateUnmodifiableFields' ],
@@ -397,7 +398,7 @@ class EditContactInfoFormCard extends React.Component {
 		const canUseDesignatedAgent = selectedDomain.transferLockOnWhoisUpdateOptional;
 		const whoisRegistrantData = this.getContactFormFieldValues();
 
-		if ( Object.values( whoisRegistrantData ).every( value => isEmpty( value ) ) ) {
+		if ( Object.values( whoisRegistrantData ).every( ( value ) => isEmpty( value ) ) ) {
 			return null;
 		}
 

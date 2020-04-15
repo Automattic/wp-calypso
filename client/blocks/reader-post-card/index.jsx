@@ -68,7 +68,7 @@ class ReaderPostCard extends React.Component {
 		this.props.onClick( postToOpen );
 	};
 
-	handleCardClick = event => {
+	handleCardClick = ( event ) => {
 		const rootNode = ReactDom.findDOMNode( this ),
 			selection = window.getSelection && window.getSelection();
 

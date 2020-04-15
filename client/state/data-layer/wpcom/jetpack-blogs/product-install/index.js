@@ -17,7 +17,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param   {object} action Action to start product install request.
  * @returns {object}        The dispatched action.
  */
-export const startJetpackProductInstall = action =>
+export const startJetpackProductInstall = ( action ) =>
 	http(
 		{
 			apiVersion: '1.1',

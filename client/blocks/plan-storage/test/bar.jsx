@@ -2,9 +2,9 @@ jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-const translate = x => x;
+const translate = ( x ) => x;
 jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
+	localize: ( Comp ) => ( props ) => (
 		<Comp
 			{ ...props }
 			translate={ function ( x ) {
@@ -12,8 +12,8 @@ jest.mock( 'i18n-calypso', () => ( {
 			} }
 		/>
 	),
-	numberFormat: x => x,
-	translate: x => x,
+	numberFormat: ( x ) => x,
+	translate: ( x ) => x,
 } ) );
 
 /**

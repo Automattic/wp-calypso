@@ -57,7 +57,7 @@ class StatsWidget extends Component {
 		viewStats: PropTypes.func,
 	};
 
-	handleTimePeriodChange = option => {
+	handleTimePeriodChange = ( option ) => {
 		const { saveDashboardUnit } = this.props;
 		saveDashboardUnit( option.value );
 	};
@@ -225,7 +225,9 @@ class StatsWidget extends Component {
 		const { site, translate, unit, referrerData, queries, viewStats } = this.props;
 		const { referrerQuery } = queries;
 
-		const selectedData = find( referrerData, d => d.date === referrerQuery.date ) || { data: [] };
+		const selectedData = find( referrerData, ( d ) => d.date === referrerQuery.date ) || {
+			data: [],
+		};
 		const sortedData = sortBySales( selectedData.data, dashboardListLimit );
 
 		const values = [
@@ -382,11 +384,11 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			saveDashboardUnit: value => {
+			saveDashboardUnit: ( value ) => {
 				recordTrack( 'calypso_woocommerce_dashboard_widget_stats_unit_change', { unit: value } );
 				return savePreference( 'store-dashboardStatsWidgetUnit', value );
 			},
-			viewStats: slug =>
+			viewStats: ( slug ) =>
 				withAnalytics(
 					recordTrack( 'calypso_woocommerce_dashboard_action_click', {
 						action: 'stats-widget-view-' + slug,

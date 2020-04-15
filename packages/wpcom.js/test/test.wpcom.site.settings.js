@@ -14,10 +14,10 @@ describe( 'wpcom.site.settings', () => {
 	const settings = site.settings();
 
 	describe( 'wpcom.site.get', () => {
-		it( 'should get site settings data', done => {
+		it( 'should get site settings data', ( done ) => {
 			settings
 				.get()
-				.then( data => {
+				.then( ( data ) => {
 					assert.ok( data );
 					assert.ok( data.settings );
 					done();
@@ -25,10 +25,10 @@ describe( 'wpcom.site.settings', () => {
 				.catch( done );
 		} );
 
-		it( 'should get `gmt_offset` option of site settings', done => {
+		it( 'should get `gmt_offset` option of site settings', ( done ) => {
 			settings
 				.getOption( 'gmt_offset' )
-				.then( value => {
+				.then( ( value ) => {
 					assert.ok( typeof value !== 'undefined' );
 					done();
 				} )

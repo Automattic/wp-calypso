@@ -66,7 +66,7 @@ function init( wpcom ) {
 		wpcom
 			.me()
 			.get()
-			.then( data => {
+			.then( ( data ) => {
 				siteId = data.primary_blog_url.replace( /http\:\/\//, '' );
 				siteNode.value = siteId;
 				input.removeAttribute( 'disabled' );
@@ -79,7 +79,7 @@ function init( wpcom ) {
 		debug( 'mediaId: %o', mediaId );
 	}
 
-	siteNode.addEventListener( 'keyup', event => {
+	siteNode.addEventListener( 'keyup', ( event ) => {
 		const value = event.target.value;
 		debug( 'value: %o', value );
 
@@ -90,14 +90,14 @@ function init( wpcom ) {
 		}
 	} );
 
-	deleteLink.addEventListener( 'click', event => {
+	deleteLink.addEventListener( 'click', ( event ) => {
 		event.preventDefault();
 		wpcom
 			.site( siteId )
 			.media( mediaId )
 			.delete()
-			.then( resp => debug( resp ) )
-			.catch( error => debug( 'ERR: ', error ) );
+			.then( ( resp ) => debug( resp ) )
+			.catch( ( error ) => debug( 'ERR: ', error ) );
 	} );
 
 	function getDate( date ) {
@@ -114,7 +114,7 @@ function init( wpcom ) {
 			.site( siteId )
 			.media( media_id )
 			.get()
-			.then( image => {
+			.then( ( image ) => {
 				debug( 'image: %o', image );
 
 				titleNode.value = image.title;
@@ -230,7 +230,7 @@ function init( wpcom ) {
 					}
 				}
 			} )
-			.catch( err => debug( 'ERR: ', err ) );
+			.catch( ( err ) => debug( 'ERR: ', err ) );
 	}
 
 	// select files on the "input" element

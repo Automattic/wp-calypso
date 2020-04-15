@@ -78,7 +78,7 @@ export function OrderReviewTotal( { total, className } ) {
 export function OrderReviewLineItems( { items, className, isSummaryVisible } ) {
 	return (
 		<div className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
-			{ items.map( item => (
+			{ items.map( ( item ) => (
 				<LineItemUI isSummaryVisible={ isSummaryVisible } key={ item.id } item={ item } />
 			) ) }
 		</div>

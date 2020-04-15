@@ -34,18 +34,18 @@ import { verifyResponseHasData } from 'woocommerce/state/data-layer/utils';
 
 const debug = debugFactory( 'woocommerce:orders' );
 
-export const del = action => {
+export const del = ( action ) => {
 	const { siteId, orderId } = action;
 	return request( siteId, action ).del( `orders/${ orderId }` );
 };
 
-const onDeleteError = ( action, error ) => dispatch => {
+const onDeleteError = ( action, error ) => ( dispatch ) => {
 	const { siteId, orderId } = action;
 	dispatch( deleteOrderError( siteId, orderId, error ) );
 	dispatch( errorNotice( translate( 'Unable to delete order.' ), { duration: 8000 } ) );
 };
 
-const onDeleteSuccess = action => dispatch => {
+const onDeleteSuccess = ( action ) => ( dispatch ) => {
 	const { siteId, siteSlug, orderId } = action;
 	dispatch( deleteOrderSuccess( siteId, orderId ) );
 	dispatch( fetchCounts( siteId ) );
@@ -63,7 +63,7 @@ export function apiError( action, error ) {
 
 export function requestOrders( action ) {
 	const { siteId, query } = action;
-	const queryString = stringify( omitBy( query, val => '' === val ) );
+	const queryString = stringify( omitBy( query, ( val ) => '' === val ) );
 	action.failureAction = failOrders( siteId, query );
 
 	return request( siteId, action ).getWithHeaders( `orders?${ queryString }` );
@@ -98,7 +98,7 @@ export function sendOrder( action ) {
 }
 
 export function onOrderSaveSuccess( action, { data } ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		const { siteId, orderId } = action;
 		// Make sure we have a success function, and a new order ID
 		if ( 'function' === typeof action.onSuccess && 'undefined' !== typeof data.id ) {
@@ -110,7 +110,7 @@ export function onOrderSaveSuccess( action, { data } ) {
 }
 
 export function onOrderSaveFailure( action, error ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		const { siteId, orderId } = action;
 		if ( 'function' === typeof action.onFailure ) {
 			action.onFailure( dispatch );

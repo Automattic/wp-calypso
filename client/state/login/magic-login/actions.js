@@ -72,7 +72,7 @@ async function postMagicLoginRequest( url, bodyObj ) {
  * @param  {string}   redirectTo Url to redirect the user to upon successful login
  * @returns {Function}            A thunk that can be dispatched
  */
-export const fetchMagicLoginAuthenticate = ( token, redirectTo ) => dispatch => {
+export const fetchMagicLoginAuthenticate = ( token, redirectTo ) => ( dispatch ) => {
 	dispatch( { type: MAGIC_LOGIN_REQUEST_AUTH_FETCH } );
 
 	postMagicLoginRequest( AUTHENTICATE_URL, {
@@ -81,7 +81,7 @@ export const fetchMagicLoginAuthenticate = ( token, redirectTo ) => dispatch => 
 		token,
 		redirect_to: redirectTo,
 	} )
-		.then( json => {
+		.then( ( json ) => {
 			dispatch( {
 				type: LOGIN_REQUEST_SUCCESS,
 				data: json.data,
@@ -91,7 +91,7 @@ export const fetchMagicLoginAuthenticate = ( token, redirectTo ) => dispatch => 
 				type: MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
 			} );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			const { status } = error;
 
 			dispatch( {

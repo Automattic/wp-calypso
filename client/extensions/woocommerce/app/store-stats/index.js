@@ -148,7 +148,7 @@ class StoreStats extends Component {
 							</Module>
 						</div>
 					) ) }
-					{ topWidgets.map( widget => {
+					{ topWidgets.map( ( widget ) => {
 						const header = (
 							<SectionHeader href={ widget.basePath + widgetPath } label={ widget.title } />
 						);
@@ -185,7 +185,7 @@ class StoreStats extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	slug: getSelectedSiteSlug( state ),
 	siteId: getSelectedSiteId( state ),
 } ) )( StoreStats );

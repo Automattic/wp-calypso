@@ -43,7 +43,7 @@ function fetchForKey( postKey ) {
 // helper that hides promise rejections so they return successfully with null instead of rejecting
 // this is so that a failure within a slow run of normalization doesn't stop successful posts
 // from being dispatched
-const hideRejections = promise => promise.catch( () => null );
+const hideRejections = ( promise ) => promise.catch( () => null );
 
 /**
  * Returns an action object to signal that post objects have been received.
@@ -51,18 +51,18 @@ const hideRejections = promise => promise.catch( () => null );
  * @param  {Array}  posts Posts received
  * @returns {object} Action object
  */
-export const receivePosts = posts => dispatch => {
+export const receivePosts = ( posts ) => ( dispatch ) => {
 	if ( ! posts ) {
 		return Promise.resolve( [] );
 	}
 
 	const [ toReload, toProcess ] = partition( posts, '_should_reload' );
-	toReload.forEach( post => dispatch( reloadPost( post ) ) );
+	toReload.forEach( ( post ) => dispatch( reloadPost( post ) ) );
 
 	const normalizedPosts = compact( toProcess ).map( runFastRules );
 
 	// dispatch post like additions before the posts. Cuts down on rerenders a bit.
-	forEach( normalizedPosts, post => {
+	forEach( normalizedPosts, ( post ) => {
 		if ( ! post.is_external ) {
 			dispatch(
 				receiveLikes( post.site_ID, post.ID, {
@@ -80,11 +80,12 @@ export const receivePosts = posts => dispatch => {
 	} );
 
 	// also save them after running the slow rules
-	Promise.all( normalizedPosts.map( runSlowRules ).map( hideRejections ) ).then( processedPosts =>
-		dispatch( {
-			type: READER_POSTS_RECEIVE,
-			posts: compact( processedPosts ), // prune out the "null" rejections
-		} )
+	Promise.all( normalizedPosts.map( runSlowRules ).map( hideRejections ) ).then(
+		( processedPosts ) =>
+			dispatch( {
+				type: READER_POSTS_RECEIVE,
+				posts: compact( processedPosts ), // prune out the "null" rejections
+			} )
 	);
 
 	forEach( filter( normalizedPosts, 'railcar' ), trackRailcarRender );
@@ -94,7 +95,7 @@ export const receivePosts = posts => dispatch => {
 };
 
 const requestsInFlight = new Set();
-export const fetchPost = postKey => dispatch => {
+export const fetchPost = ( postKey ) => ( dispatch ) => {
 	const requestKey = keyToString( postKey );
 	if ( requestsInFlight.has( requestKey ) ) {
 		return;
@@ -104,11 +105,11 @@ export const fetchPost = postKey => dispatch => {
 		requestsInFlight.delete( requestKey );
 	}
 	return fetchForKey( postKey )
-		.then( data => {
+		.then( ( data ) => {
 			removeKey();
 			return dispatch( receivePosts( [ data ] ) );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			removeKey();
 			return dispatch( receiveErrorForPostKey( error, postKey ) );
 		} );
@@ -136,7 +137,7 @@ export function reloadPost( post ) {
 		// keep track of any railcars we might have
 		const railcar = post.railcar;
 		const postKey = keyForPost( post );
-		fetchForKey( postKey ).then( data => {
+		fetchForKey( postKey ).then( ( data ) => {
 			data.railcar = railcar;
 			dispatch( receivePosts( [ data ] ) );
 		} );

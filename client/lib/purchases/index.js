@@ -364,7 +364,7 @@ function isRenewing( purchase ) {
 function isSubscription( purchase ) {
 	const nonSubscriptionFunctions = [ isDomainRegistration, isOneTimePurchase ];
 
-	return ! nonSubscriptionFunctions.some( fn => fn( purchase ) );
+	return ! nonSubscriptionFunctions.some( ( fn ) => fn( purchase ) );
 }
 
 function isPaidWithCreditCard( purchase ) {

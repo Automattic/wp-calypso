@@ -30,9 +30,9 @@ describe( 'wpcom.me', function () {
 	} );
 
 	describe( 'wpcom.me.get', function () {
-		it( 'should require user information object', done => {
+		it( 'should require user information object', ( done ) => {
 			me.get()
-				.then( data => {
+				.then( ( data ) => {
 					// testing object
 					assert.ok( data );
 					assert.equal( 'object', typeof data );
@@ -45,9 +45,9 @@ describe( 'wpcom.me', function () {
 				.catch( done );
 		} );
 
-		it( 'should require user passing query parameter', done => {
+		it( 'should require user passing query parameter', ( done ) => {
 			me.get( { context: 'info' } )
-				.then( data => {
+				.then( ( data ) => {
 					// testing object
 					assert.ok( me );
 					assert.equal( 'object', typeof data );
@@ -62,9 +62,9 @@ describe( 'wpcom.me', function () {
 	} );
 
 	describe( 'wpcom.me.keyringConnections', function () {
-		it( "should get current user' keyring connections", done => {
+		it( "should get current user' keyring connections", ( done ) => {
 			me.keyringConnections()
-				.then( data => {
+				.then( ( data ) => {
 					assert.ok( data );
 					assert.ok( data.connections instanceof Array );
 					done();
@@ -74,9 +74,9 @@ describe( 'wpcom.me', function () {
 	} );
 
 	describe( 'wpcom.me.likes', function () {
-		it( 'should require user likes', done => {
+		it( 'should require user likes', ( done ) => {
 			me.likes()
-				.then( data => {
+				.then( ( data ) => {
 					assert.equal( 'number', typeof data.found );
 					assert.equal( 'object', typeof data.likes );
 					assert.ok( data.likes instanceof Array );
@@ -90,7 +90,7 @@ describe( 'wpcom.me', function () {
 	describe( 'wpcom.me.postsList', function () {
 		it( 'should get posts list that current user belongs to', function ( done ) {
 			me.postsList()
-				.then( data => {
+				.then( ( data ) => {
 					assert.equal( 'number', typeof data.found );
 					assert.ok( data.posts instanceof Array );
 					done();
@@ -100,9 +100,9 @@ describe( 'wpcom.me', function () {
 	} );
 
 	describe( 'wpcom.me.publicizeConnections', function () {
-		it( "should get current user' publicize connections", done => {
+		it( "should get current user' publicize connections", ( done ) => {
 			me.publicizeConnections()
-				.then( data => {
+				.then( ( data ) => {
 					assert.ok( data );
 					assert.ok( data.connections instanceof Array );
 					done();
@@ -112,7 +112,7 @@ describe( 'wpcom.me', function () {
 	} );
 
 	describe( 'wpcom.me.sites', function () {
-		it( 'should require user sites object', done => {
+		it( 'should require user sites object', ( done ) => {
 			me.sites()
 				.then( () => done() )
 				.catch( done );

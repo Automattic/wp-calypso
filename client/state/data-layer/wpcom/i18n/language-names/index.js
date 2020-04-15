@@ -23,7 +23,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param {object} action Redux action
  * @returns {object} original action
  */
-export const fetchLanguageNames = action =>
+export const fetchLanguageNames = ( action ) =>
 	http(
 		{
 			method: 'GET',

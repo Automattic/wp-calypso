@@ -42,7 +42,7 @@ class ActionButtons extends Component {
 		this.setDropdownAfterLayoutFlush.cancel();
 	}
 
-	setGroupRef = group => {
+	setGroupRef = ( group ) => {
 		this.navGroup = group;
 	};
 

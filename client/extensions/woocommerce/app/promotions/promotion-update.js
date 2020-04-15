@@ -109,12 +109,12 @@ class PromotionUpdate extends React.Component {
 	onTrash = () => {
 		const { translate, site, promotion, deletePromotion: dispatchDelete } = this.props;
 		const areYouSure = translate( 'Are you sure you want to permanently delete this promotion?' );
-		accept( areYouSure, accepted => {
+		accept( areYouSure, ( accepted ) => {
 			if ( ! accepted ) {
 				return;
 			}
 
-			const successAction = dispatch => {
+			const successAction = ( dispatch ) => {
 				this.props.clearPromotionEdits( site.ID );
 
 				dispatch( successNotice( translate( 'Promotion successfully deleted.' ) ) );
@@ -171,13 +171,13 @@ class PromotionUpdate extends React.Component {
 			);
 		};
 
-		const successAction = dispatch => {
+		const successAction = ( dispatch ) => {
 			this.props.clearPromotionEdits( site.ID );
 			dispatch( getSuccessNotice( promotion ) );
 			this.setState( () => ( { busy: false, saveAttempted: false } ) );
 		};
 
-		const failureAction = error => {
+		const failureAction = ( error ) => {
 			this.setState( () => ( { busy: false } ) );
 			const errorSlug = ( error && error.error ) || undefined;
 

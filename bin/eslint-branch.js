@@ -20,8 +20,8 @@ const files = child_process
 	.execSync( 'git diff --name-only ' + rev + '..HEAD' )
 	.toString()
 	.split( '\n' )
-	.map( name => name.trim() )
-	.filter( name => /\.[jt]sx?$/.test( name ) );
+	.map( ( name ) => name.trim() )
+	.filter( ( name ) => /\.[jt]sx?$/.test( name ) );
 
 const lintResult = child_process.spawnSync( eslintBin, [ '--cache', ...files ], {
 	shell: true,

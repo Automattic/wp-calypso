@@ -25,7 +25,7 @@ const views = {
 	simplePayments: SimplePaymentsView,
 };
 
-const components = mapValues( views, view => {
+const components = mapValues( views, ( view ) => {
 	if ( 'function' === typeof view.getComponent ) {
 		return view.getComponent();
 	}
@@ -33,7 +33,7 @@ const components = mapValues( views, view => {
 	return view;
 } );
 
-const emitters = values( views ).filter( view => view instanceof EventEmitter );
+const emitters = values( views ).filter( ( view ) => view instanceof EventEmitter );
 
 export default {
 	/**

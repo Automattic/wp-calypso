@@ -172,7 +172,7 @@ UserSettings.prototype.saveSettings = function ( callback, settingsOverride ) {
 						this.unsavedSettings = {};
 					} else {
 						// Removed freshly saved data from unsavedSettings
-						keys( data ).forEach( x => delete this.unsavedSettings[ x ] );
+						keys( data ).forEach( ( x ) => delete this.unsavedSettings[ x ] );
 					}
 
 					this.emit( 'change' );

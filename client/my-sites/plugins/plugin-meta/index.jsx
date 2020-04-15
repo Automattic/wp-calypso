@@ -521,7 +521,7 @@ export class PluginMeta extends Component {
 		}
 
 		const siteVersion = this.props.selectedSite.options.software_version.split( '-' )[ 0 ];
-		return some( this.props.plugin.compatibility, compatibleVersion => {
+		return some( this.props.plugin.compatibility, ( compatibleVersion ) => {
 			return compatibleVersion.indexOf( siteVersion ) === 0;
 		} );
 	}
@@ -538,7 +538,7 @@ export class PluginMeta extends Component {
 
 	getAvailableNewVersions() {
 		return this.props.sites
-			.map( site => {
+			.map( ( site ) => {
 				if ( ! site.canUpdateFiles ) {
 					return null;
 				}
@@ -551,10 +551,10 @@ export class PluginMeta extends Component {
 					}
 				}
 			} )
-			.filter( newVersions => newVersions );
+			.filter( ( newVersions ) => newVersions );
 	}
 
-	handlePluginUpdatesSingleSite = event => {
+	handlePluginUpdatesSingleSite = ( event ) => {
 		event.preventDefault();
 		PluginsActions.updatePlugin( this.props.sites[ 0 ], this.props.sites[ 0 ].plugin );
 
@@ -571,9 +571,9 @@ export class PluginMeta extends Component {
 		} );
 	};
 
-	handlePluginUpdatesMultiSite = event => {
+	handlePluginUpdatesMultiSite = ( event ) => {
 		event.preventDefault();
-		this.props.sites.forEach( site => {
+		this.props.sites.forEach( ( site ) => {
 			const { plugin } = site;
 			if (
 				site.canUpdateFiles &&
@@ -709,7 +709,7 @@ export class PluginMeta extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const selectedSite = getSelectedSite( state );
 

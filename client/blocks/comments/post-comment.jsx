@@ -114,7 +114,7 @@ class PostComment extends React.PureComponent {
 		this.setState( { showReplies: true } ); // show the comments when replying
 	};
 
-	handleAuthorClick = event => {
+	handleAuthorClick = ( event ) => {
 		recordAction( 'comment_author_click' );
 		recordGaEvent( 'Clicked Author Name' );
 		recordTrack( 'calypso_reader_comment_author_click', {
@@ -125,7 +125,7 @@ class PostComment extends React.PureComponent {
 		} );
 	};
 
-	handleCommentPermalinkClick = event => {
+	handleCommentPermalinkClick = ( event ) => {
 		recordPermalinkClick(
 			'timestamp_comment',
 			{},
@@ -138,7 +138,7 @@ class PostComment extends React.PureComponent {
 		);
 	};
 
-	getAllChildrenIds = id => {
+	getAllChildrenIds = ( id ) => {
 		const { commentsTree } = this.props;
 
 		if ( ! id ) {
@@ -147,7 +147,7 @@ class PostComment extends React.PureComponent {
 
 		const immediateChildren = get( commentsTree, [ id, 'children' ], [] );
 		return immediateChildren.concat(
-			flatMap( immediateChildren, childId => this.getAllChildrenIds( childId ) )
+			flatMap( immediateChildren, ( childId ) => this.getAllChildrenIds( childId ) )
 		);
 	};
 
@@ -156,7 +156,9 @@ class PostComment extends React.PureComponent {
 		const { enableCaterpillar, commentsToShow, commentId } = this.props;
 		const childIds = this.getAllChildrenIds( commentId );
 
-		return enableCaterpillar && commentsToShow && some( childIds, id => ! commentsToShow[ id ] );
+		return (
+			enableCaterpillar && commentsToShow && some( childIds, ( id ) => ! commentsToShow[ id ] )
+		);
 	};
 
 	// has visisble child --> true
@@ -164,7 +166,7 @@ class PostComment extends React.PureComponent {
 		const { commentsToShow, commentId } = this.props;
 		const childIds = this.getAllChildrenIds( commentId );
 
-		return commentsToShow && some( childIds, id => commentsToShow[ id ] );
+		return commentsToShow && some( childIds, ( id ) => commentsToShow[ id ] );
 	};
 
 	renderRepliesList() {
@@ -223,7 +225,7 @@ class PostComment extends React.PureComponent {
 				) }
 				{ showReplies && (
 					<ol className="comments__list">
-						{ commentChildrenIds.map( childId => (
+						{ commentChildrenIds.map( ( childId ) => (
 							<ConnectedPostComment
 								showNestingReplyArrow={ this.props.showNestingReplyArrow }
 								showReadMoreInActions={ this.props.showReadMoreInActions }
@@ -277,7 +279,7 @@ class PostComment extends React.PureComponent {
 		);
 	}
 
-	getAuthorDetails = commentId => {
+	getAuthorDetails = ( commentId ) => {
 		const comment = get( this.props.commentsTree, [ commentId, 'data' ], {} );
 		const commentAuthor = get( comment, 'author', {} );
 		const commentAuthorName = decodeEntities( commentAuthor.name );
@@ -354,7 +356,7 @@ class PostComment extends React.PureComponent {
 		// todo: connect this constants to the state (new selector)
 		const haveReplyWithError = some(
 			get( commentsTree, [ this.props.commentId, 'children' ] ),
-			childId =>
+			( childId ) =>
 				get( commentsTree, [ childId, 'data', 'placeholderState' ] ) === PLACEHOLDER_STATE.ERROR
 		);
 
@@ -485,7 +487,7 @@ class PostComment extends React.PureComponent {
 }
 
 const ConnectedPostComment = connect(
-	state => ( {
+	( state ) => ( {
 		currentUser: getCurrentUser( state ),
 	} ),
 	{ expandComments }

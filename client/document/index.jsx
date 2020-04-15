@@ -64,7 +64,7 @@ class Document extends React.Component {
 
 		const installedChunks = entrypoint.js
 			.concat( chunkFiles.js )
-			.map( chunk => path.parse( chunk ).name );
+			.map( ( chunk ) => path.parse( chunk ).name );
 
 		const inlineScript =
 			`var COMMIT_SHA = ${ jsonStringifyForHtml( commitSha ) };\n` +
@@ -218,10 +218,10 @@ class Document extends React.Component {
 							} }
 						/>
 					) }
-					{ entrypoint.js.map( asset => (
+					{ entrypoint.js.map( ( asset ) => (
 						<script key={ asset } src={ asset } />
 					) ) }
-					{ chunkFiles.js.map( chunk => (
+					{ chunkFiles.js.map( ( chunk ) => (
 						<script key={ chunk } src={ chunk } />
 					) ) }
 					<script nonce={ inlineScriptNonce } type="text/javascript">

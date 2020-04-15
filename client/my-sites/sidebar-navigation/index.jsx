@@ -29,6 +29,6 @@ function MySitesSidebarNavigation( { site } ) {
 	);
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	site: getSelectedSite( state ),
 } ) )( MySitesSidebarNavigation );

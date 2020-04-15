@@ -146,7 +146,7 @@ class PostEditorSlug extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const slug = getEditedPostSlug( state, siteId, postId );

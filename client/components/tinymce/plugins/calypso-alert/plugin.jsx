@@ -47,7 +47,7 @@ function calypsoAlert( editor ) {
 		// clicking the "Paste as text" button for the first time in a session.
 		// Previous versions of TinyMCE used an alert to show a message;
 		// current versions use a notification instead.
-		editor.notificationManager.open = data => {
+		editor.notificationManager.open = ( data ) => {
 			editor.windowManager.alert( data.text );
 		};
 	} );

@@ -41,7 +41,7 @@ export function useSiteOptions(
 
 	function loadSiteOption() {
 		apiFetch( { path: '/wp/v2/settings' } )
-			.then( result =>
+			.then( ( result ) =>
 				setSiteOptions( {
 					...siteOptions,
 					option: decodeEntities( result[ siteOption ] ),

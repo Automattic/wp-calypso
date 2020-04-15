@@ -28,7 +28,7 @@ export const findThemeFilterTerm = createSelector(
 
 		const filters = getThemeFilters( state );
 
-		const results = filter( filters, terms => !! get( terms, left ) );
+		const results = filter( filters, ( terms ) => !! get( terms, left ) );
 
 		if ( results.length !== 1 ) {
 			// No or ambiguous results
@@ -36,5 +36,5 @@ export const findThemeFilterTerm = createSelector(
 		}
 		return results[ 0 ][ left ];
 	},
-	state => [ getThemeFilters( state ) ]
+	( state ) => [ getThemeFilters( state ) ]
 );

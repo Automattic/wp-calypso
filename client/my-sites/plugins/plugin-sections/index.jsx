@@ -33,7 +33,7 @@ class PluginSections extends React.Component {
 
 	_COLLAPSED_DESCRIPTION_HEIGHT = 140;
 
-	recordEvent = eventAction => {
+	recordEvent = ( eventAction ) => {
 		gaRecordEvent( 'Plugins', eventAction, 'Plugin Name', this.props.plugin.slug );
 	};
 
@@ -128,7 +128,7 @@ class PluginSections extends React.Component {
 		} );
 	};
 
-	getNavTitle = sectionKey => {
+	getNavTitle = ( sectionKey ) => {
 		const titleSection = find( this.getFilteredSections(), function ( section ) {
 			return section.key === sectionKey;
 		} );

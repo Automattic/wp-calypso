@@ -167,7 +167,7 @@ const mapStateToProps = ( state, { cart } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return {
 		clickUpsellAddToCart: () =>
 			dispatch( recordTracksEvent( 'calypso_non_dwpo_checkout_plan_upsell_add_to_cart', {} ) ),

@@ -190,7 +190,7 @@ export default {
 
 		window.scrollTo( 0, 0 );
 
-		const activeFilter = find( filters(), filter => {
+		const activeFilter = find( filters(), ( filter ) => {
 			return (
 				context.params.period === filter.period ||
 				context.pathname === filter.path ||
@@ -236,7 +236,7 @@ export default {
 
 		const activeFilter = find(
 			filters,
-			filter =>
+			( filter ) =>
 				context.pathname === filter.path ||
 				( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
 		);
@@ -311,7 +311,7 @@ export default {
 		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? site.ID || 0 : 0;
 
-		const activeFilter = find( filters, filter => {
+		const activeFilter = find( filters, ( filter ) => {
 			return (
 				context.pathname === filter.path ||
 				( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
@@ -424,7 +424,7 @@ export default {
 		const siteId = getSelectedSiteId( state );
 		const filters = getSiteFilters( siteId, context );
 
-		const activeFilter = find( filters, filter => context.params.period === filter.period );
+		const activeFilter = find( filters, ( filter ) => context.params.period === filter.period );
 
 		if ( ! activeFilter ) {
 			return next();

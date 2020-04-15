@@ -98,7 +98,7 @@ const LockDown = ( {
 	);
 };
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'cache_lock_down' ] );
 };
 

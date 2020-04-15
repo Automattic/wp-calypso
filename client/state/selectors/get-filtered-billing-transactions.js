@@ -50,8 +50,8 @@ function getSearchableStrings( transaction ) {
 function search( transactions, searchQuery ) {
 	const needle = searchQuery.toLowerCase();
 
-	return transactions.filter( transaction =>
-		some( getSearchableStrings( transaction ), val => {
+	return transactions.filter( ( transaction ) =>
+		some( getSearchableStrings( transaction ), ( val ) => {
 			const haystack = val.toString().toLowerCase();
 			return haystack.includes( needle );
 		} )
@@ -79,7 +79,7 @@ export default createSelector(
 		const { app, date, page, query } = getBillingTransactionFilters( state, transactionType );
 		let results = query ? search( transactions, query ) : transactions;
 		if ( date && date.month && date.operator ) {
-			results = results.filter( transaction => {
+			results = results.filter( ( transaction ) => {
 				const transactionDate = moment( transaction.date );
 
 				if ( 'equal' === date.operator ) {
@@ -91,7 +91,7 @@ export default createSelector(
 		}
 
 		if ( app && app !== 'all' ) {
-			results = results.filter( transaction => transaction.service === app );
+			results = results.filter( ( transaction ) => transaction.service === app );
 		}
 
 		const total = results.length;

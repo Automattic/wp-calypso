@@ -165,7 +165,7 @@ const ExpiryTime = ( {
 		);
 	};
 
-	const formatUnixTimestamp = timestamp => {
+	const formatUnixTimestamp = ( timestamp ) => {
 		if ( ! timestamp ) {
 			return;
 		}
@@ -213,7 +213,7 @@ const ExpiryTime = ( {
 	);
 };
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'cache_gc_email_me',
 		'cache_max_time',

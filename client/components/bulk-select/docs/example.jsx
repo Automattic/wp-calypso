@@ -20,9 +20,9 @@ export default class extends React.Component {
 		],
 	};
 
-	handleToggleAll = checkedState => {
+	handleToggleAll = ( checkedState ) => {
 		let newElements = [];
-		this.state.elements.forEach( element => {
+		this.state.elements.forEach( ( element ) => {
 			if ( typeof checkedState !== 'undefined' ) {
 				element.selected = checkedState;
 			} else {

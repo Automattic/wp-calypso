@@ -14,7 +14,7 @@ export function setSiteType( siteType ) {
 }
 
 export function submitSiteType( siteType, stepName = 'site-type' ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( setSiteType( siteType ) );
 
 		let themeSlugWithRepo = undefined;

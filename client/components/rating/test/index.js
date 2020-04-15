@@ -33,7 +33,7 @@ describe( '<Rating />', () => {
 				size = 48,
 				wrapper = shallow( <Rating rating={ rating } size={ size } /> );
 
-			wrapper.find( 'svg' ).forEach( node => {
+			wrapper.find( 'svg' ).forEach( ( node ) => {
 				expect( node.props().style.width ).to.equal( size + 'px' );
 			} );
 		} );

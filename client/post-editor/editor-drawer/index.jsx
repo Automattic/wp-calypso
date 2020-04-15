@@ -308,7 +308,7 @@ EditorDrawer.displayName = 'EditorDrawer';
 
 const enhance = flow(
 	localize,
-	connect( state => {
+	connect( ( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const type = getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' );
 		const activePlugins = getPlugins( state, [ siteId ], 'active' );

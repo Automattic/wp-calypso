@@ -39,9 +39,9 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const [ emailVal, setEmailVal ] = useState( '' );
 	const [ passwordVal, setPasswordVal ] = useState( '' );
 	const { createAccount, clearErrors } = useDispatch( USER_STORE );
-	const isFetchingNewUser = useSelect( select => select( USER_STORE ).isFetchingNewUser() );
-	const newUserError = useSelect( select => select( USER_STORE ).getNewUserError() );
-	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ) ).getState();
+	const isFetchingNewUser = useSelect( ( select ) => select( USER_STORE ).isFetchingNewUser() );
+	const newUserError = useSelect( ( select ) => select( USER_STORE ).getNewUserError() );
+	const { siteTitle, siteVertical } = useSelect( ( select ) => select( ONBOARD_STORE ) ).getState();
 	const langParam = useLangRouteParam();
 	const makePath = usePath();
 	const currentStep = useCurrentStep();

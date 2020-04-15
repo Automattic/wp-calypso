@@ -53,7 +53,7 @@ class EditorMoreOptionsSlug extends PureComponent {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {

@@ -38,7 +38,7 @@ export function sendMessage( message ) {
  * @returns {Promise} Promise that resolves when the editor has been initialized.
  */
 export const isEditorReadyWithBlocks = async () =>
-	new Promise( resolve => {
+	new Promise( ( resolve ) => {
 		const unsubscribe = subscribe( () => {
 			const isCleanNewPost = select( 'core/editor' ).isCleanNewPost();
 

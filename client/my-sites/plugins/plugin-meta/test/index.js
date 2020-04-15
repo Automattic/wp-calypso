@@ -25,7 +25,7 @@ jest.mock( 'components/notice', () => 'Notice' );
 jest.mock( 'components/notice/notice-action', () => 'NoticeAction' );
 
 jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
+	localize: ( Comp ) => ( props ) => (
 		<Comp
 			{ ...props }
 			translate={ function ( x ) {
@@ -33,8 +33,8 @@ jest.mock( 'i18n-calypso', () => ( {
 			} }
 		/>
 	),
-	numberFormat: x => x,
-	translate: x => x,
+	numberFormat: ( x ) => x,
+	translate: ( x ) => x,
 } ) );
 
 /**
@@ -75,7 +75,7 @@ const props = {
 	sites: [ [ {} ] ],
 	plugin: { active: false },
 	selectedSiteId: 123,
-	translate: x => x,
+	translate: ( x ) => x,
 };
 
 describe( 'PluginMeta basic tests', () => {
@@ -153,7 +153,7 @@ describe( 'Upsell Nudge should get appropriate plan constant', () => {
 		hasBusinessPlan: false,
 	};
 
-	[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( product_slug => {
+	[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( ( product_slug ) => {
 		test( `Business 1 year for (${ product_slug })`, () => {
 			const comp = shallow(
 				<PluginMeta
@@ -173,23 +173,25 @@ describe( 'Upsell Nudge should get appropriate plan constant', () => {
 		} );
 	} );
 
-	[ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ].forEach( product_slug => {
-		test( `Business 2 year for (${ product_slug })`, () => {
-			const comp = shallow(
-				<PluginMeta
-					{ ...myProps }
-					selectedSite={ {
-						...selectedSite,
-						plan: { product_slug },
-					} }
-				/>
-			);
-			expect(
-				comp.find( 'UpsellNudge[event="calypso_plugin_detail_page_upgrade_nudge"]' )
-			).toHaveLength( 1 );
-			expect(
-				comp.find( 'UpsellNudge[event="calypso_plugin_detail_page_upgrade_nudge"]' ).props().plan
-			).toBe( PLAN_BUSINESS_2_YEARS );
-		} );
-	} );
+	[ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ].forEach(
+		( product_slug ) => {
+			test( `Business 2 year for (${ product_slug })`, () => {
+				const comp = shallow(
+					<PluginMeta
+						{ ...myProps }
+						selectedSite={ {
+							...selectedSite,
+							plan: { product_slug },
+						} }
+					/>
+				);
+				expect(
+					comp.find( 'UpsellNudge[event="calypso_plugin_detail_page_upgrade_nudge"]' )
+				).toHaveLength( 1 );
+				expect(
+					comp.find( 'UpsellNudge[event="calypso_plugin_detail_page_upgrade_nudge"]' ).props().plan
+				).toBe( PLAN_BUSINESS_2_YEARS );
+			} );
+		}
+	);
 } );

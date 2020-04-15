@@ -34,7 +34,7 @@ import { localize } from 'i18n-calypso';
 import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'lib/plans';
 
 export class CartItem extends React.Component {
-	removeFromCart = event => {
+	removeFromCart = ( event ) => {
 		event.preventDefault();
 		gaRecordEvent(
 			'Upgrades',
@@ -184,7 +184,7 @@ export class CartItem extends React.Component {
 		let info = null;
 
 		if ( isGoogleApps( cartItem ) && cartItem.extra.google_apps_users ) {
-			info = cartItem.extra.google_apps_users.map( user => (
+			info = cartItem.extra.google_apps_users.map( ( user ) => (
 				<div key={ `user-${ user.email }` }>{ user.email }</div>
 			) );
 		} else if ( isCredits( cartItem ) ) {
@@ -353,6 +353,6 @@ export class CartItem extends React.Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 } ) )( localize( withLocalizedMoment( CartItem ) ) );

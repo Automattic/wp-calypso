@@ -81,18 +81,18 @@ class ProductCategoryForm extends Component {
 		}
 	}
 
-	setName = e => {
+	setName = ( e ) => {
 		const { siteId, category, editProductCategory } = this.props;
 		const name = e.target.value;
 		editProductCategory( siteId, category, { name } );
 	};
 
-	setDescription = event => {
+	setDescription = ( event ) => {
 		const { siteId, category, editProductCategory } = this.props;
 		editProductCategory( siteId, category, { description: event.target.value } );
 	};
 
-	setParent = parent => {
+	setParent = ( parent ) => {
 		const { siteId, category, editProductCategory } = this.props;
 		editProductCategory( siteId, category, { parent: parent.ID } );
 	};
@@ -113,7 +113,7 @@ class ProductCategoryForm extends Component {
 		}
 	};
 
-	onSearch = searchTerm => {
+	onSearch = ( searchTerm ) => {
 		if ( searchTerm !== this.state.search ) {
 			this.setState( {
 				search: searchTerm,
@@ -121,7 +121,7 @@ class ProductCategoryForm extends Component {
 		}
 	};
 
-	onSelect = files => {
+	onSelect = ( files ) => {
 		const file = head( files );
 		this.setState( {
 			placeholder: file.preview,
@@ -131,7 +131,7 @@ class ProductCategoryForm extends Component {
 		this.props.onUploadStart();
 	};
 
-	onUpload = file => {
+	onUpload = ( file ) => {
 		const { siteId, editProductCategory, category } = this.props;
 		const image = {
 			src: file.URL,

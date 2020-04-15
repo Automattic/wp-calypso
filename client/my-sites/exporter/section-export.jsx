@@ -67,7 +67,7 @@ const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {
 	);
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 

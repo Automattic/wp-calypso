@@ -15,7 +15,7 @@ export default function CheckoutOrderSummary() {
 
 	return (
 		<ProductList>
-			{ items.map( product => {
+			{ items.map( ( product ) => {
 				return <ProductListItem key={ product.id }>{ product.label }</ProductListItem>;
 			} ) }
 		</ProductList>
@@ -52,5 +52,5 @@ const CheckoutSummaryTitle = styled.span`
 `;
 
 const CheckoutSummaryTotal = styled.span`
-	font-weight: ${props => props.theme.weights.bold};
+	font-weight: ${( props ) => props.theme.weights.bold};
 `;

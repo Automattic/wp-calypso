@@ -214,7 +214,7 @@ class DailyBackupStatus extends Component {
 									link: (
 										<a
 											href="?date="
-											onClick={ event => {
+											onClick={ ( event ) => {
 												event.preventDefault();
 												onDateChange( nextDate );
 											} }
@@ -278,7 +278,7 @@ class DailyBackupStatus extends Component {
 							link: (
 								<a
 									href="?date="
-									onClick={ event => {
+									onClick={ ( event ) => {
 										event.preventDefault();
 										onDateChange( lastBackupDate );
 									} }

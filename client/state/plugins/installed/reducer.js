@@ -88,7 +88,7 @@ function pluginsForSite( state = [], action ) {
 		case PLUGIN_UPDATE_REQUEST_SUCCESS:
 		case PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS:
 		case PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS:
-			return state.map( p => plugin( p, action ) );
+			return state.map( ( p ) => plugin( p, action ) );
 		case PLUGIN_INSTALL_REQUEST_SUCCESS:
 			return [ ...state, action.data ];
 		case PLUGIN_REMOVE_REQUEST_SUCCESS:

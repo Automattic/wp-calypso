@@ -161,7 +161,7 @@ class PagesMain extends React.Component {
 	}
 }
 
-const mapState = state => {
+const mapState = ( state ) => {
 	const queryType = 'page';
 
 	const siteId = getSelectedSiteId( state );

@@ -75,7 +75,7 @@ class AuthorSelector extends React.Component {
 		);
 	}
 
-	_updateSearch = searchTerm => {
+	_updateSearch = ( searchTerm ) => {
 		searchTerm = searchTerm ? '*' + searchTerm + '*' : '';
 		this.setState( {
 			search: searchTerm,

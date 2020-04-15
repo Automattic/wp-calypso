@@ -155,7 +155,7 @@ class MediaSettingsPerformance extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
 	const isVideoPressAvailable =

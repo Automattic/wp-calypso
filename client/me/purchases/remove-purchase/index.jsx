@@ -86,7 +86,7 @@ class RemovePurchase extends Component {
 		} );
 	};
 
-	openDialog = event => {
+	openDialog = ( event ) => {
 		event.preventDefault();
 
 		if (
@@ -109,13 +109,13 @@ class RemovePurchase extends Component {
 		this.setState( { isDialogVisible: false } );
 	};
 
-	onSurveyChange = update => {
+	onSurveyChange = ( update ) => {
 		this.setState( {
 			survey: update,
 		} );
 	};
 
-	removePurchase = closeDialog => {
+	removePurchase = ( closeDialog ) => {
 		this.setState( { isRemoving: true } );
 
 		const { isDomainOnlySite, purchase, translate } = this.props;

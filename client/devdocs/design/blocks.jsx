@@ -91,7 +91,7 @@ export default class AppComponents extends React.Component {
 	static displayName = 'AppComponents';
 	state = { filter: '' };
 
-	onSearch = term => {
+	onSearch = ( term ) => {
 		this.setState( { filter: trim( term || '' ).toLowerCase() } );
 	};
 

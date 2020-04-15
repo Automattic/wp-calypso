@@ -63,7 +63,7 @@ const ReauthRequired = createReactClass( {
 	},
 
 	getCheckboxHandler( checkboxName ) {
-		return event => {
+		return ( event ) => {
 			const action = 'Clicked ' + checkboxName + ' checkbox';
 			const value = event.target.checked ? 1 : 0;
 
@@ -279,7 +279,7 @@ const ReauthRequired = createReactClass( {
 
 	refreshNonceOnFailure( error ) {
 		const errors = [].slice.call( error?.data?.errors ?? [] );
-		if ( errors.some( e => e.code === 'invalid_two_step_nonce' ) ) {
+		if ( errors.some( ( e ) => e.code === 'invalid_two_step_nonce' ) ) {
 			this.props.twoStepAuthorization.fetch();
 		}
 	},
@@ -309,7 +309,7 @@ ReauthRequired.propTypes = {
 /* eslint-enable jsx-a11y/no-autofocus, react/prefer-es6-class, jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/anchor-is-valid */
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		currentUserId: getCurrentUserId( state ),
 	} ),
 	{ recordGoogleEvent }

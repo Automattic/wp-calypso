@@ -50,7 +50,7 @@ class GSuiteStatsNudge extends Component {
 		}
 	}
 
-	recordClick = eventName => {
+	recordClick = ( eventName ) => {
 		this.props.recordTracksEvent( eventName );
 	};
 

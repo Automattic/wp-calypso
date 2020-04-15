@@ -110,7 +110,7 @@ const customerNotifications = [
 ];
 
 class Settings extends React.Component {
-	fetchSettings = props => {
+	fetchSettings = ( props ) => {
 		const { siteId, fetchSettings } = props;
 		siteId && fetchSettings( siteId );
 	};
@@ -163,7 +163,7 @@ class Settings extends React.Component {
 		}
 	}
 
-	onChange = event => {
+	onChange = ( event ) => {
 		const { onChange, onSettingsChange, siteId } = this.props;
 		onChange( siteId, event );
 		onSettingsChange();

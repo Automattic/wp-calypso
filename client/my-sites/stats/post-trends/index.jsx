@@ -85,7 +85,7 @@ class PostTrends extends React.Component {
 		this.setState( scrollProps );
 	};
 
-	scroll = direction => {
+	scroll = ( direction ) => {
 		const node = this.wrapperRef.current,
 			yearNode = this.yearRef.current,
 			computedStyle = window.getComputedStyle( yearNode ),
@@ -190,7 +190,7 @@ class PostTrends extends React.Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const query = {
 		startDate: moment()

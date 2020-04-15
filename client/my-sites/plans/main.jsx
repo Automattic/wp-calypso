@@ -174,7 +174,7 @@ class Plans extends React.Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	const jetpackSite = isJetpackSite( state, selectedSiteId );

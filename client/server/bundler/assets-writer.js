@@ -52,7 +52,7 @@ Object.assign( AssetsWriter.prototype, {
 					// Remove the sourcemap from the list and just take the js asset
 					// This may not hold true for all chunks, but it does for the manifest.
 					const jsAsset = _.head(
-						_.reject( _.castArray( stats.assetsByChunkName[ name ] ), asset =>
+						_.reject( _.castArray( stats.assetsByChunkName[ name ] ), ( asset ) =>
 							_.endsWith( asset, '.map' )
 						)
 					);
@@ -64,21 +64,23 @@ Object.assign( AssetsWriter.prototype, {
 				return path.join( stats.publicPath, f );
 			}
 
-			statsToOutput.entrypoints = _.mapValues( stats.entrypoints, entry => ( {
-				chunks: _.reject( entry.chunks, chunk => {
+			statsToOutput.entrypoints = _.mapValues( stats.entrypoints, ( entry ) => ( {
+				chunks: _.reject( entry.chunks, ( chunk ) => {
 					String( chunk ).startsWith( 'manifest' );
 				} ),
-				assets: _.reject( entry.assets, asset => asset.startsWith( 'manifest' ) ).map( fixupPath ),
+				assets: _.reject( entry.assets, ( asset ) => asset.startsWith( 'manifest' ) ).map(
+					fixupPath
+				),
 			} ) );
 
-			statsToOutput.assetsByChunkName = _.mapValues( stats.assetsByChunkName, asset =>
+			statsToOutput.assetsByChunkName = _.mapValues( stats.assetsByChunkName, ( asset ) =>
 				_.castArray( asset ).map( fixupPath )
 			);
 
-			statsToOutput.chunks = stats.chunks.map( chunk =>
+			statsToOutput.chunks = stats.chunks.map( ( chunk ) =>
 				Object.assign( {}, chunk, {
 					files: chunk.files.map( fixupPath ),
-					siblings: _.reject( chunk.siblings, sibling =>
+					siblings: _.reject( chunk.siblings, ( sibling ) =>
 						String( sibling ).startsWith( 'manifest' )
 					),
 				} )

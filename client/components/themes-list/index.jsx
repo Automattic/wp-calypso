@@ -56,7 +56,7 @@ export class ThemesList extends React.Component {
 		isInstalling: () => false,
 	};
 
-	fetchNextPage = options => {
+	fetchNextPage = ( options ) => {
 		this.props.fetchNextPage( options );
 	};
 
@@ -148,7 +148,7 @@ export class ThemesList extends React.Component {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	themesBookmark: getThemesBookmark( state ),
 } );
 

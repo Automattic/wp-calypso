@@ -16,7 +16,7 @@ export default class EmbedViewManager extends EventEmitter {
 	constructor() {
 		super();
 
-		getReduxStore().then( store => {
+		getReduxStore().then( ( store ) => {
 			store.subscribe(
 				this.createListener( store, getSelectedSiteId, this.onChange.bind( this ) )
 			);
@@ -60,7 +60,7 @@ export default class EmbedViewManager extends EventEmitter {
 			const url = currentMatch[ 2 ];
 
 			// Disregard URL if it's not a supported embed pattern for the site
-			const isMatchingPattern = embeds.some( pattern => pattern.test( url ) );
+			const isMatchingPattern = embeds.some( ( pattern ) => pattern.test( url ) );
 			if ( ! isMatchingPattern ) {
 				continue;
 			}

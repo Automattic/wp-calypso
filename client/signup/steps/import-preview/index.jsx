@@ -127,7 +127,7 @@ class ImportPreview extends Component {
 		// The preceding steps always provide a value for importSiteEngine
 		const items = this.previewData[ importSiteEngine ].supported || [];
 
-		const listItems = items.map( item => {
+		const listItems = items.map( ( item ) => {
 			return (
 				<li className="import-preview__supported-item" key={ item }>
 					<Gridicon icon="checkmark" size={ 18 } className="import-preview__checkmark" />

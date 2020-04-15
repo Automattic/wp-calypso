@@ -35,7 +35,7 @@ class StatsModuleHeader extends React.Component {
 		onActionClick: () => {},
 	};
 
-	toggleInfo = event => {
+	toggleInfo = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
 		const { path, onActionClick, showInfo } = this.props;
@@ -50,7 +50,7 @@ class StatsModuleHeader extends React.Component {
 		} );
 	};
 
-	toggleModule = event => {
+	toggleModule = ( event ) => {
 		event.preventDefault();
 		const { path, onActionClick, showModule } = this.props;
 		const gaEvent = showModule ? 'Collapsed' : 'Expanded';

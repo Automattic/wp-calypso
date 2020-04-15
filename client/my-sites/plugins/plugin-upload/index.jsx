@@ -153,7 +153,7 @@ class PluginUpload extends React.Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const error = getPluginUploadError( state, siteId );
 	const progress = getPluginUploadProgress( state, siteId );

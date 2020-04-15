@@ -87,7 +87,7 @@ class WpcomChecklistComponent extends PureComponent {
 		} );
 	};
 
-	handleTaskDismiss = taskId => () => {
+	handleTaskDismiss = ( taskId ) => () => {
 		const { siteId } = this.props;
 
 		if ( taskId ) {
@@ -96,7 +96,7 @@ class WpcomChecklistComponent extends PureComponent {
 		}
 	};
 
-	trackTaskDismiss = taskId => {
+	trackTaskDismiss = ( taskId ) => {
 		if ( taskId ) {
 			this.props.recordTracksEvent( 'calypso_checklist_task_dismiss', {
 				checklist_name: 'new_blog',
@@ -122,13 +122,13 @@ class WpcomChecklistComponent extends PureComponent {
 			product: 'WordPress.com',
 		} );
 
-	handleTaskStartThenDismiss = args => () => {
+	handleTaskStartThenDismiss = ( args ) => () => {
 		const { task } = args;
 		this.handleTaskStart( args )();
 		this.handleTaskDismiss( task.id )();
 	};
 
-	handleSendVerificationEmail = e => {
+	handleSendVerificationEmail = ( e ) => {
 		e.preventDefault();
 
 		if ( this.state.pendingRequest ) {
@@ -195,7 +195,7 @@ class WpcomChecklistComponent extends PureComponent {
 					onExpandTask={ this.trackExpandTask }
 					showChecklistHeader={ false }
 				>
-					{ taskList.getAll().map( task => this.renderTask( task ) ) }
+					{ taskList.getAll().map( ( task ) => this.renderTask( task ) ) }
 				</Checklist>
 			</>
 		);
@@ -459,7 +459,7 @@ class WpcomChecklistComponent extends PureComponent {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
 		const siteChecklist = getSiteChecklist( state, siteId );
@@ -470,7 +470,7 @@ export default connect(
 		const needsEmailVerification = ! isCurrentUserEmailVerified( state );
 		/* eslint-disable wpcalypso/redux-no-bound-selectors */
 		const needsDomainVerification =
-			taskList.getAll().filter( task => task.id === 'domain_verified' && ! task.isCompleted )
+			taskList.getAll().filter( ( task ) => task.id === 'domain_verified' && ! task.isCompleted )
 				.length > 0;
 		/* eslint-enable wpcalypso/redux-no-bound-selectors */
 

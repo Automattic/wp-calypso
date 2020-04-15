@@ -321,7 +321,7 @@ class ManagePurchase extends Component {
 			}
 		}
 
-		const onClick = event => {
+		const onClick = ( event ) => {
 			analytics.tracks.recordEvent( 'calypso_purchases_manage_purchase_cancel_click', {
 				product_slug: purchase.productSlug,
 				is_atomic: isAtomicSite,

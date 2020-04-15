@@ -10,7 +10,7 @@ export const requestTimezones = () => ( {
 	type: TIMEZONES_REQUEST,
 } );
 
-export const timezonesReceive = data => ( {
+export const timezonesReceive = ( data ) => ( {
 	type: TIMEZONES_RECEIVE,
 	...data,
 } );

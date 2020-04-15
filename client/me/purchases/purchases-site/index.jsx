@@ -38,12 +38,12 @@ const PurchasesSite = ( {
 } ) => {
 	let items;
 
-	const isJetpack = ! isPlaceholder && some( purchases, purchase => isJetpackPlan( purchase ) );
+	const isJetpack = ! isPlaceholder && some( purchases, ( purchase ) => isJetpackPlan( purchase ) );
 
 	if ( isPlaceholder ) {
-		items = times( 2, index => <PurchaseItem isPlaceholder key={ index } /> );
+		items = times( 2, ( index ) => <PurchaseItem isPlaceholder key={ index } /> );
 	} else {
-		items = purchases.map( purchase => (
+		items = purchases.map( ( purchase ) => (
 			<PurchaseItem
 				key={ purchase.id }
 				slug={ slug }

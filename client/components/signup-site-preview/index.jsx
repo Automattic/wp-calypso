@@ -8,7 +8,7 @@ import React from 'react';
  */
 import AsyncLoad from 'components/async-load';
 
-const SignupSitePreview = props => (
+const SignupSitePreview = ( props ) => (
 	<AsyncLoad { ...props } require="components/signup-site-preview/component" placeholder={ null } />
 );
 

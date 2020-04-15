@@ -49,6 +49,6 @@ export const getPostsForQuery = createSelector(
 
 		return posts.map( normalizePostForDisplay );
 	},
-	state => [ state.posts.queries, state.posts.allSitesQueries ],
+	( state ) => [ state.posts.queries, state.posts.allSitesQueries ],
 	( state, siteId, query ) => getSerializedPostsQuery( query, siteId )
 );

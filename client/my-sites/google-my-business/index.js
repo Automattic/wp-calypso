@@ -118,7 +118,7 @@ export default function ( router ) {
 		siteSelection,
 		redirectUnauthorized,
 		loadKeyringsMiddleware,
-		context => {
+		( context ) => {
 			const state = context.store.getState();
 			const siteId = getSelectedSiteId( state );
 			const hasConnectedLocation = isGoogleMyBusinessLocationConnected( state, siteId );

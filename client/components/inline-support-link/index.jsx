@@ -38,7 +38,7 @@ class InlineSupportLink extends Component {
 		iconSize: 14,
 	};
 
-	handleClick = event => {
+	handleClick = ( event ) => {
 		const { supportPostId, supportLink } = this.props;
 
 		if ( ! supportPostId ) {

@@ -16,9 +16,9 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 // The checklist API requests use the http_envelope query param, however on
 // desktop the envelope is not being unpacked for some reason. This conversion
 // ensures the payload has been unpacked.
-const fromApi = payload => get( payload, 'body', payload );
+const fromApi = ( payload ) => get( payload, 'body', payload );
 
-export const fetchChecklist = action =>
+export const fetchChecklist = ( action ) =>
 	http(
 		{
 			path: `/sites/${ action.siteId }/checklist`,
@@ -39,7 +39,7 @@ export const receiveChecklistSuccess = ( action, receivedChecklist ) => {
 	if ( ! Array.isArray( receivedChecklist.tasks ) ) {
 		checklist = {
 			...receivedChecklist,
-			tasks: Object.keys( receivedChecklist.tasks ).map( taskId => {
+			tasks: Object.keys( receivedChecklist.tasks ).map( ( taskId ) => {
 				const { completed, ...rest } = receivedChecklist.tasks[ taskId ];
 				return {
 					id: taskId,
@@ -60,7 +60,7 @@ const dispatchChecklistRequest = dispatchRequest( {
 	fromApi,
 } );
 
-export const updateChecklistTask = action =>
+export const updateChecklistTask = ( action ) =>
 	http(
 		{
 			path: `/sites/${ action.siteId }/checklist`,

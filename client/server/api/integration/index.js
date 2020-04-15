@@ -13,7 +13,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'api', () => {
 	let app, config, localRequest, sandbox;
 
-	useSandbox( newSandbox => ( sandbox = newSandbox ) );
+	useSandbox( ( newSandbox ) => ( sandbox = newSandbox ) );
 
 	beforeAll( () => {
 		config = require( 'config' );

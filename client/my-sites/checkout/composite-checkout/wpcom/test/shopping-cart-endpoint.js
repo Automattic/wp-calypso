@@ -59,7 +59,7 @@ describe( 'removeItemFromResponseCart', function () {
 		const result = removeItemFromResponseCart( responseCart, '0' );
 
 		it( 'has expected array of uuids', function () {
-			expect( result.products.map( product => product.uuid ) ).toEqual( [ '1' ] );
+			expect( result.products.map( ( product ) => product.uuid ) ).toEqual( [ '1' ] );
 		} );
 	} );
 
@@ -99,7 +99,7 @@ describe( 'removeItemFromResponseCart', function () {
 		const result = removeItemFromResponseCart( responseCart, '2' );
 
 		it( 'has expected array of uuids', function () {
-			expect( result.products.map( product => product.uuid ) ).toEqual( [ '0', '1' ] );
+			expect( result.products.map( ( product ) => product.uuid ) ).toEqual( [ '0', '1' ] );
 		} );
 	} );
 } );

@@ -49,12 +49,12 @@ class PageTemplateModal extends Component {
 	};
 
 	// Extract titles for faster lookup.
-	getTitlesByTemplateSlugs = memoize( templates =>
+	getTitlesByTemplateSlugs = memoize( ( templates ) =>
 		mapValues( keyBy( templates, 'slug' ), 'title' )
 	);
 
 	// Parse templates blocks and memoize them.
-	getBlocksByTemplateSlugs = memoize( templates => {
+	getBlocksByTemplateSlugs = memoize( ( templates ) => {
 		const blocksByTemplateSlugs = reduce(
 			templates,
 			( prev, { slug, content } ) => {
@@ -90,7 +90,7 @@ class PageTemplateModal extends Component {
 		);
 	}
 
-	getBlocksForPreview = memoize( previewedTemplate => {
+	getBlocksForPreview = memoize( ( previewedTemplate ) => {
 		const blocks = this.getBlocksByTemplateSlug( previewedTemplate );
 
 		// Modify the existing blocks returning new block object references.
@@ -108,7 +108,7 @@ class PageTemplateModal extends Component {
 		} );
 	} );
 
-	getBlocksForSelection = selectedTemplate => {
+	getBlocksForSelection = ( selectedTemplate ) => {
 		const blocks = this.getBlocksByTemplateSlug( selectedTemplate );
 		// Modify the existing blocks returning new block object references.
 		return mapBlocksRecursively( blocks, function modifyBlocksForSelection( block ) {
@@ -165,7 +165,7 @@ class PageTemplateModal extends Component {
 		);
 	}
 
-	static getDefaultSelectedTemplate = props => {
+	static getDefaultSelectedTemplate = ( props ) => {
 		const blankTemplate = get( props.templates, [ 0, 'slug' ] );
 		let previouslyChosenTemplate = props._starter_page_template;
 
@@ -189,7 +189,7 @@ class PageTemplateModal extends Component {
 		return blankTemplate;
 	};
 
-	setTemplate = slug => {
+	setTemplate = ( slug ) => {
 		// Track selection and mark post as using a template in its postmeta.
 		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
 		this.props.saveTemplateChoice( slug );
@@ -225,7 +225,7 @@ class PageTemplateModal extends Component {
 
 		// Make sure all blocks use local assets before inserting.
 		this.maybePrefetchAssets( blocks )
-			.then( blocksWithAssets => {
+			.then( ( blocksWithAssets ) => {
 				this.setState( { isLoading: false } );
 				// Don't insert anything if the user clicked Cancel/Close
 				// before we loaded everything.
@@ -236,7 +236,7 @@ class PageTemplateModal extends Component {
 				this.props.insertTemplate( title, blocksWithAssets );
 				this.props.setIsOpen( false );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				this.setState( {
 					isLoading: false,
 					error,
@@ -244,11 +244,11 @@ class PageTemplateModal extends Component {
 			} );
 	};
 
-	maybePrefetchAssets = blocks => {
+	maybePrefetchAssets = ( blocks ) => {
 		return this.props.shouldPrefetchAssets ? ensureAssets( blocks ) : Promise.resolve( blocks );
 	};
 
-	handleConfirmation = slug => {
+	handleConfirmation = ( slug ) => {
 		if ( typeof slug !== 'string' ) {
 			slug = this.state.previewedTemplate;
 		}
@@ -261,7 +261,7 @@ class PageTemplateModal extends Component {
 		}
 	};
 
-	previewTemplate = slug => {
+	previewTemplate = ( slug ) => {
 		this.setState( { previewedTemplate: slug } );
 
 		/**
@@ -276,7 +276,7 @@ class PageTemplateModal extends Component {
 		}
 	};
 
-	closeModal = event => {
+	closeModal = ( event ) => {
 		// Check to see if the Blur event occurred on the buttons inside of the Modal.
 		// If it did then we don't want to dismiss the Modal for this type of Blur.
 		if ( event.target.matches( 'button.template-selector-item__label' ) ) {
@@ -328,7 +328,7 @@ class PageTemplateModal extends Component {
 		const templatesWithoutMissingBlocks = Object.keys( blocksByTemplateSlug );
 
 		const filterOutTemplatesWithMissingBlocks = ( templatesToFilter, filterIn ) => {
-			return templatesToFilter.filter( template => filterIn.includes( template.slug ) );
+			return templatesToFilter.filter( ( template ) => filterIn.includes( template.slug ) );
 		};
 
 		const filteredTemplatesList = filterOutTemplatesWithMissingBlocks(
@@ -503,7 +503,7 @@ class PageTemplateModal extends Component {
 }
 
 export const PageTemplatesPlugin = compose(
-	withSelect( select => {
+	withSelect( ( select ) => {
 		const getMeta = () => select( 'core/editor' ).getEditedPostAttribute( 'meta' );
 		const { _starter_page_template } = getMeta();
 		const isOpen = select( 'automattic/starter-page-layouts' ).isOpen();
@@ -513,7 +513,7 @@ export const PageTemplatesPlugin = compose(
 			_starter_page_template,
 			postContentBlock: select( 'core/editor' )
 				.getBlocks()
-				.find( block => block.name === 'a8c/post-content' ),
+				.find( ( block ) => block.name === 'a8c/post-content' ),
 			isWelcomeGuideActive: select( 'core/edit-post' ).isFeatureActive( 'welcomeGuide' ), // Gutenberg 7.2.0 or higher
 			areTipsEnabled: select( 'core/nux' ) ? select( 'core/nux' ).areTipsEnabled() : false, // Gutenberg 7.1.0 or lower
 		};
@@ -523,7 +523,7 @@ export const PageTemplatesPlugin = compose(
 		const { setIsOpen } = dispatch( 'automattic/starter-page-layouts' );
 		return {
 			setIsOpen,
-			saveTemplateChoice: slug => {
+			saveTemplateChoice: ( slug ) => {
 				// Save selected template slug in meta.
 				const currentMeta = ownProps.getMeta();
 				editorDispatcher.editPost( {

@@ -67,12 +67,12 @@ export default class extends React.Component {
 		return this.props.children ? React.cloneElement( this.props.children, childrenProps ) : null;
 	}
 
-	_updateSiteUsers = fetchOptions => {
+	_updateSiteUsers = ( fetchOptions ) => {
 		fetchOptions = fetchOptions || this.props.fetchOptions;
 		this.setState( this._getState( fetchOptions ) );
 	};
 
-	_getState = fetchOptions => {
+	_getState = ( fetchOptions ) => {
 		let paginationData, users;
 		fetchOptions = fetchOptions || this.props.fetchOptions;
 		fetchOptions = Object.assign( {}, defaultOptions, fetchOptions );
@@ -102,7 +102,7 @@ export default class extends React.Component {
 		} );
 	};
 
-	_fetchIfEmpty = fetchOptions => {
+	_fetchIfEmpty = ( fetchOptions ) => {
 		fetchOptions = fetchOptions || this.props.fetchOptions;
 		if ( ! fetchOptions || ! fetchOptions.siteId ) {
 			return;

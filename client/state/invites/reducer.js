@@ -58,7 +58,7 @@ export const items = withSchemaValidation( inviteItemsSchema, ( state = {}, acti
 			// `invite_date`, which is what we want here.
 
 			const siteInvites = { pending: [], accepted: [] };
-			action.invites.forEach( invite => {
+			action.invites.forEach( ( invite ) => {
 				// Not renaming `avatar_URL` because it is used as-is by <Gravatar>
 				const user = pick( invite.user, 'login', 'email', 'name', 'avatar_URL' );
 				const invitedBy = pick( invite.invited_by, 'name', 'login', 'avatar_URL' );
@@ -106,7 +106,7 @@ export const items = withSchemaValidation( inviteItemsSchema, ( state = {}, acti
  * @returns {Array}                  Updated array of invite objects.
  */
 function deleteInvites( siteInvites, invitesToDelete ) {
-	return siteInvites.filter( siteInvite => ! includes( invitesToDelete, siteInvite.key ) );
+	return siteInvites.filter( ( siteInvite ) => ! includes( invitesToDelete, siteInvite.key ) );
 }
 
 /**

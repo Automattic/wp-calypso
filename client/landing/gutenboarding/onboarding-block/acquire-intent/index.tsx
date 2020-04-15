@@ -18,7 +18,7 @@ import './style.scss';
 
 const AcquireIntent: FunctionComponent = () => {
 	const { __ } = useI18n();
-	const { siteVertical, siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
+	const { siteVertical, siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
 	const makePath = usePath();
 
 	return (

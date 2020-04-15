@@ -19,7 +19,7 @@ describe( 'wpcom', function () {
 	var wpcom = util.wpcomPublic();
 
 	describe( 'wpcom.promises', function () {
-		it( 'should fail when slower than timeout', done => {
+		it( 'should fail when slower than timeout', ( done ) => {
 			wpcom
 				.site( util.site() )
 				.postsList()
@@ -28,7 +28,7 @@ describe( 'wpcom', function () {
 				.catch( trueAssertion( done ) );
 		} );
 
-		it( 'should still catch() with timeout()', done => {
+		it( 'should still catch() with timeout()', ( done ) => {
 			wpcom
 				.site( util.site() )
 				.post( -5 )

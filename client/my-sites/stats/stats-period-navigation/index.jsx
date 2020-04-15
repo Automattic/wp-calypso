@@ -49,7 +49,7 @@ class StatsPeriodNavigation extends PureComponent {
 		this.handleClickArrow( 'previous' );
 	};
 
-	handleClickArrow = arrow => {
+	handleClickArrow = ( arrow ) => {
 		const { date, onPeriodChange, period, recordGoogleEvent } = this.props;
 		recordGoogleEvent( 'Stats Period Navigation', `Clicked ${ arrow } ${ period }` );
 

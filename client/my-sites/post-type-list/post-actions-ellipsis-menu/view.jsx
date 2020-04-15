@@ -37,7 +37,7 @@ class PostActionsEllipsisMenuView extends Component {
 		previewUrl: '',
 	};
 
-	previewPost = event => {
+	previewPost = ( event ) => {
 		const { isPreviewable, previewUrl, siteId } = this.props;
 		this.props.bumpStat();
 		if ( ! isPreviewable ) {

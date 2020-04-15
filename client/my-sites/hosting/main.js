@@ -195,7 +195,7 @@ export const clickActivate = () =>
 	recordTracksEvent( 'calypso_hosting_configuration_activate_click' );
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {

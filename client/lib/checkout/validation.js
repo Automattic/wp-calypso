@@ -288,7 +288,7 @@ validators.validIndonesiaNik = {
 };
 
 validators.validPostalCodeUS = {
-	isValid: value => isValidPostalCode( value, 'US' ),
+	isValid: ( value ) => isValidPostalCode( value, 'US' ),
 	error: function ( description ) {
 		return i18n.translate( '%(description)s is invalid. Must be a 5 digit number', {
 			args: { description: description },

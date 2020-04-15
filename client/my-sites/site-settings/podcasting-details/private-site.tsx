@@ -57,7 +57,7 @@ const PodcastingPrivateSiteMessage: React.FC< Props > = function PodcastingPriva
 	);
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	return {
 		siteSlug: getSelectedSiteSlug( state ),
 	};

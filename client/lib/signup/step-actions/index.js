@@ -75,7 +75,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		};
 
 		const domainChoiceCart = [ domainItem ];
-		SignupCart.createCart( cartKey, domainChoiceCart, error =>
+		SignupCart.createCart( cartKey, domainChoiceCart, ( error ) =>
 			callback( error, providedDependencies )
 		);
 	} else if ( designType === 'existing-site' ) {
@@ -87,7 +87,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		SignupCart.createCart(
 			siteId,
 			omitBy( pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ), isNull ),
-			error => {
+			( error ) => {
 				callback( error, providedDependencies );
 			}
 		);
@@ -242,7 +242,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		};
 
 		const newCartItems = [ cartItem, domainItem, googleAppsCartItem, themeItem ].filter(
-			item => item
+			( item ) => item
 		);
 
 		processItemCart(
@@ -283,7 +283,7 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 
 	const providedDependencies = { cartItem };
 
-	const newCartItems = [ cartItem ].filter( item => item );
+	const newCartItems = [ cartItem ].filter( ( item ) => item );
 
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
 }
@@ -293,7 +293,7 @@ export function addDomainToCart( callback, dependencies, stepProvidedItems, redu
 	const { domainItem, googleAppsCartItem } = stepProvidedItems;
 	const providedDependencies = { domainItem };
 
-	const newCartItems = [ domainItem, googleAppsCartItem ].filter( item => item );
+	const newCartItems = [ domainItem, googleAppsCartItem ].filter( ( item ) => item );
 
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
 }
@@ -308,7 +308,7 @@ function processItemCart(
 	themeSlugWithRepo
 ) {
 	const addToCartAndProceed = () => {
-		const newCartItemsToAdd = newCartItems.map( item =>
+		const newCartItemsToAdd = newCartItems.map( ( item ) =>
 			addPrivacyProtectionIfSupported( item, reduxStore )
 		);
 
@@ -629,7 +629,7 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 		submitSignupStep( { stepName, domainItem }, { domainItem } );
 		recordExcludeStepEvent(
 			stepName,
-			siteDomains.map( siteDomain => siteDomain.domain ).join( ', ' )
+			siteDomains.map( ( siteDomain ) => siteDomain.domain ).join( ', ' )
 		);
 
 		fulfilledDependencies = [ 'domainItem' ];

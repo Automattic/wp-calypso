@@ -117,7 +117,7 @@ class HelpContact extends React.Component {
 		savedContactForm = null;
 	};
 
-	startHappychat = contactForm => {
+	startHappychat = ( contactForm ) => {
 		this.recordCompactSubmit( 'happychat' );
 		this.props.openHappychat();
 		const { howCanWeHelp, howYouFeel, message, site } = contactForm;
@@ -157,7 +157,7 @@ class HelpContact extends React.Component {
 		}
 	};
 
-	submitDirectlyQuestion = contactForm => {
+	submitDirectlyQuestion = ( contactForm ) => {
 		this.recordCompactSubmit( 'directly' );
 		const { display_name, email } = this.props.currentUser;
 
@@ -170,7 +170,7 @@ class HelpContact extends React.Component {
 		}
 	};
 
-	submitKayakoTicket = contactForm => {
+	submitKayakoTicket = ( contactForm ) => {
 		const { subject, message, howCanWeHelp, howYouFeel, site } = contactForm;
 		const { currentUserLocale } = this.props;
 
@@ -190,7 +190,7 @@ class HelpContact extends React.Component {
 			kayakoMessage,
 			currentUserLocale,
 			this.props.clientSlug,
-			error => {
+			( error ) => {
 				if ( error ) {
 					// TODO: bump a stat here
 					notices.error( error.message );
@@ -221,7 +221,7 @@ class HelpContact extends React.Component {
 		this.clearSavedContactForm();
 	};
 
-	submitSupportForumsTopic = contactForm => {
+	submitSupportForumsTopic = ( contactForm ) => {
 		const { subject, message } = contactForm;
 		const { currentUserLocale } = this.props;
 
@@ -279,7 +279,7 @@ class HelpContact extends React.Component {
 		return isEn && ! this.props.isDirectlyFailed;
 	};
 
-	recordCompactSubmit = variation => {
+	recordCompactSubmit = ( variation ) => {
 		if ( this.props.compact ) {
 			this.props.recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
 				support_variation: variation,
@@ -287,7 +287,7 @@ class HelpContact extends React.Component {
 		}
 	};
 
-	getContactFormPropsVariation = variationSlug => {
+	getContactFormPropsVariation = ( variationSlug ) => {
 		const { isSubmitting } = this.state;
 		const { currentUserLocale, hasMoreThanOneSite, translate, localizedLanguageNames } = this.props;
 		let buttonLabel = translate( 'Chat with us' );
@@ -419,7 +419,7 @@ class HelpContact extends React.Component {
 		}
 	};
 
-	getContactFormCommonProps = variationSlug => {
+	getContactFormCommonProps = ( variationSlug ) => {
 		const { isSubmitting } = this.state;
 		const { currentUserLocale } = this.props;
 
@@ -440,12 +440,12 @@ class HelpContact extends React.Component {
 			showHelpLanguagePrompt,
 			valueLink: {
 				value: savedContactForm,
-				requestChange: contactForm => ( savedContactForm = contactForm ),
+				requestChange: ( contactForm ) => ( savedContactForm = contactForm ),
 			},
 		};
 	};
 
-	shouldShowTicketRequestErrorNotice = variationSlug => {
+	shouldShowTicketRequestErrorNotice = ( variationSlug ) => {
 		const { ticketSupportRequestError } = this.props;
 
 		return SUPPORT_HAPPYCHAT !== variationSlug && null != ticketSupportRequestError;
@@ -476,7 +476,7 @@ class HelpContact extends React.Component {
 	};
 
 	// Modifies passed props for the "compact" contact form style.
-	contactFormPropsCompactFilter = props => {
+	contactFormPropsCompactFilter = ( props ) => {
 		if ( this.props.compact ) {
 			return Object.assign( props, {
 				showSubjectField: false,
@@ -614,7 +614,7 @@ class HelpContact extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const helpSelectedSiteId = getHelpSelectedSiteId( state );
 		return {
 			currentUserLocale: getCurrentUserLocale( state ),

@@ -56,7 +56,7 @@ const Support = ( { trackContactAction, trackDocsAction } ) => {
 	);
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
 	const isStaticHomePage =
@@ -67,7 +67,7 @@ const mapStateToProps = state => {
 	};
 };
 
-const trackDocsAction = isStaticHomePage =>
+const trackDocsAction = ( isStaticHomePage ) =>
 	composeAnalytics(
 		recordTracksEvent( 'calypso_customer_home_support_docs_click', {
 			is_static_home_page: isStaticHomePage,
@@ -75,7 +75,7 @@ const trackDocsAction = isStaticHomePage =>
 		bumpStat( 'calypso_customer_home', 'support_docs' )
 	);
 
-const trackContactAction = isStaticHomePage =>
+const trackContactAction = ( isStaticHomePage ) =>
 	composeAnalytics(
 		recordTracksEvent( 'calypso_customer_home_support_contact_click', {
 			is_static_home_page: isStaticHomePage,

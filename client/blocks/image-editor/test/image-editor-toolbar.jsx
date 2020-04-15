@@ -19,7 +19,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'ImageEditorToolbar', () => {
 	let defaultProps, wrapper;
 
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		defaultProps = {
 			onShowNotice: sandbox.spy(),
 		};

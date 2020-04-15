@@ -51,7 +51,7 @@ export function unwrapPre( { content } ) {
 }
 
 function sourcecode( editor ) {
-	editor.on( 'BeforeSetContent', event => {
+	editor.on( 'BeforeSetContent', ( event ) => {
 		if ( ! event.content || 'html' === event.mode ) {
 			return;
 		}
@@ -59,7 +59,7 @@ function sourcecode( editor ) {
 		event.content = wrapPre( event );
 	} );
 
-	editor.on( 'GetContent', event => {
+	editor.on( 'GetContent', ( event ) => {
 		if ( event.format !== 'raw' || ! event.content || event.selection ) {
 			return;
 		}
@@ -67,7 +67,7 @@ function sourcecode( editor ) {
 		event.content = unwrapPre( event );
 	} );
 
-	editor.on( 'PostProcess', event => {
+	editor.on( 'PostProcess', ( event ) => {
 		if ( ! event.content ) {
 			return;
 		}

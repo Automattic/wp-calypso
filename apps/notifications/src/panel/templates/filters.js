@@ -38,7 +38,7 @@ export const Filters = {
 			} ),
 			emptyLink: 'https://wordpress.com/post/',
 
-			filter: note => ! getNoteIsRead( store.getState(), note ),
+			filter: ( note ) => ! getNoteIsRead( store.getState(), note ),
 		};
 	},
 	comments: function () {

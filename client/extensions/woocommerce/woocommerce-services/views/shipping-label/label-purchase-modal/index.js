@@ -25,7 +25,7 @@ import {
 	isCustomsFormRequired,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-const PurchaseDialog = props => {
+const PurchaseDialog = ( props ) => {
 	const { loaded, translate } = props;
 
 	if ( ! loaded ) {
@@ -102,7 +102,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { exitPrintingFlow }, dispatch );
 };
 

@@ -111,7 +111,7 @@ const items = withSchemaValidation( siteKeyringsSchema, ( state = {}, action ) =
 
 			return {
 				...state,
-				[ siteId ]: state[ siteId ].map( keyring =>
+				[ siteId ]: state[ siteId ].map( ( keyring ) =>
 					keyring.keyring_id === keyringId
 						? { ...keyring, external_user_id: externalUserId }
 						: keyring
@@ -124,7 +124,7 @@ const items = withSchemaValidation( siteKeyringsSchema, ( state = {}, action ) =
 			return {
 				...state,
 				[ siteId ]: ( state[ siteId ] || [] ).filter(
-					keyring =>
+					( keyring ) =>
 						! (
 							keyring.keyring_id === keyringId &&
 							( ! externalUserId || keyring.external_user_id === externalUserId )

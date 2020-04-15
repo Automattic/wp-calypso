@@ -23,7 +23,7 @@ import './style.scss';
 const HappinessEngineersTray = ( { alreadyReceivedHappinessEngineers, happinessEngineers } ) => (
 	<div className="happiness-engineers-tray">
 		{ ! alreadyReceivedHappinessEngineers && <QueryHappinessEngineers /> }
-		{ shuffle( happinessEngineers ).map( happinessEngineer => (
+		{ shuffle( happinessEngineers ).map( ( happinessEngineer ) => (
 			<Gravatar
 				key={ happinessEngineer }
 				user={ { avatar_URL: happinessEngineer } }
@@ -34,7 +34,7 @@ const HappinessEngineersTray = ( { alreadyReceivedHappinessEngineers, happinessE
 	</div>
 );
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	happinessEngineers: getHappinessEngineers( state ),
 	alreadyReceivedHappinessEngineers: hasReceivedHappinessEngineers( state ),
 } ) )( HappinessEngineersTray );

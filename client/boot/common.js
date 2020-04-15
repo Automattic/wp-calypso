@@ -54,7 +54,7 @@ import { setStore } from 'state/redux-store';
 
 const debug = debugFactory( 'calypso' );
 
-const setupContextMiddleware = reduxStore => {
+const setupContextMiddleware = ( reduxStore ) => {
 	page( '*', ( context, next ) => {
 		// page.js url parsing is broken so we had to disable it with `decodeURLComponents: false`
 		const parsed = getUrlParts( context.canonicalPath );
@@ -124,7 +124,7 @@ const oauthTokenMiddleware = () => {
 
 		// Forces OAuth users to the /login page if no token is present
 		page( '*', function ( context, next ) {
-			const isValidSection = loggedOutRoutes.some( route => startsWith( context.path, route ) );
+			const isValidSection = loggedOutRoutes.some( ( route ) => startsWith( context.path, route ) );
 
 			// Check we have an OAuth token, otherwise redirect to auth/login page
 			if ( getToken() === false && ! isValidSection ) {
@@ -189,7 +189,7 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 
 	if ( config.isEnabled( 'network-connection' ) ) {
-		asyncRequire( 'lib/network-connection', networkConnection =>
+		asyncRequire( 'lib/network-connection', ( networkConnection ) =>
 			networkConnection.init( reduxStore )
 		);
 	}
@@ -313,7 +313,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 
 	// delete any lingering local storage data from signup
 	if ( ! startsWith( window.location.pathname, '/start' ) ) {
-		[ 'signupProgress', 'signupDependencies' ].forEach( item => store.remove( item ) );
+		[ 'signupProgress', 'signupDependencies' ].forEach( ( item ) => store.remove( item ) );
 	}
 
 	if ( ! currentUser.get() ) {
@@ -353,7 +353,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	}
 
 	if ( config.isEnabled( 'rubberband-scroll-disable' ) ) {
-		asyncRequire( 'lib/rubberband-scroll-disable', disableRubberbandScroll => {
+		asyncRequire( 'lib/rubberband-scroll-disable', ( disableRubberbandScroll ) => {
 			disableRubberbandScroll( document.body );
 		} );
 	}
@@ -362,7 +362,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		config.isEnabled( 'dev/test-helper' ) &&
 		document.querySelector( '.environment.is-tests' )
 	) {
-		asyncRequire( 'lib/abtest/test-helper', testHelper => {
+		asyncRequire( 'lib/abtest/test-helper', ( testHelper ) => {
 			testHelper( document.querySelector( '.environment.is-tests' ) );
 		} );
 	}
@@ -370,7 +370,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		config.isEnabled( 'dev/preferences-helper' ) &&
 		document.querySelector( '.environment.is-prefs' )
 	) {
-		asyncRequire( 'lib/preferences-helper', prefHelper => {
+		asyncRequire( 'lib/preferences-helper', ( prefHelper ) => {
 			prefHelper( document.querySelector( '.environment.is-prefs' ), reduxStore );
 		} );
 	}

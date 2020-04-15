@@ -91,9 +91,9 @@ function transmitDraftId( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handlePostTrash( calypsoPort ) {
-	use( registry => {
+	use( ( registry ) => {
 		return {
-			dispatch: namespace => {
+			dispatch: ( namespace ) => {
 				const actions = { ...registry.dispatch( namespace ) };
 				if ( namespace === 'core/editor' && actions.trashPost ) {
 					actions.trashPost = () => {
@@ -108,7 +108,7 @@ function handlePostTrash( calypsoPort ) {
 }
 
 function overrideRevisions( calypsoPort ) {
-	$( '#editor' ).on( 'click', '[href*="revision.php"]', e => {
+	$( '#editor' ).on( 'click', '[href*="revision.php"]', ( e ) => {
 		e.preventDefault();
 
 		calypsoPort.postMessage( { action: 'openRevisions' } );
@@ -223,7 +223,7 @@ function handlePostLocked( calypsoPort ) {
 			//signal the parent frame to navigate to All Posts
 			lockedDialogButtons[ 0 ].addEventListener(
 				'click',
-				event => {
+				( event ) => {
 					event.preventDefault();
 					calypsoPort.postMessage( { action: 'goToAllPosts' } );
 				},
@@ -268,7 +268,7 @@ function handlePostLockTakeover( calypsoPort ) {
 			//handle All Posts button click event
 			allPostsButton.addEventListener(
 				'click',
-				event => {
+				( event ) => {
 					event.preventDefault();
 					calypsoPort.postMessage( { action: 'goToAllPosts' } );
 				},
@@ -351,7 +351,7 @@ function handleUpdateImageBlocks( calypsoPort ) {
 	 * @param {number} [image.transientId] The temporary ID assigned to uploading image.
 	 */
 	function updateImageBlocks( blocks, image ) {
-		forEach( blocks, block => {
+		forEach( blocks, ( block ) => {
 			if ( imageBlocks[ block.name ] ) {
 				imageBlocks[ block.name ]( block, image );
 			}
@@ -399,7 +399,7 @@ function handleUpdateImageBlocks( calypsoPort ) {
 		let updatedImages = [];
 
 		if ( 'deleted' === image.status ) {
-			updatedImages = filter( currentImages, currentImage => {
+			updatedImages = filter( currentImages, ( currentImage ) => {
 				return currentImage.id !== image.id && currentImage.id !== image.transientId;
 			} );
 			dispatch( 'core/editor' ).updateBlockAttributes( block.clientId, {
@@ -409,7 +409,7 @@ function handleUpdateImageBlocks( calypsoPort ) {
 		}
 
 		preloadImage( image.url ).then( () => {
-			updatedImages = map( currentImages, currentImage => {
+			updatedImages = map( currentImages, ( currentImage ) => {
 				const currentImageId = parseInt( currentImage.id, 10 );
 				if ( currentImageId !== image.id && currentImageId !== image.transientId ) {
 					return currentImage;
@@ -466,7 +466,7 @@ function handleUpdateImageBlocks( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handlePreview( calypsoPort ) {
-	$( '#editor' ).on( 'click', '.editor-post-preview', e => {
+	$( '#editor' ).on( 'click', '.editor-post-preview', ( e ) => {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -568,7 +568,7 @@ function handleCloseEditor( calypsoPort ) {
 	const selector = '.edit-post-header .edit-post-fullscreen-mode-close';
 	const siteEditorSelector = '.edit-site-header .edit-site-fullscreen-mode-close';
 
-	const dispatchAction = e => {
+	const dispatchAction = ( e ) => {
 		e.preventDefault();
 
 		const { port2 } = new MessageChannel();
@@ -597,7 +597,7 @@ function openLinksInParentFrame() {
 		'.post-publish-panel__postpublish .components-panel__body.is-opened a', // Post title link in publish panel
 		'.components-panel__body.is-opened .post-publish-panel__postpublish-buttons a.components-button', // View Post button in publish panel
 	].join( ',' );
-	$( '#editor' ).on( 'click', viewPostLinkSelectors, e => {
+	$( '#editor' ).on( 'click', viewPostLinkSelectors, ( e ) => {
 		e.preventDefault();
 		window.open( e.target.href, '_top' );
 	} );
@@ -607,7 +607,7 @@ function openLinksInParentFrame() {
 			'.editor-inserter__manage-reusable-blocks', // Link in the Blocks Inserter
 			'a.components-menu-item__button[href*="post_type=wp_block"]', // Link in the More Menu
 		].join( ',' );
-		$( '#editor' ).on( 'click', manageReusableBlocksLinkSelectors, e => {
+		$( '#editor' ).on( 'click', manageReusableBlocksLinkSelectors, ( e ) => {
 			e.preventDefault();
 			window.open( calypsoifyGutenberg.manageReusableBlocksUrl, '_top' );
 		} );
@@ -621,7 +621,7 @@ function openLinksInParentFrame() {
  */
 function openCustomizer( calypsoPort ) {
 	const customizerLinkSelector = 'a.components-button[href*="customize.php"]';
-	$( '#editor' ).on( 'click', customizerLinkSelector, e => {
+	$( '#editor' ).on( 'click', customizerLinkSelector, ( e ) => {
 		e.preventDefault();
 
 		calypsoPort.postMessage( {
@@ -641,7 +641,7 @@ function openCustomizer( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function openTemplatePartLinks( calypsoPort ) {
-	$( '#editor' ).on( 'click', '.template__block-container .template-block__overlay a', e => {
+	$( '#editor' ).on( 'click', '.template__block-container .template-block__overlay a', ( e ) => {
 		e.preventDefault();
 		e.stopPropagation(); // Otherwise it will port the message twice.
 

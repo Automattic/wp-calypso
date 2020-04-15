@@ -91,7 +91,7 @@ function mediaButton( editor ) {
 				/* eslint-disable react/jsx-no-bind */
 				onClose={ renderModal.bind( null, { visible: false } ) }
 				/* eslint-disable react/jsx-no-bind */
-				onInsertMedia={ markup => {
+				onInsertMedia={ ( markup ) => {
 					insertMedia( markup );
 					renderModal( { visible: false } );
 				} }
@@ -604,7 +604,7 @@ function mediaButton( editor ) {
 		// In order to get the next usable size, we compute the ratio of all the default sizes and compare them to the current ratio
 		// If we are increasing the size, we select the default size that has the closest greater ratio
 		// While decreasing we take the closest lower ratio
-		const sizeRatios = SIZE_ORDER.map( size =>
+		const sizeRatios = SIZE_ORDER.map( ( size ) =>
 			computeRatio( getThumbnailSizeDimensions( size, selectedSite ), media )
 		);
 		const sizeIndex = SIZE_ORDER.indexOf( parsed.appearance.size );
@@ -712,7 +712,7 @@ function mediaButton( editor ) {
 
 		gallery = assign( {}, MediaConstants.GalleryDefaultAttrs, gallery.attrs.named );
 
-		gallery.items = gallery.ids.split( ',' ).map( id => {
+		gallery.items = gallery.ids.split( ',' ).map( ( id ) => {
 			id = parseInt( id, 10 );
 
 			const media = MediaStore.get( selectedSite.ID, id );

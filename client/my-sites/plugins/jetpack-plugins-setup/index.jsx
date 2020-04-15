@@ -87,8 +87,8 @@ class PlansSetup extends React.Component {
 	};
 
 	// plugins for Jetpack sites require additional data from the wporg-data store
-	addWporgDataToPlugins = plugins => {
-		return plugins.map( plugin => {
+	addWporgDataToPlugins = ( plugins ) => {
+		return plugins.map( ( plugin ) => {
 			const pluginData = getPlugin( this.props.wporg, plugin.slug );
 			if ( ! pluginData ) {
 				this.props.fetchPluginData( plugin.slug );
@@ -141,7 +141,7 @@ class PlansSetup extends React.Component {
 		}
 	}
 
-	warnIfNotFinished = event => {
+	warnIfNotFinished = ( event ) => {
 		const site = this.props.selectedSite;
 		if ( ! site || ! site.jetpack || ! site.canUpdateFiles || this.props.isFinished ) {
 			return;
@@ -152,7 +152,7 @@ class PlansSetup extends React.Component {
 		return beforeUnloadText;
 	};
 
-	startNextPlugin = plugin => {
+	startNextPlugin = ( plugin ) => {
 		// We're already installing.
 		if ( this.props.isInstalling ) {
 			return;
@@ -242,7 +242,7 @@ class PlansSetup extends React.Component {
 
 	renderPluginsPlaceholders = () => {
 		const placeholderCount = this.props.whitelist ? 1 : 2;
-		return range( placeholderCount ).map( i => <PluginItem key={ 'placeholder-' + i } /> );
+		return range( placeholderCount ).map( ( i ) => <PluginItem key={ 'placeholder-' + i } /> );
 	};
 
 	renderPlugins = ( hidden = false ) => {
@@ -283,7 +283,7 @@ class PlansSetup extends React.Component {
 		} );
 	};
 
-	renderStatus = plugin => {
+	renderStatus = ( plugin ) => {
 		if ( plugin.error ) {
 			return this.renderStatusError( plugin );
 		}
@@ -303,7 +303,7 @@ class PlansSetup extends React.Component {
 		return <Notice { ...statusProps } text={ this.getStatusText( plugin ) } />;
 	};
 
-	getStatusText = plugin => {
+	getStatusText = ( plugin ) => {
 		const { translate } = this.props;
 		switch ( plugin.status ) {
 			case 'done':
@@ -319,7 +319,7 @@ class PlansSetup extends React.Component {
 		}
 	};
 
-	renderStatusError = plugin => {
+	renderStatusError = ( plugin ) => {
 		const { translate } = this.props;
 
 		// This state isn't quite an error
@@ -397,7 +397,7 @@ class PlansSetup extends React.Component {
 		}
 	};
 
-	renderActions = plugin => {
+	renderActions = ( plugin ) => {
 		if ( plugin.status === 'wait' ) {
 			return null;
 		} else if ( plugin.error !== null ) {
@@ -415,13 +415,13 @@ class PlansSetup extends React.Component {
 		return null;
 	};
 
-	renderErrorMessage = plugins => {
+	renderErrorMessage = ( plugins ) => {
 		let noticeText;
 		const { translate } = this.props;
 		const pluginsWithErrors = this.addWporgDataToPlugins( plugins );
 
 		const tracksData = {};
-		pluginsWithErrors.map( item => {
+		pluginsWithErrors.map( ( item ) => {
 			tracksData[ item.slug ] = item.error.name + ': ' + item.error.message;
 		} );
 
@@ -470,7 +470,7 @@ class PlansSetup extends React.Component {
 			return null;
 		}
 
-		const pluginsWithErrors = filter( this.props.plugins, item => {
+		const pluginsWithErrors = filter( this.props.plugins, ( item ) => {
 			const errorCode = get( item, 'error.code', null );
 			return errorCode && errorCode !== 'already_registered';
 		} );
@@ -576,5 +576,5 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch => bindActionCreators( { requestSites, fetchPluginData, installPlugin }, dispatch )
+	( dispatch ) => bindActionCreators( { requestSites, fetchPluginData, installPlugin }, dispatch )
 )( localize( PlansSetup ) );

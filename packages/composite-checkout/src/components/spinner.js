@@ -20,7 +20,7 @@ const SpinnerWrapper = styled.div`
 	width: 20px;
 	height: 20px;
 	border: 3px solid transparent;
-	border-top-color: ${props => props.theme.colors.highlight};
+	border-top-color: ${( props ) => props.theme.colors.highlight};
 	border-radius: 100%;
 	box-sizing: border-box;
 	position: relative;
@@ -34,8 +34,8 @@ const SpinnerWrapper = styled.div`
 		width: 17px;
 		height: 17px;
 		border: 3px solid transparent;
-		border-top-color: ${props => props.theme.colors.highlight};
-		border-right-color: ${props => props.theme.colors.highlight};
+		border-top-color: ${( props ) => props.theme.colors.highlight};
+		border-right-color: ${( props ) => props.theme.colors.highlight};
 		box-sizing: border-box;
 		opacity: 0.5;
 		content: '';

@@ -18,7 +18,7 @@ function isStateInArgs( node ) {
 }
 
 function contains( xs, y ) {
-	return xs.some( x => x === y );
+	return xs.some( ( x ) => x === y );
 }
 
 module.exports = {

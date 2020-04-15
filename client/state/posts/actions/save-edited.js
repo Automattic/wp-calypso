@@ -60,7 +60,7 @@ function normalizeApiAttributes( attributes ) {
  *
  * @param {object} options object with optional recordSaveEvent property. True if you want to record the save event.
  */
-export const saveEdited = options => async ( dispatch, getState ) => {
+export const saveEdited = ( options ) => async ( dispatch, getState ) => {
 	const siteId = getSelectedSiteId( getState() );
 	const postId = getEditorPostId( getState() );
 	const post = getEditedPost( getState(), siteId, postId );

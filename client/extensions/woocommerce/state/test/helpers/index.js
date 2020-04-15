@@ -12,7 +12,7 @@ export const createState = ( { ui, site } ) => {
 					123: site,
 				},
 				ui: {
-					...mapValues( ui, branch => ( { 123: branch } ) ),
+					...mapValues( ui, ( branch ) => ( { 123: branch } ) ),
 				},
 			},
 		},

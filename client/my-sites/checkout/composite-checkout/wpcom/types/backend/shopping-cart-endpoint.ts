@@ -166,7 +166,7 @@ export function removeItemFromResponseCart(
 ): ResponseCart {
 	return {
 		...cart,
-		products: cart.products.filter( product => {
+		products: cart.products.filter( ( product ) => {
 			return product.uuid !== uuidToRemove;
 		} ),
 	};
@@ -260,7 +260,7 @@ export function addItemToResponseCart(
 
 function getFreshCartItemUUID( responseCart: ResponseCart ): string {
 	const maxUUID = responseCart.products
-		.map( product => product.uuid )
+		.map( ( product ) => product.uuid )
 		.reduce( ( accum, current ) => ( accum > current ? accum : current) , '' );
 	return maxUUID + '1';
 }
@@ -283,7 +283,7 @@ export function replaceItemInResponseCart(
 ) {
 	return {
 		...responseCart,
-		products: responseCart.products.map( item => {
+		products: responseCart.products.map( ( item ) => {
 			if ( item.uuid === uuidToReplace ) {
 				item.product_id = newProductId;
 				item.product_slug = newProductSlug;

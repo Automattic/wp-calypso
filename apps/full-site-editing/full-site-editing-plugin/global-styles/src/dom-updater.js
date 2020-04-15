@@ -17,7 +17,7 @@ export default ( options, getOptionValue ) => {
 		const currentOptions = {};
 		let previousOptions = {};
 		const cssVariables = {};
-		options.forEach( option => {
+		options.forEach( ( option ) => {
 			cssVariables[ option ] = `--${ option.replace( '_', '-' ) }`;
 		} );
 
@@ -44,7 +44,7 @@ export default ( options, getOptionValue ) => {
 			}
 
 			// Maybe bail-out early.
-			options.forEach( option => {
+			options.forEach( ( option ) => {
 				currentOptions[ option ] = getOptionValue( option );
 			} );
 			if ( isEmpty( currentOptions ) || isEqual( currentOptions, previousOptions ) ) {
@@ -55,7 +55,7 @@ export default ( options, getOptionValue ) => {
 			// Update style node. We need this to be a stylesheet rather than inline styles
 			// so the styles apply to all editor instances incl. previews.
 			let declarationList = '';
-			Object.keys( currentOptions ).forEach( key => {
+			Object.keys( currentOptions ).forEach( ( key ) => {
 				declarationList += `${ cssVariables[ key ] }:${ currentOptions[ key ] };`;
 			} );
 			styleElement.textContent = `.editor-styles-wrapper{${ declarationList }}`;

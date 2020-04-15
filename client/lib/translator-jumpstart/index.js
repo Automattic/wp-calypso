@@ -190,7 +190,7 @@ const communityTranslatorJumpstart = {
 			translationDataFromPage.pluralForms;
 		translationDataFromPage.currentUserId = user.data.ID;
 
-		const currentLocale = find( languages, lang => lang.langSlug === localeCode );
+		const currentLocale = find( languages, ( lang ) => lang.langSlug === localeCode );
 		if ( currentLocale ) {
 			translationDataFromPage.languageName = currentLocale.name.replace(
 				/^(?:[a-z]{2,3}|[a-z]{2}-[a-z]{2})\s+-\s+/,

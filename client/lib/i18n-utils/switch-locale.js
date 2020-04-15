@@ -138,7 +138,7 @@ export default function switchLocale( localeSlug ) {
 	} else {
 		getLanguageFile( localeSlug ).then(
 			// Success.
-			body => {
+			( body ) => {
 				if ( body ) {
 					// Handle race condition when we're requested to switch to a different
 					// locale while we're in the middle of request, we should abandon result
@@ -217,8 +217,8 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 			headers: { Accept: 'application/json' },
 			credentials: 'include',
 		} )
-		.then( res => res.json() )
-		.then( translations => i18n.addTranslations( translations ) );
+		.then( ( res ) => res.json() )
+		.then( ( translations ) => i18n.addTranslations( translations ) );
 }
 
 /*
@@ -242,7 +242,7 @@ function setRTLFlagOnCSSLink( url, isRTL ) {
 export function switchWebpackCSS( isRTL ) {
 	const currentLinks = document.querySelectorAll( 'link[rel="stylesheet"][data-webpack]' );
 
-	forEach( currentLinks, async currentLink => {
+	forEach( currentLinks, async ( currentLink ) => {
 		const currentHref = currentLink.getAttribute( 'href' );
 		const newHref = setRTLFlagOnCSSLink( currentHref, isRTL );
 		if ( currentHref === newHref ) {
@@ -266,7 +266,7 @@ export function switchWebpackCSS( isRTL ) {
  * @returns {Promise<string>} the new <link> DOM element after the CSS has been loaded
  */
 function loadCSS( cssUrl, currentLink ) {
-	return new Promise( resolve => {
+	return new Promise( ( resolve ) => {
 		const link = document.createElement( 'link' );
 		link.rel = 'stylesheet';
 		link.type = 'text/css';

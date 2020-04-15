@@ -59,7 +59,7 @@ import { get as webauthn_auth } from '@github/webauthn-json';
  * @param {int} ms amount of milliseconds till reject the promise
  * @returns {Promise} a promise that will be rejected after ms milliseconds
  */
-export const createTimingOutPromise = ms =>
+export const createTimingOutPromise = ( ms ) =>
 	new Promise( ( _, reject ) => {
 		setTimeout( () => reject( new Error( `timeout of ${ ms } reached` ) ), ms );
 	} );
@@ -73,7 +73,7 @@ export const createTimingOutPromise = ms =>
  */
 export const makeRemoteLoginRequest = ( loginLink, requestTimeout = 25000 ) => {
 	let iframe;
-	const iframeLoadPromise = new Promise( resolve => {
+	const iframeLoadPromise = new Promise( ( resolve ) => {
 		iframe = document.createElement( 'iframe' );
 		iframe.style.display = 'none';
 		iframe.setAttribute( 'scrolling', 'no' );
@@ -98,12 +98,12 @@ export const makeRemoteLoginRequest = ( loginLink, requestTimeout = 25000 ) => {
  * @param  {Array}   loginLinks     Array of urls
  * @returns {Promise}                A promise that always resolve
  */
-export const remoteLoginUser = loginLinks => {
+export const remoteLoginUser = ( loginLinks ) => {
 	return Promise.all(
 		loginLinks
-			.map( loginLink => makeRemoteLoginRequest( loginLink ) )
+			.map( ( loginLink ) => makeRemoteLoginRequest( loginLink ) )
 			// make sure we continue even when a remote login fails
-			.map( promise => promise.catch( () => {} ) )
+			.map( ( promise ) => promise.catch( () => {} ) )
 	);
 };
 
@@ -116,7 +116,7 @@ export const remoteLoginUser = loginLinks => {
  * @param  {string}   domain          A domain to reverse login to
  * @returns {Function}                 A thunk that can be dispatched
  */
-export const loginUser = ( usernameOrEmail, password, redirectTo, domain ) => dispatch => {
+export const loginUser = ( usernameOrEmail, password, redirectTo, domain ) => ( dispatch ) => {
 	dispatch( {
 		type: LOGIN_REQUEST,
 	} );
@@ -130,7 +130,7 @@ export const loginUser = ( usernameOrEmail, password, redirectTo, domain ) => di
 		client_secret: config( 'wpcom_signup_key' ),
 		domain: domain,
 	} )
-		.then( response => {
+		.then( ( response ) => {
 			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
 				dispatch( {
 					type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
@@ -157,7 +157,7 @@ export const loginUser = ( usernameOrEmail, password, redirectTo, domain ) => di
 				data: response.body && response.body.data,
 			} );
 		} )
-		.catch( httpError => {
+		.catch( ( httpError ) => {
 			const error = getErrorFromHTTPError( httpError );
 
 			dispatch( {
@@ -188,7 +188,7 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 		...loginParams,
 		two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
 	} )
-		.then( response => {
+		.then( ( response ) => {
 			const parameters = get( response, 'body.data', [] );
 			const twoStepNonce = get( parameters, 'two_step_nonce' );
 
@@ -197,7 +197,7 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 			}
 			return webauthn_auth( { publicKey: parameters } );
 		} )
-		.then( assertion => {
+		.then( ( assertion ) => {
 			const response = assertion.response;
 			if ( typeof response.userHandle !== 'undefined' && null === response.userHandle ) {
 				delete response.userHandle;
@@ -209,12 +209,12 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 				remember_me: true,
 			} );
 		} )
-		.then( response => {
+		.then( ( response ) => {
 			return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
 				dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
 			} );
 		} )
-		.catch( httpError => {
+		.catch( ( httpError ) => {
 			const twoStepNonce = get( httpError, 'response.body.data.two_step_nonce' );
 
 			if ( twoStepNonce ) {
@@ -254,12 +254,12 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
 		client_id: config( 'wpcom_signup_id' ),
 		client_secret: config( 'wpcom_signup_key' ),
 	} )
-		.then( response => {
+		.then( ( response ) => {
 			return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
 				dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
 			} );
 		} )
-		.catch( httpError => {
+		.catch( ( httpError ) => {
 			const twoStepNonce = get( httpError, 'response.body.data.two_step_nonce' );
 
 			if ( twoStepNonce ) {
@@ -287,7 +287,7 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
  * @param  {string}   redirectTo     Url to redirect the user to upon successful login
  * @returns {Function}                A thunk that can be dispatched
  */
-export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
+export const loginSocialUser = ( socialInfo, redirectTo ) => ( dispatch ) => {
 	dispatch( { type: SOCIAL_LOGIN_REQUEST } );
 
 	return postLoginRequest( 'social-login-endpoint', {
@@ -296,7 +296,7 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 		client_id: config( 'wpcom_signup_id' ),
 		client_secret: config( 'wpcom_signup_key' ),
 	} )
-		.then( response => {
+		.then( ( response ) => {
 			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {
 				dispatch( {
 					type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
@@ -315,7 +315,7 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 				} );
 			} );
 		} )
-		.catch( httpError => {
+		.catch( ( httpError ) => {
 			const error = getErrorFromHTTPError( httpError );
 			error.email = get( httpError, 'response.body.data.email' );
 
@@ -340,7 +340,7 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => dispatch => {
  * @param  {string}   flowName       The name of the current signup flow
  * @returns {Function}                A thunk that can be dispatched
  */
-export const createSocialUser = ( socialInfo, flowName ) => dispatch => {
+export const createSocialUser = ( socialInfo, flowName ) => ( dispatch ) => {
 	dispatch( {
 		type: SOCIAL_CREATE_ACCOUNT_REQUEST,
 		notice: {
@@ -352,7 +352,7 @@ export const createSocialUser = ( socialInfo, flowName ) => dispatch => {
 		.undocumented()
 		.usersSocialNew( { ...socialInfo, signup_flow_name: flowName } )
 		.then(
-			wpcomResponse => {
+			( wpcomResponse ) => {
 				const data = {
 					username: wpcomResponse.username,
 					bearerToken: wpcomResponse.bearer_token,
@@ -360,7 +360,7 @@ export const createSocialUser = ( socialInfo, flowName ) => dispatch => {
 				dispatch( { type: SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS, data } );
 				return data;
 			},
-			wpcomError => {
+			( wpcomError ) => {
 				const error = getErrorFromWPCOMError( wpcomError );
 
 				dispatch( {
@@ -383,7 +383,7 @@ export const createSocialUser = ( socialInfo, flowName ) => dispatch => {
  * @param  {string}   redirectTo     Url to redirect the user to upon successful login
  * @returns {Function}                A thunk that can be dispatched
  */
-export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
+export const connectSocialUser = ( socialInfo, redirectTo ) => ( dispatch ) => {
 	dispatch( {
 		type: SOCIAL_CONNECT_ACCOUNT_REQUEST,
 		notice: {
@@ -396,13 +396,13 @@ export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
 		.me()
 		.socialConnect( { ...socialInfo, redirect_to: redirectTo } )
 		.then(
-			wpcomResponse => {
+			( wpcomResponse ) => {
 				dispatch( {
 					type: SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
 					redirect_to: wpcomResponse.redirect_to,
 				} );
 			},
-			wpcomError => {
+			( wpcomError ) => {
 				const error = getErrorFromWPCOMError( wpcomError );
 
 				dispatch( {
@@ -421,7 +421,7 @@ export const connectSocialUser = ( socialInfo, redirectTo ) => dispatch => {
  * @param  {string}   socialService The social service name
  * @returns {Function}               A thunk that can be dispatched
  */
-export const disconnectSocialUser = socialService => dispatch => {
+export const disconnectSocialUser = ( socialService ) => ( dispatch ) => {
 	dispatch( {
 		type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST,
 		notice: {
@@ -439,7 +439,7 @@ export const disconnectSocialUser = socialService => dispatch => {
 					type: SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS,
 				} );
 			},
-			wpcomError => {
+			( wpcomError ) => {
 				const error = getErrorFromWPCOMError( wpcomError );
 
 				dispatch( {
@@ -477,7 +477,7 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 		client_id: config( 'wpcom_signup_id' ),
 		client_secret: config( 'wpcom_signup_key' ),
 	} )
-		.then( response => {
+		.then( ( response ) => {
 			const message = getSMSMessageFromResponse( response );
 
 			dispatch( {
@@ -489,7 +489,7 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 				twoStepNonce: get( response, 'body.data.two_step_nonce' ),
 			} );
 		} )
-		.catch( httpError => {
+		.catch( ( httpError ) => {
 			const error = getErrorFromHTTPError( httpError );
 
 			dispatch( {
@@ -510,7 +510,7 @@ export const formUpdate = () => ( { type: LOGIN_FORM_UPDATE } );
  * @param  {string}   usernameOrEmail Identifier of the user
  * @returns {Function}                 A thunk that can be dispatched
  */
-export const getAuthAccountType = usernameOrEmail => dispatch => {
+export const getAuthAccountType = ( usernameOrEmail ) => ( dispatch ) => {
 	dispatch( recordTracksEvent( 'calypso_login_block_login_form_get_auth_type' ) );
 
 	dispatch( {
@@ -563,7 +563,7 @@ export const resetAuthAccountType = () => ( {
  * @param {Array<string>} tokenLinks token links array
  * @returns {Function} a thunk
  */
-export const receivedTwoFactorPushNotificationApproved = tokenLinks => dispatch => {
+export const receivedTwoFactorPushNotificationApproved = ( tokenLinks ) => ( dispatch ) => {
 	if ( ! Array.isArray( tokenLinks ) ) {
 		return dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED } );
 	}

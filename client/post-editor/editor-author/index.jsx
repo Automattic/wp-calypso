@@ -75,7 +75,7 @@ export class EditorAuthor extends Component {
 		);
 	}
 
-	onSelect = author => {
+	onSelect = ( author ) => {
 		this.props.recordEditorStat( 'advanced_author_changed' );
 		this.props.recordEditorEvent( 'Changed Author' );
 
@@ -101,7 +101,7 @@ export class EditorAuthor extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const isNew = isEditorNewPost( state );

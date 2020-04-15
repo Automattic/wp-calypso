@@ -4,4 +4,4 @@
  * @param  {object} state Global state tree
  * @returns {object}       Help links
  */
-export default state => state.help.links;
+export default ( state ) => state.help.links;

@@ -8,7 +8,7 @@ function arrowFunctionBodyToCase( j, test, body ) {
 function getCases( j, handlerMap ) {
 	let hasPersistence = false;
 
-	const cases = handlerMap.properties.map( actionNode => {
+	const cases = handlerMap.properties.map( ( actionNode ) => {
 		const test = actionNode.computed
 			? actionNode.key
 			: j.literal( actionNode.key.name || String( actionNode.key.value ) );
@@ -134,9 +134,9 @@ export default function transformer( file, api ) {
 	root
 		.find(
 			j.CallExpression,
-			node => node.callee.type === 'Identifier' && node.callee.name === 'createReducer'
+			( node ) => node.callee.type === 'Identifier' && node.callee.name === 'createReducer'
 		)
-		.forEach( createReducerPath => {
+		.forEach( ( createReducerPath ) => {
 			if ( createReducerPath.value.arguments.length !== 2 ) {
 				throw new Error( 'Unable to translate createReducer' );
 			}
@@ -171,10 +171,10 @@ export default function transformer( file, api ) {
 	root
 		.find(
 			j.CallExpression,
-			node =>
+			( node ) =>
 				node.callee.type === 'Identifier' && node.callee.name === 'createReducerWithValidation'
 		)
-		.forEach( createReducerPath => {
+		.forEach( ( createReducerPath ) => {
 			if ( createReducerPath.value.arguments.length !== 3 ) {
 				throw new Error( 'Unable to translate createReducerWithValidation' );
 			}
@@ -208,26 +208,26 @@ export default function transformer( file, api ) {
 	root
 		.find(
 			j.ImportDeclaration,
-			node =>
+			( node ) =>
 				node.specifiers &&
 				node.specifiers.some(
-					s =>
+					( s ) =>
 						s &&
 						s.imported &&
 						( s.imported.name === 'createReducer' ||
 							s.imported.name === 'createReducerWithValidation' )
 				)
 		)
-		.forEach( nodePath => {
+		.forEach( ( nodePath ) => {
 			const filtered = nodePath.value.specifiers.filter(
-				s =>
+				( s ) =>
 					s.imported.name !== 'createReducer' && s.imported.name !== 'createReducerWithValidation'
 			);
 
 			if (
-				nodePath.value.specifiers.find( s => s.imported.name === 'createReducerWithValidation' )
+				nodePath.value.specifiers.find( ( s ) => s.imported.name === 'createReducerWithValidation' )
 			) {
-				if ( ! filtered.find( s => s.imported.name === 'withSchemaValidation' ) ) {
+				if ( ! filtered.find( ( s ) => s.imported.name === 'withSchemaValidation' ) ) {
 					filtered.push(
 						j.importSpecifier(
 							j.identifier( 'withSchemaValidation' ),
@@ -238,7 +238,7 @@ export default function transformer( file, api ) {
 			}
 
 			if ( usedWithoutPersistence ) {
-				if ( ! filtered.find( s => s.imported.name === 'withoutPersistence' ) ) {
+				if ( ! filtered.find( ( s ) => s.imported.name === 'withoutPersistence' ) ) {
 					filtered.push(
 						j.importSpecifier(
 							j.identifier( 'withoutPersistence' ),

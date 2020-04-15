@@ -76,7 +76,7 @@ const SiteBackupCard = ( { disabled, lastGoodBackup, requestBackups, siteId } ) 
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		return {
 			lastGoodBackup: getLastGoodRewindBackup( state, siteId ),

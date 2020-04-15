@@ -118,7 +118,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		const selector = By.css( '.product-name' );
 		return await this.driver
 			.findElements( selector )
-			.then( products => promise.fullyResolved( products.map( e => e.getText() ) ) );
+			.then( ( products ) => promise.fullyResolved( products.map( ( e ) => e.getText() ) ) );
 	}
 
 	async numberOfProductsInCart() {

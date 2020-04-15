@@ -120,7 +120,9 @@ export function createStripePaymentMethodStore( {
 			return state.cardDataErrors;
 		},
 		getIncompleteFieldKeys( state ) {
-			return Object.keys( state.cardDataComplete ).filter( key => ! state.cardDataComplete[ key ] );
+			return Object.keys( state.cardDataComplete ).filter(
+				( key ) => ! state.cardDataComplete[ key ]
+			);
 		},
 	};
 
@@ -238,7 +240,7 @@ export function createStripeMethod( { store, stripe, stripeConfiguration } ) {
 			/>
 		),
 		inactiveContent: <StripeSummary />,
-		getAriaLabel: localize => localize( 'Credit Card' ),
+		getAriaLabel: ( localize ) => localize( 'Credit Card' ),
 	};
 }
 
@@ -247,18 +249,18 @@ function StripeCreditCardFields() {
 	const theme = useTheme();
 	const onEvent = useEvents();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
-	const cardholderName = useSelect( select => select( 'stripe' ).getCardholderName() );
-	const brand = useSelect( select => select( 'stripe' ).getBrand() );
+	const cardholderName = useSelect( ( select ) => select( 'stripe' ).getCardholderName() );
+	const brand = useSelect( ( select ) => select( 'stripe' ).getBrand() );
 	const {
 		cardNumber: cardNumberError,
 		cardCvc: cardCvcError,
 		cardExpiry: cardExpiryError,
-	} = useSelect( select => select( 'stripe' ).getCardDataErrors() );
+	} = useSelect( ( select ) => select( 'stripe' ).getCardDataErrors() );
 	const { changeCardholderName, changeBrand, setCardDataError, setCardDataComplete } = useDispatch(
 		'stripe'
 	);
 
-	const handleStripeFieldChange = input => {
+	const handleStripeFieldChange = ( input ) => {
 		setCardDataComplete( input.elementType, input.complete );
 		if ( input.elementType === 'cardNumber' ) {
 			changeBrand( input.brand );
@@ -307,7 +309,7 @@ function StripeCreditCardFields() {
 							onReady={ () => {
 								setIsStripeFullyLoaded( true );
 							} }
-							onChange={ input => {
+							onChange={ ( input ) => {
 								handleStripeFieldChange( input );
 							} }
 						/>
@@ -323,7 +325,7 @@ function StripeCreditCardFields() {
 							<StripeFieldWrapper hasError={ cardExpiryError }>
 								<CardExpiryElement
 									style={ cardNumberStyle }
-									onChange={ input => {
+									onChange={ ( input ) => {
 										handleStripeFieldChange( input );
 									} }
 								/>
@@ -339,7 +341,7 @@ function StripeCreditCardFields() {
 									<StripeFieldWrapper hasError={ cardCvcError }>
 										<CardCvcElement
 											style={ cardNumberStyle }
-											onChange={ input => {
+											onChange={ ( input ) => {
 												handleStripeFieldChange( input );
 											} }
 										/>
@@ -377,7 +379,7 @@ const StripeFields = styled.div`
 const CreditCardFieldsWrapper = styled.div`
 	padding: 16px;
 	position: relative;
-	display: ${props => ( props.isLoaded ? 'block' : 'none') };
+	display: ${( props ) => ( props.isLoaded ? 'block' : 'none') };
 	position: relative;
 
 	:after {
@@ -385,7 +387,7 @@ const CreditCardFieldsWrapper = styled.div`
 		width: calc( 100% - 6px );
 		height: 1px;
 		content: '';
-		background: ${props => props.theme.colors.borderColorLight};
+		background: ${( props ) => props.theme.colors.borderColorLight};
 		position: absolute;
 		top: 0;
 		left: 3px;
@@ -421,9 +423,9 @@ const Label = styled.label`
 const LabelText = styled.span`
 	display: block;
 	font-size: 14px;
-	font-weight: ${props => props.theme.weights.bold};
+	font-weight: ${( props ) => props.theme.weights.bold};
 	margin-bottom: 8px;
-	color: ${props => props.theme.colors.textColor};
+	color: ${( props ) => props.theme.colors.textColor};
 `;
 
 const StripeFieldWrapper = styled.span`
@@ -436,17 +438,17 @@ const StripeFieldWrapper = styled.span`
 		font-size: 16px;
 		box-sizing: border-box;
 		border: 1px solid
-			${props => ( props.hasError ? props.theme.colors.error : props.theme.colors.borderColor) };
+			${( props ) => ( props.hasError ? props.theme.colors.error : props.theme.colors.borderColor) };
 		padding: 12px 10px;
 		line-height: 1.2;
 	}
 
 	.StripeElement--focus {
-		outline: ${props => props.theme.colors.outline} solid 2px;
+		outline: ${( props ) => props.theme.colors.outline} solid 2px;
 	}
 
 	.StripeElement--focus.StripeElement--invalid {
-		outline: ${props => props.theme.colors.error} solid 2px;
+		outline: ${( props ) => props.theme.colors.error} solid 2px;
 	}
 `;
 
@@ -454,9 +456,9 @@ const StripeErrorMessage = styled.span`
 	font-size: 14px;
 	margin-top: 8px;
 	font-style: italic;
-	color: ${props => props.theme.colors.error};
+	color: ${( props ) => props.theme.colors.error};
 	display: block;
-	font-weight: ${props => props.theme.weights.normal};
+	font-weight: ${( props ) => props.theme.weights.normal};
 `;
 
 function LoadingFields() {
@@ -472,12 +474,14 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 	const localize = useLocalize();
 	const [ items, total ] = useLineItems();
 	const { showErrorMessage, showInfoMessage } = useMessages();
-	const transactionStatus = useSelect( select => select( 'stripe' ).getTransactionStatus() );
-	const transactionError = useSelect( select => select( 'stripe' ).getTransactionError() );
-	const transactionAuthData = useSelect( select => select( 'stripe' ).getTransactionAuthData() );
+	const transactionStatus = useSelect( ( select ) => select( 'stripe' ).getTransactionStatus() );
+	const transactionError = useSelect( ( select ) => select( 'stripe' ).getTransactionError() );
+	const transactionAuthData = useSelect( ( select ) =>
+		select( 'stripe' ).getTransactionAuthData()
+	);
 	const { beginStripeTransaction, setStripeComplete, resetTransaction } = useDispatch( 'stripe' );
-	const cardholderName = useSelect( select => select( 'stripe' ).getCardholderName() );
-	const redirectUrl = useSelect( select => select( 'stripe' ).getRedirectUrl() );
+	const cardholderName = useSelect( ( select ) => select( 'stripe' ).getCardholderName() );
+	const redirectUrl = useSelect( ( select ) => select( 'stripe' ).getRedirectUrl() );
 	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 	const onEvent = useEvents();
 
@@ -523,11 +527,11 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 				stripeConfiguration,
 				response: transactionAuthData,
 			} )
-				.then( authenticationResponse => {
+				.then( ( authenticationResponse ) => {
 					debug( 'stripe auth is complete', authenticationResponse );
 					isSubscribed && setStripeComplete( authenticationResponse );
 				} )
-				.catch( error => {
+				.catch( ( error ) => {
 					debug( 'showing error for auth', error );
 					showErrorMessage(
 						localize( 'Authorization failed for that card. Please try a different payment method.' )
@@ -586,8 +590,8 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 }
 
 function StripeSummary() {
-	const cardholderName = useSelect( select => select( 'stripe' ).getCardholderName() );
-	const brand = useSelect( select => select( 'stripe' ).getBrand() );
+	const cardholderName = useSelect( ( select ) => select( 'stripe' ).getCardholderName() );
+	const brand = useSelect( ( select ) => select( 'stripe' ).getBrand() );
 
 	return (
 		<SummaryDetails>
@@ -603,14 +607,14 @@ function isCreditCardFormValid( store ) {
 	const cardholderName = store.selectors.getCardholderName( store.getState() );
 	const errors = store.selectors.getCardDataErrors( store.getState() );
 	const incompleteFieldKeys = store.selectors.getIncompleteFieldKeys( store.getState() );
-	const areThereErrors = Object.keys( errors ).some( errorKey => errors[ errorKey ] );
+	const areThereErrors = Object.keys( errors ).some( ( errorKey ) => errors[ errorKey ] );
 	if ( ! cardholderName?.value.length ) {
 		// Touch the field so it displays a validation error
 		store.dispatch( store.actions.changeCardholderName( '' ) );
 	}
 	if ( incompleteFieldKeys.length > 0 ) {
 		// Show "this field is required" for each incomplete field
-		incompleteFieldKeys.map( key =>
+		incompleteFieldKeys.map( ( key ) =>
 			store.dispatch( store.actions.setCardDataError( key, 'This field is required' ) )
 		); // TODO: localize this message
 	}

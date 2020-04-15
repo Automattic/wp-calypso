@@ -259,7 +259,7 @@ const Security2faSMSSettings = createReactClass( {
 export default flowRight(
 	protectForm,
 	localize,
-	connect( state => ( {
+	connect( ( state ) => ( {
 		countriesList: getCountries( state, 'sms' ),
 	} ) )
 )( Security2faSMSSettings );

@@ -139,7 +139,7 @@ const getAnalyticsPathAndTitle = ( postType, postId, postToCopyId ) => {
 };
 
 function waitForSiteIdAndSelectedEditor( context ) {
-	return new Promise( resolve => {
+	return new Promise( ( resolve ) => {
 		const unsubscribe = context.store.subscribe( () => {
 			const state = context.store.getState();
 			const siteId = getSelectedSiteId( state );
@@ -219,17 +219,21 @@ export default {
 				context.store.dispatch( startEditingPostCopy( siteId, postToCopyId ) );
 			} else if ( postId ) {
 				const contextPath = context.path;
-				context.store.dispatch( startEditingExistingPost( siteId, postId ) ).then( editedPost => {
-					if ( contextPath !== page.current ) {
-						// browser navigated elsewhere while the load was in progress
-						return;
-					}
+				context.store
+					.dispatch( startEditingExistingPost( siteId, postId ) )
+					.then( ( editedPost ) => {
+						if ( contextPath !== page.current ) {
+							// browser navigated elsewhere while the load was in progress
+							return;
+						}
 
-					if ( editedPost && editedPost.type && editedPost.type !== postType ) {
-						// incorrect post type in URL
-						page.redirect( getEditURL( editedPost, getSite( context.store.getState(), siteId ) ) );
-					}
-				} );
+						if ( editedPost && editedPost.type && editedPost.type !== postType ) {
+							// incorrect post type in URL
+							page.redirect(
+								getEditURL( editedPost, getSite( context.store.getState(), siteId ) )
+							);
+						}
+					} );
 			} else {
 				const post = { type: postType };
 

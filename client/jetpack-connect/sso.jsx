@@ -67,7 +67,7 @@ class JetpackSsoForm extends Component {
 		}
 	}
 
-	onApproveSSO = event => {
+	onApproveSSO = ( event ) => {
 		event.preventDefault();
 		analytics.tracks.recordEvent( 'calypso_jetpack_sso_log_in_button_click' );
 
@@ -80,13 +80,13 @@ class JetpackSsoForm extends Component {
 		this.props.authorizeSSO( siteId, ssoNonce, siteUrl );
 	};
 
-	onCancelClick = event => {
+	onCancelClick = ( event ) => {
 		debug( 'Clicked return to site link' );
 		analytics.tracks.recordEvent( 'calypso_jetpack_sso_return_to_site_link_click' );
 		this.returnToSiteFallback( event );
 	};
 
-	onTryAgainClick = event => {
+	onTryAgainClick = ( event ) => {
 		debug( 'Clicked try again link' );
 		analytics.tracks.recordEvent( 'calypso_jetpack_sso_try_again_link_click' );
 		this.returnToSiteFallback( event );
@@ -96,7 +96,7 @@ class JetpackSsoForm extends Component {
 		analytics.tracks.recordEvent( 'calypso_jetpack_sso_sign_in_different_user_link_click' );
 	};
 
-	onClickSharedDetailsModal = event => {
+	onClickSharedDetailsModal = ( event ) => {
 		event.preventDefault();
 		analytics.tracks.recordEvent( 'calypso_jetpack_sso_shared_details_link_click' );
 		this.setState( {
@@ -110,7 +110,7 @@ class JetpackSsoForm extends Component {
 		} );
 	};
 
-	returnToSiteFallback = event => {
+	returnToSiteFallback = ( event ) => {
 		// If, for some reason, the API request failed and we do not have the admin URL,
 		// then fallback to the user's last location.
 		if ( ! get( this.props, 'blogDetails.admin_url' ) ) {
@@ -475,7 +475,7 @@ class JetpackSsoForm extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const jetpackSSO = getSSO( state );
 		return {
 			ssoUrl: get( jetpackSSO, 'ssoUrl' ),

@@ -28,7 +28,7 @@ class SharingButtonsStyle extends React.Component {
 		disabled: false,
 	};
 
-	onChange = value => {
+	onChange = ( value ) => {
 		const { path } = this.props;
 
 		this.props.onChange( value );
@@ -95,6 +95,6 @@ class SharingButtonsStyle extends React.Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	return { path: getCurrentRouteParameterized( state, getSelectedSiteId( state ) ) };
 } )( localize( SharingButtonsStyle ) );

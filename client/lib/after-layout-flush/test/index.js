@@ -23,7 +23,7 @@ function requestAnimationFrameFake( func ) {
 }
 
 function cancelAnimationFrameFake( func ) {
-	pendingRafCallbacks = pendingRafCallbacks.filter( item => item !== func );
+	pendingRafCallbacks = pendingRafCallbacks.filter( ( item ) => item !== func );
 }
 
 function clearAnimationFrameCallbacks() {
@@ -31,7 +31,7 @@ function clearAnimationFrameCallbacks() {
 }
 
 function runAnimationFrame() {
-	pendingRafCallbacks.forEach( callback => callback() );
+	pendingRafCallbacks.forEach( ( callback ) => callback() );
 	clearAnimationFrameCallbacks();
 }
 

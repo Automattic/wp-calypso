@@ -38,7 +38,7 @@ export default function () {
 	);
 
 	// Redirect settings pages for import and export now that they have their own sections.
-	page( '/settings/:importOrExport(import|export)/:subroute(.*)', context => {
+	page( '/settings/:importOrExport(import|export)/:subroute(.*)', ( context ) => {
 		const importOrExport = get( context, 'params.importOrExport' );
 		const subroute = get( context, 'params.subroute' );
 		const queryString = get( context, 'querystring' );

@@ -129,12 +129,12 @@ User.prototype.fetch = function () {
 			meta: 'flags',
 			abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ),
 		} )
-		.then( data => {
+		.then( ( data ) => {
 			debug( 'User successfully retrieved from api:', data );
 			const userData = filterUserObject( data );
 			this.handleFetchSuccess( userData );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			debug( 'Failed to retrieve user from api:', error );
 			this.handleFetchFailure( error );
 		} )
@@ -353,7 +353,7 @@ User.prototype.checkVerification = function () {
 	);
 
 	// wait for localStorage event (from other windows)
-	window.addEventListener( 'storage', e => {
+	window.addEventListener( 'storage', ( e ) => {
 		if ( e.key === '__email_verified_signal__' && e.newValue ) {
 			debug( 'Verification: RECEIVED SIGNAL' );
 			window.localStorage.removeItem( '__email_verified_signal__' );

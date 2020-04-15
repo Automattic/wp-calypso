@@ -19,7 +19,7 @@ export function getProductsBySiteId( state, siteId ) {
 export function getAvailableProductsBySiteId( state, siteId ) {
 	const products = getProductsBySiteId( state, siteId );
 	if ( products.data ) {
-		products.data = pickBy( products.data, product => product.available );
+		products.data = pickBy( products.data, ( product ) => product.available );
 	}
 	return products;
 }

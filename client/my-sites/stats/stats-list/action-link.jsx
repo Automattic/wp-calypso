@@ -18,7 +18,7 @@ class StatsActionLink extends PureComponent {
 		translate: PropTypes.func,
 	};
 
-	onClick = event => {
+	onClick = ( event ) => {
 		event.stopPropagation();
 		gaRecordEvent(
 			'Stats',

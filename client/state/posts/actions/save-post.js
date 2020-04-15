@@ -19,7 +19,7 @@ import 'state/posts/init';
  * @returns {Function}        Action thunk
  */
 export function savePost( siteId, postId = null, post ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: POST_SAVE,
 			siteId,
@@ -33,11 +33,11 @@ export function savePost( siteId, postId = null, post ) {
 		const saveResult = postHandle[ method ]( { apiVersion: '1.2' }, normalizedPost );
 
 		saveResult.then(
-			savedPost => {
+			( savedPost ) => {
 				dispatch( savePostSuccess( siteId, postId, savedPost, post ) );
 				dispatch( receivePost( savedPost ) );
 			},
-			error => {
+			( error ) => {
 				dispatch( {
 					type: POST_SAVE_FAILURE,
 					siteId,

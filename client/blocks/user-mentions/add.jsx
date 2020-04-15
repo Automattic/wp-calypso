@@ -22,7 +22,7 @@ const keys = { tab: 9, enter: 13, esc: 27, spaceBar: 32, upArrow: 38, downArrow:
  * @param {object} WrappedComponent - React component to wrap
  * @returns {object} the enhanced component
  */
-export default WrappedComponent =>
+export default ( WrappedComponent ) =>
 	class AddUserMentions extends React.Component {
 		matchingSuggestions = [];
 
@@ -80,7 +80,7 @@ export default WrappedComponent =>
 			}
 		}
 
-		handleKeyDown = event => {
+		handleKeyDown = ( event ) => {
 			if ( ! this.state.showPopover ) {
 				return;
 			}
@@ -116,7 +116,7 @@ export default WrappedComponent =>
 			this.setState( { selectedSuggestionId: this.matchingSuggestions[ nextIndex ].ID } );
 		};
 
-		handleKeyUp = event => {
+		handleKeyUp = ( event ) => {
 			if ( includes( [ keys.downArrow, keys.upArrow ], event.keyCode ) ) {
 				return;
 			}

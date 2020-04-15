@@ -117,7 +117,7 @@ describe( 'MediaStore', () => {
 			expect( MediaStore.dispatchToken ).to.be.a( 'string' );
 		} );
 
-		test( 'should emit a change event when receiving updates', done => {
+		test( 'should emit a change event when receiving updates', ( done ) => {
 			MediaStore.once( 'change', done );
 
 			dispatchReceiveMediaItems();

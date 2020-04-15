@@ -59,7 +59,7 @@ class Edit extends React.Component {
 		);
 	}
 
-	getDetailsForType = type => {
+	getDetailsForType = ( type ) => {
 		const newStatusDesign = config.isEnabled( 'domains/new-status-design' );
 
 		switch ( type ) {

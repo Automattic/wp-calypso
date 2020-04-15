@@ -23,7 +23,7 @@
  * @returns {*} value of property named by the key
  */
 
-const config = data => key => {
+const config = ( data ) => ( key ) => {
 	if ( key in data ) {
 		return data[ key ];
 	}
@@ -63,9 +63,10 @@ const config = data => key => {
  * @returns {boolean} True when feature is enabled.
  * @api public
  */
-const isEnabled = data => feature => ( data.features && !! data.features[ feature ] ) || false;
+const isEnabled = ( data ) => ( feature ) =>
+	( data.features && !! data.features[ feature ] ) || false;
 
-module.exports = data => {
+module.exports = ( data ) => {
 	const configApi = config( data );
 	configApi.isEnabled = isEnabled( data );
 

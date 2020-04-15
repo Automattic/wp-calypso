@@ -57,7 +57,7 @@ class EditorMediaModalDetailBase extends React.Component {
 		}, this );
 	};
 
-	incrementIndex = increment => {
+	incrementIndex = ( increment ) => {
 		this.props.onSelectedIndexChange( this.props.selectedIndex + increment );
 	};
 

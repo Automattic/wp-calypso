@@ -23,8 +23,10 @@ import './colors.scss';
 import './style.scss';
 
 const OnboardingEdit: FunctionComponent< BlockEditProps< Attributes > > = () => {
-	const { siteVertical, selectedDesign } = useSelect( select => select( STORE_KEY ).getState() );
-	const isCreatingSite = useSelect( select => select( SITE_STORE ).isFetchingSite() );
+	const { siteVertical, selectedDesign } = useSelect( ( select ) =>
+		select( STORE_KEY ).getState()
+	);
+	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
 	const replaceHistory = useNewQueryParam();
 
 	const makePath = usePath();

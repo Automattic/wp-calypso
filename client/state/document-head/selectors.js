@@ -60,7 +60,7 @@ export function getDocumentHeadCappedUnreadCount( state ) {
  * @returns {string}         Formatted title
  */
 export const getDocumentHeadFormattedTitle = createSelector(
-	state => {
+	( state ) => {
 		let title = '';
 
 		const unreadCount = getDocumentHeadCappedUnreadCount( state );
@@ -79,7 +79,7 @@ export const getDocumentHeadFormattedTitle = createSelector(
 
 		return title + config( 'site_name' );
 	},
-	state => [ state.documentHead, state.ui.section, state.ui.selectedSiteId ]
+	( state ) => [ state.documentHead, state.ui.section, state.ui.selectedSiteId ]
 );
 
 /**

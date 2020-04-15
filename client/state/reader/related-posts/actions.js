@@ -48,7 +48,7 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 			.undocumented()
 			.readSitePostRelated( query )
 			.then(
-				response => {
+				( response ) => {
 					dispatch( {
 						type: READER_RELATED_POSTS_REQUEST_SUCCESS,
 						payload: { siteId, postId, scope },
@@ -73,7 +73,7 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 						} );
 					} );
 				},
-				err => {
+				( err ) => {
 					dispatch( {
 						type: READER_RELATED_POSTS_REQUEST_FAILURE,
 						payload: { siteId, postId, scope, error: err },

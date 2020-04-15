@@ -221,8 +221,8 @@ const PluginsStore = {
 		}
 
 		pluginSites = plugin.sites
-			.filter( site => site.visible )
-			.map( site => {
+			.filter( ( site ) => site.visible )
+			.map( ( site ) => {
 				// clone the site object before adding a new property. Don't modify the return value of getSite
 				const pluginSite = clone( getSite( reduxGetState(), site.ID ) );
 				pluginSite.plugin = site.plugin;

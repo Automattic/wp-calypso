@@ -60,7 +60,7 @@ class UpgradeNudgeExpanded extends Component {
 		const price = formatCurrency( this.props.plan.raw_price / 12, this.props.plan.currency_code );
 		const features = this.props.planConstants
 			.getPlanCompareFeatures()
-			.filter( feature => feature !== this.props.highlightedFeature )
+			.filter( ( feature ) => feature !== this.props.highlightedFeature )
 			.slice( 0, 6 );
 
 		return (
@@ -86,7 +86,7 @@ class UpgradeNudgeExpanded extends Component {
 								{ getFeatureTitle( this.props.highlightedFeature ) }
 							</PlanCompareCardItem>
 						) }
-						{ features.map( feature => (
+						{ features.map( ( feature ) => (
 							<PlanCompareCardItem key={ feature }>
 								{ getFeatureTitle( feature ) }
 							</PlanCompareCardItem>
@@ -161,6 +161,6 @@ const mapStateToProps = ( state, { plan = PLAN_PERSONAL } ) => ( {
 	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
 } );
 
-const mapDispatchToProps = dispatch => bindActionCreators( { recordTracksEvent }, dispatch );
+const mapDispatchToProps = ( dispatch ) => bindActionCreators( { recordTracksEvent }, dispatch );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( UpgradeNudgeExpanded ) );

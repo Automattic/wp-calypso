@@ -7,7 +7,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 import { HOME_LAYOUT_REQUEST } from 'state/action-types';
 import { setHomeLayout } from 'state/home/actions';
 
-const requestLayout = action => {
+const requestLayout = ( action ) => {
 	return http(
 		{
 			method: 'GET',

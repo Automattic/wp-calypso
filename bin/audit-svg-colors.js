@@ -124,7 +124,7 @@ const REPLACEMENT_RULES = [];
  * Perform the audit
  */
 
-SVG_FILES_TO_PROCESS.forEach( imagePath => {
+SVG_FILES_TO_PROCESS.forEach( ( imagePath ) => {
 	const targetValues = isAppImagePath( imagePath )
 		? PALETTE_APP_COLOR_VALUES
 		: PALETTE_ILLUSTRATION_COLOR_VALUES;
@@ -133,7 +133,7 @@ SVG_FILES_TO_PROCESS.forEach( imagePath => {
 	const matchedColorValues = matchColorValues( imageContent );
 	const colorValuesToReplace = [];
 
-	_.uniq( matchedColorValues ).forEach( value => {
+	_.uniq( matchedColorValues ).forEach( ( value ) => {
 		if ( SVG_IGNORE_VALUES.includes( value ) ) {
 			return;
 		}
@@ -155,7 +155,7 @@ SVG_FILES_TO_PROCESS.forEach( imagePath => {
 
 	REPLACEMENT_RULES.push( {
 		file: imagePath,
-		rules: colorValuesToReplace.map( value => {
+		rules: colorValuesToReplace.map( ( value ) => {
 			const replacementValue = findClosestColor( value, targetValues );
 			const replacementName = findPaletteColorName( replacementValue );
 
@@ -184,13 +184,13 @@ printReplacementRules( REPLACEMENT_RULES );
 
 function excludeSelectedPaths( imagePath ) {
 	// Make sure none of the ignored paths match
-	return SVG_IGNORE_PATHS.every( ignoredPath => {
+	return SVG_IGNORE_PATHS.every( ( ignoredPath ) => {
 		return ! ignoredPath.test( imagePath );
 	} );
 }
 
 function isAppImagePath( imagePath ) {
-	return SVG_APP_PATHS.some( appPath => {
+	return SVG_APP_PATHS.some( ( appPath ) => {
 		return appPath.test( imagePath );
 	} );
 }
@@ -266,7 +266,7 @@ function printReplacementRules( replacementObjects ) {
 			`Found ${ count } SVG images in this repository that use non-standard color values:`
 		);
 
-		replacementObjects.forEach( replacementObject => {
+		replacementObjects.forEach( ( replacementObject ) => {
 			const replacementRules = formatReplacementRules( replacementObject.rules );
 			console.log( `\n${ replacementObject.file}\n${ replacementRules.join( '\n' ) }` );
 		} );
@@ -274,7 +274,7 @@ function printReplacementRules( replacementObjects ) {
 }
 
 function formatReplacementRules( rules ) {
-	return _.sortBy( rules, 'to.name' ).map( rule => {
+	return _.sortBy( rules, 'to.name' ).map( ( rule ) => {
 		const valueFrom = _.padEnd( rule.from.value, 7 );
 		const valueTo = _.padEnd( rule.to.value, 7 );
 

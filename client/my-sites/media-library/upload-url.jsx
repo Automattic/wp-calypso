@@ -40,7 +40,7 @@ class MediaLibraryUploadUrl extends Component {
 		isError: false,
 	};
 
-	upload = event => {
+	upload = ( event ) => {
 		event.preventDefault();
 
 		const isError = ! event.target.checkValidity();
@@ -59,14 +59,14 @@ class MediaLibraryUploadUrl extends Component {
 		bumpStat( 'editor_upload_via', 'url' );
 	};
 
-	onChange = event => {
+	onChange = ( event ) => {
 		this.setState( {
 			isError: false,
 			value: event.target.value,
 		} );
 	};
 
-	onKeyDown = event => {
+	onKeyDown = ( event ) => {
 		if ( event.key === 'Escape' ) {
 			return this.props.onClose( event );
 		}

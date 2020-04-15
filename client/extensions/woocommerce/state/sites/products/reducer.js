@@ -45,7 +45,7 @@ export default withoutPersistence( ( state = {}, action ) => {
 function updateCachedProduct( products, product ) {
 	let found = false;
 	const updatedProduct = { ...product, name: decodeEntities( product.name ) };
-	const newProducts = products.map( p => {
+	const newProducts = products.map( ( p ) => {
 		if ( p.id === product.id ) {
 			found = true;
 			return updatedProduct;
@@ -104,7 +104,7 @@ export function productsRequestSuccess( state = {}, action ) {
 		products = updateCachedProduct( products, product );
 	} );
 
-	const ids = action.products.map( p => p.id );
+	const ids = action.products.map( ( p ) => p.id );
 	const isLoading = false;
 	const totalPages = get( action, 'totalPages', 0 );
 	const totalProducts = get( action, 'totalProducts', 0 );

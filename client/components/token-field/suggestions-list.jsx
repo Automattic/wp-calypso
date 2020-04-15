@@ -56,7 +56,7 @@ class SuggestionsList extends React.PureComponent {
 		}
 	}
 
-	_computeSuggestionMatch = suggestion => {
+	_computeSuggestionMatch = ( suggestion ) => {
 		const match = this.props.displayTransform( this.props.match || '' ).toLocaleLowerCase();
 
 		if ( match.length === 0 ) {
@@ -122,7 +122,7 @@ class SuggestionsList extends React.PureComponent {
 		);
 	};
 
-	_handleHover = suggestion => {
+	_handleHover = ( suggestion ) => {
 		return function () {
 			if ( ! this._scrollingIntoView ) {
 				this.props.onHover( suggestion );
@@ -130,13 +130,13 @@ class SuggestionsList extends React.PureComponent {
 		}.bind( this );
 	};
 
-	_handleClick = suggestion => {
+	_handleClick = ( suggestion ) => {
 		return function () {
 			this.props.onSelect( suggestion );
 		}.bind( this );
 	};
 
-	_handleMouseDown = e => {
+	_handleMouseDown = ( e ) => {
 		// By preventing default here, we will not lose focus of <input> when clicking a suggestion
 		e.preventDefault();
 	};

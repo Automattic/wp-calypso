@@ -192,13 +192,13 @@ class PluginItem extends Component {
 		}
 
 		const updated_versions = this.props.plugin.sites
-			.map( site => {
+			.map( ( site ) => {
 				if ( site.plugin.update && site.plugin.update.new_version ) {
 					return site.plugin.update.new_version;
 				}
 				return false;
 			} )
-			.filter( version => version );
+			.filter( ( version ) => version );
 
 		return (
 			<Notice
@@ -303,7 +303,7 @@ class PluginItem extends Component {
 		);
 	}
 
-	onItemClick = event => {
+	onItemClick = ( event ) => {
 		if ( this.props.isSelectable ) {
 			event.preventDefault();
 			this.props.onClick( this );

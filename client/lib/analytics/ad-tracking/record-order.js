@@ -108,7 +108,7 @@ export async function recordOrder( cart, orderId ) {
 	}
 
 	if ( isIconMediaEnabled ) {
-		const skus = cart.products.map( product => product.product_slug ).join( ',' );
+		const skus = cart.products.map( ( product ) => product.product_slug ).join( ',' );
 		const params =
 			ICON_MEDIA_ORDER_PIXEL_URL + `&tx=${ orderId }&sku=${ skus }&price=${ usdTotalCost }`;
 		debug( 'recordOrder: [Icon Media]', params );
@@ -123,9 +123,9 @@ export async function recordOrder( cart, orderId ) {
 			{
 				value: cart.total_cost.toString(),
 				currency: cart.currency,
-				content_name: cart.products.map( product => product.product_name ).join( ',' ),
+				content_name: cart.products.map( ( product ) => product.product_name ).join( ',' ),
 				content_type: 'product',
-				content_ids: cart.products.map( product => product.product_slug ),
+				content_ids: cart.products.map( ( product ) => product.product_slug ),
 				num_items: cart.products.length,
 				order_id: orderId,
 			},
@@ -142,7 +142,7 @@ export async function recordOrder( cart, orderId ) {
 			{
 				value: cart.total_cost,
 				currency: cart.currency,
-				line_items: cart.products.map( product => ( {
+				line_items: cart.products.map( ( product ) => ( {
 					product_name: product.product_name,
 					product_id: product.product_slug,
 					product_price: product.price,
@@ -168,13 +168,13 @@ export async function recordOrder( cart, orderId ) {
 
 function splitWpcomJetpackCartInfo( cart ) {
 	const jetpackCost = cart.products
-		.map( product => ( productsValues.isJetpackPlan( product ) ? product.cost : 0)  )
+		.map( ( product ) => ( productsValues.isJetpackPlan( product ) ? product.cost : 0)  )
 		.reduce( ( accumulator, cost ) => accumulator + cost, 0 );
 	const wpcomCost = cart.total_cost - jetpackCost;
 	const wpcomProducts = cart.products.filter(
-		product => ! productsValues.isJetpackPlan( product )
+		( product ) => ! productsValues.isJetpackPlan( product )
 	);
-	const jetpackProducts = cart.products.filter( product =>
+	const jetpackProducts = cart.products.filter( ( product ) =>
 		productsValues.isJetpackPlan( product )
 	);
 
@@ -211,7 +211,7 @@ function recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo ) {
 				qacct: TRACKING_IDS.quantcast,
 				labels:
 					'_fp.event.Purchase Confirmation,_fp.pcat.' +
-					wpcomJetpackCartInfo.wpcomProducts.map( product => product.product_slug ).join( ' ' ),
+					wpcomJetpackCartInfo.wpcomProducts.map( ( product ) => product.product_slug ).join( ' ' ),
 				orderid: orderId.toString(),
 				revenue: wpcomJetpackCartInfo.wpcomCostUSD.toString(),
 				event: 'refresh',
@@ -232,7 +232,9 @@ function recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo ) {
 				qacct: TRACKING_IDS.quantcast,
 				labels:
 					'_fp.event.Purchase Confirmation,_fp.pcat.' +
-					wpcomJetpackCartInfo.jetpackProducts.map( product => product.product_slug ).join( ' ' ),
+					wpcomJetpackCartInfo.jetpackProducts
+						.map( ( product ) => product.product_slug )
+						.join( ' ' ),
 				orderid: orderId.toString(),
 				revenue: wpcomJetpackCartInfo.jetpackCostUSD.toString(),
 				event: 'refresh',
@@ -267,7 +269,7 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 		value: wpcomJetpackCartInfo.totalCostUSD,
 		transaction_id: orderId,
 		u1: wpcomJetpackCartInfo.totalCostUSD,
-		u2: cart.products.map( product => product.product_name ).join( ', ' ),
+		u2: cart.products.map( ( product ) => product.product_name ).join( ', ' ),
 		u3: 'USD',
 		u8: orderId,
 		send_to: 'DC-6355556/wpsal0/wpsale+transactions',
@@ -280,7 +282,9 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 			value: wpcomJetpackCartInfo.wpcomCostUSD,
 			transaction_id: orderId,
 			u1: wpcomJetpackCartInfo.wpcomCostUSD,
-			u2: wpcomJetpackCartInfo.wpcomProducts.map( product => product.product_name ).join( ', ' ),
+			u2: wpcomJetpackCartInfo.wpcomProducts
+				.map( ( product ) => product.product_name )
+				.join( ', ' ),
 			u3: 'USD',
 			u8: orderId,
 			send_to: 'DC-6355556/wpsal0/purch0+transactions',
@@ -294,7 +298,9 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 			value: wpcomJetpackCartInfo.jetpackCostUSD,
 			transaction_id: orderId,
 			u1: wpcomJetpackCartInfo.jetpackCostUSD,
-			u2: wpcomJetpackCartInfo.jetpackProducts.map( product => product.product_name ).join( ', ' ),
+			u2: wpcomJetpackCartInfo.jetpackProducts
+				.map( ( product ) => product.product_name )
+				.join( ', ' ),
 			u3: 'USD',
 			u8: orderId,
 			send_to: 'DC-6355556/wpsal0/purch00+transactions',
@@ -334,7 +340,7 @@ function recordOrderInFacebook( cart, orderId ) {
 		TRACKING_IDS.facebookInit,
 		'Purchase',
 		{
-			product_slug: cart.products.map( product => product.product_slug ).join( ', ' ),
+			product_slug: cart.products.map( ( product ) => product.product_slug ).join( ', ' ),
 			value: cart.total_cost,
 			currency: cart.currency,
 			user_id: currentUser ? currentUser.hashedPii.ID : 0,
@@ -351,7 +357,7 @@ function recordOrderInFacebook( cart, orderId ) {
 		TRACKING_IDS.facebookJetpackInit,
 		'Purchase',
 		{
-			product_slug: cart.products.map( product => product.product_slug ).join( ', ' ),
+			product_slug: cart.products.map( ( product ) => product.product_slug ).join( ', ' ),
 			value: cart.total_cost,
 			currency: cart.currency,
 			user_id: currentUser ? currentUser.hashedPii.ID : 0,
@@ -464,7 +470,7 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 	}
 
 	const items = [];
-	products.map( product => {
+	products.map( ( product ) => {
 		items.push( {
 			id: product.product_id.toString(),
 			name: product.product_name_en.toString(),

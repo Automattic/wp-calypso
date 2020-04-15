@@ -196,7 +196,7 @@ const LineItemPriceUI = styled.span`
 `;
 
 const BundledDomainFreeUI = styled.div`
-	color: ${props => props.theme.colors.success};
+	color: ${( props ) => props.theme.colors.success};
 `;
 
 const ProductTitleUI = styled.div`
@@ -210,7 +210,7 @@ const DeleteButton = styled( Button )`
 	top: 10px;
 
 	:hover rect {
-		fill: ${props => props.theme.colors.error};
+		fill: ${( props ) => props.theme.colors.error};
 	}
 `;
 
@@ -274,7 +274,7 @@ export function WPOrderReviewLineItems( {
 } ) {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
-			{ items.map( item => (
+			{ items.map( ( item ) => (
 				<WPOrderReviewListItems key={ item.id }>
 					<LineItemUI
 						isSummaryVisible={ isSummaryVisible }

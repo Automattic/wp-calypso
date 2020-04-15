@@ -42,7 +42,7 @@ class SidebarModalOpener extends Component {
 			// If no template used or 'blank', preview any other template (1 is currently 'Home' template).
 			return templates[ 0 ];
 		}
-		const matchingTemplate = templates.find( temp => temp.slug === lastTemplateUsedSlug );
+		const matchingTemplate = templates.find( ( temp ) => temp.slug === lastTemplateUsedSlug );
 		// If no matching template, return the blank template.
 		if ( ! matchingTemplate ) {
 			return templates[ 0 ];
@@ -124,12 +124,12 @@ class SidebarModalOpener extends Component {
 }
 
 const SidebarTemplatesPlugin = compose(
-	withSelect( select => ( {
+	withSelect( ( select ) => ( {
 		lastTemplateUsedSlug: select( 'core/editor' ).getEditedPostAttribute( 'meta' )
 			._starter_page_template,
 		isOpen: select( 'automattic/starter-page-layouts' ).isOpen(),
 	} ) ),
-	withDispatch( dispatch => ( {
+	withDispatch( ( dispatch ) => ( {
 		setIsOpen: dispatch( 'automattic/starter-page-layouts' ).setIsOpen,
 	} ) )
 )( SidebarModalOpener );

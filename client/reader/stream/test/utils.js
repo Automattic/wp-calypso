@@ -31,7 +31,7 @@ describe( 'reader stream', () => {
 	};
 
 	describe( '#sameDay', () => {
-		const datePostKey = date => ( { date } );
+		const datePostKey = ( date ) => ( { date } );
 		const todayPostKey = datePostKey( today );
 		const todayPostKey2 = datePostKey( new Date() );
 		const oneYearAgoPostKey = datePostKey( moment( today ).subtract( 1, 'year' ).toDate() );

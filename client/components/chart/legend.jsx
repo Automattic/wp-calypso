@@ -26,7 +26,7 @@ export default class ChartLegend extends React.Component {
 		tabs: [],
 	};
 
-	onFilterChange = chartItem => {
+	onFilterChange = ( chartItem ) => {
 		this.props.clickHandler( chartItem );
 	};
 

@@ -11,7 +11,7 @@ import {
 import 'state/data-layer/wpcom/sites/memberships';
 import wpcom from 'lib/wp';
 
-export const requestSettings = siteId => ( {
+export const requestSettings = ( siteId ) => ( {
 	siteId,
 	type: MEMBERSHIPS_SETTINGS,
 } );
@@ -22,7 +22,7 @@ export const requestDisconnectStripeAccount = (
 	noticeTextOnProcessing,
 	noticeTextOnSuccess
 ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: NOTICE_CREATE,
 			notice: {
@@ -48,7 +48,7 @@ export const requestDisconnectStripeAccount = (
 					},
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: NOTICE_CREATE,
 					notice: {

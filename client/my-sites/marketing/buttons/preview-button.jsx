@@ -100,7 +100,7 @@ class SharingButtonsPreviewButton extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		path: getCurrentRouteParameterized( state, getSelectedSiteId( state ) ),
 	} ),
 	null,

@@ -23,7 +23,7 @@ describe( '#accept()', () => {
 		expect( dialog.textContent ).toEqual( message );
 	} );
 
-	test( 'should trigger the callback with an accepted prompt', done => {
+	test( 'should trigger the callback with an accepted prompt', ( done ) => {
 		accept( 'Are you sure?', function ( accepted ) {
 			expect( accepted ).toBe( true );
 			done();
@@ -32,7 +32,7 @@ describe( '#accept()', () => {
 		document.querySelector( '.button.is-primary' ).click();
 	} );
 
-	test( 'should trigger the callback with a denied prompt', done => {
+	test( 'should trigger the callback with a denied prompt', ( done ) => {
 		accept( 'Are you sure?', function ( accepted ) {
 			expect( accepted ).toBe( false );
 			done();

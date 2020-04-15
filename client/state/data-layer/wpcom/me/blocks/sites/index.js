@@ -6,7 +6,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const handleSiteBlocksRequest = action =>
+export const handleSiteBlocksRequest = ( action ) =>
 	http(
 		{
 			apiNamespace: 'wpcom/v2',
@@ -25,7 +25,7 @@ export const siteBlocksRequestReceived = ( action, payload ) => ( {
 	payload,
 } );
 
-export const siteBlocksRequestFailure = error => ( {
+export const siteBlocksRequestFailure = ( error ) => ( {
 	type: READER_SITE_BLOCKS_RECEIVE,
 	payload: error,
 	error: true,

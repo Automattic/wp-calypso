@@ -56,7 +56,7 @@ export function getAvailableExternalAccounts( state, serviceName ) {
 		}
 
 		return memo.concat(
-			keyringConnection.additional_external_users.map( externalUser => ( {
+			keyringConnection.additional_external_users.map( ( externalUser ) => ( {
 				ID: externalUser.external_ID,
 				name: externalUser.external_name,
 				description: externalUser.external_description,

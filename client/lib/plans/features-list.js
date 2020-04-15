@@ -990,8 +990,8 @@ export const FEATURES_LIST = {
 	},
 };
 
-export const getPlanFeaturesObject = planFeaturesList => {
-	return planFeaturesList.map( featuresConst => FEATURES_LIST[ featuresConst ] );
+export const getPlanFeaturesObject = ( planFeaturesList ) => {
+	return planFeaturesList.map( ( featuresConst ) => FEATURES_LIST[ featuresConst ] );
 };
 
 export function getValidFeatureKeys() {

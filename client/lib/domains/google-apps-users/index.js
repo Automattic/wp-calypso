@@ -8,7 +8,7 @@ import emailValidator from 'email-validator';
 export function filter( { users, fields } ) {
 	return users.filter( function ( user, index ) {
 		const isFirst = index === 0;
-		const hasInput = some( Object.keys( fields ), name => user[ name ].value );
+		const hasInput = some( Object.keys( fields ), ( name ) => user[ name ].value );
 
 		return isFirst || hasInput;
 	} );
@@ -54,7 +54,7 @@ export function validate( { users, fields }, existingUsers = null ) {
 	} );
 
 	const errors = compact(
-		flatten( users.map( user => values( user ).map( property( 'error' ) ) ) )
+		flatten( users.map( ( user ) => values( user ).map( property( 'error' ) ) ) )
 	);
 
 	return {

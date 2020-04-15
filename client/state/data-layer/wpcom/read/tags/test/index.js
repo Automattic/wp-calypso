@@ -96,7 +96,7 @@ describe( 'wpcom-api', () => {
 			test( 'multiple tags: should dispatch the tags', () => {
 				const action = requestTagsAction();
 
-				const transformedResponse = map( fromApi( successfulFollowedTagsResponse ), tag => ( {
+				const transformedResponse = map( fromApi( successfulFollowedTagsResponse ), ( tag ) => ( {
 					...tag,
 					isFollowing: true,
 				} ) );

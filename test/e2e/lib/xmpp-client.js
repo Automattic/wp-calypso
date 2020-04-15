@@ -15,7 +15,7 @@ export const listenForSMS = function ( user ) {
 
 	client.start( { uri: 'xmpp://xmpp.wordpress.com', domain: domain } );
 
-	client.on( 'stanza', stanza => {
+	client.on( 'stanza', ( stanza ) => {
 		if (
 			stanza.is( 'presence' ) &&
 			stanza.getAttr( 'from' ) &&
@@ -43,7 +43,7 @@ export const listenForSMS = function ( user ) {
 		client.emit( 'e2e:sms', sms );
 	} );
 
-	client.handle( 'authenticate', authenticate => authenticate( jabberId, password ) );
+	client.handle( 'authenticate', ( authenticate ) => authenticate( jabberId, password ) );
 
 	client.on( 'online', () => {
 		client.send( xmpp.xml( 'presence', { 'xml:lang': 'en' } ) );

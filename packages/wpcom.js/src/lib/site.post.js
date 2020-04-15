@@ -122,7 +122,7 @@ class SitePost {
 
 		return this.wpcom.req
 			.post( `${ this.path }/new`, query, body )
-			.then( data => {
+			.then( ( data ) => {
 				// update POST object
 				this._id = data.ID;
 				debug( 'Set post _id: %s', this._id );
@@ -136,7 +136,7 @@ class SitePost {
 					return Promise.resolve( data );
 				}
 			} )
-			.catch( err => {
+			.catch( ( err ) => {
 				if ( 'function' === typeof fn ) {
 					fn( err );
 				} else {

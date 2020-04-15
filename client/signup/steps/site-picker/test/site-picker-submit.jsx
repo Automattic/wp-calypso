@@ -13,7 +13,7 @@ import React from 'react';
 import { noop } from 'lodash';
 
 jest.mock( 'i18n-calypso', () => ( {
-	translate: str => str,
+	translate: ( str ) => str,
 } ) );
 
 /**
@@ -69,13 +69,13 @@ describe( 'siteHasPaidPlan', () => {
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( product_slug => {
+	].forEach( ( product_slug ) => {
 		test( `Should return true for plan ${ product_slug }`, () => {
 			expect( siteHasPaidPlan( { plan: { product_slug } } ) ).toBe( true );
 		} );
 	} );
 
-	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( product_slug => {
+	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( ( product_slug ) => {
 		test( `Should return false for plan ${ product_slug }`, () => {
 			expect( siteHasPaidPlan( { plan: { product_slug } } ) ).toBe( false );
 		} );
@@ -112,7 +112,7 @@ describe( 'SitePickerSubmit', () => {
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( plan => {
+	].forEach( ( plan ) => {
 		test( `Goes to step "user" when paid plan is passed (${ plan })`, () => {
 			expect( props.goToStep ).toHaveBeenCalledTimes( 0 );
 			shallow(
@@ -122,7 +122,7 @@ describe( 'SitePickerSubmit', () => {
 		} );
 	} );
 
-	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( plan => {
+	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( ( plan ) => {
 		test( `Goes to step "plans-site-selected" when a free plan is passed (${ plan })`, () => {
 			expect( props.goToStep ).toHaveBeenCalledTimes( 0 );
 			shallow(

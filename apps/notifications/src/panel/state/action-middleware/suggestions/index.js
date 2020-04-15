@@ -26,7 +26,7 @@ const getUsersSuggestions = ( { dispatch, getState }, { siteId } ) => {
 
 			// Create a composite index to search against of; username + real name
 			// This will also determine ordering of results, so username matches will appear on top
-			const newSuggestions = data.suggestions.map( suggestion => ( {
+			const newSuggestions = data.suggestions.map( ( suggestion ) => ( {
 				...suggestion,
 				name: suggestion.name || `${ suggestion.user_login } ${ suggestion.display_name }`,
 			} ) );

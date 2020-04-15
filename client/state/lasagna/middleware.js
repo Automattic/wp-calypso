@@ -17,9 +17,9 @@ let socketConnecting = false;
  * @param m middlewares to compose
  */
 const combineMiddleware = ( ...m ) => {
-	return store => {
-		const initialized = m.map( middleware => middleware( store ) );
-		return next => initialized.reduce( ( chain, mw ) => mw( chain ), next );
+	return ( store ) => {
+		const initialized = m.map( ( middleware ) => middleware( store ) );
+		return ( next ) => initialized.reduce( ( chain, mw ) => mw( chain ), next );
 	};
 };
 
@@ -28,7 +28,7 @@ const combineMiddleware = ( ...m ) => {
  *
  * @param store middleware store
  */
-const connectMiddleware = store => next => action => {
+const connectMiddleware = ( store ) => ( next ) => ( action ) => {
 	// bail unless this is a section set with the section definition
 	if ( action.type !== 'SECTION_SET' || ! action.section ) {
 		return next( action );

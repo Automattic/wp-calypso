@@ -19,7 +19,7 @@ import {
 	translationExists,
 } from 'lib/i18n-utils';
 
-jest.mock( 'config', () => key => {
+jest.mock( 'config', () => ( key ) => {
 	if ( 'i18n_default_locale_slug' === key ) {
 		return 'en';
 	}
@@ -249,14 +249,14 @@ describe( 'utils', () => {
 				'https://de.wordpress.com/',
 				'https://wordpress.com/start/',
 				'https://wordpress.com/wp-login.php?action=lostpassword',
-			].forEach( fullUrl => {
+			].forEach( ( fullUrl ) => {
 				getLocaleSlug.mockImplementationOnce( () => 'en' );
 				expect( localizeUrl( fullUrl ) ).toEqual( fullUrl );
 			} );
 		} );
 
 		test( 'should not change relative URLs', () => {
-			[ '/me/account', '/settings' ].forEach( fullUrl => {
+			[ '/me/account', '/settings' ].forEach( ( fullUrl ) => {
 				getLocaleSlug.mockImplementationOnce( () => 'en' );
 				expect( localizeUrl( fullUrl ) ).toEqual( fullUrl );
 				getLocaleSlug.mockImplementationOnce( () => 'fr' );
@@ -266,7 +266,7 @@ describe( 'utils', () => {
 
 		test( 'handles invalid URLs', () => {
 			[ undefined, null, [], {}, { href: 'https://test' }, 'not-a-url', () => {} ].forEach(
-				fullUrl => {
+				( fullUrl ) => {
 					getLocaleSlug.mockImplementationOnce( () => 'en' );
 					expect( localizeUrl( fullUrl ) ).toEqual( fullUrl );
 					getLocaleSlug(); // make sure to consume it.

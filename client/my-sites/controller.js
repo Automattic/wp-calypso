@@ -63,9 +63,9 @@ import DomainOnly from 'my-sites/domains/domain-management/list/domain-only';
 /*
  * @FIXME Shorthand, but I might get rid of this.
  */
-const getStore = context => ( {
+const getStore = ( context ) => ( {
 	getState: () => context.store.getState(),
-	dispatch: action => context.store.dispatch( action ),
+	dispatch: ( action ) => context.store.dispatch( action ),
 } );
 
 /**
@@ -172,7 +172,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		emailManagementForwarding,
 	];
 
-	let domainManagementPaths = allPaths.map( pathFactory => {
+	let domainManagementPaths = allPaths.map( ( pathFactory ) => {
 		if ( pathFactory === emailManagementNewGSuiteAccount ) {
 			// `emailManagementNewGSuiteAccount` takes `planType` from `context.params`, otherwise path comparisons won't work well.
 			return emailManagementNewGSuiteAccount( slug, slug, contextParams.planType );
@@ -182,13 +182,13 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 
 	if ( primaryDomain && slug !== primaryDomain.name ) {
 		domainManagementPaths = domainManagementPaths.concat(
-			allPaths.map( pathFactory => pathFactory( slug, primaryDomain.name ) )
+			allPaths.map( ( pathFactory ) => pathFactory( slug, primaryDomain.name ) )
 		);
 	}
 
 	const startsWithPaths = [ '/checkout/', `/me/purchases/${ slug }` ];
 
-	if ( some( startsWithPaths, startsWithPath => startsWith( path, startsWithPath ) ) ) {
+	if ( some( startsWithPaths, ( startsWithPath ) => startsWith( path, startsWithPath ) ) ) {
 		return true;
 	}
 
@@ -252,7 +252,7 @@ function onSelectedSiteAvailable( context, basePath ) {
 			//also filter recent sites if not available locally
 			const updatedRecentSites = uniq( [ selectedSite.ID, ...recentSites ] )
 				.slice( 0, 5 )
-				.filter( recentId => !! getSite( state, recentId ) );
+				.filter( ( recentId ) => !! getSite( state, recentId ) );
 			context.store.dispatch( savePreference( 'recentSites', updatedRecentSites ) );
 		}
 	}
@@ -354,7 +354,7 @@ export function siteSelection( context, next ) {
 	if ( hasOneSite && ! siteFragment ) {
 		const primarySiteId = getPrimarySiteId( getState() );
 
-		const redirectToPrimary = primarySiteSlug => {
+		const redirectToPrimary = ( primarySiteSlug ) => {
 			let redirectPath = `${ context.pathname }/${ primarySiteSlug }`;
 			if ( context.querystring ) {
 				redirectPath += `?${ context.querystring }`;

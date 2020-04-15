@@ -383,7 +383,7 @@ class PurchaseMeta extends Component {
 	renderPlaceholder() {
 		return (
 			<ul className="manage-purchase__meta">
-				{ times( 4, i => (
+				{ times( 4, ( i ) => (
 					<li key={ i }>
 						<em className="manage-purchase__detail-label" />
 						<span className="manage-purchase__detail" />

@@ -140,7 +140,7 @@ class StepUpgrade extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const plan = getPlan( PLAN_BUSINESS );
 		const planId = plan.getProductId();
 

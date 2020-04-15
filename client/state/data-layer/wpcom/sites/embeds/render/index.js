@@ -17,7 +17,7 @@ import { receiveEmbed } from 'state/embeds/actions';
  * @param   {object} action Redux action
  * @returns {object}        Dispatched http action
  */
-const requestEmbed = action =>
+const requestEmbed = ( action ) =>
 	http(
 		{
 			apiVersion: '1.1',

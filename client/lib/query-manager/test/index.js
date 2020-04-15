@@ -425,7 +425,7 @@ describe( 'QueryManager', () => {
 		test( 'should sort items when merging queries', () => {
 			jest.spyOn( QueryManager, 'compare' ).mockImplementation( ( query, a, b ) => a.ID - b.ID );
 			[ { ID: 4 }, { ID: 2 }, { ID: 3 } ].forEach(
-				item =>
+				( item ) =>
 					( manager = manager.receive( item, {
 						mergeQuery: true,
 						query: {},
@@ -441,7 +441,7 @@ describe( 'QueryManager', () => {
 				}
 			} )();
 			[ { ID: 4 }, { ID: 2 }, { ID: 3 } ].forEach(
-				item =>
+				( item ) =>
 					( sortingManager = sortingManager.receive( item, {
 						mergeQuery: true,
 						query: {},

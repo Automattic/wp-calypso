@@ -23,12 +23,12 @@ let driver;
 // Write url and site credentials into file for further use
 function writeJNCredentials( url, username, password ) {
 	const fileContents = `${ url } ${ username } ${ password }`;
-	return fs.mkdir( './temp', err => {
+	return fs.mkdir( './temp', ( err ) => {
 		if ( err && err.code !== 'EEXIST' ) {
 			return console.log( err );
 		}
 
-		fs.writeFile( './temp/jn-credentials.txt', fileContents, fileErr => {
+		fs.writeFile( './temp/jn-credentials.txt', fileContents, ( fileErr ) => {
 			if ( fileErr ) {
 				return console.log( fileErr );
 			}

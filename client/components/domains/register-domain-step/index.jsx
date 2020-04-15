@@ -364,7 +364,7 @@ class RegisterDomainStep extends React.Component {
 		return ! this.props.defaultSuggestions && ! this.props.defaultSuggestionsError;
 	}
 
-	bindSearchCardReference = searchCard => {
+	bindSearchCardReference = ( searchCard ) => {
 		this.searchCard = searchCard;
 	};
 
@@ -630,13 +630,13 @@ class RegisterDomainStep extends React.Component {
 		return mapKeys(
 			pickBy(
 				filters,
-				value => isNumberString( value ) || value === true || Array.isArray( value )
+				( value ) => isNumberString( value ) || value === true || Array.isArray( value )
 			),
 			( value, key ) => snakeCase( key )
 		);
 	}
 
-	toggleTldInFilter = event => {
+	toggleTldInFilter = ( event ) => {
 		const isCurrentlySelected = event.currentTarget.dataset.selected === 'true';
 		const newTld = event.currentTarget.value;
 
@@ -727,14 +727,14 @@ class RegisterDomainStep extends React.Component {
 
 	getAvailableTlds = ( domain = undefined, vendor = undefined ) => {
 		return getAvailableTlds( { vendor, search: domain } )
-			.then( availableTlds => {
+			.then( ( availableTlds ) => {
 				this.setState( { availableTlds } );
 			} )
 			.catch( noop );
 	};
 
-	preCheckDomainAvailability = domain => {
-		return new Promise( resolve => {
+	preCheckDomainAvailability = ( domain ) => {
+		return new Promise( ( resolve ) => {
 			checkDomainAvailability(
 				{
 					domainName: domain,
@@ -766,7 +766,7 @@ class RegisterDomainStep extends React.Component {
 			return;
 		}
 
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			checkDomainAvailability(
 				{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
 				( error, result ) => {
@@ -853,10 +853,10 @@ class RegisterDomainStep extends React.Component {
 
 		return domains
 			.suggestions( query )
-			.then( domainSuggestions => {
+			.then( ( domainSuggestions ) => {
 				this.props.onDomainsAvailabilityChange( true );
 				const timeDiff = Date.now() - timestamp;
-				const analyticsResults = domainSuggestions.map( suggestion => suggestion.domain_name );
+				const analyticsResults = domainSuggestions.map( ( suggestion ) => suggestion.domain_name );
 
 				this.props.recordSearchResultsReceive(
 					domain,
@@ -868,7 +868,7 @@ class RegisterDomainStep extends React.Component {
 
 				return domainSuggestions;
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				const timeDiff = Date.now() - timestamp;
 				if ( error && error.statusCode === 503 && ! this.props.isSignupStep ) {
 					const maintenanceEndTime = get( error, 'data.maintenance_end_time', null );
@@ -893,7 +893,7 @@ class RegisterDomainStep extends React.Component {
 			} );
 	};
 
-	handleDomainSuggestions = domain => results => {
+	handleDomainSuggestions = ( domain ) => ( results ) => {
 		if (
 			! this.state.loadingResults ||
 			domain !== this.state.lastDomainSearched ||
@@ -905,7 +905,7 @@ class RegisterDomainStep extends React.Component {
 		}
 
 		const suggestionMap = new Map();
-		flatten( compact( results ) ).forEach( result => {
+		flatten( compact( results ) ).forEach( ( result ) => {
 			const { domain_name: domainName } = result;
 			suggestionMap.has( domainName )
 				? suggestionMap.set( domainName, { ...suggestionMap.get( domainName ), ...result } )
@@ -951,8 +951,8 @@ class RegisterDomainStep extends React.Component {
 			.catch( this.handleSubdomainSuggestionsFailure( domain, timestamp ) );
 	};
 
-	handleSubdomainSuggestions = ( domain, vendor, timestamp ) => subdomainSuggestions => {
-		subdomainSuggestions = subdomainSuggestions.map( suggestion => {
+	handleSubdomainSuggestions = ( domain, vendor, timestamp ) => ( subdomainSuggestions ) => {
+		subdomainSuggestions = subdomainSuggestions.map( ( suggestion ) => {
 			suggestion.fetch_algo = endsWith( suggestion.domain_name, '.wordpress.com' )
 				? '/domains/search/wpcom'
 				: '/domains/search/dotblogsub';
@@ -964,7 +964,7 @@ class RegisterDomainStep extends React.Component {
 
 		this.props.onDomainsAvailabilityChange( true );
 		const timeDiff = Date.now() - timestamp;
-		const analyticsResults = subdomainSuggestions.map( suggestion => suggestion.domain_name );
+		const analyticsResults = subdomainSuggestions.map( ( suggestion ) => suggestion.domain_name );
 
 		this.props.recordSearchResultsReceive(
 			domain,
@@ -983,7 +983,7 @@ class RegisterDomainStep extends React.Component {
 		);
 	};
 
-	handleSubdomainSuggestionsFailure = ( domain, timestamp ) => error => {
+	handleSubdomainSuggestionsFailure = ( domain, timestamp ) => ( error ) => {
 		const timeDiff = Date.now() - timestamp;
 
 		if ( error && error.statusCode === 503 ) {
@@ -1144,7 +1144,7 @@ class RegisterDomainStep extends React.Component {
 		return <FreeDomainExplainer onSkip={ this.props.hideFreePlan } />;
 	}
 
-	onAddDomain = suggestion => {
+	onAddDomain = ( suggestion ) => {
 		const domain = get( suggestion, 'domain_name' );
 		const isSubDomainSuggestion = get( suggestion, 'isSubDomainSuggestion' );
 		if ( ! hasDomainInCart( this.props.cart, domain ) && ! isSubDomainSuggestion ) {
@@ -1186,11 +1186,11 @@ class RegisterDomainStep extends React.Component {
 			lastDomainStatus,
 		} = this.state;
 
-		const matchesSearchedDomain = suggestion => suggestion.domain_name === exactMatchDomain;
+		const matchesSearchedDomain = ( suggestion ) => suggestion.domain_name === exactMatchDomain;
 		const availableDomain =
 			lastDomainStatus === domainAvailability.AVAILABLE &&
 			find( this.state.searchResults, matchesSearchedDomain );
-		const onAddMapping = domain => this.props.onAddMapping( domain, this.state );
+		const onAddMapping = ( domain ) => this.props.onAddMapping( domain, this.state );
 
 		const suggestions = this.getSuggestionsFromProps();
 
@@ -1319,7 +1319,7 @@ class RegisterDomainStep extends React.Component {
 		return useYourDomainUrl;
 	}
 
-	goToMapDomainStep = event => {
+	goToMapDomainStep = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordMapDomainButtonClick( this.props.analyticsSection );
@@ -1327,7 +1327,7 @@ class RegisterDomainStep extends React.Component {
 		page( this.getMapDomainUrl() );
 	};
 
-	goToTransferDomainStep = event => {
+	goToTransferDomainStep = ( event ) => {
 		event.preventDefault();
 
 		const source = event.currentTarget.dataset.tracksButtonClickSource;
@@ -1337,7 +1337,7 @@ class RegisterDomainStep extends React.Component {
 		page( this.getTransferDomainUrl() );
 	};
 
-	goToUseYourDomainStep = event => {
+	goToUseYourDomainStep = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordUseYourDomainButtonClick( this.props.analyticsSection );

@@ -56,7 +56,7 @@ class Referrers extends Component {
 		this.setData( this.props, this.state.filter );
 	}
 
-	onSearch = str => {
+	onSearch = ( str ) => {
 		const trimmedStr = str.trim();
 		if ( trimmedStr === '' ) {
 			const { unit, slug } = this.props;
@@ -74,7 +74,7 @@ class Referrers extends Component {
 
 	getFilteredData = ( filter, { data } ) => {
 		const filteredData = filter
-			? data.filter( d => d.referrer.toLowerCase().match( filter.toLowerCase() ) )
+			? data.filter( ( d ) => d.referrer.toLowerCase().match( filter.toLowerCase() ) )
 			: data;
 		return {
 			filteredSortedData: sortBySales( filteredData ),

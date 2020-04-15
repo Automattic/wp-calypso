@@ -108,7 +108,7 @@ export const resetHttpData = ( id: DataId ) => httpData.set( id, empty );
 export const update = ( id: DataId, state: DataState, data?: unknown ) => {
 	const updated = updateData( id, state, data );
 
-	listeners.forEach( f => f() );
+	listeners.forEach( ( f ) => f() );
 
 	return updated;
 };

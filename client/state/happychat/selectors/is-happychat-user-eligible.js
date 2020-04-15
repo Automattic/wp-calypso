@@ -8,4 +8,4 @@ import { get } from 'lodash';
  * @returns {boolean?} Whether the user is eligible for Happychat. `null` if the
  * eligibility status is unknown (i.e., not fetched from server yet)
  */
-export default state => get( state, 'happychat.user.isEligible' );
+export default ( state ) => get( state, 'happychat.user.isEligible' );

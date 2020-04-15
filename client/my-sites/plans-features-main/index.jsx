@@ -244,15 +244,15 @@ export class PlansFeaturesMain extends Component {
 				findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
 				findPlansKeys( { group, term: businessPlanTerm, type: TYPE_BUSINESS } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_ECOMMERCE } )[ 0 ],
-			].filter( el => el !== null );
+			].filter( ( el ) => el !== null );
 		}
 
 		if ( hideFreePlan ) {
-			plans = plans.filter( planSlug => ! isFreePlan( planSlug ) );
+			plans = plans.filter( ( planSlug ) => ! isFreePlan( planSlug ) );
 		}
 
 		if ( ! isEnabled( 'plans/personal-plan' ) && ! displayJetpackPlans ) {
-			plans.splice( plans.indexOf( plans.filter( p => p.type === TYPE_PERSONAL )[ 0 ] ), 1 );
+			plans.splice( plans.indexOf( plans.filter( ( p ) => p.type === TYPE_PERSONAL )[ 0 ] ), 1 );
 		}
 
 		return plans;
@@ -278,14 +278,14 @@ export class PlansFeaturesMain extends Component {
 		const { displayJetpackPlans, customerType, plansWithScroll, withWPPlanTabs } = this.props;
 
 		const isPlanOneOfType = ( plan, types ) =>
-			types.filter( type => planMatches( plan, { type } ) ).length > 0;
+			types.filter( ( type ) => planMatches( plan, { type } ) ).length > 0;
 
 		if ( displayJetpackPlans ) {
 			return plans;
 		}
 
 		if ( plansWithScroll ) {
-			return plans.filter( plan =>
+			return plans.filter( ( plan ) =>
 				isPlanOneOfType( plan, [
 					TYPE_BLOGGER,
 					TYPE_PERSONAL,
@@ -297,18 +297,18 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		if ( ! withWPPlanTabs ) {
-			return plans.filter( plan =>
+			return plans.filter( ( plan ) =>
 				isPlanOneOfType( plan, [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ] )
 			);
 		}
 
 		if ( customerType === 'personal' ) {
-			return plans.filter( plan =>
+			return plans.filter( ( plan ) =>
 				isPlanOneOfType( plan, [ TYPE_FREE, TYPE_BLOGGER, TYPE_PERSONAL, TYPE_PREMIUM ] )
 			);
 		}
 
-		return plans.filter( plan =>
+		return plans.filter( ( plan ) =>
 			isPlanOneOfType( plan, [ TYPE_FREE, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ] )
 		);
 	}

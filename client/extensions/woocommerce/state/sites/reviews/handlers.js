@@ -30,7 +30,7 @@ import {
 export function handleReviewsRequest( action ) {
 	const { siteId, query } = action;
 	const requestQuery = { ...DEFAULT_QUERY, ...query };
-	const queryString = stringify( omitBy( requestQuery, val => '' === val ) );
+	const queryString = stringify( omitBy( requestQuery, ( val ) => '' === val ) );
 
 	return request( siteId, action ).get( `products/calypso-reviews?${ queryString }&_envelope` );
 }

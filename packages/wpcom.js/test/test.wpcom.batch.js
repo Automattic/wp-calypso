@@ -9,7 +9,7 @@ import assert from 'assert';
  */
 
 describe( 'wpcom.batch', () => {
-	it( 'should makes several data in only one request', done => {
+	it( 'should makes several data in only one request', ( done ) => {
 		const wpcom = util.wpcom();
 		const batch = wpcom.batch();
 		const site = wpcom.site( util.site() );
@@ -23,7 +23,7 @@ describe( 'wpcom.batch', () => {
 			.add( url_posts )
 			.add( url_me )
 			.run()
-			.then( data => {
+			.then( ( data ) => {
 				assert.ok( data );
 				assert.ok( data[ url_site ] );
 				assert.ok( data[ url_posts ] );

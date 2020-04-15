@@ -30,7 +30,7 @@ class PostActionCounts extends PureComponent {
 		globalId: PropTypes.string,
 	};
 
-	onActionClick = action => () => {
+	onActionClick = ( action ) => () => {
 		const { recordTracksEvent: record, type } = this.props;
 
 		record( 'calypso_post_list_action_click', {
@@ -40,7 +40,7 @@ class PostActionCounts extends PureComponent {
 		} );
 	};
 
-	onLikesClick = event => {
+	onLikesClick = ( event ) => {
 		this.onActionClick( 'likes' )();
 		event.preventDefault();
 
@@ -51,7 +51,7 @@ class PostActionCounts extends PureComponent {
 		this.props.hideActiveLikesPopover();
 	};
 
-	setLikesPopoverContext = element => {
+	setLikesPopoverContext = ( element ) => {
 		this.setState( { likesPopoverContext: element } );
 	};
 

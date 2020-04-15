@@ -29,7 +29,7 @@ describe( 'useLineItems', function () {
 			const [ items, total ] = useLineItems();
 			return (
 				<div>
-					{ items.map( item => (
+					{ items.map( ( item ) => (
 						<span key={ item.id }>{ item.label }</span>
 					) ) }
 					<span key={ total.id }>{ total.label }</span>
@@ -44,7 +44,7 @@ describe( 'useLineItems', function () {
 			const [ items, total ] = useLineItems();
 			return (
 				<div>
-					{ items.map( item => (
+					{ items.map( ( item ) => (
 						<span data-testid={ item.id } key={ item.id }>
 							{ item.label }
 						</span>
@@ -76,7 +76,7 @@ describe( 'useLineItems', function () {
 			const [ items, total ] = useLineItems();
 			return (
 				<div>
-					{ items.map( item => (
+					{ items.map( ( item ) => (
 						<span data-testid={ item.id } key={ item.id }>
 							{ item.label }
 						</span>
@@ -119,7 +119,7 @@ describe( 'useLineItems', function () {
 			const [ items, total ] = useLineItems();
 			return (
 				<div>
-					{ items.map( item => (
+					{ items.map( ( item ) => (
 						<span data-testid={ item.id } key={ item.id }>
 							{ item.label }
 						</span>

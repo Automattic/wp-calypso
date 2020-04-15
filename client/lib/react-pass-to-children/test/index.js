@@ -60,7 +60,7 @@ describe( 'index', () => {
 		expect( React.Children.count( result.props.children ) ).to.equal( 2 );
 	} );
 
-	test( 'should accept multiple children and pass along props to each', done => {
+	test( 'should accept multiple children and pass along props to each', ( done ) => {
 		let result;
 
 		renderer.render(

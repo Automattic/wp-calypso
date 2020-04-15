@@ -177,7 +177,7 @@ export default connect(
 			hasEdits: Boolean( zone && 0 !== getSaveZoneActionListSteps( state ).length ),
 		};
 	},
-	dispatch => ( {
+	( dispatch ) => ( {
 		actions: bindActionCreators(
 			{
 				addNewShippingZone,

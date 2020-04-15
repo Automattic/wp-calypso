@@ -1,3 +1,3 @@
-export const getReaderFullViewPostKey = state => {
+export const getReaderFullViewPostKey = ( state ) => {
 	return state.reader.fullView.fullViewPostKey;
 };

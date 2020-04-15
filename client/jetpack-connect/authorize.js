@@ -422,7 +422,7 @@ export class JetpackAuthorize extends Component {
 
 		let redirectToMobileApp = null;
 		if ( this.props.isMobileAppFlow ) {
-			redirectToMobileApp = reason => {
+			redirectToMobileApp = ( reason ) => {
 				const url = addQueryArgs( { reason }, this.props.mobileAppRedirect );
 				this.externalRedirectOnce( url );
 			};

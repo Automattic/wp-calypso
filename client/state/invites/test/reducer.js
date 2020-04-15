@@ -463,7 +463,7 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'invalid state tests', () => {
-			useSandbox( sandbox => {
+			useSandbox( ( sandbox ) => {
 				sandbox.stub( console, 'warn' );
 			} );
 

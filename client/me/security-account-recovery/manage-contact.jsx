@@ -110,7 +110,7 @@ class ManageContact extends Component {
 		} );
 	};
 
-	onSave = data => {
+	onSave = ( data ) => {
 		this.setState( { currentView: views.VIEWING }, function () {
 			this.props.onSave( data );
 			this.recordEvent( 'save' );

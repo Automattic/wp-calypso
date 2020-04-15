@@ -151,7 +151,7 @@ async function getLocaleData( locale: string ) {
 
 function waitForCurrentUser(): Promise< User | undefined > {
 	let unsubscribe: () => void = () => undefined;
-	return new Promise< User | undefined >( resolve => {
+	return new Promise< User | undefined >( ( resolve ) => {
 		unsubscribe = subscribe( () => {
 			const currentUser = select( USER_STORE ).getCurrentUser();
 			if ( currentUser ) {

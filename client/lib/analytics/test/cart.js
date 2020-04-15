@@ -108,7 +108,7 @@ describe( 'recordEvents', () => {
 } );
 
 function getMockCartItems( previousCartItems, nextCartItems ) {
-	return cart => {
+	return ( cart ) => {
 		if ( cart === previousCart ) {
 			return previousCartItems;
 		}

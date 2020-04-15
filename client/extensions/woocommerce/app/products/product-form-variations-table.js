@@ -54,22 +54,22 @@ class ProductFormVariationsTable extends React.Component {
 		} );
 	}
 
-	setPrice = e => {
+	setPrice = ( e ) => {
 		this.editAllVariations( 'regular_price', e.target.value );
 	};
 
-	setWeight = e => {
+	setWeight = ( e ) => {
 		this.editAllVariations( 'weight', e.target.value );
 	};
 
-	setStockQuantity = e => {
+	setStockQuantity = ( e ) => {
 		const stock_quantity = Number( e.target.value ) >= 0 ? e.target.value : '';
 		const manage_stock = stock_quantity !== '';
 		this.editAllVariations( 'stock_quantity', stock_quantity );
 		this.editAllVariations( 'manage_stock', manage_stock );
 	};
 
-	setDimension = e => {
+	setDimension = ( e ) => {
 		const dimensions = { ...this.state.dimensions, [ e.target.name ]: e.target.value };
 		this.editAllVariations( 'dimensions', dimensions );
 	};
@@ -116,7 +116,7 @@ class ProductFormVariationsTable extends React.Component {
 
 	renderVariationRow = ( variation, index ) => {
 		const { siteId, product, variations, editProductVariation, storeIsManagingStock } = this.props;
-		const manageStock = find( variations, v => v.manage_stock ) ? true : false;
+		const manageStock = find( variations, ( v ) => v.manage_stock ) ? true : false;
 		return (
 			<ProductFormVariationsRow
 				siteId={ siteId }

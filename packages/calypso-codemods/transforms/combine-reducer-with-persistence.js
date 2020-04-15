@@ -19,7 +19,7 @@ module.exports = function ( file, api ) {
 				value: 'redux',
 			},
 		} )
-		.filter( importDeclaration => {
+		.filter( ( importDeclaration ) => {
 			if ( importDeclaration.value.specifiers.length === 1 ) {
 				return importDeclaration.value.specifiers[ 0 ].imported.name === 'combineReducers';
 			}
@@ -33,7 +33,7 @@ module.exports = function ( file, api ) {
 	combineReducerImport.remove();
 
 	// find the first external import
-	const firstInternalImport = root.find( j.ImportDeclaration ).filter( item => {
+	const firstInternalImport = root.find( j.ImportDeclaration ).filter( ( item ) => {
 		if ( item.node.comments && item.node.comments.length > 0 ) {
 			return item.node.comments[ 0 ].value.match( /Internal dependencies/ );
 		}

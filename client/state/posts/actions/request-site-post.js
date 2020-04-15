@@ -15,7 +15,7 @@ import 'state/posts/init';
  * @returns {Function}        Action thunk
  */
 export function requestSitePost( siteId, postId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: POST_REQUEST,
 			siteId,
@@ -26,7 +26,7 @@ export function requestSitePost( siteId, postId ) {
 			.site( siteId )
 			.post( postId )
 			.get()
-			.then( post => {
+			.then( ( post ) => {
 				dispatch( receivePost( post ) );
 				dispatch( {
 					type: POST_REQUEST_SUCCESS,
@@ -34,7 +34,7 @@ export function requestSitePost( siteId, postId ) {
 					postId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: POST_REQUEST_FAILURE,
 					siteId,

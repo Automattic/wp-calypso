@@ -25,7 +25,7 @@ function replaceThreeDotsWithEllipsis( string ) {
 }
 
 function makeFixerFunction( arg ) {
-	return fixer => {
+	return ( fixer ) => {
 		switch ( arg.type ) {
 			case 'TemplateLiteral':
 				return arg.quasis.reduce( ( fixes, quasi ) => {

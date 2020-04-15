@@ -184,7 +184,7 @@ TransactionFlow.prototype._paymentHandlers = {
 		this._pushStep( { name: INPUT_VALIDATION, first: true } );
 		debug( 'submitting transaction with new card (ebanx)' );
 
-		this._createCardToken( gatewayData => {
+		this._createCardToken( ( gatewayData ) => {
 			const { name, country, 'postal-code': zip } = newCardDetails;
 
 			// Ebanx payments require additional customer documentation.
@@ -356,7 +356,7 @@ TransactionFlow.prototype._submitWithPayment = function ( payment ) {
 	return wp
 		.undocumented()
 		.transactions( transaction )
-		.then( data => {
+		.then( ( data ) => {
 			if ( data.message ) {
 				this._pushStep( { name: MODAL_AUTHORIZATION, data, last: false } );
 			} else if ( data.redirect_url ) {
@@ -367,7 +367,7 @@ TransactionFlow.prototype._submitWithPayment = function ( payment ) {
 
 			return data;
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			this._pushStep( { name: RECEIVED_WPCOM_RESPONSE, error, last: true } );
 			// This should probably reject the error but since the error is already
 			// reported just above, that might risk double-reporting or
@@ -416,7 +416,7 @@ function createPaygateToken( requestType, cardDetails, callback ) {
 
 			paymentGatewayLoader
 				.ready( configuration.js_url, 'Paygate' )
-				.then( Paygate => {
+				.then( ( Paygate ) => {
 					Paygate.setProcessor( configuration.processor );
 					Paygate.setApiUrl( configuration.api_url );
 					Paygate.setPublicKey( configuration.public_key );
@@ -425,7 +425,7 @@ function createPaygateToken( requestType, cardDetails, callback ) {
 					const parameters = getPaygateParameters( cardDetails );
 					Paygate.createToken( parameters, onSuccess, onFailure );
 				} )
-				.catch( loaderError => {
+				.catch( ( loaderError ) => {
 					callback( loaderError );
 				} );
 		}
@@ -461,7 +461,7 @@ function createEbanxToken( requestType, cardDetails ) {
 
 				return paymentGatewayLoader
 					.ready( configuration.js_url, 'EBANX', false )
-					.then( Ebanx => {
+					.then( ( Ebanx ) => {
 						Ebanx.config.setMode( configuration.environment );
 						Ebanx.config.setPublishableKey( configuration.public_key );
 						Ebanx.config.setCountry( cardDetails.country.toLowerCase() );
@@ -474,7 +474,7 @@ function createEbanxToken( requestType, cardDetails ) {
 							} );
 						} );
 					} )
-					.catch( loaderError => {
+					.catch( ( loaderError ) => {
 						reject( loaderError );
 					} );
 			}
@@ -530,7 +530,7 @@ function getEbanxParameters( cardDetails ) {
 export function createCardToken( requestType, cardDetails, callback ) {
 	if ( isEbanxCreditCardProcessingEnabledForCountry( cardDetails.country ) ) {
 		return createEbanxToken( requestType, cardDetails ).then(
-			result => callback( null, result ),
+			( result ) => callback( null, result ),
 			function ( errorMsg ) {
 				return callback( new Error( errorMsg ) );
 			}

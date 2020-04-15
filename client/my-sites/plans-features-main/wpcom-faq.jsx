@@ -164,7 +164,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 	);
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	isChatAvailable: isHappychatAvailable( state ),
 	siteSlug: getSelectedSiteSlug( state ),
 } ) )( localize( WpcomFAQ ) );

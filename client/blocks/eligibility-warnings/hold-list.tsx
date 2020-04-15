@@ -178,7 +178,7 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 	const holdMessages = getHoldMessages( context, translate );
 	const blockingMessages = getBlockingMessages( translate );
 
-	const blockingHold = holds.find( h => isHardBlockingHoldType( h, blockingMessages ) );
+	const blockingHold = holds.find( ( h ) => isHardBlockingHoldType( h, blockingMessages ) );
 
 	return (
 		<>
@@ -221,7 +221,7 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 					</div>
 				) }
 				{ ! isPlaceholder &&
-					map( holds, hold =>
+					map( holds, ( hold ) =>
 						! isKnownHoldType( hold, holdMessages ) ? null : (
 							<div className="eligibility-warnings__hold" key={ hold }>
 								<div className="eligibility-warnings__message">
@@ -302,6 +302,6 @@ function isHardBlockingHoldType(
 }
 
 export const hasBlockingHold = ( holds: string[] ) =>
-	holds.some( hold => isHardBlockingHoldType( hold, getBlockingMessages( identity ) ) );
+	holds.some( ( hold ) => isHardBlockingHoldType( hold, getBlockingMessages( identity ) ) );
 
 export default localize( HoldList );

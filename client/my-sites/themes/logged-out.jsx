@@ -13,7 +13,7 @@ import { connectOptions } from './theme-options';
 
 const ConnectedThemeShowcase = connectOptions( ThemeShowcase );
 
-export default props => (
+export default ( props ) => (
 	<Main className="themes">
 		<ConnectedThemeShowcase
 			{ ...props }

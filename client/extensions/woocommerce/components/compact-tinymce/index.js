@@ -50,7 +50,7 @@ class CompactTinyMCE extends Component {
 	componentDidMount() {
 		this.mounted = true;
 
-		const setup = editor => {
+		const setup = ( editor ) => {
 			this.editor = editor;
 
 			if ( ! this.mounted ) {
@@ -137,7 +137,7 @@ class CompactTinyMCE extends Component {
 
 	destroyEditor() {
 		if ( this.editor ) {
-			forEach( [ 'change', 'keyup', 'setcontent', 'init' ], eventName => {
+			forEach( [ 'change', 'keyup', 'setcontent', 'init' ], ( eventName ) => {
 				this.editor.off( eventName );
 			} );
 		}
@@ -147,7 +147,7 @@ class CompactTinyMCE extends Component {
 		this.editorContainer = null;
 	}
 
-	setTextAreaRef = ref => {
+	setTextAreaRef = ( ref ) => {
 		this.textarea = ref;
 	};
 

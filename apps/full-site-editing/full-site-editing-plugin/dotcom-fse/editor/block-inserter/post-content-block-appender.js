@@ -6,12 +6,12 @@ import { compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 
 const PostContentBlockAppender = compose(
-	withSelect( select => {
+	withSelect( ( select ) => {
 		const { getEditorSettings } = select( 'core/editor' );
 		const { getBlocks } = select( 'core/block-editor' );
 		const { getEditorMode } = select( 'core/edit-post' );
 
-		const postContentBlock = getBlocks().find( block => block.name === 'a8c/post-content' );
+		const postContentBlock = getBlocks().find( ( block ) => block.name === 'a8c/post-content' );
 
 		return {
 			rootClientId: postContentBlock ? postContentBlock.clientId : '',

@@ -222,7 +222,7 @@ export function persistOnChange( reduxStore ) {
 				persistentStoreState( reduxStateKey, storageKey, data, _timestamp )
 			);
 
-			Promise.all( storeTasks ).catch( setError =>
+			Promise.all( storeTasks ).catch( ( setError ) =>
 				debug( 'failed to set redux-store state', setError )
 			);
 		},

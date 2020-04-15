@@ -94,7 +94,7 @@ class BackupsPage extends Component {
 		this.setState( this.getDefaultState() );
 	}
 
-	onDateChange = date => {
+	onDateChange = ( date ) => {
 		const { siteSlug } = this.props;
 
 		this.setState( { selectedDate: date } );
@@ -126,7 +126,7 @@ class BackupsPage extends Component {
 	 *
 	 * @param date {Date} The current selected date
 	 */
-	getBackupLogsFor = date => {
+	getBackupLogsFor = ( date ) => {
 		const { moment } = this.props;
 
 		const index = moment( date ).format( INDEX_FORMAT );
@@ -137,7 +137,7 @@ class BackupsPage extends Component {
 		};
 
 		if ( index in this.props.indexedLog && this.props.indexedLog[ index ].length > 0 ) {
-			this.props.indexedLog[ index ].forEach( log => {
+			this.props.indexedLog[ index ].forEach( ( log ) => {
 				// Looking for the last backup on the date
 				if (
 					! backupsOnSelectedDate.lastBackup &&
@@ -153,7 +153,7 @@ class BackupsPage extends Component {
 		return backupsOnSelectedDate;
 	};
 
-	isEmptyFilter = filter => {
+	isEmptyFilter = ( filter ) => {
 		if ( ! filter ) {
 			return true;
 		}
@@ -256,7 +256,7 @@ class BackupsPage extends Component {
 		const { logs, siteSlug, translate } = this.props;
 
 		// Filter out anything that is not restorable
-		const restorablePoints = logs.filter( event => !! event.activityIsRewindable );
+		const restorablePoints = logs.filter( ( event ) => !! event.activityIsRewindable );
 
 		return (
 			<div className="backups__search">
@@ -300,7 +300,7 @@ const createIndexedLog = ( logs, timezone, gmtOffset ) => {
 	let lastDateAvailable = null;
 
 	if ( 'success' === logs.state ) {
-		logs.data.forEach( log => {
+		logs.data.forEach( ( log ) => {
 			//Move the backup date to the site timezone
 			const backupDate = applySiteOffset( momentDate( log.activityTs ), {
 				timezone,
@@ -336,7 +336,7 @@ const createIndexedLog = ( logs, timezone, gmtOffset ) => {
 	};
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const filter = getActivityLogFilter( state, siteId );
 	const logs = requestActivityLogs( siteId, filter );
@@ -376,7 +376,7 @@ const mapStateToProps = state => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	selectPage: ( siteId, pageNumber ) => dispatch( updateFilter( siteId, { page: pageNumber } ) ),
 } );
 

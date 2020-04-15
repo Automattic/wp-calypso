@@ -35,16 +35,16 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		};
 
 		const loadedTranslationChunks = {};
-		const fetchTranslationChunk = translationChunkPath => {
+		const fetchTranslationChunk = ( translationChunkPath ) => {
 			return window
 				.fetch( translationChunkPath )
-				.then( response => response.json() )
-				.then( data => {
+				.then( ( response ) => response.json() )
+				.then( ( data ) => {
 					i18n.addTranslations( data );
 					loadedTranslationChunks[ translationChunkPath ] = true;
 					return;
 				} )
-				.catch( error => error );
+				.catch( ( error ) => error );
 		};
 
 		const languageRevision = languageRevisions[ currentUser.localeSlug ] || '';
@@ -54,15 +54,15 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 			.fetch(
 				`${ languagesPath }/${ currentUser.localeSlug }-language-manifest.json?v=${ languageRevision }`
 			)
-			.then( response => response.json() )
-			.then( data => {
+			.then( ( response ) => response.json() )
+			.then( ( data ) => {
 				translatedChunks = data.translatedChunks;
 				i18n.setLocale( data.locale );
 				const installedChunks = ( window.installedChunks || [] ).concat(
 					window.__requireChunkCallback__.getInstalledChunks()
 				);
 
-				installedChunks.forEach( chunkId => {
+				installedChunks.forEach( ( chunkId ) => {
 					const translationChunkPath = getTranslationChunkPath( chunkId );
 
 					if (

@@ -20,7 +20,7 @@ export default function ( post ) {
 
 	if ( isDiscover ) {
 		const formats = get( post, 'discover_metadata.discover_fp_post_formats' );
-		const pickFormat = find( formats, format => format.slug !== 'pick' );
+		const pickFormat = find( formats, ( format ) => format.slug !== 'pick' );
 
 		// if there is no pick format the post is a discover feature
 		discoverFormat = pickFormat ? pickFormat.slug : 'feature';

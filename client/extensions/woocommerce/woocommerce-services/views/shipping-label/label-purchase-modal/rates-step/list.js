@@ -15,7 +15,7 @@ import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import Notice from 'components/notice';
 import getPackageDescriptions from '../packages-step/get-package-descriptions';
 
-const renderRateNotice = translate => {
+const renderRateNotice = ( translate ) => {
 	return (
 		<Notice
 			className="rates-step__notice"
@@ -55,12 +55,12 @@ export const ShippingRates = ( {
 		const valuesMap = { '': translate( 'Select one…' ) };
 		const packageErrors = errors[ pckgId ] || [];
 
-		packageRates.forEach( rateObject => {
+		packageRates.forEach( ( rateObject ) => {
 			valuesMap[ rateObject.service_id ] =
 				rateObject.title + ' (' + formatCurrency( rateObject.rate, 'USD' ) + ')';
 		} );
 
-		const onRateUpdate = value => updateRate( pckgId, value );
+		const onRateUpdate = ( value ) => updateRate( pckgId, value );
 		return (
 			<div key={ pckgId } className="rates-step__package-container">
 				<Dropdown

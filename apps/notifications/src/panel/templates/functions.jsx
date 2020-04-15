@@ -23,7 +23,7 @@ import { pickBy, get } from 'lodash';
  * @param {string} text input list of blocks as HTML string
  * @returns {string} marked-up text
  */
-const toBlocks = text =>
+const toBlocks = ( text ) =>
 	text.split( '\n' ).reduce(
 		( { out, inFence, inList }, raw ) => {
 			// detect code fences
@@ -168,7 +168,7 @@ export function p( html, className ) {
 	} );
 }
 
-export const pSoup = items => items.map( toHtml ).map( internalP );
+export const pSoup = ( items ) => items.map( toHtml ).map( internalP );
 
 export function getSignature( blocks, note ) {
 	if ( ! blocks || ! blocks.length ) {

@@ -30,7 +30,7 @@ export function receiveHappinessEngineers( happinessEngineers ) {
  * @returns {Function} Action thunk
  */
 export function fetchHappinessEngineers() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: HAPPINESS_ENGINEERS_FETCH,
 		} );
@@ -38,13 +38,13 @@ export function fetchHappinessEngineers() {
 		return wpcom
 			.undocumented()
 			.getHappinessEngineers()
-			.then( happinessEngineers => {
+			.then( ( happinessEngineers ) => {
 				dispatch( receiveHappinessEngineers( happinessEngineers ) );
 				dispatch( {
 					type: HAPPINESS_ENGINEERS_FETCH_SUCCESS,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: HAPPINESS_ENGINEERS_FETCH_FAILURE,
 					error,

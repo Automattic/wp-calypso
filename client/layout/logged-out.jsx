@@ -30,7 +30,7 @@ import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
 import './style.scss';
 
 // Returns true if given section should display sidebar for logged out users.
-const hasSidebar = section => {
+const hasSidebar = ( section ) => {
 	if ( section.name === 'devdocs' ) {
 		// Devdocs should always display a sidebar, except for landing page.
 		return ! includes( section.paths, '/devdocs/start' );
@@ -136,7 +136,7 @@ LayoutLoggedOut.propTypes = {
 	showOAuth2Layout: PropTypes.bool,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const section = getSection( state );
 	const currentRoute = getCurrentRoute( state );
 	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );

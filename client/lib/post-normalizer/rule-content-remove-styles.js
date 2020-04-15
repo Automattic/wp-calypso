@@ -42,7 +42,7 @@ export default function removeContentStyles( post, dom ) {
 	} );
 
 	// remove align from non images. Unlike above, img align is permitted anywhere.
-	forEach( dom.querySelectorAll( '[align]' ), element => {
+	forEach( dom.querySelectorAll( '[align]' ), ( element ) => {
 		if ( element.tagName !== 'IMG' ) {
 			element.removeAttribute( 'align' );
 		}

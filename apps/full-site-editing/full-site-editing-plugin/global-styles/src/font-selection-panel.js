@@ -33,14 +33,14 @@ export default ( {
 				label={ __( 'Heading Font' ) }
 				value={ fontHeadings }
 				options={ fontHeadingsOptions }
-				onChange={ newValue => updateHeadingsFont( newValue ) }
+				onChange={ ( newValue ) => updateHeadingsFont( newValue ) }
 				style={ { fontFamily: fontHeadings !== 'unset' ? fontHeadings : fontHeadingsDefault } }
 			/>
 			<SelectControl
 				label={ __( 'Base Font' ) }
 				value={ fontBase }
 				options={ fontBaseOptions }
-				onChange={ newValue => updateBaseFont( newValue ) }
+				onChange={ ( newValue ) => updateBaseFont( newValue ) }
 				style={ { fontFamily: fontBase !== 'unset' ? fontBase : fontBaseDefault } }
 			/>
 			<hr />

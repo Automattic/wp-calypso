@@ -100,9 +100,11 @@ class ProductFormVariationsCard extends Component {
 			}
 		} );
 		const variationAttributes =
-			( product.attributes && product.attributes.filter( attribute => attribute.variation ) ) || [];
+			( product.attributes && product.attributes.filter( ( attribute ) => attribute.variation ) ) ||
+			[];
 		const attributes =
-			( product.attributes && product.attributes.filter( attribute => ! attribute.variation ) ) ||
+			( product.attributes &&
+				product.attributes.filter( ( attribute ) => ! attribute.variation ) ) ||
 			null;
 
 		this.setState( { variationAttributes, simpleProduct: [] } );

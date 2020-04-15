@@ -29,7 +29,9 @@ import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transforme
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
 const navigateTo =
-	undefined !== typeof window ? path => window.open( path, '_blank' ) : path => page( path );
+	undefined !== typeof window
+		? ( path ) => window.open( path, '_blank' )
+		: ( path ) => page( path );
 
 /**
  * Makes sure that we can initialize a connection
@@ -46,7 +48,7 @@ export const primeHappychat = ( { dispatch, getState } ) => {
 	}
 };
 
-export const request = action => {
+export const request = ( action ) => {
 	const notice = successNotice( i18n.translate( 'Testing connection…' ), { duration: 30000 } );
 	const {
 		notice: { noticeId },
@@ -129,7 +131,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 	const announce = ( message, options ) =>
 		dispatch( errorNotice( message, options ? { ...baseOptions, ...options } : baseOptions ) );
 
-	const spreadHappiness = message => {
+	const spreadHappiness = ( message ) => {
 		const tracksEvent = recordTracksEvent( 'calypso_rewind_creds_update_failure', {
 			site_id: action.siteId,
 			error: error.error,

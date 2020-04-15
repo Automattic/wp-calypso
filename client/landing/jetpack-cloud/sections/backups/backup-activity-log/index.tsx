@@ -30,7 +30,7 @@ const BackupActivityLogPage: FunctionComponent< Props > = ( { after, before, gro
 	const dispatch = useDispatch();
 
 	const siteId = useSelector( getSelectedSiteId );
-	const filter = useSelector( state => getActivityLogFilter( state, siteId ) );
+	const filter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
 	const logs = useSelector( () => getHttpData( getRequestActivityLogsId( siteId, filter ) ).data );
 
 	/*

@@ -120,7 +120,7 @@ export class SiteNotice extends React.Component {
 
 		const eligibleDomains = reject(
 			this.props.domains,
-			domain =>
+			( domain ) =>
 				domain.isWPCOMDomain ||
 				domain.name.endsWith( '.wpcomstaging.com' ) ||
 				( domain.registrationDate && moment( domain.registrationDate ).add( 7, 'days' ).isAfter() )
@@ -304,7 +304,7 @@ export default connect(
 			messagePath,
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return {
 			clickClaimDomainNotice: () =>
 				dispatch(

@@ -31,7 +31,7 @@ class MediaLibraryDropZone extends React.Component {
 		trackStats: true,
 	};
 
-	uploadFiles = files => {
+	uploadFiles = ( files ) => {
 		if ( ! this.props.site || ! userCan( 'upload_files', this.props.site ) ) {
 			return;
 		}
@@ -45,7 +45,7 @@ class MediaLibraryDropZone extends React.Component {
 		}
 	};
 
-	isValidTransfer = transfer => {
+	isValidTransfer = ( transfer ) => {
 		if ( ! transfer ) {
 			return false;
 		}

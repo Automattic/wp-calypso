@@ -40,7 +40,7 @@ class StepSourceSelect extends Component {
 		isLoading: false,
 	};
 
-	onUrlChange = args => {
+	onUrlChange = ( args ) => {
 		this.setState( { error: null } );
 		this.props.onUrlChange( args );
 	};
@@ -60,7 +60,7 @@ class StepSourceSelect extends Component {
 		this.setState( { error: null, isLoading: true }, () => {
 			wpcom
 				.isSiteImportable( this.props.url )
-				.then( result => {
+				.then( ( result ) => {
 					const importUrl = `/import/${ this.props.targetSiteSlug }?not-wp=1&engine=${ result.site_engine }&from-site=${ result.site_url }`;
 
 					this.props.recordTracksEvent( 'calypso_importer_wordpress_enter_url', {
@@ -94,7 +94,7 @@ class StepSourceSelect extends Component {
 							return redirectTo( importUrl );
 					}
 				} )
-				.catch( error => {
+				.catch( ( error ) => {
 					switch ( error.code ) {
 						case 'rest_invalid_param':
 							return this.setState( {

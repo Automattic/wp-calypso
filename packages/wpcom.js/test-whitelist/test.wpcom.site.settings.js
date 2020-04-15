@@ -15,10 +15,10 @@ describe( '[whitelist] wpcom.site.settings', function () {
 	var current_settings;
 
 	describe( 'wpcom.site.get', function () {
-		it( 'should get site settings data', done => {
+		it( 'should get site settings data', ( done ) => {
 			settings
 				.get()
-				.then( data => {
+				.then( ( data ) => {
 					assert.ok( data );
 					assert.ok( data.settings );
 					current_settings = data;
@@ -27,30 +27,30 @@ describe( '[whitelist] wpcom.site.settings', function () {
 				.catch( done );
 		} );
 
-		it( 'should get `gmt_offset` option of site settings', done => {
+		it( 'should get `gmt_offset` option of site settings', ( done ) => {
 			settings
 				.getOption( 'gmt_offset' )
-				.then( value => {
+				.then( ( value ) => {
 					assert.ok( typeof value !== 'undefined' );
 					done();
 				} )
 				.catch( done );
 		} );
 
-		it( 'should update site settings', done => {
+		it( 'should update site settings', ( done ) => {
 			settings
 				.update( { blogname: current_settings.name + ' (Updated)' } )
-				.then( data => {
+				.then( ( data ) => {
 					assert.ok( data );
 					done();
 				} )
 				.catch( done );
 		} );
 
-		it( 'should set `blogname` option', done => {
+		it( 'should set `blogname` option', ( done ) => {
 			settings
 				.setOption( 'blogname', current_settings.name )
-				.then( res => {
+				.then( ( res ) => {
 					assert.ok( typeof res !== 'undefined' );
 					assert.ok( res.updated.blogname === current_settings.name );
 					done();

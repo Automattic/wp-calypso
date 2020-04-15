@@ -20,7 +20,7 @@ import OrderEventsByDay from './day';
 
 function getSortedEvents( events ) {
 	const eventsByDay = {};
-	events.forEach( event => {
+	events.forEach( ( event ) => {
 		const day = moment( event.timestamp ).format( 'YYYYMMDD' );
 		if ( eventsByDay[ day ] ) {
 			eventsByDay[ day ].push( event );
@@ -29,7 +29,7 @@ function getSortedEvents( events ) {
 		}
 	} );
 
-	keys( eventsByDay ).forEach( day => {
+	keys( eventsByDay ).forEach( ( day ) => {
 		eventsByDay[ day ] = sortBy( eventsByDay[ day ], [ 'timestamp', 'key' ] ).reverse();
 	} );
 	return eventsByDay;
@@ -53,7 +53,7 @@ class OrderEvents extends Component {
 		}
 	}
 
-	toggleOpenDay = date => {
+	toggleOpenDay = ( date ) => {
 		this.setState( () => ( { openDay: date } ) );
 	};
 
@@ -65,7 +65,7 @@ class OrderEvents extends Component {
 
 		return (
 			<div>
-				{ days.map( day => {
+				{ days.map( ( day ) => {
 					const events = eventsByDay[ day ];
 					return (
 						<OrderEventsByDay
@@ -75,7 +75,7 @@ class OrderEvents extends Component {
 							isOpen={ day === this.state.openDay }
 							onClick={ this.toggleOpenDay }
 						>
-							{ events.map( event => (
+							{ events.map( ( event ) => (
 								<OrderEvent
 									key={ `${ event.type }-${ event.key }` }
 									event={ event }

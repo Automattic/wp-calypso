@@ -158,7 +158,7 @@ class TagStream extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		followedTags: getReaderFollowedTags( state ),
 		tags: getReaderTags( state ),
 	} ),

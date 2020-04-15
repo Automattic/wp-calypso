@@ -21,7 +21,7 @@ const EnterPasswordForm = ( props: Props ) => {
 	const [ passwordVal, setPasswordVal ] = useState( '' );
 	const { reset } = useDispatch( AUTH_STORE );
 	const { submitPassword } = useDispatch( AUTH_STORE );
-	const usernameOrEmail = useSelect( select => select( AUTH_STORE ).getUsernameOrEmail() );
+	const usernameOrEmail = useSelect( ( select ) => select( AUTH_STORE ).getUsernameOrEmail() );
 
 	const onSubmitPassword = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();

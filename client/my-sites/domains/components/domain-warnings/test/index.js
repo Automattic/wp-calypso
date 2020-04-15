@@ -133,7 +133,7 @@ describe( 'index', () => {
 			expect( textContent ).toContain( 'contact your domain registrar' );
 			expect(
 				links.some(
-					link =>
+					( link ) =>
 						link.href ===
 						'https://wordpress.com/support/domains/map-existing-domain/#change-your-domains-name-servers'
 				)
@@ -166,7 +166,7 @@ describe( 'index', () => {
 			const domNode = ReactDom.findDOMNode( component ),
 				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
-			expect( links.some( link => link.href === MAP_EXISTING_DOMAIN_UPDATE_DNS ) ).toBeTruthy();
+			expect( links.some( ( link ) => link.href === MAP_EXISTING_DOMAIN_UPDATE_DNS ) ).toBeTruthy();
 		} );
 
 		test( 'should show a subdomain mapping related message for one misconfigured subdomain', () => {
@@ -190,7 +190,7 @@ describe( 'index', () => {
 				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
 			expect( textContent ).toContain( 'DNS records need to be configured' );
-			expect( links.some( link => link.href === MAP_SUBDOMAIN ) ).toBeTruthy();
+			expect( links.some( ( link ) => link.href === MAP_SUBDOMAIN ) ).toBeTruthy();
 		} );
 
 		test( 'should show a subdomain mapping related message for multiple misconfigured subdomains', () => {
@@ -220,7 +220,7 @@ describe( 'index', () => {
 				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
 			expect( textContent ).toContain( "Some of your domains' DNS records need to be configured" );
-			expect( links.some( link => link.href === MAP_SUBDOMAIN ) ).toBeTruthy();
+			expect( links.some( ( link ) => link.href === MAP_SUBDOMAIN ) ).toBeTruthy();
 		} );
 
 		test( 'should show a subdomain mapping related message for multiple misconfigured subdomains and domains mixed', () => {
@@ -252,7 +252,7 @@ describe( 'index', () => {
 			expect( textContent ).toContain(
 				"Some of your domains' name server records need to be configured"
 			);
-			expect( links.some( link => link.href === MAP_EXISTING_DOMAIN_UPDATE_DNS ) ).toBeTruthy();
+			expect( links.some( ( link ) => link.href === MAP_EXISTING_DOMAIN_UPDATE_DNS ) ).toBeTruthy();
 		} );
 	} );
 
@@ -289,12 +289,12 @@ describe( 'index', () => {
 
 			expect( textContent ).not.toContain( 'Please verify ownership of domains' );
 			expect(
-				links.some( link =>
+				links.some( ( link ) =>
 					link.href.endsWith( '/domains/manage/blog.example.com/edit/blog.example.com' )
 				)
 			).toBeFalsy();
 			expect(
-				links.some( link =>
+				links.some( ( link ) =>
 					link.href.endsWith( '/domains/manage/mygroovysite.com/edit/blog.example.com' )
 				)
 			).toBeFalsy();
@@ -329,12 +329,12 @@ describe( 'index', () => {
 
 			expect( textContent ).toContain( 'Please verify ownership of domains' );
 			expect(
-				links.some( link =>
+				links.some( ( link ) =>
 					link.href.endsWith( '/domains/manage/blog.example.com/edit/blog.example.com' )
 				)
 			).toBeTruthy();
 			expect(
-				links.some( link =>
+				links.some( ( link ) =>
 					link.href.endsWith( '/domains/manage/mygroovysite.com/edit/blog.example.com' )
 				)
 			).toBeTruthy();
@@ -372,12 +372,12 @@ describe( 'index', () => {
 				'Your domains may be suspended because your email address is not verified.'
 			);
 			expect(
-				links.some( link =>
+				links.some( ( link ) =>
 					link.href.endsWith( '/domains/manage/blog.example.com/edit/blog.example.com' )
 				)
 			).toBeTruthy();
 			expect(
-				links.some( link =>
+				links.some( ( link ) =>
 					link.href.endsWith( '/domains/manage/mygroovysite.com/edit/blog.example.com' )
 				)
 			).toBeTruthy();

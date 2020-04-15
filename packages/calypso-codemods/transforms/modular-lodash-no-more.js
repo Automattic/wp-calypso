@@ -22,8 +22,8 @@ export default function transformer( file, api ) {
 
 	return j( file.source )
 		.find( j.ImportDeclaration )
-		.filter( dec => dec.value.source.value.startsWith( 'lodash/' ) )
-		.replaceWith( node => {
+		.filter( ( dec ) => dec.value.source.value.startsWith( 'lodash/' ) )
+		.replaceWith( ( node ) => {
 			return Object.assign(
 				j.importDeclaration(
 					[

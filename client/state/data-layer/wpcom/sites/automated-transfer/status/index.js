@@ -20,7 +20,7 @@ import { transferStates } from 'state/automated-transfer/constants';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const requestStatus = action =>
+export const requestStatus = ( action ) =>
 	http(
 		{
 			method: 'GET',
@@ -30,10 +30,9 @@ export const requestStatus = action =>
 		action
 	);
 
-export const receiveStatus = (
-	{ siteId },
-	{ status, uploaded_plugin_slug, transfer_id }
-) => dispatch => {
+export const receiveStatus = ( { siteId }, { status, uploaded_plugin_slug, transfer_id } ) => (
+	dispatch
+) => {
 	const pluginId = uploaded_plugin_slug;
 
 	dispatch( setAutomatedTransferStatus( siteId, status, pluginId ) );

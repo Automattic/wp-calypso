@@ -61,15 +61,15 @@ describe( 'Checkout', () => {
 				const { container } = render( <MyCheckout /> );
 
 				// Product line items show the correct price
-				getAllByLabelTextInNode( container, items[ 0 ].label ).map( element =>
+				getAllByLabelTextInNode( container, items[ 0 ].label ).map( ( element ) =>
 					expect( element ).toHaveTextContent( items[ 0 ].amount.displayValue )
 				);
-				getAllByLabelTextInNode( container, items[ 1 ].label ).map( element =>
+				getAllByLabelTextInNode( container, items[ 1 ].label ).map( ( element ) =>
 					expect( element ).toHaveTextContent( items[ 1 ].amount.displayValue )
 				);
 
 				// All elements labeled 'Total' show the expected price
-				getAllByLabelTextInNode( container, total.label ).map( element =>
+				getAllByLabelTextInNode( container, total.label ).map( ( element ) =>
 					expect( element ).toHaveTextContent( total.amount.displayValue )
 				);
 			} );
@@ -127,15 +127,15 @@ describe( 'Checkout', () => {
 				const { container } = render( <MyCheckout /> );
 
 				// Product line items show the correct price
-				getAllByLabelTextInNode( container, items[ 0 ].label ).map( element =>
+				getAllByLabelTextInNode( container, items[ 0 ].label ).map( ( element ) =>
 					expect( element ).toHaveTextContent( items[ 0 ].amount.displayValue )
 				);
-				getAllByLabelTextInNode( container, items[ 1 ].label ).map( element =>
+				getAllByLabelTextInNode( container, items[ 1 ].label ).map( ( element ) =>
 					expect( element ).toHaveTextContent( items[ 1 ].amount.displayValue )
 				);
 
 				// All elements labeled 'Total' show the expected price
-				getAllByLabelTextInNode( container, total.label ).map( element =>
+				getAllByLabelTextInNode( container, total.label ).map( ( element ) =>
 					expect( element ).toHaveTextContent( total.amount.displayValue )
 				);
 			} );
@@ -256,7 +256,7 @@ describe( 'Checkout', () => {
 		const steps = createMockStepObjects();
 
 		beforeEach( () => {
-			MyCheckout = props => {
+			MyCheckout = ( props ) => {
 				const [ paymentData, setPaymentData ] = useState( {} );
 				return (
 					<myContext.Provider value={ [ paymentData, setPaymentData ] }>
@@ -593,7 +593,7 @@ function MockPaymentForm( { summary } ) {
 			},
 		},
 	} );
-	const cardholderName = useSelect( select => select( 'mock' ).getCardholderName() );
+	const cardholderName = useSelect( ( select ) => select( 'mock' ).getCardholderName() );
 	const { changeCardholderName } = useDispatch( 'mock' );
 	return (
 		<div data-testid="mock-payment-form">
@@ -632,9 +632,11 @@ function createMockItems() {
 function createStepsFromStepObjects( stepObjects, paymentData ) {
 	const createStepFromStepObject = createStepObjectConverter( paymentData );
 	const stepObjectsWithoutStepNumber = stepObjects.filter(
-		stepObject => ! stepObject.hasStepNumber
+		( stepObject ) => ! stepObject.hasStepNumber
 	);
-	const stepObjectsWithStepNumber = stepObjects.filter( stepObject => stepObject.hasStepNumber );
+	const stepObjectsWithStepNumber = stepObjects.filter(
+		( stepObject ) => stepObject.hasStepNumber
+	);
 	return (
 		<React.Fragment>
 			{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
@@ -766,7 +768,7 @@ function PossiblyCompleteTitle() {
 
 function StepWithEditableField() {
 	const [ paymentData, setPaymentData ] = usePaymentData();
-	const onChange = event => {
+	const onChange = ( event ) => {
 		setPaymentData( { userName: event.target.value } );
 	};
 	const value = paymentData.userName || '';

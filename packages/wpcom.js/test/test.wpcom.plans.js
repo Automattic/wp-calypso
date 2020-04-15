@@ -10,10 +10,10 @@ describe( 'wpcom.plans', () => {
 	const plans = wpcom.plans();
 
 	describe( 'wpcom.plans.list', () => {
-		it( 'should request current WordPress plans list', done => {
+		it( 'should request current WordPress plans list', ( done ) => {
 			plans
 				.list()
-				.then( data => {
+				.then( ( data ) => {
 					assert.equal( 'object', typeof data );
 					assert.ok( data instanceof Array );
 					done();
@@ -23,10 +23,10 @@ describe( 'wpcom.plans', () => {
 	} );
 
 	describe( 'wpcom.plans.features', () => {
-		it( 'should request list of features of active WordPress.com plans', done => {
+		it( 'should request list of features of active WordPress.com plans', ( done ) => {
 			plans
 				.features()
-				.then( data => {
+				.then( ( data ) => {
 					assert.equal( 'object', typeof data );
 					assert.ok( data instanceof Array );
 					done();

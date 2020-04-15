@@ -38,7 +38,7 @@ export class UndoListItem extends React.Component {
 		window.removeEventListener( 'keydown', this.handleKeyDown, false );
 	}
 
-	handleKeyDown = event => {
+	handleKeyDown = ( event ) => {
 		if ( ! this.props.global.keyboardShortcutsAreEnabled ) {
 			return;
 		}
@@ -115,7 +115,7 @@ export class UndoListItem extends React.Component {
 		wpcom()
 			.site( this.props.note.meta.ids.site )
 			.comment( this.props.note.meta.ids.comment )
-			.del( error => {
+			.del( ( error ) => {
 				if ( error ) throw error;
 			} );
 
@@ -126,7 +126,7 @@ export class UndoListItem extends React.Component {
 		this.finishExecution();
 	};
 
-	actImmediately = event => {
+	actImmediately = ( event ) => {
 		if ( event && event.preventDefault ) {
 			event.preventDefault();
 		}
@@ -135,7 +135,7 @@ export class UndoListItem extends React.Component {
 		this.executor();
 	};
 
-	cancelAction = event => {
+	cancelAction = ( event ) => {
 		if ( event ) {
 			event.preventDefault();
 			event.stopPropagation();
@@ -165,7 +165,7 @@ export class UndoListItem extends React.Component {
 		this.props.global.resetUndoBar();
 	};
 
-	storeInstance = ref => {
+	storeInstance = ( ref ) => {
 		this.instance = ref;
 	};
 
@@ -195,7 +195,7 @@ export class UndoListItem extends React.Component {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	selectedNoteId: getSelectedNoteId( state ),
 } );
 

@@ -121,13 +121,13 @@ describe( 'MediaLibrarySelectedStore', () => {
 			expect( MediaLibrarySelectedStore.dispatchToken ).to.not.be.undefined;
 		} );
 
-		test( 'should emit a change event when library items have been set', done => {
+		test( 'should emit a change event when library items have been set', ( done ) => {
 			MediaLibrarySelectedStore.once( 'change', done );
 
 			dispatchSetLibrarySelectedItems();
 		} );
 
-		test( 'should emit a change event when receiving updates', done => {
+		test( 'should emit a change event when receiving updates', ( done ) => {
 			MediaLibrarySelectedStore.once( 'change', done );
 
 			dispatchReceiveMediaItem();
