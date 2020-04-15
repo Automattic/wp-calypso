@@ -65,8 +65,8 @@ export const Stats = ( {
 				) }
 				<CardHeading>
 					{ config.isEnabled( 'home/experimental-layout' )
-						? translate( 'Stats at a glance' )
-						: translate( 'Page views' ) }
+						? translate( 'Page views' )
+						: translate( 'Stats at a glance' ) }
 				</CardHeading>
 				<h6 className="stats__subheader">{ translate( 'Your site in the last week.' ) }</h6>
 				<div className="stats__data">
