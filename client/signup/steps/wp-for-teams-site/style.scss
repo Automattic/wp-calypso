@@ -20,3 +20,10 @@
 .wp-for-teams-site__validation-site-title.validation-fieldset {
 	margin-bottom: 20px;
 }
+
+.signup.is-wp-for-teams .form-label {
+	&:hover {
+		cursor: pointer;
+	}
+
+}
