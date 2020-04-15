@@ -4,6 +4,7 @@
 import {
 	ManagedContactDetailsShape,
 	updateManagedContactDetailsShape,
+	flattenManagedContactDetailsShape,
 } from '../types/wpcom-store-state';
 
 /**
@@ -207,5 +208,181 @@ describe( 'updateManagedContactDetailsShape', function() {
 			getRandomBoolean() ? undefined : getRandomInt( 0, 10 )
 		);
 		testProperty( merge, construct, update, data );
+	} );
+} );
+
+describe( 'flattenManagedContactDetailsShape', function() {
+	it( 'with no extra fields', () => {
+		expect(
+			flattenManagedContactDetailsShape( x => x.length, {
+				firstName: 'firstName',
+				lastName: 'lastName',
+				organization: 'organization',
+				email: 'email',
+				alternateEmail: 'alternateEmail',
+				phone: 'phone',
+				phoneNumberCountry: 'phoneNumberCountry',
+				address1: 'address1',
+				address2: 'address2',
+				city: 'city',
+				state: 'state',
+				postalCode: 'postalCode',
+				countryCode: 'countryCode',
+				fax: 'fax',
+				vatId: 'vatId',
+				tldExtraFields: {},
+			} )
+		).toEqual( [ 9, 8, 12, 5, 14, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5 ] );
+	} );
+
+	it( 'with ca fields', () => {
+		expect(
+			flattenManagedContactDetailsShape( x => x.length, {
+				firstName: 'firstName',
+				lastName: 'lastName',
+				organization: 'organization',
+				email: 'email',
+				alternateEmail: 'alternateEmail',
+				phone: 'phone',
+				phoneNumberCountry: 'phoneNumberCountry',
+				address1: 'address1',
+				address2: 'address2',
+				city: 'city',
+				state: 'state',
+				postalCode: 'postalCode',
+				countryCode: 'countryCode',
+				fax: 'fax',
+				vatId: 'vatId',
+				tldExtraFields: {
+					ca: {
+						lang: 'lang',
+						legalType: 'legalType',
+						ciraAgreementAccepted: 'ciraAgreementAccepted',
+					},
+				},
+			} )
+		).toEqual( [ 9, 8, 12, 5, 14, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5, 4, 9, 21 ] );
+	} );
+
+	it( 'with uk fields', () => {
+		expect(
+			flattenManagedContactDetailsShape( x => x.length, {
+				firstName: 'firstName',
+				lastName: 'lastName',
+				organization: 'organization',
+				email: 'email',
+				alternateEmail: 'alternateEmail',
+				phone: 'phone',
+				phoneNumberCountry: 'phoneNumberCountry',
+				address1: 'address1',
+				address2: 'address2',
+				city: 'city',
+				state: 'state',
+				postalCode: 'postalCode',
+				countryCode: 'countryCode',
+				fax: 'fax',
+				vatId: 'vatId',
+				tldExtraFields: {
+					uk: {
+						registrantType: 'registrantType',
+						registrationNumber: 'registrationNumber',
+						tradingName: 'tradingName',
+					},
+				},
+			} )
+		).toEqual( [ 9, 8, 12, 5, 14, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5, 14, 18, 11 ] );
+	} );
+
+	it( 'with fr fields', () => {
+		expect(
+			flattenManagedContactDetailsShape( x => x.length, {
+				firstName: 'firstName',
+				lastName: 'lastName',
+				organization: 'organization',
+				email: 'email',
+				alternateEmail: 'alternateEmail',
+				phone: 'phone',
+				phoneNumberCountry: 'phoneNumberCountry',
+				address1: 'address1',
+				address2: 'address2',
+				city: 'city',
+				state: 'state',
+				postalCode: 'postalCode',
+				countryCode: 'countryCode',
+				fax: 'fax',
+				vatId: 'vatId',
+				tldExtraFields: {
+					fr: {
+						registrantType: 'registrantType',
+						trademarkNumber: 'trademarkNumber',
+						sirenSirat: 'sirenSirat',
+					},
+				},
+			} )
+		).toEqual( [ 9, 8, 12, 5, 14, 5, 18, 8, 8, 4, 5, 10, 11, 3, 5, 14, 15, 10 ] );
+	} );
+
+	it( 'with all fields', () => {
+		expect(
+			flattenManagedContactDetailsShape( x => x.length, {
+				firstName: 'firstName',
+				lastName: 'lastName',
+				organization: 'organization',
+				email: 'email',
+				alternateEmail: 'alternateEmail',
+				phone: 'phone',
+				phoneNumberCountry: 'phoneNumberCountry',
+				address1: 'address1',
+				address2: 'address2',
+				city: 'city',
+				state: 'state',
+				postalCode: 'postalCode',
+				countryCode: 'countryCode',
+				fax: 'fax',
+				vatId: 'vatId',
+				tldExtraFields: {
+					ca: {
+						lang: 'lang',
+						legalType: 'legalType',
+						ciraAgreementAccepted: 'ciraAgreementAccepted',
+					},
+					uk: {
+						registrantType: 'registrantType',
+						registrationNumber: 'registrationNumber',
+						tradingName: 'tradingName',
+					},
+					fr: {
+						registrantType: 'registrantType',
+						trademarkNumber: 'trademarkNumber',
+						sirenSirat: 'sirenSirat',
+					},
+				},
+			} )
+		).toEqual( [
+			9,
+			8,
+			12,
+			5,
+			14,
+			5,
+			18,
+			8,
+			8,
+			4,
+			5,
+			10,
+			11,
+			3,
+			5,
+			4,
+			9,
+			21,
+			14,
+			18,
+			11,
+			14,
+			15,
+			10,
+		] );
 	} );
 } );

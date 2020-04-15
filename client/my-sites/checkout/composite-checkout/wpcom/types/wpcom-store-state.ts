@@ -176,7 +176,7 @@ export function updateManagedContactDetailsShape< A, B >(
 	};
 }
 
-function flattenManagedContactDetailsShape< A, B >(
+export function flattenManagedContactDetailsShape< A, B >(
 	f: ( A ) => B,
 	x: ManagedContactDetailsShape< A >
 ): Array< B > {
@@ -203,7 +203,7 @@ function flattenManagedContactDetailsShape< A, B >(
 			? [
 					f( x.tldExtraFields.ca.lang ),
 					f( x.tldExtraFields.ca.legalType ),
-					f( x.tldExtraFields.ca.lang ),
+					f( x.tldExtraFields.ca.ciraAgreementAccepted ),
 			  ]
 			: [];
 
