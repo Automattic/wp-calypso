@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { __experimentalCreateInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
@@ -24,7 +24,7 @@ import { localizeUrl } from '../../../../lib/i18n-utils';
 // TODO: deploy this change to @types/wordpress__element
 declare module '@wordpress/element' {
 	// eslint-disable-next-line no-shadow
-	export function __experimentalCreateInterpolateElement(
+	export function createInterpolateElement(
 		interpolatedString: string,
 		conversionMap: Record< string, ReactElement >
 	): ReactNode;
@@ -82,7 +82,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 
 	const localizedTosLink = localizeUrl( 'https://wordpress.com/tos/' );
 
-	const tos = __experimentalCreateInterpolateElement(
+	const tos = createInterpolateElement(
 		__( 'By creating an account you agree to our <link_to_tos>Terms of Service</link_to_tos>.' ),
 		{
 			link_to_tos: <ExternalLink href={ localizedTosLink } />,

@@ -22,16 +22,7 @@
 		}
 	}
 
-	&__btn--fix {
-		background: var( --color-primary-40 );
-		color: #fff;
-		border: 1px solid var( --studio-gray-0 );
-	}
-
 	&__btn--cancel {
-		background: #fff;
-		color: var( --color-primary-40 );
-		border: 1px solid var( --color-primary-40 );
 		margin-right: 16px;
 	}
 }

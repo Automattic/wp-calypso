@@ -28,9 +28,14 @@
 	color: var( --studio-gray-40 );
 }
 
-.daily-backup-status__label {
+.daily-backup-status__label,
+.daily-backup-status__unavailable {
 	color: var( --studio-gray-80 );
 	text-align: left;
+}
+
+.daily-backup-status__unavailable {
+	margin-bottom: 1rem;
 }
 
 .daily-backup-status__date,

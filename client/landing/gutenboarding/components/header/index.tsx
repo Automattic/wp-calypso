@@ -64,7 +64,7 @@ interface Cart {
 }
 
 const Header: FunctionComponent = () => {
-	const { __ } = useI18n();
+	const { __, i18nLocale } = useI18n();
 
 	const currentStep = useCurrentStep();
 
@@ -78,7 +78,7 @@ const Header: FunctionComponent = () => {
 
 	const { createSite, setDomain, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
-	const allSuggestions = useDomainSuggestions( siteTitle );
+	const allSuggestions = useDomainSuggestions( { searchOverride: siteTitle, locale: i18nLocale } );
 	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice(
 		0,
 		PAID_DOMAINS_TO_SHOW

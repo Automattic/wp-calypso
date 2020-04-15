@@ -4,7 +4,7 @@
 import React, { useEffect } from 'react';
 import { Button, ExternalLink, Modal, Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { __experimentalCreateInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
 
 /**
@@ -18,7 +18,7 @@ import './style.scss';
 // TODO: deploy this change to @types/wordpress__element
 declare module '@wordpress/element' {
 	// eslint-disable-next-line no-shadow
-	export function __experimentalCreateInterpolateElement(
+	export function createInterpolateElement(
 		interpolatedString: string,
 		conversionMap: Record< string, ReactElement >
 	): ReactNode;
@@ -60,7 +60,7 @@ const LoginForm = ( { onRequestClose, onOpenSignup, onLogin }: Props ) => {
 
 	const tos = (
 		<p className="login-form__terms-of-service-link">
-			{ __experimentalCreateInterpolateElement(
+			{ createInterpolateElement(
 				__( 'By continuing you agree to our <link_to_tos>Terms of Service</link_to_tos>.' ),
 				{
 					link_to_tos: <ExternalLink href="https://wordpress.com/tos/" />,

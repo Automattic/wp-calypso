@@ -5,6 +5,11 @@ import React, { createRef, FunctionComponent, useState } from 'react';
 import { Button, Popover, Dashicon } from '@wordpress/components';
 import classnames from 'classnames';
 
+// Core package needs to add this to the type definitions.
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { useViewportMatch } from '@wordpress/compose';
+
 /**
  * Internal dependencies
  */
@@ -32,6 +37,9 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 	const buttonRef = createRef< HTMLButtonElement >();
 
 	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState( false );
+
+	// Popover expands at medium viewport width
+	const isMobile = useViewportMatch( 'medium', '<' );
 
 	const handleClose = ( e?: React.FocusEvent ) => {
 		// Don't collide with button toggling
@@ -61,6 +69,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				<div className="domain-picker-button__popover-container">
 					<Popover
 						className="domain-picker-button__popover"
+						focusOnMount={ isMobile ? 'container' : 'firstElement' }
 						noArrow
 						onClose={ handleClose }
 						onFocusOutside={ handleClose }

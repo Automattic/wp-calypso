@@ -161,7 +161,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			}
 
 			const siteFields = pick( fields, settingsFields.site );
-			if ( 'variant' !== abtest( 'ATPrivacy' ) ) {
+			if ( ! this.props.settings.private_sites_enabled && 'variant' !== abtest( 'ATPrivacy' ) ) {
 				delete siteFields.wpcom_coming_soon;
 			}
 			this.props.saveSiteSettings( siteId, { ...siteFields, apiVersion: '1.4' } );

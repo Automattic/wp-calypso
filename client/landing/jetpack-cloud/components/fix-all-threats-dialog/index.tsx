@@ -115,10 +115,7 @@ const FixAllThreatsDialog = ( {
 								Go back
 							</Button>
 						) }
-						<Button
-							className="fix-all-threats-dialog__btn fix-all-threats-dialog__btn--fix"
-							onClick={ onConfirmation }
-						>
+						<Button primary className="fix-all-threats-dialog__btn" onClick={ onConfirmation }>
 							Fix all threats
 						</Button>
 					</div>

@@ -938,7 +938,7 @@ class RegisterDomainStep extends React.Component {
 			quantity: this.getFreeSubdomainSuggestionsQuantity(),
 			include_wordpressdotcom: true,
 			include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
-			only_wordpressdotcom: true,
+			only_wordpressdotcom: this.props.includeDotBlogSubdomain,
 			tld_weight_overrides: null,
 			vendor: 'dot',
 			vertical: this.props.vertical,

@@ -297,7 +297,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 	}
 }
 
-// Background color override for new flow
+// Background color and plans grid overrides for new flow
 body.is-section-signup.is-frankenflow {
 	background: var( --color-white );
 
@@ -358,8 +358,11 @@ body.is-section-signup.is-frankenflow {
 	}
 
 	.formatted-header__title {
-		@include onboarding-heading-text;
-		font-size: 32px;
+		@include onboarding-heading-text-mobile;
+
+		@include breakpoint( '>480px' ) {
+			@include onboarding-heading-text;
+		}
 	}
 
 	.formatted-header__subtitle {

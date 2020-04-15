@@ -716,15 +716,12 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 };
 
 const connectComponent = connect(
-	( state, ownProps ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 		const siteIsJetpack = isJetpackSite( state, siteId );
 		const selectedSite = getSelectedSite( state );
 
 		return {
-			withComingSoonOption: ownProps.hasOwnProperty( 'withComingSoonOption' )
-				? ownProps.withComingSoonOption
-				: 'variant' === abtest( 'ATPrivacy' ),
 			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
 			isComingSoon: isSiteComingSoon( state, siteId ),
 			needsVerification: ! isCurrentUserEmailVerified( state ),
@@ -765,7 +762,7 @@ const getFormSettings = settings => {
 		timezone_string: settings.timezone_string,
 	};
 
-	if ( 'variant' === abtest( 'ATPrivacy' ) ) {
+	if ( settings.private_sites_enabled || 'variant' === abtest( 'ATPrivacy' ) ) {
 		formSettings.wpcom_coming_soon = settings.wpcom_coming_soon;
 	}
 
@@ -781,5 +778,10 @@ const getFormSettings = settings => {
 
 export default flowRight(
 	connectComponent,
-	wrapSettingsForm( getFormSettings )
+	wrapSettingsForm( getFormSettings ),
+	connect( ( state, ownProps ) => ( {
+		withComingSoonOption: ownProps.hasOwnProperty( 'withComingSoonOption' )
+			? ownProps.withComingSoonOption
+			: ownProps?.settings?.private_sites_enabled || 'variant' === abtest( 'ATPrivacy' ),
+	} ) )
 )( SiteSettingsFormGeneral );
