@@ -3,7 +3,7 @@
  */
 import { localizeUrl } from 'lib/i18n-utils';
 
-const root = localizeUrl( 'https://en.support.wordpress.com/' ).replace( /\/$/, '' );
+const root = localizeUrl( 'https://wordpress.com/support/' ).replace( /\/$/, '' );
 
 export const ACCOUNT_RECOVERY = `${ root }/account-recovery`;
 export const ADDING_GOOGLE_APPS_TO_YOUR_SITE = `${ root }/adding-g-suite-to-your-site`;

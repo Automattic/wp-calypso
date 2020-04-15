@@ -25,6 +25,7 @@ import { get } from 'lodash';
 import InboundTransferEmailVerificationCard from 'my-sites/domains/domain-management/components/inbound-transfer-verification';
 import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
 import { recordPaymentSettingsClick } from './payment-settings-analytics';
+import { localizeUrl } from 'lib/i18n-utils';
 
 class Transfer extends React.PureComponent {
 	render() {
@@ -66,7 +67,9 @@ class Transfer extends React.PureComponent {
 						components: {
 							a: (
 								<a
-									href="https://en.support.wordpress.com/move-domain/incoming-domain-transfer/#checking-your-transfer-status-and-failed-transfers"
+									href={ localizeUrl(
+										'https://wordpress.com/support/move-domain/incoming-domain-transfer/#checking-your-transfer-status-and-failed-transfers'
+									) }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>

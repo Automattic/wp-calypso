@@ -153,7 +153,7 @@ class SharingButtonsAppearance extends Component {
 						text={ translate(
 							'Give your readers the ability to show appreciation for your posts.'
 						) }
-						link="https://support.wordpress.com/likes/"
+						link="https://wordpress.com/support/likes/"
 						privacyLink={ false }
 						position={ 'bottom left' }
 					/>

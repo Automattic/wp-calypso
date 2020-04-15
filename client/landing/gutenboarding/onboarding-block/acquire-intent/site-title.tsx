@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 import classnames from 'classnames';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
-import { __experimentalCreateInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { ENTER } from '@wordpress/keycodes';
 
 /**
@@ -52,7 +52,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { isVisible } ) => {
 
 	// translators: Form input for a site's title where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
 	const madlibTemplate = __( 'Itʼs called <Input />' );
-	const madlib = __experimentalCreateInterpolateElement( madlibTemplate, {
+	const madlib = createInterpolateElement( madlibTemplate, {
 		Input: (
 			<span
 				contentEditable

@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { Card } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
-import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
@@ -32,7 +31,6 @@ import {
 	withAnalytics,
 } from 'state/analytics/actions';
 import ActionBox from './action-box';
-import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 /**
  * Image dependencies
@@ -60,11 +58,8 @@ export const QuickLinks = ( {
 	trackDesignLogoAction,
 	addEmailAction,
 	addDomainAction,
-	isSiteWPForTeamsProp,
 } ) => {
 	const translate = useTranslate();
-
-	const isWPForTeamsSite = isEnabled( 'signup/wpforteams' ) && isSiteWPForTeamsProp;
 
 	const quickLinks = (
 		<div className="quick-links__boxes">
@@ -123,37 +118,32 @@ export const QuickLinks = ( {
 					materialIcon="palette"
 				/>
 			) }
-			{ ! isWPForTeamsSite && (
+			<ActionBox
+				onClick={ changeThemeAction }
+				label={ translate( 'Change theme' ) }
+				materialIcon="view_quilt"
+			/>
+			{ hasCustomDomain ? (
 				<ActionBox
-					onClick={ changeThemeAction }
-					label={ translate( 'Change theme' ) }
-					materialIcon="view_quilt"
+					onClick={ addEmailAction }
+					label={ translate( 'Add email' ) }
+					materialIcon="email"
+				/>
+			) : (
+				<ActionBox
+					onClick={ addDomainAction }
+					label={ translate( 'Add a domain' ) }
+					gridicon="domains"
 				/>
 			) }
-			{ ! isWPForTeamsSite &&
-				( hasCustomDomain ? (
-					<ActionBox
-						onClick={ addEmailAction }
-						label={ translate( 'Add email' ) }
-						materialIcon="email"
-					/>
-				) : (
-					<ActionBox
-						onClick={ addDomainAction }
-						label={ translate( 'Add a domain' ) }
-						gridicon="domains"
-					/>
-				) ) }
-			{ ! isWPForTeamsSite && (
-				<ActionBox
-					href="https://wp.me/logo-maker"
-					onClick={ trackDesignLogoAction }
-					target="_blank"
-					label={ translate( 'Create a logo with Looka' ) }
-					external
-					iconSrc={ logoIcon }
-				/>
-			) }
+			<ActionBox
+				href="https://wp.me/logo-maker"
+				onClick={ trackDesignLogoAction }
+				target="_blank"
+				label={ translate( 'Create a logo with Looka' ) }
+				external
+				iconSrc={ logoIcon }
+			/>
 		</div>
 	);
 
@@ -294,7 +284,6 @@ const mapStateToProps = state => {
 		isNewlyCreatedSite: isNewSite( state, siteId ),
 		showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
 		hasCustomDomain: getGSuiteSupportedDomains( domains ).length > 0,
-		isSiteWPForTeamsProp: isSiteWPForTeams( state, siteId ),
 		siteSlug,
 		isStaticHomePage,
 		editHomePageUrl,

@@ -189,27 +189,27 @@ describe( 'Checkout', () => {
 				container = renderResult.container;
 			} );
 
-			it( 'makes the payment method step active', () => {
+			it( 'makes the review step active', () => {
 				const activeSteps = container.querySelectorAll( '.checkout-step--is-active' );
 				expect( activeSteps ).toHaveLength( 1 );
-				expect( activeSteps[ 0 ] ).toHaveTextContent( 'Pick a payment method' );
+				expect( activeSteps[ 0 ] ).toHaveTextContent( 'Review your order' );
 			} );
 
-			it( 'makes the payment method step visible', () => {
+			it( 'makes the payment method step invisible', () => {
 				const firstStep = container.querySelector( '.checkout__payment-methods-step' );
 				const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
-				expect( firstStepContent ).toHaveStyle( 'display: block' );
+				expect( firstStepContent ).toHaveStyle( 'display: none' );
 			} );
 
-			it( 'makes the review step invisible', () => {
+			it( 'makes the review step visible', () => {
 				const reviewStep = container.querySelector( '.checkout__review-order-step' );
 				expect( reviewStep ).toHaveTextContent( 'Review your order' );
 				const reviewStepContent = reviewStep.querySelector( '.checkout-steps__step-content' );
-				expect( reviewStepContent ).toHaveStyle( 'display: none' );
+				expect( reviewStepContent ).toHaveStyle( 'display: block' );
 			} );
 		} );
 
-		describe( 'when clicking continue from the payment method step', function() {
+		describe( 'when clicking continue from the first step', function() {
 			let container;
 
 			beforeEach( () => {
@@ -236,13 +236,13 @@ describe( 'Checkout', () => {
 			} );
 
 			it( 'makes the first step invisible', () => {
-				const firstStep = container.querySelector( '.checkout__payment-methods-step' );
+				const firstStep = container.querySelector( '.checkout__review-order-step' );
 				const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 				expect( firstStepContent ).toHaveStyle( 'display: none' );
 			} );
 
-			it( 'makes the review step visible', () => {
-				const reviewStep = container.querySelector( '.checkout__review-order-step' );
+			it( 'makes the next step visible', () => {
+				const reviewStep = container.querySelector( '.checkout__payment-methods-step' );
 				const reviewStepContent = reviewStep.querySelector( '.checkout-steps__step-content' );
 				expect( reviewStepContent ).toHaveStyle( 'display: block' );
 			} );

@@ -14,6 +14,7 @@ import { noop } from 'lodash';
 import { recordTracksEvent } from 'state/analytics/actions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormFieldset from 'components/forms/form-fieldset';
+import { localizeUrl } from 'lib/i18n-utils';
 
 export class BusinessATStep extends Component {
 	static propTypes = {
@@ -40,7 +41,7 @@ export class BusinessATStep extends Component {
 				onClick={ this.onClickPluginSupport }
 				target="_blank"
 				rel="noopener noreferrer"
-				href="https://en.support.wordpress.com/plugins/"
+				href={ localizeUrl( 'https://wordpress.com/support/plugins/' ) }
 			/>
 		);
 		const themeLink = (
@@ -48,7 +49,7 @@ export class BusinessATStep extends Component {
 				onClick={ this.onClickThemeSupport }
 				target="_blank"
 				rel="noopener noreferrer"
-				href="https://en.support.wordpress.com/themes/adding-new-themes/"
+				href={ localizeUrl( 'https://wordpress.com/support/themes/adding-new-themes/' ) }
 			/>
 		);
 

@@ -54,7 +54,6 @@ import {
 	isDomainMapping,
 	isDomainTransfer,
 	isTheme,
-	isJetpackBackup,
 	isJetpackProduct,
 	isConciergeSession,
 } from 'lib/products-values';
@@ -344,7 +343,7 @@ class ManagePurchase extends Component {
 
 	renderPlanIcon() {
 		const { purchase } = this.props;
-		if ( isPlan( purchase ) || isJetpackBackup( purchase ) ) {
+		if ( isPlan( purchase ) || isJetpackProduct( purchase ) ) {
 			return (
 				<div className="manage-purchase__plan-icon">
 					<ProductIcon slug={ purchase.productSlug } />

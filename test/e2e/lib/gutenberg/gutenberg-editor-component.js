@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By, until } from 'selenium-webdriver';
+import { By, Key, until } from 'selenium-webdriver';
 import { kebabCase } from 'lodash';
 
 /**
@@ -248,13 +248,15 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		);
 
 		await this.openBlockInserterAndSearch( name );
-		// Using a JS click here since the Webdriver click wasn't working
-		const button = await this.driver.findElement( inserterBlockItemSelector );
-		await this.driver
-			.actions( { bridge: true } )
-			.move( { origin: button } )
-			.perform();
-		await this.driver.executeScript( 'arguments[0].click();', button );
+
+		if ( await driverHelper.elementIsNotPresent( this.driver, inserterBlockItemSelector ) ) {
+			await driverHelper.waitTillPresentAndDisplayed( this.driver, inserterBlockItemSelector );
+		}
+
+		// The normal click is needed to avoid hovering the element, which seems
+		// to cause the element to become stale.
+		await driverHelper.clickWhenClickable( this.driver, inserterBlockItemSelector );
+
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, insertedBlockSelector );
 		return await this.driver.findElement( insertedBlockSelector ).getAttribute( 'id' );
 	}
@@ -447,13 +449,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async dismissEditorWelcomeModal() {
-		if (
-			await driverHelper.isElementPresent( this.driver, By.css( '.edit-post-welcome-guide' ) )
-		) {
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( '.edit-post-welcome-guide .components-modal__header .components-button' )
-			);
+		const welcomeModal = By.css( '.components-guide__container' );
+		if ( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, welcomeModal ) ) {
+			await this.driver.findElement( By.css( '.components-guide' ) ).sendKeys( Key.ESCAPE );
 		}
 	}
 }

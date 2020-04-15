@@ -5,7 +5,7 @@ import React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Suggestions } from '@automattic/components';
 import { useI18n } from '@automattic/react-i18n';
-import { __experimentalCreateInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { ENTER, TAB } from '@wordpress/keycodes';
 import { remove } from 'lodash';
 
@@ -182,7 +182,7 @@ const VerticalSelect: React.FunctionComponent = () => {
 	const madlibTemplate = __( 'My site is about <Input />' );
 	// translators: Form input for a site's topic where "<Input />" is replaced with the topic selected by the user.
 	const madlibTemplateWithPeriod = __( 'My site is about <Input />.' );
-	const madlib = __experimentalCreateInterpolateElement(
+	const madlib = createInterpolateElement(
 		siteVertical ? madlibTemplateWithPeriod : madlibTemplate,
 		{
 			Input: (

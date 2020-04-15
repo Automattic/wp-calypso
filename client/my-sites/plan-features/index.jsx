@@ -270,7 +270,7 @@ export class PlanFeatures extends Component {
 				<p>{ translate( 'Upgrading to this plan makes your site visible to the public.' ) }</p>
 				<InlineSupportLink
 					showIcon={ false }
-					supportLink="https://support.wordpress.com/settings/privacy-settings/"
+					supportLink="https://wordpress.com/support/settings/privacy-settings/"
 					supportPostId={ 1507 }
 				/>
 			</Dialog>

@@ -18,7 +18,7 @@ If you are a developer who needs help with *WordPress.com APIs and related
 tools*, please [contact us](https://developer.wordpress.com/contact/).
 
 If you need help with your *WordPress.com site or account*, please [contact our
-Happiness Engineers](https://support.wordpress.com/contact/).
+Happiness Engineers](https://wordpress.com/support/contact/).
 
 ## Twitter
 

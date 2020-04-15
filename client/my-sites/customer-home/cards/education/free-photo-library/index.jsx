@@ -6,7 +6,6 @@ import { useTranslate } from 'i18n-calypso';
 import { Button, Card } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
 import { connect } from 'react-redux';
-import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
@@ -20,8 +19,6 @@ import {
 	recordTracksEvent,
 	bumpStat,
 } from 'state/analytics/actions';
-import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
-import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Style dependencies
@@ -33,12 +30,8 @@ import './style.scss';
  */
 import freePhotoLibraryVideoPrompt from 'assets/images/customer-home/illustration--free-photo-library.svg';
 
-const FreePhotoLibrary = ( { openSupportArticleDialogAndTrack, isSiteWPForTeamsProp } ) => {
+const FreePhotoLibrary = ( { openSupportArticleDialogAndTrack } ) => {
 	const translate = useTranslate();
-
-	if ( isEnabled( 'signup/wpforteams' ) && isSiteWPForTeamsProp ) {
-		return null;
-	}
 
 	return (
 		<Card className="free-photo-library">
@@ -78,17 +71,8 @@ const openSupportArticleDialogAndTrack = clickSource =>
 		),
 		openSupportArticleDialog( {
 			postId: 145498,
-			postUrl: localizeUrl( 'https://support.wordpress.com/free-photo-library/' ),
+			postUrl: localizeUrl( 'https://wordpress.com/support/free-photo-library/' ),
 		} )
 	);
 
-export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-
-		return {
-			isSiteWPForTeamsProp: isSiteWPForTeams( state, siteId ),
-		};
-	},
-	{ openSupportArticleDialogAndTrack }
-)( FreePhotoLibrary );
+export default connect( null, { openSupportArticleDialogAndTrack } )( FreePhotoLibrary );

@@ -36,9 +36,9 @@
 	],
 	"types": "types",
 	"scripts": {
-		"clean": "npx rimraf dist",
-		"prepublish": "npm run clean",
-		"prepare": "transpile"
+		"clean": "check-npm-client && npx rimraf dist",
+		"prepublish": "check-npm-client && npm run clean",
+		"prepare": "check-npm-client && transpile"
 	},
 	"dependencies": {
 		"@babel/runtime": "^7.8.4",

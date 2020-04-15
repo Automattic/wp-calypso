@@ -46,7 +46,7 @@
 		"@types/webpack-env": "1.15.1",
 		"@wordpress/babel-plugin-import-jsx-pragma": "2.5.0",
 		"@wordpress/browserslist-config": "2.6.0",
-		"@wordpress/dependency-extraction-webpack-plugin": "2.2.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "2.4.0",
 		"autoprefixer": "9.7.3",
 		"babel-jest": "25.1.0",
 		"babel-loader": "8.0.6",

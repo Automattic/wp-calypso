@@ -1,12 +1,14 @@
 .history {
-
 	&__header {
+		color: var( --studio-black );
 		font-size: 28px;
 		line-height: 1;
-		margin: 30px 0;
+		margin: 32px 0 16px;
 
 		@include breakpoint( '>660px' ) {
-			font-size: 48px;
+			font-size: 36px;
+			font-weight: 600;
+			margin: 32px 0 24px;
 		}
 	}
 
@@ -15,11 +17,12 @@
 	}
 
 	&__filters {
-		margin: 25px;
+		margin: 8px 0 24px;
 		display: inline-flex;
 
-		a:focus {
-			border-color: var( --color-neutral-30 );
+		.segmented-control__item.is-selected a {
+			background: var( --color-neutral-30 );
+			color: #fff;
 		}
 	}
 
@@ -27,5 +30,15 @@
 	&__description,
 	&__entries {
 		padding: 0 16px;
+	}
+
+	p {
+		font-size: 18px;
+		margin-bottom: 16px;
+		line-height: 24px;
+
+		@include breakpoint( '>660px' ) {
+			margin-bottom: 24px;
+		}
 	}
 }

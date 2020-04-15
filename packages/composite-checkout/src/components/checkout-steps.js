@@ -93,7 +93,6 @@ export function Checkout( { children, className } ) {
 }
 
 function DefaultCheckoutSteps() {
-	const activePaymentMethod = usePaymentMethod();
 	const orderSummaryStep = getDefaultOrderSummaryStep();
 	const paymentMethodStep = getDefaultPaymentMethodStep();
 	const reviewOrderStep = getDefaultOrderReviewStep();
@@ -113,22 +112,19 @@ function DefaultCheckoutSteps() {
 			/>
 			<CheckoutSteps>
 				<CheckoutStep
-					stepId="payment-method-step"
-					isCompleteCallback={ () =>
-						paymentMethodStep.isCompleteCallback( { activePaymentMethod } )
-					}
-					activeStepContent={ paymentMethodStep.activeStepContent }
-					completeStepContent={ paymentMethodStep.completeStepContent }
-					titleContent={ paymentMethodStep.titleContent }
-					className={ paymentMethodStep.className }
-				/>
-				<CheckoutStep
 					stepId="review-order-step"
 					isCompleteCallback={ () => true }
 					activeStepContent={ reviewOrderStep.activeStepContent }
 					completeStepContent={ reviewOrderStep.completeStepContent }
 					titleContent={ reviewOrderStep.titleContent }
 					className={ reviewOrderStep.className }
+				/>
+				<CheckoutStep
+					stepId="payment-method-step"
+					activeStepContent={ paymentMethodStep.activeStepContent }
+					completeStepContent={ paymentMethodStep.completeStepContent }
+					titleContent={ paymentMethodStep.titleContent }
+					className={ paymentMethodStep.className }
 				/>
 			</CheckoutSteps>
 		</React.Fragment>

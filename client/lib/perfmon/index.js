@@ -7,8 +7,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-
-import analytics from 'lib/analytics';
+import { recordTiming } from 'lib/analytics/timing';
 import { isEnabled } from 'config';
 import debugFactory from 'debug';
 
@@ -121,9 +120,9 @@ function checkActivePlaceholders() {
 	if ( activePlaceholderEverDetected && placeholdersCount === 0 ) {
 		// tell tracks to record duration
 		const { startTime, trigger } = determineTimingType();
-		const duration = Math.round( performance.now() - startTime );
+		const duration = Math.round( window.performance.now() - startTime );
 		debug( `Recording placeholder wait. Duration: ${ duration }, Trigger: ${ trigger }` );
-		analytics.timing.record( `placeholder-wait.${ trigger }`, duration );
+		recordTiming( `placeholder-wait.${ trigger }`, duration );
 		stopMutationObserver();
 	}
 }
@@ -191,7 +190,7 @@ export function installPerfmonPageHandlers() {
 
 	page( function( context, next ) {
 		navigationCount++;
-		navigationStartTime = performance.now();
+		navigationStartTime = window.performance.now();
 		debug( 'entering page navigation', context.path );
 		next();
 	} );

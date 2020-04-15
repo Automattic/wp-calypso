@@ -24,6 +24,7 @@ import SelfHostedInstructions from './self-hosted-instructions';
 import WordPressLogo from 'components/wordpress-logo';
 import { login } from 'lib/oauth-store/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { localizeUrl } from 'lib/i18n-utils';
 
 export class Auth extends Component {
 	state = {
@@ -149,7 +150,7 @@ export class Auth extends Component {
 						target="_blank"
 						rel="noopener noreferrer"
 						title={ translate( 'Visit the WordPress.com support site for help' ) }
-						href="https://en.support.wordpress.com/"
+						href={ localizeUrl( 'https://wordpress.com/support/' ) }
 					>
 						<Gridicon icon="help" />
 					</a>

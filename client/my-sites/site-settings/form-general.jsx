@@ -216,7 +216,7 @@ export class SiteSettingsFormGeneral extends Component {
 		const errors = {
 			error_cap: {
 				text: translate( 'The Site Language setting is disabled due to insufficient permissions.' ),
-				link: 'https://support.wordpress.com/user-roles/',
+				link: 'https://wordpress.com/support/user-roles/',
 				linkText: translate( 'More info' ),
 			},
 			error_const: {
@@ -716,15 +716,12 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 };
 
 const connectComponent = connect(
-	( state, ownProps ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
 		const siteIsJetpack = isJetpackSite( state, siteId );
 		const selectedSite = getSelectedSite( state );
 
 		return {
-			withComingSoonOption: ownProps.hasOwnProperty( 'withComingSoonOption' )
-				? ownProps.withComingSoonOption
-				: 'variant' === abtest( 'ATPrivacy' ),
 			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
 			isComingSoon: isSiteComingSoon( state, siteId ),
 			needsVerification: ! isCurrentUserEmailVerified( state ),
@@ -762,9 +759,12 @@ const getFormSettings = settings => {
 
 		lang_id: settings.lang_id,
 		blog_public: settings.blog_public,
-		wpcom_coming_soon: settings.wpcom_coming_soon,
 		timezone_string: settings.timezone_string,
 	};
+
+	if ( settings.private_sites_enabled || 'variant' === abtest( 'ATPrivacy' ) ) {
+		formSettings.wpcom_coming_soon = settings.wpcom_coming_soon;
+	}
 
 	// handling `gmt_offset` and `timezone_string` values
 	const gmt_offset = settings.gmt_offset;
@@ -778,5 +778,10 @@ const getFormSettings = settings => {
 
 export default flowRight(
 	connectComponent,
-	wrapSettingsForm( getFormSettings )
+	wrapSettingsForm( getFormSettings ),
+	connect( ( state, ownProps ) => ( {
+		withComingSoonOption: ownProps.hasOwnProperty( 'withComingSoonOption' )
+			? ownProps.withComingSoonOption
+			: ownProps?.settings?.private_sites_enabled || 'variant' === abtest( 'ATPrivacy' ),
+	} ) )
 )( SiteSettingsFormGeneral );

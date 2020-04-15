@@ -28,6 +28,7 @@ import {
 	isKeyringConnectionsFetching,
 } from 'state/sharing/keyring/selectors';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
+import { localizeUrl } from 'lib/i18n-utils';
 
 export class EditorSharingPublicizeConnection extends React.Component {
 	static propTypes = {
@@ -130,7 +131,7 @@ export class EditorSharingPublicizeConnection extends React.Component {
 						components: {
 							a: (
 								<a
-									href="https://en.support.wordpress.com/publicize/#facebook-pages"
+									href={ localizeUrl( 'https://wordpress.com/support/publicize/#facebook-pages' ) }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>

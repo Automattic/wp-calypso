@@ -325,7 +325,7 @@ class SiteVerification extends Component {
 										<ExternalLink
 											icon={ true }
 											target="_blank"
-											href="https://en.support.wordpress.com/webmaster-tools/"
+											href="https://wordpress.com/support/webmaster-tools/"
 										/>
 									),
 									google: (

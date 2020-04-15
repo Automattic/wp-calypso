@@ -191,6 +191,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	};
 
 	onIframePortMessage = ( { data, ports }: MessageEvent ) => {
+		/* eslint-disable @typescript-eslint/no-explicit-any */
 		const { action, payload }: { action: EditorActions; payload: any } = data;
 
 		if ( EditorActions.OpenMediaModal === action && ports && ports[ 0 ] ) {

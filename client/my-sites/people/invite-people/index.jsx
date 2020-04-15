@@ -290,7 +290,7 @@ class InvitePeople extends React.Component {
 			<a
 				target="_blank"
 				rel="noopener noreferrer"
-				href="http://en.support.wordpress.com/user-roles/"
+				href="http://wordpress.com/support/user-roles/"
 				onClick={ onClickRoleExplanation }
 			>
 				{ translate( 'Learn more about roles' ) }

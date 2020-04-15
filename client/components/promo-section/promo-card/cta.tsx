@@ -15,6 +15,7 @@ import ActionPanelCta from 'components/action-panel/cta';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { URL } from 'types';
+import { localizeUrl } from 'lib/i18n-utils';
 
 type ClickCallback = () => void;
 
@@ -88,13 +89,13 @@ const PromoCardCta: FunctionComponent< Props & ConnectedProps > = ( {
 	if ( learnMoreLink ) {
 		learnMore = isCtaAction( learnMoreLink )
 			? {
-					href: learnMoreLink.url,
+					href: localizeUrl( learnMoreLink.url ),
 					target: '_blank',
 					onClick: learnMoreLink.onClick,
 			  }
 			: {
 					target: '_blank',
-					href: learnMoreLink,
+					href: localizeUrl( learnMoreLink ),
 			  };
 	}
 

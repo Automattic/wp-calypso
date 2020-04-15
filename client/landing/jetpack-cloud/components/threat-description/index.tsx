@@ -4,6 +4,11 @@
 import React, { ReactNode } from 'react';
 import { translate } from 'i18n-calypso';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export interface Props {
 	children?: ReactNode;
 	action?: 'ignored' | 'fixed';
@@ -15,7 +20,7 @@ export interface Props {
 class ThreatDescription extends React.PureComponent< Props > {
 	renderTextOrNode( content: string | ReactNode ) {
 		if ( typeof content === 'string' ) {
-			return <p>{ content }</p>;
+			return <p className="threat-description__section-text">{ content }</p>;
 		}
 		return content;
 	}
@@ -26,15 +31,21 @@ class ThreatDescription extends React.PureComponent< Props > {
 
 		return (
 			<div className="threat-description">
-				<strong>{ translate( 'What was the problem?' ) }</strong>
+				<p className="threat-description__section-title">
+					<strong>{ translate( 'What was the problem?' ) }</strong>
+				</p>
 				{ this.renderTextOrNode( problem ) }
-				<strong>
-					{ ! isThreatFixedOrIgnored
-						? translate( 'How we will fix it?' )
-						: translate( 'How did Jetpack fix it?' ) }
-				</strong>
+				<p className="threat-description__section-title">
+					<strong>
+						{ ! isThreatFixedOrIgnored
+							? translate( 'How we will fix it?' )
+							: translate( 'How did Jetpack fix it?' ) }
+					</strong>
+				</p>
 				{ this.renderTextOrNode( fix ) }
-				<strong>{ translate( 'The technical details' ) }</strong>
+				<p className="threat-description__section-title">
+					<strong>{ translate( 'The technical details' ) }</strong>
+				</p>
 				{ this.renderTextOrNode( details ) }
 				{ children }
 			</div>

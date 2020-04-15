@@ -25,6 +25,7 @@ import observe from 'lib/mixins/data-observe'; //eslint-disable-line no-restrict
 import ProfileLinks from 'me/profile-links';
 import ReauthRequired from 'me/reauth-required';
 import SectionHeader from 'components/section-header';
+import { localizeUrl } from 'lib/i18n-utils';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import { protectForm } from 'lib/protect-form';
 import { recordGoogleEvent } from 'state/analytics/actions';
@@ -153,7 +154,7 @@ const Profile = createReactClass( {
 									hovercardslink: (
 										<a
 											onClick={ this.getClickHandler( 'Gravatar Hovercards Link' ) }
-											href="https://support.wordpress.com/gravatar-hovercards/"
+											href={ localizeUrl( 'https://wordpress.com/support/gravatar-hovercards/' ) }
 											target="_blank"
 											rel="noopener noreferrer"
 										/>
