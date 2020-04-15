@@ -7,16 +7,13 @@ Automatticians may refer to internal documentation for more information about Tr
 
 Note: In most situations it is best to use the [Analytics Middleware](https://github.com/Automattic/wp-calypso/tree/master/client/state/analytics), which has no direct browser dependencies and therefore will not complicate any unit testing of the modules where it is used.
 
-### `recordGoogleEvent( name, properties )`
+### `recordTracksEvent( name, properties )`
 
 ```js
 import { recordTracksEvent } from 'state/analytics/actions';
 
 dispatch( recordTracksEvent( 'calypso_checkout_coupon_apply', { 'coupon_code': 'abc123' } ) );
 ```
-
-### `analytics.tracks.recordEvent( name, properties )` (Deprecated)
-
 _Note: Unless you have a strong reason to call `recordTracksEvent` directly, you should use the Analytics Middleware instead._
 
 Record an event with optional properties:
@@ -29,7 +26,7 @@ import { initializeAnalytics, recordTracksEvent } from '@automattic/calypso-anal
 initializeAnalytics( currentUser, superProps );
 
 //in your component
-recordTracksEvent( 'calpbso_do_thing', { extra: 'info' } );
+recordTracksEvent( 'calypso_do_thing', { extra: 'info' } );
 ```
 
 ## Naming Conventions
