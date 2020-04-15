@@ -6,10 +6,9 @@ $acquire-intent-transition-duration: 200ms;
 $acquire-intent-transition-algorithm: ease-in-out;
 
 .acquire-intent {
-	@include onboarding-font-recoleta;
+	@include onboarding-heading-text-mobile;
 	background-color: var( --contrastColor );
 	color: var( --mainColor );
-	font-size: 64px;
 	tab-size: 4;
 	position: absolute;
 	left: 0;
@@ -26,6 +25,8 @@ $acquire-intent-transition-algorithm: ease-in-out;
 		display: flex;
 		align-items: center;
 		padding: 0 120px;
+		font-size: 64px;
+		line-height: 80px;
 	}
 
 	@include break-large {
@@ -41,6 +42,11 @@ $acquire-intent-transition-algorithm: ease-in-out;
 		opacity: 0;
 		visibility: hidden;
 	}
+
+}
+
+.acquire-intent__mobile-back-arrow {
+	transform: rotate( 180deg );
 }
 
 .madlib__input {
@@ -49,6 +55,7 @@ $acquire-intent-transition-algorithm: ease-in-out;
 	border: none;
 	font-size: inherit;
 	line-height: 1em;
+	word-break: break-word;
 	height: 1.01em;
 	padding: 0;
 
@@ -66,12 +73,16 @@ $acquire-intent-transition-algorithm: ease-in-out;
 }
 
 .madlib__input:empty {
-	width: 400px;
+	width: 100%;
 	display: inline-block;
 	border-bottom: 2px solid transparent;
 	position: relative;
 	z-index: 2;
 	vertical-align: middle;
+
+	@include break-small {
+		width: 400px;
+	}
 }
 
 /* hide the placeholder when input is not empty */
@@ -108,11 +119,29 @@ $acquire-intent-transition-algorithm: ease-in-out;
 	}
 }
 
+.acquire-intent__question-skip {
+	position: fixed;
+    bottom: 20px;
+	right: 20px;
+
+	@include break-small {
+		position: static;
+	}
+}
+
 .site-title {
 	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
 
 	&--hidden {
 		visibility: hidden;
 		opacity: 0;
+	}
+}
+
+.site-title__input-wrapper {
+	display: block;
+
+	@include break-small {
+		display: inline;
 	}
 }
