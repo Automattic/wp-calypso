@@ -53,11 +53,13 @@ class ActivityCardList extends Component {
 		let lastDate = null;
 		for ( const log of logs ) {
 			const activityDateMoment = applySiteOffset( moment( log.activityDate ) );
-			if ( lastDate && lastDate.isSame( activityDateMoment, 'day' ) ) {
-				logsByDate[ logsByDate.length - 1 ].logs.push( log );
-			} else {
-				logsByDate.push( { date: activityDateMoment, logs: [ log ] } );
-				lastDate = activityDateMoment;
+			if ( activityDateMoment ) {
+				if ( lastDate && lastDate.isSame( activityDateMoment, 'day' ) ) {
+					logsByDate[ logsByDate.length - 1 ].logs.push( log );
+				} else {
+					logsByDate.push( { date: activityDateMoment, logs: [ log ] } );
+					lastDate = activityDateMoment;
+				}
 			}
 		}
 		return logsByDate;
@@ -89,7 +91,7 @@ class ActivityCardList extends Component {
 		} );
 	}
 
-	render() {
+	renderData() {
 		const { filter, logs, pageSize, showFilter, showPagination, siteId } = this.props;
 		const { page: requestedPage } = filter;
 
@@ -98,11 +100,8 @@ class ActivityCardList extends Component {
 			Math.min( requestedPage, Math.ceil( logs.length / pageSize ) )
 		);
 		const theseLogs = logs.slice( ( actualPage - 1 ) * pageSize, actualPage * pageSize );
-
 		return (
-			<div className="activity-card-list">
-				<QueryRewindCapabilities siteId={ siteId } />
-				<QueryRewindState siteId={ siteId } />
+			<>
 				{ showFilter && (
 					<Filterbar
 						{ ...{
@@ -140,6 +139,18 @@ class ActivityCardList extends Component {
 						total={ logs.length }
 					/>
 				) }
+			</>
+		);
+	}
+
+	render() {
+		const { applySiteOffset, siteId } = this.props;
+
+		return (
+			<div className="activity-card-list">
+				<QueryRewindCapabilities siteId={ siteId } />
+				<QueryRewindState siteId={ siteId } />
+				{ applySiteOffset && this.renderData() }
 			</div>
 		);
 	}
