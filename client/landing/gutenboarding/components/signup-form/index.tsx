@@ -21,9 +21,6 @@ import GUTENBOARDING_BASE_NAME from '../../basename.json';
 
 import { localizeUrl } from '../../../../lib/i18n-utils';
 
-// TODO: remove after @types/wordpress__element update
-/*#__PURE__*/ import '../../gutenberg-types-patch';
-
 interface Props {
 	onRequestClose: () => void;
 }

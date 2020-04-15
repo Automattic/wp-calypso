@@ -15,9 +15,6 @@ import EnterUsernameOrEmailForm from './enter-username-or-email';
 import EnterPasswordForm from './enter-password';
 import './style.scss';
 
-// TODO: remove after @types/wordpress__element update
-/*#__PURE__*/ import '../../gutenberg-types-patch';
-
 interface Props {
 	onRequestClose: () => void;
 	onOpenSignup: () => void;

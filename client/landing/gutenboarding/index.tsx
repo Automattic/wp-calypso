@@ -29,6 +29,9 @@ import { USER_STORE } from './stores/user';
 import 'assets/stylesheets/gutenboarding.scss';
 import 'components/environment-badge/style.scss';
 
+// TODO: remove when all needed core types are available
+/*#__PURE__*/ import './gutenberg-types-patch';
+
 function generateGetSuperProps() {
 	return () => ( {
 		environment: process.env.NODE_ENV,
