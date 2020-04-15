@@ -37,7 +37,7 @@ export const fetchStoredCards = () => ( dispatch ) => {
 
 	return new Promise( ( resolve, reject ) => {
 		wp.undocumented().getPaymentMethods(
-			{ type: 'all', status: 'stored', expired: 'exclude' },
+			{ type: 'all', forgotten: 'exclude', expired: 'exclude' },
 			( error, data ) => {
 				error ? reject( error ) : resolve( data );
 			}

@@ -13,7 +13,11 @@ import { deleteStoredCard } from 'state/stored-cards/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { isDeletingStoredCard } from 'state/stored-cards/selectors';
 import { Button } from '@automattic/components';
-import { isPaymentAgreement, getPaymentMethodSummary } from 'lib/checkout/payment-methods';
+import {
+	isPaymentAgreement,
+	getPaymentMethodSummary,
+	PaymentMethod,
+} from 'lib/checkout/payment-methods';
 import StoredCard from 'components/credit-card/stored-card';
 import PaymentMethodDeleteDialog from './payment-method-delete-dialog';
 
@@ -22,21 +26,11 @@ import PaymentMethodDeleteDialog from './payment-method-delete-dialog';
  */
 import './credit-card-delete.scss';
 
-interface Card {
-	card?: string;
-	email: string;
-	card_type?: string;
-	payment_partner: string;
-	name: string;
-	expiry: string;
-	stored_details_id: string;
-}
-
 interface Props {
-	card: Card;
+	card: PaymentMethod;
 	errorNotice: ( msg: TranslateResult ) => void;
 	successNotice: ( msg: TranslateResult ) => void;
-	deleteStoredCard: ( card: Card ) => Promise< void >;
+	deleteStoredCard: ( card: PaymentMethod ) => Promise< void >;
 	isDeleting: boolean;
 }
 
@@ -103,7 +97,7 @@ const CreditCardDelete: FunctionComponent< Props > = props => {
 };
 
 interface OwnProps {
-	card: Card;
+	card: PaymentMethod;
 }
 
 export default connect< {}, {}, OwnProps >(

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { TranslateResult } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 
 /**
  * Image assets
@@ -27,10 +27,20 @@ import payPalImage from 'assets/images/upgrades/paypal.svg';
 export const PARTNER_PAYPAL_EXPRESS = 'paypal_express';
 export const PAYMENT_AGREEMENTS_PARTNERS = [ PARTNER_PAYPAL_EXPRESS ];
 
-export const isPaymentAgreement = method =>
+export interface PaymentMethod {
+	card?: string;
+	email: string;
+	card_type?: string;
+	payment_partner: string;
+	name: string;
+	expiry: string;
+	stored_details_id: string;
+}
+
+export const isPaymentAgreement = ( method: PaymentMethod ) =>
 	PAYMENT_AGREEMENTS_PARTNERS.includes( method.payment_partner );
 
-export const isCreditCard = method => method.card && method.card.length > 0;
+export const isCreditCard = ( method: PaymentMethod ) => ! isPaymentAgreement( method );
 
 interface ImagePathsMap {
 	[ key: string ]: string;
@@ -74,7 +84,7 @@ export const getPaymentMethodSummary = ( {
 	digits,
 	email,
 }: {
-	translate: ReturnType< TranslateResult >;
+	translate: ReturnType< typeof useTranslate >;
 	type: string;
 	digits?: string;
 	email?: string;
