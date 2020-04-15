@@ -28,9 +28,6 @@ export default function WPContactForm( {
 	CountrySelectMenu,
 	countriesList,
 	renderDomainContactFields,
-	updateContactDetails,
-	updateCountryCode,
-	updatePostalCode,
 	shouldShowContactDetailsValidationErrors,
 } ) {
 	const translate = useTranslate();
@@ -49,19 +46,16 @@ export default function WPContactForm( {
 
 	return (
 		<BillingFormFields>
-			{ renderContactDetails( {
-				translate,
-				isDomainFieldsVisible,
-				contactInfo,
-				renderDomainContactFields,
-				updateContactDetails,
-				updateCountryCode,
-				updatePostalCode,
-				CountrySelectMenu,
-				countriesList,
-				shouldShowContactDetailsValidationErrors,
-				isDisabled,
-			} ) }
+			<RenderContactDetails
+				translate={ translate }
+				isDomainFieldsVisible={ isDomainFieldsVisible }
+				contactInfo={ contactInfo }
+				renderDomainContactFields={ renderDomainContactFields }
+				CountrySelectMenu={ CountrySelectMenu }
+				countriesList={ countriesList }
+				shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
+				isDisabled={ isDisabled }
+			/>
 		</BillingFormFields>
 	);
 }
@@ -268,14 +262,11 @@ function getContactDetailsFormat( isDomainFieldsVisible ) {
 	return 'DEFAULT';
 }
 
-function renderContactDetails( {
+function RenderContactDetails( {
 	translate,
 	isDomainFieldsVisible,
 	contactInfo,
 	renderDomainContactFields,
-	updateContactDetails,
-	updateCountryCode,
-	updatePostalCode,
 	CountrySelectMenu,
 	countriesList,
 	shouldShowContactDetailsValidationErrors,
@@ -283,6 +274,9 @@ function renderContactDetails( {
 } ) {
 	const format = getContactDetailsFormat( isDomainFieldsVisible );
 	const requiresVatId = isEligibleForVat( contactInfo.countryCode.value );
+	const domainNames = useDomainNamesInCart();
+	const { updateDomainContactFields, updateCountryCode, updatePostalCode } = useDispatch( 'wpcom' );
+
 	switch ( format ) {
 		case 'DOMAINS':
 			return (
@@ -295,7 +289,7 @@ function renderContactDetails( {
 					{ renderDomainContactFields(
 						prepareDomainContactDetails( contactInfo ),
 						prepareDomainContactDetailsErrors( contactInfo ),
-						updateContactDetails,
+						updateDomainContactFields,
 						shouldShowContactDetailsValidationErrors,
 						isDisabled
 					) }

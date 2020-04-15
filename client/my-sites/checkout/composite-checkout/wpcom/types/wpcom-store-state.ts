@@ -412,7 +412,6 @@ export function prepareDomainContactValidationRequest(
 
 	return {
 		domain_names: domainNames,
-		qualify_properties: true,
 		contact_information: {
 			firstName: details.firstName.value,
 			lastName: details.lastName.value,
@@ -438,39 +437,218 @@ export function formatDomainContactValidationResponse(
 	response: DomainContactValidationResponse
 ): ManagedContactDetailsErrors {
 	return {
-		firstName: response.messages?.firstName,
-		lastName: response.messages?.lastName,
-		organization: response.messages?.organization,
-		email: response.messages?.email,
-		alternateEmail: response.messages?.alternateEmail,
-		phone: response.messages?.phone,
-		phoneNumberCountry: response.messages?.phoneNumberCountry,
-		address1: response.messages?.address1,
-		address2: response.messages?.address2,
-		city: response.messages?.city,
-		state: response.messages?.state,
-		postalCode: response.messages?.postalCode,
-		countryCode: response.messages?.countryCode,
-		fax: response.messages?.fax,
-		vatId: response.messages?.vatId,
+        firstName: response.messages ?.firstName,
+        lastName
+:
+    response.messages ?
+.
+    lastName,
+        organization
+:
+    response.messages ?
+.
+    organization,
+        email
+:
+    response.messages ?
+.
+    email,
+        alternateEmail
+:
+    response.messages ?
+.
+    alternateEmail,
+        phone
+:
+    response.messages ?
+.
+    phone,
+        phoneNumberCountry
+:
+    response.messages ?
+.
+    phoneNumberCountry,
+        address1
+:
+    response.messages ?
+.
+    address1,
+        address2
+:
+    response.messages ?
+.
+    address2,
+        city
+:
+    response.messages ?
+.
+    city,
+        state
+:
+    response.messages ?
+.
+    state,
+        postalCode
+:
+    response.messages ?
+.
+    postalCode,
+        countryCode
+:
+    response.messages ?
+.
+    countryCode,
+        fax
+:
+    response.messages ?
+.
+    fax,
+        vatId
+:
+    response.messages ?
+.
+    vatId,
+        tldExtraFields
+:
+    {
+        ca: {
+            lang: response.messages ?
+        .
+            extra ?
+        .
+            ca ?
+        .
+            lang,
+                legalType
+        :
+            response.messages ?
+        .
+            extra ?
+        .
+            ca ?
+        .
+            legalType,
+                ciraAgreementAccepted
+        :
+            response.messages ?
+        .
+            extra ?
+        .
+            ca ?
+        .
+            ciraAgreementAccepted,
+        }
+    ,
+        uk: {
+            registrantType: response.messages ?
+        .
+            extra ?
+        .
+            uk ?
+        .
+            registrantType,
+                registrationNumber
+        :
+            response.messages ?
+        .
+            extra ?
+        .
+            uk ?
+        .
+            registrationNumber,
+                tradingName
+        :
+            response.messages ?
+        .
+            extra ?
+        .
+            uk ?
+        .
+            tradingName,
+        }
+    ,
+        fr: {
+            registrantType: response.messages ?
+        .
+            extra ?
+        .
+            fr ?
+        .
+            registrantType,
+                trademarkNumber
+        :
+            response.messages ?
+        .
+            extra ?
+        .
+            fr ?
+        .
+            trademarkNumber,
+                sirenSirat
+        :
+            response.messages ?
+        .
+            extra ?
+        .
+            fr ?
+        .
+            sirenSirat,
+        }
+    ,
+    }
+} };
+
+function prepareManagedContactDetailsUpdate(
+	rawFields: DomainContactDetails
+): ManagedContactDetailsUpdate {
+	return {
+		firstName: rawFields.firstName,
+		lastName: rawFields.lastName,
+		organization: rawFields.organization,
+		email: rawFields.email,
+		alternateEmail: rawFields.alternateEmail,
+		phone: rawFields.phone,
+		phoneNumberCountry: undefined,
+		address1: rawFields.address1,
+		address2: rawFields.address2,
+		city: rawFields.city,
+		state: rawFields.state,
+		postalCode: rawFields.postalCode,
+		countryCode: rawFields.countryCode,
+		fax: rawFields.fax,
+		vatId: rawFields.vatId,
 		tldExtraFields: {
 			ca: {
-				lang: response.messages?.extra?.ca?.lang,
-				legalType: response.messages?.extra?.ca?.legalType,
-				ciraAgreementAccepted: response.messages?.extra?.ca?.ciraAgreementAccepted,
+				lang: rawFields?.extra?.ca?.lang,
+				legalType: rawFields?.extra?.ca?.legalType,
+				ciraAgreementAccepted: rawFields?.extra?.ca?.ciraAgreementAccepted?.toString(),
 			},
 			uk: {
-				registrantType: response.messages?.extra?.uk?.registrantType,
-				registrationNumber: response.messages?.extra?.uk?.registrationNumber,
-				tradingName: response.messages?.extra?.uk?.tradingName,
+				registrantType: rawFields?.extra?.uk?.registrantType,
+				registrationNumber: rawFields?.extra?.uk?.registrationNumber,
+				tradingName: rawFields?.extra?.uk?.tradingName,
 			},
 			fr: {
-				registrantType: response.messages?.extra?.fr?.registrantType,
-				trademarkNumber: response.messages?.extra?.fr?.trademarkNumber,
-				sirenSirat: response.messages?.extra?.fr?.sirenSirat,
+				registrantType: rawFields?.extra?.fr?.registrantType,
+				trademarkNumber: rawFields?.extra?.fr?.trademarkNumber,
+				sirenSirat: rawFields?.extra?.fr?.sirenSirat,
 			},
 		},
 	};
+}
+
+function applyDomainContactDetailsUpdate(
+	oldDetails: ManagedContactDetails,
+	update: ManagedContactDetailsUpdate
+): ManagedContactDetails {
+	return updateManagedContactDetailsShape(
+		( newField: undefined | string, detail: ManagedValue ) => {
+			return touchIfDifferent( newField, detail );
+		},
+		( newField: undefined | string ) => getInitialManagedValue( { value: newField } ),
+		update,
+		oldDetails
+	);
 }
 
 /*
@@ -479,43 +657,27 @@ export function formatDomainContactValidationResponse(
  * assume input came from the user.
  */
 export type ManagedContactDetailsUpdaters = {
-	updateDomainFields: ( ManagedContactDetails, DomainContactDetails ) => ManagedContactDetails;
-	updatePhone: ( ManagedContactDetails, string ) => ManagedContactDetails;
-	updatePhoneNumberCountry: ( ManagedContactDetails, string ) => ManagedContactDetails;
-	updatePostalCode: ( ManagedContactDetails, string ) => ManagedContactDetails;
-	updateCountryCode: ( ManagedContactDetails, string ) => ManagedContactDetails;
-	touchContactFields: ( ManagedContactDetails ) => ManagedContactDetails;
-	updateVatId: ( ManagedContactDetails, string ) => ManagedContactDetails;
-	setErrorMessages: ( ManagedContactDetails, ManagedContactDetailsErrors ) => ManagedContactDetails;
+	updatePhone: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
+	updatePhoneNumberCountry: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
+	updatePostalCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
+	updateCountryCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
+	updateDomainContactFields: (
+		arg0: ManagedContactDetails,
+		arg1: DomainContactDetails
+	) => ManagedContactDetails;
+	touchContactFields: ( arg0: ManagedContactDetails ) => ManagedContactDetails;
+	updateVatId: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
+	setErrorMessages: (
+		arg0: ManagedContactDetails,
+		arg1: ManagedContactDetailsErrors
+	) => ManagedContactDetails;
 	populateDomainFieldsFromCache: (
-		ManagedContactDetails,
-		PossiblyCompleteDomainContactDetails
+		arg0: ManagedContactDetails,
+		arg1: PossiblyCompleteDomainContactDetails
 	) => ManagedContactDetails;
 };
 
 export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
-	updateDomainFields: (
-		oldDetails: ManagedContactDetails,
-		newDetails: DomainContactDetails
-	): ManagedContactDetails => {
-		return {
-			...oldDetails,
-			firstName: touchIfDifferent( newDetails.firstName, oldDetails.firstName ),
-			lastName: touchIfDifferent( newDetails.lastName, oldDetails.lastName ),
-			organization: touchIfDifferent( newDetails.organization, oldDetails.organization ),
-			email: touchIfDifferent( newDetails.email, oldDetails.email ),
-			alternateEmail: touchIfDifferent( newDetails.alternateEmail, oldDetails.alternateEmail ),
-			phone: touchIfDifferent( newDetails.phone, oldDetails.phone ),
-			address1: touchIfDifferent( newDetails.address1, oldDetails.address1 ),
-			address2: touchIfDifferent( newDetails.address2, oldDetails.address2 ),
-			city: touchIfDifferent( newDetails.city, oldDetails.city ),
-			state: touchIfDifferent( newDetails.state, oldDetails.state ),
-			postalCode: touchIfDifferent( newDetails.postalCode, oldDetails.postalCode ),
-			countryCode: touchIfDifferent( newDetails.countryCode, oldDetails.countryCode ),
-			fax: touchIfDifferent( newDetails.fax, oldDetails.fax ),
-		};
-	},
-
 	updatePhone: ( oldDetails: ManagedContactDetails, newPhone: string ): ManagedContactDetails => {
 		return {
 			...oldDetails,
@@ -551,6 +713,16 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 			...oldDetails,
 			countryCode: touchIfDifferent( newCountryCode, oldDetails.countryCode ),
 		};
+	},
+
+	updateDomainContactFields: (
+		oldDetails: ManagedContactDetails,
+		newField: DomainContactDetails
+	): ManagedContactDetails => {
+		return applyDomainContactDetailsUpdate(
+			oldDetails,
+			prepareManagedContactDetailsUpdate( newField )
+		);
 	},
 
 	touchContactFields: ( oldDetails: ManagedContactDetails ): ManagedContactDetails => {

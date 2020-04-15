@@ -86,14 +86,9 @@ export default function WPCheckout( {
 	const shouldShowContactStep = isDomainFieldsVisible || total.amount.value > 0;
 
 	const contactInfo = useSelect( sel => sel( 'wpcom' ).getContactInfo() ) || {};
-	const {
-		setSiteId,
-		touchContactFields,
-		updateContactDetails,
-		updateCountryCode,
-		updatePostalCode,
-		applyDomainContactValidationResults,
-	} = useDispatch( 'wpcom' );
+	const { setSiteId, touchContactFields, applyDomainContactValidationResults } = useDispatch(
+		'wpcom'
+	);
 
 	const [
 		shouldShowContactDetailsValidationErrors,
@@ -187,9 +182,6 @@ export default function WPCheckout( {
 								countriesList={ countriesList }
 								StateSelect={ StateSelect }
 								renderDomainContactFields={ renderDomainContactFields }
-								updateContactDetails={ updateContactDetails }
-								updateCountryCode={ updateCountryCode }
-								updatePostalCode={ updatePostalCode }
 								shouldShowContactDetailsValidationErrors={
 									shouldShowContactDetailsValidationErrors
 								}
