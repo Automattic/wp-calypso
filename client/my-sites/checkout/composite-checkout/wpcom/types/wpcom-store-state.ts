@@ -5,6 +5,12 @@ import {
 	DomainContactDetails,
 	PossiblyCompleteDomainContactDetails,
 	DomainContactDetailsErrors,
+	CaDomainContactExtraDetails,
+	CaDomainContactExtraDetailsErrors,
+	UkDomainContactExtraDetails,
+	UkDomainContactExtraDetailsErrors,
+	FrDomainContactExtraDetails,
+	FrDomainContactExtraDetailsErrors,
 } from './backend/domain-contact-details-components';
 import {
 	DomainContactValidationRequest,
@@ -368,6 +374,7 @@ export function prepareDomainContactDetails(
 		postalCode: details.postalCode.value,
 		countryCode: details.countryCode.value,
 		fax: details.fax.value,
+		extra: prepareTldExtraContactDetails( details ),
 	};
 }
 
@@ -388,7 +395,121 @@ export function prepareDomainContactDetailsErrors(
 		postalCode: details.postalCode.errors[ 0 ],
 		countryCode: details.countryCode.errors[ 0 ],
 		fax: details.fax.errors[ 0 ],
+		extra: prepareTldExtraContactDetailsErrors( details ),
 	};
+}
+
+function prepareTldExtraContactDetails(
+	details: ManagedContactDetails
+): {
+	ca: null | CaDomainContactExtraDetails;
+	uk: null | UkDomainContactExtraDetails;
+	fr: null | FrDomainContactExtraDetails;
+} {
+	return {
+		ca: prepareCaDomainContactExtraDetails( details ),
+		uk: prepareUkDomainContactExtraDetails( details ),
+		fr: prepareFrDomainContactExtraDetails( details ),
+	};
+}
+
+function prepareTldExtraContactDetailsErrors(
+	details: ManagedContactDetails
+): {
+	ca: null | CaDomainContactExtraDetailsErrors;
+	uk: null | UkDomainContactExtraDetailsErrors;
+	fr: null | FrDomainContactExtraDetailsErrors;
+} {
+	return {
+		ca: prepareCaDomainContactExtraDetailsErrors( details ),
+		uk: prepareUkDomainContactExtraDetailsErrors( details ),
+		fr: prepareFrDomainContactExtraDetailsErrors( details ),
+	};
+}
+
+function prepareCaDomainContactExtraDetails(
+	details: ManagedContactDetails
+): CaDomainContactExtraDetails | null {
+	if ( details.tldExtraFields?.ca ) {
+		return {
+			lang: details.tldExtraFields.ca.lang.value,
+			legalType: details.tldExtraFields.ca.legalType.value,
+			ciraAgreementAccepted: details.tldExtraFields.ca.ciraAgreementAccepted.value === 'true',
+		};
+	}
+	return null;
+}
+
+function prepareCaDomainContactExtraDetailsErrors(
+	details: ManagedContactDetails
+): CaDomainContactExtraDetailsErrors | null {
+	if ( details.tldExtraFields?.ca ) {
+		return {
+			lang: details.tldExtraFields.ca.lang.errors[ 0 ],
+			legalType: details.tldExtraFields.ca.legalType.errors[ 0 ],
+			ciraAgreementAccepted: details.tldExtraFields.ca.ciraAgreementAccepted.errors[ 0 ],
+		};
+	}
+	return null;
+}
+
+function prepareUkDomainContactExtraDetails(
+	details: ManagedContactDetails
+): UkDomainContactExtraDetails | null {
+	if ( details.tldExtraFields?.uk ) {
+		return {
+			registrantType: details.tldExtraFields.uk.registrantType.value,
+			registrationNumber: details.tldExtraFields.uk.registrationNumber.value,
+			tradingName: details.tldExtraFields.uk.tradingName.value,
+		};
+	}
+	return null;
+}
+
+function prepareUkDomainContactExtraDetailsErrors(
+	details: ManagedContactDetails
+): UkDomainContactExtraDetailsErrors | null {
+	if ( details.tldExtraFields?.uk ) {
+		// Needed for compatibility with existing component props
+		const toErrorPayload = ( errorMessage, index ) => {
+			return { errorCode: index.toString(), errorMessage };
+		};
+
+		return {
+			registrantType: details.tldExtraFields.uk.registrantType.errors.map( toErrorPayload ),
+			registrationNumber: details.tldExtraFields.uk.registrationNumber.errors.map( toErrorPayload ),
+			tradingName: details.tldExtraFields.uk.tradingName.errors.map( toErrorPayload ),
+		};
+	}
+	return null;
+}
+
+function prepareFrDomainContactExtraDetails(
+	details: ManagedContactDetails
+): FrDomainContactExtraDetails | null {
+	if ( details.tldExtraFields?.fr ) {
+		return {
+			registrantType: details.tldExtraFields.fr.registrantType.value,
+			registrantVatId: details.vatId.value,
+			trademarkNumber: details.tldExtraFields.fr.trademarkNumber.value,
+			sirenSirat: details.tldExtraFields.fr.sirenSirat.value,
+		};
+	}
+	return null;
+}
+
+function prepareFrDomainContactExtraDetailsErrors(
+	details: ManagedContactDetails
+): FrDomainContactExtraDetailsErrors | null {
+	if ( details.tldExtraFields?.fr ) {
+		return {
+			registrantType: details.tldExtraFields.fr.registrantType.errors[ 0 ],
+			registrantVatId: details.vatId.errors[ 0 ],
+			trademarkNumber: details.tldExtraFields.fr.trademarkNumber.errors[ 0 ],
+			sirenSirat: details.tldExtraFields.fr.sirenSirat.errors[ 0 ],
+		};
+	}
+	return null;
 }
 
 export function prepareDomainContactValidationRequest(
