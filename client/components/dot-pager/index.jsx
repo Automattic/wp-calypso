@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Children, useState } from 'react';
-import { Button, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
 
