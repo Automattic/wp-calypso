@@ -10,14 +10,14 @@ $acquire-intent-transition-algorithm: ease-in-out;
 	background-color: var( --contrastColor );
 	color: var( --mainColor );
 	tab-size: 4;
-	width: 100%;
 	min-height: calc( 100vh - #{$gutenboarding-header-height} );
 	display: flex;
 	flex: 1;
     flex-direction: column;
     justify-content: space-between;
 	height: 100%;
-	padding: 20px 0;
+	margin: 0 -20px;
+	padding: 20px;
 	transition: color $acquire-intent-transition-duration
 			$acquire-intent-transition-algorithm,
 		background-color $acquire-intent-transition-duration
@@ -28,14 +28,16 @@ $acquire-intent-transition-algorithm: ease-in-out;
 	}
 
 	@include break-small {
-		padding: 0 calc( 120px - 44px ); // calc difference between design and block margins
+		margin: 0 -44px; // override block margins
+		padding: 0 120px;
 		font-size: 64px;
 		line-height: 80px;
 		justify-content: center;
 	}
 
-	@include break-large {
-		padding: 12px calc( 170px - 88px ) 0; // calc difference between design and block margins
+	@include break-medium {
+		margin: 0 -88px; // override block margins
+		padding: 12px 170px 0;
 	}
 }
 
