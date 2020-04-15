@@ -67,6 +67,10 @@ export const UpsellNudge = ( {
 			showIcon={ showIcon }
 			disableHref={ disableHref }
 			className={ classes }
+			showIcon={ showIcon }
+			jetpack={ isJetpack }
+			feature={ feature }
+			plan={ plan }
 			href={ href }
 		/>
 	);
