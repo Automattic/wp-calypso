@@ -27,7 +27,9 @@ const ManageSite = ( { cards } ) => {
 
 	return (
 		<>
-			<h2>{ translate( 'Manage your site' ) }</h2>
+			<h2 className="manage-site__heading customer-home__section-heading">
+				{ translate( 'Manage your site' ) }
+			</h2>
 			{ cards &&
 				cards.map(
 					( card, index ) =>

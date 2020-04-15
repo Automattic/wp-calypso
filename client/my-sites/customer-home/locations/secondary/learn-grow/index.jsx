@@ -23,7 +23,9 @@ const LearnGrow = ( { cards } ) => {
 
 	return (
 		<>
-			<h2>{ translate( 'Learn and grow' ) }</h2>
+			<h2 className="learn-grow__heading customer-home__section-heading">
+				{ translate( 'Learn and grow' ) }
+			</h2>
 			{ cards &&
 				cards.map(
 					( card, index ) =>

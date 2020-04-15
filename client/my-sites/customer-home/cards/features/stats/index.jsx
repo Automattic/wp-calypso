@@ -34,7 +34,9 @@ export const Stats = ( {
 
 	return (
 		<>
-			<h2>{ translate( 'Stats at a glance' ) }</h2>
+			<h2 className="stats__heading customer-home__section-heading">
+				{ translate( 'Stats at a glance' ) }
+			</h2>
 			<Card className="stats">
 				{ siteId && (
 					<>

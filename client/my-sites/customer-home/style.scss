@@ -70,10 +70,6 @@
 		@include grid-template-columns( 12, 24px, 1fr );
 		grid-gap: 24px;
 	}
-
-	h2 {
-		font-family: 'Recoleta', serif;
-	}
 }
 .customer-home__layout-col {
 	.card-heading {
@@ -111,4 +107,10 @@
 .customer-home__loading-placeholder {
 	@include placeholder();
 	@include grid-column( 1, 12 );
+}
+
+.customer-home__section-heading {
+	font-family: 'Recoleta', serif;
+	font-size: 1.25rem;
+	margin-bottom: 0.25rem;
 }
