@@ -138,7 +138,7 @@
 		// On mobile the main content area has to scroll, otherwise you can invoke the overscroll bounce on the non-scrolling container.
 		@include break-small {
 			position: fixed;
-			padding: $grid-size;
+			padding: $grid-unit-10;
 		}
 	}
 
@@ -152,15 +152,15 @@
 		margin-left: 10px;
 
 		&.signup-form__header-wp-logo {
-			margin-left: 24px - $grid-size; // ( 24 - header padding )
+			margin-left: 24px - $grid-unit-10; // ( 24 - header padding )
 		}
 
 		&.signup-form__header-close-button {
-			margin-right: 24px - $grid-size; // ( 24 - header padding )
+			margin-right: 24px - $grid-unit-10; // ( 24 - header padding )
 		}
 
 		.signup-form__link {
-			margin-right: 24px - $grid-size; // ( 24 - header padding )
+			margin-right: 24px - $grid-unit-10; // ( 24 - header padding )
 			font-weight: 600;
 			@include onboarding-small-text;
 		}

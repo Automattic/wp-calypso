@@ -217,7 +217,7 @@ class BackupsPage extends Component {
 					siteSlug={ siteSlug }
 				/>
 
-				<div>{ isLoadingBackups && translate( 'Loading backups…' ) }</div>
+				{ isLoadingBackups && <div className="backups__is-loading" /> }
 
 				{ ! isLoadingBackups && (
 					<>

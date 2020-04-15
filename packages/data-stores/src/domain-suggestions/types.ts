@@ -16,6 +16,11 @@ export interface DomainSuggestionQuery {
 	include_wordpressdotcom: boolean;
 
 	/**
+	 * Localizes domain results, e.g., price format
+	 */
+	locale?: string;
+
+	/**
 	 * True to only provide a wordpress.com subdomain
 	 *
 	 * @example
