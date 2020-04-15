@@ -33,13 +33,11 @@ const CheckoutSingleStepDataContext = React.createContext();
 
 export function Checkout( { children, className } ) {
 	const { formStatus } = useFormStatus();
-	const localize = useLocalize();
 	const [ activeStepNumber, setActiveStepNumber ] = useState( 1 );
 	const [ stepCompleteStatus, setStepCompleteStatus ] = useState( {} );
 	const [ totalSteps, setTotalSteps ] = useState( 0 );
 	const actualActiveStepNumber =
 		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
-	const isThereAnotherNumberedStep = actualActiveStepNumber < totalSteps;
 
 	// Change the step if the url changes
 	useChangeStepNumberForUrl( setActiveStepNumber );
@@ -71,22 +69,7 @@ export function Checkout( { children, className } ) {
 					setTotalSteps,
 				} }
 			>
-				<MainContentUI
-					className={ joinClasses( [ className, 'checkout__content' ] ) }
-					isLastStepActive={ ! isThereAnotherNumberedStep }
-				>
-					{ children || getDefaultCheckoutSteps() }
-
-					<SubmitButtonWrapperUI isLastStepActive={ ! isThereAnotherNumberedStep }>
-						<CheckoutErrorBoundary
-							errorMessage={ localize( 'There was a problem with the submit button.' ) }
-						>
-							<CheckoutSubmitButton
-								disabled={ isThereAnotherNumberedStep || formStatus !== 'ready' }
-							/>
-						</CheckoutErrorBoundary>
-					</SubmitButtonWrapperUI>
-				</MainContentUI>
+				{ children || getDefaultCheckoutSteps() }
 			</CheckoutStepDataContext.Provider>
 		</ContainerUI>
 	);
@@ -131,7 +114,10 @@ function DefaultCheckoutSteps() {
 	);
 }
 
-export function CheckoutSteps( { children } ) {
+export function CheckoutSteps( { children, className } ) {
+	const localize = useLocalize();
+	const { formStatus } = useFormStatus();
+
 	let stepNumber = 0;
 	let nextStepNumber = 1;
 	const steps = React.Children.toArray( children ).filter( ( child ) => child );
@@ -139,6 +125,7 @@ export function CheckoutSteps( { children } ) {
 	const { activeStepNumber, stepCompleteStatus, setTotalSteps } = useContext(
 		CheckoutStepDataContext
 	);
+	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
 
 	useEffect( () => {
 		setTotalSteps( totalSteps );
@@ -153,25 +140,40 @@ export function CheckoutSteps( { children } ) {
 		totalSteps
 	);
 
-	return steps.map( ( child ) => {
-		stepNumber = nextStepNumber;
-		nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
-		const isStepActive = activeStepNumber === stepNumber;
-		const isStepComplete = !! stepCompleteStatus[ stepNumber ];
-		return (
-			<CheckoutSingleStepDataContext.Provider
-				key={ 'checkout-step-' + stepNumber }
-				value={ {
-					stepNumber,
-					nextStepNumber,
-					isStepActive,
-					isStepComplete,
-				} }
-			>
-				{ child }
-			</CheckoutSingleStepDataContext.Provider>
-		);
-	} );
+	return (
+		<MainContentUI
+			className={ joinClasses( [ className, 'checkout__content' ] ) }
+			isLastStepActive={ ! isThereAnotherNumberedStep }
+		>
+			{ steps.map( child => {
+				stepNumber = nextStepNumber;
+				nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
+				const isStepActive = activeStepNumber === stepNumber;
+				const isStepComplete = !! stepCompleteStatus[ stepNumber ];
+				return (
+					<CheckoutSingleStepDataContext.Provider
+						key={ 'checkout-step-' + stepNumber }
+						value={ {
+							stepNumber,
+							nextStepNumber,
+							isStepActive,
+							isStepComplete,
+						} }
+					>
+						{ child }
+					</CheckoutSingleStepDataContext.Provider>
+				);
+			} ) }
+
+			<SubmitButtonWrapperUI isLastStepActive={ ! isThereAnotherNumberedStep }>
+				<CheckoutErrorBoundary
+					errorMessage={ localize( 'There was a problem with the submit button.' ) }
+				>
+					<CheckoutSubmitButton disabled={ isThereAnotherNumberedStep || formStatus !== 'ready' } />
+				</CheckoutErrorBoundary>
+			</SubmitButtonWrapperUI>
+		</MainContentUI>
+	);
 }
 
 export function CheckoutStep( {
