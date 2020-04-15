@@ -124,11 +124,6 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 			return false;
 		}
 
-		// Omit Instagram Basic Display, which is still in testing
-		if ( 'instagram-basic-display' === service.ID ) {
-			return false;
-		}
-
 		return true;
 	} );
 }

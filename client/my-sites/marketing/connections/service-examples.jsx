@@ -32,7 +32,7 @@ const SERVICES_WHITELIST = [
 	'facebook',
 	'google_plus',
 	'google_my_business',
-	'instagram',
+	'instagram-basic-display',
 	'linkedin',
 	'tumblr',
 	'twitter',
@@ -158,7 +158,7 @@ class SharingServiceExamples extends Component {
 		];
 	}
 
-	instagram() {
+	instagram_basic_display() {
 		return [
 			{
 				image: {
@@ -319,7 +319,7 @@ class SharingServiceExamples extends Component {
 			return <GooglePlusDeprication />;
 		}
 
-		const examples = this[ this.props.service.ID ]();
+		const examples = this[ this.props.service.ID.replace( /-/g, '_' ) ]();
 
 		return (
 			/**

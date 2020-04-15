@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-
+import React from 'react';
 import PropTypes from 'prop-types';
 import { last, isEqual } from 'lodash';
 
@@ -10,6 +10,7 @@ import { last, isEqual } from 'lodash';
  */
 import { deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
 import { SharingService, connectFor } from 'my-sites/marketing/connections/service';
+import SocialLogo from 'components/social-logo';
 
 export class Instagram extends SharingService {
 	static propTypes = {
@@ -36,6 +37,15 @@ export class Instagram extends SharingService {
 		this.setState( { isDisconnecting: true } );
 		this.props.deleteStoredKeyringConnection( last( this.props.keyringConnections ) );
 	};
+
+	renderLogo = () => (
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		<SocialLogo
+			icon="instagram"
+			size={ 48 }
+			className="sharing-service__logo"
+		/>
+	);
 
 	UNSAFE_componentWillReceiveProps( { availableExternalAccounts } ) {
 		if ( ! isEqual( this.props.availableExternalAccounts, availableExternalAccounts ) ) {

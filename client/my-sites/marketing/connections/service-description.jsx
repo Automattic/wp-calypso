@@ -105,7 +105,7 @@ class SharingServiceDescription extends Component {
 					comment: 'Description for Tumblr Publicize when no accounts are connected',
 				} );
 			},
-			instagram: function() {
+			instagram_basic_display: function() {
 				if ( this.props.numberOfConnections > 0 ) {
 					return this.props.translate( 'Connected to your Instagram account.', {
 						comment: 'Description for Instagram when one or more accounts are connected',
@@ -173,8 +173,12 @@ class SharingServiceDescription extends Component {
 				args: { service: this.props.service.label },
 				context: 'Sharing: Publicize',
 			} );
-		} else if ( 'function' === typeof this.props.descriptions[ this.props.service.ID ] ) {
-			description = this.props.descriptions[ this.props.service.ID ].call( this );
+		} else if (
+			'function' === typeof this.props.descriptions[ this.props.service.ID.replace( /-/g, '_' ) ]
+		) {
+			description = this.props.descriptions[ this.props.service.ID.replace( /-/g, '_' ) ].call(
+				this
+			);
 		}
 
 		/**

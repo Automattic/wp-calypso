@@ -460,7 +460,7 @@ export class SharingService extends Component {
 		return (
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<SocialLogo
-				icon={ replace( this.props.service.ID, '_', '-' ) }
+				icon={ replace( this.props.service.ID, /_/g, '-' ) }
 				size={ 48 }
 				className="sharing-service__logo"
 			/>
