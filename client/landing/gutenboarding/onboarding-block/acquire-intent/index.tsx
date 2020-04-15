@@ -27,39 +27,45 @@ const AcquireIntent: FunctionComponent = () => {
 	const { siteVertical, siteTitle } = useSelect( select => select( STORE_KEY ).getState() );
 	const makePath = usePath();
 
-	const [ isSiteTitleActive, setSiteTitleActive ] = React.useState( false );
+	const [ isSiteTitleActive, setIsSiteTitleActive ] = React.useState( false );
 	const isMobile = useViewportMatch( 'small', '<' );
 
 	const displaySiteTitle = isSiteTitleActive || ! isMobile;
 	const displayVerticalSelect = ! isSiteTitleActive || ! isMobile;
 
 	return (
-		<div className="gutenboarding-page acquire-intent">
-			<div className="acquire-intent__questions">
-				{ displayVerticalSelect && <VerticalSelect onNext={ () => setSiteTitleActive( true ) } /> }
-				{ /* We are rendering everything to keep the content vertically centered on desktop while preventing jumping */ }
-				{ isSiteTitleActive && (
-					<Arrow
-						className="acquire-intent__mobile-back-arrow"
-						onClick={ () => setSiteTitleActive( false ) }
-					/>
-				) }
-				<SiteTitle isVisible={ !! ( siteVertical || siteTitle ) && displaySiteTitle } />
-				<div
-					className={ classnames( 'acquire-intent__footer', {
-						'acquire-intent__footer--hidden': ! siteVertical || ! displaySiteTitle,
-					} ) }
-				>
-					<Link
-						className="acquire-intent__question-skip"
-						isPrimary
-						to={ siteVertical && makePath( Step.DesignSelection ) }
+		<div
+			className={ classnames( 'gutenboarding-page acquire-intent', {
+				'acquire-intent--mobile-vertical-step': ! isSiteTitleActive,
+			} ) }
+		>
+			{ displayVerticalSelect && <VerticalSelect onNext={ () => setIsSiteTitleActive( true ) } /> }
+			{ /* We are rendering everything to keep the content vertically centered on desktop while preventing jumping */ }
+			{ isSiteTitleActive && (
+				<Arrow
+					className="acquire-intent__mobile-back-arrow"
+					onClick={ () => setIsSiteTitleActive( false ) }
+				/>
+			) }
+			{ displaySiteTitle && (
+				<>
+					<SiteTitle isVisible={ !! ( siteVertical || siteTitle ) } />
+					<div
+						className={ classnames( 'acquire-intent__footer', {
+							'acquire-intent__footer--hidden': ! siteVertical,
+						} ) }
 					>
-						{ /* @TODO: add transitions and correct action */ }
-						{ siteTitle ? __( 'Choose a design' ) : __( 'Donʼt know yet' ) }
-					</Link>
-				</div>
-			</div>
+						<Link
+							className="acquire-intent__question-skip"
+							isPrimary
+							to={ siteVertical && makePath( Step.DesignSelection ) }
+						>
+							{ /* @TODO: add transitions and correct action */ }
+							{ siteTitle ? __( 'Choose a design' ) : __( 'Donʼt know yet' ) }
+						</Link>
+					</div>
+				</>
+			) }
 		</div>
 	);
 };
