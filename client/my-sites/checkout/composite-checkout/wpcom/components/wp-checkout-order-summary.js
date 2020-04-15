@@ -17,9 +17,7 @@ export default function WPCheckoutOrderSummary() {
 
 	return (
 		<CheckoutSummaryWrapper className="components__checkout-order-summary">
-			<CheckoutSummaryTitle>
-				<span>{ translate( 'Purchase Details' ) }</span>
-			</CheckoutSummaryTitle>
+			<CheckoutSummaryTitle>{ translate( 'Purchase Details' ) }</CheckoutSummaryTitle>
 			<CheckoutSummaryAmountWrapper>
 				{ tax && (
 					<CheckoutSummaryLineItem>
