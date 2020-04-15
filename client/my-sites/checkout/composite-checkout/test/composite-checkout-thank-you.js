@@ -493,7 +493,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
 
-	it( 'redirects to thank you page if concierge and jetpack are not in the cart, personal is in the cart, but the previous route is the nudge', () => {
+	it( 'redirects to thank you page if concierge and jetpack are not in the cart, personal is in the cart, but hideNudge is true', () => {
 		isEnabled.mockImplementation( flag => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
@@ -507,7 +507,7 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: '1234abcd',
-			previousRoute: '/checkout/foo.bar/offer-plan-upgrade/premium/1234abcd',
+			hideNudge: true,
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );

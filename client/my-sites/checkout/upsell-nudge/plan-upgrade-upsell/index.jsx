@@ -62,7 +62,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 
 	body() {
 		const { translate, planRawPrice, planDiscountedRawPrice, currencyCode } = this.props;
-		const bundleValue = planRawPrice * 77;
+		const bundleValue = planRawPrice * 14.33;
 		const premiumThemePriceLow = planRawPrice * 0.73;
 		const premiumThemePriceHigh = planRawPrice * 1.045;
 		return (

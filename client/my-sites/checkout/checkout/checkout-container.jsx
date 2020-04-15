@@ -76,6 +76,7 @@ class CheckoutContainer extends React.Component {
 			shouldShowCart = true,
 			clearTransaction,
 			isComingFromGutenboarding,
+			isComingFromUpsell,
 		} = this.props;
 
 		const TransactionData = clearTransaction ? CartData : CheckoutData;
@@ -110,7 +111,7 @@ class CheckoutContainer extends React.Component {
 							reduxStore={ reduxStore }
 							redirectTo={ redirectTo }
 							upgradeIntent={ upgradeIntent }
-							hideNudge={ isComingFromGutenboarding }
+							hideNudge={ isComingFromGutenboarding || isComingFromUpsell }
 						>
 							{ this.props.children }
 						</Checkout>
