@@ -62,8 +62,8 @@ export function createExistingCardMethod( {
 				};
 				debug( 'existing card transaction complete', response );
 			} catch ( error ) {
-				debug( 'existing card transaction had an error', error );
-				return { type: 'EXISTING_CARD_TRANSACTION_ERROR', payload: error };
+				debug( 'existing card transaction had an error', error.message );
+				return { type: 'EXISTING_CARD_TRANSACTION_ERROR', payload: error.message };
 			}
 			if ( response?.message?.payment_intent_client_secret ) {
 				debug( 'existing card transaction requires auth' );
@@ -269,7 +269,7 @@ function ExistingCardPayButton( { disabled, id, stripeConfiguration } ) {
 					isSubscribed && setTransactionComplete( authenticationResponse );
 				} )
 				.catch( ( error ) => {
-					debug( 'showing error for auth', error );
+					debug( 'showing error for auth', error.message );
 					showErrorMessage(
 						localize( 'Authorization failed for that card. Please try a different payment method.' )
 					);
@@ -362,8 +362,8 @@ async function submitExistingCardPayment( {
 	} catch ( error ) {
 		resetTransaction();
 		setFormReady();
-		onEvent( { type: 'EXISTING_CARD_TRANSACTION_ERROR', payload: String( error ) } );
-		showErrorMessage( error );
+		onEvent( { type: 'EXISTING_CARD_TRANSACTION_ERROR', payload: String( error.message ) } );
+		showErrorMessage( error.message );
 		return;
 	}
 }
