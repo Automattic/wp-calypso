@@ -35,7 +35,9 @@ const MasteringGutenberg = () => {
 					supportLink={ localizeUrl( 'https://wordpress.com/support/wordpress-editor/#blocks' ) }
 					showIcon={ false }
 					text={ translate( 'Customizing posts and pages with blocks' ) }
-					tracksEvent={ 'calypso_customer_home_customizing_with_blocks_support_page_view' }
+					tracksEvent="calypso_customer_home_customizing_with_blocks_support_page_view"
+					statsGroup="calypso_customer_home"
+					statsName="view_customizing_with_blocks_video"
 				/>
 				<InlineSupportLink
 					supportPostId={ 147594 }
@@ -45,6 +47,8 @@ const MasteringGutenberg = () => {
 					showIcon={ false }
 					text={ translate( 'Adjusting settings of blocks' ) }
 					tracksEvent={ 'calypso_customer_home_adjust_blocks_support_page_view' }
+					statsGroup="calypso_customer_home"
+					statsName="view_adjust_blocks_video"
 				/>
 			</div>
 			{ ! isMobile() && (
