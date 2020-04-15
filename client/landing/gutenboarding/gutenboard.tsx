@@ -23,6 +23,7 @@ import { name, settings } from './onboarding-block';
 import './style.scss';
 import { fontPairings, getFontTitle } from './constants';
 import GUTENARDING_BASE_NAME from './basename.json';
+import { recordOnboardingStart } from './utils/analytics';
 
 registerBlockType( name, settings );
 
@@ -61,6 +62,9 @@ export function Gutenboard() {
 			document.head.appendChild( linkBase );
 			document.head.appendChild( linkHeadings );
 		} );
+
+		// Track Gutenboarding start
+		recordOnboardingStart();
 	}, [] );
 
 	// @TODO: This is currently needed in addition to the routing (inside the Onboarding Block)
