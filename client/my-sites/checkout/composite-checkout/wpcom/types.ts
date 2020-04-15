@@ -26,6 +26,11 @@ import {
 	processRawResponse,
 } from './types/backend/shopping-cart-endpoint';
 import {
+	DomainContactDetails,
+	PossiblyCompleteDomainContactDetails,
+	DomainContactDetailsErrors,
+} from './types/backend/domain-contact-details-components';
+import {
 	WPCOMCart,
 	WPCOMCartItem,
 	WPCOMCartCouponItem,
@@ -43,8 +48,6 @@ import {
 	isTouched,
 	ManagedContactDetailsErrors,
 	managedContactDetailsUpdaters,
-	DomainContactDetails,
-	PossiblyCompleteDomainContactDetails,
 	prepareDomainContactDetails,
 	prepareDomainContactDetailsErrors,
 	isValid,
@@ -89,6 +92,7 @@ export {
 	managedContactDetailsUpdaters,
 	DomainContactDetails,
 	PossiblyCompleteDomainContactDetails,
+	DomainContactDetailsErrors,
 	prepareDomainContactDetails,
 	prepareDomainContactDetailsErrors,
 	isValid,
