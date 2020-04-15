@@ -12,7 +12,7 @@ import { memoize } from 'lodash';
  */
 import config from 'config';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import getJetpackScanThreats from 'state/selectors/get-jetpack-scan-threats';
+import getSiteScanThreats from 'state/selectors/get-site-scan-threats';
 import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import { itemLinkMatches } from 'my-sites/sidebar/utils';
@@ -209,7 +209,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const isBackupSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_BACKUP );
 		const isScanSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_SCAN );
-		const threats = getJetpackScanThreats( state, siteId );
+		const threats = getSiteScanThreats( state, siteId );
 
 		return {
 			isBackupSectionOpen,
