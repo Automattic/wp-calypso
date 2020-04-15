@@ -49,9 +49,12 @@ const QuickStart = ( {
 				{ nextSession.beginTimestamp }
 			</div>
 			<Button onClick={ () => viewDetails( siteSlug ) }>{ translate( 'View details' ) }</Button>
-			<Button onClick={ () => reschedule( siteSlug, nextSession.id ) }>
+			<a
+				href={ `/me/concierge/${ siteSlug }/book` }
+				onClick={ () => reschedule( siteSlug, nextSession.id ) }
+			>
 				{ translate( 'Reschedule' ) }
-			</Button>
+			</a>
 		</Card>
 	) : (
 		<>
@@ -87,8 +90,7 @@ export default connect(
 							siteSlug: siteSlug,
 						} ),
 						bumpStat( 'calypso_customer_home', 'book_quick_start_session' )
-					),
-					navigate( `/me/concierge/${ siteSlug }/book` )
+					)
 				)
 			),
 		viewDetails: siteSlug =>
