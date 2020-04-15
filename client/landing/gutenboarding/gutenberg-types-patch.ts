@@ -1,9 +1,3 @@
-/**
- * External dependencies
- */
-import '@wordpress/compose';
-import '@wordpress/element';
-
 declare module '@wordpress/compose' {
 	type breakpoint = 'huge' | 'wide' | 'large' | 'medium' | 'small' | 'mobile';
 	type operator = '>=' | '<';
@@ -16,3 +10,5 @@ declare module '@wordpress/element' {
 		conversionMap: Record< string, ReactElement >
 	): ReactNode;
 }
+
+export {};
