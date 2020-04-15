@@ -86,7 +86,6 @@ import ColorSchemePicker from 'blocks/color-scheme-picker/docs/example';
 import UserMentions from 'blocks/user-mentions/docs/example';
 import SupportArticleDialog from 'blocks/support-article-dialog/docs/example';
 import UpsellNudge from 'blocks/upsell-nudge/docs/example';
-import DotPager from 'blocks/dot-pager/docs/example';
 
 export default class AppComponents extends React.Component {
 	static displayName = 'AppComponents';
@@ -204,7 +203,6 @@ export default class AppComponents extends React.Component {
 					<SupportArticleDialog />
 					<ImageSelector readmeFilePath="image-selector" />
 					<UpsellNudge />
-					<DotPager readmeFilePath="dot-pager" />
 				</Collection>
 			</Main>
 		);

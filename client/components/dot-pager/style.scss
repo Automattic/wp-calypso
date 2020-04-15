@@ -5,8 +5,10 @@
 	justify-content: center;
 
 	li {
-		display: inline-block;
+		display: inline-flex;
 		margin: 0 4px;
+		height: 18px;
+		align-items: center;
 	}
 
 	button {
@@ -19,9 +21,20 @@
 		&:hover {
 			background-color: var( --color-neutral-light );
 		}
-	}
 
-	li[aria-current] button {
-		background-color: var( --color-primary );
+		&:disabled {
+			cursor: default;
+		}
+
+		&.dot-pager__current {
+			background-color: var( --color-primary );
+		}
+
+		&.dot-pager__prev,
+		&.dot-pager__next {
+			width: 18px;
+			height: 18px;
+			background-color: transparent;
+		}
 	}
 }

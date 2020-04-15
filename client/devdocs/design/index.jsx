@@ -44,6 +44,7 @@ import CreditCard from 'components/credit-card/docs/example';
 import DatePicker from 'components/date-picker/docs/example';
 import DateRange from 'components/date-range/docs/example';
 import DiffViewerExample from 'components/diff-viewer/docs/example';
+import DotPager from 'components/dot-pager/docs/example';
 import DropZones from 'components/drop-zone/docs/example';
 import EllipsisMenu from 'components/ellipsis-menu/docs/example';
 import EmbedDialog from 'components/tinymce/plugins/embed/docs/example';
@@ -200,6 +201,7 @@ export default class DesignAssets extends React.Component {
 					<DatePicker readmeFilePath="date-picker" />
 					<DateRange readmeFilePath="date-range" />
 					<DiffViewerExample readmeFilePath="diff-viewer" />
+					<DotPager readmeFilePath="dot-pager" />
 					<DropZones searchKeywords="drag" readmeFilePath="drop-zone" />
 					<EllipsisMenu readmeFilePath="ellipsis-menu" />
 					<EmbedDialog readmeFilePath="tinymce/plugins/embed" />
