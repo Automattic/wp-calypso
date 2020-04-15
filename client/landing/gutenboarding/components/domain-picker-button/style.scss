@@ -5,6 +5,11 @@
 	&.components-button {
 		@include onboarding-medium-text;
 		color: var( --studio-gray-90 );
+		padding: 9px 12px;
+		height: auto; // prevent clipping when there are 2 lines
+	}
+	&__label {
+		word-break: break-word;
 	}
 	.dashicon {
 		margin-left: 0.5em;

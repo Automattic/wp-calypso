@@ -54,7 +54,7 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				onClick={ () => setDomainPopoverVisibility( s => ! s ) }
 				ref={ buttonRef }
 			>
-				<span>{ children }</span>
+				<span className="domain-picker-button__label">{ children }</span>
 				<Dashicon icon="arrow-down-alt2" size={ 16 } />
 			</Button>
 			{ isDomainPopoverVisible && (
