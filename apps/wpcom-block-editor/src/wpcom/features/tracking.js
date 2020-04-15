@@ -210,6 +210,14 @@ const trackSearchBlocksNotFound = ( { context } ) => {
 	} );
 };
 
+const trackTemplatesWithMissingBlocks = ( { slug, context, blocks } ) => {
+	tracksRecordEvent( 'wpcom_tamplates_with_missing_blocks', {
+		slug,
+		context,
+		blocks: blocks && blocks.length ? blocks.join( ', ' ) : null,
+	} );
+};
+
 /**
  * Tracker can be
  * - string - which means it is an event name and should be tracked as such automatically
@@ -245,6 +253,7 @@ const REDUX_TRACKING = {
 	'automattic/tracking': {
 		setSearchBlocks: trackSearchBlocks,
 		setSearchBlocksNotFound: trackSearchBlocksNotFound,
+		emitTemplatesWithMissingBlocks: trackTemplatesWithMissingBlocks,
 	},
 };
 
