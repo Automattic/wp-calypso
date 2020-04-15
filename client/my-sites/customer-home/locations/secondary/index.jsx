@@ -26,6 +26,7 @@ const cardComponents = {
 	'home-feature-go-mobile-desktop': GoMobile,
 	'home-feature-grow-and-earn': GrowEarn,
 	'home-feature-stats': config.isEnabled( 'home/experimental-layout' ) ? StatsV2 : Stats,
+	'home-feature-quick-start': QuickStart,
 	'home-feature-support': Support,
 	'home-section-learn-grow': LearnGrow,
 };
