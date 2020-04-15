@@ -23,6 +23,12 @@ export default function() {
 	const user = userFactory();
 	const isLoggedOut = ! user.get();
 	const locale = getLanguageRouteParam( 'locale' );
+	let refParams = '';
+
+	if ( typeof window !== 'undefined' && window.location ) {
+		const urlParams = new URL( window.location.href ).searchParams;
+		refParams = urlParams ? Object.fromEntries( urlParams ) : {};
+	}
 
 	page(
 		'/jetpack/connect/:type(personal|premium|pro|backup|realtimebackup|jetpack_search)/:interval(yearly|monthly)?',
@@ -88,6 +94,10 @@ export default function() {
 		makeLayout,
 		clientRender
 	);
+
+	if ( refParams.ref === 'jetpack-lp' ) {
+		page.redirect( `/jetpack/connect` );
+	}
 
 	page(
 		`/jetpack/connect/store/:interval(yearly|monthly)?/${ locale }`,
