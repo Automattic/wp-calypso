@@ -484,6 +484,7 @@ export class Checkout extends React.Component {
 			redirectTo,
 			selectedSite,
 			selectedSiteSlug,
+			isJetpackNotAtomic,
 			transaction: { step: { data: stepResult = null } = {} } = {},
 		} = this.props;
 
@@ -532,7 +533,7 @@ export class Checkout extends React.Component {
 		this.setDestinationIfEcommPlan( pendingOrReceiptId );
 
 		// if it is a Jetpack product, use product info as a parameter
-		if ( product ) {
+		if ( isJetpackNotAtomic && product ) {
 			signupDestination = this.getFallbackDestination( pendingOrReceiptId );
 		} else {
 			signupDestination =
