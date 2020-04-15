@@ -238,10 +238,6 @@ $domain-picker__suggestion-item-height: 24px;
 		color: var( --color-text-inverted );
 		background-color: var( --color-success );
 	}
-
-	.components-popover.is-expanded & {
-		display: none;
-	}
 }
 
 .domain-picker__price {
