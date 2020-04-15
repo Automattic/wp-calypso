@@ -7,7 +7,7 @@ import {
 	DomainContactDetailsErrors,
 } from './backend/domain-contact-details-components';
 
-type ManagedContactDetailsShape< T > = {
+export type ManagedContactDetailsShape< T > = {
 	firstName: T;
 	lastName: T;
 	organization: T;
@@ -45,99 +45,133 @@ type ManagedContactDetailsTldExtraFieldsShape< T > = {
 };
 
 /*
- * Combine two ManagedContactDetailsShape<T> objects x and y using two
- * helper functions.
+ * Asymmetrically combine two ManagedContactDetailsShape<T> objects 'update' and 'data'
+ * using two helper functions.
  *
- *   f: (A,B) => B merges fields which exist in both,
- *   g: (A) => B constructs new fields which don't exist in y, but do in x.
+ *   merge: (A,B) => B merges fields which exist in both update and data
+ *   construct: (A) => B constructs new fields which exist in update but not data
+ *
+ * Fields which exist in data but not update are copied, and fields which do not
+ * exist in either data or update do not exist in the result.
+ *
+ * More precisely, this function should satisfy the following property for all accessors A:
+ *
+ *   _.get( updateManagedContactDetailsShape( merge, construct, update, data ), A )
+ *     === merge( _.get( update, A ), _.get( data, A ) ) if update.A and data.A are defined;
+ *     === construct( _.get( update, A ) )               if update.A is defined and data.A is undefined;
+ *     === _.get( data, A )                              if data.A is defined and update.A is undefined;
+ *     === undefined                                     if data.A and update.A are undefined.
  */
-function combineManagedContactDetailsShape< A, B >(
-	f: ( A, B ) => B,
-	g: ( A ) => B,
-	x: ManagedContactDetailsShape< A >,
-	y: ManagedContactDetailsShape< B >
+export function updateManagedContactDetailsShape< A, B >(
+	merge: ( arg0: A, arg1: B ) => B,
+	construct: ( arg0: A ) => B,
+	update: ManagedContactDetailsShape< A >,
+	data: ManagedContactDetailsShape< B >
 ): ManagedContactDetailsShape< B > {
 	const tldExtraFields: ManagedContactDetailsTldExtraFieldsShape< B > = {};
 
-	if ( y.tldExtraFields?.ca ) {
-		if ( x.tldExtraFields?.ca ) {
+	const combine = ( u, v ) => {
+		if ( typeof u !== 'undefined' && typeof v !== 'undefined' ) {
+			return merge( u, v );
+		} else if ( typeof u !== 'undefined' && typeof v === 'undefined' ) {
+			return construct( u );
+		} else if ( typeof u === 'undefined' && typeof v !== 'undefined' ) {
+			return v;
+		}
+		return undefined;
+	};
+
+	if ( data.tldExtraFields?.ca ) {
+		if ( update.tldExtraFields?.ca ) {
 			tldExtraFields.ca = {
-				lang: f( x.tldExtraFields.ca.lang, y.tldExtraFields.ca.lang ),
-				legalType: f( x.tldExtraFields.ca.legalType, y.tldExtraFields.ca.legalType ),
-				ciraAgreementAccepted: f(
-					x.tldExtraFields.ca.ciraAgreementAccepted,
-					y.tldExtraFields.ca.ciraAgreementAccepted
+				lang: combine( update.tldExtraFields.ca.lang, data.tldExtraFields.ca.lang ),
+				legalType: combine( update.tldExtraFields.ca.legalType, data.tldExtraFields.ca.legalType ),
+				ciraAgreementAccepted: combine(
+					update.tldExtraFields.ca.ciraAgreementAccepted,
+					data.tldExtraFields.ca.ciraAgreementAccepted
 				),
 			};
 		} else {
-			tldExtraFields.ca = y.tldExtraFields.ca;
+			tldExtraFields.ca = data.tldExtraFields.ca;
 		}
-	} else if ( x.tldExtraFields?.ca ) {
+	} else if ( update.tldExtraFields?.ca ) {
 		tldExtraFields.ca = {
-			lang: g( x.tldExtraFields.ca.lang ),
-			legalType: g( x.tldExtraFields.ca.legalType ),
-			ciraAgreementAccepted: g( x.tldExtraFields.ca.ciraAgreementAccepted ),
+			lang: construct( update.tldExtraFields.ca.lang ),
+			legalType: construct( update.tldExtraFields.ca.legalType ),
+			ciraAgreementAccepted: construct( update.tldExtraFields.ca.ciraAgreementAccepted ),
 		};
 	}
 
-	if ( y.tldExtraFields?.uk ) {
-		if ( x.tldExtraFields?.uk ) {
+	if ( data.tldExtraFields?.uk ) {
+		if ( update.tldExtraFields?.uk ) {
 			tldExtraFields.uk = {
-				registrantType: f( x.tldExtraFields.uk.registrantType, y.tldExtraFields.uk.registrantType ),
-				registrationNumber: f(
-					x.tldExtraFields.uk.registrationNumber,
-					y.tldExtraFields.uk.registrationNumber
+				registrantType: combine(
+					update.tldExtraFields.uk.registrantType,
+					data.tldExtraFields.uk.registrantType
 				),
-				tradingName: f( x.tldExtraFields.uk.tradingName, y.tldExtraFields.uk.tradingName ),
+				registrationNumber: combine(
+					update.tldExtraFields.uk.registrationNumber,
+					data.tldExtraFields.uk.registrationNumber
+				),
+				tradingName: combine(
+					update.tldExtraFields.uk.tradingName,
+					data.tldExtraFields.uk.tradingName
+				),
 			};
 		} else {
-			tldExtraFields.uk = y.tldExtraFields.uk;
+			tldExtraFields.uk = data.tldExtraFields.uk;
 		}
-	} else if ( x.tldExtraFields?.uk ) {
+	} else if ( update.tldExtraFields?.uk ) {
 		tldExtraFields.uk = {
-			registrantType: g( x.tldExtraFields.uk.registrantType ),
-			registrationNumber: g( x.tldExtraFields.uk.registrationNumber ),
-			tradingName: g( x.tldExtraFields.uk.tradingName ),
+			registrantType: construct( update.tldExtraFields.uk.registrantType ),
+			registrationNumber: construct( update.tldExtraFields.uk.registrationNumber ),
+			tradingName: construct( update.tldExtraFields.uk.tradingName ),
 		};
 	}
 
-	if ( y.tldExtraFields?.fr ) {
-		if ( x.tldExtraFields?.fr ) {
+	if ( data.tldExtraFields?.fr ) {
+		if ( update.tldExtraFields?.fr ) {
 			tldExtraFields.fr = {
-				registrantType: f( x.tldExtraFields.fr.registrantType, y.tldExtraFields.fr.registrantType ),
-				trademarkNumber: f(
-					x.tldExtraFields.fr.trademarkNumber,
-					y.tldExtraFields.fr.trademarkNumber
+				registrantType: combine(
+					update.tldExtraFields.fr.registrantType,
+					data.tldExtraFields.fr.registrantType
 				),
-				sirenSirat: f( x.tldExtraFields.fr.sirenSirat, y.tldExtraFields.fr.sirenSirat ),
+				trademarkNumber: combine(
+					update.tldExtraFields.fr.trademarkNumber,
+					data.tldExtraFields.fr.trademarkNumber
+				),
+				sirenSirat: combine(
+					update.tldExtraFields.fr.sirenSirat,
+					data.tldExtraFields.fr.sirenSirat
+				),
 			};
 		} else {
-			tldExtraFields.fr = y.tldExtraFields.fr;
+			tldExtraFields.fr = data.tldExtraFields.fr;
 		}
-	} else if ( x.tldExtraFields?.fr ) {
+	} else if ( update.tldExtraFields?.fr ) {
 		tldExtraFields.fr = {
-			registrantType: g( x.tldExtraFields.fr.registrantType ),
-			trademarkNumber: g( x.tldExtraFields.fr.trademarkNumber ),
-			sirenSirat: g( x.tldExtraFields.fr.sirenSirat ),
+			registrantType: construct( update.tldExtraFields.fr.registrantType ),
+			trademarkNumber: construct( update.tldExtraFields.fr.trademarkNumber ),
+			sirenSirat: construct( update.tldExtraFields.fr.sirenSirat ),
 		};
 	}
 
 	return {
-		firstName: f( x.firstName, y.firstName ),
-		lastName: f( x.lastName, y.lastName ),
-		organization: f( x.organization, y.organization ),
-		email: f( x.email, y.email ),
-		alternateEmail: f( x.alternateEmail, y.alternateEmail ),
-		phone: f( x.phone, y.phone ),
-		phoneNumberCountry: f( x.phoneNumberCountry, y.phoneNumberCountry ),
-		address1: f( x.address1, y.address1 ),
-		address2: f( x.address2, y.address2 ),
-		city: f( x.city, y.city ),
-		state: f( x.state, y.state ),
-		postalCode: f( x.postalCode, y.postalCode ),
-		countryCode: f( x.countryCode, y.countryCode ),
-		fax: f( x.fax, y.fax ),
-		vatId: f( x.vatId, y.vatId ),
+		firstName: combine( update.firstName, data.firstName ),
+		lastName: combine( update.lastName, data.lastName ),
+		organization: combine( update.organization, data.organization ),
+		email: combine( update.email, data.email ),
+		alternateEmail: combine( update.alternateEmail, data.alternateEmail ),
+		phone: combine( update.phone, data.phone ),
+		phoneNumberCountry: combine( update.phoneNumberCountry, data.phoneNumberCountry ),
+		address1: combine( update.address1, data.address1 ),
+		address2: combine( update.address2, data.address2 ),
+		city: combine( update.city, data.city ),
+		state: combine( update.state, data.state ),
+		postalCode: combine( update.postalCode, data.postalCode ),
+		countryCode: combine( update.countryCode, data.countryCode ),
+		fax: combine( update.fax, data.fax ),
+		vatId: combine( update.vatId, data.vatId ),
 		tldExtraFields,
 	};
 }
@@ -290,7 +324,7 @@ function setManagedContactDetailsErrors(
 	errors: ManagedContactDetailsErrors,
 	details: ManagedContactDetails
 ): ManagedContactDetails {
-	return combineManagedContactDetailsShape(
+	return updateManagedContactDetailsShape(
 		( error, detail ) => setErrors( error, detail ),
 		error => getInitialManagedValue( { errors: error } ),
 		errors,
@@ -495,7 +529,7 @@ export function applyContactDetailsRequiredMask(
 	details: ManagedContactDetails,
 	requiredMask: ManagedContactDetailsRequiredMask
 ): ManagedContactDetails {
-	return combineManagedContactDetailsShape(
+	return updateManagedContactDetailsShape(
 		( isRequired, managedValue ) => {
 			return { ...managedValue, isRequired };
 		},
