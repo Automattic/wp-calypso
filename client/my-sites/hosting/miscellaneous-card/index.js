@@ -72,8 +72,8 @@ const MiscellaneousCard = ( {
 				</p>
 				<p>
 					{ translate(
-						'Although we allow WordPress cache clearing, it might make your site unresponsive or even ' +
-							'break it while the cache is rebuilding.'
+						'Clearing the cache on your site may make it unresponsive while the cache is rebuilding. ' +
+							'Please use this feature responsibly.'
 					) }
 				</p>
 				<Button
@@ -94,7 +94,7 @@ const MiscellaneousCard = ( {
 						htmlFor="confirmDomainChangeInput"
 						className="miscellaneous-card__confirm-label"
 					>
-						<p>{ translate( 'Please tell us why you think a cache clear is required.' ) }</p>
+						<p>{ translate( "Please let us know why you are clearing your site's cache." ) }</p>
 						<p>
 							{ translate(
 								'We use this information to audit plugins and give valuable feedback to plugin developers. ' +
