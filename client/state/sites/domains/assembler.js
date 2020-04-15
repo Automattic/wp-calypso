@@ -38,6 +38,7 @@ export const createSiteDomainObject = domain => {
 		domain: String( domain.domain ),
 		domainLockingAvailable: Boolean( domain.domain_locking_available ),
 		domainRegistrationAgreementUrl: getDomainRegistrationAgreementUrl( domain ),
+		emailForwardsCount: Number( domain.email_forwards_count ),
 		expired: Boolean( domain.expired ),
 		expiry: ! domain.expiry ? null : String( domain.expiry ),
 		expirySoon: Boolean( domain.expiry_soon ),
