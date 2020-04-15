@@ -187,8 +187,8 @@ const trackGlobalStyles = eventName => options => {
  */
 const trackErrorNotices = ( content, options ) =>
 	tracksRecordEvent( 'wpcom_gutenberg_error_notice', {
-		error_text: content,
-		error_options: options,
+		notice_text: content,
+		notice_options: options,
 	} );
 
 /**
