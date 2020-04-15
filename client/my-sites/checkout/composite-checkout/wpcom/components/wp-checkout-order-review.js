@@ -68,6 +68,7 @@ WPCheckoutOrderReview.propTypes = {
 	removeCoupon: PropTypes.func.isRequired,
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
+	siteUrl: PropTypes.string,
 };
 
 const DomainURL = styled.div`
