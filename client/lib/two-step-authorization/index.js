@@ -216,6 +216,8 @@ TwoStepAuthorization.prototype.sendSMSCode = function( callback ) {
 TwoStepAuthorization.prototype.backupCodes = function( callback ) {
 	wpcom.me().backupCodes(
 		function( error, data ) {
+			error = new Error( 'Invalid' );
+			data = {};
 			if ( error ) {
 				debug( 'Fetching Backup Codes failed: ' + JSON.stringify( error ) );
 			} else {
