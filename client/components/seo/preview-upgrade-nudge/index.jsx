@@ -56,6 +56,7 @@ export const SeoPreviewNudge = ( {
 						  )
 				}
 				forceDisplay
+				disableHref={ ! canCurrentUserUpgrade }
 				event="site_preview_seo_plan_upgrade"
 				className="preview-upgrade-nudge__banner"
 				feature={ FEATURE_SEO_PREVIEW_TOOLS }
