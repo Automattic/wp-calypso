@@ -1,4 +1,11 @@
 .theme-jetpack-cloud .main,
+.color-scheme.is-jetpack-cloud .main {
+	box-sizing: border-box;
+	padding-left: 16px;
+	padding-right: 16px;
+}
+
+.theme-jetpack-cloud .main,
 .color-scheme.is-jetpack-cloud .main,
 .theme-jetpack-cloud .ReactModalPortal {
 	.button {
