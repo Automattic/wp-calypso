@@ -50,12 +50,12 @@ const InserterMenuTrackingEvent = function() {
 		 * to the temporary solution below if the core version
 		 * is equal to 7.8.1.
 		 */
-		if ( plugingVersion && plugingVersion === '7.8.1' ) {
+		if ( pluginVersion && pluginVersion === '7.8.1' ) {
 			return null;
 		}
 
 		// let's remove this line once the core version updates.
-		debug( '%o: tracking with Slot parameter', plugingVersion );
+		debug( '%o: tracking with Slot parameter', pluginVersion );
 
 		if ( has_items ) {
 			return;
@@ -77,11 +77,11 @@ const InserterMenuTrackingEvent = function() {
 	 */
 	useEffect( () => {
 		// Skip whether isn't the 7.8.1 version.
-		if ( plugingVersion && plugingVersion !== '7.8.1' ) {
+		if ( pluginVersion && pluginVersion !== '7.8.1' ) {
 			return;
 		}
 		// let's remove this line once the core version updates.
-		debug( '%o: tracking inspecting DOM tree', plugingVersion );
+		debug( '%o: tracking inspecting DOM tree', pluginVersion );
 
 		if ( ! searchTerm || searchTerm.length < 3 ) {
 			return;
@@ -103,7 +103,7 @@ const InserterMenuTrackingEvent = function() {
 		) {
 			tracksRecordEvent( 'wpcom_block_picker_no_results', eventProperties );
 		}
-	}, [ searchTerm, plugingVersion, selectedBlock ] );
+	}, [ searchTerm, pluginVersion, selectedBlock ] );
 
 	return (
 		<InserterMenuExtension>
