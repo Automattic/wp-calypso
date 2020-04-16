@@ -11,78 +11,85 @@ import { DomainSuggestionQuery } from './types';
 import { State } from './reducer';
 import { stringifyDomainQueryObject } from './utils';
 
-export const getState = ( state: State ) => state;
-
 type DomainSuggestionSelectorOptions = Partial< Exclude< DomainSuggestionQuery, 'query' > >;
 
-export const getDomainSuggestions = (
-	_state: State,
-	search: string,
-	options: DomainSuggestionSelectorOptions = {}
-) => {
-	const normalizedQuery = normalizeDomainSuggestionQuery( search, options );
+export default class Selectors {
+	private vendor: string;
 
-	// We need to go through the `select` store to get the resolver action
-	return select( STORE_KEY ).__internalGetDomainSuggestions( normalizedQuery );
-};
+	constructor( vendor: string ) {
+		this.vendor = vendor;
+	}
 
-export const isLoadingDomainSuggestions = (
-	_state: State,
-	search: string,
-	options: DomainSuggestionSelectorOptions = {}
-) => {
-	const normalizedQuery = normalizeDomainSuggestionQuery( search, options );
+	getState( state: State ) {
+		return state;
+	}
 
-	return select( 'core/data' ).isResolving( STORE_KEY, '__internalGetDomainSuggestions', [
-		normalizedQuery,
-	] );
-};
+	getDomainSuggestions(
+		_state: State,
+		search: string,
+		options: DomainSuggestionSelectorOptions = {}
+	) {
+		const normalizedQuery = this.normalizeDomainSuggestionQuery( search, options );
 
-/**
- * Do not use this selector. It is for internal use.
- *
- * @private
- *
- * @param state Store state
- * @param queryObject Normalized object representing the query
- * @returns suggestions
- */
-export const __internalGetDomainSuggestions = (
-	state: State,
-	queryObject: DomainSuggestionQuery
-) => {
-	return state.domainSuggestions[ stringifyDomainQueryObject( queryObject ) ];
-};
+		// We need to go through the `select` store to get the resolver action
+		return select( STORE_KEY ).__internalGetDomainSuggestions( normalizedQuery );
+	}
 
-/**
- * Normalize domain query
- *
- * It's important to have a consistent, reproduceable representation of a domains query so that the result can be
- * stored and retrieved.
- *
- * @see client/state/domains/suggestions/utils.js
- * @see client/components/data/query-domains-suggestions/index.jsx
- *
- * @param search       Domain search string
- * @param queryOptions Optional paramaters for the query
- * @returns Normalized query object
- */
-function normalizeDomainSuggestionQuery(
-	search: string,
-	queryOptions: DomainSuggestionSelectorOptions
-): DomainSuggestionQuery {
-	return {
-		// Defaults
-		include_wordpressdotcom: queryOptions.only_wordpressdotcom || false,
-		include_dotblogsubdomain: false,
-		only_wordpressdotcom: false,
-		quantity: 5,
-		vendor: 'variation2_front',
+	isLoadingDomainSuggestions(
+		_state: State,
+		search: string,
+		options: DomainSuggestionSelectorOptions = {}
+	) {
+		const normalizedQuery = this.normalizeDomainSuggestionQuery( search, options );
 
-		// Merge options
-		...queryOptions,
+		return select( 'core/data' ).isResolving( STORE_KEY, '__internalGetDomainSuggestions', [
+			normalizedQuery,
+		] );
+	}
 
-		// Add the search query
-		query: search.trim().toLocaleLowerCase(),
-	};
+	/**
+	 * Normalize domain query
+	 *
+	 * It's important to have a consistent, reproduceable representation of a domains query so that the result can be
+	 * stored and retrieved.
+	 *
+	 * @see client/state/domains/suggestions/utils.js
+	 * @see client/components/data/query-domains-suggestions/index.jsx
+	 *
+	 * @param search       Domain search string
+	 * @param queryOptions Optional paramaters for the query
+	 * @returns Normalized query object
+	 */
+	normalizeDomainSuggestionQuery(
+		search: string,
+		queryOptions: DomainSuggestionSelectorOptions
+	): DomainSuggestionQuery {
+		return {
+			// Defaults
+			include_wordpressdotcom: queryOptions.only_wordpressdotcom || false,
+			include_dotblogsubdomain: false,
+			only_wordpressdotcom: false,
+			quantity: 5,
+			vendor: this.vendor,
+
+			// Merge options
+			...queryOptions,
+
+			// Add the search query
+			query: search.trim().toLocaleLowerCase(),
+		};
+	}
+
+	/**
+	 * Do not use this selector. It is for internal use.
+	 *
+	 * @private
+	 *
+	 * @param state Store state
+	 * @param queryObject Normalized object representing the query
+	 * @returns suggestions
+	 */
+	__internalGetDomainSuggestions( state: State, queryObject: DomainSuggestionQuery ) {
+		return state.domainSuggestions[ stringifyDomainQueryObject( queryObject ) ];
+	}
 }
