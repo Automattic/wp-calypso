@@ -54,7 +54,7 @@
 	left: -16px;
 	margin-top: 20px;
 	min-height: 100px;
-    max-height: calc( 100% - 50px );
+	max-height: calc( 100% - 50px );
 	overflow: auto;
 
 	@include break-small {
