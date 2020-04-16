@@ -188,7 +188,7 @@ const trackGlobalStyles = eventName => options => {
 const trackErrorNotices = ( content, options ) =>
 	tracksRecordEvent( 'wpcom_gutenberg_error_notice', {
 		notice_text: content,
-		notice_options: options,
+		notice_options: JSON.stringify( options ), // Returns undefined if options is undefined.
 	} );
 
 /**
