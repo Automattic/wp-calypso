@@ -10,8 +10,8 @@ import { includes, get, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
+import AsyncLoad from 'components/async-load';
 import config from 'config';
-import GlobalNotices from 'components/global-notices';
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 import notices from 'notices';
 import OauthClientMasterbar from 'layout/masterbar/oauth-client';
@@ -111,7 +111,12 @@ const LayoutLoggedOut = ( {
 			<BodySectionCssClass group={ sectionGroup } section={ sectionName } />
 			{ masterbar }
 			<div id="content" className="layout__content">
-				<GlobalNotices id="notices" notices={ notices.list } />
+				<AsyncLoad
+					require="components/global-notices"
+					placeholder={ null }
+					id="notices"
+					notices={ notices.list }
+				/>
 				<div id="primary" className="layout__primary">
 					{ primary }
 				</div>

@@ -10,7 +10,7 @@ import { isUndefined, omit, assign, get, has } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import { statsdTimingUrl, statsdCountingUrl } from 'lib/analytics/statsd';
+import { statsdTimingUrl, statsdCountingUrl } from 'lib/analytics/statsd-utils';
 const URL = require( 'url' );
 
 function getUserFromRequest( request ) {

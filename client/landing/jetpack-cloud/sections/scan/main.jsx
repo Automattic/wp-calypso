@@ -32,12 +32,11 @@ class ScanPage extends Component {
 		return (
 			<>
 				<SecurityIcon />
-				<h1 className="scan__header scan__header--okay">
-					{ translate( 'Don’t worry about a thing' ) }
-				</h1>
+				<h1 className="scan__header">{ translate( 'Don’t worry about a thing' ) }</h1>
 				<p>
 					The last Jetpack scan ran <strong>{ moment( lastScanTimestamp ).fromNow() }</strong> and
-					everything looked great.
+					everything looked great. <br />
+					Run a manual scan now or wait for Jetpack to scan your site later today.
 				</p>
 				{ isEnabled( 'jetpack-cloud/on-demand-scan' ) && (
 					<Button
@@ -56,7 +55,7 @@ class ScanPage extends Component {
 		return (
 			<>
 				<SecurityIcon icon="in-progress" />
-				<h1 className="scan__header scan__header--okay">{ translate( 'Preparing to scan' ) }</h1>
+				<h1 className="scan__header">{ translate( 'Preparing to scan' ) }</h1>
 				<ProgressBar value={ 1 } total={ 100 } color="#069E08" />
 				<p>
 					Welcome to Jetpack Scan, we are taking a first look at your site now and the results will
@@ -83,8 +82,9 @@ class ScanPage extends Component {
 				<SecurityIcon icon="scan-error" />
 				<h1 className="scan__header">{ translate( 'Something went wrong' ) }</h1>
 				<p>
-					The scan did not complete successfully. In order to complete the scan you need to contact
-					support.
+					The scan was unable to process the themes directory and did not completed successfully. In
+					order to complete the scan you will need to speak to support who can help determine what
+					went wrong.
 				</p>
 				<Button
 					primary
@@ -127,8 +127,8 @@ class ScanPage extends Component {
 						{ name: 'Plugins', number: 4 },
 						{ name: 'Themes', number: 3 },
 					] }
-					noticeText="Failing to plan is planning to fail. Regular backups ensure that should the worst happen, you are prepared. Jetpack Backups has you covered."
-					noticeLink="https://jetpack/upgrade/backups"
+					noticeText="Failing to plan is planning to fail. Regular backups ensure that should the worst happen, you are prepared. Jetpack Backup has you covered."
+					noticeLink="https://jetpack.com/upgrade/backup"
 				/>
 			</Main>
 		);

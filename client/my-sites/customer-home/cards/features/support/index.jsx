@@ -41,7 +41,7 @@ const Support = ( { trackContactAction, trackDocsAction } ) => {
 				<img src={ happinessIllustration } alt={ translate( 'Support' ) } />
 				<VerticalNav>
 					<VerticalNavItem
-						path={ localizeUrl( 'https://en.support.wordpress.com' ) }
+						path={ localizeUrl( 'https://wordpress.com/support' ) }
 						external
 						onClick={ trackDocsAction }
 					>

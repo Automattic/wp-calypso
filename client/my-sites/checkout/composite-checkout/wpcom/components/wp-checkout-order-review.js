@@ -11,11 +11,7 @@ import { useLineItems, useFormStatus } from '@automattic/composite-checkout';
  */
 import joinClasses from './join-classes';
 import Coupon from './coupon';
-import {
-	WPOrderReviewLineItems,
-	WPOrderReviewTotal,
-	WPOrderReviewSection,
-} from './wp-order-review-line-items';
+import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 
 export default function WPCheckoutOrderReview( {
 	className,
@@ -27,11 +23,10 @@ export default function WPCheckoutOrderReview( {
 	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
-	responseCart,
-	CheckoutTerms,
 } ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
+	const isPurchaseFree = total.amount.value === 0;
 
 	return (
 		<div className={ joinClasses( [ className, 'checkout-review-order' ] ) }>
@@ -47,20 +42,14 @@ export default function WPCheckoutOrderReview( {
 				/>
 			</WPOrderReviewSection>
 
-			<CouponField
-				id="order-review-coupon"
-				disabled={ formStatus !== 'ready' }
-				couponStatus={ couponStatus }
-				couponFieldStateProps={ couponFieldStateProps }
-			/>
-
-			<WPOrderReviewSection>
-				<WPOrderReviewTotal total={ total } />
-			</WPOrderReviewSection>
-
-			<CheckoutTermsUI>
-				<CheckoutTerms cart={ responseCart } />
-			</CheckoutTermsUI>
+			{ ! isPurchaseFree && (
+				<CouponField
+					id="order-review-coupon"
+					disabled={ formStatus !== 'ready' }
+					couponStatus={ couponStatus }
+					couponFieldStateProps={ couponFieldStateProps }
+				/>
+			) }
 		</div>
 	);
 }
@@ -72,47 +61,10 @@ WPCheckoutOrderReview.propTypes = {
 	removeCoupon: PropTypes.func.isRequired,
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
-	responseCart: PropTypes.object.isRequired,
-	CheckoutTerms: PropTypes.elementType.isRequired,
 };
 
 const CouponField = styled( Coupon )`
 	margin: 24px 30px 24px 0;
 	padding-bottom: 24px;
 	border-bottom: 1px solid ${props => props.theme.colors.borderColorLight};
-`;
-
-const CheckoutTermsUI = styled.div`
-	& > * {
-		margin: 16px 16px 16px -24px;
-		padding-left: 24px;
-		position: relative;
-	}
-
-	& div:first-of-type {
-		padding-left: 0;
-		margin-left: 0;
-	}
-
-	svg {
-		width: 16px;
-		height: 16px;
-		position: absolute;
-		top: 0;
-		left: 0;
-	}
-
-	p {
-		font-size: 12px;
-		margin: 0;
-		word-break: break-word;
-	}
-
-	a {
-		text-decoration: underline;
-	}
-
-	a:hover {
-		text-decoration: none;
-	}
 `;

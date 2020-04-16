@@ -143,7 +143,7 @@ class StatsPostDetail extends Component {
 						title={ noViewsLabel }
 						line={ translate( 'Learn some tips to attract more visitors' ) }
 						action={ translate( 'Get more traffic!' ) }
-						actionURL="https://en.support.wordpress.com/getting-more-views-and-traffic/"
+						actionURL="https://wordpress.com/support/getting-more-views-and-traffic/"
 						actionTarget="blank"
 						illustration="/calypso/images/stats/illustration-stats.svg"
 						illustrationWidth={ 150 }

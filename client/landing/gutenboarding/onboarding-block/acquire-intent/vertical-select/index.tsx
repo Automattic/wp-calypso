@@ -5,7 +5,7 @@ import React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Suggestions } from '@automattic/components';
 import { useI18n } from '@automattic/react-i18n';
-import { __experimentalCreateInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { ENTER, TAB } from '@wordpress/keycodes';
 import { remove } from 'lodash';
 
@@ -96,7 +96,8 @@ const VerticalSelect: React.FunctionComponent = () => {
 
 		const normalizedInputValue = inputValue.toLowerCase();
 
-		let newSuggestions = verticals.filter( vertical =>
+		// TODO: write a more advanced compare fn https://github.com/Automattic/wp-calypso/pull/40645#discussion_r402156751
+		const newSuggestions = verticals.filter( vertical =>
 			vertical.label.toLowerCase().includes( normalizedInputValue )
 		);
 
@@ -114,17 +115,6 @@ const VerticalSelect: React.FunctionComponent = () => {
 
 		// ...and finally, we prepend firstSuggestion to our suggestions list.
 		newSuggestions.unshift( firstSuggestion );
-
-		// If there is only one suggestion and that suggestion matches the user input value,
-		// do not show any suggestions.
-
-		// TODO: write a more advanced compare fn https://github.com/Automattic/wp-calypso/pull/40645#discussion_r402156751
-		if (
-			newSuggestions.length === 1 &&
-			newSuggestions[ 0 ].label.toLowerCase() === normalizedInputValue
-		) {
-			newSuggestions = [];
-		}
 
 		setSuggestions( newSuggestions );
 	};
@@ -182,7 +172,7 @@ const VerticalSelect: React.FunctionComponent = () => {
 	const madlibTemplate = __( 'My site is about <Input />' );
 	// translators: Form input for a site's topic where "<Input />" is replaced with the topic selected by the user.
 	const madlibTemplateWithPeriod = __( 'My site is about <Input />.' );
-	const madlib = __experimentalCreateInterpolateElement(
+	const madlib = createInterpolateElement(
 		siteVertical ? madlibTemplateWithPeriod : madlibTemplate,
 		{
 			Input: (

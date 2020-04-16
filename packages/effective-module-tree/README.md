@@ -34,6 +34,11 @@ Use `effective-module-tree --root <path>` to print the tree in a different proje
 effective-module-tree --root "./src/package.json"
 ```
 
+This tool can generate either an ascii tree, or a list (easier to visualize dependency chains in
+big trees). It can be specified with the flags `-o tree` or `-o list`.
+
+Check out `effective-module-tree --help` for other flags and examples.
+
 ## Troubleshooting
 
 Invoke the command with `DEBUG=effective-module-tree ./effective-module-tree` to get a verbose

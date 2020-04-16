@@ -3,6 +3,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
+import styled from '@emotion/styled';
 import {
 	Checkout,
 	CheckoutStepBody,
@@ -26,7 +27,8 @@ import useCouponFieldState from '../hooks/use-coupon-field-state';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary, { WPCheckoutOrderSummaryTitle } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
-import { isCompleteAndValid, prepareDomainContactDetails } from '../types';
+import { isCompleteAndValid } from '../types';
+import { WPOrderReviewTotal, WPOrderReviewSection, LineItemUI } from './wp-order-review-line-items';
 
 const ContactFormTitle = () => {
 	const translate = useTranslate();
@@ -70,6 +72,7 @@ export default function WPCheckout( {
 	getItemVariants,
 	domainContactValidationCallback,
 	responseCart,
+	subtotal,
 } ) {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( submitCoupon );
@@ -109,10 +112,9 @@ export default function WPCheckout( {
 		if ( isDomainFieldsVisible ) {
 			const hasValidationErrors = await domainContactValidationCallback(
 				activePaymentMethod.id,
-				prepareDomainContactDetails( contactInfo ),
+				contactInfo,
 				[ domainName ],
-				applyDomainContactValidationResults,
-				contactInfo
+				applyDomainContactValidationResults
 			);
 			return ! hasValidationErrors;
 		}
@@ -135,13 +137,7 @@ export default function WPCheckout( {
 		<Checkout>
 			<CheckoutStepBody
 				activeStepContent={ null }
-				completeStepContent={
-					<WPCheckoutOrderSummary
-						siteUrl={ siteUrl }
-						couponStatus={ couponStatus }
-						couponFieldStateProps={ couponFieldStateProps }
-					/>
-				}
+				completeStepContent={ <WPCheckoutOrderSummary siteUrl={ siteUrl } /> }
 				titleContent={ <WPCheckoutOrderSummaryTitle /> }
 				errorMessage={ translate( 'There was an error with the summary step.' ) }
 				isStepActive={ false }
@@ -152,13 +148,22 @@ export default function WPCheckout( {
 			/>
 			<CheckoutSteps>
 				<CheckoutStep
-					stepId="payment-method-step"
-					isCompleteCallback={ () =>
-						paymentMethodStep.isCompleteCallback( { activePaymentMethod } )
+					stepId="review-order-step"
+					isCompleteCallback={ () => true }
+					activeStepContent={
+						<WPCheckoutOrderReview
+							removeItem={ removeItem }
+							couponStatus={ couponStatus }
+							couponFieldStateProps={ couponFieldStateProps }
+							removeCoupon={ removeCouponAndResetActiveStep }
+							onChangePlanLength={ changePlanLength }
+							variantRequestStatus={ variantRequestStatus }
+							variantSelectOverride={ variantSelectOverride }
+							getItemVariants={ getItemVariants }
+						/>
 					}
-					activeStepContent={ paymentMethodStep.activeStepContent }
-					completeStepContent={ paymentMethodStep.completeStepContent }
-					titleContent={ paymentMethodStep.titleContent }
+					titleContent={ <OrderReviewTitle /> }
+					completeStepContent={ <InactiveOrderReview /> }
 					editButtonText={ translate( 'Edit' ) }
 					editButtonAriaLabel={ translate( 'Edit the payment method' ) }
 					nextStepButtonText={ translate( 'Continue' ) }
@@ -201,23 +206,16 @@ export default function WPCheckout( {
 					/>
 				) }
 				<CheckoutStep
-					stepId="review-order-step"
-					isCompleteCallback={ () => true }
+					stepId="payment-method-step"
 					activeStepContent={
-						<WPCheckoutOrderReview
-							removeItem={ removeItem }
-							couponStatus={ couponStatus }
-							couponFieldStateProps={ couponFieldStateProps }
-							removeCoupon={ removeCouponAndResetActiveStep }
-							onChangePlanLength={ changePlanLength }
-							variantRequestStatus={ variantRequestStatus }
-							variantSelectOverride={ variantSelectOverride }
-							getItemVariants={ getItemVariants }
-							responseCart={ responseCart }
+						<PaymentMethodStep
 							CheckoutTerms={ CheckoutTerms }
+							responseCart={ responseCart }
+							subtotal={ subtotal }
 						/>
 					}
-					titleContent={ <OrderReviewTitle /> }
+					completeStepContent={ paymentMethodStep.completeStepContent }
+					titleContent={ paymentMethodStep.titleContent }
 					editButtonText={ translate( 'Edit' ) }
 					editButtonAriaLabel={ translate( 'Edit the payment method' ) }
 					nextStepButtonText={ translate( 'Continue' ) }
@@ -233,3 +231,100 @@ export default function WPCheckout( {
 function setActiveStepNumber( stepNumber ) {
 	window.location.hash = '#step' + stepNumber;
 }
+
+function PaymentMethodStep( { CheckoutTerms, responseCart, subtotal } ) {
+	const [ items, total ] = useLineItems();
+	const taxes = items.filter( item => item.type === 'tax' );
+	return (
+		<React.Fragment>
+			{ paymentMethodStep.activeStepContent }
+
+			<CheckoutTermsUI>
+				<CheckoutTerms cart={ responseCart } />
+			</CheckoutTermsUI>
+
+			<WPOrderReviewSection>
+				{ subtotal && <LineItemUI subtotal item={ subtotal } /> }
+				{ taxes.map( tax => (
+					<LineItemUI tax key={ tax.id } item={ tax } />
+				) ) }
+				<WPOrderReviewTotal total={ total } />
+			</WPOrderReviewSection>
+		</React.Fragment>
+	);
+}
+
+function InactiveOrderReview() {
+	const [ items ] = useLineItems();
+	return (
+		<SummaryContent>
+			<ProductList>
+				{ items.filter( shouldItemBeInSummary ).map( product => {
+					return <ProductListItem key={ product.id }>{ product.label }</ProductListItem>;
+				} ) }
+			</ProductList>
+		</SummaryContent>
+	);
+}
+
+function shouldItemBeInSummary( item ) {
+	const itemTypesToIgnore = [ 'tax', 'credits', 'wordpress-com-credits' ];
+	return ! itemTypesToIgnore.includes( item.type );
+}
+
+const CheckoutTermsUI = styled.div`
+	& > * {
+		margin: 16px 0 16px -24px;
+		padding-left: 24px;
+		position: relative;
+	}
+
+	& div:first-of-type {
+		padding-left: 0;
+		margin-left: 0;
+		margin-top: 32px;
+	}
+
+	svg {
+		width: 16px;
+		height: 16px;
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+
+	p {
+		font-size: 12px;
+		margin: 0;
+		word-break: break-word;
+	}
+
+	a {
+		text-decoration: underline;
+	}
+
+	a:hover {
+		text-decoration: none;
+	}
+`;
+
+const SummaryContent = styled.div`
+	margin-top: 12px;
+
+	@media ( ${props => props.theme.breakpoints.smallPhoneUp} ) {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+	}
+`;
+
+const ProductList = styled.ul`
+	margin: 0;
+	padding: 0;
+`;
+
+const ProductListItem = styled.li`
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+`;

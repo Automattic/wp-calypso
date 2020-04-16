@@ -26,6 +26,7 @@ import SiteBlockListItem from './list-item';
 import InfiniteList from 'components/infinite-list';
 import { requestSiteBlocks } from 'state/reader/site-blocks/actions';
 import SiteBlockListItemPlaceholder from './list-item-placeholder';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -72,9 +73,9 @@ class SiteBlockList extends Component {
 					<p>
 						{ translate(
 							'Blocked sites will not appear in your Reader and will not be recommended to you.'
-						) }
-						<a href="https://en.support.wordpress.com/reader/#blocking-sites">
-							{ translate( ' Learn more.' ) }
+						) }{ ' ' }
+						<a href={ localizeUrl( 'https://wordpress.com/support/reader/#blocking-sites' ) }>
+							{ translate( 'Learn more' ) }
 						</a>
 					</p>
 

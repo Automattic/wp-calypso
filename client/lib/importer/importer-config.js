@@ -9,7 +9,6 @@ import { filter, head, orderBy, values } from 'lodash';
  * Internal dependencies
  */
 import InlineSupportLink from 'components/inline-support-link';
-import { localizeUrl } from 'lib/i18n-utils';
 
 function getConfig( { siteTitle = '' } = {} ) {
 	const importerConfig = {};
@@ -41,9 +40,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 					supportLink: (
 						<InlineSupportLink
 							supportPostId={ 67084 }
-							supportLink={ localizeUrl(
-								'https://support.wordpress.com/coming-from-self-hosted/'
-							) }
+							supportLink="https://wordpress.com/support/coming-from-self-hosted/"
 							showIcon={ false }
 							text={ translate( 'Need help exporting your content?' ) }
 						/>
@@ -85,9 +82,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 					supportLink: (
 						<InlineSupportLink
 							supportPostId={ 66764 }
-							supportLink={ localizeUrl(
-								'https://support.wordpress.com/import/coming-from-blogger/'
-							) }
+							supportLink="https://wordpress.com/support/import/coming-from-blogger/"
 							showIcon={ false }
 							text={ translate( 'Need help exporting your content?' ) }
 						/>
@@ -120,9 +115,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 				supportLink: (
 					<InlineSupportLink
 						supportPostId={ 154436 }
-						supportLink={ localizeUrl(
-							'https://support.wordpress.com/import/import-from-godaddy/'
-						) }
+						supportLink="https://wordpress.com/support/import/import-from-godaddy/"
 						showIcon={ false }
 						text={ translate( 'Need help?' ) }
 					/>
@@ -162,9 +155,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 					supportLink: (
 						<InlineSupportLink
 							supportPostId={ 93180 }
-							supportLink={ localizeUrl(
-								'https://support.wordpress.com/import/import-from-medium/'
-							) }
+							supportLink="https://wordpress.com/support/import/import-from-medium/"
 							showIcon={ false }
 							text={ translate( 'Need help exporting your content?' ) }
 						/>
@@ -205,9 +196,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 					supportLink: (
 						<InlineSupportLink
 							supportPostId={ 87696 }
-							supportLink={ localizeUrl(
-								'https://support.wordpress.com/import/import-from-squarespace/'
-							) }
+							supportLink="https://wordpress.com/support/import/import-from-squarespace/"
 							showIcon={ false }
 							text={ translate( 'Need help exporting your content?' ) }
 						/>
@@ -240,7 +229,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 				supportLink: (
 					<InlineSupportLink
 						supportPostId={ 147777 }
-						supportLink={ localizeUrl( 'https://support.wordpress.com/import/import-from-wix/' ) }
+						supportLink="https://wordpress.com/support/import/import-from-wix/"
 						showIcon={ false }
 						text={ translate( 'Need help?' ) }
 					/>

@@ -100,7 +100,7 @@ const PhpMyAdminCard = ( {
 									<ExternalLink
 										icon
 										target="_blank"
-										href={ localizeUrl( 'https://en.support.wordpress.com/phpmyadmin-and-mysql/' ) }
+										href={ localizeUrl( 'https://wordpress.com/support/phpmyadmin-and-mysql/' ) }
 									/>
 								),
 							},

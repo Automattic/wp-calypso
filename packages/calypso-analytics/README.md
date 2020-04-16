@@ -1,23 +1,30 @@
 Calypso Analytics.
 =================
 
+Currently this package supports calls to Tracks only.
+
 Automatticians may refer to internal documentation for more information about Tracks.
 
 ## Usage
 
 Note: In most situations it is best to use the [Analytics Middleware](https://github.com/Automattic/wp-calypso/tree/master/client/state/analytics), which has no direct browser dependencies and therefore will not complicate any unit testing of the modules where it is used.
 
-### `recordGoogleEvent( name, properties )`
+### `recordTracksEvent( name, properties )`
+
+```js
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+
+recordTracksEvent( 'calypso_signup_step_start', { step: 'a_nice_step' } );
+
+```
+
+_Note: Unless you have a strong reason to call `recordTracksEvent` directly, you should use the Analytics Middleware instead:_
 
 ```js
 import { recordTracksEvent } from 'state/analytics/actions';
 
-dispatch( recordTracksEvent( 'calypso_checkout_coupon_apply', { 'coupon_code': 'abc123' } ) );
+dispatch( recordTracksEvent( 'calypso_checkout_coupon_apply', { coupon_code: 'abc123' } ) );
 ```
-
-### `analytics.tracks.recordEvent( name, properties )` (Deprecated)
-
-_Note: Unless you have a strong reason to call `recordTracksEvent` directly, you should use the Analytics Middleware instead._
 
 Record an event with optional properties:
 
@@ -29,7 +36,16 @@ import { initializeAnalytics, recordTracksEvent } from '@automattic/calypso-anal
 initializeAnalytics( currentUser, superProps );
 
 //in your component
-recordTracksEvent( 'calpbso_do_thing', { extra: 'info' } );
+recordTracksEvent( 'calypso_do_thing', { extra: 'info' } );
+```
+
+#### Deprecates
+
+`recordTracksEvent( name, properties )` deprecates the following call to the analytics lib method:
+
+```js
+import analytics from 'lib/analytics';
+analytics.tracks.recordEvent( name, properties );
 ```
 
 ## Naming Conventions

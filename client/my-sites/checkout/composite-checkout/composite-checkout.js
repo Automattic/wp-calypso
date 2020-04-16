@@ -16,8 +16,10 @@ import {
 	useShoppingCart,
 	FormFieldAnnotation,
 	areDomainsInLineItems,
-	domainManagedContactDetails,
-	taxManagedContactDetails,
+	emptyManagedContactDetails,
+	applyContactDetailsRequiredMask,
+	domainRequiredContactDetails,
+	taxRequiredContactDetails,
 } from 'my-sites/checkout/composite-checkout/wpcom';
 import { CheckoutProvider, defaultRegistry } from '@automattic/composite-checkout';
 
@@ -31,7 +33,7 @@ import {
 	useIsApplePayAvailable,
 	filterAppropriatePaymentMethods,
 } from './payment-method-helpers';
-import usePrepareProductForCart from './use-prepare-product-for-cart';
+import usePrepareProductsForCart from './use-prepare-product-for-cart';
 import notices from 'notices';
 import { isJetpackSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
@@ -88,6 +90,7 @@ export default function CompositeCheckout( {
 	purchaseId,
 	cart,
 	couponCode: couponCodeFromUrl,
+	isComingFromUpsell,
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic = useSelector(
@@ -96,6 +99,7 @@ export default function CompositeCheckout( {
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const isLoadingCartSynchronizer =
 		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
+	const hideNudge = isComingFromUpsell;
 
 	const getThankYouUrl = useGetThankYouUrl( {
 		siteSlug,
@@ -106,6 +110,7 @@ export default function CompositeCheckout( {
 		isJetpackNotAtomic,
 		product,
 		siteId,
+		hideNudge,
 	} );
 	const reduxDispatch = useDispatch();
 	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [] );
@@ -157,11 +162,12 @@ export default function CompositeCheckout( {
 
 	const countriesList = useCountryList( overrideCountryList || [] );
 
-	const { productForCart, canInitializeCart } = usePrepareProductForCart(
+	const { productsForCart, canInitializeCart } = usePrepareProductsForCart( {
 		siteId,
 		product,
-		isJetpackNotAtomic
-	);
+		purchaseId,
+		isJetpackNotAtomic,
+	} );
 
 	const {
 		items,
@@ -185,7 +191,7 @@ export default function CompositeCheckout( {
 	} = useShoppingCart(
 		siteSlug,
 		canInitializeCart && ! isLoadingCartSynchronizer,
-		productForCart,
+		productsForCart,
 		couponCodeFromUrl,
 		setCart || wpcomSetCart,
 		getCart || wpcomGetCart,
@@ -210,7 +216,10 @@ export default function CompositeCheckout( {
 	useWpcomStore(
 		registerStore,
 		recordEvent,
-		areDomainsInLineItems( items ) ? domainManagedContactDetails : taxManagedContactDetails,
+		applyContactDetailsRequiredMask(
+			emptyManagedContactDetails,
+			areDomainsInLineItems( items ) ? domainRequiredContactDetails : taxRequiredContactDetails
+		),
 		updateContactDetailsCache
 	);
 
@@ -347,6 +356,7 @@ export default function CompositeCheckout( {
 					getItemVariants={ getItemVariants }
 					domainContactValidationCallback={ domainContactValidationCallback }
 					responseCart={ responseCart }
+					subtotal={ subtotal }
 					CheckoutTerms={ CheckoutTerms }
 				/>
 			</CheckoutProvider>

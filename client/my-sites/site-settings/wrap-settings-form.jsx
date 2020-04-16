@@ -11,6 +11,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import { protectForm } from 'lib/protect-form';
 import trackForm from 'lib/track-form';
 import {
@@ -160,6 +161,9 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			}
 
 			const siteFields = pick( fields, settingsFields.site );
+			if ( ! this.props.settings.private_sites_enabled && 'variant' !== abtest( 'ATPrivacy' ) ) {
+				delete siteFields.wpcom_coming_soon;
+			}
 			this.props.saveSiteSettings( siteId, { ...siteFields, apiVersion: '1.4' } );
 		};
 

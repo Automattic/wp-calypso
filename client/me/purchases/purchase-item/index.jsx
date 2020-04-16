@@ -29,7 +29,7 @@ import {
 	isGoogleApps,
 	isPlan,
 	isTheme,
-	isJetpackBackup,
+	isJetpackProduct,
 	isConciergeSession,
 } from 'lib/products-values';
 import Notice from 'components/notice';
@@ -158,7 +158,7 @@ class PurchaseItem extends Component {
 			return null;
 		}
 
-		if ( isPlan( purchase ) || isJetpackBackup( purchase ) ) {
+		if ( isPlan( purchase ) || isJetpackProduct( purchase ) ) {
 			return (
 				<div className="purchase-item__plan-icon">
 					<ProductIcon

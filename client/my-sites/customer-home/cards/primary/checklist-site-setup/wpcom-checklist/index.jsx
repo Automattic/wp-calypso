@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getTaskList } from './wpcom-task-list';
+import { getTaskList } from 'lib/checklist';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -37,7 +37,12 @@ class WpcomChecklist extends Component {
 		}
 
 		// Asynchronously load and render component with passed props.
-		return <AsyncLoad require="my-sites/checklist/wpcom-checklist/component.jsx" { ...ownProps } />;
+		return (
+			<AsyncLoad
+				require="my-sites/customer-home/cards/primary/checklist-site-setup/wpcom-checklist/component.jsx"
+				{ ...ownProps }
+			/>
+		);
 	}
 }
 

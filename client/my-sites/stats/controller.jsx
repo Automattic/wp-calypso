@@ -221,7 +221,7 @@ export default {
 				context.store.dispatch(
 					recordTracksEvent( 'calypso_simple_payment_email_tour', { source: 'mobile' } )
 				);
-				window.location.href = 'https://support.wordpress.com/simple-payments/';
+				window.location.href = 'https://wordpress.com/support/simple-payments/';
 				return;
 			}
 			context.store.dispatch(

@@ -71,7 +71,6 @@ import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
 import PlanTestimonials from '../plan-testimonials';
-import GutenboardingHeader from './gutenboarding-header';
 
 /**
  * Style dependencies
@@ -131,7 +130,7 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			plansWithScroll,
 			translate,
-			isGutenboarding,
+			customHeader,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -149,9 +148,7 @@ export class PlansFeaturesMain extends Component {
 				) }
 				data-e2e-plans={ displayJetpackPlans ? 'jetpack' : 'wpcom' }
 			>
-				{ isGutenboarding && (
-					<GutenboardingHeader onFreePlanSelect={ this.handleFreePlanButtonClick } />
-				) }
+				{ customHeader }
 				{ this.isJetpackBackupAvailable() && (
 					<FormattedHeader
 						headerText={ translate( 'Plans' ) }
@@ -397,14 +394,14 @@ export class PlansFeaturesMain extends Component {
 	};
 
 	renderFreePlanBanner() {
-		const { hideFreePlan, translate, flowName, isInSignup, isGutenboarding } = this.props;
+		const { hideFreePlan, translate, flowName, isInSignup, customHeader } = this.props;
 		const className = 'is-free-plan';
 		const callToAction =
 			isInSignup && flowName === 'launch-site'
 				? translate( 'Continue with your free site' )
 				: translate( 'Start with a free site' );
 
-		if ( hideFreePlan || isGutenboarding ) {
+		if ( hideFreePlan || !! customHeader ) {
 			return null;
 		}
 
@@ -519,6 +516,7 @@ PlansFeaturesMain.propTypes = {
 	withWPPlanTabs: PropTypes.bool,
 	plansWithScroll: PropTypes.bool,
 	planTypes: PropTypes.array,
+	customHeader: PropTypes.node,
 };
 
 PlansFeaturesMain.defaultProps = {

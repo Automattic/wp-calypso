@@ -278,7 +278,7 @@ export function fillInSingleCartItemAttributes( cartItem, products ) {
  * in the shopping cart. See the support documentation for more details on
  * these policies:
  *
- * https://en.support.wordpress.com/refunds/
+ * https://wordpress.com/support/refunds/
  *
  * @param {object} cart - cart as `CartValue` object
  * @returns {string} the refund policy type

@@ -6,6 +6,7 @@ import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { defaultRegistry } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
+import { isEmpty } from 'lodash';
 
 const { select } = defaultRegistry;
 const debug = debugFactory( 'calypso:composite-checkout-thank-you' );
@@ -32,7 +33,7 @@ import { JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
 import { persistSignupDestination, retrieveSignupDestination } from 'signup/utils';
 import { getSelectedSite } from 'state/ui/selectors';
 import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-signup-destination';
-import getPreviousPath from 'state/selectors/get-previous-path.js';
+import { abtest } from 'lib/abtest';
 
 export function getThankYouPageUrl( {
 	siteSlug,
@@ -47,8 +48,10 @@ export function getThankYouPageUrl( {
 	product,
 	getUrlFromCookie = retrieveSignupDestination,
 	saveUrlToCookie = persistSignupDestination,
-	previousRoute,
 	isEligibleForSignupDestinationResult,
+	hideNudge,
+	didPurchaseFail,
+	isTransactionResultEmpty,
 } ) {
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
 	// (i.e. on WordPress.com), or a Jetpack or WP.com site's block editor (in wp-admin).
@@ -118,7 +121,9 @@ export function getThankYouPageUrl( {
 		pendingOrReceiptId,
 		cart,
 		siteSlug,
-		previousRoute,
+		hideNudge,
+		didPurchaseFail,
+		isTransactionResultEmpty,
 	} );
 	if ( redirectPathForConciergeUpsell ) {
 		return redirectPathForConciergeUpsell;
@@ -179,18 +184,55 @@ function getFallbackDestination( {
 	return '/';
 }
 
-function getRedirectUrlForConciergeNudge( { pendingOrReceiptId, cart, siteSlug, previousRoute } ) {
+function maybeShowPlanBumpOfferConcierge( {
+	pendingOrReceiptId,
+	cart,
+	siteSlug,
+	didPurchaseFail,
+	isTransactionResultEmpty,
+} ) {
+	if ( hasPersonalPlan( cart ) && ! isTransactionResultEmpty && ! didPurchaseFail ) {
+		if ( 'variantShowPlanBump' === abtest( 'showPremiumPlanBump' ) ) {
+			return `/checkout/${ siteSlug }/offer-plan-upgrade/premium/${ pendingOrReceiptId }`;
+		}
+	}
+
+	return;
+}
+
+function getRedirectUrlForConciergeNudge( {
+	pendingOrReceiptId,
+	cart,
+	siteSlug,
+	hideNudge,
+	didPurchaseFail,
+	isTransactionResultEmpty,
+} ) {
+	if ( hideNudge ) {
+		return;
+	}
+
 	// If the user has upgraded a plan from seeing our upsell(we find this by checking the previous route is /offer-plan-upgrade),
 	// then skip this section so that we do not show further upsells.
 	if (
 		config.isEnabled( 'upsell/concierge-session' ) &&
 		! hasConciergeSession( cart ) &&
 		! hasJetpackPlan( cart ) &&
-		( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) ) &&
-		! previousRoute?.includes( `/checkout/${ siteSlug }/offer-plan-upgrade` )
+		( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) )
 	) {
 		// A user just purchased one of the qualifying plans
 		// Show them the concierge session upsell page
+
+		const upgradePath = maybeShowPlanBumpOfferConcierge( {
+			pendingOrReceiptId,
+			cart,
+			siteSlug,
+			didPurchaseFail,
+			isTransactionResultEmpty,
+		} );
+		if ( upgradePath ) {
+			return upgradePath;
+		}
 
 		// The conciergeUpsellDial test is used when we need to quickly dial back the volume of concierge sessions
 		// being offered and so sold, to be inline with HE availability.
@@ -267,19 +309,21 @@ export function useGetThankYouUrl( {
 	isJetpackNotAtomic,
 	product,
 	siteId,
+	hideNudge,
 } ) {
 	const selectedSiteData = useSelector( state => getSelectedSite( state ) );
 	const adminUrl = selectedSiteData?.options?.admin_url;
 	const isEligibleForSignupDestinationResult = useSelector( state =>
 		isEligibleForSignupDestination( state, siteId, cart )
 	);
-	const previousRoute = useSelector( state => getPreviousPath( state ) );
 
 	const getThankYouUrl = useCallback( () => {
 		const transactionResult = select( 'wpcom' ).getTransactionResult();
 		debug( 'for getThankYouUrl, transactionResult is', transactionResult );
+		const didPurchaseFail = Object.keys( transactionResult.failed_purchases ?? {} ).length > 0;
 		const receiptId = transactionResult.receipt_id;
 		const orderId = transactionResult.order_id;
+		const isTransactionResultEmpty = isEmpty( transactionResult );
 
 		debug( 'getThankYouUrl called with', {
 			siteSlug,
@@ -292,8 +336,10 @@ export function useGetThankYouUrl( {
 			cart,
 			isJetpackNotAtomic,
 			product,
-			previousRoute,
 			isEligibleForSignupDestinationResult,
+			hideNudge,
+			didPurchaseFail,
+			isTransactionResultEmpty,
 		} );
 		const url = getThankYouPageUrl( {
 			siteSlug,
@@ -306,13 +352,14 @@ export function useGetThankYouUrl( {
 			cart,
 			isJetpackNotAtomic,
 			product,
-			previousRoute,
 			isEligibleForSignupDestinationResult,
+			hideNudge,
+			didPurchaseFail,
+			isTransactionResultEmpty,
 		} );
 		debug( 'getThankYouUrl returned', url );
 		return url;
 	}, [
-		previousRoute,
 		isEligibleForSignupDestinationResult,
 		siteSlug,
 		adminUrl,
@@ -322,6 +369,7 @@ export function useGetThankYouUrl( {
 		feature,
 		purchaseId,
 		cart,
+		hideNudge,
 	] );
 	return getThankYouUrl;
 }

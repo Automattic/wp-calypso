@@ -5,6 +5,11 @@ import React, { createRef, FunctionComponent, useState } from 'react';
 import { Button, Popover, Dashicon } from '@wordpress/components';
 import classnames from 'classnames';
 
+// Core package needs to add this to the type definitions.
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { useViewportMatch } from '@wordpress/compose';
+
 /**
  * Internal dependencies
  */
@@ -33,6 +38,9 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 
 	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState( false );
 
+	// Popover expands at medium viewport width
+	const isMobile = useViewportMatch( 'medium', '<' );
+
 	const handleClose = ( e?: React.FocusEvent ) => {
 		// Don't collide with button toggling
 		if ( e?.relatedTarget === buttonRef.current ) {
@@ -54,16 +62,15 @@ const DomainPickerButton: FunctionComponent< Props > = ( {
 				onClick={ () => setDomainPopoverVisibility( s => ! s ) }
 				ref={ buttonRef }
 			>
-				<span>{ children }</span>
+				<span className="domain-picker-button__label">{ children }</span>
 				<Dashicon icon="arrow-down-alt2" size={ 16 } />
 			</Button>
 			{ isDomainPopoverVisible && (
 				<div className="domain-picker-button__popover-container">
 					<Popover
 						className="domain-picker-button__popover"
-						focusOnMount={ false }
+						focusOnMount={ isMobile ? 'container' : 'firstElement' }
 						noArrow
-						onClickOutside={ handleClose } // TODO: investigate why clicking outside is ignored
 						onClose={ handleClose }
 						onFocusOutside={ handleClose }
 						position={ 'bottom center' }

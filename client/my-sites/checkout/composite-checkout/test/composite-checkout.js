@@ -65,7 +65,7 @@ const domainTransferProduct = {
 
 const planWithBundledDomain = {
 	product_name: 'WordPress.com Personal',
-	product_slug: 'personal_bundle',
+	product_slug: 'personal-bundle',
 	currency: 'BRL',
 	extra: {
 		context: 'signup',
@@ -81,7 +81,7 @@ const planWithBundledDomain = {
 
 const planWithoutDomain = {
 	product_name: 'WordPress.com Personal',
-	product_slug: 'personal_bundle',
+	product_slug: 'personal-bundle',
 	currency: 'BRL',
 	extra: {
 		context: 'signup',
@@ -162,10 +162,22 @@ describe( 'CompositeCheckout', () => {
 				ui: { selectedSiteId: 123 },
 				productsList: {
 					items: {
+						'personal-bundle': {
+							product_id: 1009,
+							product_name: 'Plan',
+							product_slug: 'personal-bundle',
+							prices: {},
+						},
 						domain_map: {
 							product_id: 5,
 							product_name: 'Product',
 							product_slug: 'domain_map',
+							prices: {},
+						},
+						domain_reg: {
+							product_id: 6,
+							product_name: 'Product',
+							product_slug: 'domain_reg',
 							prices: {},
 						},
 					},
@@ -492,6 +504,68 @@ describe( 'CompositeCheckout', () => {
 		getAllByLabelText( 'Domain Mapping: bar.com' ).map( element =>
 			expect( element ).toHaveTextContent( 'R$0' )
 		);
+	} );
+
+	it( 'adds renewal product to the cart when the url has a renewal', async () => {
+		let renderResult;
+		const cartChanges = { products: [] };
+		const additionalProps = { product: 'personal-bundle', purchaseId: '12345' };
+		await act( async () => {
+			renderResult = render(
+				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+				container
+			);
+		} );
+		const { getAllByLabelText } = renderResult;
+		getAllByLabelText( 'WordPress.com Personal' ).map( element =>
+			expect( element ).toHaveTextContent( 'R$144' )
+		);
+	} );
+
+	it( 'adds renewal product to the cart when the url has a renewal with a domain registration', async () => {
+		let renderResult;
+		const cartChanges = { products: [] };
+		const additionalProps = { product: 'domain_reg:foo.cash', purchaseId: '12345' };
+		await act( async () => {
+			renderResult = render(
+				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+				container
+			);
+		} );
+		const { getByLabelText } = renderResult;
+		expect( getByLabelText( 'Domain Registration: foo.cash' ) ).toBeInTheDocument();
+	} );
+
+	it( 'adds renewal product to the cart when the url has a renewal with a domain mapping', async () => {
+		let renderResult;
+		const cartChanges = { products: [] };
+		const additionalProps = { product: 'domain_map:bar.com', purchaseId: '12345' };
+		await act( async () => {
+			renderResult = render(
+				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+				container
+			);
+		} );
+		const { getByLabelText } = renderResult;
+		expect( getByLabelText( 'Domain Mapping: bar.com' ) ).toBeInTheDocument();
+	} );
+
+	it( 'adds renewal products to the cart when the url has multiple renewals', async () => {
+		let renderResult;
+		const cartChanges = { products: [] };
+		const additionalProps = {
+			product: 'domain_map:bar.com,domain_reg:bar.com',
+			purchaseId: '12345,54321',
+		};
+		await act( async () => {
+			renderResult = render(
+				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+				container
+			);
+		} );
+		const { getByLabelText } = renderResult;
+		expect( getByLabelText( 'Domain Mapping: bar.com' ) ).toBeInTheDocument();
+		expect( getByLabelText( 'Domain Registration: bar.com' ) ).toBeInTheDocument();
 	} );
 
 	it( 'adds the coupon to the cart when the url has a coupon code', async () => {

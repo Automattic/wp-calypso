@@ -70,13 +70,13 @@ const SearchIcon = () => (
 );
 
 const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, currentDomain } ) => {
-	const { __ } = useI18n();
+	const { __, i18nLocale } = useI18n();
 	const label = __( 'Search for a domain' );
 
 	const { domainSearch } = useSelect( select => select( STORE_KEY ).getState() );
 	const { setDomainSearch } = useDispatch( STORE_KEY );
 
-	const allSuggestions = useDomainSuggestions();
+	const allSuggestions = useDomainSuggestions( { locale: i18nLocale } );
 	const freeSuggestions = getFreeDomainSuggestions( allSuggestions );
 	const paidSuggestions = getPaidDomainSuggestions( allSuggestions )?.slice(
 		0,
@@ -87,13 +87,19 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 	return (
 		<Panel className="domain-picker">
 			<PanelBody>
-				<PanelRow className="domain-picker__panel-row">
+				<PanelRow className="domain-picker__panel-row-main">
 					<div className="domain-picker__header">
 						<div className="domain-picker__header-group">
 							<div className="domain-picker__header-title">{ __( 'Choose a domain' ) }</div>
 							<p>{ __( 'Free for the first year with any paid plan' ) }</p>
 						</div>
-						<CloseButton onClose={ () => onClose() } />
+						<CloseButton
+							onClose={ onClose }
+							// removing from tab flow as discussed in p1586489720342200-slack-gutenboarding
+							// @wordpress/popover finds and focuses on the first found focusable element which will be TextControl
+							// footer-button serve the same purpose and also ESC key in closing the popover
+							tabIndex={ -1 }
+						/>
 					</div>
 					<div className="domain-picker__search">
 						<SearchIcon />
@@ -105,9 +111,6 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 							value={ domainSearch }
 						/>
 					</div>
-				</PanelRow>
-
-				<PanelRow className="domain-picker__panel-row">
 					<div className="domain-picker__suggestion-item-group">
 						{ ! freeSuggestions && <SuggestionItemPlaceholder /> }
 						{ freeSuggestions &&
@@ -138,8 +141,7 @@ const DomainPicker: FunctionComponent< Props > = ( { onDomainSelect, onClose, cu
 							) ) }
 					</div>
 				</PanelRow>
-
-				<PanelRow className="domain-picker__panel-row">
+				<PanelRow className="domain-picker__panel-row-footer">
 					<div className="domain-picker__footer">
 						<div className="domain-picker__footer-options"></div>
 						<Button

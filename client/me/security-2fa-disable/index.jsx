@@ -112,7 +112,7 @@ class Security2faDisable extends Component {
 								changephonelink: (
 									<a
 										href={ localizeUrl(
-											'https://en.support.wordpress.com/security/two-step-authentication/#moving-to-a-new-device'
+											'https://wordpress.com/support/security/two-step-authentication/#moving-to-a-new-device'
 										) }
 										target="_blank"
 										rel="noopener noreferrer"

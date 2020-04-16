@@ -14,7 +14,7 @@
 			flex-flow: row wrap;
 
 			.product-card {
-				
+
 				@include breakpoint( '>480px' ) {
 					flex-basis: calc( 50% - 1em );
 				}

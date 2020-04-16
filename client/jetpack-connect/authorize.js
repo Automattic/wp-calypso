@@ -569,12 +569,14 @@ export class JetpackAuthorize extends Component {
 	getUserText() {
 		const { translate } = this.props;
 		const { authorizeSuccess } = this.props.authorizationData;
+		// translators: %(user) is user's Display Name (Eg Connecting as John Doe)
 		let text = translate( 'Connecting as {{strong}}%(user)s{{/strong}}', {
 			args: { user: this.props.user.display_name },
 			components: { strong: <strong /> },
 		} );
 
 		if ( authorizeSuccess || this.props.isAlreadyOnSitesList ) {
+			// translators: %(user) is user's Display Name (Eg Connected as John Doe)
 			text = translate( 'Connected as {{strong}}%(user)s{{/strong}}', {
 				args: { user: this.props.user.display_name },
 				components: { strong: <strong /> },
@@ -614,7 +616,8 @@ export class JetpackAuthorize extends Component {
 		const backToWpAdminLink = (
 			<LoggedOutFormLinkItem href={ redirectAfterAuth }>
 				<Gridicon size={ 18 } icon="arrow-left" />{ ' ' }
-				{ translate( 'Return to %(sitename)s', {
+				{ // translators: eg: Return to The WordPress.com Blog
+				translate( 'Return to %(sitename)s', {
 					args: { sitename: decodeEntities( blogname ) },
 				} ) }
 			</LoggedOutFormLinkItem>

@@ -8,8 +8,44 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { loadUserUndeployedTranslations } from 'lib/i18n-utils/switch-locale';
+import { getLanguageSlugs } from 'lib/i18n-utils';
+import {
+	loadUserUndeployedTranslations,
+	getLanguageManifestFile,
+	getTranslationChunkFile,
+} from 'lib/i18n-utils/switch-locale';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
+
+const setupTranslationChunks = async localeSlug => {
+	const { translatedChunks, locale } = await getLanguageManifestFile( localeSlug );
+
+	i18n.setLocale( locale );
+
+	const loadedTranslationChunks = {};
+	const loadTranslationForChunkIfNeeded = chunkId => {
+		if ( ! translatedChunks.includes( chunkId ) || loadedTranslationChunks[ chunkId ] ) {
+			return;
+		}
+
+		return getTranslationChunkFile( chunkId, localeSlug ).then( translations => {
+			i18n.addTranslations( translations );
+			loadedTranslationChunks[ chunkId ] = true;
+		} );
+	};
+	const installedChunks = new Set(
+		( window.installedChunks || [] ).concat( window.__requireChunkCallback__.getInstalledChunks() )
+	);
+
+	installedChunks.forEach( chunkId => {
+		loadTranslationForChunkIfNeeded( chunkId );
+	} );
+
+	window.__requireChunkCallback__.add( ( { publicPath, scriptSrc }, promises ) => {
+		const chunkId = scriptSrc.replace( publicPath, '' ).replace( /\.js$/, '' );
+
+		promises.push( loadTranslationForChunkIfNeeded( chunkId ) );
+	} );
+};
 
 export const setupLocale = ( currentUser, reduxStore ) => {
 	if ( window.i18nLocaleStrings ) {
@@ -26,69 +62,16 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 	}
 
 	if ( config.isEnabled( 'use-translation-chunks' ) && '__requireChunkCallback__' in window ) {
-		const languageRevisions = window.languageRevisions || {};
-		const languagesPath = `${ window.__requireChunkCallback__.getPublicPath() }languages`;
-		const getTranslationChunkPath = ( chunkId, langSlug = currentUser.localeSlug ) => {
-			const languageRevision = languageRevisions[ langSlug ] || '';
+		const userLocaleSlug = currentUser && currentUser.localeSlug;
+		const lastPathSegment = window.location.pathname.substr(
+			window.location.pathname.lastIndexOf( '/' ) + 1
+		);
+		const pathLocaleSlug = getLanguageSlugs().includes( lastPathSegment ) && lastPathSegment;
+		const localeSlug = userLocaleSlug || pathLocaleSlug;
 
-			return `${ languagesPath }/${ langSlug }-${ chunkId }.json?${ languageRevision }`;
-		};
-
-		const loadedTranslationChunks = {};
-		const fetchTranslationChunk = translationChunkPath => {
-			return window
-				.fetch( translationChunkPath )
-				.then( response => response.json() )
-				.then( data => {
-					i18n.addTranslations( data );
-					loadedTranslationChunks[ translationChunkPath ] = true;
-					return;
-				} )
-				.catch( error => error );
-		};
-
-		const languageRevision = languageRevisions[ currentUser.localeSlug ] || '';
-		let translatedChunks; // should we get these bootstrapped on page load, similarly to `languageRevisions`?
-
-		window
-			.fetch(
-				`${ languagesPath }/${ currentUser.localeSlug }-language-manifest.json?v=${ languageRevision }`
-			)
-			.then( response => response.json() )
-			.then( data => {
-				translatedChunks = data.translatedChunks;
-				i18n.setLocale( data.locale );
-				const installedChunks = ( window.installedChunks || [] ).concat(
-					window.__requireChunkCallback__.getInstalledChunks()
-				);
-
-				installedChunks.forEach( chunkId => {
-					const translationChunkPath = getTranslationChunkPath( chunkId );
-
-					if (
-						translatedChunks.includes( chunkId ) &&
-						! loadedTranslationChunks[ translationChunkPath ]
-					) {
-						fetchTranslationChunk( translationChunkPath );
-					}
-				} );
-			} );
-
-		window.__requireChunkCallback__.add( ( { publicPath, scriptSrc }, promises ) => {
-			const chunkId = scriptSrc.replace( publicPath, '' ).replace( /\.js$/, '' );
-			const translationChunkPath = getTranslationChunkPath( chunkId );
-
-			if ( ! translatedChunks ) {
-				return;
-			}
-
-			if (
-				translatedChunks.includes( chunkId ) &&
-				! loadedTranslationChunks[ translationChunkPath ]
-			) {
-				promises.push( fetchTranslationChunk( translationChunkPath ) );
-			}
-		} );
+		if ( localeSlug ) {
+			setupTranslationChunks( localeSlug );
+		}
 	}
 
 	// If user is logged out and translations are not boostrapped, we assume default locale

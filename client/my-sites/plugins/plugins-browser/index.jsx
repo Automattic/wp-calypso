@@ -37,7 +37,7 @@ import isVipSite from 'state/selectors/is-vip-site';
 import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
 import { Button } from '@automattic/components';
 import { isBusiness, isEcommerce, isEnterprise, isPremium } from 'lib/products-values';
-import { TYPE_BUSINESS } from 'lib/plans/constants';
+import { FEATURE_UPLOAD_PLUGINS, TYPE_BUSINESS } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import UpsellNudge from 'blocks/upsell-nudge';
 import { isEnabled } from 'config';
@@ -526,6 +526,7 @@ export class PluginsBrowser extends Component {
 				event="calypso_plugins_browser_upgrade_nudge"
 				showIcon={ true }
 				href={ bannerURL }
+				feature={ FEATURE_UPLOAD_PLUGINS }
 				plan={ plan }
 				title={ title }
 			/>

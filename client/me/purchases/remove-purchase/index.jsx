@@ -255,7 +255,9 @@ class RemovePurchase extends Component {
 		return (
 			<div>
 				<p>
-					{ translate( 'Are you sure you want to remove %(productName)s from {{domain/}}?', {
+					{ /* translators: productName is a product name, like Jetpack.
+					 domain is something like example.wordpress.com */
+					translate( 'Are you sure you want to remove %(productName)s from {{domain/}}?', {
 						args: { productName },
 						components: { domain: <em>{ purchase.domain }</em> },
 						// ^ is the internal WPcom domain i.e. example.wordpress.com
@@ -365,7 +367,8 @@ class RemovePurchase extends Component {
 		const defaultContent = (
 			<>
 				<Gridicon icon="trash" />
-				{ translate( 'Remove %(productName)s', { args: { productName } } ) }
+				{ // translators: productName is a product name, like Jetpack
+				translate( 'Remove %(productName)s', { args: { productName } } ) }
 			</>
 		);
 
