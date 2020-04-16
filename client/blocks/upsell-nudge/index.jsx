@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Banner from 'components/banner';
-import { FEATURE_NO_ADS, PLAN_BUSINESS, PLAN_ECOMMERCE } from 'lib/plans/constants';
+import { FEATURE_NO_ADS } from 'lib/plans/constants';
 import { addQueryArgs } from 'lib/url';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { isFreePlan } from 'lib/products-values';
