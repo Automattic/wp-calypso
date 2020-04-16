@@ -15,7 +15,12 @@ Apps (unlike packages) are not built on Calypso's `yarn`.
 You must manually build apps by running:
 
 ```bash
-npx lerna run build --scope="@automattic/app-name"
+cd apps/app-name
+yarn build
+
+# Or any other command in the app's package.json
+# E.g. for the FSE plugin dev & sync command:
+yarn dev --sync
 ```
 
 ## Validating package.json

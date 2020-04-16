@@ -33,4 +33,8 @@ To build bundle in `apps/o2-blocks/dist`, run:
 
 ```bash
 npx lerna run build --scope="@automattic/o2-blocks"
+
+# or:
+cd apps/o2-blocks
+yarn build
 ```

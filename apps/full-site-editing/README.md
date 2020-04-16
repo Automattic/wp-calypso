@@ -24,12 +24,12 @@ This plugin should not be confused with the site editor work in core Gutenberg. 
 
 ## Build System
 
-Note: these scripts must be run from the Calypso _root_ directory. You will probably want to add aliases for these since they are very verbose.
+_Note: `cd` to `apps/full-site-editing` before running these commands_
 
-- `npx lerna run dev --scope='@automattic/full-site-editing' --stream --no-prefix`<br>
+- `yarn dev`<br>
 Compiles the plugins and watches for changes.
 
-- `npx lerna run build --scope='@automattic/full-site-editing' --stream --no-prefix`<br>
+- `yarn build`<br>
 Compiles and minifies the plugins for production.
 
 Both these scripts will also move all source and PHP files into `/dist` in their respective folders.
@@ -48,7 +48,7 @@ You can also build one of the Plugins separately by appending the plugin slug on
 
 ```sh
 # Builds the `posts-list-block` Plugin only
-npx lerna run build:posts-list-block --scope='@automattic/full-site-editing' --stream`
+yarn build:posts-list-block`
 ```
 
 ## Local Development
@@ -74,12 +74,13 @@ wp-env run cli wp ... # Runs a wp-cli command.
 Once the environment running, you can use the dev script (shown above), and the environment will automatically see the updated build. It works by mounting the FSE plugin as a Docker volume.
 
 ### Other:
-Build (or `run dev`) and symlink the plugin into a local WordPress install.
+Build (or `dev`) and symlink the plugin into a local WordPress install.
 
 E.g.
 
 ```sh
-npx lerna run build --scope='@automattic/full-site-editing'
+cd apps/full-site-editing
+yarn build
 
 ln -s ~/Dev/wp-calypso/apps/full-site-editing/full-site-editing-plugin/ ~/Dev/wordpress/wp-content/plugins/full-site-editing-plugin
 ```
@@ -88,17 +89,17 @@ ln -s ~/Dev/wp-calypso/apps/full-site-editing/full-site-editing-plugin/ ~/Dev/wo
 
 The Plugin contains a suite of unit / integration tests powered by `@wordpress/scripts`.
 
-We use `lerna` to run the tests using the following basic command:
+_Run these commands from the apps/full-site-editing directory_
 
 ```shell
-npx lerna run test:js --scope='@automattic/full-site-editing' --stream
+yarn test:js
 ```
 
 If you wish to "watch" and run tests on file change then run:
 
 ```shell
 // Note the additional `:watch` below
-npx lerna run test:js:watch --scope='@automattic/full-site-editing' --stream
+yarn test:js:watch
 ```
 
 ### Updating Snapshots
@@ -106,7 +107,7 @@ npx lerna run test:js:watch --scope='@automattic/full-site-editing' --stream
 Occasionally you will need to update Jest Snapshots. This is so common that there's a dedicated script for this:
 
 ```shell
-npx lerna run test:js:update-snapshots --scope='@automattic/full-site-editing' --stream
+yarn test:js:update-snapshots
 ```
 
 ### Writing Tests
