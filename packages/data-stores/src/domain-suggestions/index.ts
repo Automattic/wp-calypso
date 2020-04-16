@@ -10,7 +10,7 @@ import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import * as actions from './actions';
 import * as resolvers from './resolvers';
-import Selectors from './selectors';
+import createSelectors, { Selectors } from './selectors';
 import { DispatchFromMap, SelectFromMap } from '../mapped-types';
 import { controls } from '../wpcom-request-controls';
 
@@ -26,7 +26,7 @@ export function register( vendor: string ): typeof STORE_KEY {
 			controls: controls as any,
 			reducer: reducer as any,
 			resolvers,
-			selectors: new Selectors( vendor ) as any,
+			selectors: createSelectors( vendor ),
 		} );
 	}
 	return STORE_KEY;

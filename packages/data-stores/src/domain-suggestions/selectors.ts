@@ -13,34 +13,28 @@ import { stringifyDomainQueryObject } from './utils';
 
 type DomainSuggestionSelectorOptions = Partial< Exclude< DomainSuggestionQuery, 'query' > >;
 
-export default class Selectors {
-	private vendor: string;
-
-	constructor( vendor: string ) {
-		this.vendor = vendor;
-	}
-
-	getState( state: State ) {
+const createSelectors = ( vendor: string ) => {
+	function getState( state: State ) {
 		return state;
 	}
 
-	getDomainSuggestions(
+	function getDomainSuggestions(
 		_state: State,
 		search: string,
 		options: DomainSuggestionSelectorOptions = {}
 	) {
-		const normalizedQuery = this.normalizeDomainSuggestionQuery( search, options );
+		const normalizedQuery = normalizeDomainSuggestionQuery( search, options );
 
 		// We need to go through the `select` store to get the resolver action
 		return select( STORE_KEY ).__internalGetDomainSuggestions( normalizedQuery );
 	}
 
-	isLoadingDomainSuggestions(
+	function isLoadingDomainSuggestions(
 		_state: State,
 		search: string,
 		options: DomainSuggestionSelectorOptions = {}
 	) {
-		const normalizedQuery = this.normalizeDomainSuggestionQuery( search, options );
+		const normalizedQuery = normalizeDomainSuggestionQuery( search, options );
 
 		return select( 'core/data' ).isResolving( STORE_KEY, '__internalGetDomainSuggestions', [
 			normalizedQuery,
@@ -60,7 +54,7 @@ export default class Selectors {
 	 * @param queryOptions Optional paramaters for the query
 	 * @returns Normalized query object
 	 */
-	normalizeDomainSuggestionQuery(
+	function normalizeDomainSuggestionQuery(
 		search: string,
 		queryOptions: DomainSuggestionSelectorOptions
 	): DomainSuggestionQuery {
@@ -70,7 +64,7 @@ export default class Selectors {
 			include_dotblogsubdomain: false,
 			only_wordpressdotcom: false,
 			quantity: 5,
-			vendor: this.vendor,
+			vendor: vendor,
 
 			// Merge options
 			...queryOptions,
@@ -89,7 +83,18 @@ export default class Selectors {
 	 * @param queryObject Normalized object representing the query
 	 * @returns suggestions
 	 */
-	__internalGetDomainSuggestions( state: State, queryObject: DomainSuggestionQuery ) {
+	function __internalGetDomainSuggestions( state: State, queryObject: DomainSuggestionQuery ) {
 		return state.domainSuggestions[ stringifyDomainQueryObject( queryObject ) ];
 	}
-}
+
+	return {
+		getState,
+		getDomainSuggestions,
+		isLoadingDomainSuggestions,
+		__internalGetDomainSuggestions,
+	};
+};
+
+export type Selectors = ReturnType< typeof createSelectors >;
+
+export default createSelectors;
