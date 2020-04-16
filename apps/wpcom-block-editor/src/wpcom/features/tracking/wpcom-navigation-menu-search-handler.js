@@ -103,7 +103,7 @@ const InserterMenuTrackingEvent = function() {
 		) {
 			tracksRecordEvent( 'wpcom_block_picker_no_results', eventProperties );
 		}
-	}, [ searchTerm ] );
+	}, [ searchTerm, plugingVersion, selectedBlock ] );
 
 	return (
 		<InserterMenuExtension>
